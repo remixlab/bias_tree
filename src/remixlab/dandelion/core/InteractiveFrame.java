@@ -1315,7 +1315,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		trans = transformOf(trans);
 		// trans = transformOfFrom(trans, camera.frame());
 
-		Vec res = new Vec(trans);
+		Vec res = trans.get();
 		// perform conversion
 		if (scaling().x() < 0)
 			res.setX(-trans.x());

@@ -23,42 +23,10 @@ import remixlab.fpstiming.AnimatorObject;
 import remixlab.fpstiming.TimingHandler;
 
 /**
- * <h1>Introduction to Dandelion</h1>
- * 
- * The main objective of the package is to provide interactivity to Frames (coordinate systems), mainly but not limited
- * to by controlling their motion. Frames may be attached not only to user-space objects (thus controlling their
- * motion), but to the Eye to control the Scene viewpoint. The powerful Frame API allows transforming points and vectors
- * among different Frame instances, thus providing means to easily implement Scene-Graphs.
- * 
- * <h2>Action-driven package</h2>
- * 
- * The whole package is based on a pre-defined (pre-implemented) action set (please refer to:
- * {@link remixlab.dandelion.core.Constants.DandelionAction}) whose elements can be related to different interaction
- * mechanisms, simply according to their degrees-of-freedom (DOFs). DOFs provide a nice interface between (motion)
- * actions and input data, representing a convenient abstraction layer for it. Dandelion actions are thus grouped
- * together according to their DOFs in the following sub-sets:
- * <p>
- * <ol>
- * <li>{@link remixlab.dandelion.core.Constants.ClickAction}s, that may be triggered when a button is clicked.</li>
- * <li>{@link remixlab.dandelion.core.Constants.KeyboardAction}s, that may be triggered when a key is pressed.</li>
- * <li>{@link remixlab.dandelion.core.Constants.WheelAction}s, that may be triggered when a wheel event occurred.</li>
- * <li>{@link remixlab.dandelion.core.Constants.DOF2Action}s, that may be triggered when a DOF2 gesture is captured
- * (such as a mouse button drag).</li>
- * <li>{@link remixlab.dandelion.core.Constants.DOF3Action}s, that may be triggered when a DOF3 gesture is captured
- * (such those performed with some joystics).</li>
- * <li>{@link remixlab.dandelion.core.Constants.DOF6Action}s, that may be triggered when a DOF6 gesture is captured
- * (such those performed with a kinect).</li>
- * </ol>
- * Sub-group constitutions with their individual action descriptions are available here:
- * {@link remixlab.dandelion.core.Constants}
- * <p>
- * This action-driven design allows to easily add all sorts of new interaction mechanisms without having the need to
- * re-implement any of the supported actions.
- * 
- * <h1>The AbstractScene Class</h1>
- * 
  * A 2D or 3D interactive abstract Scene. Main package class representing an interface between Dandelion and the outside
- * world. Each AbstractScene provides the following main object instances:
+ * world. For an introduction to DANDELION please refer to <a href="http://nakednous.github.io/projects/dandelion">this</a>.
+ * <p>
+ * Each AbstractScene provides the following main object instances:
  * <ol>
  * <li>An {@link #eye()} which represents the 2D ({@link remixlab.dandelion.core.Window}) or 3D (
  * {@link remixlab.dandelion.core.Camera}) controlling object. For details please refer to the

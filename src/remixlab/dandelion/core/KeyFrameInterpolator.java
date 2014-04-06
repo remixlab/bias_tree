@@ -1067,8 +1067,8 @@ public class KeyFrameInterpolator implements Copyable {
 					((KeyFrame3D) keyFrameList.get(currentFrame2.nextIndex())).tgQ(),
 					(Quat) keyFrameList.get(currentFrame2.nextIndex()).orientation(), alpha);
 		} else {
-			q = new Rot(rotationLerp(keyFrameList.get(currentFrame1.nextIndex()),
-					keyFrameList.get(currentFrame2.nextIndex()),
+			q = new Rot(Util.lerp(keyFrameList.get(currentFrame1.nextIndex()).orientation().angle(),
+					keyFrameList.get(currentFrame2.nextIndex()).orientation().angle(),
 					(alpha)));
 		}
 
@@ -1077,21 +1077,23 @@ public class KeyFrameInterpolator implements Copyable {
 		frame().setMagnitudeWithConstraint(mag);
 	}
 
+	/*
 	protected float rotationLerp(AbstractKeyFrame kf1, AbstractKeyFrame kf2, float alpha) {
 		float start = kf1.orientation().angle();
 		float stop = kf2.orientation().angle();
-		return lerp(start, stop, alpha);
+		return Util.lerp(start, stop, alpha);
 	}
+	*/
 
+	/*
 	protected Vec magnitudeLerp(AbstractKeyFrame kf1, AbstractKeyFrame kf2, float alpha) {
 		return vectorLerp(kf1.magnitude(), kf2.magnitude(), alpha);
 	}
+	*/
 
+	/*
 	protected Vec vectorLerp(Vec start, Vec stop, float alpha) {
-		return new Vec(lerp(start.x(), stop.x(), alpha), lerp(start.y(), stop.y(), alpha), lerp(start.z(), stop.z(), alpha));
+		return new Vec(Util.lerp(start.x(), stop.x(), alpha), Util.lerp(start.y(), stop.y(), alpha), Util.lerp(start.z(), stop.z(), alpha));
 	}
-
-	protected float lerp(float start, float stop, float alpha) {
-		return start + (stop - start) * alpha;
-	}
+	*/
 }
