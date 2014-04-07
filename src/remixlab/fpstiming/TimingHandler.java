@@ -15,8 +15,8 @@ import java.util.ArrayList;
 /**
  * A timing handler holds a {@link #timerPool()} and an {@link #animatorPool()}. The timer pool are all the tasks
  * scheduled to be performed in the future (one single time or periodically). The animation pool are all the objects
- * that implement an animation callback function. For an introduction to FPSTiming please refer to
- * <a href="http://nakednous.github.io/projects/fpstiming">this</a>.
+ * that implement an animation callback function. For an introduction to FPSTiming please refer to <a
+ * href="http://nakednous.github.io/projects/fpstiming">this</a>.
  */
 public class TimingHandler {
 	// T i m e r P o o l

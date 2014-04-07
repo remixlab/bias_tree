@@ -201,8 +201,8 @@ public abstract class Eye implements Copyable {
 		this.setSceneRadius(oVP.sceneRadius());
 		this.setSceneCenter(oVP.sceneCenter());
 		this.setScreenWidthAndHeight(oVP.screenWidth(), oVP.screenHeight());
-		this.viewMat = new Mat(oVP.viewMat);
-		this.projectionMat = new Mat(oVP.projectionMat);
+		this.viewMat = oVP.viewMat.get();
+		this.projectionMat = oVP.projectionMat.get();
 	}
 
 	@Override

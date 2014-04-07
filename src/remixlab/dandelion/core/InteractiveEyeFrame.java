@@ -414,7 +414,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				break;
 			}
 			trans = Vec.multiply(trans, translationSensitivity());
-			trans.divide(magnitude());
+			trans.entryWiseDivision(magnitude());
 			translate(inverseTransformOf(trans));
 			// translate(inverseTransformOf(trans, false));
 			break;
@@ -510,7 +510,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			trans = new Vec(0.0f, 0.0f, delta);
 			// No Scl
 			Vec mag = magnitude();
-			trans.divide(mag);
+			trans.entryWiseDivision(mag);
 			translate(inverseTransformOf(trans));
 			break;
 		case ZOOM_ON_REGION:

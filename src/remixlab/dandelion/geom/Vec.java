@@ -513,7 +513,7 @@ public class Vec implements Constants, Linkable {
 	 * @param v
 	 *          the vector to multiply by
 	 */
-	public void multiply(Vec v) {
+	public void entryWiseProduct(Vec v) {
 		this.vec[0] *= v.vec[0];
 		this.vec[1] *= v.vec[1];
 		this.vec[2] *= v.vec[2];
@@ -523,8 +523,8 @@ public class Vec implements Constants, Linkable {
 	 * Multiply each element of one vector by the individual elements of another vector, and return the result as a new
 	 * Vec. Also known as <a href="http://en.wikipedia.org/wiki/Hadamard_product_(matrices)">Hadamard product.</a>
 	 */
-	static public Vec multiply(Vec v1, Vec v2) {
-		return multiply(v1, v2, null);
+	static public Vec entryWiseProduct(Vec v1, Vec v2) {
+		return entryWiseProduct(v1, v2, null);
 	}
 
 	/**
@@ -539,7 +539,7 @@ public class Vec implements Constants, Linkable {
 	 * @param target
 	 *          Vec to store the result
 	 */
-	static public Vec multiply(Vec v1, Vec v2, Vec target) {
+	static public Vec entryWiseProduct(Vec v1, Vec v2, Vec target) {
 		if (target == null) {
 			target = new Vec(v1.vec[0] * v2.vec[0], v1.vec[1] * v2.vec[1], v1.vec[2] * v2.vec[2]);
 		} else {
@@ -592,7 +592,7 @@ public class Vec implements Constants, Linkable {
 	 * Divide each element of one vector by the elements of another vector. Refer to <a
 	 * href="http://en.wikipedia.org/wiki/Hadamard_product_(matrices)">Hadamard product.</a>
 	 */
-	public void divide(Vec v) {
+	public void entryWiseDivision(Vec v) {
 		this.vec[0] /= v.vec[0];
 		this.vec[1] /= v.vec[1];
 		this.vec[2] /= v.vec[2];
@@ -602,8 +602,8 @@ public class Vec implements Constants, Linkable {
 	 * Divide each element of one vector by the individual elements of another vector, and return the result as a new Vec.
 	 * Refer to <a href="http://en.wikipedia.org/wiki/Hadamard_product_(matrices)">Hadamard product.</a>
 	 */
-	static public Vec divide(Vec v1, Vec v2) {
-		return divide(v1, v2, null);
+	static public Vec entryWiseDivision(Vec v1, Vec v2) {
+		return entryWiseDivision(v1, v2, null);
 	}
 
 	/**
@@ -617,7 +617,7 @@ public class Vec implements Constants, Linkable {
 	 * @param target
 	 *          Vec to store the result
 	 */
-	static public Vec divide(Vec v1, Vec v2, Vec target) {
+	static public Vec entryWiseDivision(Vec v1, Vec v2, Vec target) {
 		if (target == null) {
 			target = new Vec(v1.vec[0] / v2.vec[0], v1.vec[1] / v2.vec[1], v1.vec[2] / v2.vec[2]);
 		} else {

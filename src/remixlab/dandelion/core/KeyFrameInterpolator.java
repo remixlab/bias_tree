@@ -1078,22 +1078,17 @@ public class KeyFrameInterpolator implements Copyable {
 	}
 
 	/*
-	protected float rotationLerp(AbstractKeyFrame kf1, AbstractKeyFrame kf2, float alpha) {
-		float start = kf1.orientation().angle();
-		float stop = kf2.orientation().angle();
-		return Util.lerp(start, stop, alpha);
-	}
-	*/
+	 * protected float rotationLerp(AbstractKeyFrame kf1, AbstractKeyFrame kf2, float alpha) { float start =
+	 * kf1.orientation().angle(); float stop = kf2.orientation().angle(); return Util.lerp(start, stop, alpha); }
+	 */
 
 	/*
-	protected Vec magnitudeLerp(AbstractKeyFrame kf1, AbstractKeyFrame kf2, float alpha) {
-		return vectorLerp(kf1.magnitude(), kf2.magnitude(), alpha);
-	}
-	*/
+	 * protected Vec magnitudeLerp(AbstractKeyFrame kf1, AbstractKeyFrame kf2, float alpha) { return
+	 * vectorLerp(kf1.magnitude(), kf2.magnitude(), alpha); }
+	 */
 
 	/*
-	protected Vec vectorLerp(Vec start, Vec stop, float alpha) {
-		return new Vec(Util.lerp(start.x(), stop.x(), alpha), Util.lerp(start.y(), stop.y(), alpha), Util.lerp(start.z(), stop.z(), alpha));
-	}
-	*/
+	 * protected Vec vectorLerp(Vec start, Vec stop, float alpha) { return new Vec(Util.lerp(start.x(), stop.x(), alpha),
+	 * Util.lerp(start.y(), stop.y(), alpha), Util.lerp(start.z(), stop.z(), alpha)); }
+	 */
 }

@@ -24,7 +24,8 @@ import remixlab.fpstiming.TimingHandler;
 
 /**
  * A 2D or 3D interactive abstract Scene. Main package class representing an interface between Dandelion and the outside
- * world. For an introduction to DANDELION please refer to <a href="http://nakednous.github.io/projects/dandelion">this</a>.
+ * world. For an introduction to DANDELION please refer to <a
+ * href="http://nakednous.github.io/projects/dandelion">this</a>.
  * <p>
  * Each AbstractScene provides the following main object instances:
  * <ol>
@@ -291,27 +292,27 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		case MOVE_EYE_LEFT:
 			trans = new Vec(-10.0f * eye().flySpeed(), 0.0f, 0.0f);
 			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
+				trans.entryWiseDivision(camera().frame().magnitude());
 			eye().frame().translate(eye().frame().inverseTransformOf(trans));
 			break;
 		case MOVE_EYE_RIGHT:
 			trans = new Vec(10.0f * eye().flySpeed(), 0.0f, 0.0f);
 			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
+				trans.entryWiseDivision(camera().frame().magnitude());
 			eye().frame().translate(eye().frame().inverseTransformOf(trans));
 			break;
 		case MOVE_EYE_UP:
 			trans = eye().frame().inverseTransformOf(
 					new Vec(0.0f, isRightHanded() ? 10.0f : -10.0f * eye().flySpeed(), 0.0f));
 			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
+				trans.entryWiseDivision(camera().frame().magnitude());
 			eye().frame().translate(trans);
 			break;
 		case MOVE_EYE_DOWN:
 			trans = eye().frame().inverseTransformOf(
 					new Vec(0.0f, isRightHanded() ? -10.0f : 10.0f * eye().flySpeed(), 0.0f));
 			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
+				trans.entryWiseDivision(camera().frame().magnitude());
 			eye().frame().translate(trans);
 			break;
 		case INCREASE_ROTATION_SENSITIVITY:

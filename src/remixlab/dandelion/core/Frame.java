@@ -216,7 +216,7 @@ public class Frame implements Copyable, Constants {
 		}
 
 		public void scale(Vec s) {
-			setScaling(Vec.multiply(scaling(), s));
+			setScaling(Vec.entryWiseProduct(scaling(), s));
 		}
 
 		public boolean isInverted() {
@@ -742,7 +742,7 @@ public class Frame implements Copyable, Constants {
 	 * @see #setMagnitudeWithConstraint(Vec)
 	 */
 	public final void setScalingWithConstraint(Vec s) {
-		Vec deltaS = Vec.divide(s, this.scaling());
+		Vec deltaS = Vec.entryWiseDivision(s, this.scaling());
 		if (constraint() != null)
 			deltaS = constraint().constrainScaling(deltaS, this);
 
@@ -915,7 +915,7 @@ public class Frame implements Copyable, Constants {
 	 */
 	public final void setMagnitudeWithConstraint(Vec mag) {
 		if (referenceFrame() != null)
-			mag = Vec.divide(mag, referenceFrame().magnitude());
+			mag = Vec.entryWiseDivision(mag, referenceFrame().magnitude());
 
 		setScalingWithConstraint(mag);
 	}
@@ -951,7 +951,7 @@ public class Frame implements Copyable, Constants {
 	 */
 	public Vec magnitude() {
 		if (referenceFrame() != null)
-			return Vec.multiply(referenceFrame().magnitude(), scaling());
+			return Vec.entryWiseProduct(referenceFrame().magnitude(), scaling());
 		else
 			return scaling().get();
 	}
@@ -1796,7 +1796,7 @@ public class Frame implements Copyable, Constants {
 	 */
 	public final Vec localCoordinatesOf(Vec src, boolean improper) {
 		if (improper)
-			return Vec.divide(rotation().inverseRotate(Vec.subtract(src, translation())), scaling());
+			return Vec.entryWiseDivision(rotation().inverseRotate(Vec.subtract(src, translation())), scaling());
 		else
 			return rotation().inverseRotate(Vec.subtract(src, translation()));
 	}
@@ -1846,7 +1846,7 @@ public class Frame implements Copyable, Constants {
 	 */
 	public final Vec localInverseCoordinatesOf(Vec src, boolean improper) {
 		if (improper)
-			return Vec.add(rotation().rotate(Vec.multiply(src, scaling())), translation());
+			return Vec.add(rotation().rotate(Vec.entryWiseProduct(src, scaling())), translation());
 		else
 			return Vec.add(rotation().rotate(src), translation());
 	}
@@ -1951,7 +1951,7 @@ public class Frame implements Copyable, Constants {
 	 */
 	public final Vec localTransformOf(Vec src, boolean improper) {
 		if (improper)
-			return Vec.divide(rotation().inverseRotate(src), scaling());
+			return Vec.entryWiseDivision(rotation().inverseRotate(src), scaling());
 		else
 			return rotation().inverseRotate(src);
 	}
@@ -1977,7 +1977,7 @@ public class Frame implements Copyable, Constants {
 	 */
 	public final Vec localInverseTransformOf(Vec src, boolean improper) {
 		if (improper)
-			return rotation().rotate(Vec.multiply(src, scaling()));
+			return rotation().rotate(Vec.entryWiseProduct(src, scaling()));
 		else
 			return rotation().rotate(src);
 	}

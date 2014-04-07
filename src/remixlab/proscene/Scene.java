@@ -598,7 +598,7 @@ public class Scene extends AbstractScene implements PConstants {
 		@Override
 		public Mat getModelView(Mat target) {
 			if (target == null)
-				target = new Mat(Scene.toMat((PMatrix2D) pgj2d().getMatrix()));
+				target = Scene.toMat((PMatrix2D) pgj2d().getMatrix()).get();
 			else
 				target.set(Scene.toMat((PMatrix2D) pgj2d().getMatrix()));
 			return target;
@@ -718,7 +718,7 @@ public class Scene extends AbstractScene implements PConstants {
 		@Override
 		public Mat getProjection(Mat target) {
 			if (target == null)
-				target = new Mat(Scene.toMat(pggl().projection.get()));
+				target = Scene.toMat(pggl().projection.get()).get();
 			else
 				target.set(Scene.toMat(pggl().projection.get()));
 			return target;
@@ -752,7 +752,7 @@ public class Scene extends AbstractScene implements PConstants {
 		@Override
 		public Mat getModelView(Mat target) {
 			if (target == null)
-				target = new Mat(Scene.toMat((PMatrix3D) pggl().getMatrix()));
+				target = Scene.toMat((PMatrix3D) pggl().getMatrix()).get();
 			else
 				target.set(Scene.toMat((PMatrix3D) pggl().getMatrix()));
 			return target;
