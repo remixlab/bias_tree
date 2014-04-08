@@ -23,7 +23,7 @@ public class Window extends Eye implements Copyable {
 	public Window(AbstractScene scn) {
 		super(scn);
 		if (scene.is3D())
-			throw new RuntimeException("Use ViewWindow only for a 2D Scene");
+			throw new RuntimeException("Use Window only for a 2D Scene");
 		computeProjection();
 	}
 

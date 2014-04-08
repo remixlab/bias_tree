@@ -24,9 +24,7 @@ import remixlab.util.Util;
  * include static versions. Because creating new objects can be computationally expensive, most functions include an
  * optional 'target' Vec, so that a new Vec object is not created with each operation.
  * <p>
- * Initially based on the Vec class by <a href="http://www.shiffman.net">Dan Shiffman</a>.
- * <p>
- * This class has been almost entirely taken from Processing.
+ * Initially based on the <a href="http://www.processing.org">Processing</a> PVector class.
  */
 public class Vec implements Constants, Linkable {
 	@Override
@@ -870,8 +868,7 @@ public class Vec implements Constants, Linkable {
 	}
 
 	/**
-	 * Calculate the angle between two vectors, using the dot product. Code contributed by Jacques Maire
-	 * (http://www.alcys.com/)
+	 * Calculate the angle between two vectors, using the dot product.
 	 * 
 	 * @param v1
 	 *          a vector
@@ -880,16 +877,25 @@ public class Vec implements Constants, Linkable {
 	 * @return the angle between the vectors
 	 */
 	static public float angleBetween(Vec v1, Vec v2) {
-		if (v1.x() == 0 && v1.y() == 0 && v1.z() == 0)
+		// We get NaN if we pass in a zero vector which can cause problems
+		// Zero seems like a reasonable angle between a 0 length vector and something else
+		if (Util.zero(v1.magnitude()))
 			return 0.0f;
-		if (v2.x() == 0 && v2.y() == 0 && v2.z() == 0)
+		if (Util.zero(v2.magnitude()))
 			return 0.0f;
-		Vec di = Vec.subtract(v1, v2);
-		float mg = di.magnitude();
-		if (Util.nonZero(mg))
-			return (float) ((di.y() < 0) ? -Math.acos(di.x() / mg) : Math.acos(di.x() / mg));
-		else
-			return 0;
+
+		// as in P5:
+		// double dot = v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
+		// double v1mag = Math.sqrt(v1.x() * v1.x() + v1.y() * v1.y() + v1.z() * v1.z());
+		// double v2mag = Math.sqrt(v2.x() * v2.x() + v2.y() * v2.y() + v2.z() * v2.z());
+		// double amt = dot / (v1mag * v2mag);
+		// if (amt <= -1) return Constants.PI; else if (amt >= 1) return 0;
+		// return (float) Math.acos(amt);
+
+		// as here: http://stackoverflow.com/questions/10133957/signed-angle-between-two-vectors-without-a-reference-plane
+		float s = cross(v1, v2, null).magnitude();
+		float c = dot(v1, v2);
+		return (float) Math.atan2(s, c);
 	}
 
 	/**

@@ -15,13 +15,12 @@ import remixlab.util.HashCodeBuilder;
 import remixlab.util.Util;
 
 /**
- * 4x4 matrix implementation.
- * <p>
- * This class has been almost entirely taken from Processing.
+ * 4x4 matrix affine matrix implementation. Matrix is represented in column major order: | m0 m4 m8 m12 | | m1 m5 m9 m13
+ * | | m2 m6 m10 m14 | | m3 m7 m11 m15 |
  */
 public class Mat implements Linkable {
 	/**
-	 * Array col major representation: | m0 m4 m8 m12 | | m1 m5 m9 m13 | | m2 m6 m10 m14 | | m3 m7 m11 m15 |
+	 * Array col major representation
 	 */
 	@Override
 	public int hashCode() {
