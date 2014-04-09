@@ -305,12 +305,7 @@ public abstract class MatrixHelper implements Constants {
 	 * Computes the world coordinates of an screen object so that drawing can be done directly with 2D screen coordinates.
 	 * <p>
 	 * All screen drawing should be enclosed between {@link #beginScreenDrawing()} and {@link #endScreenDrawing()}. Then
-	 * you can just begin drawing your screen shapes (defined between {@code PApplet.beginShape()} and
-	 * {@code PApplet.endShape()}).
-	 * <p>
-	 * <b>Note:</b> To specify a {@code (x,y)} vertex screen coordinate you should first call
-	 * {@code Vec p = coords(new Point(x, y))} then do your drawing as {@code vertex(p.x, p.y, p.z)}.
-	 * <p>
+	 * you can just begin drawing your screen shapes.
 	 * <b>Attention:</b> If you want your screen drawing to appear on top of your 3d scene then draw first all your 3d
 	 * before doing any call to a {@link #beginScreenDrawing()} and {@link #endScreenDrawing()} pair.
 	 * 
