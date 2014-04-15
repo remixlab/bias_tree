@@ -258,7 +258,7 @@ public interface Constants extends EventConstants {
 		/**
 		 * Drive (camera or interactive frame)
 		 */
-		DRIVE("Drive (camera or interactive frame)", false, 1),
+		DRIVE("Drive (camera or interactive frame)", false, 2),
 
 		// DEVICE ACTIONs
 		/**
@@ -546,7 +546,6 @@ public interface Constants extends EventConstants {
 		SCALE(DandelionAction.SCALE),
 		ZOOM(DandelionAction.ZOOM),
 		ROLL(DandelionAction.ROLL),
-		DRIVE(DandelionAction.DRIVE),
 
 		CUSTOM(DandelionAction.CUSTOM);
 
@@ -587,9 +586,9 @@ public interface Constants extends EventConstants {
 		SCALE(DandelionAction.SCALE),
 		ZOOM(DandelionAction.ZOOM),
 		ROLL(DandelionAction.ROLL),
-		DRIVE(DandelionAction.DRIVE),
 
 		// DOF_2
+		DRIVE(DandelionAction.DRIVE),
 		ROTATE(DandelionAction.ROTATE),
 		CAD_ROTATE(DandelionAction.CAD_ROTATE),
 		TRANSLATE(DandelionAction.TRANSLATE),
@@ -639,9 +638,9 @@ public interface Constants extends EventConstants {
 		SCALE(DandelionAction.SCALE),
 		ZOOM(DandelionAction.ZOOM),
 		ROLL(DandelionAction.ROLL),
-		DRIVE(DandelionAction.DRIVE),
 
 		// DOF_2
+		DRIVE(DandelionAction.DRIVE),
 		ROTATE(DandelionAction.ROTATE),
 		CAD_ROTATE(DandelionAction.CAD_ROTATE),
 		TRANSLATE(DandelionAction.TRANSLATE),
@@ -695,10 +694,10 @@ public interface Constants extends EventConstants {
 		SCALE(DandelionAction.SCALE),
 		ZOOM(DandelionAction.ZOOM),
 		ROLL(DandelionAction.ROLL),
-		DRIVE(DandelionAction.DRIVE),
 
 		// DOF_2
 		ROTATE(DandelionAction.ROTATE),
+		DRIVE(DandelionAction.DRIVE),
 		CAD_ROTATE(DandelionAction.CAD_ROTATE),
 		TRANSLATE(DandelionAction.TRANSLATE),
 		MOVE_FORWARD(DandelionAction.MOVE_FORWARD),

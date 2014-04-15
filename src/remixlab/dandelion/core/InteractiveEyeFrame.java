@@ -329,10 +329,8 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		Camera.WorldPoint wP;
 		switch (a) {
 		// better handled these by default (see below)
-		/*
-		 * case CUSTOM: case DRIVE: case LOOK_AROUND: case MOVE_BACKWARD: case MOVE_FORWARD: case ROLL:
-		 * super.execAction3D(a); break;
-		 */
+		// case CUSTOM: case DRIVE: case LOOK_AROUND: case MOVE_BACKWARD: case MOVE_FORWARD: case ROLL:
+		// super.execAction3D(a); break;
 		case ROTATE:
 			if (e2.isAbsolute()) {
 				AbstractScene.showEventVariationWarning(a);

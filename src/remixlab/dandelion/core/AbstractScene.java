@@ -71,6 +71,10 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public Point						upperLeftCorner;
 	protected boolean				offscreen;
 
+	// Who's performing the motion action.
+	// TODO define if this should go in agent bindings:
+	// enum ActionPerformer { EYE, FRAME };
+
 	/**
 	 * Default constructor which defines a right-handed OpenGL compatible Scene with its own
 	 * {@link remixlab.dandelion.core.MatrixStackHelper}. The constructor also instantiates the {@link #inputHandler()}

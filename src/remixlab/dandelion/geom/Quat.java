@@ -676,7 +676,7 @@ public class Quat implements Constants, Linkable, Rotation {
 	/**
 	 * Converts this Quat to Euler rotation angles {@code roll}, {@code pitch} and {@code yaw} in radians.
 	 * {@link #fromEulerAngles(float, float, float)} performs the inverse operation. The code was adapted from:
-	 * http://www.euclideanspace.com/maths/geometry /rotations/conversions/quaternionToEuler/index.htm.
+	 * http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm.
 	 * <p>
 	 * <b>Attention:</b> This method assumes that this Quat is normalized.
 	 * 

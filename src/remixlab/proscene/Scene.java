@@ -233,10 +233,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 */
 	public class ProsceneMouse extends MouseAgent {
 		Scene							scene;
-		boolean						bypassNullEvent, need4Spin;
+		boolean						bypassNullEvent, need4Spin, drive;
 		Point							fCorner		= new Point();
 		Point							lCorner		= new Point();
-		DOF2Event					event, prevEvent;
+		DOF2Event					event, prevEvent, pressEvent;
 		float							dFriction	= eye().frame().dampingFriction();
 		InteractiveFrame	iFrame;
 
@@ -256,6 +256,7 @@ public class Scene extends AbstractScene implements PConstants {
 			if (e.getAction() == processing.event.MouseEvent.PRESS) {
 				event = new DOF2Event(prevEvent, e.getX() - scene.upperLeftCorner.x(), e.getY()
 						- scene.upperLeftCorner.y(), e.getModifiers(), e.getButton());
+				pressEvent = event.get();
 				if (inputGrabber() instanceof InteractiveFrame) {
 					if (need4Spin)
 						((InteractiveFrame) inputGrabber()).stopSpinning();
@@ -270,8 +271,9 @@ public class Scene extends AbstractScene implements PConstants {
 					need4Spin = (((dA == DandelionAction.ROTATE) || (dA == DandelionAction.ROTATE3)
 							|| (dA == DandelionAction.SCREEN_ROTATE) || (dA == DandelionAction.TRANSLATE_ROTATE)) && (((InteractiveFrame) inputGrabber())
 							.dampingFriction() == 0));
+					drive = (dA == DandelionAction.DRIVE);
 					bypassNullEvent = (dA == DandelionAction.MOVE_FORWARD) || (dA == DandelionAction.MOVE_BACKWARD)
-							|| (dA == DandelionAction.DRIVE) && scene.inputHandler().isAgentRegistered(this);
+							|| (drive) && scene.inputHandler().isAgentRegistered(this);
 					setZoomVisualHint(dA == DandelionAction.ZOOM_ON_REGION && (inputGrabber() instanceof InteractiveEyeFrame)
 							&& scene.inputHandler().isAgentRegistered(this));
 					setRotateVisualHint(dA == DandelionAction.SCREEN_ROTATE && (inputGrabber() instanceof InteractiveEyeFrame)
@@ -302,6 +304,8 @@ public class Scene extends AbstractScene implements PConstants {
 				if (!zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
 					event = new DOF2Event(prevEvent, e.getX() - scene.upperLeftCorner.x(), e.getY()
 							- scene.upperLeftCorner.y(), e.getModifiers(), e.getButton());
+					if (drive && inputGrabber() instanceof InteractiveFrame)
+						((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * radius() * 0.01f * (event.y() - pressEvent.y()));
 					handle(event);
 					prevEvent = event.get();
 				}
@@ -328,6 +332,9 @@ public class Scene extends AbstractScene implements PConstants {
 					iFrame.setDampingFriction(dFriction);
 					bypassNullEvent = !bypassNullEvent;
 				}
+				// restore speed after drive action terminates:
+				if (drive && inputGrabber() instanceof InteractiveFrame)
+					((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * radius());
 			}
 			if (e.getAction() == processing.event.MouseEvent.WHEEL) {
 				handle(new DOF1Event(e.getCount(), e.getModifiers(), B_NOBUTTON));
@@ -360,7 +367,8 @@ public class Scene extends AbstractScene implements PConstants {
 			eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.ROLL);
 			eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_CENTER), B_CENTER, DOF2Action.DRIVE);
 			eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.ROLL);
-			eyeWheelProfile().setBinding(B_SHIFT, B_NOBUTTON, WheelAction.DRIVE);
+			// TODO PITCH, YAW?
+			// eyeWheelProfile().setBinding(B_SHIFT, B_NOBUTTON, WheelAction.DRIVE);
 			frameProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.ROTATE);
 			frameProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, DOF2Action.SCALE);
 			frameProfile().setBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, DOF2Action.TRANSLATE);

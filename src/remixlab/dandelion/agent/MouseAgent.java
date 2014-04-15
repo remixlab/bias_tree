@@ -73,7 +73,8 @@ public class MouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Act
 		eyeProfile().setBinding(B_SHIFT, B_LEFT, DOF2Action.ROLL);
 		eyeProfile().setBinding(B_SHIFT, B_CENTER, DOF2Action.DRIVE);
 		eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.ROLL);
-		eyeWheelProfile().setBinding(B_SHIFT, B_NOBUTTON, WheelAction.DRIVE);
+		// TODO PITCH, YAW?
+		// eyeWheelProfile().setBinding(B_SHIFT, B_NOBUTTON, WheelAction.DRIVE);
 		frameProfile().setBinding(B_NOMODIFIER_MASK, B_LEFT, DOF2Action.ROTATE);
 		frameProfile().setBinding(B_NOMODIFIER_MASK, B_CENTER, DOF2Action.SCALE);
 		frameProfile().setBinding(B_NOMODIFIER_MASK, B_RIGHT, DOF2Action.TRANSLATE);

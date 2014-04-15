@@ -40,7 +40,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				append(sFriction).
 				append(transSensitivity).
 				append(wheelSensitivity).
-				append(drvSpd).
 				append(flyDisp).
 				append(flySpd).
 				append(flyUpVec).
@@ -68,7 +67,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				.append(spngSensitivity, other.spngSensitivity)
 				.append(transSensitivity, other.transSensitivity)
 				.append(wheelSensitivity, other.wheelSensitivity)
-				.append(drvSpd, other.drvSpd)
 				.append(flyDisp, other.flyDisp)
 				.append(flySpd, other.flySpd)
 				.append(flyUpVec, other.flyUpVec)
@@ -99,7 +97,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	// " D R I V A B L E " S T U F F :
 	protected Vec								tDir;
 	protected float							flySpd;
-	protected float							drvSpd;
 	protected TimingTask				flyTimerTask;
 	protected Vec								flyUpVec;
 	protected Vec								flyDisp;
@@ -141,10 +138,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		};
 		scene.registerTimingTask(spinningTimerTask);
 
-		// Drivable stuff:
-		drvSpd = 0.0f;
 		flyUpVec = new Vec(0.0f, 1.0f, 0.0f);
-
 		flyDisp = new Vec(0.0f, 0.0f, 0.0f);
 
 		if (!(this instanceof InteractiveEyeFrame))
@@ -185,8 +179,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		};
 		this.scene.registerTimingTask(spinningTimerTask);
 
-		// Drivable stuff:
-		this.drvSpd = otherFrame.drvSpd;
 		this.flyUpVec = new Vec();
 		this.flyUpVec.set(otherFrame.flyUpVector());
 		this.flyDisp = new Vec();
@@ -239,8 +231,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		};
 		scene.registerTimingTask(spinningTimerTask);
 
-		// Drivable stuff:
-		drvSpd = 0.0f;
 		flyUpVec = new Vec(0.0f, 1.0f, 0.0f);
 		flyDisp = new Vec(0.0f, 0.0f, 0.0f);
 		setFlySpeed(0.0f);
@@ -636,7 +626,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 
 	/**
 	 * Translates the InteractiveFrame by its {@link #tossingDirection()}. Invoked by a timer when the InteractiveFrame is
-	 * performing the DRIVE ,MOVE_BACKWARD or MOVE_FORWARD dandelion actions.
+	 * performing the DRIVE, MOVE_BACKWARD or MOVE_FORWARD dandelion actions.
 	 * <p>
 	 * <b>Attention: </b>Tossing may be decelerated according to {@link #dampingFriction()} till it stops completely.
 	 * 
@@ -810,14 +800,13 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			if (e instanceof DOF1Event)
 				e1 = (DOF1Event) e.get();
 			else if (e instanceof DOF2Event)
-				e1 = currentAction == DandelionAction.ROLL || currentAction == DandelionAction.DRIVE ? ((DOF2Event) e)
-						.dof1Event() : ((DOF2Event) e).dof1Event(false);
+				e1 = currentAction == DandelionAction.ROLL ? ((DOF2Event) e).dof1Event() : ((DOF2Event) e).dof1Event(false);
 			else if (e instanceof DOF3Event)
-				e1 = currentAction == DandelionAction.ROLL || currentAction == DandelionAction.DRIVE ? ((DOF3Event) e)
-						.dof2Event().dof1Event() : ((DOF3Event) e).dof2Event().dof1Event(false);
+				e1 = currentAction == DandelionAction.ROLL ? ((DOF3Event) e).dof2Event().dof1Event() : ((DOF3Event) e)
+						.dof2Event().dof1Event(false);
 			else if (e instanceof DOF6Event)
-				e1 = currentAction == DandelionAction.ROLL || currentAction == DandelionAction.DRIVE ? ((DOF6Event) e)
-						.dof3Event().dof2Event().dof1Event() : ((DOF6Event) e).dof3Event().dof2Event().dof1Event(false);
+				e1 = currentAction == DandelionAction.ROLL ? ((DOF6Event) e).dof3Event().dof2Event().dof1Event()
+						: ((DOF6Event) e).dof3Event().dof2Event().dof1Event(false);
 			break;
 		case 2:
 			if (e instanceof DOF2Event)
@@ -1007,20 +996,11 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			AbstractScene.showMissingImplementationWarning(a, getClass().getName());
 			break;
 		case DRIVE:
-			rotate(turnQuaternion(e1, scene.camera()));
-			if (e1.action() != null) // its a wheel wheel :P
-				drvSpd = 0.01f * -e1.x() * wheelSensitivity();
-			else if (e1.isAbsolute())
-				drvSpd = 0.01f * -e1.x();
-			else
-				drvSpd = 0.01f * -e1.dx();
-			flyDisp.set(0.0f, 0.0f, flySpeed() * drvSpd);
-			if (scene.is2D())
-				trans = localInverseTransformOf(flyDisp);
-			else
-				trans = rotation().rotate(flyDisp);
+			rotate(turnQuaternion(e2.dof1Event(), scene.camera()));
+			flyDisp.set(0.0f, 0.0f, flySpeed());
+			trans = rotation().rotate(flyDisp);
 			setTossingDirection(trans);
-			startTossing(e1);
+			startTossing(e2);
 			break;
 		case LOOK_AROUND:
 			rotate(pitchYawQuaternion(e2, scene.camera()));
@@ -1028,20 +1008,16 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		case MOVE_BACKWARD:
 			rotate(pitchYawQuaternion(e2, scene.camera()));
 			flyDisp.set(0.0f, 0.0f, flySpeed());
-			if (scene.is2D())
-				trans = localInverseTransformOf(flyDisp);
-			else
-				trans = rotation().rotate(flyDisp);
+			// trans = localInverseTransformOf(flyDisp);
+			trans = rotation().rotate(flyDisp);
 			setTossingDirection(trans);
 			startTossing(e2);
 			break;
 		case MOVE_FORWARD:
 			rotate(pitchYawQuaternion(e2, scene.camera()));
 			flyDisp.set(0.0f, 0.0f, -flySpeed());
-			if (scene.is2D())
-				trans = localInverseTransformOf(flyDisp);
-			else
-				trans = rotation().rotate(flyDisp);
+			// trans = localInverseTransformOf(flyDisp);
+			trans = rotation().rotate(flyDisp);
 			setTossingDirection(trans);
 			startTossing(e2);
 			break;
@@ -1345,8 +1321,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	/**
 	 * Returns the fly speed, expressed in virtual scene units.
 	 * <p>
-	 * It corresponds to the incremental displacement that is periodically applied to the InteractiveDrivableFrame
-	 * position when a MOVE_FORWARD or MOVE_BACKWARD action is proceeded.
+	 * It corresponds to the incremental displacement that is periodically applied to the InteractiveFrame position when a
+	 * MOVE_FORWARD or MOVE_BACKWARD action is proceeded.
 	 * <p>
 	 * <b>Attention:</b> When the InteractiveFrame is set as the {@link remixlab.dandelion.core.Eye#frame()} or when it is
 	 * set as the {@link remixlab.dandelion.core.AbstractScene#avatar()} (which indeed is an instance of the
@@ -1362,8 +1338,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	 * Sets the {@link #flySpeed()}, defined in virtual scene units.
 	 * <p>
 	 * Default value is 0.0, but it is modified according to the {@link remixlab.dandelion.core.AbstractScene#radius()}
-	 * when the InteractiveDrivableFrame is set as the {@link remixlab.dandelion.core.Eye#frame()} (which indeed is an
-	 * instance of the InteractiveEyeFrame class) or when the InteractiveDrivableFrame is set as the
+	 * when the InteractiveFrame is set as the {@link remixlab.dandelion.core.Eye#frame()} (which indeed is an instance of
+	 * the InteractiveEyeFrame class) or when the InteractiveFrame is set as the
 	 * {@link remixlab.dandelion.core.AbstractScene#avatar()} (which indeed is an instance of the InteractiveAvatarFrame
 	 * class).
 	 */
@@ -1375,8 +1351,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	 * Returns the up vector used in fly mode, expressed in the world coordinate system.
 	 * <p>
 	 * Fly mode corresponds to the MOVE_FORWARD and MOVE_BACKWARD action bindings. In these modes, horizontal
-	 * displacements of the mouse rotate the InteractiveDrivableFrame around this vector. Vertical displacements rotate
-	 * always around the frame {@code X} axis.
+	 * displacements of the mouse rotate the InteractiveFrame around this vector. Vertical displacements rotate always
+	 * around the frame {@code X} axis.
 	 * <p>
 	 * Default value is (0,1,0), but it is updated by the Eye when set as its {@link remixlab.dandelion.core.Eye#frame()}.
 	 * {@link remixlab.dandelion.core.Eye#setOrientation(Rotation)} and
@@ -1410,11 +1386,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	 * Returns a Quaternion that is a rotation around current camera Y, proportional to the horizontal mouse position.
 	 */
 	protected final Quat turnQuaternion(DOF1Event event, Camera camera) {
-		float deltaX;
-		if (e1.action() != null) // it's a wheel then :P
-			deltaX = event.x() * wheelSensitivity();
-		else
-			deltaX = event.isAbsolute() ? event.x() : event.dx();
+		float deltaX = event.isAbsolute() ? event.x() : event.dx();
 		return new Quat(new Vec(0.0f, 1.0f, 0.0f), rotationSensitivity() * (-deltaX) / camera.screenWidth());
 	}
 

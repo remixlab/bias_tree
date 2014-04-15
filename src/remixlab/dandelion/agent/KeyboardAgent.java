@@ -19,15 +19,15 @@ import remixlab.dandelion.core.Constants.*;
 /**
  * An {@link remixlab.bias.agent.ActionKeyboardAgent} that handles Dandelion keyboard actions.
  * <p>
- * Dandelion actions can be handled by an {@link remixlab.dandelion.core.AbstractScene}, an
- * {@link remixlab.dandelion.core.InteractiveFrame} or by an {@link remixlab.dandelion.core.InteractiveEyeFrame}. This
+ * Dandelion actions can be handled by the {@link remixlab.dandelion.core.AbstractScene}, or by an
+ * {@link remixlab.dandelion.core.InteractiveFrame} or an {@link remixlab.dandelion.core.InteractiveEyeFrame}. This
  * class implements a generic Keyboard Agent that represents a keyboard device that handles actions to be executed only
- * by an AbstractScene (InteractiveFrame and InteractiveEyeFrame actions are handled exclusively by an
+ * by the AbstractScene (InteractiveFrame and InteractiveEyeFrame actions are handled exclusively by an
  * {@link remixlab.dandelion.agent.ActionWheeledBiMotionAgent}).
  * <p>
  * The agent uses its {@link #keyboardProfile()} to parse the {@link remixlab.bias.core.BogusEvent} to obtain a
- * dandelion action, which is then sent to the proper AbstractScene ({@link #inputGrabber()}) for its final execution.
- * In case the grabber is not an instance of an AbstractScenee, but a different object which behavior you implemented (
+ * dandelion action, which is then sent to the AbstractScene ({@link #inputGrabber()}) for its final execution. In case
+ * the grabber is not an instance of AbstractScene, but a different object which behavior you implemented (
  * {@link #alienGrabber()}), the agent sends the raw BogusEvent to it.
  * <p>
  * Simply retrieve the {@link #keyboardProfile()} to bind an action to a shortcut, to remove it, or to check your
