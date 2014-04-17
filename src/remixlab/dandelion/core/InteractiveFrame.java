@@ -716,6 +716,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 
 		flyDisp.setZ(flyDisp.z() * (eventSpeed / prevSpeed));
 
+		//TODO both cases should go simply as 3d case?
 		if (scene.is2D())
 			setTossingDirection(localInverseTransformOf(flyDisp));
 		else
@@ -903,6 +904,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			else if (dir == -1)
 				trans.set(0.0f, -deltaY, 0.0f);
 			trans = scene.window().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()));
+			//not the same as (because invTransfOf takes into account scaling): 
+			//trans = scene.window().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
 			// And then down to frame
 			if (referenceFrame() != null)
 				trans = referenceFrame().transformOf(trans);
@@ -916,6 +919,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				deltaY = scene.isRightHanded() ? e2.y() : -e2.y();
 			trans = new Vec(deltaX, -deltaY, 0.0f);
 			trans = scene.window().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()));
+		  //not the same as (because invTransfOf takes into account scaling): 
+			//trans = scene.window().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
 			// And then down to frame
 			if (referenceFrame() != null)
 				trans = referenceFrame().transformOf(trans);
@@ -931,6 +936,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				deltaY = scene.isRightHanded() ? e6.y() : -e6.y();
 			trans = new Vec(deltaX, -deltaY, 0.0f);
 			trans = scene.window().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()));
+		  //not the same as (because invTransfOf takes into account scaling): 
+			//trans = scene.window().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
 			// And then down to frame
 			if (referenceFrame() != null)
 				trans = referenceFrame().transformOf(trans);
@@ -998,6 +1005,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		case DRIVE:
 			rotate(turnQuaternion(e2.dof1Event(), scene.camera()));
 			flyDisp.set(0.0f, 0.0f, flySpeed());
+			//trans = localInverseTransformOf(flyDisp, false);
 			trans = rotation().rotate(flyDisp);
 			setTossingDirection(trans);
 			startTossing(e2);
@@ -1008,7 +1016,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		case MOVE_BACKWARD:
 			rotate(pitchYawQuaternion(e2, scene.camera()));
 			flyDisp.set(0.0f, 0.0f, flySpeed());
-			// trans = localInverseTransformOf(flyDisp);
+			//trans = localInverseTransformOf(flyDisp, false);
 			trans = rotation().rotate(flyDisp);
 			setTossingDirection(trans);
 			startTossing(e2);
@@ -1016,7 +1024,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		case MOVE_FORWARD:
 			rotate(pitchYawQuaternion(e2, scene.camera()));
 			flyDisp.set(0.0f, 0.0f, -flySpeed());
-			// trans = localInverseTransformOf(flyDisp);
+			//trans = localInverseTransformOf(flyDisp, false);
 			trans = rotation().rotate(flyDisp);
 			setTossingDirection(trans);
 			startTossing(e2);
@@ -1073,7 +1081,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			trans = scene.camera().projectedCoordinatesOf(position());
 			float prev_angle = (float) Math.atan2(e2.prevY() - trans.vec[1], e2.prevX() - trans.vec[0]);
 			angle = (float) Math.atan2(e2.y() - trans.vec[1], e2.x() - trans.vec[0]);
-			Vec axis = transformOf(scene.camera().frame().inverseTransformOf(new Vec(0.0f, 0.0f, -1.0f)));
+			//TODO test (2nd option is new and different than the first)
+			//Vec axis = transformOf(scene.camera().frame().inverseTransformOf(new Vec(0.0f, 0.0f, -1.0f)));
+			Vec axis = transformOf(scene.camera().frame().orientation().rotate(new Vec(0.0f, 0.0f, -1.0f)));
 			// TODO testing handed
 			if (scene.isRightHanded())
 				rot = new Quat(axis, angle - prev_angle);
@@ -1141,10 +1151,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				break;
 			}
 			}
+		  //trans = scene.camera().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false);
 			// same as:
 			trans = scene.camera().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
-			// but takes into account scaling
-			// trans = scene.camera().frame().inverseTransformOf(Vector3D.mult(trans, translationSensitivity()));
 			// And then down to frame
 			if (referenceFrame() != null)
 				trans = referenceFrame().transformOf(trans);
@@ -1174,8 +1183,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			}
 			// same as:
 			trans = scene.camera().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
-			// but takes into account scaling
-			// trans = scene.camera().frame().inverseTransformOf(Vector3D.mult(trans, translationSensitivity()));
+			//trans = scene.camera().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false);
 			// And then down to frame
 			if (referenceFrame() != null)
 				trans = referenceFrame().transformOf(trans);
@@ -1379,7 +1387,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	 */
 	public final void updateFlyUpVector() {
 		// flyUpVec = inverseTransformOf(new Vector3D(0.0f, 1.0f, 0.0f));
-		flyUpVec = inverseTransformOf(new Vec(0.0f, 1.0f, 0.0f), false);
+		//flyUpVec = inverseTransformOf(new Vec(0.0f, 1.0f, 0.0f), false);
+		//TODO test:
+		flyUpVec = orientation().rotate(new Vec(0.0f, 1.0f, 0.0f));
 	}
 
 	/**

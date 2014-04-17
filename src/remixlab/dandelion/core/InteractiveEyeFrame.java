@@ -221,6 +221,8 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			trans.vec[0] *= 2.0f * wh[0] / viewWindow.screenWidth();
 			trans.vec[1] *= 2.0f * wh[1] / viewWindow.screenHeight();
 			translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity())));
+		  //not the same as (because invTransfOf takes into account scaling): 
+			//translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
 		case TRANSLATE:
 			deltaX = (e2.isRelative()) ? e2.dx() : e2.x();
@@ -230,6 +232,8 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				deltaY = scene.isRightHanded() ? -e2.y() : e2.y();
 			trans = new Vec(-deltaX, -deltaY, 0.0f);
 			trans = viewWindow.frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()));
+		  //not the same as (because invTransfOf takes into account scaling): 
+			//trans = viewWindow.frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
 			// And then down to frame
 			if (referenceFrame() != null)
 				trans = referenceFrame().transformOf(trans);
@@ -244,6 +248,8 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				deltaY = scene.isRightHanded() ? -e6.y() : e6.y();
 			trans = new Vec(-deltaX, -deltaY, 0.0f);
 			trans = viewWindow.frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()));
+		  //not the same as (because invTransfOf takes into account scaling): 
+			//trans = viewWindow.frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
 			// And then down to frame
 			if (referenceFrame() != null)
 				trans = referenceFrame().transformOf(trans);
@@ -412,9 +418,13 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				break;
 			}
 			trans = Vec.multiply(trans, translationSensitivity());
-			trans.entryWiseDivision(magnitude());
-			translate(inverseTransformOf(trans));
-			// translate(inverseTransformOf(trans, false));
+			//op1
+			//trans.entryWiseDivision(magnitude());
+			//translate(inverseTransformOf(trans));
+			//op2
+			//translate(inverseTransformOf(trans, false));
+			//op3
+			translate(orientation().rotate(trans));
 			break;
 		case TRANSLATE:
 			if (e2.isRelative())
@@ -434,7 +444,8 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
 				break;
 			}
-			translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
+			//translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
+			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
 		case TRANSLATE3:
 			if (e3.isRelative())
@@ -454,7 +465,8 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
 				break;
 			}
-			translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
+			//translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
+			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
 		case TRANSLATE_ROTATE:
 			// translate
@@ -475,7 +487,8 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
 				break;
 			}
-			translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
+			//translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
+			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			// Rotate
 			q = new Quat();
 			if (e6.isAbsolute())
@@ -507,9 +520,12 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				delta = -coef * e1.dx() / camera.screenHeight();
 			trans = new Vec(0.0f, 0.0f, delta);
 			// No Scl
-			Vec mag = magnitude();
-			trans.entryWiseDivision(mag);
-			translate(inverseTransformOf(trans));
+			//op1
+			//Vec mag = magnitude();
+			//trans.entryWiseDivision(mag);
+			//translate(inverseTransformOf(trans));
+			//op2
+			translate(orientation().rotate(trans));
 			break;
 		case ZOOM_ON_REGION:
 			if (e2.isAbsolute()) {
