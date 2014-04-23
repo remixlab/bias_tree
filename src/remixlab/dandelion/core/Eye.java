@@ -275,6 +275,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Avoids non-negative {@link #frame()} scaling values.
 	 */
+	//TODO should also go if using a single scaling value
 	protected boolean validateScaling() {
 		boolean passed = true;
 		if (scene.is2D()) {
@@ -302,9 +303,9 @@ public abstract class Eye implements Copyable {
 		}
 		if (!passed)
 			throw new RuntimeException(
-					"viewpoint().frame() should have positive scaling values; and if the viewpoint.frame().referenceFrame()"
+					"eye().frame() should have positive scaling values; and if the eye.frame().referenceFrame()"
 							+ " is non null, its x,y,z magnitude values should be equal and non-negative. If you want to turn your"
-							+ " scene upside down use viewpoint.flip() instead.");
+							+ " scene upside down use eye.flip() instead.");
 		return passed;
 	}
 

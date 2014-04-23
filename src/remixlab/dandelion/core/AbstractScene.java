@@ -73,7 +73,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 
 	// Who's performing the motion action.
 	// TODO define if this should go in agent bindings:
-	// enum ActionPerformer { EYE, FRAME };
+	//public enum Target { EYE, FRAME };
 
 	/**
 	 * Default constructor which defines a right-handed OpenGL compatible Scene with its own

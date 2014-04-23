@@ -857,6 +857,8 @@ public class Frame implements Copyable, Constants {
 	 * @see #setOrientation(Rotation)
 	 * @see #rotation()
 	 */
+	//TODO key: seems broken to me due to scaling (different values and non-negative),
+	//i.e., it only works when scl.x = scl.y = scl.z (> 0)
 	public final Rotation orientation() {
 		Rotation res = rotation().get();
 		Frame fr = referenceFrame();

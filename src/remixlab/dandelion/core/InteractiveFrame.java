@@ -1067,7 +1067,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				q.fromEulerAngles(e3.dx(), e3.dy(), -e3.dz());
 			trans.set(-q.x(), -q.y(), -q.z());
 			trans = scene.camera().frame().orientation().rotate(trans);
-			trans = transformOf(trans, false);
+		  //TODO second option is new but should really go without false (please test me with space nav)
+			//trans = transformOf(trans, false);
+			trans = transformOf(trans);
 			q.setX(trans.x());
 			q.setY(trans.y());
 			q.setZ(trans.z());
@@ -1229,7 +1231,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				q.fromEulerAngles(e6.drx(), e6.dry(), -e6.drz());
 			trans.set(-q.x(), -q.y(), -q.z());
 			trans = scene.camera().frame().orientation().rotate(trans);
-			trans = transformOf(trans, false);
+			//TODO second option is new but should really go without false (please test me with space nav)
+			//trans = transformOf(trans, false);
+			trans = transformOf(trans);
 			q.setX(trans.x());
 			q.setY(trans.y());
 			q.setZ(trans.z());
@@ -1414,6 +1418,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		Quat rotX = new Quat(new Vec(1.0f, 0.0f, 0.0f), rotationSensitivity() * deltaY / camera.screenHeight());
 		// Quaternion rotY = new Quaternion(transformOf(flyUpVector()), rotationSensitivity() * ((int)prevPos.x - x) /
 		// camera.screenWidth());
+		//TODO test false
 		Quat rotY = new Quat(transformOf(flyUpVector(), false), rotationSensitivity() * (-deltaX) / camera.screenWidth());
 		return Quat.multiply(rotY, rotX);
 	}
