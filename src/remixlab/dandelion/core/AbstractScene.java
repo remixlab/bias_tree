@@ -73,7 +73,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 
 	// Who's performing the motion action.
 	// TODO define if this should go in agent bindings:
-	//public enum Target { EYE, FRAME };
+	// public enum Target { EYE, FRAME };
 
 	/**
 	 * Default constructor which defines a right-handed OpenGL compatible Scene with its own
@@ -296,27 +296,27 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		case MOVE_EYE_LEFT:
 			trans = new Vec(-10.0f * eye().flySpeed(), 0.0f, 0.0f);
 			if (this.is3D())
-				trans.entryWiseDivision(camera().frame().magnitude());
+				trans.divide(camera().frame().magnitude());
 			eye().frame().translate(eye().frame().inverseTransformOf(trans));
 			break;
 		case MOVE_EYE_RIGHT:
 			trans = new Vec(10.0f * eye().flySpeed(), 0.0f, 0.0f);
 			if (this.is3D())
-				trans.entryWiseDivision(camera().frame().magnitude());
+				trans.divide(camera().frame().magnitude());
 			eye().frame().translate(eye().frame().inverseTransformOf(trans));
 			break;
 		case MOVE_EYE_UP:
-			trans = eye().frame().inverseTransformOf(
-					new Vec(0.0f, isRightHanded() ? 10.0f : -10.0f * eye().flySpeed(), 0.0f));
+			trans = eye().frame()
+					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? 10.0f : -10.0f * eye().flySpeed(), 0.0f));
 			if (this.is3D())
-				trans.entryWiseDivision(camera().frame().magnitude());
+				trans.divide(camera().frame().magnitude());
 			eye().frame().translate(trans);
 			break;
 		case MOVE_EYE_DOWN:
-			trans = eye().frame().inverseTransformOf(
-					new Vec(0.0f, isRightHanded() ? -10.0f : 10.0f * eye().flySpeed(), 0.0f));
+			trans = eye().frame()
+					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? -10.0f : 10.0f * eye().flySpeed(), 0.0f));
 			if (this.is3D())
-				trans.entryWiseDivision(camera().frame().magnitude());
+				trans.divide(camera().frame().magnitude());
 			eye().frame().translate(trans);
 			break;
 		case INCREASE_ROTATION_SENSITIVITY:
@@ -812,11 +812,10 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Called before your main drawing, e.g., P5.pre().
 	 * <p>
-	 * Calls {@link remixlab.dandelion.core.Eye#validateScaling()}, handles the {@link #avatar()}, calls {@link #bind()}
-	 * and finally {@link remixlab.dandelion.core.Eye#updateBoundaryEquations()} if {@link #areBoundaryEquationsEnabled()}.
+	 * Handles the {@link #avatar()}, then calls {@link #bind()} and finally
+	 * {@link remixlab.dandelion.core.Eye#updateBoundaryEquations()} if {@link #areBoundaryEquationsEnabled()}.
 	 */
 	public void preDraw() {
-		eye().validateScaling();
 		if (avatar() != null && (!eye().anyInterpolationIsStarted())) {
 			eye().setPosition(avatar().eyePosition());
 			eye().setUpVector(avatar().upVector());
@@ -1880,13 +1879,13 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		if (is2D()) {
 			translate(frame.translation().x(), frame.translation().y());
 			rotate(frame.rotation().angle());
-			scale(frame.scaling().x(), frame.scaling().y());
+			scale(frame.scaling(), frame.scaling());
 		}
 		else {
 			translate(frame.translation().vec[0], frame.translation().vec[1], frame.translation().vec[2]);
 			rotate(frame.rotation().angle(), ((Quat) frame.rotation()).axis().vec[0],
 					((Quat) frame.rotation()).axis().vec[1], ((Quat) frame.rotation()).axis().vec[2]);
-			scale(frame.scaling().x(), frame.scaling().y(), frame.scaling().z());
+			scale(frame.scaling(), frame.scaling(), frame.scaling());
 		}
 	}
 

@@ -47,7 +47,7 @@ public void setup() {
   for (int i=0; i<nbKeyFrames; i++) {
     keyFrame[i] = new InteractiveFrame(scene);
     keyFrame[i].setPosition(-100 + 200*i/(nbKeyFrames-1), 0, 0);
-    keyFrame[i].setScaling(random(-2.0f, -2.0f), random(-2.0f, 2.0f), random(-2.0f, 2.0f));
+    keyFrame[i].setScaling(random(0.25f, 4.0f));
     kfi.addKeyFrame(keyFrame[i]);
   }
 

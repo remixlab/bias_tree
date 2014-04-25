@@ -378,7 +378,7 @@ public class Camera extends Eye implements Constants, Copyable {
 	 * Use {@link #setFOVToFitScene()} to adapt the {@link #fieldOfView()} to a given scene.
 	 */
 	public float fieldOfView() {
-		return 2.0f * (float) Math.atan(frame().scaling().y());
+		return 2.0f * (float) Math.atan(frame().scaling());
 	}
 
 	/**
@@ -389,10 +389,8 @@ public class Camera extends Eye implements Constants, Copyable {
 	 */
 	public void setFieldOfView(float fov) {
 		// fldOfView = fov;
-		frame().setScaling((float) Math.tan(fov / 2.0f),
-				(float) Math.tan(fov / 2.0f),
-				(float) Math.tan(fov / 2.0f));
-		setFocusDistance(sceneRadius() / frame().scaling().y());
+		frame().setScaling((float) Math.tan(fov / 2.0f));
+		setFocusDistance(sceneRadius() / frame().scaling());
 	}
 
 	/**
@@ -438,7 +436,7 @@ public class Camera extends Eye implements Constants, Copyable {
 	 */
 	public float horizontalFieldOfView() {
 		// return 2.0f * (float) Math.atan((float) Math.tan(fieldOfView() / 2.0f) * aspectRatio());
-		return 2.0f * (float) Math.atan(frame().scaling().x() * aspectRatio());
+		return 2.0f * (float) Math.atan(frame().scaling() * aspectRatio());
 	}
 
 	/**
@@ -569,8 +567,9 @@ public class Camera extends Eye implements Constants, Copyable {
 	public float pixelSceneRatio(Vec position) {
 		switch (type()) {
 		case PERSPECTIVE:
-			return 2.0f * Math.abs((frame().coordinatesOf(position, false)).vec[2])
-					* (float) Math.tan(fieldOfView() / 2.0f) / screenHeight();
+			return 2.0f * Math.abs((frame().coordinatesOf(position)).vec[2] * frame().magnitude())
+					* (float) Math.tan(fieldOfView() / 2.0f)
+					/ screenHeight();
 		case ORTHOGRAPHIC: {
 			float[] wh = getBoundaryWidthHeight();
 			return 2.0f * wh[1] / screenHeight();
@@ -982,8 +981,8 @@ public class Camera extends Eye implements Constants, Copyable {
 			// float f = 1.0f / (float) Math.tan(fieldOfView() / 2.0f);
 			// projectionMat.mat[0] = f / aspectRatio();
 			// projectionMat.mat[5] = scene.isLeftHanded() ? -f : f;
-			projectionMat.mat[0] = 1 / (frame().scaling().x() * this.aspectRatio());
-			projectionMat.mat[5] = 1 / (scene.isLeftHanded() ? -frame().scaling().y() : frame().scaling().y());
+			projectionMat.mat[0] = 1 / (frame().scaling() * this.aspectRatio());
+			projectionMat.mat[5] = 1 / (scene.isLeftHanded() ? -frame().scaling() : frame().scaling());
 			projectionMat.mat[10] = (ZNear + ZFar) / (ZNear - ZFar);
 			projectionMat.mat[11] = -1.0f;
 			projectionMat.mat[14] = 2.0f * ZNear * ZFar / (ZNear - ZFar);
@@ -1043,7 +1042,7 @@ public class Camera extends Eye implements Constants, Copyable {
 					((2.0f * (screenHeight() - pixel.y()) / screenHeight()) - 1.0f)
 							* (float) Math.tan(fieldOfView() / 2.0f),
 					-1.0f));
-			dir.set(Vec.subtract(frame().inverseCoordinatesOf(dir, false), orig));
+			dir.set(Vec.subtract(frame().inverseCoordinatesOf(dir), orig));
 			dir.normalize();
 			break;
 
@@ -1051,7 +1050,7 @@ public class Camera extends Eye implements Constants, Copyable {
 			float[] wh = getBoundaryWidthHeight();
 			orig.set(new Vec((2.0f * pixel.x() / screenWidth() - 1.0f) * wh[0],
 					-(2.0f * pixel.y() / screenHeight() - 1.0f) * wh[1], 0.0f));
-			orig.set(frame().inverseCoordinatesOf(orig, false));
+			orig.set(frame().inverseCoordinatesOf(orig));
 			dir.set(viewDirection());
 			break;
 		}
@@ -1083,7 +1082,7 @@ public class Camera extends Eye implements Constants, Copyable {
 		case ORTHOGRAPHIC: {
 			// distance = Vec.dot(Vec.subtract(center, arcballReferencePoint()), viewDirection()) + (radius / orthoCoef);
 			distance = Vec.dot(Vec.subtract(center, anchor()), viewDirection())
-					+ (radius / Math.max(frame().scaling().x(), frame().scaling().y()));
+					+ (radius / frame().scaling());
 			break;
 		}
 		}
@@ -1136,10 +1135,8 @@ public class Camera extends Eye implements Constants, Copyable {
 			// ((aspectRatio() < 1.0) ? 1.0f : aspectRatio());
 			// final float distY = Vec.distance(pointY, newCenter) / Math.max(frame().scaling().x(),frame().scaling().y()) /
 			// ((aspectRatio() < 1.0) ? 1.0f / aspectRatio() : 1.0f);
-			final float distX = Vec.distance(pointX, newCenter) / Math.max(frame().scaling().x(), frame().scaling().y())
-					/ aspectRatio();
-			final float distY = Vec.distance(pointY, newCenter) / Math.max(frame().scaling().x(), frame().scaling().y())
-					/ 1.0f;
+			final float distX = Vec.distance(pointX, newCenter) / frame().scaling() / aspectRatio();
+			final float distY = Vec.distance(pointY, newCenter) / frame().scaling() / 1.0f;
 
 			distance = dist + Math.max(distX, distY);
 

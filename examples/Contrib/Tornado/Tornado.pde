@@ -54,7 +54,6 @@ class Bande {
   void remplir() { 
     for (int ic=0;ic<nbdiv;ic++) {
       float  inc=PI/8.0*ic;
-      float inc1=PI/8.0+inc;
       for (int i=0;i<nbnoeud;i++) {
         frame0.setOrientation(new Quat(new Vec(0, 0, 1), angle*i+inc+millis()*0.0015));
         frame1.setTranslation(new Vec(rayon, 0, 0));

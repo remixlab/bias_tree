@@ -189,10 +189,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			}
 			else
 				rot = new Rot(e2.x() * rotationSensitivity());
-			if (!isFlipped())
-				rot.negate();
-			// but its not enough to cover all different cases, so:
-			if (scene.window().frame().magnitude().x() * scene.window().frame().magnitude().y() < 0)
+			if (scene.isLeftHanded())
 				rot.negate();
 			if (e2.isRelative()) {
 				setSpinningRotation(rot);
@@ -221,8 +218,8 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			trans.vec[0] *= 2.0f * wh[0] / viewWindow.screenWidth();
 			trans.vec[1] *= 2.0f * wh[1] / viewWindow.screenHeight();
 			translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity())));
-		  //not the same as (because invTransfOf takes into account scaling): 
-			//translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
+			// not the same as (because invTransfOf takes into account scaling):
+			// translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
 		case TRANSLATE:
 			deltaX = (e2.isRelative()) ? e2.dx() : e2.x();
@@ -232,8 +229,8 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				deltaY = scene.isRightHanded() ? -e2.y() : e2.y();
 			trans = new Vec(-deltaX, -deltaY, 0.0f);
 			trans = viewWindow.frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()));
-		  //not the same as (because invTransfOf takes into account scaling): 
-			//trans = viewWindow.frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
+			// not the same as (because invTransfOf takes into account scaling):
+			// trans = viewWindow.frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
 			// And then down to frame
 			if (referenceFrame() != null)
 				trans = referenceFrame().transformOf(trans);
@@ -248,8 +245,8 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				deltaY = scene.isRightHanded() ? -e6.y() : e6.y();
 			trans = new Vec(-deltaX, -deltaY, 0.0f);
 			trans = viewWindow.frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()));
-		  //not the same as (because invTransfOf takes into account scaling): 
-			//trans = viewWindow.frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
+			// not the same as (because invTransfOf takes into account scaling):
+			// trans = viewWindow.frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
 			// And then down to frame
 			if (referenceFrame() != null)
 				trans = referenceFrame().transformOf(trans);
@@ -262,10 +259,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				rot = new Rot(e6.drx() * rotationSensitivity());
 			else
 				rot = new Rot(e6.rx() * rotationSensitivity());
-			if (!isFlipped())
-				rot.negate();
-			// but its not enough to cover all different cases, so:
-			if (scene.window().frame().magnitude().x() * scene.window().frame().magnitude().y() < 0)
+			if (scene.isLeftHanded())
 				rot.negate();
 			if (e6.isRelative()) {
 				setSpinningRotation(rot);
@@ -379,7 +373,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 					- (float) Math.atan2(e2.prevY() - trans.vec[1], e2.prevX() - trans.vec[0]);
 			// lef-handed coordinate system correction
 			// if( scene.isLeftHanded() )
-			if (!isFlipped())
+			if (scene.isLeftHanded())
 				angle = -angle;
 			Rotation rot = new Quat(new Vec(0.0f, 0.0f, 1.0f), angle);
 			setSpinningRotation(rot);
@@ -406,9 +400,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			case PERSPECTIVE:
 				trans.multiply(2.0f
 						* (float) Math.tan(camera.fieldOfView() / 2.0f)
-						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude().z())
-						// * Math.abs((camera.frame().coordinatesOf(arcballReferencePoint())).vec[2])
-						// * Math.abs((camera.frame().coordinatesOfNoScl(arcballReferencePoint())).vec[2])
+						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
 						/ camera.screenHeight());
 				break;
 			case ORTHOGRAPHIC:
@@ -418,12 +410,12 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				break;
 			}
 			trans = Vec.multiply(trans, translationSensitivity());
-			//op1
-			//trans.entryWiseDivision(magnitude());
-			//translate(inverseTransformOf(trans));
-			//op2
-			//translate(inverseTransformOf(trans, false));
-			//op3
+			// op1
+			// trans.entryWiseDivision(magnitude());
+			// translate(inverseTransformOf(trans));
+			// op2
+			// translate(inverseTransformOf(trans, false));
+			// op3
 			translate(orientation().rotate(trans));
 			break;
 		case TRANSLATE:
@@ -435,7 +427,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			switch (camera.type()) {
 			case PERSPECTIVE:
 				trans.multiply(2.0f * (float) Math.tan(camera.fieldOfView() / 2.0f)
-						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude().z())
+						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
 						/ camera.screenHeight());
 				break;
 			case ORTHOGRAPHIC:
@@ -444,7 +436,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
 				break;
 			}
-			//translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
+			// translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
 		case TRANSLATE3:
@@ -456,7 +448,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			switch (camera.type()) {
 			case PERSPECTIVE:
 				trans.multiply(2.0f * (float) Math.tan(camera.fieldOfView() / 2.0f)
-						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude().z())
+						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
 						/ camera.screenHeight());
 				break;
 			case ORTHOGRAPHIC:
@@ -465,7 +457,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
 				break;
 			}
-			//translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
+			// translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
 		case TRANSLATE_ROTATE:
@@ -478,7 +470,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			switch (camera.type()) {
 			case PERSPECTIVE:
 				trans.multiply(2.0f * (float) Math.tan(camera.fieldOfView() / 2.0f)
-						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude().z())
+						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
 						/ camera.screenHeight());
 				break;
 			case ORTHOGRAPHIC:
@@ -487,7 +479,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
 				break;
 			}
-			//translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
+			// translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			// Rotate
 			q = new Quat();
@@ -510,7 +502,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			break;
 		case ZOOM:
 			float wheelSensitivityCoef = 8E-4f;
-			float coef = Math.max(Math.abs((coordinatesOf(camera.anchor())).vec[2] * magnitude().z()),
+			float coef = Math.max(Math.abs((coordinatesOf(camera.anchor())).vec[2] * magnitude()),
 					0.2f * camera.sceneRadius());
 			if (e1.action() != null) // its a wheel wheel :P
 				delta = coef * e1.x() * -wheelSensitivity() * wheelSensitivityCoef;
@@ -520,11 +512,11 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				delta = -coef * e1.dx() / camera.screenHeight();
 			trans = new Vec(0.0f, 0.0f, delta);
 			// No Scl
-			//op1
-			//Vec mag = magnitude();
-			//trans.entryWiseDivision(mag);
-			//translate(inverseTransformOf(trans));
-			//op2
+			// op1
+			// Vec mag = magnitude();
+			// trans.entryWiseDivision(mag);
+			// translate(inverseTransformOf(trans));
+			// op2
 			translate(orientation().rotate(trans));
 			break;
 		case ZOOM_ON_REGION:
@@ -609,12 +601,8 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 
 		// 1,0,0 is given in the camera frame
 		Vec axisX = new Vec(1, 0, 0);
-		// 0,0,1 is given in the world and then transform to the camera frame
 
-		// TODO broken when cam frame has scaling, maybe should go like this:?
-		// Vec world2camAxis = camera.frame().transformOf(worldAxis, false);
 		Vec world2camAxis = camera.frame().transformOf(worldAxis);
-		// Vector3D world2camAxis = camera.frame().transformOfNoScl(worldAxis);
 
 		float angleWorldAxis = rotationSensitivity() * (scene.isLeftHanded() ? (dx - px) : (px - dx));
 		float angleX = rotationSensitivity() * (dy - py);

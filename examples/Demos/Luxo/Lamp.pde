@@ -62,7 +62,6 @@ public class Lamp {
 
     LocalConstraint headConstraint = new LocalConstraint();
     headConstraint.setTranslationConstraint(AxisPlaneConstraint.Type.FORBIDDEN, new Vec(0.0f, 0.0f, 0.0f));
-    headConstraint.setScalingConstraintVec(new Vec(0, 0, 1));
     frame(3).setConstraint(headConstraint);
   }
 

@@ -19,7 +19,6 @@ Scene scene;
 PFont myFont;
 private int transDir;
 private int rotDir;
-private int sclDir=4;
 InteractiveFrame frame;
 AxisPlaneConstraint constraints[] = new AxisPlaneConstraint[3];
 int activeConstraint;
@@ -163,9 +162,6 @@ protected void displayType(AxisPlaneConstraint.Type type, int x, int y, char c) 
     break;
   }
 
-  text("CONSTRAINT SCALING :", 85, height - 30);
-  displayDir(sclDir, (150 + 90), height - 30, 'O');
-
   text(textToDisplay, x, y);
 }
 
@@ -243,9 +239,6 @@ public void keyPressed() {
   if (key == 'd' || key == 'D') {
     transDir = (transDir + 1) % 3;
   }
-  if (key == 'o' || key == 'O') {
-    sclDir = (sclDir + 1) % 5;
-  }
   if (key == 'u' || key == 'U') {
     changeConstraint();
   }
@@ -287,24 +280,4 @@ public void keyPressed() {
     break;
   }
   constraints[activeConstraint].setRotationConstraintDirection(dir);
-
-  switch (sclDir) {
-  case 0:
-    dir.set(1.0f, 0.0f, 0.0f);
-    break;
-  case 1:
-    dir.set(0.0f, 1.0f, 0.0f);
-    break;
-  case 2:
-    dir.set(0.0f, 0.0f, 1.0f);
-    break;
-  case 3:
-    dir.set(1.0f, 1.0f, 1.0f);
-    break;
-  case 4:
-    dir.set(0.0f, 0.0f, 0.0f);
-    break;
-  }
-  println(sclDir);
-  constraints[activeConstraint].setScalingConstraintVec(dir);
 }
