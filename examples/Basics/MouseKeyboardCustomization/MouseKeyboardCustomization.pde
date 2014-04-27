@@ -13,6 +13,7 @@ import remixlab.proscene.Scene.ProsceneMouse;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.agent.*;
+import remixlab.dandelion.core.Constants.WheelAction;
 import remixlab.dandelion.core.Constants.DOF2Action;
 import remixlab.dandelion.core.Constants.ClickAction;
 import remixlab.dandelion.core.Constants.KeyboardAction;
@@ -57,12 +58,15 @@ void draw() {
 
 public void setExoticCustomization() {
   //eye
+  scene.setMouseButtonBinding(true, CENTER, DOF2Action.ZOOM_ON_ANCHOR);
   scene.setMouseButtonBinding(true, LEFT, DOF2Action.TRANSLATE);
   scene.setMouseButtonBinding(true, RIGHT, DOF2Action.CAD_ROTATE);
-  //scene.setMouseClickBinding(true, EventConstants.B_SHIFT, EventConstants.B_RIGHT, 2, ClickAction.TOGGLE_AXIS_VISUAL_HINT);
+  scene.setMouseClickBinding(true, EventConstants.B_SHIFT, EventConstants.B_RIGHT, 2, ClickAction.TOGGLE_AXIS_VISUAL_HINT);
   scene.setMouseClickBinding(true, Event.SHIFT, LEFT, 2, ClickAction.TOGGLE_AXIS_VISUAL_HINT);
   //frame
   scene.setMouseButtonBinding(false, LEFT, DOF2Action.TRANSLATE);
+  scene.setMouseButtonBinding(false, CENTER, DOF2Action.ZOOM);
+  scene.setMouseWheelBinding(false, WheelAction.ZOOM);
   //keyboard
   scene.setKeyboardShortcut('g',KeyboardAction.TOGGLE_AXIS_VISUAL_HINT);
   scene.setKeyboardShortcut(Event.CTRL,java.awt.event.KeyEvent.VK_G,KeyboardAction.TOGGLE_GRID_VISUAL_HINT);

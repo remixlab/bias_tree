@@ -143,7 +143,6 @@ public class MouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Act
 		frameProfile().setBinding(B_SHIFT, B_CENTER, DOF2Action.SCREEN_TRANSLATE);
 		frameProfile().setBinding(B_SHIFT, B_RIGHT, DOF2Action.SCREEN_ROTATE);
 		setCommonBindings();
-
 	}
 
 	/**

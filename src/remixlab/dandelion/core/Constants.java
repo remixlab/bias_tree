@@ -252,6 +252,10 @@ public interface Constants extends EventConstants {
 		 */
 		ZOOM("Zoom eye", false, 1),
 		/**
+		 * Zoom eye
+		 */
+		ZOOM_ON_ANCHOR("Zoom eye on anchor", false, 1),
+		/**
 		 * Roll frame (camera or interactive frame)
 		 */
 		ROLL("Roll frame (eye or interactive frame)", true, 1),
@@ -545,6 +549,7 @@ public interface Constants extends EventConstants {
 		// DOF_1
 		SCALE(DandelionAction.SCALE),
 		ZOOM(DandelionAction.ZOOM),
+		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
 		ROLL(DandelionAction.ROLL),
 
 		CUSTOM(DandelionAction.CUSTOM);
@@ -585,6 +590,7 @@ public interface Constants extends EventConstants {
 		// DOF_1
 		SCALE(DandelionAction.SCALE),
 		ZOOM(DandelionAction.ZOOM),
+		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
 		ROLL(DandelionAction.ROLL),
 
 		// DOF_2
@@ -637,6 +643,7 @@ public interface Constants extends EventConstants {
 		// DOF_1
 		SCALE(DandelionAction.SCALE),
 		ZOOM(DandelionAction.ZOOM),
+		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
 		ROLL(DandelionAction.ROLL),
 
 		// DOF_2
@@ -693,6 +700,7 @@ public interface Constants extends EventConstants {
 		// DOF_1
 		SCALE(DandelionAction.SCALE),
 		ZOOM(DandelionAction.ZOOM),
+		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
 		ROLL(DandelionAction.ROLL),
 
 		// DOF_2

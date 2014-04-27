@@ -171,7 +171,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 	protected void execAction2D(DandelionAction a) {
 		if (a == null)
 			return;
-		Window viewWindow = (Window) eye;
+		Window window = (Window) eye;
 		Vec trans;
 		float deltaX, deltaY;
 		Rotation rot;
@@ -180,7 +180,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		// case CUSTOM: case ROLL: super.execAction2D(a); break;
 		case ROTATE:
 		case SCREEN_ROTATE:
-			trans = viewWindow.projectedCoordinatesOf(anchor());
+			trans = window.projectedCoordinatesOf(anchor());
 			if (e2.isRelative()) {
 				Point prevPos = new Point(e2.prevX(), e2.prevY());
 				Point curPos = new Point(e2.x(), e2.y());
@@ -214,9 +214,9 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			else if (dir == -1)
 				trans.set(0.0f, deltaY, 0.0f);
 
-			float[] wh = viewWindow.getBoundaryWidthHeight();
-			trans.vec[0] *= 2.0f * wh[0] / viewWindow.screenWidth();
-			trans.vec[1] *= 2.0f * wh[1] / viewWindow.screenHeight();
+			float[] wh = window.getBoundaryWidthHeight();
+			trans.vec[0] *= 2.0f * wh[0] / window.screenWidth();
+			trans.vec[1] *= 2.0f * wh[1] / window.screenHeight();
 			translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity())));
 			// not the same as (because invTransfOf takes into account scaling):
 			// translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
@@ -227,14 +227,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				deltaY = scene.isRightHanded() ? -e2.dy() : e2.dy();
 			else
 				deltaY = scene.isRightHanded() ? -e2.y() : e2.y();
-			trans = new Vec(-deltaX, -deltaY, 0.0f);
-			trans = viewWindow.frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()));
-			// not the same as (because invTransfOf takes into account scaling):
-			// trans = viewWindow.frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
-			// And then down to frame
-			if (referenceFrame() != null)
-				trans = referenceFrame().transformOf(trans);
-			translate(trans);
+			translateFromEye(new Vec(-deltaX, -deltaY, 0.0f));
 			break;
 		case TRANSLATE_ROTATE:
 			// translate:
@@ -243,16 +236,10 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				deltaY = scene.isRightHanded() ? -e6.dy() : e6.dy();
 			else
 				deltaY = scene.isRightHanded() ? -e6.y() : e6.y();
-			trans = new Vec(-deltaX, -deltaY, 0.0f);
-			trans = viewWindow.frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()));
-			// not the same as (because invTransfOf takes into account scaling):
-			// trans = viewWindow.frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
-			// And then down to frame
-			if (referenceFrame() != null)
-				trans = referenceFrame().transformOf(trans);
-			translate(trans);
+			translateFromEye(new Vec(-deltaX, -deltaY, 0.0f));
 			// rotate:
-			trans = viewWindow.projectedCoordinatesOf(anchor());
+			// TODO commented because trans is not used
+			// trans = window.projectedCoordinatesOf(anchor());
 			// TODO "relative" is experimental here.
 			// Hard to think of a DOF6 relative device in the first place.
 			if (e6.isRelative())
@@ -292,23 +279,23 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			int h = (int) Math.abs(e2.dy());
 			int tlY = (int) e2.prevY() < (int) e2.y() ? (int) e2.prevY() : (int) e2.y();
 			// viewWindow.fitScreenRegion( new Rectangle (tlX, tlY, w, h) );
-			viewWindow.interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
+			window.interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
 			break;
 		case CENTER_FRAME:
-			viewWindow.centerScene();
+			window.centerScene();
 			break;
 		case ALIGN_FRAME:
-			viewWindow.frame().alignWithFrame(null, true);
+			window.frame().alignWithFrame(null, true);
 			break;
 		// TODO these timer actions need testing
 		case ZOOM_ON_PIXEL:
-			viewWindow.interpolateToZoomOnPixel(new Point(cEvent.x(), cEvent.y()));
-			pupVec = viewWindow.unprojectedCoordinatesOf(new Vec(cEvent.x(), cEvent.y(), 0.5f));
+			window.interpolateToZoomOnPixel(new Point(cEvent.x(), cEvent.y()));
+			pupVec = window.unprojectedCoordinatesOf(new Vec(cEvent.x(), cEvent.y(), 0.5f));
 			pupFlag = true;
 			timerFx.runOnce(1000);
 			break;
 		case ANCHOR_FROM_PIXEL:
-			if (viewWindow.setAnchorFromPixel(new Point(cEvent.x(), cEvent.y()))) {
+			if (window.setAnchorFromPixel(new Point(cEvent.x(), cEvent.y()))) {
 				anchorFlag = true;
 				timerFx.runOnce(1000);
 			}
@@ -327,6 +314,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		Vec trans;
 		Quat q;
 		Camera.WorldPoint wP;
+		float wheelSensitivityCoef = 8E-4f;
 		switch (a) {
 		// better handled these by default (see below)
 		// case CUSTOM: case DRIVE: case LOOK_AROUND: case MOVE_BACKWARD: case MOVE_FORWARD: case ROLL:
@@ -410,12 +398,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				break;
 			}
 			trans = Vec.multiply(trans, translationSensitivity());
-			// op1
-			// trans.entryWiseDivision(magnitude());
-			// translate(inverseTransformOf(trans));
-			// op2
-			// translate(inverseTransformOf(trans, false));
-			// op3
 			translate(orientation().rotate(trans));
 			break;
 		case TRANSLATE:
@@ -436,7 +418,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
 				break;
 			}
-			// translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
 		case TRANSLATE3:
@@ -457,7 +438,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
 				break;
 			}
-			// translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
 		case TRANSLATE_ROTATE:
@@ -479,7 +459,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
 				break;
 			}
-			// translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity()), false));
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			// Rotate
 			q = new Quat();
@@ -501,23 +480,29 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			scale(delta >= 0 ? s : 1 / s);
 			break;
 		case ZOOM:
-			float wheelSensitivityCoef = 8E-4f;
 			float coef = Math.max(Math.abs((coordinatesOf(camera.anchor())).vec[2] * magnitude()),
 					0.2f * camera.sceneRadius());
 			if (e1.action() != null) // its a wheel wheel :P
 				delta = coef * e1.x() * -wheelSensitivity() * wheelSensitivityCoef;
+			// TODO should absolute be divided by camera.screenHeight()?
 			else if (e1.isAbsolute())
 				delta = -coef * e1.x() / camera.screenHeight();
 			else
 				delta = -coef * e1.dx() / camera.screenHeight();
 			trans = new Vec(0.0f, 0.0f, delta);
-			// No Scl
-			// op1
-			// Vec mag = magnitude();
-			// trans.entryWiseDivision(mag);
-			// translate(inverseTransformOf(trans));
-			// op2
 			translate(orientation().rotate(trans));
+			break;
+		case ZOOM_ON_ANCHOR:
+			if (e1.action() != null) // its a wheel wheel :P
+				delta = e1.x() * -wheelSensitivity() * wheelSensitivityCoef;
+			// TODO should absolute be divided by camera.screenHeight()?
+			else if (e1.isAbsolute())
+				delta = -e1.x() / camera.screenHeight();
+			else
+				delta = -e1.dx() / camera.screenHeight();
+			trans = Vec.subtract(position(), scene.camera().anchor());
+			if (trans.magnitude() > 0.02f * scene.radius() || delta > 0.0f)
+				translate(Vec.multiply(trans, delta));
 			break;
 		case ZOOM_ON_REGION:
 			if (e2.isAbsolute()) {

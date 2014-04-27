@@ -840,7 +840,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	protected void execAction2D(DandelionAction a) {
 		if (a == null)
 			return;
-		Vec trans;
 		float deltaX, deltaY;
 		Rotation rot;
 		float angle;
@@ -867,7 +866,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			break;
 		case ROTATE:
 		case SCREEN_ROTATE:
-			trans = scene.window().projectedCoordinatesOf(position());
+			Vec trans = scene.window().projectedCoordinatesOf(position());
 			if (e2.isRelative()) {
 				Point prevPos = new Point(e2.prevX(), e2.prevY());
 				Point curPos = new Point(e2.x(), e2.y());
@@ -894,19 +893,11 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				deltaY = scene.isRightHanded() ? e2.dy() : -e2.dy();
 			else
 				deltaY = scene.isRightHanded() ? e2.y() : -e2.y();
-			trans = new Vec();
 			int dir = originalDirection(e2);
 			if (dir == 1)
-				trans.set(deltaX, 0.0f, 0.0f);
+				translateFromEye(new Vec(deltaX, 0.0f, 0.0f));
 			else if (dir == -1)
-				trans.set(0.0f, -deltaY, 0.0f);
-			trans = scene.window().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()));
-			// not the same as (because invTransfOf takes into account scaling):
-			// trans = scene.window().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
-			// And then down to frame
-			if (referenceFrame() != null)
-				trans = referenceFrame().transformOf(trans);
-			translate(trans);
+				translateFromEye(new Vec(0.0f, -deltaY, 0.0f));
 			break;
 		case TRANSLATE:
 			deltaX = (e2.isRelative()) ? e2.dx() : e2.x();
@@ -914,14 +905,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				deltaY = scene.isRightHanded() ? e2.dy() : -e2.dy();
 			else
 				deltaY = scene.isRightHanded() ? e2.y() : -e2.y();
-			trans = new Vec(deltaX, -deltaY, 0.0f);
-			trans = scene.window().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()));
-			// not the same as (because invTransfOf takes into account scaling):
-			// trans = scene.window().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
-			// And then down to frame
-			if (referenceFrame() != null)
-				trans = referenceFrame().transformOf(trans);
-			translate(trans);
+			translateFromEye(new Vec(deltaX, -deltaY, 0.0f));
 			break;
 		// TODO needs testing with space navigator
 		case TRANSLATE_ROTATE:
@@ -931,16 +915,10 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				deltaY = scene.isRightHanded() ? e6.dy() : -e6.dy();
 			else
 				deltaY = scene.isRightHanded() ? e6.y() : -e6.y();
-			trans = new Vec(deltaX, -deltaY, 0.0f);
-			trans = scene.window().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()));
-			// not the same as (because invTransfOf takes into account scaling):
-			// trans = scene.window().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
-			// And then down to frame
-			if (referenceFrame() != null)
-				trans = referenceFrame().transformOf(trans);
-			translate(trans);
+			translateFromEye(new Vec(deltaX, -deltaY, 0.0f));
 			// rotate
-			trans = scene.window().projectedCoordinatesOf(position());
+			// TODO: next line commented as trans is not used anymore
+			// trans = scene.window().projectedCoordinatesOf(position());
 			// TODO "relative" is experimental here.
 			// Hard to think of a DOF6 relative device in the first place.
 			if (e6.isRelative())
@@ -991,7 +969,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			return;
 		Quat q, rot;
 		Vec trans;
-		// Vec t;
+		float delta;
 		float angle;
 		switch (a) {
 		case CUSTOM:
@@ -1119,10 +1097,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				trans.vec[1] *= 2.0 * wh[1] / scene.camera().screenHeight();
 				break;
 			}
-			trans = scene.camera().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
-			if (referenceFrame() != null)
-				trans = referenceFrame().transformOf(trans);
-			translate(trans);
+			translateFromEye(trans);
 			break;
 		case TRANSLATE:
 			if (e2.isRelative())
@@ -1144,11 +1119,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				break;
 			}
 			}
-			trans = scene.camera().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
-			// And then down to frame
-			if (referenceFrame() != null)
-				trans = referenceFrame().transformOf(trans);
-			translate(trans);
+			translateFromEye(trans);
 			break;
 		case TRANSLATE3:
 			if (e3.isRelative())
@@ -1170,11 +1141,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				break;
 			}
 			}
-			trans = scene.camera().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
-			// And then down to frame
-			if (referenceFrame() != null)
-				trans = referenceFrame().transformOf(trans);
-			translate(trans);
+			translateFromEye(trans);
 			break;
 		case TRANSLATE_ROTATE:
 			// A. Translate the iFrame
@@ -1197,11 +1164,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				break;
 			}
 			}
-			trans = scene.camera().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
-			// And then down to frame
-			if (referenceFrame() != null)
-				trans = referenceFrame().transformOf(trans);
-			translate(trans);
+			translateFromEye(trans);
 			// B. Rotate the iFrame
 			q = new Quat();
 			trans = scene.camera().projectedCoordinatesOf(position());
@@ -1220,7 +1183,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			rotate(q);
 			break;
 		case SCALE:
-			float delta;
 			if (e1.action() != null) // its a wheel wheel :P
 				delta = e1.x() * wheelSensitivity();
 			else if (e1.isAbsolute())
@@ -1229,6 +1191,24 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				delta = e1.dx();
 			float s = 1 + Math.abs(delta) / (float) scene.height();
 			scale(delta >= 0 ? s : 1 / s);
+			break;
+		case ZOOM:
+			if (e1.action() != null) // its a wheel wheel :P
+				delta = e1.x() * wheelSensitivity();
+			// TODO should absolute be divided by camera.screenHeight()?
+			else if (e1.isAbsolute())
+				delta = e1.x();
+			else
+				delta = e1.dx();
+			// TODO decide one or the other:
+			// translateFromEye(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta /
+			// scene.camera().screenHeight()));
+			trans = new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
+					/ scene.camera().screenHeight());
+			trans = scene.camera().frame().orientation().rotate(trans);
+			if (referenceFrame() != null)
+				trans = referenceFrame().transformOf(trans);
+			translate(trans);
 			break;
 		case CENTER_FRAME:
 			projectOnLine(scene.camera().position(), scene.camera().viewDirection());
@@ -1240,6 +1220,16 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			AbstractScene.showOnlyEyeWarning(a);
 			break;
 		}
+	}
+
+	protected void translateFromEye(Vec trans) {
+		// Transform from eye to world coordinate system.
+		Vec t = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()))
+				: scene.camera().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
+		// And then down to frame
+		if (referenceFrame() != null)
+			t = referenceFrame().transformOf(trans);
+		translate(t);
 	}
 
 	/**
