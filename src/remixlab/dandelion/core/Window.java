@@ -100,6 +100,9 @@ public class Window extends Eye implements Copyable {
 									anchor()))));
 
 		frame().rotate(r);
+		
+	  // Useful in fly mode to keep the horizontal direction.
+		frame().updateSceneUpVector();
 	}
 
 	@Override

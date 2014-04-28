@@ -284,7 +284,7 @@ public class Scene extends AbstractScene implements PConstants {
 							&& scene.inputHandler().isAgentRegistered(this));
 					if (bypassNullEvent || zoomVisualHint() || rotateVisualHint()) {
 						if (bypassNullEvent) {
-							// TODO: experimental, this is needed for first person:
+							// This is needed for first person:
 							((InteractiveFrame) inputGrabber()).updateSceneUpVector();
 							dFriction = ((InteractiveFrame) inputGrabber()).dampingFriction();
 							((InteractiveFrame) inputGrabber()).setDampingFriction(0);

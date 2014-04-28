@@ -8,9 +8,6 @@
  * scene.setAvatar(). Any object implementing the Trackable interface may be defined
  * as the avatar.
  * 
- * Since the InteractiveAvatarFrame class is an InteractiveFrame that implements the
- * Trackable interface we may set an instance of it as the avatar by calling
- * scene.setInteractiveFrame() (which automatically calls scene.setAvatar()).
  * When the camera mode is set to THIRD_PERSON you can then manipulate your
  * interactive frame with the mouse and the camera will follow it.
  * 
