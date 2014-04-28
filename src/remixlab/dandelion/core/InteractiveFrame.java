@@ -571,7 +571,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	/**
 	 * Starts the spinning of the InteractiveFrame.
 	 * <p>
-	 * This method starts a timer that will call {@link #toss()} every {@code updateInterval} milliseconds. The
+	 * This method starts a timer that will call {@link #spin()} every {@code updateInterval} milliseconds. The
 	 * InteractiveFrame {@link #isSpinning()} until you call {@link #stopSpinning()}.
 	 * <p>
 	 * <b>Attention: </b>Spinning may be decelerated according to {@link #dampingFriction()} till it stops completely.
@@ -1193,22 +1193,17 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			scale(delta >= 0 ? s : 1 / s);
 			break;
 		case ZOOM:
-			if (e1.action() != null) // its a wheel wheel :P
+			// its a wheel wheel :P
+			if (e1.action() != null) {
 				delta = e1.x() * wheelSensitivity();
-			// TODO should absolute be divided by camera.screenHeight()?
-			else if (e1.isAbsolute())
-				delta = e1.x();
-			else
-				delta = e1.dx();
-			// TODO decide one or the other:
-			// translateFromEye(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta /
-			// scene.camera().screenHeight()));
-			trans = new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
-					/ scene.camera().screenHeight());
-			trans = scene.camera().frame().orientation().rotate(trans);
-			if (referenceFrame() != null)
-				trans = referenceFrame().transformOf(trans);
-			translate(trans);
+				translateFromEye(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
+						/ scene.camera().screenHeight()), 1);
+			}
+			else {
+				delta = e1.isAbsolute() ? e1.x() : e1.dx();
+				translateFromEye(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
+						/ scene.camera().screenHeight()));
+			}
 			break;
 		case CENTER_FRAME:
 			projectOnLine(scene.camera().position(), scene.camera().viewDirection());
@@ -1221,8 +1216,14 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			break;
 		}
 	}
+	
+	// micro-actions procedures
 
 	protected void translateFromEye(Vec trans) {
+		translateFromEye(trans, translationSensitivity());
+	}
+
+	protected void translateFromEye(Vec trans, float sens) {
 		// Transform from eye to world coordinate system.
 		Vec t = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()))
 				: scene.camera().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
@@ -1331,7 +1332,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	 * Default value is (0,1,0), but it is updated by the Eye when set as its {@link remixlab.dandelion.core.Eye#frame()}.
 	 * Use {@link remixlab.dandelion.core.Eye#setUpVector(Vec)} instead in that case.
 	 */
-	// TODO: decide if this should go or not
 	public void setFlyUpVector(Vec up) {
 		flyUpVec = up;
 	}
@@ -1341,9 +1341,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	 * is changed accordingly. You should not need to call this method.
 	 */
 	public final void updateFlyUpVector() {
-		// flyUpVec = inverseTransformOf(new Vector3D(0.0f, 1.0f, 0.0f));
-		// flyUpVec = inverseTransformOf(new Vec(0.0f, 1.0f, 0.0f), false);
-		// TODO test:
 		flyUpVec = orientation().rotate(new Vec(0.0f, 1.0f, 0.0f));
 	}
 
@@ -1367,9 +1364,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			deltaY = -deltaY;
 
 		Quat rotX = new Quat(new Vec(1.0f, 0.0f, 0.0f), rotationSensitivity() * deltaY / camera.screenHeight());
-		// Quaternion rotY = new Quaternion(transformOf(flyUpVector()), rotationSensitivity() * ((int)prevPos.x - x) /
-		// camera.screenWidth());
-		// TODO test false
 		Quat rotY = new Quat(transformOf(flyUpVector()), rotationSensitivity() * (-deltaX) / camera.screenWidth());
 		return Quat.multiply(rotY, rotX);
 	}

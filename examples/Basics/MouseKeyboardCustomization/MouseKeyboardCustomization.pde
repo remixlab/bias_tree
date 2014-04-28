@@ -17,6 +17,7 @@ import remixlab.dandelion.core.Constants.WheelAction;
 import remixlab.dandelion.core.Constants.DOF2Action;
 import remixlab.dandelion.core.Constants.ClickAction;
 import remixlab.dandelion.core.Constants.KeyboardAction;
+import remixlab.bias.core.*;
 
 Scene scene;
 InteractiveFrame iFrame;
@@ -64,9 +65,10 @@ public void setExoticCustomization() {
   scene.setMouseClickBinding(true, EventConstants.B_SHIFT, EventConstants.B_RIGHT, 2, ClickAction.TOGGLE_AXIS_VISUAL_HINT);
   scene.setMouseClickBinding(true, Event.SHIFT, LEFT, 2, ClickAction.TOGGLE_AXIS_VISUAL_HINT);
   //frame
-  scene.setMouseButtonBinding(false, LEFT, DOF2Action.TRANSLATE);
-  scene.setMouseButtonBinding(false, CENTER, DOF2Action.ZOOM);
-  scene.setMouseWheelBinding(false, WheelAction.ZOOM);
+  //scene.setMouseButtonBinding(false, LEFT, DOF2Action.TRANSLATE);
+  //scene.setMouseButtonBinding(false, CENTER, DOF2Action.ZOOM);
+  //scene.setMouseWheelBinding(false, WheelAction.ZOOM);
+  scene.setMouseButtonBinding(false, RIGHT, DOF2Action.ROLL);
   //keyboard
   scene.setKeyboardShortcut('g',KeyboardAction.TOGGLE_AXIS_VISUAL_HINT);
   scene.setKeyboardShortcut(Event.CTRL,java.awt.event.KeyEvent.VK_G,KeyboardAction.TOGGLE_GRID_VISUAL_HINT);

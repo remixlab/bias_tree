@@ -89,16 +89,6 @@ public class Window extends Eye implements Copyable {
 	}
 
 	@Override
-	public Vec upVector() {
-		return frame().yAxis();
-	}
-
-	@Override
-	public Vec rightVector() {
-		return frame().xAxis();
-	}
-
-	@Override
 	public void setUpVector(Vec up, boolean noMove) {
 		Rot r = new Rot(new Vec(0.0f, 1.0f), frame().transformOf(up));
 

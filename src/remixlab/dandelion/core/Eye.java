@@ -398,7 +398,9 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * It corresponds to the Y axis of the associated {@link #frame()} (actually returns {@code frame().yAxis()}
 	 */
-	public abstract Vec upVector();
+	public Vec upVector() {
+		return frame().yAxis();
+	}
 
 	/**
 	 * Convenience function that simply calls {@code setUpVector(up, true)}.
@@ -437,7 +439,9 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * Simply returns {@code frame().xAxis()}.
 	 */
-	public abstract Vec rightVector();
+	public Vec rightVector() {
+		return frame().xAxis();
+	}
 
 	/**
 	 * Sets the Eye {@link #orientation()}, defined in the world coordinate system.

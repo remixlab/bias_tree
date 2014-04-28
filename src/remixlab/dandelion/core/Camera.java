@@ -241,20 +241,6 @@ public class Camera extends Eye implements Constants, Copyable {
 	// 2. POSITION AND ORIENTATION
 
 	@Override
-	public Vec rightVector() {
-		// if there were not validateScaling this should do it:
-		// return frame().magnitude().x() > 0 ? frame().xAxis() : frame().xAxis(false);
-		return frame().xAxis();
-	}
-
-	@Override
-	public Vec upVector() {
-		// if there were not validateScaling this should do it:
-		// return frame().magnitude().y() > 0 ? frame().yAxis() : frame().yAxis(false);
-		return frame().yAxis();
-	}
-
-	@Override
 	public void setUpVector(Vec up, boolean noMove) {
 		// if there were not validateScaling this should do it:
 		// Quat q = new Quat(new Vec(0.0f, frame().magnitude().y() > 0 ? 1.0f : -1.0f, 0.0f), frame().transformOf(up));
