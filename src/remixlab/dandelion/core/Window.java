@@ -166,7 +166,7 @@ public class Window extends Eye implements Copyable {
 	public void setOrientation(float angle) {
 		Rotation r = new Rot(angle);
 		frame().setOrientation(r);
-		frame().updateFlyUpVector();
+		frame().updateSceneUpVector();
 	}
 
 	@Override

@@ -233,7 +233,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 */
 	public class ProsceneMouse extends MouseAgent {
 		Scene							scene;
-		boolean						bypassNullEvent, need4Spin, drive;
+		boolean						bypassNullEvent, need4Spin, drive, rotateMode;
 		Point							fCorner		= new Point();
 		Point							lCorner		= new Point();
 		DOF2Event					event, prevEvent, pressEvent;
@@ -268,9 +268,13 @@ public class Scene extends AbstractScene implements PConstants {
 					DandelionAction dA = (DandelionAction) a.referenceAction();
 					if (dA == DandelionAction.SCREEN_TRANSLATE)
 						((InteractiveFrame) inputGrabber()).dirIsFixed = false;
-					need4Spin = (((dA == DandelionAction.ROTATE) || (dA == DandelionAction.ROTATE3)
-							|| (dA == DandelionAction.SCREEN_ROTATE) || (dA == DandelionAction.TRANSLATE_ROTATE)) && (((InteractiveFrame) inputGrabber())
-							.dampingFriction() == 0));
+					rotateMode = ((dA == DandelionAction.ROTATE) || (dA == DandelionAction.ROTATE3)
+							|| (dA == DandelionAction.CAD_ROTATE)
+							|| (dA == DandelionAction.SCREEN_ROTATE) || (dA == DandelionAction.TRANSLATE_ROTATE));
+					if (rotateMode && scene.is3D())
+						scene.camera().frame().cadRotationIsReversed = scene.camera().frame()
+								.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
+					need4Spin = (rotateMode && (((InteractiveFrame) inputGrabber()).dampingFriction() == 0));
 					drive = (dA == DandelionAction.DRIVE);
 					bypassNullEvent = (dA == DandelionAction.MOVE_FORWARD) || (dA == DandelionAction.MOVE_BACKWARD)
 							|| (drive) && scene.inputHandler().isAgentRegistered(this);
@@ -281,7 +285,7 @@ public class Scene extends AbstractScene implements PConstants {
 					if (bypassNullEvent || zoomVisualHint() || rotateVisualHint()) {
 						if (bypassNullEvent) {
 							// TODO: experimental, this is needed for first person:
-							((InteractiveFrame) inputGrabber()).updateFlyUpVector();
+							((InteractiveFrame) inputGrabber()).updateSceneUpVector();
 							dFriction = ((InteractiveFrame) inputGrabber()).dampingFriction();
 							((InteractiveFrame) inputGrabber()).setDampingFriction(0);
 							handler.eventTupleQueue().add(new EventGrabberTuple(event, a, inputGrabber()));

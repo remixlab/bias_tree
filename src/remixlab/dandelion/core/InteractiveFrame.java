@@ -42,7 +42,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				append(wheelSensitivity).
 				append(flyDisp).
 				append(flySpd).
-				append(flyUpVec).
+				append(scnUpVec).
 				toHashCode();
 	}
 
@@ -69,7 +69,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				.append(wheelSensitivity, other.wheelSensitivity)
 				.append(flyDisp, other.flyDisp)
 				.append(flySpd, other.flySpd)
-				.append(flyUpVec, other.flyUpVec)
+				.append(scnUpVec, other.scnUpVec)
 				.isEquals();
 	}
 
@@ -98,7 +98,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	protected Vec								tDir;
 	protected float							flySpd;
 	protected TimingTask				flyTimerTask;
-	protected Vec								flyUpVec;
+	protected Vec								scnUpVec;
 	protected Vec								flyDisp;
 	protected static final long	FLY_UPDATE_PERDIOD	= 10;
 
@@ -138,7 +138,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		};
 		scene.registerTimingTask(spinningTimerTask);
 
-		flyUpVec = new Vec(0.0f, 1.0f, 0.0f);
+		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
 		flyDisp = new Vec(0.0f, 0.0f, 0.0f);
 
 		if (!(this instanceof InteractiveEyeFrame))
@@ -179,8 +179,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		};
 		this.scene.registerTimingTask(spinningTimerTask);
 
-		this.flyUpVec = new Vec();
-		this.flyUpVec.set(otherFrame.flyUpVector());
+		this.scnUpVec = new Vec();
+		this.scnUpVec.set(otherFrame.sceneUpVector());
 		this.flyDisp = new Vec();
 		this.flyDisp.set(otherFrame.flyDisp);
 		this.setFlySpeed(otherFrame.flySpeed());
@@ -231,7 +231,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		};
 		scene.registerTimingTask(spinningTimerTask);
 
-		flyUpVec = new Vec(0.0f, 1.0f, 0.0f);
+		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
 		flyDisp = new Vec(0.0f, 0.0f, 0.0f);
 		setFlySpeed(0.0f);
 		flyTimerTask = new TimingTask() {
@@ -862,7 +862,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			rotate(rot);
 			setSpinningRotation(rot);
 			// TODO needs this:?
-			updateFlyUpVector();
+			updateSceneUpVector();
 			break;
 		case ROTATE:
 		case SCREEN_ROTATE:
@@ -1015,7 +1015,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			q = new Quat(new Vec(0.0f, 0.0f, 1.0f), angle);
 			rotate(q);
 			setSpinningRotation(q);
-			updateFlyUpVector();
+			updateSceneUpVector();
 			break;
 		case ROTATE:
 			if (e2.isAbsolute()) {
@@ -1216,7 +1216,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			break;
 		}
 	}
-	
+
 	// micro-actions procedures
 
 	protected void translateFromEye(Vec trans) {
@@ -1318,30 +1318,33 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	 * displacements of the mouse rotate the InteractiveFrame around this vector. Vertical displacements rotate always
 	 * around the frame {@code X} axis.
 	 * <p>
+	 * This value is also used within the CAD_ROTATE action to define the up vector (and incidentally the 'horizon' plane)
+	 * around which the camera will rotate.
+	 * <p>
 	 * Default value is (0,1,0), but it is updated by the Eye when set as its {@link remixlab.dandelion.core.Eye#frame()}.
 	 * {@link remixlab.dandelion.core.Eye#setOrientation(Rotation)} and
 	 * {@link remixlab.dandelion.core.Eye#setUpVector(Vec)} modify this value and should be used instead.
 	 */
-	public Vec flyUpVector() {
-		return flyUpVec;
+	public Vec sceneUpVector() {
+		return scnUpVec;
 	}
 
 	/**
-	 * Sets the {@link #flyUpVector()}, defined in the world coordinate system.
+	 * Sets the {@link #sceneUpVector()}, defined in the world coordinate system.
 	 * <p>
 	 * Default value is (0,1,0), but it is updated by the Eye when set as its {@link remixlab.dandelion.core.Eye#frame()}.
 	 * Use {@link remixlab.dandelion.core.Eye#setUpVector(Vec)} instead in that case.
 	 */
-	public void setFlyUpVector(Vec up) {
-		flyUpVec = up;
+	public void setSceneUpVector(Vec up) {
+		scnUpVec = up;
 	}
 
 	/**
-	 * This method will be called by the Eye when its orientation is changed, so that the {@link #flyUpVector()} (private)
-	 * is changed accordingly. You should not need to call this method.
+	 * This method will be called by the Eye when its orientation is changed, so that the {@link #sceneUpVector()} is
+	 * changed accordingly. You should not need to call this method.
 	 */
-	public final void updateFlyUpVector() {
-		flyUpVec = orientation().rotate(new Vec(0.0f, 1.0f, 0.0f));
+	public final void updateSceneUpVector() {
+		scnUpVec = orientation().rotate(new Vec(0.0f, 1.0f, 0.0f));
 	}
 
 	/**
@@ -1354,7 +1357,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 
 	/**
 	 * Returns a Quaternion that is the composition of two rotations, inferred from the mouse pitch (X axis) and yaw (
-	 * {@link #flyUpVector()} axis).
+	 * {@link #sceneUpVector()} axis).
 	 */
 	protected final Quat pitchYawQuaternion(DOF2Event event, Camera camera) {
 		float deltaX = event.isAbsolute() ? event.x() : event.dx();
@@ -1364,7 +1367,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			deltaY = -deltaY;
 
 		Quat rotX = new Quat(new Vec(1.0f, 0.0f, 0.0f), rotationSensitivity() * deltaY / camera.screenHeight());
-		Quat rotY = new Quat(transformOf(flyUpVector()), rotationSensitivity() * (-deltaX) / camera.screenWidth());
+		Quat rotY = new Quat(transformOf(sceneUpVector()), rotationSensitivity() * (-deltaX) / camera.screenWidth());
 		return Quat.multiply(rotY, rotX);
 	}
 

@@ -253,7 +253,7 @@ public class Camera extends Eye implements Constants, Copyable {
 		frame().rotate(q);
 
 		// Useful in fly mode to keep the horizontal direction.
-		frame().updateFlyUpVector();
+		frame().updateSceneUpVector();
 	}
 
 	@Override
@@ -314,7 +314,7 @@ public class Camera extends Eye implements Constants, Copyable {
 	@Override
 	public void setOrientation(Rotation q) {
 		frame().setOrientation(q);
-		frame().updateFlyUpVector();
+		frame().updateSceneUpVector();
 	}
 
 	// 3. FRUSTUM

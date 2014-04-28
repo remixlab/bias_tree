@@ -10,7 +10,6 @@
 
 package remixlab.dandelion.core;
 
-import remixlab.bias.event.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.util.Copyable;
@@ -26,10 +25,18 @@ import remixlab.util.Util;
  * defined for the InteractiveFrame (and also the InteractiveAvatarFrame). For instance, with a move-to-the-right user
  * gesture the InteractiveEyeFrame has to go to the <i>left</i>, so that the <i>scene</i> seems to move to the right.
  * <p>
- * An InteractiveEyeFrame rotates around its {@link #anchor()} (wrapper to {@link Eye#anchor()}).
+ * Depending on the Dandelion action an InteractiveEyeFrame rotates either around its {@link #anchor()} (e.g., ROTATE)
+ * which is a wrapper to {@link Eye#anchor()}), or its {@link #sceneUpVector()} (e.g., ROTATE_CAD). In the latter case
+ * the {@link #sceneUpVector()} defines a 'vertical' direction around which the camera rotates. The camera can rotate
+ * left or right, around this axis. It can also be moved up or down to show the 'top' and 'bottom' views of the scene.
+ * As a result, the {@link #sceneUpVector()} will always appear vertical in the scene, and the horizon is preserved and
+ * stays projected along the camera's horizontal axis. Use {@link remixlab.dandelion.core.Camera#setUpVector(Vec)} to
+ * define the {@link #sceneUpVector()} and align the camera before starting a ROTATE_CAD action to ensure these
+ * invariants are preserved.
  * <p>
- * <b>Note:</b> The InteractiveEyeFrame is not added to the {@link remixlab.dandelion.core.AbstractScene#inputHandler()}
- * {@link remixlab.bias.core.InputHandler#agents()} pool upon creation.
+ * <b>Observation: </b> The InteractiveEyeFrame is not added to the
+ * {@link remixlab.dandelion.core.AbstractScene#inputHandler()} {@link remixlab.bias.core.InputHandler#agents()} pool
+ * upon creation.
  */
 public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 	@Override
@@ -37,7 +44,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		return new HashCodeBuilder(17, 37).
 				appendSuper(super.hashCode()).
 				append(anchorPnt).
-				append(worldAxis).
 				toHashCode();
 	}
 
@@ -54,13 +60,11 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(anchorPnt, other.anchorPnt)
-				.append(worldAxis, other.worldAxis)
 				.isEquals();
 	}
 
 	protected Eye					eye;
 	protected Vec					anchorPnt;
-	protected Vec					worldAxis;
 
 	// L O C A L T I M E R
 	public boolean				anchorFlag;
@@ -68,11 +72,15 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 	public Vec						pupVec;
 	protected TimingTask	timerFx;
 
+	// Inverse the direction of an horizontal mouse motion. Depends on the projected
+	// screen orientation of the vertical axis when the mouse button is pressed.
+	public boolean				cadRotationIsReversed;
+
 	/**
 	 * Default constructor.
 	 * <p>
-	 * {@link #flySpeed()} is set to 0.0 and {@link #flyUpVector()} is set to the Y-axis. The {@link #anchor()} is set to
-	 * 0.
+	 * {@link #flySpeed()} is set to 0.0 and {@link #sceneUpVector()} is set to the Y-axis. The {@link #anchor()} is set
+	 * to 0.
 	 * <p>
 	 * <b>Attention:</b> Created object is removed from the {@link remixlab.dandelion.core.AbstractScene#inputHandler()}
 	 * {@link remixlab.bias.core.InputHandler#agents()} pool.
@@ -82,7 +90,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		eye = theEye;
 		scene.inputHandler().removeFromAllAgentPools(this);
 		anchorPnt = new Vec(0.0f, 0.0f, 0.0f);
-		worldAxis = new Vec(0, 0, 1);
 
 		timerFx = new TimingTask() {
 			public void execute() {
@@ -97,8 +104,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		this.eye = otherFrame.eye;
 		this.anchorPnt = new Vec();
 		this.anchorPnt.set(otherFrame.anchorPnt);
-		this.worldAxis = new Vec();
-		this.worldAxis.set(otherFrame.worldAxis);
 		this.scene.inputHandler().removeFromAllAgentPools(this);
 		this.timerFx = new TimingTask() {
 			public void execute() {
@@ -336,20 +341,19 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				AbstractScene.showEventVariationWarning(a);
 				break;
 			}
-			trans = camera.projectedCoordinatesOf(anchor());
-			setSpinningRotation(cadQuaternion(e2, trans.vec[0], trans.vec[1], camera));
+			// Multiply by 2.0 to get on average about the same speed as with the deformed ball
+			float dx = -2.0f * rotationSensitivity() * e2.dx() / scene.camera().screenWidth();
+			float dy = 2.0f * rotationSensitivity() * e2.dy() / scene.camera().screenHeight();
+			if (cadRotationIsReversed)
+				dx = -dx;
+			if (scene.isRightHanded())
+				dy = -dy;
+			Vec verticalAxis = transformOf(sceneUpVector());
+			setSpinningRotation(Quat.multiply(new Quat(verticalAxis, dx), new Quat(new Vec(1.0f, 0.0f, 0.0f), dy)));
 			if (Util.nonZero(dampingFriction()))
 				startSpinning(e2);
 			else
 				spin();
-			break;
-		case ROTATE3:
-			q = new Quat();
-			if (e3.isAbsolute())
-				q.fromEulerAngles(-e3.x(), -e3.y(), e3.z());
-			else
-				q.fromEulerAngles(-e3.dx(), -e3.dy(), e3.dz());
-			rotate(q);
 			break;
 		case SCREEN_ROTATE:
 			if (e2.isAbsolute()) {
@@ -369,7 +373,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				startSpinning(e2);
 			else
 				spin();
-			updateFlyUpVector();
+			updateSceneUpVector();
 			break;
 		case SCREEN_TRANSLATE:
 			trans = new Vec();
@@ -559,61 +563,5 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		 * 
 		 * q.fromEulerAngles(-event6.roll(), 0, 0); rotate(q); break; //
 		 */
-	}
-
-	/**
-	 * Returns a Quaternion computed according to mouse motion. The Quaternion is computed as composition of two rotations
-	 * (quaternions): 1. Mouse motion along the screen X Axis rotates the camera along the {@link #getCADAxis()}. 2. Mouse
-	 * motion along the screen Y axis rotates the camera along its X axis.
-	 * 
-	 * @see #getCADAxis()
-	 */
-	protected Quat cadQuaternion(DOF2Event event, float cx, float cy, Eye camera) {
-		if (!(camera instanceof Camera))
-			throw new RuntimeException("CAD cam is oly available in 3D");
-
-		float x = event.x();
-		float y = event.y();
-		float prevX = event.prevX();
-		float prevY = event.prevY();
-
-		// Points on the deformed ball
-		float px = rotationSensitivity() * ((int) prevX - cx) / camera.screenWidth();
-		float py = rotationSensitivity() * (scene.isLeftHanded() ? ((int) prevY - cy) : ((cy - (int) prevY)))
-				/ camera.screenHeight();
-		float dx = rotationSensitivity() * (x - cx) / camera.screenWidth();
-		float dy = rotationSensitivity() * (scene.isLeftHanded() ? (y - cy) : (cy - y)) / camera.screenHeight();
-
-		// 1,0,0 is given in the camera frame
-		Vec axisX = new Vec(1, 0, 0);
-
-		Vec world2camAxis = camera.frame().transformOf(worldAxis);
-
-		float angleWorldAxis = rotationSensitivity() * (scene.isLeftHanded() ? (dx - px) : (px - dx));
-		float angleX = rotationSensitivity() * (dy - py);
-
-		Quat quatWorld = new Quat(world2camAxis, angleWorldAxis);
-		Quat quatX = new Quat(axisX, angleX);
-
-		return Quat.multiply(quatWorld, quatX);
-	}
-
-	/**
-	 * Set axis (defined in the world coordinate system) as the main rotation axis used in CAD rotation.
-	 */
-	public void setCADAxis(Vec axis) {
-		// non-zero
-		if (Util.zero(axis.magnitude()))
-			return;
-		else
-			worldAxis = axis.get();
-		worldAxis.normalize();
-	}
-
-	/**
-	 * Returns the main CAD rotation axis ((defined in the world coordinate system).
-	 */
-	public Vec getCADAxis() {
-		return worldAxis;
 	}
 }

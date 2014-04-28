@@ -1400,10 +1400,10 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 			avatarIsInteractiveFrame = true;
 			if (avatar() instanceof InteractiveAvatarFrame)
 				avatarIsInteractiveAvatarFrame = true;
-			eye().frame().updateFlyUpVector();// ?
+			eye().frame().updateSceneUpVector();// ?
 			eye().frame().stopSpinning();
 			if (this.avatarIsInteractiveFrame) {
-				((InteractiveFrame) (avatar())).updateFlyUpVector();
+				((InteractiveFrame) (avatar())).updateSceneUpVector();
 				((InteractiveFrame) (avatar())).stopSpinning();
 			}
 			// perform small animation ;)

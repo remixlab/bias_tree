@@ -24,7 +24,6 @@ void setup() {
   scene = new Scene(this);
   //Set right handed world frame (useful for architects...)
   scene.setRightHanded();
-  scene.camera().frame().setCADAxis(new Vec(0, 1, 0));
   scene.mouseAgent().eyeProfile().setBinding(Constants.B_LEFT, DOF2Action.CAD_ROTATE);
   scene.camera().frame().setRotationSensitivity(1.5);
 }
@@ -47,9 +46,9 @@ void keyPressed() {
     else
       scene.setRightHanded();
   else if (key == 'x' || key == 'X')
-    scene.camera().frame().setCADAxis(new Vec(1, 0, 0));
+    scene.camera().setUpVector(new Vec(1, 0, 0));
   else if (key == 'y' || key == 'Y')
-    scene.camera().frame().setCADAxis(new Vec(0, 1, 0));
+    scene.camera().setUpVector(new Vec(0, 1, 0));
   else if (key == 'z' || key == 'Z')
-    scene.camera().frame().setCADAxis(new Vec(0, 0, 1));
+    scene.camera().setUpVector(new Vec(0, 0, 1));
 }
