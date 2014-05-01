@@ -66,7 +66,7 @@ public class Frame implements Copyable, Constants {
 	 * Internal abstract class that holds the main frame attributes. This class is useful to link frames together (i.e.,
 	 * to share these attributes) and its the base class for 2D and 3D Frame kernels.
 	 */
-	protected abstract class AbstractFrameKernel implements Copyable {
+	protected abstract class FrameKernel implements Copyable {
 		@Override
 		public int hashCode() {
 			return new HashCodeBuilder(17, 37).
@@ -105,7 +105,7 @@ public class Frame implements Copyable, Constants {
 		protected Constraint	constr;
 		protected long				lastUpdate;
 
-		public AbstractFrameKernel() {
+		public FrameKernel() {
 			trans = new Vec(0, 0, 0);
 			scl = 1;
 			rot = null;
@@ -114,7 +114,7 @@ public class Frame implements Copyable, Constants {
 			lastUpdate = 0;
 		}
 
-		public AbstractFrameKernel(Vec p, Rotation r, float s) {
+		public FrameKernel(Vec p, Rotation r, float s) {
 			trans = new Vec(p.x(), p.y(), p.z());
 			setScaling(s);
 			rot = r.get();
@@ -123,7 +123,7 @@ public class Frame implements Copyable, Constants {
 			lastUpdate = 0;
 		}
 
-		public AbstractFrameKernel(Vec p, Rotation r) {
+		public FrameKernel(Vec p, Rotation r) {
 			trans = new Vec(p.x(), p.y(), p.z());
 			rot = r.get();
 			scl = 1;
@@ -132,7 +132,7 @@ public class Frame implements Copyable, Constants {
 			lastUpdate = 0;
 		}
 
-		protected AbstractFrameKernel(AbstractFrameKernel other) {
+		protected FrameKernel(FrameKernel other) {
 			trans = new Vec(other.translation().vec[0], other.translation().vec[1], other.translation().vec[2]);
 			rot = other.rotation().get();
 			scl = other.scaling();
@@ -233,7 +233,7 @@ public class Frame implements Copyable, Constants {
 	/**
 	 * Internal class. 3D version of AbstractFrameKernel.
 	 */
-	protected class FrameKernel3D extends AbstractFrameKernel {
+	protected class FrameKernel3D extends FrameKernel {
 		public FrameKernel3D() {
 			rot = new Quat();
 		}
@@ -259,7 +259,7 @@ public class Frame implements Copyable, Constants {
 	/**
 	 * Internal class. 2D version of AbstractFrameKernel.
 	 */
-	protected class FrameKernel2D extends AbstractFrameKernel {
+	protected class FrameKernel2D extends FrameKernel {
 		public FrameKernel2D() {
 			rot = new Rot();
 		}
@@ -282,9 +282,9 @@ public class Frame implements Copyable, Constants {
 		}
 	}
 
-	protected AbstractFrameKernel	krnl;
-	protected List<Frame>					linkedFramesList;
-	protected Frame								srcFrame;
+	protected FrameKernel	krnl;
+	protected List<Frame>	linkedFramesList;
+	protected Frame				srcFrame;
 
 	/**
 	 * Convenience constructor that simply calls {@code this(true)}.
@@ -370,11 +370,11 @@ public class Frame implements Copyable, Constants {
 	/**
 	 * @return Frame kernel.
 	 */
-	public AbstractFrameKernel kernel() {
+	public FrameKernel kernel() {
 		return krnl;
 	}
 
-	protected void setKernel(AbstractFrameKernel k) {
+	protected void setKernel(FrameKernel k) {
 		krnl = k;
 	}
 
@@ -537,9 +537,22 @@ public class Frame implements Copyable, Constants {
 
 		return false;
 	}
+	
+	/**
+	 * Simply returns {@code unlink(false)}.
+	 * 
+	 * @see #unlink(boolean)
+	 */
+	public boolean unlink() {
+		return unlink(false);
+	}
 
 	/**
 	 * Unlinks this frame from its source frame. Does nothing if this frame is not linked to another frame.
+	 * <p>
+	 * Sets a new {@link #kernel()} for the frame with the same {@link #position()}, {@link #orientation()} and {@link #magnitude()} as the source frame
+	 * If {@code keepRefFrame} is {@code true} the Frame will keep the source {@link #referenceFrame()}.
+	 * No {@link #constraint()} is kept.
 	 * <p>
 	 * See {@link #linkTo(Frame)} for the rules and terminology applying to the linking process.
 	 * 
@@ -551,24 +564,37 @@ public class Frame implements Copyable, Constants {
 	 * @see #isLinked()
 	 * @see #areLinkedTogether(Frame)
 	 */
-	public boolean unlink() {
+	public boolean unlink(boolean keepRefFrame) {
 		boolean result = false;
 		if (srcFrame != null) {
 			result = srcFrame.linkedFramesList.remove(this);
 			if (result) {
-				if (is3D())
-					setKernel(new FrameKernel3D(srcFrame.translation(), (Quat) srcFrame.rotation(), srcFrame.scaling()));
-				else
-					setKernel(new FrameKernel2D(srcFrame.translation(), (Rot) srcFrame.rotation(), srcFrame.scaling()));
+				if(keepRefFrame) {
+					setKernel(is2D() ? new FrameKernel2D() : new FrameKernel3D());
+					setReferenceFrame( srcFrame.referenceFrame() );
+					setPosition(srcFrame.position());
+					setOrientation(srcFrame.orientation());
+					setMagnitude(srcFrame.magnitude());
+				}
+				else {
+					setKernel(is2D() ? new FrameKernel2D(srcFrame.position(), (Rot) srcFrame.orientation(), srcFrame.magnitude())
+					                 : new FrameKernel3D(srcFrame.position(), (Quat) srcFrame.orientation(), srcFrame.magnitude()));
+					setReferenceFrame(null);
+				}
 				srcFrame = null;
 			}
 		}
 		return result;
 	}
+	
+	public boolean unlinkFrom(Frame requestedFrame) {
+		return unlinkFrom(requestedFrame, false);
+	}
 
 	/**
 	 * Unlinks the requested frame from this frame. Does nothing if the frames are not linked together (
-	 * {@link #areLinkedTogether(Frame)}).
+	 * {@link #areLinkedTogether(Frame)}). Sets a new {@link #kernel()} for the requested frame with the
+	 * same {@link #position()}, {@link #orientation()} and {@link #magnitude()} as this Frame, but {@code null} {@link #referenceFrame()}.
 	 * <p>
 	 * See {@link #linkTo(Frame)} for the rules and terminology applying to the linking process.
 	 * 
@@ -580,15 +606,23 @@ public class Frame implements Copyable, Constants {
 	 * @see #isLinked()
 	 * @see #areLinkedTogether(Frame)
 	 */
-	public boolean unlinkFrom(Frame requestedFrame) {
+	public boolean unlinkFrom(Frame requestedFrame, boolean keepRefFrame) {
 		boolean result = false;
 		if ((srcFrame == null) && (requestedFrame != this)) {
 			result = linkedFramesList.remove(requestedFrame);
 			if (result) {
-				if (is3D())
-					requestedFrame.setKernel(new FrameKernel3D(translation(), (Quat) rotation(), scaling()));
-				else
-					requestedFrame.setKernel(new FrameKernel2D(translation(), (Rot) rotation(), scaling()));
+				if(keepRefFrame) {
+					requestedFrame.setKernel(is2D() ? new FrameKernel2D() : new FrameKernel3D());
+					requestedFrame.setReferenceFrame(referenceFrame());
+					requestedFrame.setPosition(position());
+					requestedFrame.setOrientation(orientation());
+					requestedFrame.setMagnitude(magnitude());
+				}
+				else {
+					requestedFrame.setKernel(is2D() ? new FrameKernel2D(position(), (Rot) orientation(), magnitude())
+					                                : new FrameKernel3D(position(), (Quat) orientation(), magnitude()));
+					requestedFrame.setReferenceFrame(null);
+				}			
 				requestedFrame.srcFrame = null;
 			}
 		}

@@ -16,6 +16,7 @@ import java.util.Iterator;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.agent.ActionWheeledBiMotionAgent;
+import remixlab.dandelion.agent.KeyboardAgent;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.fpstiming.Animator;
@@ -47,8 +48,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	protected MatrixHelper	matrixHelper;
 	protected Eye						eye;
 	protected Trackable			trck;
-	public boolean					avatarIsInteractiveFrame;
-	protected boolean				avatarIsInteractiveAvatarFrame;
 
 	// E X C E P T I O N H A N D L I N G
 	protected int						startCoordCalls;
@@ -70,6 +69,11 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	// offscreen
 	public Point						upperLeftCorner;
 	protected boolean				offscreen;
+	
+  //Eventhandling agents
+	//TODO decide if this should here or at the Processing Scene base class ?
+	protected ActionWheeledBiMotionAgent<?>	defMotionAgent;
+	protected KeyboardAgent			defKeyboardAgent;
 
 	// Who's performing the motion action.
 	// TODO define if this should go in agent bindings:
@@ -86,7 +90,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * its own matrix handling.</li>
 	 * <li>Call {@link #setEye(Eye)} to set the {@link #eye()}, once it's known if the Scene {@link #is2D()} or
 	 * {@link #is3D()}.</li>
-	 * <li>Instantiate some {@link remixlab.bias.core.Agent}s and register them at the {@link #inputHandler()}.</li>
+	 * <li>Instantiate the {@link #motionAgent()} and the {@link #keyboardAgent()} and enable them (register them at
+	 * the {@link #inputHandler()}) and possibly some other {@link remixlab.bias.core.Agent}s as well and .</li>
 	 * <li>Define whether or not the Scene {@link #isOffscreen()}.</li>
 	 * <li>Call {@link #init()} at the end of the constructor.</li>
 	 * </ol>
@@ -105,7 +110,103 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		setRightHanded();
 		setVisualHints(AXIS | GRID);
 	}
+	
+	// AGENTs
+	
+	/**
+	 * Returns the default {@link remixlab.dandelion.agent.KeyboardAgent} keyboard agent.
+	 * 
+	 * @see #motionAgent()
+	 */
+	public KeyboardAgent keyboardAgent() {
+		return defKeyboardAgent;
+	}
 
+	/**
+	 * Returns {@code true} if the {@link #keyboardAgent()} is enabled and {@code false} otherwise.
+	 * 
+	 * @see #enableKeyboardAgent()
+	 * @see #disableKeyboardAgent()
+	 * @see #isMotionAgentEnabled()
+	 */
+	public boolean isKeyboardAgentEnabled() {
+		return inputHandler().isAgentRegistered(defKeyboardAgent);
+	}
+
+	/**
+	 * Enables keyboard handling through the {@link #keyboardAgent()}.
+	 * 
+	 * @see #isKeyboardAgentEnabled()
+	 * @see #disableKeyboardAgent()
+	 * @see #enableMotionAgent()
+	 */
+	public void enableKeyboardAgent() {
+		if (!inputHandler().isAgentRegistered(keyboardAgent())) {
+			inputHandler().registerAgent(keyboardAgent());
+		}
+	}
+
+	/**
+	 * Disables the default {@link remixlab.dandelion.agent.KeyboardAgent} and returns it.
+	 * 
+	 * @see #isKeyboardAgentEnabled()
+	 * @see #enableKeyboardAgent()
+	 * @see #disableMotionAgent()
+	 */
+	public KeyboardAgent disableKeyboardAgent() {
+		if (inputHandler().isAgentRegistered(keyboardAgent())) {
+			return (KeyboardAgent) inputHandler().unregisterAgent(keyboardAgent());
+		}
+		return keyboardAgent();
+	}
+	
+	/**
+	 * Returns the default motion agent.
+	 * 
+	 * @see #keyboardAgent()
+	 */
+	public ActionWheeledBiMotionAgent<?> motionAgent() {
+		return defMotionAgent;
+	}
+
+	/**
+	 * Returns {@code true} if the {@link #motionAgent()} is enabled and {@code false} otherwise.
+	 * 
+	 * @see #enableMotionAgent()
+	 * @see #disableMotionAgent()
+	 * @see #isKeyboardAgentEnabled()
+	 */
+	public boolean isMotionAgentEnabled() {
+		return inputHandler().isAgentRegistered(defMotionAgent);
+	}
+	
+	/**
+	 * Enables motion handling through the {@link #motionAgent()}.
+	 * 
+	 * @see #isMotionAgentEnabled()
+	 * @see #disableMotionAgent()
+	 * @see #enableKeyboardAgent()
+	 */
+	public void enableMotionAgent() {
+		if (!inputHandler().isAgentRegistered(motionAgent())) {
+			inputHandler().registerAgent(motionAgent());
+		}
+	}
+
+	/**
+	 * Disables the default motion agent and returns it.
+	 * 
+	 * @see #isMotionAgentEnabled()
+	 * @see #enableMotionAgent()
+	 * @see #enableKeyboardAgent()
+	 */
+	public ActionWheeledBiMotionAgent<?> disableMotionAgent() {
+		if (inputHandler().isAgentRegistered(motionAgent())) {
+			return (ActionWheeledBiMotionAgent<?>) inputHandler().unregisterAgent(motionAgent());
+		}
+		return motionAgent();
+	}
+	
 	// FPSTiming STUFF
 
 	/**
@@ -330,50 +431,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 			break;
 		case DECREASE_CAMERA_FLY_SPEED:
 			((Camera) eye()).setFlySpeed(((Camera) eye()).flySpeed() / 1.2f);
-			break;
-		case INCREASE_AVATAR_FLY_SPEED:
-			if (avatar() != null)
-				if (avatarIsInteractiveFrame)
-					((InteractiveFrame) avatar()).setFlySpeed(((InteractiveFrame) avatar()).flySpeed() * 1.2f);
-			break;
-		case DECREASE_AVATAR_FLY_SPEED:
-			if (avatar() != null)
-				if (avatarIsInteractiveFrame)
-					((InteractiveFrame) avatar()).setFlySpeed(((InteractiveFrame) avatar()).flySpeed() / 1.2f);
-			break;
-		case INCREASE_AZIMUTH:
-			if (avatar() != null)
-				if (avatarIsInteractiveAvatarFrame)
-					((InteractiveAvatarFrame) avatar()).setAzimuth(((InteractiveAvatarFrame) avatar()).azimuth() + PI / 64);
-			break;
-		case DECREASE_AZIMUTH:
-			if (avatar() != null)
-				if (avatarIsInteractiveAvatarFrame)
-					((InteractiveAvatarFrame) avatar()).setAzimuth(((InteractiveAvatarFrame) avatar()).azimuth() - PI / 64);
-			break;
-		case INCREASE_INCLINATION:
-			if (avatar() != null)
-				if (avatarIsInteractiveAvatarFrame)
-					((InteractiveAvatarFrame) avatar()).setInclination(((InteractiveAvatarFrame) avatar()).inclination() + PI
-							/ 64);
-			break;
-		case DECREASE_INCLINATION:
-			if (avatar() != null)
-				if (avatarIsInteractiveAvatarFrame)
-					((InteractiveAvatarFrame) avatar()).setInclination(((InteractiveAvatarFrame) avatar()).inclination() - PI
-							/ 64);
-			break;
-		case INCREASE_TRACKING_DISTANCE:
-			if (avatar() != null)
-				if (avatarIsInteractiveAvatarFrame)
-					((InteractiveAvatarFrame) avatar()).setTrackingDistance(((InteractiveAvatarFrame) avatar())
-							.trackingDistance() + radius() / 50);
-			break;
-		case DECREASE_TRACKING_DISTANCE:
-			if (avatar() != null)
-				if (avatarIsInteractiveAvatarFrame)
-					((InteractiveAvatarFrame) avatar()).setTrackingDistance(((InteractiveAvatarFrame) avatar())
-							.trackingDistance() - radius() / 50);
 			break;
 		case INTERPOLATE_TO_FIT:
 			eye().interpolateToFitScene();
@@ -817,10 +874,11 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 */
 	public void preDraw() {
 		if (avatar() != null && (!eye().anyInterpolationIsStarted())) {
-			eye().setPosition(avatar().eyePosition());
-			eye().setUpVector(avatar().upVector());
-			if(is3D()) eye().lookAt(avatar().target());
+			eye().frame().setPosition(avatar().eyeFrame().position());
+		  eye().frame().setOrientation(avatar().eyeFrame().orientation());
+		  eye().frame().setScaling(avatar().eyeFrame().scaling());
 		}
+		
 		bind();
 		if (areBoundaryEquationsEnabled())
 			eye().updateBoundaryEquations();
@@ -1392,37 +1450,28 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 */
 	public void setAvatar(Trackable t) {
 		trck = t;
-		avatarIsInteractiveAvatarFrame = false;
-		avatarIsInteractiveFrame = false;
-		if (avatar() == null)
-			return;
-		if (avatar() instanceof InteractiveFrame) {
-			avatarIsInteractiveFrame = true;
-			if (avatar() instanceof InteractiveAvatarFrame)
-				avatarIsInteractiveAvatarFrame = true;
-			eye().frame().stopSpinning();
-			if (this.avatarIsInteractiveFrame)
-				((InteractiveFrame) (avatar())).stopSpinning();
-			// perform small animation ;)
-			if (eye().anyInterpolationIsStarted())
-				eye().stopAllInterpolations();
-			Eye cm = eye().get();
-			cm.setPosition(avatar().eyePosition());
-			cm.setUpVector(avatar().upVector());
-			cm.lookAt(avatar().target());
-			eye().interpolateTo(cm.frame());
-		}
+		if (avatar() == null)	return;
+		
+		eye().frame().stopSpinning();
+		if (avatar() instanceof InteractiveFrame)	((InteractiveFrame) (avatar())).stopSpinning();
+		// perform small animation ;)
+		if (eye().anyInterpolationIsStarted()) eye().stopAllInterpolations();
+		eye().interpolateTo(avatar().eyeFrame());
+		
+		if(avatar() instanceof Grabber)	motionAgent().setDefaultGrabber((Grabber)avatar());
+    motionAgent().disableTracking();
 	}
 
 	/**
-	 * If there's a avatar unset it.
+	 * If there's an avatar unset it.
 	 * 
 	 * @see #setAvatar(Trackable)
 	 */
-	public void unsetAvatar() {
+	public void unsetAvatar() {		
+		motionAgent().setDefaultGrabber(eye().frame());
+    motionAgent().enableTracking();
+	  
 		trck = null;
-		avatarIsInteractiveAvatarFrame = false;
-		avatarIsInteractiveFrame = false;
 	}
 
 	// 3. EYE STUFF

@@ -1,8 +1,8 @@
 /**
- * Third Person Camera.
+ * Third Person Eye.
  * by Jean Pierre Charalambos.
  * 
- * This example illustrates the THIRD_PERSON proscene camera mode.
+ * This example illustrates the THIRD_PERSON proscene eye mode.
  * 
  * The THIRD_PERSON camera mode is enabled once a scene.avatar() is set by calling
  * scene.setAvatar(). Any object implementing the Trackable interface may be defined
@@ -34,7 +34,8 @@ InteractiveAvatarFrame avatar;
 public void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
-  scene.setRadius(400);  
+  scene.setRadius(400);
+  scene.showAll();
   scene.setGridVisualHint(false);
   scene.setAxisVisualHint(false);
   // press 'f' to display frame selection hints
@@ -79,27 +80,22 @@ public void draw() {
 }	
 
 public void keyPressed() {
-  if (key == 'x') {
-    print("avatar up vector: ");
-    scene.avatar().upVector().print();
-    print("camara up vector b4: ");
-    scene.camera().upVector().print();
-    scene.camera().setUpVector(scene.avatar().upVector());
-    print("camara up vector after: ");
-    scene.camera().upVector().print();
-  }
   if ( key == ' ' )
     if ( scene.avatar() == null ) {
       scene.setAvatar(avatar);
       scene.mouseAgent().setAsThirdPerson();
-      scene.mouseAgent().setDefaultGrabber(avatar);
-      scene.mouseAgent().disableTracking();
     }
     else {
-      scene.unsetAvatar(); //simply sets avatar as null
+      scene.unsetAvatar();
       scene.mouseAgent().setAsArcball();
-      scene.mouseAgent().setDefaultGrabber(scene.camera().frame());
-      scene.mouseAgent().enableTracking();
       scene.eye().interpolateToFitScene();
     }
+  if(key=='i') ((InteractiveAvatarFrame) scene.avatar()).setInclination(((InteractiveAvatarFrame) scene.avatar()).inclination() - PI / 64);
+  if(key=='I') ((InteractiveAvatarFrame) scene.avatar()).setInclination(((InteractiveAvatarFrame) scene.avatar()).inclination() + PI / 64);
+  if(key=='z') ((InteractiveAvatarFrame) scene.avatar()).setAzimuth(((InteractiveAvatarFrame) scene.avatar()).azimuth() + PI / 64);
+  if(key=='Z') ((InteractiveAvatarFrame) scene.avatar()).setAzimuth(((InteractiveAvatarFrame) scene.avatar()).azimuth() + PI / 64);
+  if(key=='t') ((InteractiveAvatarFrame) scene.avatar()).setTrackingDistance(((InteractiveAvatarFrame) scene.avatar()).trackingDistance() - scene.radius() / 50);
+  if(key=='T') ((InteractiveAvatarFrame) scene.avatar()).setTrackingDistance(((InteractiveAvatarFrame) scene.avatar()).trackingDistance() + scene.radius() / 50);
+  if(key=='p') ((InteractiveFrame) scene.avatar()).setFlySpeed(((InteractiveFrame) scene.avatar()).flySpeed() / 1.2f);
+  if(key=='P') ((InteractiveFrame) scene.avatar()).setFlySpeed(((InteractiveFrame) scene.avatar()).flySpeed() * 1.2f);
 }

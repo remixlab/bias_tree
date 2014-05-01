@@ -876,10 +876,6 @@ public class Scene extends AbstractScene implements PConstants {
 
 	protected boolean						javaTiming;
 
-	// Eventhandling agents
-	protected MouseAgent				defMouseAgent;
-	protected KeyboardAgent			defKeyboardAgent;
-
 	/**
 	 * Constructor that defines an on-screen Processing Scene. Same as {@code this(p, p.g}.
 	 * 
@@ -956,7 +952,7 @@ public class Scene extends AbstractScene implements PConstants {
 		// 5. Create agents and register P5 methods
 		defKeyboardAgent = new ProsceneKeyboard(this, "proscene_keyboard");
 		enableKeyboardAgent();
-		defMouseAgent = new ProsceneMouse(this, "proscene_mouse");
+		defMotionAgent = new ProsceneMouse(this, "proscene_mouse");
 		enableMouseAgent();
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
@@ -1299,32 +1295,13 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
-	 * Returns the default keyboard agent handling Processing key events.
-	 * 
-	 * @see #mouseAgent()
-	 */
-	public KeyboardAgent keyboardAgent() {
-		return defKeyboardAgent;
-	}
-
-	/**
-	 * Returns {@code true} if the {@link #keyboardAgent()} is enabled and {@code false} otherwise.
-	 * 
-	 * @see #enableKeyboardAgent()
-	 * @see #disableKeyboardAgent()
-	 * @see #isMouseAgentEnabled()
-	 */
-	public boolean isKeyboardAgentEnabled() {
-		return inputHandler().isAgentRegistered(defKeyboardAgent);
-	}
-
-	/**
 	 * Enables Proscene keyboard handling through the {@link #keyboardAgent()}.
 	 * 
 	 * @see #isKeyboardAgentEnabled()
 	 * @see #disableKeyboardAgent()
 	 * @see #enableMouseAgent()
 	 */
+	@Override
 	public void enableKeyboardAgent() {
 		if (!inputHandler().isAgentRegistered(keyboardAgent())) {
 			inputHandler().registerAgent(keyboardAgent());
@@ -1339,6 +1316,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #enableKeyboardAgent()
 	 * @see #disableMouseAgent()
 	 */
+	@Override
 	public KeyboardAgent disableKeyboardAgent() {
 		if (inputHandler().isAgentRegistered(keyboardAgent())) {
 			parent.unregisterMethod("keyEvent", keyboardAgent());
@@ -1353,18 +1331,18 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #keyboardAgent()
 	 */
 	public MouseAgent mouseAgent() {
-		return defMouseAgent;
+		return (MouseAgent) motionAgent();
 	}
 
 	/**
-	 * Enables Proscene mouse handling through the {@link #mouseAgent()}.
+	 * Returns {@code true} if the {@link #mouseAgent()} is enabled and {@code false} otherwise.
 	 * 
 	 * @see #enableMouseAgent()
 	 * @see #disableMouseAgent()
 	 * @see #isKeyboardAgentEnabled()
 	 */
 	public boolean isMouseAgentEnabled() {
-		return inputHandler().isAgentRegistered(defMouseAgent);
+		return isMotionAgentEnabled();
 	}
 
 	/**
@@ -1374,11 +1352,16 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #disableMouseAgent()
 	 * @see #enableKeyboardAgent()
 	 */
-	public void enableMouseAgent() {
-		if (!inputHandler().isAgentRegistered(mouseAgent())) {
-			inputHandler().registerAgent(mouseAgent());
-			parent.registerMethod("mouseEvent", mouseAgent());
+	@Override
+	public void enableMotionAgent() {
+		if (!inputHandler().isAgentRegistered(motionAgent())) {
+			inputHandler().registerAgent(motionAgent());
+			parent.registerMethod("mouseEvent", motionAgent());
 		}
+	}
+	
+	public void enableMouseAgent() {
+		enableMotionAgent();
 	}
 
 	/**
@@ -1388,12 +1371,17 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #enableMouseAgent()
 	 * @see #enableKeyboardAgent()
 	 */
-	public MouseAgent disableMouseAgent() {
-		if (inputHandler().isAgentRegistered(mouseAgent())) {
-			parent.unregisterMethod("mouseEvent", mouseAgent());
-			return (MouseAgent) inputHandler().unregisterAgent(mouseAgent());
+	@Override
+	public MouseAgent disableMotionAgent() {
+		if (inputHandler().isAgentRegistered(motionAgent())) {
+			parent.unregisterMethod("mouseEvent", motionAgent());
+			return (MouseAgent) inputHandler().unregisterAgent(motionAgent());
 		}
 		return mouseAgent();
+	}
+	
+	public MouseAgent disableMouseAgent() {
+		return disableMotionAgent();
 	}
 
 	// 2. Associated objects

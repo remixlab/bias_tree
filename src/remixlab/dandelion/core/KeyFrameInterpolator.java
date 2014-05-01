@@ -117,7 +117,7 @@ public class KeyFrameInterpolator implements Copyable {
 	/**
 	 * Internal protected abstract base class for 2d and 3d KeyFrames
 	 */
-	protected abstract class AbstractKeyFrame implements Copyable {
+	protected abstract class KeyFrame implements Copyable {
 		@Override
 		public int hashCode() {
 			return new HashCodeBuilder(17, 37).
@@ -134,7 +134,7 @@ public class KeyFrameInterpolator implements Copyable {
 			if (obj.getClass() != getClass())
 				return false;
 
-			AbstractKeyFrame other = (AbstractKeyFrame) obj;
+			KeyFrame other = (KeyFrame) obj;
 			return new EqualsBuilder()
 					.append(frm, other.frm)
 					.isEquals();
@@ -144,12 +144,12 @@ public class KeyFrameInterpolator implements Copyable {
 		protected float	tm;
 		protected Frame	frm;
 
-		AbstractKeyFrame(Frame fr, float t) {
+		KeyFrame(Frame fr, float t) {
 			tm = t;
 			frm = fr;
 		}
 
-		protected AbstractKeyFrame(AbstractKeyFrame otherKF) {
+		protected KeyFrame(KeyFrame otherKF) {
 			this.tm = otherKF.tm;
 			this.frm = otherKF.frm.get();
 		}
@@ -178,13 +178,13 @@ public class KeyFrameInterpolator implements Copyable {
 			return tgPVec;
 		}
 
-		abstract void computeTangent(AbstractKeyFrame prev, AbstractKeyFrame next);
+		abstract void computeTangent(KeyFrame prev, KeyFrame next);
 	}
 
 	/**
 	 * 3D KeyFrame internal class.
 	 */
-	protected class KeyFrame3D extends AbstractKeyFrame {
+	protected class KeyFrame3D extends KeyFrame {
 		protected Quat	tgQuat;
 
 		KeyFrame3D(Frame fr, float t) {
@@ -205,7 +205,7 @@ public class KeyFrameInterpolator implements Copyable {
 		}
 
 		@Override
-		void computeTangent(AbstractKeyFrame prev, AbstractKeyFrame next) {
+		void computeTangent(KeyFrame prev, KeyFrame next) {
 			tgPVec = Vec.multiply(Vec.subtract(next.position(), prev.position()), 0.5f);
 			tgQuat = Quat.squadTangent((Quat) prev.orientation(), (Quat) orientation(), (Quat) next.orientation());
 		}
@@ -214,7 +214,7 @@ public class KeyFrameInterpolator implements Copyable {
 	/**
 	 * 2D KeyFrame internal class.
 	 */
-	protected class KeyFrame2D extends AbstractKeyFrame {
+	protected class KeyFrame2D extends KeyFrame {
 		KeyFrame2D(Frame fr, float t) {
 			super(fr, t);
 		}
@@ -229,17 +229,17 @@ public class KeyFrameInterpolator implements Copyable {
 		}
 
 		@Override
-		void computeTangent(AbstractKeyFrame prev, AbstractKeyFrame next) {
+		void computeTangent(KeyFrame prev, KeyFrame next) {
 			tgPVec = Vec.multiply(Vec.subtract(next.position(), prev.position()), 0.5f);
 		}
 	}
 
 	private long														lUpdate;
-	protected List<AbstractKeyFrame>				keyFrameList;
-	private ListIterator<AbstractKeyFrame>	currentFrame0;
-	private ListIterator<AbstractKeyFrame>	currentFrame1;
-	private ListIterator<AbstractKeyFrame>	currentFrame2;
-	private ListIterator<AbstractKeyFrame>	currentFrame3;
+	protected List<KeyFrame>				keyFrameList;
+	private ListIterator<KeyFrame>	currentFrame0;
+	private ListIterator<KeyFrame>	currentFrame1;
+	private ListIterator<KeyFrame>	currentFrame2;
+	private ListIterator<KeyFrame>	currentFrame3;
 	protected List<Frame>										path;
 	// A s s o c i a t e d f r a m e
 	private Frame														mainFrame;
@@ -287,7 +287,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 */
 	public KeyFrameInterpolator(AbstractScene scn, Frame frame) {
 		scene = scn;
-		keyFrameList = new ArrayList<AbstractKeyFrame>();
+		keyFrameList = new ArrayList<KeyFrame>();
 		path = new ArrayList<Frame>();
 		mainFrame = null;
 		period = 40;
@@ -332,10 +332,10 @@ public class KeyFrameInterpolator implements Copyable {
 		this.valuesAreValid = otherKFI.valuesAreValid;
 		this.currentFrmValid = otherKFI.currentFrmValid;
 
-		this.keyFrameList = new ArrayList<AbstractKeyFrame>();
+		this.keyFrameList = new ArrayList<KeyFrame>();
 
-		for (AbstractKeyFrame element : otherKFI.keyFrameList) {
-			AbstractKeyFrame kf = (AbstractKeyFrame) element.get();
+		for (KeyFrame element : otherKFI.keyFrameList) {
+			KeyFrame kf = (KeyFrame) element.get();
 			this.keyFrameList.add(kf);
 			if (kf.frame() instanceof InteractiveFrame)
 				this.scene.inputHandler().removeFromAllAgentPools((InteractiveFrame) kf.frame());
@@ -679,7 +679,7 @@ public class KeyFrameInterpolator implements Copyable {
 		currentFrmValid = false;
 		if (interpolationIsStarted())
 			stopInterpolation();
-		AbstractKeyFrame kf = keyFrameList.remove(index);
+		KeyFrame kf = keyFrameList.remove(index);
 		if (kf.frm instanceof InteractiveFrame)
 			scene.inputHandler().removeFromAllAgentPools((InteractiveFrame) kf.frm);
 		setInterpolationTime(firstTime());
@@ -725,13 +725,13 @@ public class KeyFrameInterpolator implements Copyable {
 	}
 
 	protected void updateModifiedFrameValues() {
-		AbstractKeyFrame kf;
-		AbstractKeyFrame prev = keyFrameList.get(0);
+		KeyFrame kf;
+		KeyFrame prev = keyFrameList.get(0);
 		kf = keyFrameList.get(0);
 
 		int index = 1;
 		while (kf != null) {
-			AbstractKeyFrame next = (index < keyFrameList.size()) ? keyFrameList.get(index) : null;
+			KeyFrame next = (index < keyFrameList.size()) ? keyFrameList.get(index) : null;
 			index++;
 			if (next != null)
 				kf.computeTangent(prev, next);
@@ -774,7 +774,7 @@ public class KeyFrameInterpolator implements Copyable {
 				path.add(new Frame(keyFrameList.get(0).position(), keyFrameList.get(0).orientation(), keyFrameList.get(0)
 						.magnitude()));
 			else {
-				AbstractKeyFrame[] kf = new AbstractKeyFrame[4];
+				KeyFrame[] kf = new KeyFrame[4];
 				kf[0] = keyFrameList.get(0);
 				kf[1] = kf[0];
 
@@ -829,7 +829,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 */
 	protected void checkValidity() {
 		boolean flag = false;
-		for (AbstractKeyFrame element : keyFrameList) {
+		for (KeyFrame element : keyFrameList) {
 			if (element.frame().lastUpdate() > lastUpdate()) {
 				flag = true;
 				break;

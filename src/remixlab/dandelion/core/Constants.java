@@ -205,40 +205,6 @@ public interface Constants extends EventConstants {
 		 * Decrease camera fly speed (only meaningful in first-person mode)
 		 */
 		DECREASE_CAMERA_FLY_SPEED("Decrease camera fly speed (only meaningful in first-person mode)", false, 0),
-		/**
-		 * Increase avatar fly speed (only meaningful in third-person mode)
-		 */
-		INCREASE_AVATAR_FLY_SPEED("Increase avatar fly speed (only meaningful in third-person mode)", false, 0),
-		/**
-		 * Decrease avatar fly speed (only meaningful in third-person mode)
-		 */
-		DECREASE_AVATAR_FLY_SPEED("Decrease avatar fly speed (only meaningful in third-person mode)", false, 0),
-		/**
-		 * Increase camera azimuth respect to the avatar (only meaningful in third-person mode)
-		 */
-		INCREASE_AZIMUTH("Increase camera azimuth respect to the avatar (only meaningful in third-person mode)", false, 0),
-		/**
-		 * Decrease camera azimuth respect to the avatar (only meaningful in third-person mode)
-		 */
-		DECREASE_AZIMUTH("Decrease camera azimuth respect to the avatar (only meaningful in third-person mode)", false, 0),
-		/**
-		 * Increase camera inclination respect to the avatar (only meaningful in third-person mode)
-		 */
-		INCREASE_INCLINATION("Increase camera inclination respect to the avatar (only meaningful in third-person mode)", true, 0),
-		/**
-		 * Decrease camera inclination respect to the avatar (only meaningful in third-person mode)
-		 */
-		DECREASE_INCLINATION("Decrease camera inclination respect to the avatar (only meaningful in third-person mode)", true, 0),
-		/**
-		 * Increase camera tracking distance respect to the avatar (only meaningful in third-person mode
-		 */
-		INCREASE_TRACKING_DISTANCE(
-				"Increase camera tracking distance respect to the avatar (only meaningful in third-person mode)", true, 0),
-		/**
-		 * Decrease camera tracking distance respect to the avatar (only meaningful in third-person mode)
-		 */
-		DECREASE_TRACKING_DISTANCE(
-				"Decrease camera tracking distance respect to the avatar (only meaningful in third-person mode)", true, 0),
 
 		// Wheel
 		/**
@@ -438,14 +404,6 @@ public interface Constants extends EventConstants {
 		DECREASE_ROTATION_SENSITIVITY(DandelionAction.DECREASE_ROTATION_SENSITIVITY),
 		INCREASE_CAMERA_FLY_SPEED(DandelionAction.INCREASE_CAMERA_FLY_SPEED),
 		DECREASE_CAMERA_FLY_SPEED(DandelionAction.DECREASE_CAMERA_FLY_SPEED),
-		INCREASE_AVATAR_FLY_SPEED(DandelionAction.INCREASE_AVATAR_FLY_SPEED),
-		DECREASE_AVATAR_FLY_SPEED(DandelionAction.DECREASE_AVATAR_FLY_SPEED),
-		INCREASE_AZIMUTH(DandelionAction.INCREASE_AZIMUTH),
-		DECREASE_AZIMUTH(DandelionAction.DECREASE_AZIMUTH),
-		INCREASE_INCLINATION(DandelionAction.INCREASE_INCLINATION),
-		DECREASE_INCLINATION(DandelionAction.DECREASE_INCLINATION),
-		INCREASE_TRACKING_DISTANCE(DandelionAction.INCREASE_TRACKING_DISTANCE),
-		DECREASE_TRACKING_DISTANCE(DandelionAction.DECREASE_TRACKING_DISTANCE),
 
 		CUSTOM(DandelionAction.CUSTOM);
 
@@ -520,14 +478,6 @@ public interface Constants extends EventConstants {
 		DECREASE_ROTATION_SENSITIVITY(DandelionAction.DECREASE_ROTATION_SENSITIVITY),
 		INCREASE_CAMERA_FLY_SPEED(DandelionAction.INCREASE_CAMERA_FLY_SPEED),
 		DECREASE_CAMERA_FLY_SPEED(DandelionAction.DECREASE_CAMERA_FLY_SPEED),
-		INCREASE_AVATAR_FLY_SPEED(DandelionAction.INCREASE_AVATAR_FLY_SPEED),
-		DECREASE_AVATAR_FLY_SPEED(DandelionAction.DECREASE_AVATAR_FLY_SPEED),
-		INCREASE_AZIMUTH(DandelionAction.INCREASE_AZIMUTH),
-		DECREASE_AZIMUTH(DandelionAction.DECREASE_AZIMUTH),
-		INCREASE_INCLINATION(DandelionAction.INCREASE_INCLINATION),
-		DECREASE_INCLINATION(DandelionAction.DECREASE_INCLINATION),
-		INCREASE_TRACKING_DISTANCE(DandelionAction.INCREASE_TRACKING_DISTANCE),
-		DECREASE_TRACKING_DISTANCE(DandelionAction.DECREASE_TRACKING_DISTANCE),
 
 		CUSTOM(DandelionAction.CUSTOM);
 
