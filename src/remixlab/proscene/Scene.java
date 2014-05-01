@@ -268,7 +268,7 @@ public class Scene extends AbstractScene implements PConstants {
 					DandelionAction dA = (DandelionAction) a.referenceAction();
 					if (dA == DandelionAction.SCREEN_TRANSLATE)
 						((InteractiveFrame) inputGrabber()).dirIsFixed = false;
-					rotateMode = ((dA == DandelionAction.ROTATE) || (dA == DandelionAction.ROTATE3)
+					rotateMode = ((dA == DandelionAction.ROTATE) || (dA == DandelionAction.ROTATE_XYZ)
 							|| (dA == DandelionAction.CAD_ROTATE)
 							|| (dA == DandelionAction.SCREEN_ROTATE) || (dA == DandelionAction.TRANSLATE_ROTATE));
 					if (rotateMode && scene.is3D())
@@ -368,9 +368,9 @@ public class Scene extends AbstractScene implements PConstants {
 			eyeProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.MOVE_FORWARD);
 			eyeProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, DOF2Action.LOOK_AROUND);
 			eyeProfile().setBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, DOF2Action.MOVE_BACKWARD);
-			eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.ROLL);
+			eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.YAW);
 			eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_CENTER), B_CENTER, DOF2Action.DRIVE);
-			eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.ROLL);
+			eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.YAW);
 			// TODO PITCH, YAW?
 			// eyeWheelProfile().setBinding(B_SHIFT, B_NOBUTTON, WheelAction.DRIVE);
 			frameProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.ROTATE);
@@ -391,7 +391,7 @@ public class Scene extends AbstractScene implements PConstants {
 			frameProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.MOVE_FORWARD);
 			frameProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, DOF2Action.LOOK_AROUND);
 			frameProfile().setBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, DOF2Action.MOVE_BACKWARD);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.ROLL);
+			frameProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.YAW);
 			frameProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_CENTER), B_CENTER, DOF2Action.DRIVE);
 			setCommonBindings();
 		}

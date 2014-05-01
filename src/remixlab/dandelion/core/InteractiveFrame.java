@@ -788,25 +788,23 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	 * Internal use. Utility routine for reducing the bogus motion event into a dandelion action.
 	 */
 	protected DandelionAction reduceEvent(MotionEvent e) {
-		// currentEvent = e;
 		currentAction = (DandelionAction) ((BogusEvent) e).action().referenceAction();
 		if (currentAction == null)
 			return null;
 
 		int dofs = currentAction.dofs();
-
+		boolean fromY = currentAction == DandelionAction.ROLL || currentAction == DandelionAction.ROTATE_X;
+		
 		switch (dofs) {
 		case 1:
 			if (e instanceof DOF1Event)
 				e1 = (DOF1Event) e.get();
 			else if (e instanceof DOF2Event)
-				e1 = currentAction == DandelionAction.ROLL ? ((DOF2Event) e).dof1Event() : ((DOF2Event) e).dof1Event(false);
+				e1 = fromY ? ((DOF2Event) e).dof1Event(false) : ((DOF2Event) e).dof1Event();
 			else if (e instanceof DOF3Event)
-				e1 = currentAction == DandelionAction.ROLL ? ((DOF3Event) e).dof2Event().dof1Event() : ((DOF3Event) e)
-						.dof2Event().dof1Event(false);
+				e1 = fromY ? ((DOF3Event) e).dof2Event().dof1Event(false) : ((DOF3Event) e).dof2Event().dof1Event();
 			else if (e instanceof DOF6Event)
-				e1 = currentAction == DandelionAction.ROLL ? ((DOF6Event) e).dof3Event().dof2Event().dof1Event()
-						: ((DOF6Event) e).dof3Event().dof2Event().dof1Event(false);
+				e1 = fromY ? ((DOF6Event) e).dof3Event().dof2Event().dof1Event(false) : ((DOF6Event) e).dof3Event().dof2Event().dof1Event();
 			break;
 		case 2:
 			if (e instanceof DOF2Event)
@@ -847,7 +845,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		case CUSTOM:
 			AbstractScene.showMissingImplementationWarning(a, this.getClass().getName());
 			break;
-		case ROLL:
+		case YAW:
 			// TODO needs testing
 			if (e1.action() != null) // its a wheel wheel :P
 				angle = (float) Math.PI * e1.x() * wheelSensitivity() / scene.window().screenWidth();
@@ -967,7 +965,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	protected void execAction3D(DandelionAction a) {
 		if (a == null)
 			return;
-		Quat q, rot;
+		Quat rot;
 		Vec trans;
 		float delta;
 		float angle;
@@ -984,10 +982,10 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			startTossing(e2);
 			break;
 		case LOOK_AROUND:
-			rotate(pitchYawQuaternion(e2, scene.camera()));
+			rotate(rollPitchQuaternion(e2, scene.camera()));
 			break;
 		case MOVE_BACKWARD:
-			rotate(pitchYawQuaternion(e2, scene.camera()));
+			rotate(rollPitchQuaternion(e2, scene.camera()));
 			flyDisp.set(0.0f, 0.0f, flySpeed());
 			// trans = localInverseTransformOf(flyDisp, false);
 			trans = rotation().rotate(flyDisp);
@@ -995,7 +993,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			startTossing(e2);
 			break;
 		case MOVE_FORWARD:
-			rotate(pitchYawQuaternion(e2, scene.camera()));
+			rotate(rollPitchQuaternion(e2, scene.camera()));
 			flyDisp.set(0.0f, 0.0f, -flySpeed());
 			// trans = localInverseTransformOf(flyDisp, false);
 			trans = rotation().rotate(flyDisp);
@@ -1003,19 +1001,22 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			startTossing(e2);
 			break;
 		case ROLL:
-			if (e1.action() != null) // its a wheel wheel :P
-				angle = (float) Math.PI * e1.x() * wheelSensitivity() / scene.camera().screenWidth();
-			else if (e1.isAbsolute())
-				angle = (float) Math.PI * e1.x() / scene.camera().screenWidth();
-			else
-				angle = (float) Math.PI * e1.dx() / scene.camera().screenWidth();
-			// lef-handed coordinate system correction
-			if (scene.isLeftHanded())
-				angle = -angle;
-			q = new Quat(new Vec(0.0f, 0.0f, 1.0f), angle);
-			rotate(q);
-			setSpinningRotation(q);
-			updateSceneUpVector();
+			rotateAroundFrameAxis(new Vec(scene.isLeftHanded() ? -1 : 1, 0, 0));
+			break;
+		case PITCH:
+			rotateAroundFrameAxis(new Vec(0,1,0));
+			break;
+		case YAW:
+			rotateAroundFrameAxis(new Vec(0,0,scene.isLeftHanded() ? 1 : -1));
+			break;
+		case ROTATE_X:
+			rotateScreenX();
+			break;
+		case ROTATE_Y:
+			rotateScreenY();
+			break;
+		case ROTATE_Z:
+			rotateScreenZ();
 			break;
 		case ROTATE:
 			if (e2.isAbsolute()) {
@@ -1023,30 +1024,23 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				break;
 			}
 			trans = scene.camera().projectedCoordinatesOf(position());
-			rot = deformedBallQuaternion(e2, trans.x(), trans.y(), scene.camera());
-			rot = iFrameQuaternion(rot, scene.camera());
+			rot = deformedBallQuaternion(e2, trans.x(), trans.y(), scene.camera());			
+			trans = rot.axis();
+			trans = scene.camera().frame().orientation().rotate(trans);
+			trans = transformOf(trans);
+			rot = new Quat(trans, -rot.angle());	
 			setSpinningRotation(rot);
 			if (Util.nonZero(dampingFriction()))
 				startSpinning(e2);
 			else
 				spin();
 			break;
-		case ROTATE3:
-			q = new Quat();
-			trans = scene.camera().projectedCoordinatesOf(position());
+		case ROTATE_XYZ:
+			//trans = scene.camera().projectedCoordinatesOf(position());
 			if (e3.isAbsolute())
-				q.fromEulerAngles(e3.x(), e3.y(), -e3.z());
+				rotateScreen(e3.x(), -e3.y(), -e3.z());
 			else
-				q.fromEulerAngles(e3.dx(), e3.dy(), -e3.dz());
-			trans.set(-q.x(), -q.y(), -q.z());
-			trans = scene.camera().frame().orientation().rotate(trans);
-			// TODO second option is new but should really go without false (please test me with space nav)
-			// trans = transformOf(trans, false);
-			trans = transformOf(trans);
-			q.setX(trans.x());
-			q.setY(trans.y());
-			q.setZ(trans.z());
-			rotate(q);
+				rotateScreen(e3.dx(), -e3.dy(), -e3.dz());
 			break;
 		case SCREEN_ROTATE:
 			if (e2.isAbsolute()) {
@@ -1056,10 +1050,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			trans = scene.camera().projectedCoordinatesOf(position());
 			float prev_angle = (float) Math.atan2(e2.prevY() - trans.vec[1], e2.prevX() - trans.vec[0]);
 			angle = (float) Math.atan2(e2.y() - trans.vec[1], e2.x() - trans.vec[0]);
-			// TODO test (2nd option is new and different than the first)
-			// Vec axis = transformOf(scene.camera().frame().inverseTransformOf(new Vec(0.0f, 0.0f, -1.0f)));
 			Vec axis = transformOf(scene.camera().frame().orientation().rotate(new Vec(0.0f, 0.0f, -1.0f)));
-			// TODO testing handed
 			if (scene.isRightHanded())
 				rot = new Quat(axis, angle - prev_angle);
 			else
@@ -1071,7 +1062,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				spin();
 			break;
 		case SCREEN_TRANSLATE:
-			// TODO: needs testing to see if it works correctly when left-handed is set
 			int dir = originalDirection(e2);
 			trans = new Vec();
 			if (dir == 1)
@@ -1081,9 +1071,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 					trans.set(e2.dx(), 0.0f, 0.0f);
 			else if (dir == -1)
 				if (e2.isAbsolute())
-					trans.set(0.0f, e2.y(), 0.0f);
+					trans.set(0.0f, scene.isLeftHanded() ? e2.y() : -e2.y(), 0.0f);
 				else
-					trans.set(0.0f, e2.dy(), 0.0f);
+					trans.set(0.0f, scene.isLeftHanded() ? e2.dy() : -e2.dy(), 0.0f);
 			switch (scene.camera().type()) {
 			case PERSPECTIVE:
 				trans.multiply(2.0f
@@ -1123,9 +1113,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			break;
 		case TRANSLATE3:
 			if (e3.isRelative())
-				trans = new Vec(e3.dx(), scene.isRightHanded() ? -e3.dy() : e3.dy(), e3.dz());
+				trans = new Vec(e3.dx(), scene.isRightHanded() ? -e3.dy() : e3.dy(), -e3.dz());
 			else
-				trans = new Vec(e3.x(), scene.isRightHanded() ? -e3.y() : e3.y(), e3.z());
+				trans = new Vec(e3.x(), scene.isRightHanded() ? -e3.y() : e3.y(), -e3.z());
 			// Scale to fit the screen mouse displacement
 			switch (scene.camera().type()) {
 			case PERSPECTIVE:
@@ -1146,9 +1136,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		case TRANSLATE_ROTATE:
 			// A. Translate the iFrame
 			if (e6.isRelative())
-				trans = new Vec(e6.dx(), scene.isRightHanded() ? -e6.dy() : e6.dy(), e6.dz());
+				trans = new Vec(e6.dx(), scene.isRightHanded() ? -e6.dy() : e6.dy(), -e6.dz());
 			else
-				trans = new Vec(e6.x(), scene.isRightHanded() ? -e6.y() : e6.y(), e6.z());
+				trans = new Vec(e6.x(), scene.isRightHanded() ? -e6.y() : e6.y(), -e6.z());
 			// Scale to fit the screen mouse displacement
 			switch (scene.camera().type()) {
 			case PERSPECTIVE:
@@ -1166,21 +1156,11 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			}
 			translateFromEye(trans);
 			// B. Rotate the iFrame
-			q = new Quat();
 			trans = scene.camera().projectedCoordinatesOf(position());
 			if (e6.isAbsolute())
-				q.fromEulerAngles(e6.roll(), e6.pitch(), -e6.yaw());
+				rotateScreen(e6.roll(), -e6.pitch(), -e6.yaw());
 			else
-				q.fromEulerAngles(e6.drx(), e6.dry(), -e6.drz());
-			trans.set(-q.x(), -q.y(), -q.z());
-			trans = scene.camera().frame().orientation().rotate(trans);
-			// TODO second option is new but should really go without false (please test me with space nav)
-			// trans = transformOf(trans, false);
-			trans = transformOf(trans);
-			q.setX(trans.x());
-			q.setY(trans.y());
-			q.setZ(trans.z());
-			rotate(q);
+				rotateScreen(e6.drx(), -e6.dry(), -e6.drz());
 			break;
 		case SCALE:
 			if (e1.action() != null) // its a wheel wheel :P
@@ -1218,7 +1198,59 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	}
 
 	// micro-actions procedures
+	
+	protected float computeAngle() {
+		float angle;
+		if (e1.action() != null) // its a wheel wheel :P
+			angle = (float) Math.PI * e1.x() * wheelSensitivity() / scene.camera().screenWidth();
+		else if (e1.isAbsolute())
+			angle = (float) Math.PI * e1.x() / scene.camera().screenWidth();
+		else
+			angle = (float) Math.PI * e1.dx() / scene.camera().screenWidth();
+		return angle;
+	}
+	
+	protected void rotateAroundFrameAxis(Vec axis) {
+		rotateAroundFrameAxis(axis, computeAngle());
+	}
+	
+	public void rotateAroundFrameAxis(Vec axis, float angle) {
+		// lef-handed coordinate system correction
+		//if (scene.isLeftHanded())	angle = -angle;
+		Quat q = new Quat(axis, angle);
+		rotate(q);
+		setSpinningRotation(q);
+		updateSceneUpVector();
+	}
+	
+	protected void rotateScreenX() {
+		rotateScreen(computeAngle(),0,0);
+	}
+	
+	protected void rotateScreenY() {
+		rotateScreen(0,computeAngle(),0);
+	}
+	
+	protected void rotateScreenZ() {
+		rotateScreen(0,0,computeAngle());
+	}
 
+	public void rotateScreen(float roll, float pitch, float yaw) {
+		Vec trans = new Vec();
+		Quat q = new Quat();
+		q.fromEulerAngles(scene.isLeftHanded() ? roll : -roll, -pitch, scene.isLeftHanded() ? yaw : -yaw);
+		//trans = scene.camera().projectedCoordinatesOf(position());
+		trans.set(-q.x(), -q.y(), -q.z());
+		trans = scene.camera().frame().orientation().rotate(trans);
+		// TODO second option is new but should really go without false (please test me with space nav)
+		// trans = transformOf(trans, false);
+		trans = transformOf(trans);
+		q.setX(trans.x());
+		q.setY(trans.y());
+		q.setZ(trans.z());
+		rotate(q);
+	}
+	
 	protected void translateFromEye(Vec trans) {
 		translateFromEye(trans, translationSensitivity());
 	}
@@ -1256,15 +1288,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		Vec axis = p2.cross(p1);
 		float angle = 2.0f * (float) Math.asin((float) Math.sqrt(axis.squaredNorm() / p1.squaredNorm() / p2.squaredNorm()));
 		return new Quat(axis, angle);
-	}
-
-	protected final Quat iFrameQuaternion(Quat rot, Camera camera) {
-		Vec trans = new Vec();
-		trans = rot.axis();
-		trans = camera.frame().orientation().rotate(trans);
-		trans = transformOf(trans);
-		// trans = transformOfFrom(trans, camera.frame());
-		return new Quat(trans, -rot.angle());
 	}
 
 	/**
@@ -1356,10 +1379,10 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	}
 
 	/**
-	 * Returns a Quaternion that is the composition of two rotations, inferred from the mouse pitch (X axis) and yaw (
+	 * Returns a Quaternion that is the composition of two rotations, inferred from the mouse roll (X axis) and pitch (
 	 * {@link #sceneUpVector()} axis).
 	 */
-	protected final Quat pitchYawQuaternion(DOF2Event event, Camera camera) {
+	protected final Quat rollPitchQuaternion(DOF2Event event, Camera camera) {
 		float deltaX = event.isAbsolute() ? event.x() : event.dx();
 		float deltaY = event.isAbsolute() ? event.y() : event.dy();
 

@@ -24,7 +24,6 @@ import remixlab.util.HashCodeBuilder;
  * {@link #trackingDistance()}) respect to the {@link #position()} (which defines its {@link #target()}) of the
  * InteractiveAvatarFrame.
  */
-// TODO: decide 2d implementation
 public class InteractiveAvatarFrame extends InteractiveFrame implements Constants, Trackable, Copyable {
 	@Override
 	public int hashCode() {
@@ -54,7 +53,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 				.isEquals();
 	}
 
-	private Quat	q;
+	private Rotation	q;
 	private float	trackingDist;
 	private Vec		camRelPos;
 
@@ -66,8 +65,12 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 	 */
 	public InteractiveAvatarFrame(AbstractScene scn) {
 		super(scn);
-		q = new Quat();
-		q.fromTaitBryan(QUARTER_PI, 0, 0);
+		if( scene.is3D() ) {
+			q = new Quat();
+			((Quat) q).fromTaitBryan(QUARTER_PI, 0, 0);
+		} else {
+			q = new Rot(QUARTER_PI);
+		}
 		camRelPos = new Vec();
 		setTrackingDistance(scene.radius() / 5);
 		// scene.setAvatar(this);
@@ -118,16 +121,25 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 	 */
 	public float azimuth() {
 		// azimuth <-> pitch
-		return q.taitBryanAngles().vec[1];
+		if( scene.is3D() )
+			return ((Quat) q).taitBryanAngles().vec[1];
+		else {
+			AbstractScene.showDepthWarning("azimuth");
+			return 0;
+		}
 	}
 
 	/**
 	 * Sets the {@link #azimuth()} of the tracking camera.
 	 */
 	public void setAzimuth(float a) {
-		float roll = q.taitBryanAngles().vec[0];
-		q.fromTaitBryan(roll, a, 0);
-		computeEyePosition();
+		if (scene.is3D()) {
+			float roll = ((Quat) q).taitBryanAngles().vec[0];
+			((Quat) q).fromTaitBryan(roll, a, 0);
+			computeEyePosition();
+		}
+		else
+			AbstractScene.showDepthWarning("setAzimuth");
 	}
 
 	/**
@@ -135,15 +147,22 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 	 */
 	public float inclination() {
 		// inclination <-> roll
-		return q.taitBryanAngles().vec[0];
+		if(scene.is3D())
+			return ((Quat) q).taitBryanAngles().vec[0];
+		else
+			return q.angle();
 	}
 
 	/**
 	 * Sets the {@link #inclination()} of the tracking camera.
 	 */
 	public void setInclination(float i) {
-		float pitch = q.taitBryanAngles().vec[1];
-		q.fromTaitBryan(i, pitch, 0);
+		if( scene.is3D() ) {
+			float pitch = ((Quat) q).taitBryanAngles().vec[1];
+			((Quat) q).fromTaitBryan(i, pitch, 0);
+		}
+		else
+			q = new Rot(i);
 		computeEyePosition();
 	}
 
@@ -183,7 +202,10 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 	 */
 	@Override
 	public void computeEyePosition() {
-		camRelPos = q.rotate(new Vec(0, 0, 1));
+		if( scene.is3D() )
+			camRelPos = q.rotate(new Vec(0, 0, 1));
+		else
+			camRelPos = q.rotate(new Vec(0, 1));
 		camRelPos.multiply(trackingDistance());
 	}
 }

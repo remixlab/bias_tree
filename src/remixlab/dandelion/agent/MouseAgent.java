@@ -70,9 +70,9 @@ public class MouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Act
 		eyeProfile().setBinding(B_NOMODIFIER_MASK, B_LEFT, DOF2Action.MOVE_FORWARD);
 		eyeProfile().setBinding(B_NOMODIFIER_MASK, B_CENTER, DOF2Action.LOOK_AROUND);
 		eyeProfile().setBinding(B_NOMODIFIER_MASK, B_RIGHT, DOF2Action.MOVE_BACKWARD);
-		eyeProfile().setBinding(B_SHIFT, B_LEFT, DOF2Action.ROLL);
+		eyeProfile().setBinding(B_SHIFT, B_LEFT, DOF2Action.YAW);
 		eyeProfile().setBinding(B_SHIFT, B_CENTER, DOF2Action.DRIVE);
-		eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.ROLL);
+		eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.YAW);
 		// TODO PITCH, YAW?
 		// eyeWheelProfile().setBinding(B_SHIFT, B_NOBUTTON, WheelAction.DRIVE);
 		frameProfile().setBinding(B_NOMODIFIER_MASK, B_LEFT, DOF2Action.ROTATE);
@@ -104,7 +104,7 @@ public class MouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Act
 		frameProfile().setBinding(B_NOMODIFIER_MASK, B_LEFT, DOF2Action.MOVE_FORWARD);
 		frameProfile().setBinding(B_NOMODIFIER_MASK, B_CENTER, DOF2Action.LOOK_AROUND);
 		frameProfile().setBinding(B_NOMODIFIER_MASK, B_RIGHT, DOF2Action.MOVE_BACKWARD);
-		frameProfile().setBinding(B_SHIFT, B_LEFT, DOF2Action.ROLL);
+		frameProfile().setBinding(B_SHIFT, B_LEFT, DOF2Action.YAW);
 		frameProfile().setBinding(B_SHIFT, B_CENTER, DOF2Action.DRIVE);
 		setCommonBindings();
 	}

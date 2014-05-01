@@ -78,7 +78,7 @@ public void draw() {
   endShape(CLOSE);
 }	
 
-public void keyPressed() { 
+public void keyPressed() {
   if (key == 'x') {
     print("avatar up vector: ");
     scene.avatar().upVector().print();

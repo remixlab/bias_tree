@@ -341,12 +341,12 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 				if (avatarIsInteractiveFrame)
 					((InteractiveFrame) avatar()).setFlySpeed(((InteractiveFrame) avatar()).flySpeed() / 1.2f);
 			break;
-		case INCREASE_AZYMUTH:
+		case INCREASE_AZIMUTH:
 			if (avatar() != null)
 				if (avatarIsInteractiveAvatarFrame)
 					((InteractiveAvatarFrame) avatar()).setAzimuth(((InteractiveAvatarFrame) avatar()).azimuth() + PI / 64);
 			break;
-		case DECREASE_AZYMUTH:
+		case DECREASE_AZIMUTH:
 			if (avatar() != null)
 				if (avatarIsInteractiveAvatarFrame)
 					((InteractiveAvatarFrame) avatar()).setAzimuth(((InteractiveAvatarFrame) avatar()).azimuth() - PI / 64);
@@ -819,7 +819,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		if (avatar() != null && (!eye().anyInterpolationIsStarted())) {
 			eye().setPosition(avatar().eyePosition());
 			eye().setUpVector(avatar().upVector());
-			eye().lookAt(avatar().target());
+			if(is3D()) eye().lookAt(avatar().target());
 		}
 		bind();
 		if (areBoundaryEquationsEnabled())

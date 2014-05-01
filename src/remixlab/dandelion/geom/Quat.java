@@ -139,24 +139,7 @@ public class Quat implements Constants, Linkable, Rotation {
 			this.quat[3] = q[3];
 		}
 	}
-
-	protected Quat(Quat q1) {
-		set(q1);
-	}
-
-	@Override
-	public void reset() {
-		this.quat[0] = 0;
-		this.quat[1] = 0;
-		this.quat[2] = 0;
-		this.quat[3] = 1;
-	}
-
-	@Override
-	public Quat get() {
-		return new Quat(this);
-	}
-
+	
 	/**
 	 * Copy constructor. If {@code normalize} is {@code true} this Quat is {@link #normalize()}.
 	 * 
@@ -165,6 +148,52 @@ public class Quat implements Constants, Linkable, Rotation {
 	 */
 	public Quat(Quat q1, boolean normalize) {
 		set(q1, normalize);
+	}
+	
+	/**
+	 * Constructs and initializes a Quat from the specified rotation {@link #axis() axis} (non null) and {@link #angle()
+	 * angle} (in radians).
+	 * 
+	 * @param axis
+	 *          the Vec representing the axis
+	 * @param angle
+	 *          the angle in radians
+	 * 
+	 * @see #fromAxisAngle(Vec, float)
+	 */
+	public Quat(Vec axis, float angle) {
+		fromAxisAngle(axis, angle);
+	}
+
+	/**
+	 * Constructs a Quat that will rotate from the {@code from} direction to the {@code to} direction.
+	 * 
+	 * @param from
+	 *          the first Vec
+	 * @param to
+	 *          the second Vec
+	 * 
+	 * @see #fromTo(Vec, Vec)
+	 */
+	public Quat(Vec from, Vec to) {
+		fromTo(from, to);
+	}
+	
+	protected Quat(Quat q1) {
+		set(q1);
+	}
+	
+	@Override
+	public Quat get() {
+		return new Quat(this);
+	}
+
+	@Override
+	public void reset() {
+		this.quat[0] = 0;
+		this.quat[1] = 0;
+		this.quat[2] = 0;
+		this.quat[3] = 1;
 	}
 
 	@Override
@@ -284,35 +313,6 @@ public class Quat implements Constants, Linkable, Rotation {
 		this.quat[3] = q1.quat[3];
 		if (normalize)
 			this.normalize();
-	}
-
-	/**
-	 * Constructs and initializes a Quat from the specified rotation {@link #axis() axis} (non null) and {@link #angle()
-	 * angle} (in radians).
-	 * 
-	 * @param axis
-	 *          the Vec representing the axis
-	 * @param angle
-	 *          the angle in radians
-	 * 
-	 * @see #fromAxisAngle(Vec, float)
-	 */
-	public Quat(Vec axis, float angle) {
-		fromAxisAngle(axis, angle);
-	}
-
-	/**
-	 * Constructs a Quat that will rotate from the {@code from} direction to the {@code to} direction.
-	 * 
-	 * @param from
-	 *          the first Vec
-	 * @param to
-	 *          the second Vec
-	 * 
-	 * @see #fromTo(Vec, Vec)
-	 */
-	public Quat(Vec from, Vec to) {
-		fromTo(from, to);
 	}
 
 	/**
@@ -682,8 +682,7 @@ public class Quat implements Constants, Linkable, Rotation {
 	 * 
 	 * @return the Vec holding the roll (x coordinate of the vector), pitch (y coordinate of the vector) and yaw angles (z
 	 *         coordinate of the vector). <b>Note:</b> The order of the rotations that would produce this Quat (i.e., as
-	 *         with {@code fromEulerAngles(roll, pitch,
-	 *         yaw)}) is: y->z->x.
+	 *         with {@code fromEulerAngles(roll, pitch, yaw)}) is: y->z->x.
 	 * 
 	 * @see #fromEulerAngles(float, float, float)
 	 */

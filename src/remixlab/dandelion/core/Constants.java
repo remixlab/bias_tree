@@ -214,33 +214,31 @@ public interface Constants extends EventConstants {
 		 */
 		DECREASE_AVATAR_FLY_SPEED("Decrease avatar fly speed (only meaningful in third-person mode)", false, 0),
 		/**
-		 * Increase camera azymuth respect to the avatar (only meaningful in third-person mode)
+		 * Increase camera azimuth respect to the avatar (only meaningful in third-person mode)
 		 */
-		INCREASE_AZYMUTH("Increase camera azymuth respect to the avatar (only meaningful in third-person mode)", false, 0),
+		INCREASE_AZIMUTH("Increase camera azimuth respect to the avatar (only meaningful in third-person mode)", false, 0),
 		/**
-		 * Decrease camera azymuth respect to the avatar (only meaningful in third-person mode)
+		 * Decrease camera azimuth respect to the avatar (only meaningful in third-person mode)
 		 */
-		DECREASE_AZYMUTH("Decrease camera azymuth respect to the avatar (only meaningful in third-person mode)", false, 0),
+		DECREASE_AZIMUTH("Decrease camera azimuth respect to the avatar (only meaningful in third-person mode)", false, 0),
 		/**
 		 * Increase camera inclination respect to the avatar (only meaningful in third-person mode)
 		 */
-		INCREASE_INCLINATION("Increase camera inclination respect to the avatar (only meaningful in third-person mode)",
-				false, 0),
+		INCREASE_INCLINATION("Increase camera inclination respect to the avatar (only meaningful in third-person mode)", true, 0),
 		/**
 		 * Decrease camera inclination respect to the avatar (only meaningful in third-person mode)
 		 */
-		DECREASE_INCLINATION("Decrease camera inclination respect to the avatar (only meaningful in third-person mode)",
-				false, 0),
+		DECREASE_INCLINATION("Decrease camera inclination respect to the avatar (only meaningful in third-person mode)", true, 0),
 		/**
 		 * Increase camera tracking distance respect to the avatar (only meaningful in third-person mode
 		 */
 		INCREASE_TRACKING_DISTANCE(
-				"Increase camera tracking distance respect to the avatar (only meaningful in third-person mode)", false, 0),
+				"Increase camera tracking distance respect to the avatar (only meaningful in third-person mode)", true, 0),
 		/**
 		 * Decrease camera tracking distance respect to the avatar (only meaningful in third-person mode)
 		 */
 		DECREASE_TRACKING_DISTANCE(
-				"Decrease camera tracking distance respect to the avatar (only meaningful in third-person mode)", false, 0),
+				"Decrease camera tracking distance respect to the avatar (only meaningful in third-person mode)", true, 0),
 
 		// Wheel
 		/**
@@ -252,23 +250,43 @@ public interface Constants extends EventConstants {
 		 */
 		ZOOM("Zoom eye", false, 1),
 		/**
-		 * Zoom eye
+		 * Zoom eye on anchor
 		 */
 		ZOOM_ON_ANCHOR("Zoom eye on anchor", false, 1),
 		/**
 		 * Roll frame (camera or interactive frame)
 		 */
-		ROLL("Roll frame (eye or interactive frame)", true, 1),
+		ROLL("Roll frame (eye or interactive frame)", false, 1),
+		/**
+		 * Pitch frame (camera or interactive frame)
+		 */
+		PITCH("Picth frame (eye or interactive frame)", false, 1),
+		/**
+		 * Yaw frame (camera or interactive frame)
+		 */
+		YAW("Yaw frame (eye or interactive frame)", true, 1),
+		/**
+		 * Rotate frame around screen x axis (eye or interactive frame)
+		 */
+		ROTATE_X("Rotate frame around screen x axis (eye or interactive frame)", false, 1),
+		/**
+		 * Rotate frame around screen y axis (eye or interactive frame)
+		 */
+		ROTATE_Y("Rotate frame around screen y axis (eye or interactive frame)", false, 1),
+		/**
+		 * Rotate frame around screen z axis (eye or interactive frame)
+		 */
+		ROTATE_Z("Rotate frame around screen z axis (eye or interactive frame)", true, 1),
 		/**
 		 * Drive (camera or interactive frame)
 		 */
 		DRIVE("Drive (camera or interactive frame)", false, 2),
 
-		// DEVICE ACTIONs
+		// 2 DOFs ACTIONs
 		/**
-		 * Rotate frame (eye or interactive frame)
+		 * Frame (eye or interactive frame) arcball rotate
 		 */
-		ROTATE("Rotate frame (eye or interactive frame)", true, 2),
+		ROTATE("Frame (eye or interactive frame) arcball rotate", true, 2),
 		/**
 		 * Rotate camera frame as in CAD applications
 		 */
@@ -308,7 +326,7 @@ public interface Constants extends EventConstants {
 		/**
 		 * Rotate frame (camera or interactive frame) from Euler angles
 		 */
-		ROTATE3("Rotate frame (camera or interactive frame) from Euler angles", false, 3),
+		ROTATE_XYZ("Rotate frame (camera or interactive frame) from Euler angles", false, 3),
 
 		// GOOGLE_EARTH("Google earth emulation", false, 6),
 		/**
@@ -422,8 +440,8 @@ public interface Constants extends EventConstants {
 		DECREASE_CAMERA_FLY_SPEED(DandelionAction.DECREASE_CAMERA_FLY_SPEED),
 		INCREASE_AVATAR_FLY_SPEED(DandelionAction.INCREASE_AVATAR_FLY_SPEED),
 		DECREASE_AVATAR_FLY_SPEED(DandelionAction.DECREASE_AVATAR_FLY_SPEED),
-		INCREASE_AZYMUTH(DandelionAction.INCREASE_AZYMUTH),
-		DECREASE_AZYMUTH(DandelionAction.DECREASE_AZYMUTH),
+		INCREASE_AZIMUTH(DandelionAction.INCREASE_AZIMUTH),
+		DECREASE_AZIMUTH(DandelionAction.DECREASE_AZIMUTH),
 		INCREASE_INCLINATION(DandelionAction.INCREASE_INCLINATION),
 		DECREASE_INCLINATION(DandelionAction.DECREASE_INCLINATION),
 		INCREASE_TRACKING_DISTANCE(DandelionAction.INCREASE_TRACKING_DISTANCE),
@@ -504,8 +522,8 @@ public interface Constants extends EventConstants {
 		DECREASE_CAMERA_FLY_SPEED(DandelionAction.DECREASE_CAMERA_FLY_SPEED),
 		INCREASE_AVATAR_FLY_SPEED(DandelionAction.INCREASE_AVATAR_FLY_SPEED),
 		DECREASE_AVATAR_FLY_SPEED(DandelionAction.DECREASE_AVATAR_FLY_SPEED),
-		INCREASE_AZYMUTH(DandelionAction.INCREASE_AZYMUTH),
-		DECREASE_AZYMUTH(DandelionAction.DECREASE_AZYMUTH),
+		INCREASE_AZIMUTH(DandelionAction.INCREASE_AZIMUTH),
+		DECREASE_AZIMUTH(DandelionAction.DECREASE_AZIMUTH),
 		INCREASE_INCLINATION(DandelionAction.INCREASE_INCLINATION),
 		DECREASE_INCLINATION(DandelionAction.DECREASE_INCLINATION),
 		INCREASE_TRACKING_DISTANCE(DandelionAction.INCREASE_TRACKING_DISTANCE),
@@ -551,7 +569,12 @@ public interface Constants extends EventConstants {
 		ZOOM(DandelionAction.ZOOM),
 		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
 		ROLL(DandelionAction.ROLL),
-
+		PITCH(DandelionAction.PITCH),
+		YAW(DandelionAction.YAW),
+		ROTATE_X(DandelionAction.ROTATE_X),
+		ROTATE_Y(DandelionAction.ROTATE_Y),
+		ROTATE_Z(DandelionAction.ROTATE_Z),
+		
 		CUSTOM(DandelionAction.CUSTOM);
 
 		@Override
@@ -592,6 +615,11 @@ public interface Constants extends EventConstants {
 		ZOOM(DandelionAction.ZOOM),
 		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
 		ROLL(DandelionAction.ROLL),
+		PITCH(DandelionAction.PITCH),
+		YAW(DandelionAction.YAW),
+		ROTATE_X(DandelionAction.ROTATE_X),
+		ROTATE_Y(DandelionAction.ROTATE_Y),
+		ROTATE_Z(DandelionAction.ROTATE_Z),
 
 		// DOF_2
 		DRIVE(DandelionAction.DRIVE),
@@ -645,6 +673,11 @@ public interface Constants extends EventConstants {
 		ZOOM(DandelionAction.ZOOM),
 		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
 		ROLL(DandelionAction.ROLL),
+		PITCH(DandelionAction.PITCH),
+		YAW(DandelionAction.YAW),
+		ROTATE_X(DandelionAction.ROTATE_X),
+		ROTATE_Y(DandelionAction.ROTATE_Y),
+		ROTATE_Z(DandelionAction.ROTATE_Z),
 
 		// DOF_2
 		DRIVE(DandelionAction.DRIVE),
@@ -660,7 +693,7 @@ public interface Constants extends EventConstants {
 
 		// DOF_3
 		TRANSLATE3(DandelionAction.TRANSLATE3),
-		ROTATE3(DandelionAction.ROTATE3),
+		ROTATE_XYZ(DandelionAction.ROTATE_XYZ),
 
 		CUSTOM(DandelionAction.CUSTOM);
 
@@ -702,6 +735,11 @@ public interface Constants extends EventConstants {
 		ZOOM(DandelionAction.ZOOM),
 		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
 		ROLL(DandelionAction.ROLL),
+		PITCH(DandelionAction.PITCH),
+		YAW(DandelionAction.YAW),
+		ROTATE_X(DandelionAction.ROTATE_X),
+		ROTATE_Y(DandelionAction.ROTATE_Y),
+		ROTATE_Z(DandelionAction.ROTATE_Z),
 
 		// DOF_2
 		ROTATE(DandelionAction.ROTATE),
@@ -717,7 +755,7 @@ public interface Constants extends EventConstants {
 
 		// DOF_3
 		TRANSLATE3(DandelionAction.TRANSLATE3),
-		ROTATE3(DandelionAction.ROTATE3),
+		ROTATE_XYZ(DandelionAction.ROTATE_XYZ),
 
 		// DOF_6
 		TRANSLATE_ROTATE(DandelionAction.TRANSLATE_ROTATE),
