@@ -176,19 +176,19 @@ public interface Constants extends EventConstants {
 		/**
 		 * Move eye to the left
 		 */
-		MOVE_EYE_LEFT("Move eye to the left", true, 0),
+		MOVE_LEFT("Move eye to the left", true, 0),
 		/**
 		 * Move eye to the right
 		 */
-		MOVE_EYE_RIGHT("Move eye to the right", true, 0),
+		MOVE_RIGHT("Move eye to the right", true, 0),
 		/**
 		 * Move eye up
 		 */
-		MOVE_EYE_UP("Move eye up", true, 0),
+		MOVE_UP("Move eye up", true, 0),
 		/**
 		 * Move eye down
 		 */
-		MOVE_EYE_DOWN("Move eye down", true, 0),
+		MOVE_DOWN("Move eye down", true, 0),
 		/**
 		 * Increase frame rotation sensitivity
 		 */
@@ -198,13 +198,13 @@ public interface Constants extends EventConstants {
 		 */
 		DECREASE_ROTATION_SENSITIVITY("Decrease frame rotation sensitivity", true, 0),
 		/**
-		 * Increase camera fly speed (only meaningful in first-person mode)
+		 * Increase eye fly speed
 		 */
-		INCREASE_CAMERA_FLY_SPEED("Increase camera fly speed (only meaningful in first-person mode)", false, 0),
+		INCREASE_FLY_SPEED("Increase eye fly speed", true, 0),
 		/**
-		 * Decrease camera fly speed (only meaningful in first-person mode)
+		 * Decrease eye fly speed
 		 */
-		DECREASE_CAMERA_FLY_SPEED("Decrease camera fly speed (only meaningful in first-person mode)", false, 0),
+		DECREASE_FLY_SPEED("Decrease eye fly speed", true, 0),
 
 		// Wheel
 		/**
@@ -264,11 +264,11 @@ public interface Constants extends EventConstants {
 		/**
 		 * Move forward frame (camera or interactive frame)
 		 */
-		MOVE_FORWARD("Move forward frame (camera or interactive frame)", false, 2),
+		MOVE_FORWARD("Move forward frame (camera or interactive frame)", true, 2),
 		/**
 		 * Move backward frame (camera or interactive frame)
 		 */
-		MOVE_BACKWARD("Move backward frame (camera or interactive frame)", false, 2),
+		MOVE_BACKWARD("Move backward frame (camera or interactive frame)", true, 2),
 		/**
 		 * Look around with frame (camera or interactive frame)
 		 */
@@ -396,14 +396,14 @@ public interface Constants extends EventConstants {
 		SHOW_ALL(DandelionAction.SHOW_ALL),
 
 		// CAMERA KEYBOARD ACTIONs
-		MOVE_EYE_LEFT(DandelionAction.MOVE_EYE_LEFT),
-		MOVE_EYE_RIGHT(DandelionAction.MOVE_EYE_RIGHT),
-		MOVE_EYE_UP(DandelionAction.MOVE_EYE_UP),
-		MOVE_EYE_DOWN(DandelionAction.MOVE_EYE_DOWN),
+		MOVE_LEFT(DandelionAction.MOVE_LEFT),
+		MOVE_RIGHT(DandelionAction.MOVE_RIGHT),
+		MOVE_UP(DandelionAction.MOVE_UP),
+		MOVE_DOWN(DandelionAction.MOVE_DOWN),
 		INCREASE_ROTATION_SENSITIVITY(DandelionAction.INCREASE_ROTATION_SENSITIVITY),
 		DECREASE_ROTATION_SENSITIVITY(DandelionAction.DECREASE_ROTATION_SENSITIVITY),
-		INCREASE_CAMERA_FLY_SPEED(DandelionAction.INCREASE_CAMERA_FLY_SPEED),
-		DECREASE_CAMERA_FLY_SPEED(DandelionAction.DECREASE_CAMERA_FLY_SPEED),
+		INCREASE_FLY_SPEED(DandelionAction.INCREASE_FLY_SPEED),
+		DECREASE_FLY_SPEED(DandelionAction.DECREASE_FLY_SPEED),
 
 		CUSTOM(DandelionAction.CUSTOM);
 
@@ -470,14 +470,14 @@ public interface Constants extends EventConstants {
 		SHOW_ALL(DandelionAction.SHOW_ALL),
 
 		// CAMERA KEYBOARD ACTIONs
-		MOVE_EYE_LEFT(DandelionAction.MOVE_EYE_LEFT),
-		MOVE_EYE_RIGHT(DandelionAction.MOVE_EYE_RIGHT),
-		MOVE_EYE_UP(DandelionAction.MOVE_EYE_UP),
-		MOVE_EYE_DOWN(DandelionAction.MOVE_EYE_DOWN),
+		MOVE_LEFT(DandelionAction.MOVE_LEFT),
+		MOVE_RIGHT(DandelionAction.MOVE_RIGHT),
+		MOVE_UP(DandelionAction.MOVE_UP),
+		MOVE_DOWN(DandelionAction.MOVE_DOWN),
 		INCREASE_ROTATION_SENSITIVITY(DandelionAction.INCREASE_ROTATION_SENSITIVITY),
 		DECREASE_ROTATION_SENSITIVITY(DandelionAction.DECREASE_ROTATION_SENSITIVITY),
-		INCREASE_CAMERA_FLY_SPEED(DandelionAction.INCREASE_CAMERA_FLY_SPEED),
-		DECREASE_CAMERA_FLY_SPEED(DandelionAction.DECREASE_CAMERA_FLY_SPEED),
+		INCREASE_FLY_SPEED(DandelionAction.INCREASE_FLY_SPEED),
+		DECREASE_FLY_SPEED(DandelionAction.DECREASE_FLY_SPEED),
 
 		CUSTOM(DandelionAction.CUSTOM);
 
@@ -524,7 +524,7 @@ public interface Constants extends EventConstants {
 		ROTATE_X(DandelionAction.ROTATE_X),
 		ROTATE_Y(DandelionAction.ROTATE_Y),
 		ROTATE_Z(DandelionAction.ROTATE_Z),
-		
+
 		CUSTOM(DandelionAction.CUSTOM);
 
 		@Override

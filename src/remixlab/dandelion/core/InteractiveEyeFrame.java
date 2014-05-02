@@ -183,19 +183,23 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		switch (a) {
 		// better handled these by default (see below)
 		// case CUSTOM: case ROLL: super.execAction2D(a); break;
+		case MOVE_FORWARD:
+			rotate(computeRot(scene.window().projectedCoordinatesOf(position())));
+			flyDisp.set(-flySpeed(), 0.0f, 0.0f);
+			translate(flyDisp);
+			setTossingDirection(flyDisp);
+			startTossing(e2);
+			break;
+		case MOVE_BACKWARD:
+			rotate(computeRot(scene.window().projectedCoordinatesOf(position())));
+			flyDisp.set(flySpeed(), 0.0f, 0.0f);
+			translate(flyDisp);
+			setTossingDirection(flyDisp);
+			startTossing(e2);
+			break;
 		case ROTATE:
 		case SCREEN_ROTATE:
-			trans = window.projectedCoordinatesOf(anchor());
-			if (e2.isRelative()) {
-				Point prevPos = new Point(e2.prevX(), e2.prevY());
-				Point curPos = new Point(e2.x(), e2.y());
-				rot = new Rot(new Point(trans.x(), trans.y()), prevPos, curPos);
-				rot = new Rot(rot.angle() * rotationSensitivity());
-			}
-			else
-				rot = new Rot(e2.x() * rotationSensitivity());
-			if (scene.isLeftHanded())
-				rot.negate();
+			rot = computeRot(window.projectedCoordinatesOf(anchor()));
 			if (e2.isRelative()) {
 				setSpinningRotation(rot);
 				if (Util.nonZero(dampingFriction()))
@@ -324,24 +328,25 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		// better handled these by default (see below)
 		// case CUSTOM: case DRIVE: case LOOK_AROUND: case MOVE_BACKWARD: case MOVE_FORWARD: case ROLL:
 		// super.execAction3D(a); break;
-		case ROLL :
-		case ROTATE_X :
-			rotateAroundFrameAxis(new Vec(scene.isLeftHanded() ? 1 : -1,0,0));
+		case ROLL:
+		case ROTATE_X:
+			rotateAroundFrameAxis(new Vec(scene.isLeftHanded() ? 1 : -1, 0, 0));
 			break;
-		case PITCH :
+		case PITCH:
 		case ROTATE_Y:
-			rotateAroundFrameAxis(new Vec(0,-1,0));
+			rotateAroundFrameAxis(new Vec(0, -1, 0));
 			break;
-		case YAW :
+		case YAW:
 		case ROTATE_Z:
-			rotateAroundFrameAxis(new Vec(0,0,scene.isLeftHanded() ? -1 : 0));
+			rotateAroundFrameAxis(new Vec(0, 0, scene.isLeftHanded() ? -1 : 0));
 			break;
 		case ROTATE_XYZ:
 			q = new Quat();
 			if (e3.isAbsolute())
 				q.fromEulerAngles(scene.isLeftHanded() ? -e3.x() : e3.x(), -e3.y(), scene.isLeftHanded() ? e3.z() : -e3.z());
 			else
-				q.fromEulerAngles(scene.isLeftHanded() ? -e3.dx() : e3.dx(), -e3.dy(), scene.isLeftHanded() ? e3.dz() : -e3.dz());
+				q.fromEulerAngles(scene.isLeftHanded() ? -e3.dx() : e3.dx(), -e3.dy(),
+						scene.isLeftHanded() ? e3.dz() : -e3.dz());
 			rotate(q);
 			break;
 		case ROTATE:
@@ -487,9 +492,11 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			// Rotate
 			q = new Quat();
 			if (e6.isAbsolute())
-				q.fromEulerAngles(scene.isLeftHanded() ? -e6.roll() : e6.roll(), -e6.pitch(), scene.isLeftHanded() ? e6.yaw() : -e6.yaw());
+				q.fromEulerAngles(scene.isLeftHanded() ? -e6.roll() : e6.roll(), -e6.pitch(), scene.isLeftHanded() ? e6.yaw()
+						: -e6.yaw());
 			else
-				q.fromEulerAngles(scene.isLeftHanded() ? -e6.drx() : e6.drx(), -e6.dry(), scene.isLeftHanded() ? e6.drz() : -e6.drz());
+				q.fromEulerAngles(scene.isLeftHanded() ? -e6.drx() : e6.drx(), -e6.dry(),
+						scene.isLeftHanded() ? e6.drz() : -e6.drz());
 			rotate(q);
 			break;
 		case SCALE:
@@ -583,5 +590,21 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		 * 
 		 * q.fromEulerAngles(-event6.roll(), 0, 0); rotate(q); break; //
 		 */
+	}
+
+	@Override
+	protected Rot computeRot(Vec trans) {
+		Rot rot;
+		if (e2.isRelative()) {
+			Point prevPos = new Point(e2.prevX(), e2.prevY());
+			Point curPos = new Point(e2.x(), e2.y());
+			rot = new Rot(new Point(trans.x(), trans.y()), prevPos, curPos);
+			rot = new Rot(rot.angle() * rotationSensitivity());
+		}
+		else
+			rot = new Rot(e2.x() * rotationSensitivity());
+		if (scene.isLeftHanded())
+			rot.negate();
+		return rot;
 	}
 }

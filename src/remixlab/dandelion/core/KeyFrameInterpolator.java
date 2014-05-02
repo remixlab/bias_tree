@@ -234,37 +234,37 @@ public class KeyFrameInterpolator implements Copyable {
 		}
 	}
 
-	private long														lUpdate;
+	private long										lUpdate;
 	protected List<KeyFrame>				keyFrameList;
 	private ListIterator<KeyFrame>	currentFrame0;
 	private ListIterator<KeyFrame>	currentFrame1;
 	private ListIterator<KeyFrame>	currentFrame2;
 	private ListIterator<KeyFrame>	currentFrame3;
-	protected List<Frame>										path;
+	protected List<Frame>						path;
 	// A s s o c i a t e d f r a m e
-	private Frame														mainFrame;
+	private Frame										mainFrame;
 
 	// R h y t h m
-	private TimingTask											interpolationTimerTask;
-	private int															period;
-	private float														interpolationTm;
-	private float														interpolationSpd;
-	private boolean													interpolationStrt;
+	private TimingTask							interpolationTimerTask;
+	private int											period;
+	private float										interpolationTm;
+	private float										interpolationSpd;
+	private boolean									interpolationStrt;
 
 	// M i s c
-	private boolean													lpInterpolation;
+	private boolean									lpInterpolation;
 
 	// C a c h e d v a l u e s a n d f l a g s
-	private boolean													pathIsValid;
-	private boolean													valuesAreValid;
-	private boolean													currentFrmValid;
-	private boolean													splineCacheIsValid;
-	private Vec															pv1, pv2;
+	private boolean									pathIsValid;
+	private boolean									valuesAreValid;
+	private boolean									currentFrmValid;
+	private boolean									splineCacheIsValid;
+	private Vec											pv1, pv2;
 	// Option 2 (interpolate magnitude using a spline)
 	// private Vec sv1, sv2;
 
 	// S C E N E
-	public AbstractScene										scene;
+	public AbstractScene						scene;
 
 	/**
 	 * Convenience constructor that simply calls {@code this(scn, new Frame())}.

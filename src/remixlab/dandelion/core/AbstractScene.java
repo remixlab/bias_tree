@@ -42,38 +42,38 @@ import remixlab.fpstiming.TimingHandler;
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>
  */
 public abstract class AbstractScene extends AnimatorObject implements Constants, Grabber {
-	protected boolean				dottedGrid;
+	protected boolean												dottedGrid;
 
 	// O B J E C T S
-	protected MatrixHelper	matrixHelper;
-	protected Eye						eye;
-	protected Trackable			trck;
+	protected MatrixHelper									matrixHelper;
+	protected Eye														eye;
+	protected Trackable											trck;
 
 	// E X C E P T I O N H A N D L I N G
-	protected int						startCoordCalls;
+	protected int														startCoordCalls;
 
 	// T i m e r P o o l
 
 	// InputHandler
-	protected InputHandler	iHandler;
+	protected InputHandler									iHandler;
 
 	// D I S P L A Y F L A G S
-	protected int						visualHintMask;
+	protected int														visualHintMask;
 
 	// LEFT vs RIGHT_HAND
-	protected boolean				rightHanded;
+	protected boolean												rightHanded;
 
 	// S I Z E
-	protected int						width, height;
+	protected int														width, height;
 
 	// offscreen
-	public Point						upperLeftCorner;
-	protected boolean				offscreen;
-	
-  //Eventhandling agents
-	//TODO decide if this should here or at the Processing Scene base class ?
+	public Point														upperLeftCorner;
+	protected boolean												offscreen;
+
+	// Eventhandling agents
+	// TODO decide if this should here or at the Processing Scene base class ?
 	protected ActionWheeledBiMotionAgent<?>	defMotionAgent;
-	protected KeyboardAgent			defKeyboardAgent;
+	protected KeyboardAgent									defKeyboardAgent;
 
 	// Who's performing the motion action.
 	// TODO define if this should go in agent bindings:
@@ -90,8 +90,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * its own matrix handling.</li>
 	 * <li>Call {@link #setEye(Eye)} to set the {@link #eye()}, once it's known if the Scene {@link #is2D()} or
 	 * {@link #is3D()}.</li>
-	 * <li>Instantiate the {@link #motionAgent()} and the {@link #keyboardAgent()} and enable them (register them at
-	 * the {@link #inputHandler()}) and possibly some other {@link remixlab.bias.core.Agent}s as well and .</li>
+	 * <li>Instantiate the {@link #motionAgent()} and the {@link #keyboardAgent()} and enable them (register them at the
+	 * {@link #inputHandler()}) and possibly some other {@link remixlab.bias.core.Agent}s as well and .</li>
 	 * <li>Define whether or not the Scene {@link #isOffscreen()}.</li>
 	 * <li>Call {@link #init()} at the end of the constructor.</li>
 	 * </ol>
@@ -110,9 +110,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		setRightHanded();
 		setVisualHints(AXIS | GRID);
 	}
-	
+
 	// AGENTs
-	
+
 	/**
 	 * Returns the default {@link remixlab.dandelion.agent.KeyboardAgent} keyboard agent.
 	 * 
@@ -159,7 +159,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		}
 		return keyboardAgent();
 	}
-	
+
 	/**
 	 * Returns the default motion agent.
 	 * 
@@ -179,7 +179,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public boolean isMotionAgentEnabled() {
 		return inputHandler().isAgentRegistered(defMotionAgent);
 	}
-	
+
 	/**
 	 * Enables motion handling through the {@link #motionAgent()}.
 	 * 
@@ -206,7 +206,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		}
 		return motionAgent();
 	}
-	
+
 	// FPSTiming STUFF
 
 	/**
@@ -334,7 +334,16 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		if (!id.is2D() && this.is2D())
 			return;
 
-		execAction(id);
+		// eye firewall when avatar has been set
+		boolean passed = (avatar() == null) || (id == DandelionAction.TOGGLE_ANIMATION ||
+				id == DandelionAction.TOGGLE_AXIS_VISUAL_HINT ||
+				id == DandelionAction.TOGGLE_CAMERA_TYPE ||
+				id == DandelionAction.TOGGLE_FRAME_VISUAL_HINT ||
+				id == DandelionAction.TOGGLE_GRID_VISUAL_HINT ||
+				id == DandelionAction.CUSTOM);
+
+		if (passed)
+			execAction(id);
 	}
 
 	/**
@@ -394,26 +403,26 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		case SHOW_ALL:
 			showAll();
 			break;
-		case MOVE_EYE_LEFT:
+		case MOVE_LEFT:
 			trans = new Vec(-10.0f * eye().flySpeed(), 0.0f, 0.0f);
 			if (this.is3D())
 				trans.divide(camera().frame().magnitude());
 			eye().frame().translate(eye().frame().inverseTransformOf(trans));
 			break;
-		case MOVE_EYE_RIGHT:
+		case MOVE_RIGHT:
 			trans = new Vec(10.0f * eye().flySpeed(), 0.0f, 0.0f);
 			if (this.is3D())
 				trans.divide(camera().frame().magnitude());
 			eye().frame().translate(eye().frame().inverseTransformOf(trans));
 			break;
-		case MOVE_EYE_UP:
+		case MOVE_UP:
 			trans = eye().frame()
 					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? 10.0f : -10.0f * eye().flySpeed(), 0.0f));
 			if (this.is3D())
 				trans.divide(camera().frame().magnitude());
 			eye().frame().translate(trans);
 			break;
-		case MOVE_EYE_DOWN:
+		case MOVE_DOWN:
 			trans = eye().frame()
 					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? -10.0f : 10.0f * eye().flySpeed(), 0.0f));
 			if (this.is3D())
@@ -426,11 +435,11 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		case DECREASE_ROTATION_SENSITIVITY:
 			eye().setRotationSensitivity(eye().rotationSensitivity() / 1.2f);
 			break;
-		case INCREASE_CAMERA_FLY_SPEED:
-			((Camera) eye()).setFlySpeed(((Camera) eye()).flySpeed() * 1.2f);
+		case INCREASE_FLY_SPEED:
+			eye().setFlySpeed(eye().flySpeed() * 1.2f);
 			break;
-		case DECREASE_CAMERA_FLY_SPEED:
-			((Camera) eye()).setFlySpeed(((Camera) eye()).flySpeed() / 1.2f);
+		case DECREASE_FLY_SPEED:
+			eye().setFlySpeed(eye().flySpeed() / 1.2f);
 			break;
 		case INTERPOLATE_TO_FIT:
 			eye().interpolateToFitScene();
@@ -873,12 +882,16 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * {@link remixlab.dandelion.core.Eye#updateBoundaryEquations()} if {@link #areBoundaryEquationsEnabled()}.
 	 */
 	public void preDraw() {
-		if (avatar() != null && (!eye().anyInterpolationIsStarted())) {
-			eye().frame().setPosition(avatar().eyeFrame().position());
-		  eye().frame().setOrientation(avatar().eyeFrame().orientation());
-		  eye().frame().setScaling(avatar().eyeFrame().scaling());
-		}
-		
+		if (avatar() != null && (!eye().anyInterpolationIsStarted()) && !eye().frame().isLinked())
+			eye().frame().linkTo(avatar().eyeFrame());
+
+		/*
+		 * if (avatar() != null && (!eye().anyInterpolationIsStarted())) {
+		 * eye().frame().setPosition(avatar().eyeFrame().position());
+		 * eye().frame().setOrientation(avatar().eyeFrame().orientation());
+		 * eye().frame().setScaling(avatar().eyeFrame().scaling()); }
+		 */
+
 		bind();
 		if (areBoundaryEquationsEnabled())
 			eye().updateBoundaryEquations();
@@ -1450,16 +1463,21 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 */
 	public void setAvatar(Trackable t) {
 		trck = t;
-		if (avatar() == null)	return;
-		
+		if (avatar() == null)
+			return;
+
 		eye().frame().stopSpinning();
-		if (avatar() instanceof InteractiveFrame)	((InteractiveFrame) (avatar())).stopSpinning();
+		if (avatar() instanceof InteractiveFrame)
+			((InteractiveFrame) (avatar())).stopSpinning();
+
 		// perform small animation ;)
-		if (eye().anyInterpolationIsStarted()) eye().stopAllInterpolations();
+		if (eye().anyInterpolationIsStarted())
+			eye().stopAllInterpolations();
 		eye().interpolateTo(avatar().eyeFrame());
-		
-		if(avatar() instanceof Grabber)	motionAgent().setDefaultGrabber((Grabber)avatar());
-    motionAgent().disableTracking();
+
+		if (avatar() instanceof Grabber)
+			motionAgent().setDefaultGrabber((Grabber) avatar());
+		motionAgent().disableTracking();
 	}
 
 	/**
@@ -1467,10 +1485,12 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * 
 	 * @see #setAvatar(Trackable)
 	 */
-	public void unsetAvatar() {		
+	public void unsetAvatar() {
+		eye().frame().unlink();
+
 		motionAgent().setDefaultGrabber(eye().frame());
-    motionAgent().enableTracking();
-	  
+		motionAgent().enableTracking();
+
 		trck = null;
 	}
 

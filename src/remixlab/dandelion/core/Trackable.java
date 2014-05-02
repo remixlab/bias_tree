@@ -23,7 +23,8 @@ package remixlab.dandelion.core;
 
 public interface Trackable {
 	/**
-	 * Returns the Frame of the tracking Eye defined in the world coordinate system.
+	 * Returns the Frame of the tracking Eye defined in the world coordinate system. This frame will be linked to the
+	 * {@link remixlab.dandelion.core.Eye#frame()}.
 	 * 
 	 * @return Frame representing the Eye Frame defined in the world coordinate system.
 	 */

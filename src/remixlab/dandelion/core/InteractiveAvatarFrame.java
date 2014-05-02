@@ -21,7 +21,8 @@ import remixlab.util.HashCodeBuilder;
  * <p>
  * The {@link #eyeFrame()} of the camera that is to be tracking the frame (see the documentation of the Trackable
  * interface) is defined in spherical coordinates ({@link #azimuth()}, {@link #inclination()} and
- * {@link #trackingDistance()}) respect to the {@link #position()} (which defines the {@link remixlab.dandelion.core.Eye#at()} Vec).
+ * {@link #trackingDistance()}) respect to the {@link #position()} (which defines the
+ * {@link remixlab.dandelion.core.Eye#at()} Vec).
  */
 public class InteractiveAvatarFrame extends InteractiveFrame implements Constants, Trackable, Copyable {
 	@Override
@@ -48,10 +49,10 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 				.isEquals();
 	}
 
-	protected Frame eFrame;
-	
+	protected Frame		eFrame;
+
 	private Rotation	q;
-	private float	trackingDist;
+	private float			trackingDist;
 
 	/**
 	 * Constructs an InteractiveAvatarFrame and sets its {@link #trackingDistance()} to
@@ -60,8 +61,8 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 	 * @see remixlab.dandelion.core.AbstractScene#setAvatar(Trackable)
 	 */
 	public InteractiveAvatarFrame(AbstractScene scn) {
-		super(scn);		
-		if( scene.is3D() ) {
+		super(scn);
+		if (scene.is3D()) {
 			eFrame = new Frame();
 			q = new Quat();
 			((Quat) q).fromTaitBryan(QUARTER_PI, 0, 0);
@@ -82,6 +83,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 	 */
 	protected InteractiveAvatarFrame(InteractiveAvatarFrame otherFrame) {
 		super(otherFrame);
+		this.eFrame = otherFrame.eyeFrame().get();
 		this.q = otherFrame.q.get();
 		this.setTrackingDistance(otherFrame.trackingDistance());
 	}
@@ -104,6 +106,11 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 		return trackingDist;
 	}
 
+	@Override
+	public void scale(float s) {
+		System.out.println("An InteractiveiAvatarFrame has no scaling");
+	}
+
 	/**
 	 * Sets the distance between the frame and the tracking camera.
 	 */
@@ -117,7 +124,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 	 */
 	public float azimuth() {
 		// azimuth <-> pitch
-		if( scene.is3D() )
+		if (scene.is3D())
 			return ((Quat) q).taitBryanAngles().vec[1];
 		else {
 			AbstractScene.showDepthWarning("azimuth");
@@ -143,7 +150,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 	 */
 	public float inclination() {
 		// inclination <-> roll
-		if(scene.is3D())
+		if (scene.is3D())
 			return ((Quat) q).taitBryanAngles().vec[0];
 		else
 			return q.angle();
@@ -153,7 +160,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 	 * Sets the {@link #inclination()} of the tracking camera.
 	 */
 	public void setInclination(float i) {
-		if( scene.is3D() ) {
+		if (scene.is3D()) {
 			float pitch = ((Quat) q).taitBryanAngles().vec[1];
 			((Quat) q).fromTaitBryan(i, pitch, 0);
 		}
@@ -174,20 +181,19 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 	}
 
 	/**
-	 * The {@link #eyeFrame()} of the camera that is to be tracking the frame (see the documentation of the Trackable
+	 * The {@link #eyeFrame()} of the Eye that is to be tracking the frame (see the documentation of the Trackable
 	 * interface) is defined in spherical coordinates by means of the {@link #azimuth()}, the {@link #inclination()} and
 	 * {@link #trackingDistance()}) respect to the Frame {@link #position()}.
 	 */
 	public void updateEyeFrame() {
-		//TODO works when no scaling is involved
-		if( scene.is3D() ) {
+		if (scene.is3D()) {
 			Vec p = q.rotate(new Vec(0, 0, 1));
 			p.multiply(trackingDistance());
-			p.divide(scaling());
 			eFrame.setTranslation(p);
 			eFrame.setYAxis(yAxis());
 			eFrame.setZAxis(inverseTransformOf(p));
-			eFrame.setScaling(scene.eye().frame().scaling());
+			// eFrame.setScaling((scene.eye().frame().scaling()));
+			eFrame.setScaling((scene.eye().frame().scaling()) / magnitude());
 		}
 		else {
 			Vec p = q.rotate(new Vec(0, 1));
@@ -195,7 +201,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 			eFrame.setTranslation(p);
 			eFrame.setYAxis(yAxis());
 			float size = Math.min(scene.width(), scene.height());
-			eFrame.setScaling(2 * p.magnitude() / size);
+			eFrame.setScaling((2 * p.magnitude() / size) / magnitude());
 		}
 	}
 }

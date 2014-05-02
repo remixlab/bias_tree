@@ -82,10 +82,10 @@ public class KeyboardAgent extends ActionKeyboardAgent<KeyboardProfile<KeyboardA
 		keyboardProfile().setShortcut('s', KeyboardAction.INTERPOLATE_TO_FIT);
 		keyboardProfile().setShortcut('S', KeyboardAction.SHOW_ALL);
 
-		keyboardProfile().setShortcut(B_NOMODIFIER_MASK, B_RIGHT, KeyboardAction.MOVE_EYE_RIGHT);
-		keyboardProfile().setShortcut(B_NOMODIFIER_MASK, B_LEFT, KeyboardAction.MOVE_EYE_LEFT);
-		keyboardProfile().setShortcut(B_NOMODIFIER_MASK, B_UP, KeyboardAction.MOVE_EYE_UP);
-		keyboardProfile().setShortcut(B_NOMODIFIER_MASK, B_DOWN, KeyboardAction.MOVE_EYE_DOWN);
+		keyboardProfile().setShortcut(B_NOMODIFIER_MASK, B_RIGHT, KeyboardAction.MOVE_RIGHT);
+		keyboardProfile().setShortcut(B_NOMODIFIER_MASK, B_LEFT, KeyboardAction.MOVE_LEFT);
+		keyboardProfile().setShortcut(B_NOMODIFIER_MASK, B_UP, KeyboardAction.MOVE_UP);
+		keyboardProfile().setShortcut(B_NOMODIFIER_MASK, B_DOWN, KeyboardAction.MOVE_DOWN);
 	}
 
 	/**

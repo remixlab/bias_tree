@@ -537,22 +537,13 @@ public class Frame implements Copyable, Constants {
 
 		return false;
 	}
-	
-	/**
-	 * Simply returns {@code unlink(false)}.
-	 * 
-	 * @see #unlink(boolean)
-	 */
-	public boolean unlink() {
-		return unlink(false);
-	}
 
 	/**
 	 * Unlinks this frame from its source frame. Does nothing if this frame is not linked to another frame.
 	 * <p>
-	 * Sets a new {@link #kernel()} for the frame with the same {@link #position()}, {@link #orientation()} and {@link #magnitude()} as the source frame
-	 * If {@code keepRefFrame} is {@code true} the Frame will keep the source {@link #referenceFrame()}.
-	 * No {@link #constraint()} is kept.
+	 * Sets a new {@link #kernel()} for the frame with the same {@link #position()}, {@link #orientation()} and
+	 * {@link #magnitude()} as the source frame. Sets {@link #referenceFrame()} to null and discards any
+	 * {@link #constraint()}.
 	 * <p>
 	 * See {@link #linkTo(Frame)} for the rules and terminology applying to the linking process.
 	 * 
@@ -564,37 +555,26 @@ public class Frame implements Copyable, Constants {
 	 * @see #isLinked()
 	 * @see #areLinkedTogether(Frame)
 	 */
-	public boolean unlink(boolean keepRefFrame) {
+	public boolean unlink() {
 		boolean result = false;
 		if (srcFrame != null) {
 			result = srcFrame.linkedFramesList.remove(this);
 			if (result) {
-				if(keepRefFrame) {
-					setKernel(is2D() ? new FrameKernel2D() : new FrameKernel3D());
-					setReferenceFrame( srcFrame.referenceFrame() );
-					setPosition(srcFrame.position());
-					setOrientation(srcFrame.orientation());
-					setMagnitude(srcFrame.magnitude());
-				}
-				else {
-					setKernel(is2D() ? new FrameKernel2D(srcFrame.position(), (Rot) srcFrame.orientation(), srcFrame.magnitude())
-					                 : new FrameKernel3D(srcFrame.position(), (Quat) srcFrame.orientation(), srcFrame.magnitude()));
-					setReferenceFrame(null);
-				}
+				setKernel(is2D() ? new FrameKernel2D(srcFrame.position(), (Rot) srcFrame.orientation(), srcFrame.magnitude())
+						: new FrameKernel3D(srcFrame.position(), (Quat) srcFrame.orientation(), srcFrame.magnitude()));
+				setReferenceFrame(null);
 				srcFrame = null;
 			}
 		}
 		return result;
 	}
-	
-	public boolean unlinkFrom(Frame requestedFrame) {
-		return unlinkFrom(requestedFrame, false);
-	}
 
 	/**
 	 * Unlinks the requested frame from this frame. Does nothing if the frames are not linked together (
-	 * {@link #areLinkedTogether(Frame)}). Sets a new {@link #kernel()} for the requested frame with the
-	 * same {@link #position()}, {@link #orientation()} and {@link #magnitude()} as this Frame, but {@code null} {@link #referenceFrame()}.
+	 * {@link #areLinkedTogether(Frame)}).
+	 * <p>
+	 * Sets a new {@link #kernel()} for the requested frame with the same {@link #position()}, {@link #orientation()} and
+	 * {@link #magnitude()} as this Frame, but {@code null} {@link #referenceFrame()} and no {@link #constraint()}.
 	 * <p>
 	 * See {@link #linkTo(Frame)} for the rules and terminology applying to the linking process.
 	 * 
@@ -606,23 +586,14 @@ public class Frame implements Copyable, Constants {
 	 * @see #isLinked()
 	 * @see #areLinkedTogether(Frame)
 	 */
-	public boolean unlinkFrom(Frame requestedFrame, boolean keepRefFrame) {
+	public boolean unlinkFrom(Frame requestedFrame) {
 		boolean result = false;
 		if ((srcFrame == null) && (requestedFrame != this)) {
 			result = linkedFramesList.remove(requestedFrame);
 			if (result) {
-				if(keepRefFrame) {
-					requestedFrame.setKernel(is2D() ? new FrameKernel2D() : new FrameKernel3D());
-					requestedFrame.setReferenceFrame(referenceFrame());
-					requestedFrame.setPosition(position());
-					requestedFrame.setOrientation(orientation());
-					requestedFrame.setMagnitude(magnitude());
-				}
-				else {
-					requestedFrame.setKernel(is2D() ? new FrameKernel2D(position(), (Rot) orientation(), magnitude())
-					                                : new FrameKernel3D(position(), (Quat) orientation(), magnitude()));
-					requestedFrame.setReferenceFrame(null);
-				}			
+				requestedFrame.setKernel(is2D() ? new FrameKernel2D(position(), (Rot) orientation(), magnitude())
+						: new FrameKernel3D(position(), (Quat) orientation(), magnitude()));
+				requestedFrame.setReferenceFrame(null);
 				requestedFrame.srcFrame = null;
 			}
 		}

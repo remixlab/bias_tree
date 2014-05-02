@@ -794,7 +794,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 
 		int dofs = currentAction.dofs();
 		boolean fromY = currentAction == DandelionAction.ROLL || currentAction == DandelionAction.ROTATE_X;
-		
+
 		switch (dofs) {
 		case 1:
 			if (e instanceof DOF1Event)
@@ -804,7 +804,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			else if (e instanceof DOF3Event)
 				e1 = fromY ? ((DOF3Event) e).dof2Event().dof1Event(false) : ((DOF3Event) e).dof2Event().dof1Event();
 			else if (e instanceof DOF6Event)
-				e1 = fromY ? ((DOF6Event) e).dof3Event().dof2Event().dof1Event(false) : ((DOF6Event) e).dof3Event().dof2Event().dof1Event();
+				e1 = fromY ? ((DOF6Event) e).dof3Event().dof2Event().dof1Event(false) : ((DOF6Event) e).dof3Event().dof2Event()
+						.dof1Event();
 			break;
 		case 2:
 			if (e instanceof DOF2Event)
@@ -838,6 +839,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	protected void execAction2D(DandelionAction a) {
 		if (a == null)
 			return;
+		Vec trans;
 		float deltaX, deltaY;
 		Rotation rot;
 		float angle;
@@ -859,22 +861,27 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			rot = new Rot(angle);
 			rotate(rot);
 			setSpinningRotation(rot);
-			// TODO needs this:?
+			// TODO needs this:? Don't think so!
 			updateSceneUpVector();
+			break;
+		case MOVE_FORWARD:
+			rotate(computeRot(scene.window().projectedCoordinatesOf(position())));
+			flyDisp.set(flySpeed(), 0.0f, 0.0f);
+			trans = localInverseTransformOf(flyDisp);
+			setTossingDirection(trans);
+			startTossing(e2);
+			break;
+		case MOVE_BACKWARD:
+			rotate(computeRot(scene.window().projectedCoordinatesOf(position())));
+			flyDisp.set(-flySpeed(), 0.0f, 0.0f);
+			trans = localInverseTransformOf(flyDisp);
+			translate(trans);
+			setTossingDirection(trans);
+			startTossing(e2);
 			break;
 		case ROTATE:
 		case SCREEN_ROTATE:
-			Vec trans = scene.window().projectedCoordinatesOf(position());
-			if (e2.isRelative()) {
-				Point prevPos = new Point(e2.prevX(), e2.prevY());
-				Point curPos = new Point(e2.x(), e2.y());
-				rot = new Rot(new Point(trans.x(), trans.y()), prevPos, curPos);
-				rot = new Rot(rot.angle() * rotationSensitivity());
-			}
-			else
-				rot = new Rot(e2.x() * rotationSensitivity());
-			if (scene.isRightHanded())
-				rot.negate();
+			rot = this.computeRot(scene.window().projectedCoordinatesOf(position()));
 			if (e2.isRelative()) {
 				setSpinningRotation(rot);
 				if (Util.nonZero(dampingFriction()))
@@ -976,7 +983,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		case DRIVE:
 			rotate(turnQuaternion(e2.dof1Event(), scene.camera()));
 			flyDisp.set(0.0f, 0.0f, flySpeed());
-			// trans = localInverseTransformOf(flyDisp, false);
 			trans = rotation().rotate(flyDisp);
 			setTossingDirection(trans);
 			startTossing(e2);
@@ -987,7 +993,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		case MOVE_BACKWARD:
 			rotate(rollPitchQuaternion(e2, scene.camera()));
 			flyDisp.set(0.0f, 0.0f, flySpeed());
-			// trans = localInverseTransformOf(flyDisp, false);
 			trans = rotation().rotate(flyDisp);
 			setTossingDirection(trans);
 			startTossing(e2);
@@ -995,7 +1000,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		case MOVE_FORWARD:
 			rotate(rollPitchQuaternion(e2, scene.camera()));
 			flyDisp.set(0.0f, 0.0f, -flySpeed());
-			// trans = localInverseTransformOf(flyDisp, false);
 			trans = rotation().rotate(flyDisp);
 			setTossingDirection(trans);
 			startTossing(e2);
@@ -1004,10 +1008,10 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			rotateAroundFrameAxis(new Vec(scene.isLeftHanded() ? -1 : 1, 0, 0));
 			break;
 		case PITCH:
-			rotateAroundFrameAxis(new Vec(0,1,0));
+			rotateAroundFrameAxis(new Vec(0, 1, 0));
 			break;
 		case YAW:
-			rotateAroundFrameAxis(new Vec(0,0,scene.isLeftHanded() ? 1 : -1));
+			rotateAroundFrameAxis(new Vec(0, 0, scene.isLeftHanded() ? 1 : -1));
 			break;
 		case ROTATE_X:
 			rotateScreenX();
@@ -1024,11 +1028,11 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				break;
 			}
 			trans = scene.camera().projectedCoordinatesOf(position());
-			rot = deformedBallQuaternion(e2, trans.x(), trans.y(), scene.camera());			
+			rot = deformedBallQuaternion(e2, trans.x(), trans.y(), scene.camera());
 			trans = rot.axis();
 			trans = scene.camera().frame().orientation().rotate(trans);
 			trans = transformOf(trans);
-			rot = new Quat(trans, -rot.angle());	
+			rot = new Quat(trans, -rot.angle());
 			setSpinningRotation(rot);
 			if (Util.nonZero(dampingFriction()))
 				startSpinning(e2);
@@ -1036,7 +1040,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				spin();
 			break;
 		case ROTATE_XYZ:
-			//trans = scene.camera().projectedCoordinatesOf(position());
+			// trans = scene.camera().projectedCoordinatesOf(position());
 			if (e3.isAbsolute())
 				rotateScreen(e3.x(), -e3.y(), -e3.z());
 			else
@@ -1198,7 +1202,22 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	}
 
 	// micro-actions procedures
-	
+
+	protected Rot computeRot(Vec trans) {
+		Rot rot;
+		if (e2.isRelative()) {
+			Point prevPos = new Point(e2.prevX(), e2.prevY());
+			Point curPos = new Point(e2.x(), e2.y());
+			rot = new Rot(new Point(trans.x(), trans.y()), prevPos, curPos);
+			rot = new Rot(rot.angle() * rotationSensitivity());
+		}
+		else
+			rot = new Rot(e2.x() * rotationSensitivity());
+		if (scene.isRightHanded())
+			rot.negate();
+		return rot;
+	}
+
 	protected float computeAngle() {
 		float angle;
 		if (e1.action() != null) // its a wheel wheel :P
@@ -1209,37 +1228,37 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			angle = (float) Math.PI * e1.dx() / scene.camera().screenWidth();
 		return angle;
 	}
-	
+
 	protected void rotateAroundFrameAxis(Vec axis) {
 		rotateAroundFrameAxis(axis, computeAngle());
 	}
-	
+
 	public void rotateAroundFrameAxis(Vec axis, float angle) {
 		// lef-handed coordinate system correction
-		//if (scene.isLeftHanded())	angle = -angle;
+		// if (scene.isLeftHanded()) angle = -angle;
 		Quat q = new Quat(axis, angle);
 		rotate(q);
 		setSpinningRotation(q);
 		updateSceneUpVector();
 	}
-	
+
 	protected void rotateScreenX() {
-		rotateScreen(computeAngle(),0,0);
+		rotateScreen(computeAngle(), 0, 0);
 	}
-	
+
 	protected void rotateScreenY() {
-		rotateScreen(0,computeAngle(),0);
+		rotateScreen(0, computeAngle(), 0);
 	}
-	
+
 	protected void rotateScreenZ() {
-		rotateScreen(0,0,computeAngle());
+		rotateScreen(0, 0, computeAngle());
 	}
 
 	public void rotateScreen(float roll, float pitch, float yaw) {
 		Vec trans = new Vec();
 		Quat q = new Quat();
 		q.fromEulerAngles(scene.isLeftHanded() ? roll : -roll, -pitch, scene.isLeftHanded() ? yaw : -yaw);
-		//trans = scene.camera().projectedCoordinatesOf(position());
+		// trans = scene.camera().projectedCoordinatesOf(position());
 		trans.set(-q.x(), -q.y(), -q.z());
 		trans = scene.camera().frame().orientation().rotate(trans);
 		// TODO second option is new but should really go without false (please test me with space nav)
@@ -1250,19 +1269,20 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		q.setZ(trans.z());
 		rotate(q);
 	}
-	
+
 	protected void translateFromEye(Vec trans) {
 		translateFromEye(trans, translationSensitivity());
 	}
 
 	protected void translateFromEye(Vec trans, float sens) {
 		// Transform from eye to world coordinate system.
-		Vec t = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()))
+		trans = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()))
 				: scene.camera().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
+
 		// And then down to frame
 		if (referenceFrame() != null)
-			t = referenceFrame().transformOf(trans);
-		translate(t);
+			trans = referenceFrame().transformOf(trans);
+		translate(trans);
 	}
 
 	/**

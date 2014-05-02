@@ -139,7 +139,7 @@ public class Quat implements Constants, Linkable, Rotation {
 			this.quat[3] = q[3];
 		}
 	}
-	
+
 	/**
 	 * Copy constructor. If {@code normalize} is {@code true} this Quat is {@link #normalize()}.
 	 * 
@@ -149,7 +149,7 @@ public class Quat implements Constants, Linkable, Rotation {
 	public Quat(Quat q1, boolean normalize) {
 		set(q1, normalize);
 	}
-	
+
 	/**
 	 * Constructs and initializes a Quat from the specified rotation {@link #axis() axis} (non null) and {@link #angle()
 	 * angle} (in radians).
@@ -178,11 +178,11 @@ public class Quat implements Constants, Linkable, Rotation {
 	public Quat(Vec from, Vec to) {
 		fromTo(from, to);
 	}
-	
+
 	protected Quat(Quat q1) {
 		set(q1);
 	}
-	
+
 	@Override
 	public Quat get() {
 		return new Quat(this);

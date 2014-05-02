@@ -62,17 +62,15 @@ public class MouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Act
 	 * Then calls {@link #setCommonBindings()}.
 	 */
 	public void setAsFirstPerson() {
-		if (scene.is2D()) {
-			AbstractScene.showDepthWarning("setAsFirstPerson");
-			return;
-		}
 		resetAllProfiles();
 		eyeProfile().setBinding(B_NOMODIFIER_MASK, B_LEFT, DOF2Action.MOVE_FORWARD);
-		eyeProfile().setBinding(B_NOMODIFIER_MASK, B_CENTER, DOF2Action.LOOK_AROUND);
 		eyeProfile().setBinding(B_NOMODIFIER_MASK, B_RIGHT, DOF2Action.MOVE_BACKWARD);
 		eyeProfile().setBinding(B_SHIFT, B_LEFT, DOF2Action.YAW);
-		eyeProfile().setBinding(B_SHIFT, B_CENTER, DOF2Action.DRIVE);
 		eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.YAW);
+		if (scene.is2D()) {
+			eyeProfile().setBinding(B_NOMODIFIER_MASK, B_CENTER, DOF2Action.LOOK_AROUND);
+			eyeProfile().setBinding(B_SHIFT, B_CENTER, DOF2Action.DRIVE);
+		}
 		// TODO PITCH, YAW?
 		// eyeWheelProfile().setBinding(B_SHIFT, B_NOBUTTON, WheelAction.DRIVE);
 		frameProfile().setBinding(B_NOMODIFIER_MASK, B_LEFT, DOF2Action.ROTATE);
@@ -96,16 +94,14 @@ public class MouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Act
 	 * Then calls {@link #setCommonBindings()}.
 	 */
 	public void setAsThirdPerson() {
-		if (scene.is2D()) {
-			AbstractScene.showDepthWarning("setAsThirdPerson");
-			return;
-		}
 		resetAllProfiles();
 		frameProfile().setBinding(B_NOMODIFIER_MASK, B_LEFT, DOF2Action.MOVE_FORWARD);
-		frameProfile().setBinding(B_NOMODIFIER_MASK, B_CENTER, DOF2Action.LOOK_AROUND);
 		frameProfile().setBinding(B_NOMODIFIER_MASK, B_RIGHT, DOF2Action.MOVE_BACKWARD);
 		frameProfile().setBinding(B_SHIFT, B_LEFT, DOF2Action.YAW);
-		frameProfile().setBinding(B_SHIFT, B_CENTER, DOF2Action.DRIVE);
+		if (scene.is3D()) {
+			frameProfile().setBinding(B_NOMODIFIER_MASK, B_CENTER, DOF2Action.LOOK_AROUND);
+			frameProfile().setBinding(B_SHIFT, B_CENTER, DOF2Action.DRIVE);
+		}
 		setCommonBindings();
 	}
 
