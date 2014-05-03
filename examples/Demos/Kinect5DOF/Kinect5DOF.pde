@@ -70,8 +70,8 @@ void setup() {
     }
   };  
   agent.setSensitivities(0.03, 0.03, 0.03, 0.00005, 0.00005, 0.00005);
-  agent.eyeProfile().setBinding(Constants.DOF6Action.TRANSLATE_ROTATE); //set by default anyway
-  agent.frameProfile().setBinding(Constants.DOF6Action.TRANSLATE3);
+  agent.eyeProfile().setBinding(Constants.DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ); //set by default anyway
+  agent.frameProfile().setBinding(Constants.DOF6Action.TRANSLATE_XYZ);
   //needs fixing in dandelion:
   //agent.frameProfile().setBinding(Constants.DOF6Action.TRANSLATE_ROTATE); //set by default anyway
 

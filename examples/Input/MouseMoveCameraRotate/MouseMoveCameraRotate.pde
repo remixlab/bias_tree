@@ -9,10 +9,8 @@
  */
 
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.agent.KeyboardAgent;
-import remixlab.dandelion.agent.MouseAgent;
+import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.core.Constants.DOF2Action;
 import remixlab.proscene.*;
 import remixlab.bias.event.*;
 

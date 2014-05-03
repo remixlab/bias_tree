@@ -1,5 +1,5 @@
 /**
- * Camera Customization.
+ * Mouse and Keyboard Customization.
  * by Jean Pierre Charalambos.
  * 
  * This example shows proscene mouse and keyboard customization.
@@ -61,14 +61,14 @@ public void setExoticCustomization() {
   //eye
   scene.setMouseButtonBinding(true, CENTER, DOF2Action.ZOOM_ON_ANCHOR);
   scene.setMouseButtonBinding(true, LEFT, DOF2Action.TRANSLATE);
-  scene.setMouseButtonBinding(true, RIGHT, DOF2Action.CAD_ROTATE);
+  scene.setMouseButtonBinding(true, RIGHT, DOF2Action.ROTATE_CAD);
   scene.setMouseClickBinding(true, EventConstants.B_SHIFT, EventConstants.B_RIGHT, 2, ClickAction.TOGGLE_AXIS_VISUAL_HINT);
   scene.setMouseClickBinding(true, Event.SHIFT, LEFT, 2, ClickAction.TOGGLE_AXIS_VISUAL_HINT);
   //frame
-  //scene.setMouseButtonBinding(false, LEFT, DOF2Action.TRANSLATE);
-  //scene.setMouseButtonBinding(false, CENTER, DOF2Action.ZOOM);
-  //scene.setMouseWheelBinding(false, WheelAction.ZOOM);
-  scene.setMouseButtonBinding(false, RIGHT, DOF2Action.ROLL);
+  scene.setMouseButtonBinding(false, LEFT, DOF2Action.TRANSLATE);
+  scene.setMouseButtonBinding(false, CENTER, DOF2Action.SCALE);
+  scene.setMouseWheelBinding(false, WheelAction.ZOOM);
+  scene.setMouseButtonBinding(false, RIGHT, DOF2Action.ROTATE_X);
   //keyboard
   scene.setKeyboardShortcut('g',KeyboardAction.TOGGLE_AXIS_VISUAL_HINT);
   scene.setKeyboardShortcut(Event.CTRL,java.awt.event.KeyEvent.VK_G,KeyboardAction.TOGGLE_GRID_VISUAL_HINT);

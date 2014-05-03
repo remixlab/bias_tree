@@ -13,11 +13,7 @@
  * Press 'h' to display the key shortcuts, mouse and SpaceNavigator bindings in the console.
  */
 
-import processing.opengl.*;
-
 import remixlab.proscene.*;
-import remixlab.proscene.Scene.ProsceneKeyboard;
-import remixlab.proscene.Scene.ProsceneMouse;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.geom.*;
@@ -87,7 +83,7 @@ void setup() {
   //declare some sensitivities for the space navigator device
   hidAgent.setSensitivities(0.01, 0.01, 0.01, 0.0001, 0.0001, 0.0001);
   //Set by default:  
-  //dev.eyeProfile().setBinding(Constants.DOF6Action.TRANSLATE_ROTATE);
+  //dev.eyeProfile().setBinding(Constants.DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
 
   smooth();
 }

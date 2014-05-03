@@ -658,8 +658,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	/**
 	 * Defines the spinning deceleration.
 	 * <p>
-	 * Default value is 0.5, i.e., no spinning deceleration. Use {@link #setDampingFriction(float)} to tune this value. A
-	 * higher value will make spinning more difficult (a value of 1.0 forbids spinning).
+	 * Default value is 0.5. Use {@link #setDampingFriction(float)} to tune this value. A
+	 * higher value will make damping more difficult (a value of 1.0 forbids damping).
 	 */
 	public float dampingFriction() {
 		return dampFriction;

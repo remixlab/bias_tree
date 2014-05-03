@@ -1,5 +1,5 @@
 /**
- * Dizzi
+ * Dizzy
  * by Jean Pierre Charalambos.
  *
  * This example demonstrates how 2D key frames may be used to perform a Prezi-like
