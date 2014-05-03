@@ -248,7 +248,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				deltaY = scene.isRightHanded() ? -e2.y() : e2.y();
 			translateFromEye(new Vec(-deltaX, -deltaY, 0.0f));
 			break;
-		case TRANSLATE_ROTATE:
+		case TRANSLATE_XYZ_ROTATE_XYZ:
 			// translate:
 			deltaX = (e6.isRelative()) ? e6.dx() : e6.x();
 			if (e6.isRelative())
@@ -378,7 +378,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			else
 				spin();
 			break;
-		case CAD_ROTATE:
+		case ROTATE_CAD:
 			if (e2.isAbsolute()) {
 				AbstractScene.showEventVariationWarning(a);
 				break;
@@ -442,7 +442,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			scale2Fit(trans);
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
-		case TRANSLATE3:
+		case TRANSLATE_XYZ:
 			if (e3.isRelative())
 				trans = new Vec(-e3.dx(), scene.isRightHanded() ? -e3.dy() : e3.dy(), -e3.dz());
 			else
@@ -450,7 +450,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			scale2Fit(trans);
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
-		case TRANSLATE_ROTATE:
+		case TRANSLATE_XYZ_ROTATE_XYZ:
 			// translate
 			if (e6.isRelative())
 				trans = new Vec(-e6.dx(), scene.isRightHanded() ? -e6.dy() : e6.dy(), -e6.dz());

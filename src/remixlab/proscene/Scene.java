@@ -269,8 +269,8 @@ public class Scene extends AbstractScene implements PConstants {
 					if (dA == DandelionAction.SCREEN_TRANSLATE)
 						((InteractiveFrame) inputGrabber()).dirIsFixed = false;
 					rotateMode = ((dA == DandelionAction.ROTATE) || (dA == DandelionAction.ROTATE_XYZ)
-							|| (dA == DandelionAction.CAD_ROTATE)
-							|| (dA == DandelionAction.SCREEN_ROTATE) || (dA == DandelionAction.TRANSLATE_ROTATE));
+							|| (dA == DandelionAction.ROTATE_CAD)
+							|| (dA == DandelionAction.SCREEN_ROTATE) || (dA == DandelionAction.TRANSLATE_XYZ_ROTATE_XYZ));
 					if (rotateMode && scene.is3D())
 						scene.camera().frame().cadRotationIsReversed = scene.camera().frame()
 								.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;

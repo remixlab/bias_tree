@@ -256,7 +256,7 @@ public interface Constants extends EventConstants {
 		/**
 		 * Rotate camera frame as in CAD applications
 		 */
-		CAD_ROTATE("Rotate camera frame as in CAD applications", false, 2),
+		ROTATE_CAD("Rotate camera frame as in CAD applications", false, 2),
 		/**
 		 * Translate frame (eye or interactive frame)
 		 */
@@ -288,7 +288,7 @@ public interface Constants extends EventConstants {
 		/**
 		 * Translate frame (camera or interactive frame) from dx, dy, dz simultaneously
 		 */
-		TRANSLATE3("Translate frame (camera or interactive frame) from dx, dy, dz simultaneously", false, 3),
+		TRANSLATE_XYZ("Translate frame (camera or interactive frame) from dx, dy, dz simultaneously", false, 3),
 		/**
 		 * Rotate frame (camera or interactive frame) from Euler angles
 		 */
@@ -298,7 +298,7 @@ public interface Constants extends EventConstants {
 		/**
 		 * Natural (camera or interactive frame)
 		 */
-		TRANSLATE_ROTATE("Natural (camera or interactive frame)", false, 6),
+		TRANSLATE_XYZ_ROTATE_XYZ("Natural (camera or interactive frame)", false, 6),
 
 		// CUSTOM ACTIONs
 		/**
@@ -574,7 +574,7 @@ public interface Constants extends EventConstants {
 		// DOF_2
 		DRIVE(DandelionAction.DRIVE),
 		ROTATE(DandelionAction.ROTATE),
-		CAD_ROTATE(DandelionAction.CAD_ROTATE),
+		ROTATE_CAD(DandelionAction.ROTATE_CAD),
 		TRANSLATE(DandelionAction.TRANSLATE),
 		MOVE_FORWARD(DandelionAction.MOVE_FORWARD),
 		MOVE_BACKWARD(DandelionAction.MOVE_BACKWARD),
@@ -632,7 +632,7 @@ public interface Constants extends EventConstants {
 		// DOF_2
 		DRIVE(DandelionAction.DRIVE),
 		ROTATE(DandelionAction.ROTATE),
-		CAD_ROTATE(DandelionAction.CAD_ROTATE),
+		ROTATE_CAD(DandelionAction.ROTATE_CAD),
 		TRANSLATE(DandelionAction.TRANSLATE),
 		MOVE_FORWARD(DandelionAction.MOVE_FORWARD),
 		MOVE_BACKWARD(DandelionAction.MOVE_BACKWARD),
@@ -642,7 +642,7 @@ public interface Constants extends EventConstants {
 		ZOOM_ON_REGION(DandelionAction.ZOOM_ON_REGION),
 
 		// DOF_3
-		TRANSLATE3(DandelionAction.TRANSLATE3),
+		TRANSLATE_XYZ(DandelionAction.TRANSLATE_XYZ),
 		ROTATE_XYZ(DandelionAction.ROTATE_XYZ),
 
 		CUSTOM(DandelionAction.CUSTOM);
@@ -694,7 +694,7 @@ public interface Constants extends EventConstants {
 		// DOF_2
 		ROTATE(DandelionAction.ROTATE),
 		DRIVE(DandelionAction.DRIVE),
-		CAD_ROTATE(DandelionAction.CAD_ROTATE),
+		ROTATE_CAD(DandelionAction.ROTATE_CAD),
 		TRANSLATE(DandelionAction.TRANSLATE),
 		MOVE_FORWARD(DandelionAction.MOVE_FORWARD),
 		MOVE_BACKWARD(DandelionAction.MOVE_BACKWARD),
@@ -704,11 +704,11 @@ public interface Constants extends EventConstants {
 		ZOOM_ON_REGION(DandelionAction.ZOOM_ON_REGION),
 
 		// DOF_3
-		TRANSLATE3(DandelionAction.TRANSLATE3),
+		TRANSLATE_XYZ(DandelionAction.TRANSLATE_XYZ),
 		ROTATE_XYZ(DandelionAction.ROTATE_XYZ),
 
 		// DOF_6
-		TRANSLATE_ROTATE(DandelionAction.TRANSLATE_ROTATE),
+		TRANSLATE_XYZ_ROTATE_XYZ(DandelionAction.TRANSLATE_XYZ_ROTATE_XYZ),
 
 		CUSTOM(DandelionAction.CUSTOM);
 

@@ -908,7 +908,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			translateFromEye(new Vec(deltaX, -deltaY, 0.0f));
 			break;
 		// TODO needs testing with space navigator
-		case TRANSLATE_ROTATE:
+		case TRANSLATE_XYZ_ROTATE_XYZ:
 			// translate
 			deltaX = (e6.isRelative()) ? e6.dx() : e6.x();
 			if (e6.isRelative())
@@ -1084,7 +1084,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			scale2Fit(trans);
 			translateFromEye(trans);
 			break;
-		case TRANSLATE3:
+		case TRANSLATE_XYZ:
 			if (e3.isRelative())
 				trans = new Vec(e3.dx(), scene.isRightHanded() ? -e3.dy() : e3.dy(), -e3.dz());
 			else
@@ -1092,7 +1092,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			scale2Fit(trans);
 			translateFromEye(trans);
 			break;
-		case TRANSLATE_ROTATE:
+		case TRANSLATE_XYZ_ROTATE_XYZ:
 			// A. Translate the iFrame
 			if (e6.isRelative())
 				trans = new Vec(e6.dx(), scene.isRightHanded() ? -e6.dy() : e6.dy(), -e6.dz());
