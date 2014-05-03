@@ -172,7 +172,7 @@ public interface Constants extends EventConstants {
 		 */
 		SHOW_ALL("Show the whole scene", true, 0),
 
-		// CAMERA KEYBOARD ACTIONs // TODO all of these could be dof_1
+		// CAMERA KEYBOARD ACTIONs
 		/**
 		 * Move eye to the left
 		 */

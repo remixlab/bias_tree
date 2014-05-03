@@ -199,7 +199,6 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 			p.multiply(trackingDistance() / magnitude());
 			eFrame.setTranslation(p);
 			eFrame.setYAxis(yAxis());
-			// hack idem (see above)
 			float size = Math.min(scene.width(), scene.height());
 			eFrame.setScaling((2.5f * trackingDistance() / size)); // window.fitBall which sets the scaling
 		}
