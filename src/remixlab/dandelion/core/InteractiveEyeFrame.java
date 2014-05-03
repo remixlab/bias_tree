@@ -183,6 +183,29 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		switch (a) {
 		// better handled these by default (see below)
 		// case CUSTOM: case ROLL: super.execAction2D(a); break;
+		case TRANSLATE_X:
+			translateFromEye(new Vec(-delta1(), 0));
+			break;
+		case TRANSLATE_Y:
+			translateFromEye(new Vec(0, scene.isRightHanded() ? delta1() : -delta1()));
+			break;
+		case ROTATE_Z:
+			rot = new Rot(scene.isRightHanded() ? -computeAngle() : computeAngle());
+			rotate(rot);
+			setSpinningRotation(rot);
+		case ROTATE:
+		case SCREEN_ROTATE:
+			rot = computeRot(window.projectedCoordinatesOf(anchor()));
+			if (e2.isRelative()) {
+				setSpinningRotation(rot);
+				if (Util.nonZero(dampingFriction()))
+					startSpinning(e2);
+				else
+					spin();
+			} else
+				// absolute needs testing
+				rotate(rot);
+			break;
 		case MOVE_FORWARD:
 			rotate(computeRot(scene.window().projectedCoordinatesOf(position())));
 			flyDisp.set(-flySpeed(), 0.0f, 0.0f);
@@ -196,19 +219,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			translate(flyDisp);
 			setTossingDirection(flyDisp);
 			startTossing(e2);
-			break;
-		case ROTATE:
-		case SCREEN_ROTATE:
-			rot = computeRot(window.projectedCoordinatesOf(anchor()));
-			if (e2.isRelative()) {
-				setSpinningRotation(rot);
-				if (Util.nonZero(dampingFriction()))
-					startSpinning(e2);
-				else
-					spin();
-			} else
-				// absolute needs testing
-				rotate(rot);
 			break;
 		case SCREEN_TRANSLATE:
 			trans = new Vec();
@@ -317,22 +327,35 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		Vec trans;
 		Quat q;
 		Camera.WorldPoint wP;
+		float delta;
 		float wheelSensitivityCoef = 8E-4f;
 		switch (a) {
 		// better handled these by default (see below)
 		// case CUSTOM: case DRIVE: case LOOK_AROUND: case MOVE_BACKWARD: case MOVE_FORWARD: case ROLL:
 		// super.execAction3D(a); break;
-		case ROLL:
+		case TRANSLATE_X:
+			trans = new Vec(-delta1(), 0.0f, 0.0f);
+			scale2Fit(trans);
+			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
+			break;
+		case TRANSLATE_Y:
+			trans = new Vec(0.0f, scene.isRightHanded() ? delta1() : -delta1(), 0.0f);
+			scale2Fit(trans);
+			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
+			break;
+		case TRANSLATE_Z:
+			trans = new Vec(0.0f, 0.0f, -delta1());
+			scale2Fit(trans);
+			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
+			break;
 		case ROTATE_X:
-			rotateAroundFrameAxis(new Vec(scene.isLeftHanded() ? 1 : -1, 0, 0));
+			rotateAroundAxis(new Vec(scene.isLeftHanded() ? 1 : -1, 0, 0), computeAngle());
 			break;
-		case PITCH:
 		case ROTATE_Y:
-			rotateAroundFrameAxis(new Vec(0, -1, 0));
+			rotateAroundAxis(new Vec(0, -1, 0), computeAngle());
 			break;
-		case YAW:
 		case ROTATE_Z:
-			rotateAroundFrameAxis(new Vec(0, 0, scene.isLeftHanded() ? -1 : 0));
+			rotateAroundAxis(new Vec(0, 0, scene.isLeftHanded() ? -1 : 0), computeAngle());
 			break;
 		case ROTATE_XYZ:
 			q = new Quat();
@@ -416,7 +439,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				trans = new Vec(-e2.dx(), scene.isRightHanded() ? e2.dy() : -e2.dy(), 0.0f);
 			else
 				trans = new Vec(-e2.x(), scene.isRightHanded() ? e2.y() : -e2.y(), 0.0f);
-			// Scale to fit the screen mouse displacement
 			scale2Fit(trans);
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
@@ -425,7 +447,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				trans = new Vec(-e3.dx(), scene.isRightHanded() ? -e3.dy() : e3.dy(), -e3.dz());
 			else
 				trans = new Vec(-e3.x(), scene.isRightHanded() ? -e3.y() : e3.y(), -e3.z());
-			// Scale to fit the screen mouse displacement
 			scale2Fit(trans);
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
@@ -449,13 +470,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			rotate(q);
 			break;
 		case SCALE:
-			float delta;
-			if (e1.action() != null) // its a wheel wheel :P
-				delta = e1.x() * wheelSensitivity();
-			else if (e1.isAbsolute())
-				delta = e1.x();
-			else
-				delta = e1.dx();
+			delta = delta1();
 			float s = 1 + Math.abs(delta) / (float) -scene.height();
 			scale(delta >= 0 ? s : 1 / s);
 			break;
@@ -540,22 +555,22 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		 * q.fromEulerAngles(-event6.roll(), 0, 0); rotate(q); break; //
 		 */
 	}
-	
+
 	@Override
 	protected void scale2Fit(Vec trans) {
-	  // Scale to fit the screen mouse displacement
+		// Scale to fit the screen mouse displacement
 		switch (scene.camera().type()) {
-			case PERSPECTIVE:
-				trans.multiply(2.0f * (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
-						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
-						/ scene.camera().screenHeight());
-				break;
-			case ORTHOGRAPHIC:
-				float[] wh = scene.camera().getBoundaryWidthHeight();
-				trans.vec[0] *= 2.0f * wh[0] / scene.camera().screenWidth();
-				trans.vec[1] *= 2.0f * wh[1] / scene.camera().screenHeight();
-				break;
-			}
+		case PERSPECTIVE:
+			trans.multiply(2.0f * (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
+					* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
+					/ scene.camera().screenHeight());
+			break;
+		case ORTHOGRAPHIC:
+			float[] wh = scene.camera().getBoundaryWidthHeight();
+			trans.vec[0] *= 2.0f * wh[0] / scene.camera().screenWidth();
+			trans.vec[1] *= 2.0f * wh[1] / scene.camera().screenHeight();
+			break;
+		}
 	}
 
 	@Override

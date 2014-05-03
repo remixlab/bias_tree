@@ -189,14 +189,14 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 	public void updateEyeFrame() {
 		if (scene.is3D()) {
 			Vec p = q.rotate(new Vec(0, 0, 1));
-			p.multiply(trackingDistance()/magnitude());
+			p.multiply(trackingDistance() / magnitude());
 			eFrame.setTranslation(p);
 			eFrame.setYAxis(yAxis());
-		  eFrame.setZAxis(inverseTransformOf(p));
+			eFrame.setZAxis(inverseTransformOf(p));
 		}
 		else {
 			Vec p = q.rotate(new Vec(0, 1));
-			p.multiply(trackingDistance()/magnitude());
+			p.multiply(trackingDistance() / magnitude());
 			eFrame.setTranslation(p);
 			eFrame.setYAxis(yAxis());
 			// hack idem (see above)

@@ -65,8 +65,8 @@ public class MouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Act
 		resetAllProfiles();
 		eyeProfile().setBinding(B_NOMODIFIER_MASK, B_LEFT, DOF2Action.MOVE_FORWARD);
 		eyeProfile().setBinding(B_NOMODIFIER_MASK, B_RIGHT, DOF2Action.MOVE_BACKWARD);
-		eyeProfile().setBinding(B_SHIFT, B_LEFT, DOF2Action.YAW);
-		eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.YAW);
+		eyeProfile().setBinding(B_SHIFT, B_LEFT, DOF2Action.ROTATE_Z);
+		eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.ROTATE_Z);
 		if (scene.is2D()) {
 			eyeProfile().setBinding(B_NOMODIFIER_MASK, B_CENTER, DOF2Action.LOOK_AROUND);
 			eyeProfile().setBinding(B_SHIFT, B_CENTER, DOF2Action.DRIVE);
@@ -97,7 +97,7 @@ public class MouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Act
 		resetAllProfiles();
 		frameProfile().setBinding(B_NOMODIFIER_MASK, B_LEFT, DOF2Action.MOVE_FORWARD);
 		frameProfile().setBinding(B_NOMODIFIER_MASK, B_RIGHT, DOF2Action.MOVE_BACKWARD);
-		frameProfile().setBinding(B_SHIFT, B_LEFT, DOF2Action.YAW);
+		frameProfile().setBinding(B_SHIFT, B_LEFT, DOF2Action.ROTATE_Z);
 		if (scene.is3D()) {
 			frameProfile().setBinding(B_NOMODIFIER_MASK, B_CENTER, DOF2Action.LOOK_AROUND);
 			frameProfile().setBinding(B_SHIFT, B_CENTER, DOF2Action.DRIVE);

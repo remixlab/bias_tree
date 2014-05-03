@@ -363,8 +363,8 @@ public class Scene extends AbstractScene implements PConstants {
 			resetAllProfiles();
 			eyeProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.MOVE_FORWARD);
 			eyeProfile().setBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, DOF2Action.MOVE_BACKWARD);
-			eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.YAW);
-			eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.YAW);
+			eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.ROTATE_Z);
+			eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.ROTATE_Z);
 			if (is3D()) {
 				eyeProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, DOF2Action.LOOK_AROUND);
 				eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_CENTER), B_CENTER, DOF2Action.DRIVE);
@@ -384,7 +384,7 @@ public class Scene extends AbstractScene implements PConstants {
 			resetAllProfiles();
 			frameProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.MOVE_FORWARD);
 			frameProfile().setBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, DOF2Action.MOVE_BACKWARD);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.YAW);
+			frameProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.ROTATE_Z);
 			if (is3D()) {
 				frameProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, DOF2Action.LOOK_AROUND);
 				frameProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_CENTER), B_CENTER, DOF2Action.DRIVE);

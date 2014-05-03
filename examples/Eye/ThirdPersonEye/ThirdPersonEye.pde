@@ -92,7 +92,7 @@ public void keyPressed() {
     }
   if(key=='i') ((InteractiveAvatarFrame) scene.avatar()).setInclination(((InteractiveAvatarFrame) scene.avatar()).inclination() - PI / 64);
   if(key=='I') ((InteractiveAvatarFrame) scene.avatar()).setInclination(((InteractiveAvatarFrame) scene.avatar()).inclination() + PI / 64);
-  if(key=='z') ((InteractiveAvatarFrame) scene.avatar()).setAzimuth(((InteractiveAvatarFrame) scene.avatar()).azimuth() + PI / 64);
+  if(key=='z') ((InteractiveAvatarFrame) scene.avatar()).setAzimuth(((InteractiveAvatarFrame) scene.avatar()).azimuth() - PI / 64);
   if(key=='Z') ((InteractiveAvatarFrame) scene.avatar()).setAzimuth(((InteractiveAvatarFrame) scene.avatar()).azimuth() + PI / 64);
   if(key=='t') ((InteractiveAvatarFrame) scene.avatar()).setTrackingDistance(((InteractiveAvatarFrame) scene.avatar()).trackingDistance() - scene.radius() / 50);
   if(key=='T') ((InteractiveAvatarFrame) scene.avatar()).setTrackingDistance(((InteractiveAvatarFrame) scene.avatar()).trackingDistance() + scene.radius() / 50);

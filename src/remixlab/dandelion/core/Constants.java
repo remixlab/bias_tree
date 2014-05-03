@@ -220,41 +220,17 @@ public interface Constants extends EventConstants {
 		 */
 		ZOOM_ON_ANCHOR("Zoom eye on anchor", false, 1),
 		/**
-		 * Translate along frame X axis
-		 */
-		TRANSLATE_X("Translate along frame X axis", true, 1),
-		/**
-		 * Translate along frame Y axis
-		 */
-		TRANSLATE_Y("Translate along frame Y axis", true, 1),
-		/**
-		 * Translate along frame Z axis
-		 */
-		TRANSLATE_Z("Translate along frame Z axis", false, 1),
-		/**
 		 * Translate along screen X axis
 		 */
-		TRANSLATE_SCR_X("Translate along screen X axis", true, 1),
+		TRANSLATE_X("Translate along screen X axis", true, 1),
 		/**
 		 * Translate along screen Y axis
 		 */
-		TRANSLATE_SCR_Y("Translate along screen Y axis", true, 1),
+		TRANSLATE_Y("Translate along screen Y axis", true, 1),
 		/**
 		 * Translate along screen Z axis
 		 */
-		TRANSLATE_SCR_Z("Translate along screen Z axis", false, 1),		
-		/**
-		 * Roll frame (camera or interactive frame)
-		 */
-		ROLL("Roll frame (eye or interactive frame)", false, 1),
-		/**
-		 * Pitch frame (camera or interactive frame)
-		 */
-		PITCH("Picth frame (eye or interactive frame)", false, 1),
-		/**
-		 * Yaw frame (camera or interactive frame)
-		 */
-		YAW("Yaw frame (eye or interactive frame)", true, 1),
+		TRANSLATE_Z("Translate along screen Z axis", false, 1),
 		/**
 		 * Rotate frame around screen x axis (eye or interactive frame)
 		 */
@@ -545,12 +521,6 @@ public interface Constants extends EventConstants {
 		TRANSLATE_X(DandelionAction.TRANSLATE_X),
 		TRANSLATE_Y(DandelionAction.TRANSLATE_Y),
 		TRANSLATE_Z(DandelionAction.TRANSLATE_Z),
-		TRANSLATE_SCR_X(DandelionAction.TRANSLATE_SCR_X),
-		TRANSLATE_SCR_Y(DandelionAction.TRANSLATE_SCR_Y),
-		TRANSLATE_SCR_Z(DandelionAction.TRANSLATE_SCR_Z),
-		ROLL(DandelionAction.ROLL),
-		PITCH(DandelionAction.PITCH),
-		YAW(DandelionAction.YAW),
 		ROTATE_X(DandelionAction.ROTATE_X),
 		ROTATE_Y(DandelionAction.ROTATE_Y),
 		ROTATE_Z(DandelionAction.ROTATE_Z),
@@ -597,12 +567,6 @@ public interface Constants extends EventConstants {
 		TRANSLATE_X(DandelionAction.TRANSLATE_X),
 		TRANSLATE_Y(DandelionAction.TRANSLATE_Y),
 		TRANSLATE_Z(DandelionAction.TRANSLATE_Z),
-		TRANSLATE_SCR_X(DandelionAction.TRANSLATE_SCR_X),
-		TRANSLATE_SCR_Y(DandelionAction.TRANSLATE_SCR_Y),
-		TRANSLATE_SCR_Z(DandelionAction.TRANSLATE_SCR_Z),
-		ROLL(DandelionAction.ROLL),
-		PITCH(DandelionAction.PITCH),
-		YAW(DandelionAction.YAW),
 		ROTATE_X(DandelionAction.ROTATE_X),
 		ROTATE_Y(DandelionAction.ROTATE_Y),
 		ROTATE_Z(DandelionAction.ROTATE_Z),
@@ -661,12 +625,6 @@ public interface Constants extends EventConstants {
 		TRANSLATE_X(DandelionAction.TRANSLATE_X),
 		TRANSLATE_Y(DandelionAction.TRANSLATE_Y),
 		TRANSLATE_Z(DandelionAction.TRANSLATE_Z),
-		TRANSLATE_SCR_X(DandelionAction.TRANSLATE_SCR_X),
-		TRANSLATE_SCR_Y(DandelionAction.TRANSLATE_SCR_Y),
-		TRANSLATE_SCR_Z(DandelionAction.TRANSLATE_SCR_Z),
-		ROLL(DandelionAction.ROLL),
-		PITCH(DandelionAction.PITCH),
-		YAW(DandelionAction.YAW),
 		ROTATE_X(DandelionAction.ROTATE_X),
 		ROTATE_Y(DandelionAction.ROTATE_Y),
 		ROTATE_Z(DandelionAction.ROTATE_Z),
@@ -729,12 +687,6 @@ public interface Constants extends EventConstants {
 		TRANSLATE_X(DandelionAction.TRANSLATE_X),
 		TRANSLATE_Y(DandelionAction.TRANSLATE_Y),
 		TRANSLATE_Z(DandelionAction.TRANSLATE_Z),
-		TRANSLATE_SCR_X(DandelionAction.TRANSLATE_SCR_X),
-		TRANSLATE_SCR_Y(DandelionAction.TRANSLATE_SCR_Y),
-		TRANSLATE_SCR_Z(DandelionAction.TRANSLATE_SCR_Z),
-		ROLL(DandelionAction.ROLL),
-		PITCH(DandelionAction.PITCH),
-		YAW(DandelionAction.YAW),
 		ROTATE_X(DandelionAction.ROTATE_X),
 		ROTATE_Y(DandelionAction.ROTATE_Y),
 		ROTATE_Z(DandelionAction.ROTATE_Z),
