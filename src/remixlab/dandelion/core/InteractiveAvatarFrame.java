@@ -108,7 +108,8 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 
 	@Override
 	public void scale(float s) {
-		System.out.println("An InteractiveiAvatarFrame has no scaling");
+		super.scale(s);
+		updateEyeFrame();
 	}
 
 	/**
@@ -188,20 +189,19 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 	public void updateEyeFrame() {
 		if (scene.is3D()) {
 			Vec p = q.rotate(new Vec(0, 0, 1));
-			p.multiply(trackingDistance());
+			p.multiply(trackingDistance()/magnitude());
 			eFrame.setTranslation(p);
 			eFrame.setYAxis(yAxis());
-			eFrame.setZAxis(inverseTransformOf(p));
-			// eFrame.setScaling((scene.eye().frame().scaling()));
-			eFrame.setScaling((scene.eye().frame().scaling()) / magnitude());
+		  eFrame.setZAxis(inverseTransformOf(p));
 		}
 		else {
 			Vec p = q.rotate(new Vec(0, 1));
-			p.multiply(trackingDistance());
+			p.multiply(trackingDistance()/magnitude());
 			eFrame.setTranslation(p);
 			eFrame.setYAxis(yAxis());
+			// hack idem (see above)
 			float size = Math.min(scene.width(), scene.height());
-			eFrame.setScaling((2 * p.magnitude() / size) / magnitude());
+			eFrame.setScaling((2.5f * trackingDistance() / size)); // window.fitBall which sets the scaling
 		}
 	}
 }

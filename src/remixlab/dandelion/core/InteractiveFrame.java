@@ -793,7 +793,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			return null;
 
 		int dofs = currentAction.dofs();
-		boolean fromY = currentAction == DandelionAction.ROLL || currentAction == DandelionAction.ROTATE_X;
+		boolean fromY = currentAction == DandelionAction.ROLL || currentAction == DandelionAction.ROTATE_X ||
+				            currentAction == DandelionAction.TRANSLATE_Y || currentAction == DandelionAction.TRANSLATE_SCR_Y;
 
 		switch (dofs) {
 		case 1:
@@ -840,12 +841,24 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		if (a == null)
 			return;
 		Vec trans;
-		float deltaX, deltaY;
+		float deltaX, deltaY, delta;
 		Rotation rot;
 		float angle;
 		switch (a) {
 		case CUSTOM:
 			AbstractScene.showMissingImplementationWarning(a, this.getClass().getName());
+			break;
+		case TRANSLATE_X:
+			translate(delta1(),0);
+			break;
+		case TRANSLATE_Y:
+			translate(0,scene.isRightHanded() ? -delta1() : delta1());
+			break;
+		case TRANSLATE_SCR_X:
+			translateFromEye(new Vec(delta1(), 0));
+			break;
+		case TRANSLATE_SCR_Y:
+			translateFromEye(new Vec(0, scene.isRightHanded() ? -delta1() : delta1()));
 			break;
 		case YAW:
 			// TODO needs testing
@@ -944,13 +957,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				rotate(rot);
 			break;
 		case SCALE:
-			float delta;
-			if (e1.action() != null) // its a wheel wheel :P
-				delta = e1.x() * wheelSensitivity();
-			else if (e1.isAbsolute())
-				delta = e1.x();
-			else
-				delta = e1.dx();
+			delta = delta1();
 			float s = 1 + Math.abs(delta) / (float) scene.height();
 			scale(delta >= 0 ? s : 1 / s);
 			break;
@@ -979,6 +986,33 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		switch (a) {
 		case CUSTOM:
 			AbstractScene.showMissingImplementationWarning(a, getClass().getName());
+			break;
+		case TRANSLATE_X:
+			delta = delta1();
+			translate(delta,0,0);
+			break;
+		case TRANSLATE_Y:
+			delta = delta1();
+			translate(0,delta,0);
+			break;
+		case TRANSLATE_Z:
+			delta = delta1();
+			translate(0,0,delta);
+			break;
+		case TRANSLATE_SCR_X:
+			trans = new Vec(delta1(), 0.0f, 0.0f);
+			scale2Fit(trans);
+			translateFromEye(trans);
+			break;
+		case TRANSLATE_SCR_Y:
+		  trans = new Vec(0.0f, scene.isRightHanded() ? -delta1() : delta1(), 0.0f);
+			scale2Fit(trans);
+			translateFromEye(trans);
+			break;
+		case TRANSLATE_SCR_Z:
+			trans = new Vec(0.0f, 0.0f, delta1());
+			scale2Fit(trans);
+			translateFromEye(trans);
 			break;
 		case DRIVE:
 			rotate(turnQuaternion(e2.dof1Event(), scene.camera()));
@@ -1078,19 +1112,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 					trans.set(0.0f, scene.isLeftHanded() ? e2.y() : -e2.y(), 0.0f);
 				else
 					trans.set(0.0f, scene.isLeftHanded() ? e2.dy() : -e2.dy(), 0.0f);
-			switch (scene.camera().type()) {
-			case PERSPECTIVE:
-				trans.multiply(2.0f
-						* (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
-						* Math.abs((scene.camera().frame().coordinatesOf(position())).vec[2] * scene.camera().frame().magnitude())
-						/ scene.camera().screenHeight());
-				break;
-			case ORTHOGRAPHIC:
-				float[] wh = scene.camera().getBoundaryWidthHeight();
-				trans.vec[0] *= 2.0 * wh[0] / scene.camera().screenWidth();
-				trans.vec[1] *= 2.0 * wh[1] / scene.camera().screenHeight();
-				break;
-			}
+			scale2Fit(trans);
 			translateFromEye(trans);
 			break;
 		case TRANSLATE:
@@ -1099,20 +1121,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			else
 				trans = new Vec(e2.x(), scene.isRightHanded() ? -e2.y() : e2.y(), 0.0f);
 			// Scale to fit the screen mouse displacement
-			switch (scene.camera().type()) {
-			case PERSPECTIVE:
-				trans.multiply(2.0f
-						* (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
-						* Math.abs((scene.camera().frame().coordinatesOf(position())).vec[2] * scene.camera().frame().magnitude())
-						/ scene.camera().screenHeight());
-				break;
-			case ORTHOGRAPHIC: {
-				float[] wh = scene.camera().getBoundaryWidthHeight();
-				trans.vec[0] *= 2.0 * wh[0] / scene.camera().screenWidth();
-				trans.vec[1] *= 2.0 * wh[1] / scene.camera().screenHeight();
-				break;
-			}
-			}
+			scale2Fit(trans);
 			translateFromEye(trans);
 			break;
 		case TRANSLATE3:
@@ -1121,20 +1130,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			else
 				trans = new Vec(e3.x(), scene.isRightHanded() ? -e3.y() : e3.y(), -e3.z());
 			// Scale to fit the screen mouse displacement
-			switch (scene.camera().type()) {
-			case PERSPECTIVE:
-				trans.multiply(2.0f
-						* (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
-						* Math.abs((scene.camera().frame().coordinatesOf(position())).vec[2] * scene.camera().frame().magnitude())
-						/ scene.camera().screenHeight());
-				break;
-			case ORTHOGRAPHIC: {
-				float[] wh = scene.camera().getBoundaryWidthHeight();
-				trans.vec[0] *= 2.0 * wh[0] / scene.camera().screenWidth();
-				trans.vec[1] *= 2.0 * wh[1] / scene.camera().screenHeight();
-				break;
-			}
-			}
+			scale2Fit(trans);
 			translateFromEye(trans);
 			break;
 		case TRANSLATE_ROTATE:
@@ -1144,20 +1140,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			else
 				trans = new Vec(e6.x(), scene.isRightHanded() ? -e6.y() : e6.y(), -e6.z());
 			// Scale to fit the screen mouse displacement
-			switch (scene.camera().type()) {
-			case PERSPECTIVE:
-				trans.multiply(2.0f
-						* (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
-						* Math.abs((scene.camera().frame().coordinatesOf(position())).vec[2] * scene.camera().frame().magnitude())
-						/ scene.camera().screenHeight());
-				break;
-			case ORTHOGRAPHIC: {
-				float[] wh = scene.camera().getBoundaryWidthHeight();
-				trans.vec[0] *= 2.0 * wh[0] / scene.camera().screenWidth();
-				trans.vec[1] *= 2.0 * wh[1] / scene.camera().screenHeight();
-				break;
-			}
-			}
+			scale2Fit(trans);
 			translateFromEye(trans);
 			// B. Rotate the iFrame
 			trans = scene.camera().projectedCoordinatesOf(position());
@@ -1167,12 +1150,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 				rotateScreen(e6.drx(), -e6.dry(), -e6.drz());
 			break;
 		case SCALE:
-			if (e1.action() != null) // its a wheel wheel :P
-				delta = e1.x() * wheelSensitivity();
-			else if (e1.isAbsolute())
-				delta = e1.x();
-			else
-				delta = e1.dx();
+			delta = delta1();
 			float s = 1 + Math.abs(delta) / (float) scene.height();
 			scale(delta >= 0 ? s : 1 / s);
 			break;
@@ -1202,6 +1180,35 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	}
 
 	// micro-actions procedures
+	
+	protected void scale2Fit(Vec trans) {
+		// Scale to fit the screen mouse displacement
+		switch (scene.camera().type()) {
+		case PERSPECTIVE:
+			trans.multiply(2.0f
+					* (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
+					* Math.abs((scene.camera().frame().coordinatesOf(position())).vec[2] * scene.camera().frame().magnitude())
+					/ scene.camera().screenHeight());
+			break;
+		case ORTHOGRAPHIC: {
+			float[] wh = scene.camera().getBoundaryWidthHeight();
+			trans.vec[0] *= 2.0 * wh[0] / scene.camera().screenWidth();
+			trans.vec[1] *= 2.0 * wh[1] / scene.camera().screenHeight();
+			break;
+		}
+		}
+	}
+	
+	protected float delta1() {		
+		float delta;
+		if (e1.action() != null) // its a wheel wheel :P
+			delta = e1.x() * wheelSensitivity();
+		else if (e1.isAbsolute())
+			delta = e1.x();
+		else
+			delta = e1.dx();
+		return delta;
+	}
 
 	protected Rot computeRot(Vec trans) {
 		Rot rot;

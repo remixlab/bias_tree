@@ -334,6 +334,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		if (!id.is2D() && this.is2D())
 			return;
 
+		/*
 		// eye firewall when avatar has been set
 		boolean passed = (avatar() == null) || (id == DandelionAction.TOGGLE_ANIMATION ||
 				id == DandelionAction.TOGGLE_AXIS_VISUAL_HINT ||
@@ -341,9 +342,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 				id == DandelionAction.TOGGLE_FRAME_VISUAL_HINT ||
 				id == DandelionAction.TOGGLE_GRID_VISUAL_HINT ||
 				id == DandelionAction.CUSTOM);
-
-		if (passed)
-			execAction(id);
+	  if (passed)
+		*/
+		execAction(id);
 	}
 
 	/**
@@ -882,15 +883,17 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * {@link remixlab.dandelion.core.Eye#updateBoundaryEquations()} if {@link #areBoundaryEquationsEnabled()}.
 	 */
 	public void preDraw() {
-		if (avatar() != null && (!eye().anyInterpolationIsStarted()) && !eye().frame().isLinked())
-			eye().frame().linkTo(avatar().eyeFrame());
+		//TODO needs improving, but seems more elegant to me
+		//if (avatar() != null && (!eye().anyInterpolationIsStarted()) && !eye().frame().isLinked())
+			//eye().frame().linkTo(avatar().eyeFrame());
 
-		/*
-		 * if (avatar() != null && (!eye().anyInterpolationIsStarted())) {
-		 * eye().frame().setPosition(avatar().eyeFrame().position());
-		 * eye().frame().setOrientation(avatar().eyeFrame().orientation());
-		 * eye().frame().setScaling(avatar().eyeFrame().scaling()); }
-		 */
+		///*
+		if (avatar() != null && (!eye().anyInterpolationIsStarted())) {
+			eye().frame().setPosition(avatar().eyeFrame().position());
+			eye().frame().setOrientation(avatar().eyeFrame().orientation());
+			eye().frame().setScaling(avatar().eyeFrame().scaling());
+		}	
+		//*/
 
 		bind();
 		if (areBoundaryEquationsEnabled())

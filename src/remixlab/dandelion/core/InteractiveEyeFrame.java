@@ -268,13 +268,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				rotate(rot);
 			break;
 		case SCALE:
-			float delta;
-			if (e1.action() != null) // its a wheel wheel :P
-				delta = e1.x() * wheelSensitivity();
-			else if (e1.isAbsolute())
-				delta = e1.x();
-			else
-				delta = e1.dx();
+			float delta = delta1();
 			float s = 1 + Math.abs(delta) / (float) -scene.height();
 			scale(delta >= 0 ? s : 1 / s);
 			break;
@@ -413,19 +407,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 					trans.set(0.0f, scene.isLeftHanded() ? -e2.y() : e2.y(), 0.0f);
 				else
 					trans.set(0.0f, scene.isLeftHanded() ? -e2.dy() : e2.dy(), 0.0f);
-			switch (camera.type()) {
-			case PERSPECTIVE:
-				trans.multiply(2.0f
-						* (float) Math.tan(camera.fieldOfView() / 2.0f)
-						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
-						/ camera.screenHeight());
-				break;
-			case ORTHOGRAPHIC:
-				float[] wh = camera.getBoundaryWidthHeight();
-				trans.vec[0] *= 2.0f * wh[0] / camera.screenWidth();
-				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
-				break;
-			}
+			scale2Fit(trans);
 			trans = Vec.multiply(trans, translationSensitivity());
 			translate(orientation().rotate(trans));
 			break;
@@ -435,18 +417,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			else
 				trans = new Vec(-e2.x(), scene.isRightHanded() ? e2.y() : -e2.y(), 0.0f);
 			// Scale to fit the screen mouse displacement
-			switch (camera.type()) {
-			case PERSPECTIVE:
-				trans.multiply(2.0f * (float) Math.tan(camera.fieldOfView() / 2.0f)
-						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
-						/ camera.screenHeight());
-				break;
-			case ORTHOGRAPHIC:
-				float[] wh = camera.getBoundaryWidthHeight();
-				trans.vec[0] *= 2.0f * wh[0] / camera.screenWidth();
-				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
-				break;
-			}
+			scale2Fit(trans);
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
 		case TRANSLATE3:
@@ -455,18 +426,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			else
 				trans = new Vec(-e3.x(), scene.isRightHanded() ? -e3.y() : e3.y(), -e3.z());
 			// Scale to fit the screen mouse displacement
-			switch (camera.type()) {
-			case PERSPECTIVE:
-				trans.multiply(2.0f * (float) Math.tan(camera.fieldOfView() / 2.0f)
-						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
-						/ camera.screenHeight());
-				break;
-			case ORTHOGRAPHIC:
-				float[] wh = camera.getBoundaryWidthHeight();
-				trans.vec[0] *= 2.0f * wh[0] / camera.screenWidth();
-				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
-				break;
-			}
+			scale2Fit(trans);
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
 		case TRANSLATE_ROTATE:
@@ -476,18 +436,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			else
 				trans = new Vec(-e6.x(), scene.isRightHanded() ? -e6.y() : e6.y(), -e6.z());
 			// Scale to fit the screen mouse displacement
-			switch (camera.type()) {
-			case PERSPECTIVE:
-				trans.multiply(2.0f * (float) Math.tan(camera.fieldOfView() / 2.0f)
-						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
-						/ camera.screenHeight());
-				break;
-			case ORTHOGRAPHIC:
-				float[] wh = camera.getBoundaryWidthHeight();
-				trans.vec[0] *= 2.0f * wh[0] / camera.screenWidth();
-				trans.vec[1] *= 2.0f * wh[1] / camera.screenHeight();
-				break;
-			}
+			scale2Fit(trans);
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			// Rotate
 			q = new Quat();
@@ -590,6 +539,23 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		 * 
 		 * q.fromEulerAngles(-event6.roll(), 0, 0); rotate(q); break; //
 		 */
+	}
+	
+	@Override
+	protected void scale2Fit(Vec trans) {
+	  // Scale to fit the screen mouse displacement
+		switch (scene.camera().type()) {
+			case PERSPECTIVE:
+				trans.multiply(2.0f * (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
+						* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
+						/ scene.camera().screenHeight());
+				break;
+			case ORTHOGRAPHIC:
+				float[] wh = scene.camera().getBoundaryWidthHeight();
+				trans.vec[0] *= 2.0f * wh[0] / scene.camera().screenWidth();
+				trans.vec[1] *= 2.0f * wh[1] / scene.camera().screenHeight();
+				break;
+			}
 	}
 
 	@Override
