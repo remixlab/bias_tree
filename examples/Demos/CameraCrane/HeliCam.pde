@@ -18,15 +18,13 @@ public class HeliCam {
     frame(4).setReferenceFrame(frame(0));
 
     // Initialize frames
-    frame(0).setRotation(
-    new Quat(new Vec(1.0f, 0.0f, 0.0f), PApplet.HALF_PI));
+    frame(0).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), PApplet.HALF_PI));
     frame(0).setTranslation(-25, 56, 62);
     frame(1).setTranslation(0, 0, 6);
     frame(2).setTranslation(0, 0, 15);
     frame(3).setTranslation(0, 0, 15);
     frame(4).setTranslation(0, 6, 0);
-    frame(1).setRotation(
-    new Quat(new Vec(1.0f, 0.0f, 0.0f), 0.6f));
+    frame(1).setRotation( new Quat(new Vec(1.0f, 0.0f, 0.0f), 0.6f));
     frame(2).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), PApplet.HALF_PI));
     frame(3).setRotation(new Quat(new Vec(1.0f, -0.3f, 0.0f), 1.7f));
     frame(4).setRotation(new Quat(new Vec(1.0f, -0.0f, 0.0f), -PApplet.HALF_PI));
@@ -51,8 +49,7 @@ public class HeliCam {
     LocalConstraint rotor = new LocalConstraint();
     rotor.setTranslationConstraint(AxisPlaneConstraint.Type.FORBIDDEN, 
     new Vec(0.0f, 0.0f, 0.0f));
-    rotor.setRotationConstraint(AxisPlaneConstraint.Type.AXIS, new Vec(
-    0.0f, 0.0f, 1.0f));
+    rotor.setRotationConstraint(AxisPlaneConstraint.Type.AXIS, new Vec(0.0f, 0.0f, 1.0f));
     frame(4).setConstraint(rotor);
     frame(4).setSpinningRotation(rotation);
     frame(4).removeFromAgentPool(((CameraCrane)parent).mainScene.mouseAgent());

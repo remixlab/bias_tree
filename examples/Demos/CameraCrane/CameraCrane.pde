@@ -77,16 +77,16 @@ public void draw() {
   image(canvas, 0, 0);
 
   armCanvas.beginDraw();
-  drawing(armScene);
   armScene.beginDraw();
+  drawing(armScene);
   armScene.endDraw();
   armCanvas.endDraw();
   // We retrieve the scene upper left coordinates defined above.
   image(armCanvas, armScene.upperLeftCorner.x(), armScene.upperLeftCorner.y());
 
   heliCanvas.beginDraw();
-  drawing(heliScene);
   heliScene.beginDraw();
+  drawing(heliScene);
   heliScene.endDraw();
   heliCanvas.endDraw();
   // We retrieve the scene upper left coordinates defined above.
@@ -132,7 +132,7 @@ public void drawing(Scene scn) {
   }
   // 1. draw the robot cams
 
-    armCam.draw(scn);
+  armCam.draw(scn);
   heliCam.draw(scn);
 
   // 2. draw the scene

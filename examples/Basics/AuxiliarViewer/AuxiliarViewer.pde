@@ -1,5 +1,5 @@
 /**
- * Combo 2D
+ * Auxiliar Viewer
  * by Jean Pierre Charalambos.
  * 
  * This example illustrates how to use proscene off-screen rendering to build

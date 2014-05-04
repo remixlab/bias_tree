@@ -156,7 +156,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		super(otherFrame);
 		this.scene = otherFrame.scene;
 
-		// this.scene.terseHandler().addInAllAgentPools(this);
 		for (Agent element : this.scene.inputHandler().agents()) {
 			if (this.scene.inputHandler().isInAgentPool(otherFrame, element))
 				this.scene.inputHandler().addInAgentPool(this, element);
@@ -721,6 +720,121 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		else
 			setTossingDirection(rotation().rotate(flyDisp));
 	}
+	
+	/**
+	 * Returns the fly speed, expressed in virtual scene units.
+	 * <p>
+	 * It corresponds to the incremental displacement that is periodically applied to the InteractiveFrame position when a
+	 * MOVE_FORWARD or MOVE_BACKWARD action is proceeded.
+	 * <p>
+	 * <b>Attention:</b> When the InteractiveFrame is set as the {@link remixlab.dandelion.core.Eye#frame()} or when it is
+	 * set as the {@link remixlab.dandelion.core.AbstractScene#avatar()} (which indeed is an instance of the
+	 * InteractiveAvatarFrame class), this value is set according to the
+	 * {@link remixlab.dandelion.core.AbstractScene#radius()} by
+	 * {@link remixlab.dandelion.core.AbstractScene#setRadius(float)}.
+	 */
+	public float flySpeed() {
+		return flySpd;
+	}
+
+	/**
+	 * Sets the {@link #flySpeed()}, defined in virtual scene units.
+	 * <p>
+	 * Default value is 0.0, but it is modified according to the {@link remixlab.dandelion.core.AbstractScene#radius()}
+	 * when the InteractiveFrame is set as the {@link remixlab.dandelion.core.Eye#frame()} (which indeed is an instance of
+	 * the InteractiveEyeFrame class) or when the InteractiveFrame is set as the
+	 * {@link remixlab.dandelion.core.AbstractScene#avatar()} (which indeed is an instance of the InteractiveAvatarFrame
+	 * class).
+	 */
+	public void setFlySpeed(float speed) {
+		flySpd = speed;
+	}
+
+	/**
+	 * Returns the up vector used in fly mode, expressed in the world coordinate system.
+	 * <p>
+	 * Fly mode corresponds to the MOVE_FORWARD and MOVE_BACKWARD action bindings. In these modes, horizontal
+	 * displacements of the mouse rotate the InteractiveFrame around this vector. Vertical displacements rotate always
+	 * around the frame {@code X} axis.
+	 * <p>
+	 * This value is also used within the CAD_ROTATE action to define the up vector (and incidentally the 'horizon' plane)
+	 * around which the camera will rotate.
+	 * <p>
+	 * Default value is (0,1,0), but it is updated by the Eye when set as its {@link remixlab.dandelion.core.Eye#frame()}.
+	 * {@link remixlab.dandelion.core.Eye#setOrientation(Rotation)} and
+	 * {@link remixlab.dandelion.core.Eye#setUpVector(Vec)} modify this value and should be used instead.
+	 */
+	public Vec sceneUpVector() {
+		return scnUpVec;
+	}
+
+	/**
+	 * Sets the {@link #sceneUpVector()}, defined in the world coordinate system.
+	 * <p>
+	 * Default value is (0,1,0), but it is updated by the Eye when set as its {@link remixlab.dandelion.core.Eye#frame()}.
+	 * Use {@link remixlab.dandelion.core.Eye#setUpVector(Vec)} instead in that case.
+	 */
+	public void setSceneUpVector(Vec up) {
+		scnUpVec = up;
+	}
+
+	/**
+	 * This method will be called by the Eye when its orientation is changed, so that the {@link #sceneUpVector()} is
+	 * changed accordingly. You should not need to call this method.
+	 */
+	public final void updateSceneUpVector() {
+		scnUpVec = orientation().rotate(new Vec(0.0f, 1.0f, 0.0f));
+	}
+
+	/**
+	 * Rotates the frame around locally defined {@code axis}.
+	 * 
+	 * @param axis
+	 *          Local axis
+	 * @param angle
+	 *          Rotation angle in radians
+	 */
+	public void rotateAroundAxis(Vec axis, float angle) {
+		if(scene.is2D()) {
+			AbstractScene.showDepthWarning("rotateAroundAxis");
+			return;
+		}
+		Quat q = new Quat(axis, angle);
+		rotate(q);
+		setSpinningRotation(q);
+		updateSceneUpVector();
+	}
+
+	/**
+	 * <a href="http://en.wikipedia.org/wiki/Euler_angles#Extrinsic_rotations">Extrinsic rotation</a> about the
+	 * {@link remixlab.dandelion.core.AbstractScene#eye()} {@link remixlab.dandelion.core.InteractiveEyeFrame} axes.
+	 * 
+	 * @param roll
+	 *          Rotation angle in radians around the Eye x-Axis
+	 * @param pitch
+	 *          Rotation angle in radians around the Eye y-Axis
+	 * @param yaw
+	 *          Rotation angle in radians around the Eye z-Axis
+	 * 
+	 * @see remixlab.dandelion.geom.Quat#fromEulerAngles(float, float, float)
+	 */
+	public void rollPitchYaw(float roll, float pitch, float yaw) {
+		if(scene.is2D()) {
+			AbstractScene.showDepthWarning("rollPitchYaw");
+			return;
+		}
+		Vec trans = new Vec();
+		Quat q = new Quat();
+		q.fromEulerAngles(scene.isLeftHanded() ? roll : -roll, -pitch, scene.isLeftHanded() ? yaw : -yaw);
+		// trans = scene.camera().projectedCoordinatesOf(position());
+		trans.set(-q.x(), -q.y(), -q.z());
+		trans = scene.camera().frame().orientation().rotate(trans);
+		trans = transformOf(trans);
+		q.setX(trans.x());
+		q.setY(trans.y());
+		q.setZ(trans.z());
+		rotate(q);
+	}
 
 	@Override
 	public void performInteraction(BogusEvent e) {
@@ -793,7 +907,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			return null;
 
 		int dofs = currentAction.dofs();
-		boolean fromY = currentAction == DandelionAction.ROTATE_X || currentAction == DandelionAction.TRANSLATE_Y;
+		boolean fromY = currentAction == DandelionAction.ROTATE_X || currentAction == DandelionAction.TRANSLATE_Y
+				|| currentAction == DandelionAction.SCALE || currentAction == DandelionAction.ZOOM;
 
 		switch (dofs) {
 		case 1:
@@ -1136,55 +1251,11 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			break;
 		}
 	}
-
-	/**
-	 * Rotates the frame around locally defined {@code axis}.
-	 * 
-	 * @param axis
-	 *          Local axis
-	 * @param angle
-	 *          Rotation angle in radians
-	 */
-	public void rotateAroundAxis(Vec axis, float angle) {
-		// lef-handed coordinate system correction
-		// if (scene.isLeftHanded()) angle = -angle;
-		Quat q = new Quat(axis, angle);
-		rotate(q);
-		setSpinningRotation(q);
-		updateSceneUpVector();
-	}
-
-	/**
-	 * <a href="http://en.wikipedia.org/wiki/Euler_angles#Extrinsic_rotations">Extrinsic rotation</a> about the
-	 * {@link remixlab.dandelion.core.AbstractScene#eye()} {@link remixlab.dandelion.core.InteractiveEyeFrame} axes.
-	 * 
-	 * @param roll
-	 *          Rotation angle in radians around the Eye x-Axis
-	 * @param pitch
-	 *          Rotation angle in radians around the Eye y-Axis
-	 * @param yaw
-	 *          Rotation angle in radians around the Eye z-Axis
-	 * 
-	 * @see remixlab.dandelion.geom.Quat#fromEulerAngles(float, float, float)
-	 */
-	public void rollPitchYaw(float roll, float pitch, float yaw) {
-		Vec trans = new Vec();
-		Quat q = new Quat();
-		q.fromEulerAngles(scene.isLeftHanded() ? roll : -roll, -pitch, scene.isLeftHanded() ? yaw : -yaw);
-		// trans = scene.camera().projectedCoordinatesOf(position());
-		trans.set(-q.x(), -q.y(), -q.z());
-		trans = scene.camera().frame().orientation().rotate(trans);
-		trans = transformOf(trans);
-		q.setX(trans.x());
-		q.setY(trans.y());
-		q.setZ(trans.z());
-		rotate(q);
-	}
-
+	
 	// micro-actions procedures
 
 	protected void scale2Fit(Vec trans) {
-		// Scale to fit the screen mouse displacement
+		// Scale to fit the screen relative event displacement
 		switch (scene.camera().type()) {
 		case PERSPECTIVE:
 			trans.multiply(2.0f
@@ -1290,71 +1361,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 
 		float d = x * x + y * y;
 		return d < size_limit ? (float) Math.sqrt(size2 - d) : size_limit / (float) Math.sqrt(d);
-	}
-
-	/**
-	 * Returns the fly speed, expressed in virtual scene units.
-	 * <p>
-	 * It corresponds to the incremental displacement that is periodically applied to the InteractiveFrame position when a
-	 * MOVE_FORWARD or MOVE_BACKWARD action is proceeded.
-	 * <p>
-	 * <b>Attention:</b> When the InteractiveFrame is set as the {@link remixlab.dandelion.core.Eye#frame()} or when it is
-	 * set as the {@link remixlab.dandelion.core.AbstractScene#avatar()} (which indeed is an instance of the
-	 * InteractiveAvatarFrame class), this value is set according to the
-	 * {@link remixlab.dandelion.core.AbstractScene#radius()} by
-	 * {@link remixlab.dandelion.core.AbstractScene#setRadius(float)}.
-	 */
-	public float flySpeed() {
-		return flySpd;
-	}
-
-	/**
-	 * Sets the {@link #flySpeed()}, defined in virtual scene units.
-	 * <p>
-	 * Default value is 0.0, but it is modified according to the {@link remixlab.dandelion.core.AbstractScene#radius()}
-	 * when the InteractiveFrame is set as the {@link remixlab.dandelion.core.Eye#frame()} (which indeed is an instance of
-	 * the InteractiveEyeFrame class) or when the InteractiveFrame is set as the
-	 * {@link remixlab.dandelion.core.AbstractScene#avatar()} (which indeed is an instance of the InteractiveAvatarFrame
-	 * class).
-	 */
-	public void setFlySpeed(float speed) {
-		flySpd = speed;
-	}
-
-	/**
-	 * Returns the up vector used in fly mode, expressed in the world coordinate system.
-	 * <p>
-	 * Fly mode corresponds to the MOVE_FORWARD and MOVE_BACKWARD action bindings. In these modes, horizontal
-	 * displacements of the mouse rotate the InteractiveFrame around this vector. Vertical displacements rotate always
-	 * around the frame {@code X} axis.
-	 * <p>
-	 * This value is also used within the CAD_ROTATE action to define the up vector (and incidentally the 'horizon' plane)
-	 * around which the camera will rotate.
-	 * <p>
-	 * Default value is (0,1,0), but it is updated by the Eye when set as its {@link remixlab.dandelion.core.Eye#frame()}.
-	 * {@link remixlab.dandelion.core.Eye#setOrientation(Rotation)} and
-	 * {@link remixlab.dandelion.core.Eye#setUpVector(Vec)} modify this value and should be used instead.
-	 */
-	public Vec sceneUpVector() {
-		return scnUpVec;
-	}
-
-	/**
-	 * Sets the {@link #sceneUpVector()}, defined in the world coordinate system.
-	 * <p>
-	 * Default value is (0,1,0), but it is updated by the Eye when set as its {@link remixlab.dandelion.core.Eye#frame()}.
-	 * Use {@link remixlab.dandelion.core.Eye#setUpVector(Vec)} instead in that case.
-	 */
-	public void setSceneUpVector(Vec up) {
-		scnUpVec = up;
-	}
-
-	/**
-	 * This method will be called by the Eye when its orientation is changed, so that the {@link #sceneUpVector()} is
-	 * changed accordingly. You should not need to call this method.
-	 */
-	public final void updateSceneUpVector() {
-		scnUpVec = orientation().rotate(new Vec(0.0f, 1.0f, 0.0f));
 	}
 
 	/**
