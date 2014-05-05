@@ -82,7 +82,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Default constructor which defines a right-handed OpenGL compatible Scene with its own
 	 * {@link remixlab.dandelion.core.MatrixStackHelper}. The constructor also instantiates the {@link #inputHandler()}
-	 * and the {@link #timingHandler()}, and sets the AXIS and GRID visual hint flags.
+	 * and the {@link #timingHandler()}, and sets the AXES and GRID visual hint flags.
 	 * <p>
 	 * Third party (concrete) Scenes should additionally:
 	 * <ol>
@@ -108,7 +108,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		iHandler = new InputHandler();
 		setMatrixHelper(new MatrixStackHelper(this));
 		setRightHanded();
-		setVisualHints(AXIS | GRID);
+		setVisualHints(AXES | GRID);
 	}
 
 	// AGENTs
@@ -370,8 +370,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		case PLAY_PATH_3:
 			eye().playPath(3);
 			break;
-		case TOGGLE_AXIS_VISUAL_HINT:
-			toggleAxisVisualHint();
+		case TOGGLE_AXES_VISUAL_HINT:
+			toggleAxesVisualHint();
 			break;
 		case TOGGLE_GRID_VISUAL_HINT:
 			toggleGridVisualHint();
@@ -704,23 +704,23 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Low level setting of visual flags. You'd prefer {@link #setAxisVisualHint(boolean)},
+	 * Low level setting of visual flags. You'd prefer {@link #setAxesVisualHint(boolean)},
 	 * {@link #setGridVisualHint(boolean)}, {@link #setPathsVisualHint(boolean)} and {@link #setFrameVisualHint(boolean)},
 	 * unless you want to set them all at once, e.g.,
-	 * {@code setVisualHints(Constants.AXIS | Constants.GRID | Constants.PATHS | Constants.FRAME)}.
+	 * {@code setVisualHints(Constants.AXES | Constants.GRID | Constants.PATHS | Constants.FRAME)}.
 	 */
 	public void setVisualHints(int flag) {
 		visualHintMask = flag;
 	}
 
 	/**
-	 * Toggles the state of {@link #axisVisualHint()}.
+	 * Toggles the state of {@link #axesVisualHint()}.
 	 * 
-	 * @see #axisVisualHint()
-	 * @see #setAxisVisualHint(boolean)
+	 * @see #axesVisualHint()
+	 * @see #setAxesVisualHint(boolean)
 	 */
-	public void toggleAxisVisualHint() {
-		setAxisVisualHint(!axisVisualHint());
+	public void toggleAxesVisualHint() {
+		setAxesVisualHint(!axesVisualHint());
 	}
 
 	/**
@@ -765,10 +765,10 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Returns {@code true} if axis is currently being drawn and {@code false} otherwise.
+	 * Returns {@code true} if axes are currently being drawn and {@code false} otherwise.
 	 */
-	public boolean axisVisualHint() {
-		return ((visualHintMask & AXIS) != 0);
+	public boolean axesVisualHint() {
+		return ((visualHintMask & AXES) != 0);
 	}
 
 	/**
@@ -807,13 +807,13 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Sets the display of the axis according to {@code draw}
+	 * Sets the display of the axes according to {@code draw}
 	 */
-	public void setAxisVisualHint(boolean draw) {
+	public void setAxesVisualHint(boolean draw) {
 		if (draw)
-			visualHintMask |= AXIS;
+			visualHintMask |= AXES;
 		else
-			visualHintMask &= ~AXIS;
+			visualHintMask &= ~AXES;
 	}
 
 	/**
@@ -929,14 +929,14 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	protected void displayVisualHints() {
 		if (gridVisualHint())
 			drawGridHint();
-		if (axisVisualHint())
-			drawAxisHint();
+		if (axesVisualHint())
+			drawAxesHint();
 		if (frameVisualHint())
 			drawFramesHint();
 		if (pathsVisualHint())
 			drawPathsHint();
 		else
-			hideAllEyePaths();
+			hideEyePaths();
 		if (zoomVisualHint())
 			drawZoomWindowHint();
 		if (rotateVisualHint())
@@ -957,8 +957,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Internal use.
 	 */
-	protected void drawAxisHint() {
-		drawAxis(eye().sceneRadius());
+	protected void drawAxesHint() {
+		drawAxes(eye().sceneRadius());
 	}
 
 	/**
@@ -975,7 +975,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * Internal use.
 	 */
 	protected void drawPathsHint() {
-		drawAllEyePaths();
+		drawEyePaths();
 	}
 
 	/**
@@ -990,9 +990,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Draws all keyframe eye paths and makes them editable.
 	 * 
-	 * @see #hideAllEyePaths()
+	 * @see #hideEyePaths()
 	 */
-	public void drawAllEyePaths() {
+	public void drawEyePaths() {
 		// /*
 		Iterator<Integer> itrtr = eye.kfi.keySet().iterator();
 		while (itrtr.hasNext()) {
@@ -1008,10 +1008,10 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Hides all the keyframe eye paths.
 	 * 
-	 * @see #drawAllEyePaths()
+	 * @see #drawEyePaths()
 	 * @see remixlab.dandelion.core.KeyFrameInterpolator#removeFramesFromAllAgentPools()
 	 */
-	public void hideAllEyePaths() {
+	public void hideEyePaths() {
 		Iterator<Integer> itrtr = eye.kfi.keySet().iterator();
 		while (itrtr.hasNext()) {
 			Integer key = itrtr.next();
@@ -1049,8 +1049,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Convenience function that simply calls {@code drawAxis(100)}.
 	 */
-	public void drawAxis() {
-		drawAxis(100);
+	public void drawAxes() {
+		drawAxes(100);
 	}
 
 	/**
@@ -1288,18 +1288,18 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public abstract void drawCone(int detail, float x, float y, float r1, float r2, float h);
 
 	/**
-	 * Draws an axis of length {@code length} which origin correspond to the world coordinate system origin.
+	 * Draws axes of length {@code length} which origin correspond to the world coordinate system origin.
 	 * 
 	 * @see #drawGrid(float, int)
 	 */
-	public abstract void drawAxis(float length);
+	public abstract void drawAxes(float length);
 
 	/**
 	 * Draws a grid in the XY plane, centered on (0,0,0) (defined in the current coordinate system).
 	 * <p>
 	 * {@code size} and {@code nbSubdivisions} define its geometry.
 	 * 
-	 * @see #drawAxis(float)
+	 * @see #drawAxes(float)
 	 */
 	public abstract void drawGrid(float size, int nbSubdivisions);
 
@@ -1308,7 +1308,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * <p>
 	 * {@code size} and {@code nbSubdivisions} define its geometry.
 	 * 
-	 * @see #drawAxis(float)
+	 * @see #drawAxes(float)
 	 */
 	public abstract void drawDottedGrid(float size, int nbSubdivisions);
 
@@ -1316,18 +1316,18 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * Draws the path used to interpolate the {@link remixlab.dandelion.core.KeyFrameInterpolator#frame()}
 	 * <p>
 	 * {@code mask} controls what is drawn: If ( (mask & 1) != 0 ), the position path is drawn. If ( (mask & 2) != 0 ), a
-	 * camera representation is regularly drawn and if ( (mask & 4) != 0 ), an oriented axis is regularly drawn. Examples:
+	 * camera representation is regularly drawn and if ( (mask & 4) != 0 ), oriented axes are regularly drawn. Examples:
 	 * <p>
 	 * {@code drawPath(); // Simply draws the interpolation path} <br>
 	 * {@code drawPath(3); // Draws path and cameras} <br>
-	 * {@code drawPath(5); // Draws path and axis} <br>
+	 * {@code drawPath(5); // Draws path and axes} <br>
 	 * <p>
-	 * In the case where camera or axis is drawn, {@code nbFrames} controls the number of objects (axis or camera) drawn
+	 * In the case where camera or axes are drawn, {@code nbFrames} controls the number of objects (axes or camera) drawn
 	 * between two successive keyFrames. When {@code nbFrames = 1}, only the path KeyFrames are drawn.
 	 * {@code nbFrames = 2} also draws the intermediate orientation, etc. The maximum value is 30. {@code nbFrames} should
 	 * divide 30 so that an object is drawn for each KeyFrame. Default value is 6.
 	 * <p>
-	 * {@code scale} controls the scaling of the camera and axis drawing. A value of {@link #radius()} should give good
+	 * {@code scale} controls the scaling of the camera and axes drawing. A value of {@link #radius()} should give good
 	 * results.
 	 */
 	public abstract void drawPath(KeyFrameInterpolator kfi, int mask, int nbFrames, float scale);
@@ -1960,7 +1960,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * implementation is empty.
 	 * <p>
 	 * Typical usage include {@link #eye()} initialization ({@link #showAll()}) and Scene state setup (
-	 * {@link #setAxisVisualHint(boolean)} and {@link #setGridVisualHint(boolean)}.
+	 * {@link #setAxesVisualHint(boolean)} and {@link #setGridVisualHint(boolean)}.
 	 */
 	public void init() {
 	}

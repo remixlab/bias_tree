@@ -17,7 +17,7 @@ public interface Constants extends EventConstants {
 	/**
 	 * Visual hints as "the last shall be first"
 	 */
-	final static int		AXIS				= 1 << 0;
+	final static int		AXES				= 1 << 0;
 	final static int		GRID				= 1 << 1;
 	final static int		FRAME				= 1 << 2;
 	final static int		PATHS				= 1 << 3;
@@ -132,9 +132,9 @@ public interface Constants extends EventConstants {
 
 		// GENERAL KEYBOARD ACTIONs
 		/**
-		 * Toggles axis visual hint
+		 * Toggles axes visual hint
 		 */
-		TOGGLE_AXIS_VISUAL_HINT("Toggles axis visual hint", true, 0),
+		TOGGLE_AXES_VISUAL_HINT("Toggles axes visual hint", true, 0),
 		/**
 		 * Toggles grid visual hint
 		 */
@@ -381,7 +381,7 @@ public interface Constants extends EventConstants {
 		ANCHOR_FROM_PIXEL(DandelionAction.ANCHOR_FROM_PIXEL),
 
 		// GENERAL KEYBOARD ACTIONs
-		TOGGLE_AXIS_VISUAL_HINT(DandelionAction.TOGGLE_AXIS_VISUAL_HINT),
+		TOGGLE_AXES_VISUAL_HINT(DandelionAction.TOGGLE_AXES_VISUAL_HINT),
 		TOGGLE_GRID_VISUAL_HINT(DandelionAction.TOGGLE_GRID_VISUAL_HINT),
 		// CAMERA_PROFILE(DandelionAction.CAMERA_PROFILE),
 		TOGGLE_CAMERA_TYPE(DandelionAction.TOGGLE_CAMERA_TYPE),
@@ -455,7 +455,7 @@ public interface Constants extends EventConstants {
 		INTERPOLATE_TO_FIT(DandelionAction.INTERPOLATE_TO_FIT),
 
 		// GENERAL KEYBOARD ACTIONs
-		TOGGLE_AXIS_VISUAL_HINT(DandelionAction.TOGGLE_AXIS_VISUAL_HINT),
+		TOGGLE_AXES_VISUAL_HINT(DandelionAction.TOGGLE_AXES_VISUAL_HINT),
 		TOGGLE_GRID_VISUAL_HINT(DandelionAction.TOGGLE_GRID_VISUAL_HINT),
 		// CAMERA_PROFILE(DandelionAction.CAMERA_PROFILE),
 		TOGGLE_CAMERA_TYPE(DandelionAction.TOGGLE_CAMERA_TYPE),

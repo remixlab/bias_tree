@@ -47,7 +47,7 @@ import java.util.List;
  * {@link #keyboardAgent()}, and {@link #mouseAgent()}:
  * <ol>
  * <li><b>The default keyboard agent</b> provides shortcuts to general keyboard dandelion actions such as
- * {@link #drawGrid()} or {@link #drawAxis()}. See
+ * {@link #drawGrid()} or {@link #drawAxes()}. See
  * {@link #setKeyboardShortcut(Character, remixlab.dandelion.core.Constants.KeyboardAction)} and
  * {@link #setKeyboardShortcut(int, int, remixlab.dandelion.core.Constants.KeyboardAction)}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage camera and frame motion actions. Please
@@ -1961,7 +1961,7 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	@Override
-	public void drawAxis(float length) {
+	public void drawAxes(float length) {
 		pg().pushStyle();
 		pg().colorMode(PApplet.RGB, 255);
 		final float charWidth = length / 40.0f;
@@ -2262,7 +2262,7 @@ public class Scene extends AbstractScene implements PConstants {
 						if ((mask & 2) != 0)
 							drawKFIEye(scale);
 						if ((mask & 4) != 0)
-							drawAxis(scale / 10.0f);
+							drawAxes(scale / 10.0f);
 
 						popModelView();
 					}
@@ -2511,10 +2511,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Copy paste from AbstractScene but we add the style (color, stroke, etc) here.
 	 */
 	@Override
-	protected void drawAxisHint() {
+	protected void drawAxesHint() {
 		pg().pushStyle();
 		pg().strokeWeight(2);
-		drawAxis(eye().sceneRadius());
+		drawAxes(eye().sceneRadius());
 		pg().popStyle();
 	}
 
@@ -2545,7 +2545,7 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().colorMode(PApplet.RGB, 255);
 		pg().strokeWeight(1);
 		pg().stroke(0, 220, 220);
-		drawAllEyePaths();
+		drawEyePaths();
 		pg().popStyle();
 	}
 

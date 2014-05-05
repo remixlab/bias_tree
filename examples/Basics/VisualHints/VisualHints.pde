@@ -62,7 +62,7 @@ public void draw() {
   // applyMatrix(iFrame.matrix()) is possible but inefficient 
   iFrame.applyTransformation();//very efficient
   // Draw an axis using the Scene static function
-  scene.drawAxis(20);
+  scene.drawAxes(20);
 
   // Draw a second box
   if (focusIFrame) {
@@ -103,11 +103,11 @@ public void drawPaths() {
     colorMode(PApplet.RGB, 255);
     strokeWeight(3);
     stroke(220,0,220);
-    scene.drawAllEyePaths();
+    scene.drawEyePaths();
     popStyle();
   }
   else
-    scene.hideAllEyePaths();
+    scene.hideEyePaths();
 }
 
 public class CustomizedScene extends Scene {
