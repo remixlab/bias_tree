@@ -54,7 +54,7 @@ public void draw() {
 
   pushMatrix();
   iFrame.applyTransformation();
-  scene.drawAxis(20);
+  scene.drawAxes(20);
 
   // Draw a second box    
   if (iFrameGrabsInput()) {
@@ -104,7 +104,7 @@ public void keyPressed() {
       if (key == 'a')
         keyAction = KeyboardAction.TOGGLE_GRID_VISUAL_HINT;
       if (key == 'g')
-        keyAction = KeyboardAction.TOGGLE_AXIS_VISUAL_HINT;
+        keyAction = KeyboardAction.TOGGLE_AXES_VISUAL_HINT;
       kEvent = new KeyboardEvent(key);      
       scene.inputHandler().enqueueEventTuple(new EventGrabberTuple(kEvent, keyAction, scene));
     }

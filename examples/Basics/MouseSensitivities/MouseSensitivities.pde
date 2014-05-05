@@ -81,7 +81,7 @@ void draw() {
   //applyMatrix(interactiveFrame.matrix()); //is possible but inefficient 
   interactiveFrame.applyTransformation();//very efficient
   // Draw an axis using the Scene static function
-  scene.drawAxis(20);				
+  scene.drawAxes(20);				
   // Draw a second box
   // Draw a second box
   if (focusIFrame) {

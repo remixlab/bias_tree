@@ -23,7 +23,7 @@ void setup() {
   scene=new Scene(this); 
   scene.setRadius(800);
   scene.setGridVisualHint(false);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   nb=220;
   reperes=new InteractiveFrame[nb];
   reperes[0]=new InteractiveFrame(scene);

@@ -28,7 +28,7 @@ public void setup() {
   scene.matrixHelper().optimizeUnprojectCache(true);
   scene.setRadius(100);
   scene.showAll();
-  scene.setFrameVisualHint(true);
+  scene.setPickingVisualHint(true);
   lamp = new Lamp(scene);
 }
 

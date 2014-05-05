@@ -44,7 +44,7 @@ void draw() {
   scene.applyModelView(iFrame.matrix());  //Option 1. or,
   //iFrame.applyTransformation(); //Option 2.
   // Draw an axis using the Scene static function
-  scene.drawAxis(20);
+  scene.drawAxes(20);
   // Draw a second box attached to the interactive frame
   if (iFrame.grabsInput(scene.mouseAgent())) {
     fill(255, 0, 0);
@@ -62,15 +62,15 @@ public void setExoticCustomization() {
   scene.setMouseButtonBinding(true, CENTER, DOF2Action.ZOOM_ON_ANCHOR);
   scene.setMouseButtonBinding(true, LEFT, DOF2Action.TRANSLATE);
   scene.setMouseButtonBinding(true, RIGHT, DOF2Action.ROTATE_CAD);
-  scene.setMouseClickBinding(true, EventConstants.B_SHIFT, EventConstants.B_RIGHT, 2, ClickAction.TOGGLE_AXIS_VISUAL_HINT);
-  scene.setMouseClickBinding(true, Event.SHIFT, LEFT, 2, ClickAction.TOGGLE_AXIS_VISUAL_HINT);
+  scene.setMouseClickBinding(true, EventConstants.B_SHIFT, EventConstants.B_RIGHT, 2, ClickAction.TOGGLE_AXES_VISUAL_HINT);
+  scene.setMouseClickBinding(true, Event.SHIFT, LEFT, 2, ClickAction.TOGGLE_AXES_VISUAL_HINT);
   //frame
   scene.setMouseButtonBinding(false, LEFT, DOF2Action.TRANSLATE);
   scene.setMouseButtonBinding(false, CENTER, DOF2Action.SCALE);
   scene.setMouseWheelBinding(false, WheelAction.ZOOM);
   scene.setMouseButtonBinding(false, RIGHT, DOF2Action.ROTATE_X);
   //keyboard
-  scene.setKeyboardShortcut('g',KeyboardAction.TOGGLE_AXIS_VISUAL_HINT);
+  scene.setKeyboardShortcut('g',KeyboardAction.TOGGLE_AXES_VISUAL_HINT);
   scene.setKeyboardShortcut(Event.CTRL,java.awt.event.KeyEvent.VK_G,KeyboardAction.TOGGLE_GRID_VISUAL_HINT);
 }
 

@@ -31,7 +31,7 @@ void setup() {
   scene.setRadius(200);
   scene.camera().setPosition(new Vec(0, 350, 390));
   scene.camera().setViewDirection(new Vec(0, -0.8, -0.56));
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   waxial=new WorldConstraint();
   waxial.setTranslationConstraint(AxisPlaneConstraint.Type.FORBIDDEN, new Vec(0.0f, 0.0f, 0.0f));
   waxial.setRotationConstraint(AxisPlaneConstraint.Type.AXIS, new Vec(1f, 0.0f, 0.0f));
@@ -51,6 +51,6 @@ void draw() {
   background(250, 220, 55);
   directionalLight(255, 255, 255, 0, -1, -1);
 
-  scene.drawAxis(80);  
+  scene.drawAxes(80);  
   plan.draw();
 }

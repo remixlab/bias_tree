@@ -388,8 +388,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		case TOGGLE_PATHS_VISUAL_HINT:
 			togglePathsVisualHint();
 			break;
-		case TOGGLE_FRAME_VISUAL_HINT:
-			toggleFrameVisualhint();
+		case TOGGLE_PICKING_VISUAL_HINT:
+			togglePickingVisualhint();
 			break;
 		case SHOW_ALL:
 			showAll();
@@ -705,9 +705,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 
 	/**
 	 * Low level setting of visual flags. You'd prefer {@link #setAxesVisualHint(boolean)},
-	 * {@link #setGridVisualHint(boolean)}, {@link #setPathsVisualHint(boolean)} and {@link #setFrameVisualHint(boolean)},
-	 * unless you want to set them all at once, e.g.,
-	 * {@code setVisualHints(Constants.AXES | Constants.GRID | Constants.PATHS | Constants.FRAME)}.
+	 * {@link #setGridVisualHint(boolean)}, {@link #setPathsVisualHint(boolean)} and
+	 * {@link #setPickingVisualHint(boolean)}, unless you want to set them all at once, e.g.,
+	 * {@code setVisualHints(Constants.AXES | Constants.GRID | Constants.PATHS | Constants.PICKING)}.
 	 */
 	public void setVisualHints(int flag) {
 		visualHintMask = flag;
@@ -733,12 +733,12 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Toggles the state of {@link #frameVisualHint()}.
+	 * Toggles the state of {@link #pickingVisualHint()}.
 	 * 
-	 * @see #setFrameVisualHint(boolean)
+	 * @see #setPickingVisualHint(boolean)
 	 */
-	public void toggleFrameVisualhint() {
-		setFrameVisualHint(!frameVisualHint());
+	public void togglePickingVisualhint() {
+		setPickingVisualHint(!pickingVisualHint());
 	}
 
 	/**
@@ -779,14 +779,14 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Returns {@code true} if the frames selection visual hints are currently being drawn and {@code false} otherwise.
+	 * Returns {@code true} if the picking selection visual hint is currently being drawn and {@code false} otherwise.
 	 */
-	public boolean frameVisualHint() {
-		return ((visualHintMask & FRAME) != 0);
+	public boolean pickingVisualHint() {
+		return ((visualHintMask & PICKING) != 0);
 	}
 
 	/**
-	 * Returns {@code true} if the eye pads visual hints are currently being drawn and {@code false} otherwise.
+	 * Returns {@code true} if the eye paths visual hints are currently being drawn and {@code false} otherwise.
 	 */
 	public boolean pathsVisualHint() {
 		return ((visualHintMask & PATHS) != 0);
@@ -829,11 +829,11 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Sets the display of the interactive frames' selection hints according to {@code draw}
 	 */
-	public void setFrameVisualHint(boolean draw) {
+	public void setPickingVisualHint(boolean draw) {
 		if (draw)
-			visualHintMask |= FRAME;
+			visualHintMask |= PICKING;
 		else
-			visualHintMask &= ~FRAME;
+			visualHintMask &= ~PICKING;
 	}
 
 	/**
@@ -931,8 +931,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 			drawGridHint();
 		if (axesVisualHint())
 			drawAxesHint();
-		if (frameVisualHint())
-			drawFramesHint();
+		if (pickingVisualHint())
+			drawPickingHint();
 		if (pathsVisualHint())
 			drawPathsHint();
 		else
@@ -950,8 +950,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Internal use.
 	 */
-	protected void drawFramesHint() {
-		drawFrameSelectionTargets();
+	protected void drawPickingHint() {
+		drawPickingTargets();
 	}
 
 	/**
@@ -979,12 +979,12 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Convenience function that simply calls {@code drawFrameSelectionTargets(false)}.
+	 * Convenience function that simply calls {@code drawPickingTargets(false)}.
 	 * 
-	 * @see #drawFrameSelectionTargets(boolean)
+	 * @see #drawPickingTargets(boolean)
 	 */
-	public void drawFrameSelectionTargets() {
-		drawFrameSelectionTargets(false);
+	public void drawPickingTargets() {
+		drawPickingTargets(false);
 	}
 
 	/**
@@ -1416,13 +1416,13 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public abstract void drawShooterTarget(Vec center, float length);
 
 	/**
-	 * Draws all InteractiveFrames' selection regions: a shooter target visual hint of
+	 * Draws all InteractiveFrames' picking targets: a shooter target visual hint of
 	 * {@link remixlab.dandelion.core.InteractiveFrame#grabsInputThreshold()} pixels size.
 	 * 
 	 * <b>Attention:</b> the target is drawn either if the iFrame is part of camera path and keyFrame is {@code true}, or
 	 * if the iFrame is not part of camera path and keyFrame is {@code false}.
 	 */
-	public abstract void drawFrameSelectionTargets(boolean keyFrame);
+	public abstract void drawPickingTargets(boolean keyFrame);
 
 	// end wrapper
 

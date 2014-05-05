@@ -26,7 +26,7 @@ public void setup() {
   iFrame.translate(new Vec(30, -30, 0));
   scene.keyboardAgent().profile().setShortcut('r', null);
   scene.setNonSeqTimers();
-  scene.setVisualHints(Constants.AXIS | Constants.GRID | Constants.FRAME );
+  scene.setVisualHints(Constants.AXES | Constants.GRID | Constants.PICKING );
   //create a eye path and add some key frames:
   //key frames can be added at runtime with keys [j..n]
   scene.eye().setPosition(new Vec(80,0,0));
@@ -117,12 +117,12 @@ public class CustomizedScene extends Scene {
   }
 
   @Override
-  protected void drawFramesHint() {
+  protected void drawPickingHint() {
     pg().pushStyle();
     pg().colorMode(PApplet.RGB, 255);
     pg().strokeWeight(1);
     pg().stroke(0,220,0);
-    drawFrameSelectionTargets();
+    drawPickingTargets();
     pg().popStyle();
   }
 }

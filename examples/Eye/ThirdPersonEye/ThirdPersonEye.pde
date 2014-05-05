@@ -37,7 +37,7 @@ public void setup() {
   scene.setRadius(400);
   scene.showAll();
   scene.setGridVisualHint(false);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   // press 'f' to display frame selection hints
 
   avatar = new InteractiveAvatarFrame(scene);
@@ -60,7 +60,7 @@ public void draw() {
   //scene.interactiveFrame().applyTransformation(this);//very efficient
   scene.applyTransformation(avatar);
   // Draw an axis using the Scene static function
-  scene.drawAxis(20);
+  scene.drawAxes(20);
   if ( scene.avatar() != null )
     fill(255, 0, 0);
   else

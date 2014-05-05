@@ -33,7 +33,7 @@ class Plan {
     pushMatrix();
 
     reperes[0].applyTransformation();
-    scene.drawAxis(80);  
+    scene.drawAxes(80);  
     noStroke();
     fill(0, 255, 0);
     sphere(6);

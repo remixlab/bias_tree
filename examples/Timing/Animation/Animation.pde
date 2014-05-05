@@ -55,7 +55,7 @@ class MyScene extends Scene {
     particle = new Particle[nbPart];
     for (int i = 0; i < particle.length; i++)
       particle[i] = new Particle();
-    setAxisVisualHint(false);
+    setAxesVisualHint(false);
     setAnimationPeriod(40); // 25Hz
     startAnimation();
     smooth();

@@ -15,14 +15,14 @@ public class InteractiveTorus {
     draw(false);
   }
 
-  public void draw(boolean drawAxis) {
+  public void draw(boolean drawAxes) {
     pushMatrix();
     pushStyle();
     // Multiply matrix to get in the frame coordinate system.
     //applyMatrix(Scene.toPMatrix(iFrame.matrix())); // is handy but inefficient
     iFrame.applyTransformation(); // optimum
-    if (drawAxis)
-      scene.drawAxis(20 * 1.3f);
+    if (drawAxes)
+      scene.drawAxes(20 * 1.3f);
     noStroke();
 
     fill(255, 0, 0);

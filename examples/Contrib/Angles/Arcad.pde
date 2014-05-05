@@ -25,7 +25,7 @@ class Arcad {
   
   void draw() {  
     stroke(0);
-    scene.drawAxis(200);
+    scene.drawAxes(200);
     ligne(Scene.toPVector(dragueur.position()), or);
     ligne(Scene.toPVector(repere.position()), Scene.toPVector(rotateur.position()));
 
@@ -50,11 +50,11 @@ class Arcad {
     fill(255, 255, 0); 
     noStroke();  
     sphere(15);
-    scene.drawAxis(100);
+    scene.drawAxes(100);
     translate(sym.x, sym.y, sym.z);
     fill(255);
     sphere(15);
-    scene.drawAxis(100); 
+    scene.drawAxes(100); 
     sym=Scene.toPVector(rotateur.inverseCoordinatesOf(Scene.toVec(sym)));
     popMatrix(); 
 

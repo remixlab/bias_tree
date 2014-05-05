@@ -15,11 +15,11 @@ public class Balle {
     draw(true);
   }
 
-  public void draw(boolean drawAxis) {
+  public void draw(boolean drawAxes) {
     pushMatrix();
     pushStyle();
     iFrame.applyTransformation();
-    if (drawAxis) scene.drawAxis(r*1.3f);
+    if (drawAxes) scene.drawAxes(r*1.3f);
     noStroke();
     if (iFrame.grabsInput(scene.mouseAgent()))
       fill(255, 0, 0);

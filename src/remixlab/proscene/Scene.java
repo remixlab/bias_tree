@@ -953,7 +953,7 @@ public class Scene extends AbstractScene implements PConstants {
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
 		// Misc stuff:
-		// this.setNonSeqTimers();
+		this.setNonSeqTimers();
 		// pApplet().frameRate(100);
 
 		// 6. Init should be called only once
@@ -2269,7 +2269,7 @@ public class Scene extends AbstractScene implements PConstants {
 			}
 			kfi.addFramesToAllAgentPools();
 			pg().strokeWeight(pg().strokeWeight / 2f);
-			drawFrameSelectionTargets(true);
+			drawPickingTargets(true);
 		}
 		pg().popStyle();
 	}
@@ -2431,7 +2431,7 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	@Override
-	public void drawFrameSelectionTargets(boolean keyFrame) {
+	public void drawPickingTargets(boolean keyFrame) {
 		pg().pushStyle();
 		for (Grabber mg : inputHandler().globalGrabberList()) {
 			if (mg instanceof InteractiveFrame) {
@@ -2553,12 +2553,12 @@ public class Scene extends AbstractScene implements PConstants {
 	/*
 	 * Copy paste from AbstractScene but we add the style (color, stroke, etc) here.
 	 */
-	protected void drawFramesHint() {
+	protected void drawPickingHint() {
 		pg().pushStyle();
 		pg().colorMode(PApplet.RGB, 255);
 		pg().strokeWeight(1);
 		pg().stroke(220, 220, 220);
-		drawFrameSelectionTargets();
+		drawPickingTargets();
 		pg().popStyle();
 	}
 

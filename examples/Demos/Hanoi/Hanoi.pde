@@ -25,7 +25,7 @@ void setup() {
   font = loadFont("FreeSans-16.vlw");
   textFont(font);
   scene=new Scene(this);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   scene.setGridVisualHint(false);  
   scene.setRadius(300);
   onScreen=true;

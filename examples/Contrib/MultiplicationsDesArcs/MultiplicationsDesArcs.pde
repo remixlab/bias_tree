@@ -133,7 +133,7 @@ void draw() {
 
   pushMatrix();
   repere1.applyTransformation();
-  // scene.drawAxis(50);
+  // scene.drawAxes(50);
   pushMatrix();
   plan1.applyTransformation();
   fill(255, 255, 0);
@@ -142,7 +142,7 @@ void draw() {
   popMatrix();
   pushMatrix();
   repere2.applyTransformation();
-  // scene.drawAxis(50); 
+  // scene.drawAxes(50); 
   pushMatrix();
   plan2.applyTransformation();
   fill(255, 255, 0);

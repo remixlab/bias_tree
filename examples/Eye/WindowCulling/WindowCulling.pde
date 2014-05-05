@@ -34,7 +34,7 @@ void setup() {
   // Note that we pass the upper left corner coordinates where the scene
   // is to be drawn (see drawing code below) to its constructor.
   auxScene = new Scene(this, auxCanvas, 0, 360);
-  auxScene.setAxisVisualHint(false);
+  auxScene.setAxesVisualHint(false);
   auxScene.setGridVisualHint(false);
   auxScene.setRadius(400);
   auxScene.showAll();

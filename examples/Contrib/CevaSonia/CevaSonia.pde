@@ -23,7 +23,7 @@ void setup() {
   scene.setRadius(500);
   scene.camera().setPosition(new Vec(0, 0, 800));
   scene.setGridVisualHint(false);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   ceva=new Ceva();
   abeille = loadImage("sonia.gif");
 }

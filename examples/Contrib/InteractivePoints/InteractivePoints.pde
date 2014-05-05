@@ -34,8 +34,8 @@ void setup() {
   scene.setRadius(130);
   scene.showAll();
   scene.setCameraType(Camera.Type.PERSPECTIVE);
-  scene.setAxisVisualHint(false);
-  scene.drawAxis(30f);
+  scene.setAxesVisualHint(false);
+  scene.drawAxes(30f);
   balles=new Balle[nb];
   for (int i=0;i<nb;i++) {
     balles[i]=new Balle(posfr[i], couleurs[i]);
@@ -60,7 +60,7 @@ void draw() {
   for (int i=0;i<nb;i++) {
     pushMatrix();
     balles[i].iFrame.applyTransformation();
-    scene.drawAxis(r*15f);
+    scene.drawAxes(r*15f);
     noStroke();
     fill(0, 0, 255);
     sphere(r);

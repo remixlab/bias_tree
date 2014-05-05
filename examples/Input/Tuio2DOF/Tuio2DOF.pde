@@ -33,7 +33,7 @@ public void setup() {
   scene.setRadius(150);
   scene.showAll();
   //'f' toggles hints
-  scene.setFrameVisualHint(true);
+  scene.setPickingVisualHint(true);
   boxes = new Box[30];
 
   for (int i = 0; i < boxes.length; i++)

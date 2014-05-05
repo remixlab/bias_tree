@@ -29,7 +29,7 @@ void setup() {
   scene=new Scene(this);
   scene.setRadius(600);
   scene.setGridVisualHint(false);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   souris=new InteractiveFrame(scene);
   planaire =  new WorldConstraint();
   planaire.setRotationConstraintType(AxisPlaneConstraint.Type.FORBIDDEN);

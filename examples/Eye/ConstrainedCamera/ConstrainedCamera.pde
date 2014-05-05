@@ -40,7 +40,7 @@ public void setup() {
   activeConstraint = 0;
   scene.camera().frame().setConstraint(constraints[activeConstraint]);
 
-  scene.setAxisVisualHint(true);
+  scene.setAxesVisualHint(true);
 }
 
 public static AxisPlaneConstraint.Type nextTranslationConstraintType(AxisPlaneConstraint.Type type) {

@@ -27,7 +27,7 @@ void setup() {
   scene= new Scene(this);
   scene.setRadius(500);
   scene.setGridVisualHint(false);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
 
   alist=new ArrayList();
 

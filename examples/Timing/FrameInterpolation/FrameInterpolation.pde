@@ -35,7 +35,7 @@ public void setup() {
   nbKeyFrames = 4;
   scene = new Scene(this);
   //unsets grid and axis altogether
-  scene.setVisualHints( Constants.FRAME );
+  scene.setVisualHints( Constants.PICKING );
   scene.setRadius(70);
   scene.showAll();
   kfi = new KeyFrameInterpolator(scene);
@@ -58,7 +58,7 @@ public void draw() {
   background(0);
   pushMatrix();
   kfi.frame().applyTransformation(scene);
-  scene.drawAxis(30);
+  scene.drawAxes(30);
   popMatrix();
 
   pushStyle();
@@ -71,9 +71,9 @@ public void draw() {
     kfi.keyFrame(i).applyTransformation(scene);
 
     if ( keyFrame[i].grabsInput(scene.mouseAgent()) )
-      scene.drawAxis(40);
+      scene.drawAxes(40);
     else
-      scene.drawAxis(20);
+      scene.drawAxes(20);
 
     popMatrix();
   }

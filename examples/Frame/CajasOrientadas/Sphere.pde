@@ -44,14 +44,14 @@ public class Sphere {
     draw(true);
   }
 
-  public void draw(boolean drawAxis) {
+  public void draw(boolean drawAxes) {
     parent.pushMatrix();
     //iFrame.applyTransformation(parent);
     iFrame.applyTransformation(scene);
 
-    if (drawAxis)
-      //DrawingUtils.drawAxis(parent, radius()*1.3f);
-      scene.drawAxis(radius()*1.3f);
+    if (drawAxes)
+      //DrawingUtils.drawAxes(parent, radius()*1.3f);
+      scene.drawAxes(radius()*1.3f);
     if (scene.grabsAnyAgentInput(iFrame)) {
       parent.fill(255, 0, 0);
       parent.sphere(radius()*1.2f);

@@ -163,7 +163,7 @@ public class ArmCam {
 
   public void drawHead(Scene scn) {
     if ( parent.drawRobotCamFrustum && scn.equals( parent.mainScene) )
-      scn.drawAxis( parent.armScene.camera().sceneRadius() * 1.2f );
+      scn.drawAxes( parent.armScene.camera().sceneRadius() * 1.2f );
     drawCone(scn, 9, 12, 7, 0, 6);
     drawCone(scn, 8, 9, 6, 7, 6);
     drawCone(scn, 5, 8, 8, 6, 30);

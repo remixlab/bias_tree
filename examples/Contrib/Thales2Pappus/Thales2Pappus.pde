@@ -28,7 +28,7 @@ void setup() {
   textFont(font, 8); 
   scene=new Scene(this);
   scene.setGridVisualHint(false);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   scene.setRadius(180);
   soleil=new InteractiveFrame(scene);
   soleil.setPosition(new Vec(30, -70, 70));

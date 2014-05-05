@@ -24,7 +24,7 @@ void setup () {
   scene=new Scene(this); 
   scene.setRadius(800);
   scene.setGridVisualHint(false);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   scene.camera().setPosition(new Vec(0, 0, 8000));
   repere=new InteractiveFrame(scene);
   frameRate(40);

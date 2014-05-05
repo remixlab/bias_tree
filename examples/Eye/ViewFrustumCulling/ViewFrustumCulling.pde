@@ -41,7 +41,7 @@ public void setup() {
   // is to be drawn (see drawing code below) to its constructor.
   auxScene = new Scene(this, auxCanvas, 0, 360);
   //auxScene.camera().setType(Camera.Type.ORTHOGRAPHIC);
-  auxScene.setAxisVisualHint(false);
+  auxScene.setAxesVisualHint(false);
   auxScene.setGridVisualHint(false);
   auxScene.setRadius(200);
   auxScene.showAll();

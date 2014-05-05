@@ -657,8 +657,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	/**
 	 * Defines the spinning deceleration.
 	 * <p>
-	 * Default value is 0.5. Use {@link #setDampingFriction(float)} to tune this value. A
-	 * higher value will make damping more difficult (a value of 1.0 forbids damping).
+	 * Default value is 0.5. Use {@link #setDampingFriction(float)} to tune this value. A higher value will make damping
+	 * more difficult (a value of 1.0 forbids damping).
 	 */
 	public float dampingFriction() {
 		return dampFriction;
@@ -720,7 +720,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 		else
 			setTossingDirection(rotation().rotate(flyDisp));
 	}
-	
+
 	/**
 	 * Returns the fly speed, expressed in virtual scene units.
 	 * <p>
@@ -795,7 +795,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	 *          Rotation angle in radians
 	 */
 	public void rotateAroundAxis(Vec axis, float angle) {
-		if(scene.is2D()) {
+		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("rotateAroundAxis");
 			return;
 		}
@@ -819,7 +819,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 	 * @see remixlab.dandelion.geom.Quat#fromEulerAngles(float, float, float)
 	 */
 	public void rollPitchYaw(float roll, float pitch, float yaw) {
-		if(scene.is2D()) {
+		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("rollPitchYaw");
 			return;
 		}
@@ -1251,7 +1251,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable {
 			break;
 		}
 	}
-	
+
 	// micro-actions procedures
 
 	protected void scale2Fit(Vec trans) {

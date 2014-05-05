@@ -28,7 +28,7 @@ void setup() {
   h=150;
   planches= new ArrayList();
   scene.setGridVisualHint(false);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   scene.setRadius(1800);
   scene.showAll();
   scene.camera().setPosition(new Vec(0, 4500, 4000));

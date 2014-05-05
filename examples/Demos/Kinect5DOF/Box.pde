@@ -25,13 +25,13 @@ public class Box {
     draw(false);
   }
 
-  public void draw(boolean drawAxis) {
+  public void draw(boolean drawAxes) {
     scene.pg3d().pushMatrix();
     iFrame.applyWorldTransformation();
 
-    if (drawAxis)
-      //DrawingUtils.drawAxis(parent, PApplet.max(w,h,d)*1.3f);
-      scene.drawAxis(PApplet.max(w, h, d)*1.3f);
+    if (drawAxes)
+      //DrawingUtils.drawAxes(parent, PApplet.max(w,h,d)*1.3f);
+      scene.drawAxes(PApplet.max(w, h, d)*1.3f);
     scene.pg3d().noStroke();
     if (scene.grabsAnyAgentInput(iFrame))
       scene.pg3d().fill(255, 0, 0);

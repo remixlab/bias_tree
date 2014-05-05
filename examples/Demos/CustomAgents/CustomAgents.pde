@@ -160,7 +160,7 @@ PFont font;
 void setup() {
   size(w, h);
   scene = new Scene(this);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   scene.setGridVisualHint(false);
   scene.setRadius(min(w,h)/2);
   scene.setCenter(new Vec(w/2,h/2));
@@ -223,6 +223,6 @@ void drawSelectionHints() {
   scene.endScreenDrawing();
   pushMatrix();
   translate(w/2,h/2);
-  scene.drawAxis();
+  scene.drawAxes();
   popMatrix();
 }

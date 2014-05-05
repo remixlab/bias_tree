@@ -26,7 +26,7 @@ void setup() {
   size(800, 800, P3D);
   scene=new Scene(this);
   scene.setRadius(220);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   scene.setGridVisualHint(false);
   scene.camera().setPosition(new Vec(0, 0, 600));
   vis=new InteractiveFrame(scene);
@@ -59,7 +59,7 @@ void draw() {
   fill(150);
   box(100, 100, 20);
   vis.applyTransformation();
-  // scene.drawAxis(100);
+  // scene.drawAxes(100);
   stroke(0, 0, 255);
   noFill();
   ellipse(0, 0, 200, 200);
@@ -71,7 +71,7 @@ void draw() {
 
   pushMatrix();
   manette.applyTransformation();
-  // scene.drawAxis(100);
+  // scene.drawAxes(100);
   if (manette.isInInteraction()&&(mouseButton == RIGHT)) {
     PVector dif=comb(1.0, Scene.toPVector(manette.position()), -1.0, Scene.toPVector(vis.position()));
     dif.normalize();

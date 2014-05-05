@@ -37,7 +37,7 @@ public void setup() {
   canvas = createGraphics(width, mainWinHeight, P3D);
   mainScene = new Scene(this, (PGraphics3D) canvas);
   mainScene.setGridVisualHint(false);
-  mainScene.setAxisVisualHint(false);
+  mainScene.setAxesVisualHint(false);
   mainScene.setRadius(110);
   mainScene.showAll();
   // press 'f' to display frame selection hints
@@ -48,7 +48,7 @@ public void setup() {
   armScene = new Scene(this, (PGraphics3D) armCanvas, 0, canvas.height);
   armScene.setRadius(50);
   armScene.setGridVisualHint(false);
-  armScene.setAxisVisualHint(false);
+  armScene.setAxesVisualHint(false);
   heliCanvas = createGraphics(width / 2, (height - canvas.height), P3D);
   // Note that we pass the upper left corner coordinates where the scene
   // is to be drawn (see drawing code below) to its constructor.
@@ -56,7 +56,7 @@ public void setup() {
   canvas.height);
   heliScene.setRadius(50);
   heliScene.setGridVisualHint(false);
-  heliScene.setAxisVisualHint(false);
+  heliScene.setAxesVisualHint(false);
 
   // Frame linking
   armCam = new ArmCam(this, 60, -60, 2);

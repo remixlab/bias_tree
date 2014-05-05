@@ -34,7 +34,7 @@ public void setup() {
   scene = new Scene(this);
   // press 'i' to switch the interaction between the camera frame and the
   scene.setCameraType(Camera.Type.ORTHOGRAPHIC);
-  scene.setAxisVisualHint(true);
+  scene.setAxesVisualHint(true);
 
   constraints[0] = new LocalConstraint();
   // Note that a CameraConstraint(camera) would produce the same results:
@@ -116,7 +116,7 @@ public void draw() {
   background(0);
   pushMatrix();
   frame.applyTransformation();
-  scene.drawAxis(40);  
+  scene.drawAxes(40);  
   if (focusIFrame) {
     fill(0, 255, 255);
     scene.drawTorusSolenoid();

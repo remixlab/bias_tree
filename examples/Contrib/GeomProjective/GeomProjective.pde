@@ -58,7 +58,7 @@ void setup() {
   figure=new Figure(new PVector(a, a, 2*a), new PVector(a, -a, 2*a), new PVector(-a, -a, 2*a), new PVector(-a, a, 2*a));
   scene.camera().setPosition(new Vec(0, 0, 520));
   scene.setGridVisualHint(false);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   rectMode(CENTER);
 }
 
@@ -85,7 +85,7 @@ void draw() {
   repere.setZAxis(dragueur.position());
   pushMatrix();
   repere.applyTransformation();
-  scene.drawAxis(100);
+  scene.drawAxes(100);
   figure.draw();
   popMatrix();
   pushMatrix();

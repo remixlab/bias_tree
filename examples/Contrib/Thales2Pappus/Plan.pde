@@ -31,7 +31,7 @@ class Plan {
     fill(255);
     stroke(255);
 
-    scene.drawAxis(20);
+    scene.drawAxes(20);
     rectangle(col, 0, 0, longueur, largeur );
     rectanglesoleil();
     for (int i=0;i<7;i++) {

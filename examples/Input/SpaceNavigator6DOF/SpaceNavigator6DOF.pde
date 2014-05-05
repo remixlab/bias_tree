@@ -64,7 +64,7 @@ void setup() {
   initializeSphere(sDetail);
   scene = new Scene(this);
   scene.setGridVisualHint(false);
-  scene.setAxisVisualHint(false);  
+  scene.setAxesVisualHint(false);  
   scene.setRadius(260);
   scene.showAll();
   
@@ -125,7 +125,7 @@ void renderIFrame() {
   // applyMatrix(scene.interactiveFrame().matrix()) is handy but inefficient 
   iFrame.applyTransformation(); //optimum
   // Draw an axis using the Scene static function
-  scene.drawAxis(20);
+  scene.drawAxes(20);
   // Draw a second box
   if (iFrame.grabsInput(scene.mouseAgent()) || iFrame.grabsInput(hidAgent) ) {
     fill(255, 0, 0);

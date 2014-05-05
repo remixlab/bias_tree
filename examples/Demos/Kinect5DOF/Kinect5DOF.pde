@@ -51,13 +51,13 @@ void setup() {
       if (cameraMode) { //-> event is absolute
         setDefaultGrabber(scene.eye().frame()); //set it by default
         disableTracking();
-        scene.setFrameVisualHint(false);
+        scene.setPickingVisualHint(false);
         event=new DOF6Event(kinectPos.x, kinectPos.y, kinectPos.z, 0, kinectRot.y, kinectRot.z); 
       }
       else { //frame mode -> event is relative
         setDefaultGrabber(null);
         enableTracking();
-        scene.setFrameVisualHint(true);
+        scene.setPickingVisualHint(true);
         event = new DOF6Event(prevEvent, kinect.posit.x, kinect.posit.y, kinect.posit.z, 0, kinectRot.y, kinectRot.z);
         prevEvent = event.get();
         //debug:     

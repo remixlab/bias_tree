@@ -27,7 +27,7 @@ void setup() {
   textFont(font);
   scene =new Scene(this);
   scene.setRadius(700);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   scene.setGridVisualHint(false);
   lon=200;
   or=new PVector(0, 0, 0);

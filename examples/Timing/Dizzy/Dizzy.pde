@@ -31,7 +31,7 @@ public void setup() {
   img = loadImage("dizzi.jpg");
   scene = new Scene(this);
   scene.setGridVisualHint(false);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
 
   message1 = new InteractiveFrame(scene);
   message2 = new InteractiveFrame(scene);

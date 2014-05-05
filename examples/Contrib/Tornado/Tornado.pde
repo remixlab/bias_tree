@@ -21,7 +21,7 @@ void setup() {
   scene=new Scene(this); 
   scene.setRadius(800);
   scene.setGridVisualHint(false);
-  scene.setAxisVisualHint(false);
+  scene.setAxesVisualHint(false);
   scene.camera().setPosition(new Vec(0, 490, 140));
   scene.camera().setOrientation(new Quat(new Vec(1, 0, 0), -PI*0.34));
   bande=new Bande();

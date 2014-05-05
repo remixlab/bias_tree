@@ -71,7 +71,7 @@ public class KeyboardAgent extends ActionKeyboardAgent<KeyboardProfile<KeyboardA
 	public void setDefaultShortcuts() {
 		keyboardProfile().removeAllBindings();
 		keyboardProfile().setShortcut('a', KeyboardAction.TOGGLE_AXES_VISUAL_HINT);
-		keyboardProfile().setShortcut('f', KeyboardAction.TOGGLE_FRAME_VISUAL_HINT);
+		keyboardProfile().setShortcut('f', KeyboardAction.TOGGLE_PICKING_VISUAL_HINT);
 		keyboardProfile().setShortcut('g', KeyboardAction.TOGGLE_GRID_VISUAL_HINT);
 		keyboardProfile().setShortcut('m', KeyboardAction.TOGGLE_ANIMATION);
 

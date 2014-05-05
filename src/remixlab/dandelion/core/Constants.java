@@ -19,7 +19,7 @@ public interface Constants extends EventConstants {
 	 */
 	final static int		AXES				= 1 << 0;
 	final static int		GRID				= 1 << 1;
-	final static int		FRAME				= 1 << 2;
+	final static int		PICKING			= 1 << 2;
 	final static int		PATHS				= 1 << 3;
 	final static int		ZOOM				= 1 << 4;					// prosceneMouse.zoomOnRegion
 	final static int		ROTATE			= 1 << 5;					// prosceneMouse.screenRotate
@@ -146,7 +146,7 @@ public interface Constants extends EventConstants {
 		/**
 		 * Toggles frame visual hint
 		 */
-		TOGGLE_FRAME_VISUAL_HINT("Toggles frame visual hint", true, 0),
+		TOGGLE_PICKING_VISUAL_HINT("Toggles frame visual hint", true, 0),
 		/**
 		 * Toggles animation
 		 */
@@ -391,7 +391,7 @@ public interface Constants extends EventConstants {
 		// CURRENT_CAMERA_PROFILE_HELP(DandelionAction.CURRENT_CAMERA_PROFILE_HELP),
 		TOGGLE_PATHS_VISUAL_HINT(DandelionAction.TOGGLE_PATHS_VISUAL_HINT),
 		// FOCUS_INTERACTIVE_FRAME(DandelionAction.FOCUS_INTERACTIVE_FRAME),
-		TOGGLE_FRAME_VISUAL_HINT(DandelionAction.TOGGLE_FRAME_VISUAL_HINT),
+		TOGGLE_PICKING_VISUAL_HINT(DandelionAction.TOGGLE_PICKING_VISUAL_HINT),
 		// CONSTRAIN_FRAME(DandelionAction.CONSTRAIN_FRAME),
 		SHOW_ALL(DandelionAction.SHOW_ALL),
 
@@ -465,7 +465,7 @@ public interface Constants extends EventConstants {
 		// CURRENT_CAMERA_PROFILE_HELP(DandelionAction.CURRENT_CAMERA_PROFILE_HELP),
 		TOGGLE_PATHS_VISUAL_HINT(DandelionAction.TOGGLE_PATHS_VISUAL_HINT),
 		// FOCUS_INTERACTIVE_FRAME(DandelionAction.FOCUS_INTERACTIVE_FRAME),
-		TOGGLE_FRAME_VISUAL_HINT(DandelionAction.TOGGLE_FRAME_VISUAL_HINT),
+		TOGGLE_PICKING_VISUAL_HINT(DandelionAction.TOGGLE_PICKING_VISUAL_HINT),
 		// CONSTRAIN_FRAME(DandelionAction.CONSTRAIN_FRAME),
 		SHOW_ALL(DandelionAction.SHOW_ALL),
 

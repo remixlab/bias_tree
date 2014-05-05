@@ -84,7 +84,7 @@ public void mainDrawing(Scene s) {
   else
     auxFrame1.applyTransformation();		
   if (drawHints)
-    s.drawAxis(40);
+    s.drawAxes(40);
   if (drawHints && frame1.grabsInput(scene.mouseAgent())) {
     s.pg().fill(255, 0, 0);
     s.pg().rect(0, 0, 40, 10, 5);
@@ -100,7 +100,7 @@ public void mainDrawing(Scene s) {
   else
     auxFrame2.applyTransformation();
   if (drawHints)
-    s.drawAxis(40);
+    s.drawAxes(40);
   if (drawHints && frame2.grabsInput(scene.mouseAgent())) {
     s.pg().fill(255, 0, 0);
     s.pg().rect(0, 0, 40, 10, 5);
@@ -116,7 +116,7 @@ public void mainDrawing(Scene s) {
   else
     auxFrame3.applyTransformation();
   if (drawHints)
-    s.drawAxis(40);
+    s.drawAxes(40);
   if (drawHints && frame3.grabsInput(scene.mouseAgent())) {
     s.pg().fill(255, 0, 0);
     s.pg().rect(0, 0, 40, 10, 5);
