@@ -996,164 +996,150 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
-	 * Binds the mask-button mouse shortcut to the (DOF2) dandelion action. The action performer may be an
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or an
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
+	 * Binds the mask-button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target}
+	 * (EYE or FRAME).
 	 */
-	public void setMouseButtonBinding(boolean eye, int mask, int button, DOF2Action action) {
-		MotionProfile<DOF2Action> profile = eye ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
+	public void setMouseButtonBinding(Target target, int mask, int button, DOF2Action action) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
 		if (profile != null)
 			profile.setBinding(p5ButtonModifiersFix(mask, button), button, action);
 	}
 
 	/**
-	 * Binds the button mouse shortcut to the (DOF2) dandelion action. The action performer may be an
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or an
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
+	 * Binds the button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or
+	 * FRAME).
 	 */
-	public void setMouseButtonBinding(boolean eye, int button, DOF2Action action) {
-		MotionProfile<DOF2Action> profile = eye ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
+	public void setMouseButtonBinding(Target target, int button, DOF2Action action) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
 		profile.setBinding(p5ButtonModifiersFix(button), button, action);
 	}
 
 	/**
-	 * Removes the mask-button mouse shortcut binding from the {@link remixlab.dandelion.core.InteractiveEyeFrame} (if
-	 * {@code eye} is {@code true}) or from the {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is
-	 * {@code false}).
+	 * Removes the mask-button mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeMouseButtonBinding(boolean eye, int mask, int button) {
-		MotionProfile<DOF2Action> profile = eye ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
+	public void removeMouseButtonBinding(Target target, int mask, int button) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
 		if (profile != null)
 			profile.removeBinding(p5ButtonModifiersFix(mask, button), button);
 	}
 
 	/**
-	 * Removes the button mouse shortcut binding from the {@link remixlab.dandelion.core.InteractiveEyeFrame} (if
-	 * {@code eye} is {@code true}) or from the {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is
-	 * {@code false}).
+	 * Removes the button mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeMouseButtonBinding(boolean eye, int button) {
-		MotionProfile<DOF2Action> profile = eye ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
+	public void removeMouseButtonBinding(Target target, int button) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
 		if (profile != null)
 			profile.removeBinding(p5ButtonModifiersFix(button), button);
 	}
 
 	/**
-	 * Returns {@code true} if the mask-button mouse shortcut is bound to the
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or to the
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}) (DOF2) dandelion action.
+	 * Returns {@code true} if the mask-button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean isMouseButtonBindingInUse(boolean eye, int mask, int button) {
-		MotionProfile<DOF2Action> profile = eye ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
+	public boolean isMouseButtonBindingInUse(Target target, int mask, int button) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
 		return profile.isBindingInUse(p5ButtonModifiersFix(mask, button), button);
 	}
 
 	/**
-	 * Returns {@code true} if the button mouse shortcut is bound to the
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or to the
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}) (DOF2) dandelion action.
+	 * Returns {@code true} if the button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean isMouseButtonBindingInUse(boolean eye, int button) {
-		MotionProfile<DOF2Action> profile = eye ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
+	public boolean isMouseButtonBindingInUse(Target target, int button) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
 		return profile.isBindingInUse(p5ButtonModifiersFix(button), button);
 	}
 
 	// wheel here
 
 	/**
-	 * Binds the mask-wheel shortcut to the (wheel) dandelion action. The action performer may be an
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or an
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
+	 * Binds the mask-wheel shortcut to the (wheel) dandelion action to be performed by the given {@code target} (EYE or
+	 * FRAME).
 	 */
-	public void setMouseWheelBinding(boolean eye, int mask, WheelAction action) {
-		MotionProfile<WheelAction> profile = eye ? mouseAgent().wheelProfile() : mouseAgent().frameWheelProfile();
+	public void setMouseWheelBinding(Target target, int mask, WheelAction action) {
+		MotionProfile<WheelAction> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+				.frameWheelProfile();
 		if (profile != null)
 			profile.setBinding(mask, B_NOBUTTON, action);
 	}
 
 	/**
-	 * Binds the wheel to the (wheel) dandelion action. The action performer may be an
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or an
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
+	 * Binds the wheel to the (wheel) dandelion action to be performed by the given {@code target} (EYE or FRAME).
 	 */
-	public void setMouseWheelBinding(boolean eye, WheelAction action) {
-		MotionProfile<WheelAction> profile = eye ? mouseAgent().wheelProfile() : mouseAgent().frameWheelProfile();
+	public void setMouseWheelBinding(Target target, WheelAction action) {
+		MotionProfile<WheelAction> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+				.frameWheelProfile();
 		if (profile != null)
 			profile.setBinding(action);
 	}
 
 	/**
-	 * Removes the mask-wheel shortcut binding from the {@link remixlab.dandelion.core.InteractiveEyeFrame} (if
-	 * {@code eye} is {@code true}) or from the {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is
-	 * {@code false}).
+	 * Removes the mask-wheel shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeMouseWheelBinding(boolean eye, int mask) {
-		MotionProfile<WheelAction> profile = eye ? mouseAgent().wheelProfile() : mouseAgent().frameWheelProfile();
+	public void removeMouseWheelBinding(Target target, int mask) {
+		MotionProfile<WheelAction> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+				.frameWheelProfile();
 		if (profile != null)
 			profile.removeBinding(mask, B_NOBUTTON);
 	}
 
 	/**
-	 * Removes the wheel binding from the {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is
-	 * {@code true}) or from the {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
+	 * Removes the wheel binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeMouseWheelBinding(boolean eye) {
-		MotionProfile<WheelAction> profile = eye ? mouseAgent().wheelProfile() : mouseAgent().frameWheelProfile();
+	public void removeMouseWheelBinding(Target target) {
+		MotionProfile<WheelAction> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+				.frameWheelProfile();
 		if (profile != null)
 			profile.removeBinding();
 	}
 
 	/**
-	 * Returns {@code true} if the mask-wheel shortcut is bound to the {@link remixlab.dandelion.core.InteractiveEyeFrame}
-	 * (if {@code eye} is {@code true}) or to the {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is
-	 * {@code false}) (wheel) dandelion action.
+	 * Returns {@code true} if the mask-wheel shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean isMouseWheelBindingInUse(boolean eye, int mask) {
-		MotionProfile<WheelAction> profile = eye ? mouseAgent().wheelProfile() : mouseAgent().frameWheelProfile();
+	public boolean isMouseWheelBindingInUse(Target target, int mask) {
+		MotionProfile<WheelAction> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+				.frameWheelProfile();
 		return profile.isBindingInUse(mask, B_NOBUTTON);
 	}
 
 	/**
-	 * Returns {@code true} if the wheel is bound to the {@link remixlab.dandelion.core.InteractiveEyeFrame} (if
-	 * {@code eye} is {@code true}) or to the {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is
-	 * {@code false}) (wheel) dandelion action.
+	 * Returns {@code true} if the wheel is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean isMouseWheelBindingInUse(boolean eye) {
-		MotionProfile<WheelAction> profile = eye ? mouseAgent().wheelProfile() : mouseAgent().frameWheelProfile();
+	public boolean isMouseWheelBindingInUse(Target target) {
+		MotionProfile<WheelAction> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+				.frameWheelProfile();
 		return profile.isBindingInUse();
 	}
 
 	// mouse click
 
 	/**
-	 * Binds the mask-button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action. The action performer
-	 * may be an {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or an
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
+	 * Binds the mask-button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action to be performed by the
+	 * given {@code target} (EYE or FRAME).
 	 */
-	public void setMouseClickBinding(boolean eye, int mask, int button, int ncs, ClickAction action) {
-		ClickProfile<ClickAction> profile = eye ? mouseAgent().clickProfile() : mouseAgent().frameClickProfile();
+	public void setMouseClickBinding(Target target, int mask, int button, int ncs, ClickAction action) {
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
 		if (profile != null)
 			profile.setClickBinding(p5ButtonModifiersFix(mask, button), button, ncs, action);
 	}
 
 	/**
-	 * Binds the button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action. The action performer may be
-	 * an {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or an
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
+	 * Binds the button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action to be performed by the given
+	 * {@code target} (EYE or FRAME).
 	 */
-	public void setMouseClickBinding(boolean eye, int button, int ncs, ClickAction action) {
-		ClickProfile<ClickAction> profile = eye ? mouseAgent().clickProfile() : mouseAgent().frameClickProfile();
+	public void setMouseClickBinding(Target target, int button, int ncs, ClickAction action) {
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
 		if (profile != null)
 			profile.setClickBinding(p5ButtonModifiersFix(button), button, ncs, action);
 	}
 
 	/**
-	 * Binds the single-clicked button shortcut to the (click) dandelion action. The action performer may be an
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or an
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
+	 * Binds the single-clicked button shortcut to the (click) dandelion action to be performed by the given
+	 * {@code target} (EYE or FRAME).
 	 */
-	public void setMouseClickBinding(boolean eye, int button, ClickAction action) {
-		ClickProfile<ClickAction> profile = eye ? mouseAgent().clickProfile() : mouseAgent().frameClickProfile();
+	public void setMouseClickBinding(Target target, int button, ClickAction action) {
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
 		if (profile != null)
 			profile.setClickBinding(p5ButtonModifiersFix(button), button, 1, action);
 	}
@@ -1163,61 +1149,59 @@ public class Scene extends AbstractScene implements PConstants {
 	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or from the
 	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
 	 */
-	public void removeMouseClickBinding(boolean eye, int mask, int button, int ncs) {
-		ClickProfile<ClickAction> profile = eye ? mouseAgent().clickProfile() : mouseAgent().frameClickProfile();
+	public void removeMouseClickBinding(Target target, int mask, int button, int ncs) {
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
 		if (profile != null)
 			profile.removeClickBinding(p5ButtonModifiersFix(mask, button), button, ncs);
 	}
 
 	/**
-	 * Removes the button-ncs (number-of-clicks) click-shortcut binding from the
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or from the
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
+	 * Removes the button-ncs (number-of-clicks) click-shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeMouseClickBinding(boolean eye, int button, int ncs) {
-		ClickProfile<ClickAction> profile = eye ? mouseAgent().clickProfile() : mouseAgent().frameClickProfile();
+	public void removeMouseClickBinding(Target target, int button, int ncs) {
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
 		if (profile != null)
 			profile.removeClickBinding(p5ButtonModifiersFix(button), button, ncs);
 	}
 
 	/**
-	 * Removes the single-clicked button shortcut binding from the {@link remixlab.dandelion.core.InteractiveEyeFrame} (if
-	 * {@code eye} is {@code true}) or from the {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is
-	 * {@code false}).
+	 * Removes the single-clicked button shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeMouseClickBinding(boolean eye, int button) {
-		ClickProfile<ClickAction> profile = eye ? mouseAgent().clickProfile() : mouseAgent().frameClickProfile();
+	public void removeMouseClickBinding(Target target, int button) {
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
 		if (profile != null)
 			profile.removeClickBinding(p5ButtonModifiersFix(button), button, 1);
 	}
 
 	/**
-	 * Returns {@code true} if the mask-button-ncs (number-of-clicks) click-shortcut is bound to the
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or to the
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}) (click) dandelion action.
+	 * Returns {@code true} if the mask-button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target}
+	 * (EYE or FRAME).
 	 */
-	public boolean isMouseClickBindingInUse(boolean eye, int mask, int button, int ncs) {
-		ClickProfile<ClickAction> profile = eye ? mouseAgent().clickProfile() : mouseAgent().frameClickProfile();
+	public boolean isMouseClickBindingInUse(Target target, int mask, int button, int ncs) {
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
 		return profile.isClickBindingInUse(p5ButtonModifiersFix(mask, button), button, ncs);
 	}
 
 	/**
-	 * Returns {@code true} if the button-ncs (number-of-clicks) click-shortcut is bound to the
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or to the
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}) (click) dandelion action.
+	 * Returns {@code true} if the button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target} (EYE
+	 * or FRAME).
 	 */
-	public boolean isMouseClickBindingInUse(boolean eye, int button, int ncs) {
-		ClickProfile<ClickAction> profile = eye ? mouseAgent().clickProfile() : mouseAgent().frameClickProfile();
+	public boolean isMouseClickBindingInUse(Target target, int button, int ncs) {
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
 		return profile.isClickBindingInUse(p5ButtonModifiersFix(button), button, ncs);
 	}
 
 	/**
-	 * Returns {@code true} if the single-clicked button shortcut is bound to the
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or to the
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}) (click) dandelion action.
+	 * Returns {@code true} if the single-clicked button shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean isMouseClickBindingInUse(boolean eye, int button) {
-		ClickProfile<ClickAction> profile = eye ? mouseAgent().clickProfile() : mouseAgent().frameClickProfile();
+	public boolean isMouseClickBindingInUse(Target target, int button) {
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
 		return profile.isClickBindingInUse(p5ButtonModifiersFix(button), button, 1);
 	}
 

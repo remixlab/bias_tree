@@ -8,16 +8,10 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.proscene.Scene.ProsceneKeyboard;
-import remixlab.proscene.Scene.ProsceneMouse;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.core.Constants.*;
 import remixlab.dandelion.agent.*;
-import remixlab.dandelion.core.Constants.WheelAction;
-import remixlab.dandelion.core.Constants.DOF2Action;
-import remixlab.dandelion.core.Constants.ClickAction;
-import remixlab.dandelion.core.Constants.KeyboardAction;
-import remixlab.bias.core.*;
 
 Scene scene;
 InteractiveFrame iFrame;
@@ -59,16 +53,16 @@ void draw() {
 
 public void setExoticCustomization() {
   //eye
-  scene.setMouseButtonBinding(true, CENTER, DOF2Action.ZOOM_ON_ANCHOR);
-  scene.setMouseButtonBinding(true, LEFT, DOF2Action.TRANSLATE);
-  scene.setMouseButtonBinding(true, RIGHT, DOF2Action.ROTATE_CAD);
-  scene.setMouseClickBinding(true, EventConstants.B_SHIFT, EventConstants.B_RIGHT, 2, ClickAction.TOGGLE_AXES_VISUAL_HINT);
-  scene.setMouseClickBinding(true, Event.SHIFT, LEFT, 2, ClickAction.TOGGLE_AXES_VISUAL_HINT);
+  scene.setMouseButtonBinding(Target.EYE, CENTER, DOF2Action.ZOOM_ON_ANCHOR);
+  scene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.TRANSLATE);
+  scene.setMouseButtonBinding(Target.EYE, RIGHT, DOF2Action.ROTATE_CAD);
+  scene.setMouseClickBinding(Target.EYE, Event.SHIFT, CENTER, 2, ClickAction.TOGGLE_AXES_VISUAL_HINT);
+  scene.setMouseClickBinding(Target.EYE, Event.SHIFT, LEFT, 2, ClickAction.TOGGLE_PICKING_VISUAL_HINT);
   //frame
-  scene.setMouseButtonBinding(false, LEFT, DOF2Action.TRANSLATE);
-  scene.setMouseButtonBinding(false, CENTER, DOF2Action.SCALE);
-  scene.setMouseWheelBinding(false, WheelAction.ZOOM);
-  scene.setMouseButtonBinding(false, RIGHT, DOF2Action.ROTATE_X);
+  scene.setMouseButtonBinding(Target.FRAME, LEFT, DOF2Action.TRANSLATE);
+  scene.setMouseButtonBinding(Target.FRAME, CENTER, DOF2Action.SCALE);
+  scene.setMouseWheelBinding(Target.FRAME, WheelAction.ZOOM);
+  scene.setMouseButtonBinding(Target.FRAME, RIGHT, DOF2Action.ROTATE_X);
   //keyboard
   scene.setKeyboardShortcut('g',KeyboardAction.TOGGLE_AXES_VISUAL_HINT);
   scene.setKeyboardShortcut(Event.CTRL,java.awt.event.KeyEvent.VK_G,KeyboardAction.TOGGLE_GRID_VISUAL_HINT);

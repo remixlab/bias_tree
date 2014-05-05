@@ -21,7 +21,7 @@ Faisceau tetraedre;
 void setup() {
   size(640, 640, P3D);
   scene=new Scene(this);
-  scene.setVisualHints(Constants.AXIS);
+  scene.setVisualHints(Constants.AXES);
   scene.setRadius(380);
 
   contrainteX=new WorldConstraint();

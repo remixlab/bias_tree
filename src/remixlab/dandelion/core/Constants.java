@@ -68,6 +68,10 @@ public interface Constants extends EventConstants {
 	 */
 	static final float	TWO_PI			= PI * 2.0f;
 
+	public enum Target {
+		EYE, FRAME
+	}
+
 	/**
 	 * Dandelion global action enum. All enum sub-groups point-out to this one.
 	 */
