@@ -65,10 +65,10 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 		if (scene.is3D()) {
 			eFrame = new Frame();
 			q = new Quat();
-			((Quat) q).fromTaitBryan(QUARTER_PI, 0, 0);
+			((Quat) q).fromTaitBryan((float)Math.PI/4, 0, 0);
 		} else {
 			eFrame = new Frame(false);
-			q = new Rot(QUARTER_PI);
+			q = new Rot((float)Math.PI/4);
 		}
 		eFrame.setReferenceFrame(this);
 		setTrackingDistance(scene.radius() / 5);

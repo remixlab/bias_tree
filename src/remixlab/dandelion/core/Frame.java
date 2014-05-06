@@ -1154,12 +1154,12 @@ public class Frame implements Copyable, Constants {
 			float angle = 0; // if( (-QUARTER_PI <= delta) && (delta < QUARTER_PI) )
 			float delta = Math.abs(o.angle() - orientation().angle());
 
-			if ((QUARTER_PI <= delta) && (delta < (HALF_PI + QUARTER_PI)))
-				angle = HALF_PI;
-			else if (((HALF_PI + QUARTER_PI) <= delta) && (delta < (PI + QUARTER_PI)))
-				angle = PI;
-			else if (((PI + QUARTER_PI) <= delta) && (delta < (TWO_PI - QUARTER_PI)))
-				angle = PI + HALF_PI;
+			if (((float)Math.PI / 4 <= delta) && (delta < ((float)Math.PI * 3 / 4)))
+				angle = (float)Math.PI / 2;
+			else if ((((float)Math.PI * 3 / 4) <= delta) && (delta < ((float)Math.PI * 5 / 4)))
+				angle = (float)Math.PI;
+			else if ((((float)Math.PI * 5 / 4) <= delta) && (delta < ((float)Math.PI * 7 / 4)))
+				angle = (float)Math.PI * 3 / 2;
 
 			angle += o.angle();
 			Rot other = new Rot(angle);

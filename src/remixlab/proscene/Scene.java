@@ -917,10 +917,10 @@ public class Scene extends AbstractScene implements PConstants {
 		pgraphics = pg;
 
 		// 2. Matrix helper
-		if (pg instanceof PGraphics2D)
-			setMatrixHelper(new P5GLMatrixHelper(this, (PGraphics2D) pg));
-		else if (pg instanceof PGraphics3D)
+		if (pg instanceof PGraphics3D)
 			setMatrixHelper(new P5GLMatrixHelper(this, (PGraphics3D) pg));
+		else if (pg instanceof PGraphics2D)
+			setMatrixHelper(new P5GLMatrixHelper(this, (PGraphics2D) pg));
 		else
 			setMatrixHelper(new P5Java2DMatrixHelper(this, pg)); 
 
@@ -2477,12 +2477,6 @@ public class Scene extends AbstractScene implements PConstants {
 				v2 = new Vec((outsideRadius + insideRadius * PApplet.cos(alpha)) * PApplet.cos(ai),
 						(outsideRadius + insideRadius * PApplet.cos(alpha)) * PApplet.sin(ai), insideRadius
 								* PApplet.sin(alpha));
-				/*
-				 * int c1, c2, c; pg().colorMode(PApplet.RGB, 255); float alfa = pg().alpha(pg().fillColor); c1 = pg().color(200
-				 * + 55 * PApplet.cos(jj * eps), 130 + 125 * PApplet.sin(jj * eps), 0, alfa); c2 = pg().color(130 + 125 *
-				 * PApplet.sin(jj * eps), 0, 200 + 55 * PApplet.cos(jj * eps), alfa); c = (a % 3 == 0) ? c1 : c2; pg().fill(c);
-				 * //
-				 */
 				vertex(v1.x(), v1.y(), v1.z());
 				vertex(v2.x(), v2.y(), v2.z());
 			}

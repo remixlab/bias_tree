@@ -331,7 +331,7 @@ public abstract class MatrixHelper implements Constants {
 	// see: http://www.opengl.org/archives/resources/faq/technical/transformations.htm
 	// "9.030 How do I draw 2D controls over my 3D rendering?"
 	protected void ortho2D() {
-		float cameraZ = (scene.height() / 2.0f) / (float) Math.tan(QUARTER_PI / 2.0f);
+		float cameraZ = (scene.height() / 2.0f) / (float) Math.tan((float)Math.PI/8);
 		float cameraNear = cameraZ / 2.0f;
 		float cameraFar = cameraZ * 2.0f;
 
@@ -361,7 +361,7 @@ public abstract class MatrixHelper implements Constants {
 	protected void resetViewPoint() {
 		float eyeX = scene.width() / 2f;
 		float eyeY = scene.height() / 2f;
-		float eyeZ = (scene.height() / 2f) / (float) Math.tan(PI * 60 / 360);
+		float eyeZ = (scene.height() / 2f) / (float) Math.tan((float)Math.PI * 60 / 360);
 		float centerX = scene.width() / 2f;
 		float centerY = scene.height() / 2f;
 		float centerZ = 0;
