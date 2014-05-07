@@ -21,8 +21,6 @@ import remixlab.dandelion.geom.*;
  * {@code null} {@link remixlab.dandelion.core.Frame#constraint()}.
  */
 public abstract class Constraint {
-	protected Vec	sclConstr	= new Vec();
-
 	/**
 	 * Filters the translation applied to the Frame. This default implementation is empty (no filtering).
 	 * <p>

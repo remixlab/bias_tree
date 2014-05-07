@@ -83,7 +83,7 @@ void setup() {
   //declare some sensitivities for the space navigator device
   hidAgent.setSensitivities(0.01, 0.01, 0.01, 0.0001, 0.0001, 0.0001);
   //Set by default:  
-  //dev.eyeProfile().setBinding(Constants.DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+  //hidAgent.eyeProfile().setBinding(Constants.DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
 
   smooth();
 }

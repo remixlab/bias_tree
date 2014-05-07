@@ -152,18 +152,18 @@ public class Rot implements Constants, Rotation {
 
 	public float normalize(boolean onlypos) {
 		if (onlypos) {// 0 <-> two_pi
-			if (Math.abs(angle) > (float)Math.PI * 2) {
-				angle = angle % (float)Math.PI * 2;
+			if (Math.abs(angle) > (float) Math.PI * 2) {
+				angle = angle % (float) Math.PI * 2;
 			}
 			if (angle < 0)
-				angle = (float)Math.PI * 2 + angle;
+				angle = (float) Math.PI * 2 + angle;
 		}
 		else {// -pi <-> pi
-			if (Math.abs(angle) > (float)Math.PI)
+			if (Math.abs(angle) > (float) Math.PI)
 				if (angle >= 0)
-					angle = (angle % (float)Math.PI) - (float)Math.PI;
+					angle = (angle % (float) Math.PI) - (float) Math.PI;
 				else
-					angle = (float)Math.PI - (angle % (float)Math.PI);
+					angle = (float) Math.PI - (angle % (float) Math.PI);
 		}
 		return angle;
 	}

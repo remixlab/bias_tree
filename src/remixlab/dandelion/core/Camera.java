@@ -805,11 +805,11 @@ public class Camera extends Eye implements Constants, Copyable {
 	 * @see #faceIsBackFacing(Vec, Vec, Vec)
 	 */
 	public boolean coneIsBackFacing(Vec viewDirection, Vec axis, float angle) {
-		if (angle < (float)Math.PI/2) {
+		if (angle < (float) Math.PI / 2) {
 			float phi = (float) Math.acos(Vec.dot(axis, viewDirection));
-			if (phi >= (float)Math.PI/2)
+			if (phi >= (float) Math.PI / 2)
 				return false;
-			if ((phi + angle) >= (float)Math.PI/2)
+			if ((phi + angle) >= (float) Math.PI / 2)
 				return false;
 			return true;
 		}

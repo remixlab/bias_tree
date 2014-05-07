@@ -691,13 +691,13 @@ public class Quat implements Constants, Linkable, Rotation {
 		float test = this.quat[0] * this.quat[1] + this.quat[2] * this.quat[3];
 		if (test > 0.499) { // singularity at north pole
 			pitch = 2 * (float) Math.atan2(this.quat[0], this.quat[3]);
-			yaw = (float)Math.PI/2;
+			yaw = (float) Math.PI / 2;
 			roll = 0;
 			return new Vec(roll, pitch, yaw);
 		}
 		if (test < -0.499) { // singularity at south pole
 			pitch = -2 * (float) Math.atan2(this.quat[0], this.quat[3]);
-			yaw = -(float)Math.PI/2;
+			yaw = -(float) Math.PI / 2;
 			roll = 0;
 			return new Vec(roll, pitch, yaw);
 		}
@@ -742,7 +742,7 @@ public class Quat implements Constants, Linkable, Rotation {
 					/ (fromSqNorm * toSqNorm)));
 
 			if (from.dot(to) < 0.0)
-				angle = (float)Math.PI - angle;
+				angle = (float) Math.PI - angle;
 
 			fromAxisAngle(axis, angle);
 		}
@@ -1013,8 +1013,8 @@ public class Quat implements Constants, Linkable, Rotation {
 		float seed = (float) Math.random();
 		float r1 = (float) Math.sqrt(1.0f - seed);
 		float r2 = (float) Math.sqrt(seed);
-		float t1 = 2.0f * (float)Math.PI * (float) Math.random();
-		float t2 = 2.0f * (float)Math.PI * (float) Math.random();
+		float t1 = 2.0f * (float) Math.PI * (float) Math.random();
+		float t2 = 2.0f * (float) Math.PI * (float) Math.random();
 
 		return new Quat((float) Math.sin(t1) * r1, (float) Math.cos(t1) * r1, (float) Math.sin(t2) * r2,
 				(float) Math.cos(t2) * r2);

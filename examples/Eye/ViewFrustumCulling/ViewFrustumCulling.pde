@@ -15,8 +15,6 @@
 import remixlab.proscene.*;
 
 import remixlab.proscene.*;
-import remixlab.proscene.Scene.ProsceneKeyboard;
-import remixlab.proscene.Scene.ProsceneMouse;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 

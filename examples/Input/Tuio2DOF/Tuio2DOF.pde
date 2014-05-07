@@ -15,7 +15,6 @@ import TUIO.*;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
-import remixlab.proscene.Scene;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.bias.agent.*;

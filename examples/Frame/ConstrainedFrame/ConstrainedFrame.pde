@@ -25,23 +25,26 @@ int activeConstraint;
 boolean wC = true;
 boolean focusIFrame;
 
+//Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
+String renderer = P3D;
+
 public void setup() {
-  size(640, 360, P3D);
+  size(640, 360, renderer);
   // size(640, 360, OPENGL);
   myFont = loadFont("FreeSans-13.vlw");
   textFont(myFont);
 
   scene = new Scene(this);
   // press 'i' to switch the interaction between the camera frame and the
-  scene.setCameraType(Camera.Type.ORTHOGRAPHIC);
+  //scene.setCameraType(Camera.Type.ORTHOGRAPHIC);
   scene.setAxesVisualHint(true);
 
   constraints[0] = new LocalConstraint();
-  // Note that a CameraConstraint(camera) would produce the same results:
-  // A CameraConstraint is a LocalConstraint when applied to the camera
+  // Note that an EyeConstraint(eye) would produce the same results:
+  // An EyeConstraint is a LocalConstraint when applied to the camera
   // frame !
   constraints[1] = new WorldConstraint();
-  constraints[2] = new CameraConstraint(scene.camera());
+  constraints[2] = new EyeConstraint(scene.eye());
   transDir = 0;
   rotDir = 0;
   activeConstraint = 0;
@@ -216,7 +219,7 @@ public void displayText() {
     text("Constraint direction defined w/r to WORLD (U)", 350, 20);
     break;
   case 2:
-    text("Constraint direction defined w/r to CAMERA (U)", 350, 20);
+    text("Constraint direction defined w/r to EYE (U)", 350, 20);
     break;
   }
 }

@@ -922,7 +922,7 @@ public class Scene extends AbstractScene implements PConstants {
 		else if (pg instanceof PGraphics2D)
 			setMatrixHelper(new P5GLMatrixHelper(this, (PGraphics2D) pg));
 		else
-			setMatrixHelper(new P5Java2DMatrixHelper(this, pg)); 
+			setMatrixHelper(new P5Java2DMatrixHelper(this, pg));
 
 		// 3. Eye
 		setLeftHanded();

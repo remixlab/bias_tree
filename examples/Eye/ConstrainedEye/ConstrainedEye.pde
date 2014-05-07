@@ -1,5 +1,5 @@
 /**
- * Constrained Camera.
+ * Constrained Eye.
  * by Jean Pierre Charalambos.
  * 
  * This example illustrates how to add constrains (see Constraint related classes)
@@ -22,23 +22,24 @@ private int rotDir;
 AxisPlaneConstraint constraints[] = new AxisPlaneConstraint[2];
 int activeConstraint;
 
+//Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
+String renderer = P3D;
+
 public void setup() {
-  size(640, 360, P3D);
+  size(640, 360, renderer);
   myFont = loadFont("FreeSans-13.vlw");
   textFont(myFont);
-  textMode(SCREEN);
-  //textMode(PApplet.MODEL);
 
   scene = new Scene(this);	
 
   constraints[0] = new WorldConstraint();
-  // Note that a PSCameraConstraint(camera) would produce the same results:
-  // A PSCameraConstraint is a PSLocalConstraint when applied to the camera frame !
+  // Note that an EyeConstraint(eye) would produce the same results:
+  // An EyeConstraint is a LocalConstraint when applied to the camera frame !
   constraints[1] = new LocalConstraint();		
   transDir = 0;
   rotDir   = 0;
   activeConstraint = 0;
-  scene.camera().frame().setConstraint(constraints[activeConstraint]);
+  scene.eye().frame().setConstraint(constraints[activeConstraint]);
 
   scene.setAxesVisualHint(true);
 }
@@ -94,7 +95,7 @@ private void changeConstraint() {
   constraints[activeConstraint].setRotationConstraintType(constraints[previous].rotationConstraintType());
   constraints[activeConstraint].setRotationConstraintDirection(constraints[previous].rotationConstraintDirection());
 
-  scene.camera().frame().setConstraint(constraints[activeConstraint]);
+  scene.eye().frame().setConstraint(constraints[activeConstraint]);
 }
 
 public void draw() {
@@ -170,7 +171,7 @@ public void displayText() {
     text("Constraint direction defined w/r to WORLD (U)", 350, 20); 
     break;
   case 1 : 
-    text("Constraint direction defined w/r to CAMERA (U)", 370, 20); 
+    text("Constraint direction defined w/r to EYE (U)", 370, 20); 
     break;
   }
 }
