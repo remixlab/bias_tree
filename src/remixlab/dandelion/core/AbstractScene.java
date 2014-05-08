@@ -1460,7 +1460,10 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		// perform small animation ;)
 		if (eye().anyInterpolationIsStarted())
 			eye().stopAllInterpolations();
-		eye().interpolateTo(avatar().eyeFrame());
+		// eye().interpolateTo(avatar().eyeFrame());//works only when eyeFrame scaling = magnitude
+		Frame eyeFrameCopy = avatar().eyeFrame().get();
+		eyeFrameCopy.setMagnitude(avatar().eyeFrame().scaling());
+		eye().interpolateTo(eyeFrameCopy);
 
 		if (avatar() instanceof Grabber)
 			motionAgent().setDefaultGrabber((Grabber) avatar());

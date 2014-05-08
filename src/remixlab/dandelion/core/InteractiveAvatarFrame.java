@@ -24,7 +24,7 @@ import remixlab.util.HashCodeBuilder;
  * {@link #trackingDistance()}) respect to the {@link #position()} (which defines the
  * {@link remixlab.dandelion.core.Eye#at()} Vec).
  */
-public class InteractiveAvatarFrame extends InteractiveFrame implements Constants, Trackable, Copyable {
+public class InteractiveAvatarFrame extends InteractiveFrame implements Trackable, Copyable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -170,17 +170,6 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 		updateEyeFrame();
 	}
 
-	// Interface implementation
-
-	/**
-	 * Overloading of {@link remixlab.dandelion.core.Trackable#eyeFrame()}. Returns the world coordinates of the camera
-	 * position computed in {@link #updateEyeFrame()}.
-	 */
-	@Override
-	public Frame eyeFrame() {
-		return eFrame;
-	}
-
 	/**
 	 * The {@link #eyeFrame()} of the Eye that is to be tracking the frame (see the documentation of the Trackable
 	 * interface) is defined in spherical coordinates by means of the {@link #azimuth()}, the {@link #inclination()} and
@@ -193,6 +182,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 			eFrame.setTranslation(p);
 			eFrame.setYAxis(yAxis());
 			eFrame.setZAxis(inverseTransformOf(p));
+			eFrame.setScaling(scene.eye().frame().scaling());
 		}
 		else {
 			Vec p = q.rotate(new Vec(0, 1));
@@ -202,5 +192,16 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Constant
 			float size = Math.min(scene.width(), scene.height());
 			eFrame.setScaling((2.5f * trackingDistance() / size)); // window.fitBall which sets the scaling
 		}
+	}
+
+	// Interface implementation
+
+	/**
+	 * Overloading of {@link remixlab.dandelion.core.Trackable#eyeFrame()}. Returns the world coordinates of the camera
+	 * position computed in {@link #updateEyeFrame()}.
+	 */
+	@Override
+	public Frame eyeFrame() {
+		return eFrame;
 	}
 }
