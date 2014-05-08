@@ -70,7 +70,7 @@ public class WorldConstraint extends AxisPlaneConstraint {
 		case PLANE:
 			break;
 		case AXIS:
-			if (frame.is2D() && Util.nonZero(rotationConstraintDirection().z()))
+			if (frame.is2D())
 				break;
 			if (rotation instanceof Quat) {
 				Vec quat = new Vec(((Quat) rotation).quat[0], ((Quat) rotation).quat[1], ((Quat) rotation).quat[2]);

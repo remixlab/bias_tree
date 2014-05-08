@@ -86,7 +86,7 @@ public class EyeConstraint extends AxisPlaneConstraint {
 		case PLANE:
 			break;
 		case AXIS:
-			if (frame.is2D() && Util.nonZero(rotationConstraintDirection().z()))
+			if (frame.is2D())
 				break;
 			if (rotation instanceof Quat) {
 				Vec axis = frame.transformOf(eye().frame().inverseTransformOf(rotationConstraintDirection()));
