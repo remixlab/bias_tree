@@ -17,7 +17,7 @@ import remixlab.util.Util;
  * Various matrix operations dandelion should support either through a third-party implementation or locally through the
  * {@link remixlab.dandelion.core.MatrixStackHelper}.
  */
-public abstract class MatrixHelper implements Constants {
+public abstract class MatrixHelper {
 	protected AbstractScene	scene;
 
 	protected Mat						projectionViewMat, projectionViewInverseMat;

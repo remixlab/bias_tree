@@ -15,13 +15,10 @@ import java.util.Iterator;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.agent.ActionWheeledBiMotionAgent;
-import remixlab.dandelion.agent.KeyboardAgent;
+import remixlab.dandelion.agent.*;
+import remixlab.dandelion.constraint.*;
 import remixlab.dandelion.geom.*;
-import remixlab.fpstiming.TimingTask;
-import remixlab.fpstiming.Animator;
-import remixlab.fpstiming.AnimatorObject;
-import remixlab.fpstiming.TimingHandler;
+import remixlab.fpstiming.*;
 
 /**
  * A 2D or 3D interactive abstract Scene. Main package class representing an interface between Dandelion and the outside
@@ -75,9 +72,18 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	protected ActionWheeledBiMotionAgent<?>	defMotionAgent;
 	protected KeyboardAgent									defKeyboardAgent;
 
-	// Who's performing the motion action.
-	// TODO define if this should go in agent bindings:
-	// public enum Target { EYE, FRAME };
+	/**
+	 * Visual hints as "the last shall be first"
+	 */
+	public final static int									AXES		= 1 << 0;
+	public final static int									GRID		= 1 << 1;
+	public final static int									PICKING	= 1 << 2;
+	public final static int									PATHS		= 1 << 3;
+	public final static int									ZOOM		= 1 << 4; // prosceneMouse.zoomOnRegion
+	public final static int									ROTATE	= 1 << 5; // prosceneMouse.screenRotate
+
+	// final static int PUP = 1 << 6;
+	// final static int ARP = 1 << 7;
 
 	/**
 	 * Default constructor which defines a right-handed OpenGL compatible Scene with its own
@@ -1561,6 +1567,42 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		}
 		else
 			setEye(win);
+	}
+
+	/**
+	 * Same as {@code eye().frame().setConstraint(constraint)}.
+	 * 
+	 * @see remixlab.dandelion.core.InteractiveEyeFrame#setConstraint(Constraint)
+	 */
+	public void setEyeConstraint(Constraint constraint) {
+		eye().frame().setConstraint(constraint);
+	}
+
+	/**
+	 * Same as {@code return eye().pointIsVisible(point)}.
+	 * 
+	 * @see remixlab.dandelion.core.Eye#pointIsVisible(Vec)
+	 */
+	public boolean pointIsVisible(Vec point) {
+		return eye().pointIsVisible(point);
+	}
+
+	/**
+	 * Same as {@code return eye().ballIsVisible(center, radius)}.
+	 * 
+	 * @see remixlab.dandelion.core.Eye#ballIsVisible(Vec, float)
+	 */
+	public Eye.Visibility ballIsVisible(Vec center, float radius) {
+		return eye().ballIsVisible(center, radius);
+	}
+
+	/**
+	 * Same as {@code return eye().boxIsVisible(p1, p2)}.
+	 * 
+	 * @see remixlab.dandelion.core.Eye#boxIsVisible(Vec, Vec)
+	 */
+	public Eye.Visibility boxIsVisible(Vec p1, Vec p2) {
+		return eye().boxIsVisible(p1, p2);
 	}
 
 	/**

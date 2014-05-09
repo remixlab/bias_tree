@@ -16,10 +16,7 @@ import java.util.Iterator;
 import remixlab.bias.core.Grabber;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingHandler;
-import remixlab.util.Copyable;
-import remixlab.util.EqualsBuilder;
-import remixlab.util.HashCodeBuilder;
-import remixlab.util.Util;
+import remixlab.util.*;
 
 /**
  * Abstract base class for 3D {@link remixlab.dandelion.core.Camera}s and 2D {@link remixlab.dandelion.core.Window}s.

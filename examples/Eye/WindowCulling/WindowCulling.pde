@@ -47,7 +47,7 @@ public void mainDrawing(Scene s) {
   p.noStroke();
   p.ellipseMode(RADIUS);
   // the main viewer camera is used to cull the sphere object against its frustum
-  switch (scene.window().ballIsVisible(new Vec(0, 0), circleRadius)) {
+  switch (scene.ballIsVisible(new Vec(0, 0), circleRadius)) {
   case VISIBLE:
     p.fill(0, 255, 0);
     p.ellipse(0, 0, circleRadius, circleRadius);

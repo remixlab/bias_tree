@@ -27,7 +27,7 @@ public void setup() {
   iFrame.translate(new Vec(30, -30, 0));
   scene.keyboardAgent().profile().setShortcut('r', null);
   scene.setNonSeqTimers();
-  scene.setVisualHints(Constants.AXES | Constants.GRID | Constants.PICKING );
+  scene.setVisualHints(Scene.AXES | Scene.GRID | Scene.PICKING );
   //create a eye path and add some key frames:
   //key frames can be added at runtime with keys [j..n]
   scene.eye().setPosition(new Vec(80,0,0));

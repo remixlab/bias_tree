@@ -55,7 +55,7 @@ public void mainDrawing(Scene s) {
   p.background(0);
   p.noStroke();
   // the main viewer camera is used to cull the sphere object against its frustum
-  switch (scene.camera().ballIsVisible(new Vec(0, 0, 0), scene.radius()*0.6f)) {
+  switch (scene.ballIsVisible(new Vec(0, 0, 0), scene.radius()*0.6f)) {
   case VISIBLE:
     p.fill(0, 255, 0);
     p.sphere(scene.radius()*0.6f);

@@ -15,10 +15,7 @@ import java.util.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.fpstiming.TimingHandler;
-import remixlab.util.Copyable;
-import remixlab.util.EqualsBuilder;
-import remixlab.util.HashCodeBuilder;
-import remixlab.util.Util;
+import remixlab.util.*;
 
 /**
  * A keyFrame Catmull-Rom Frame interpolator.

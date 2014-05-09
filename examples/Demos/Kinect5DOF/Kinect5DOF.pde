@@ -9,7 +9,7 @@
  * We implement the (non-conventional) user interaction mechanism as a HIDAgent
  * which provides up to 6DOFs. The Agent gathers kinect input data and reduces
  * it as "bogus" 6DOF event from which the following proscene built-in actions are
- * bound: TRANSLATE_ROTATE and TRANSLATE3.
+ * bound: TRANSLATE_ROTATE and TRANSLATE_XYZ.
  *
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
@@ -68,10 +68,10 @@ void setup() {
     }
   };  
   agent.setSensitivities(0.03, 0.03, 0.03, 0.00005, 0.00005, 0.00005);
-  agent.eyeProfile().setBinding(Constants.DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ); //set by default anyway
-  agent.frameProfile().setBinding(Constants.DOF6Action.TRANSLATE_XYZ);
+  agent.eyeProfile().setBinding(DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ); //set by default anyway
+  agent.frameProfile().setBinding(DOF6Action.TRANSLATE_XYZ);
   //needs fixing in dandelion:
-  //agent.frameProfile().setBinding(Constants.DOF6Action.TRANSLATE_ROTATE); //set by default anyway
+  //agent.frameProfile().setBinding(DOF6Action.TRANSLATE_ROTATE); //set by default anyway
 
   boxes = new Box[30];
   for (int i = 0; i < boxes.length; i++) {

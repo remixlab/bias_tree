@@ -39,7 +39,9 @@ public void setup() {
   transDir = 0;
   rotDir   = 0;
   activeConstraint = 0;
-  scene.eye().frame().setConstraint(constraints[activeConstraint]);
+  //scene.eye().frame().setConstraint(constraints[activeConstraint]);
+  //same as the previous line
+  scene.setEyeConstraint(constraints[activeConstraint]);
 
   scene.setAxesVisualHint(true);
 }
@@ -95,7 +97,7 @@ private void changeConstraint() {
   constraints[activeConstraint].setRotationConstraintType(constraints[previous].rotationConstraintType());
   constraints[activeConstraint].setRotationConstraintDirection(constraints[previous].rotationConstraintDirection());
 
-  scene.eye().frame().setConstraint(constraints[activeConstraint]);
+  scene.setEyeConstraint(constraints[activeConstraint]);
 }
 
 public void draw() {

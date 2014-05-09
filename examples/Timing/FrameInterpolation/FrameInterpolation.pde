@@ -35,7 +35,7 @@ public void setup() {
   nbKeyFrames = 4;
   scene = new Scene(this);
   //unsets grid and axis altogether
-  scene.setVisualHints( Constants.PICKING );
+  scene.setVisualHints( Scene.PICKING );
   scene.setRadius(70);
   scene.showAll();
   kfi = new KeyFrameInterpolator(scene);

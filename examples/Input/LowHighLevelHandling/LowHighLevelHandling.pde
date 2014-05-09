@@ -42,7 +42,7 @@ public void setup() {
   iFrame = new InteractiveFrame(scene);
   iFrame.translate(new Vec(30, 30, 0));
 
-  mouseAction = Constants.DOF2Action.ROTATE;
+  mouseAction = DOF2Action.ROTATE;
 }
 
 @Override

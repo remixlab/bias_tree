@@ -12,10 +12,7 @@ package remixlab.dandelion.core;
 
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
-import remixlab.util.Copyable;
-import remixlab.util.EqualsBuilder;
-import remixlab.util.HashCodeBuilder;
-import remixlab.util.Util;
+import remixlab.util.*;
 
 /**
  * The InteractiveEyeFrame class represents an InteractiveFrame with Eye specific gesture bindings.
