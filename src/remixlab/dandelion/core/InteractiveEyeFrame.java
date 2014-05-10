@@ -297,7 +297,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		case ALIGN_FRAME:
 			window.frame().alignWithFrame(null, true);
 			break;
-		// TODO these timer actions need testing
 		case ZOOM_ON_PIXEL:
 			window.interpolateToZoomOnPixel(new Point(cEvent.x(), cEvent.y()));
 			pupVec = window.unprojectedCoordinatesOf(new Vec(cEvent.x(), cEvent.y(), 0.5f));

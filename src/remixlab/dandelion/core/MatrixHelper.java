@@ -34,7 +34,7 @@ public abstract class MatrixHelper {
 	 */
 	public void bind() {
 		loadProjection();
-		loadModelView();// TODO test also: initModelView(false);
+		loadModelView();
 		cacheProjectionViewInverse();
 	}
 
@@ -114,6 +114,7 @@ public abstract class MatrixHelper {
 	 * @see remixlab.dandelion.core.Eye#getView(boolean)
 	 */
 	public void loadModelView(boolean includeView) {
+		// TODO test also: initModelView(false); //webgl context?
 		scene.eye().computeView();
 		if (includeView)
 			setModelView(scene.eye().getView(false));

@@ -82,8 +82,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public final static int									ZOOM		= 1 << 4; // prosceneMouse.zoomOnRegion
 	public final static int									ROTATE	= 1 << 5; // prosceneMouse.screenRotate
 
-	// final static int PUP = 1 << 6;
-	// final static int ARP = 1 << 7;
+	// public final static int PUP = 1 << 6;
+	// public final static int ARP = 1 << 7;
 
 	/**
 	 * Default constructor which defines a right-handed OpenGL compatible Scene with its own
@@ -813,6 +813,16 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
+	 * Same as setAxesVisualHint(boolean draw) which should be used instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public void setAxisVisualHint(boolean draw) {
+		setAxesVisualHint(draw);
+	}
+
+	/**
 	 * Sets the display of the axes according to {@code draw}
 	 */
 	public void setAxesVisualHint(boolean draw) {
@@ -1050,6 +1060,16 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 */
 	public void drawPath(KeyFrameInterpolator kfi, int mask, int nbFrames) {
 		drawPath(kfi, mask, nbFrames, 100);
+	}
+
+	/**
+	 * Same as drawAxes() which should be used instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public void drawAxis() {
+		drawAxes();
 	}
 
 	/**
@@ -1292,6 +1312,16 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * @see #drawCone(int, float, float, float, float)
 	 */
 	public abstract void drawCone(int detail, float x, float y, float r1, float r2, float h);
+
+	/**
+	 * Same as drawAxes(float length) which should be used instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public void drawAxis(float length) {
+		drawAxes(length);
+	}
 
 	/**
 	 * Draws axes of length {@code length} which origin correspond to the world coordinate system origin.

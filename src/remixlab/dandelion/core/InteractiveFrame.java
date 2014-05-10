@@ -971,8 +971,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			rot = new Rot(scene.isRightHanded() ? computeAngle() : -computeAngle());
 			rotate(rot);
 			setSpinningRotation(rot);
-			// TODO needs this:? Don't think so!
-			// updateSceneUpVector();
 			break;
 		case ROTATE:
 		case SCREEN_ROTATE:

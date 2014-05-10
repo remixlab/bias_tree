@@ -369,8 +369,6 @@ public class Scene extends AbstractScene implements PConstants {
 				eyeProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, DOF2Action.LOOK_AROUND);
 				eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_CENTER), B_CENTER, DOF2Action.DRIVE);
 			}
-			// TODO PITCH, YAW?
-			// eyeWheelProfile().setBinding(B_SHIFT, B_NOBUTTON, WheelAction.DRIVE);
 			frameProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.ROTATE);
 			frameProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, DOF2Action.SCALE);
 			frameProfile().setBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, DOF2Action.TRANSLATE);
@@ -545,8 +543,6 @@ public class Scene extends AbstractScene implements PConstants {
 
 			if (scene.isRightHanded())
 				scale(1, -1);
-			// TODO experimental
-			// scale(scene.viewpoint().frame().inverseMagnitude().x(), scene.viewpoint().frame().inverseMagnitude().y());
 			scale(1 / scene.eye().frame().scaling(), 1 / scene.eye().frame().scaling());
 			rotate(-o.angle());
 			translate(-pos.x(), -pos.y());
@@ -570,8 +566,6 @@ public class Scene extends AbstractScene implements PConstants {
 			pushModelView();
 			translate(pos.x(), pos.y());
 			rotate(quat.angle());
-			// TODO experimental
-			// scale(scene.window().frame().magnitude().x(), scene.window().frame().magnitude().y());
 			scale(scene.window().frame().scaling(), scene.window().frame().scaling());
 			if (scene.isRightHanded())
 				scale(1, -1);

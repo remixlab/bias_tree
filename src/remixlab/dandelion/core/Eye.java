@@ -1211,16 +1211,8 @@ public abstract class Eye implements Copyable {
 	 * Sets the KeyFrameInterpolator that defines the Eye path of index {@code key}.
 	 */
 	public void setKeyFrameInterpolator(int key, KeyFrameInterpolator keyFInterpolator) {
-		// TODO experimental
-		// 1. currently there's one path for the given key
 		if (kfi.get(key) != null) {
-			// kfi.get(key).removeFramesFromAllAgentPools();
 			deletePath(key);
-			/**
-			 * for (AbstractKeyFrame element : keyFrameInterpolator(key).keyFrameList) { AbstractKeyFrame kf =
-			 * (AbstractKeyFrame)element.get(); if (kf.frame() instanceof InteractiveFrame)
-			 * scene.terseHandler().removeFromAllAgentPools((InteractiveFrame)kf.frame()); }
-			 */
 		}
 		if (keyFInterpolator != null) {
 			if (frame() != keyFInterpolator.frame())
@@ -1231,12 +1223,10 @@ public abstract class Eye implements Copyable {
 					if (keyFInterpolator.keyFrame(i) instanceof InteractiveFrame)
 						((InteractiveFrame) keyFInterpolator.keyFrame(i)).scene = scene;
 			}
-			// end
 			kfi.put(key, keyFInterpolator);
 			System.out.println("Path " + key + " set");
 		}
 		else
-			// kfi.remove(key);
 			deletePath(key);
 	}
 
