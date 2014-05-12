@@ -22,7 +22,7 @@ public class TimingHandler {
 	// T i m e r P o o l
 	protected ArrayList<TimingTask>	tPool;
 	public static long							frameCount;
-	public static float							frameRate;
+	public float										frameRate;
 	protected long									frameRateLastMillis;
 
 	// A N I M A T I O N

@@ -209,15 +209,24 @@ public class Scene extends AbstractScene implements PConstants {
 		@Override
 		public void setDefaultShortcuts() {
 			super.setDefaultShortcuts();
-			keyboardProfile().setShortcut(B_CTRL, java.awt.event.KeyEvent.VK_1, KeyboardAction.ADD_KEYFRAME_TO_PATH_1);
-			keyboardProfile().setShortcut(B_ALT, java.awt.event.KeyEvent.VK_1, KeyboardAction.DELETE_PATH_1);
-			keyboardProfile().setShortcut(B_CTRL, java.awt.event.KeyEvent.VK_2, KeyboardAction.ADD_KEYFRAME_TO_PATH_2);
-			keyboardProfile().setShortcut(B_ALT, java.awt.event.KeyEvent.VK_2, KeyboardAction.DELETE_PATH_2);
-			keyboardProfile().setShortcut(B_CTRL, java.awt.event.KeyEvent.VK_3, KeyboardAction.ADD_KEYFRAME_TO_PATH_3);
-			keyboardProfile().setShortcut(B_ALT, java.awt.event.KeyEvent.VK_3, KeyboardAction.DELETE_PATH_3);
-			setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_1, 1);
-			setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_2, 2);
-			setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_3, 3);
+			// keyboardProfile().setShortcut(B_CTRL, java.awt.event.KeyEvent.VK_1, KeyboardAction.ADD_KEYFRAME_TO_PATH_1);
+			keyboardProfile().setShortcut(B_CTRL, 49, KeyboardAction.ADD_KEYFRAME_TO_PATH_1);
+			// keyboardProfile().setShortcut(B_ALT, java.awt.event.KeyEvent.VK_1, KeyboardAction.DELETE_PATH_1);
+			keyboardProfile().setShortcut(B_ALT, 49, KeyboardAction.DELETE_PATH_1);
+			// keyboardProfile().setShortcut(B_CTRL, java.awt.event.KeyEvent.VK_2, KeyboardAction.ADD_KEYFRAME_TO_PATH_2);
+			keyboardProfile().setShortcut(B_CTRL, 50, KeyboardAction.ADD_KEYFRAME_TO_PATH_2);
+			// keyboardProfile().setShortcut(B_ALT, java.awt.event.KeyEvent.VK_2, KeyboardAction.DELETE_PATH_2);
+			keyboardProfile().setShortcut(B_ALT, 50, KeyboardAction.DELETE_PATH_2);
+			// keyboardProfile().setShortcut(B_CTRL, java.awt.event.KeyEvent.VK_3, KeyboardAction.ADD_KEYFRAME_TO_PATH_3);
+			keyboardProfile().setShortcut(B_CTRL, 51, KeyboardAction.ADD_KEYFRAME_TO_PATH_3);
+			// keyboardProfile().setShortcut(B_ALT, java.awt.event.KeyEvent.VK_3, KeyboardAction.DELETE_PATH_3);
+			keyboardProfile().setShortcut(B_ALT, 51, KeyboardAction.DELETE_PATH_3);
+			// setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_1, 1);
+			setKeyCodeToPlayPath(49, 1);
+			// setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_2, 2);
+			setKeyCodeToPlayPath(50, 2);
+			// setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_3, 3);
+			setKeyCodeToPlayPath(51, 3);
 		}
 
 		public void keyEvent(processing.event.KeyEvent e) {
