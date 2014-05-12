@@ -51,7 +51,7 @@ void setup() {
 }
 
 public void mainDrawing(Scene s) {
-  PGraphicsOpenGL p = s.pggl();
+  PGraphics p = s.pg();
   p.background(0);
   p.noStroke();
   // the main viewer camera is used to cull the sphere object against its frustum
@@ -71,11 +71,11 @@ public void mainDrawing(Scene s) {
 
 void auxiliarDrawing(Scene s) {
   mainDrawing(s);    
-  s.pg3d().pushStyle();
-  s.pg3d().stroke(255, 255, 0);
-  s.pg3d().fill(255, 255, 0, 160);
+  s.pg().pushStyle();
+  s.pg().stroke(255, 255, 0);
+  s.pg().fill(255, 255, 0, 160);
   s.drawEye(scene.camera());
-  s.pg3d().popStyle();
+  s.pg().popStyle();
 }
 
 void draw() {

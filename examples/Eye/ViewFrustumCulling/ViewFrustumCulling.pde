@@ -51,7 +51,7 @@ public void draw() {
   canvas.beginDraw();
   scene.beginDraw();
   canvas.background(0);
-  Root.drawIfAllChildrenAreVisible(scene.pggl(), scene.camera());
+  Root.drawIfAllChildrenAreVisible(scene.pg(), scene.camera());
   scene.endDraw();
   canvas.endDraw();
   image(canvas, 0, 0);
@@ -59,12 +59,12 @@ public void draw() {
   auxCanvas.beginDraw();
   auxScene.beginDraw();
   auxCanvas.background(0);
-  Root.drawIfAllChildrenAreVisible(auxScene.pggl(), scene.camera());
-  auxScene.pg3d().pushStyle();
-  auxScene.pg3d().stroke(255, 255, 0);
-  auxScene.pg3d().fill(255, 255, 0, 160);
+  Root.drawIfAllChildrenAreVisible(auxScene.pg(), scene.camera());
+  auxScene.pg().pushStyle();
+  auxScene.pg().stroke(255, 255, 0);
+  auxScene.pg().fill(255, 255, 0, 160);
   auxScene.drawEye(scene.eye());
-  auxScene.pg3d().popStyle();
+  auxScene.pg().popStyle();
   auxScene.endDraw();
   auxCanvas.endDraw();
   // We retrieve the scene upper left coordinates defined above.

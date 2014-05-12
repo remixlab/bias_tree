@@ -58,7 +58,7 @@ public class HeliCam {
 
   public void draw(Scene scn) {
     // Robot arm's local frame
-    PGraphicsOpenGL pg3d = scn.pggl();
+    PGraphics pg3d = scn.pg();
 
     pg3d.pushMatrix();
     frame(0).applyTransformation();
@@ -112,12 +112,12 @@ public class HeliCam {
   }
 
   public void drawBody(Scene scn) {
-    PGraphicsOpenGL pg3d = scn.pggl();
+    PGraphics pg3d = scn.pg();
     pg3d.sphere(7);
   }
 
   public void drawPropeller(Scene scn) {
-    PGraphicsOpenGL pg3d = scn.pggl();
+    PGraphics pg3d = scn.pg();
     pg3d.pushMatrix();
     pg3d.sphere(2);
     drawCone(scn, 0, 5, 1, 1, 10);
@@ -134,7 +134,7 @@ public class HeliCam {
   }
 
   public void drawBlade(Scene scn) {
-    PGraphicsOpenGL pg3d = scn.pggl();
+    PGraphics pg3d = scn.pg();
     pg3d.pushMatrix();
     pg3d.translate(0, 0, 5);
     pg3d.rotateX(PApplet.HALF_PI);
@@ -143,7 +143,7 @@ public class HeliCam {
   }
 
   public void drawArm(Scene scn) {
-    PGraphicsOpenGL pg3d = scn.pggl();
+    PGraphics pg3d = scn.pg();
     pg3d.translate(2, 0, 0);
     drawCone(scn, 0, 50, 1, 1, 10);
     pg3d.translate(-4, 0, 0);
@@ -167,7 +167,7 @@ public class HeliCam {
   }
 
   public void drawCylinder(Scene scn) {
-    PGraphicsOpenGL pg3d = scn.pggl();
+    PGraphics pg3d = scn.pg();
     pg3d.pushMatrix();
     pg3d.rotate(PApplet.HALF_PI, 0, 1, 0);
     drawCone(scn, -5, 5, 2, 2, 20);
@@ -175,7 +175,7 @@ public class HeliCam {
   }
 
   public void drawSmallCylinder(Scene scn) {
-    PGraphicsOpenGL pg3d = scn.pggl();
+    PGraphics pg3d = scn.pg();
     pg3d.pushMatrix();
     pg3d.rotate(PApplet.HALF_PI, 0, 1, 0);
     drawCone(scn, -2, 2, 2, 2, 20);
@@ -183,14 +183,14 @@ public class HeliCam {
   }
 
   public void drawCone(Scene scn, float zMin, float zMax, float r1, float r2, int nbSub) {
-    PGraphicsOpenGL pg3d = scn.pggl();
+    PGraphics pg3d = scn.pg();
     pg3d.translate(0.0f, 0.0f, zMin);
     scn.drawCone(nbSub, 0, 0, r1, r2, zMax - zMin);
     pg3d.translate(0.0f, 0.0f, -zMin);
   }
 
   public void setColor(Scene scn, boolean selected) {
-    PGraphicsOpenGL pg3d = scn.pggl();
+    PGraphics pg3d = scn.pg();
     if (selected)
       pg3d.fill(200, 200, 0);
     else

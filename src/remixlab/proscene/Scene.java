@@ -527,9 +527,8 @@ public class Scene extends AbstractScene implements PConstants {
 			return pg;
 		}
 
-		public PGraphicsJava2D pgj2d() {
-			return (PGraphicsJava2D) pg();
-		}
+		// Comment the above line and uncomment this one to develop the driver:
+		// public PGraphicsJava2D pg() { return (PGraphicsJava2D) pg; }
 
 		@Override
 		public void bind() {
@@ -579,101 +578,101 @@ public class Scene extends AbstractScene implements PConstants {
 
 		@Override
 		public void pushModelView() {
-			pgj2d().pushMatrix();
+			pg().pushMatrix();
 		}
 
 		@Override
 		public void popModelView() {
-			pgj2d().popMatrix();
+			pg().popMatrix();
 		}
 
 		@Override
 		public void resetModelView() {
-			pgj2d().resetMatrix();
+			pg().resetMatrix();
 		}
 
 		@Override
 		public Mat modelView() {
-			return Scene.toMat(new PMatrix2D(pgj2d().getMatrix()));
+			return Scene.toMat(new PMatrix2D(pg().getMatrix()));
 		}
 
 		@Override
 		public Mat getModelView(Mat target) {
 			if (target == null)
-				target = Scene.toMat((PMatrix2D) pgj2d().getMatrix()).get();
+				target = Scene.toMat((PMatrix2D) pg().getMatrix()).get();
 			else
-				target.set(Scene.toMat((PMatrix2D) pgj2d().getMatrix()));
+				target.set(Scene.toMat((PMatrix2D) pg().getMatrix()));
 			return target;
 		}
 
 		@Override
 		public void setModelView(Mat source) {
-			pgj2d().setMatrix(Scene.toPMatrix2D(source));
+			pg().setMatrix(Scene.toPMatrix2D(source));
 		}
 
 		@Override
 		public void printModelView() {
-			pgj2d().printMatrix();
+			pg().printMatrix();
 		}
 
 		@Override
 		public void printProjection() {
-			pgj2d().printProjection();
+			pg().printProjection();
 		}
 
 		@Override
 		public void applyModelView(Mat source) {
-			pgj2d().applyMatrix(Scene.toPMatrix2D(source));
+			pg().applyMatrix(Scene.toPMatrix2D(source));
 		}
 
 		@Override
 		public void translate(float tx, float ty) {
-			pgj2d().translate(tx, ty);
+			pg().translate(tx, ty);
 		}
 
 		@Override
 		public void translate(float tx, float ty, float tz) {
-			pgj2d().translate(tx, ty, tz);
+			pg().translate(tx, ty, tz);
 		}
 
 		@Override
 		public void rotate(float angle) {
-			pgj2d().rotate(angle);
+			pg().rotate(angle);
 		}
 
 		@Override
 		public void rotateX(float angle) {
-			pgj2d().rotateX(angle);
+			pg().rotateX(angle);
 		}
 
 		@Override
 		public void rotateY(float angle) {
-			pgj2d().rotateY(angle);
+			pg().rotateY(angle);
 		}
 
 		@Override
 		public void rotateZ(float angle) {
-			pgj2d().rotateZ(angle);
+			pg().rotateZ(angle);
 		}
 
 		@Override
 		public void rotate(float angle, float vx, float vy, float vz) {
-			pgj2d().rotate(angle, vx, vy, vz);
+			pg().rotate(angle, vx, vy, vz);
 		}
 
 		@Override
 		public void scale(float s) {
-			pgj2d().scale(s);
+			pg().scale(s);
 		}
 
 		@Override
 		public void scale(float sx, float sy) {
-			pgj2d().scale(sx, sy);
+			pg().scale(sx, sy);
 		}
 
 		@Override
 		public void scale(float x, float y, float z) {
-			pgj2d().scale(x, y, z);
+			pg().scale(x, y, z);
 		}
 	}
 
@@ -1546,74 +1545,9 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Returns the PGraphics instance this Scene is related to. It may be the PApplets one, if the Scene is on-screen or
 	 * an user-defined if the Scene {@link #isOffscreen()}.
-	 * 
-	 * @see #pgj2d()
-	 * @see #pggl()
-	 * @see #pg2d()
-	 * @see #pg3d()
 	 */
 	public PGraphics pg() {
 		return pgraphics;
-	}
-
-	/**
-	 * Casts {@link #pg()} to PGraphicsJava2D. Throws an exception if {@link #pg()} is not instance of PGraphicsJava2D.
-	 * 
-	 * @see #pg()
-	 * @see #pggl()
-	 * @see #pg2d()
-	 * @see #pg3d()
-	 */
-	public PGraphicsJava2D pgj2d() {
-		if (pg() instanceof PGraphicsJava2D)
-			return (PGraphicsJava2D) pg();
-		else
-			throw new RuntimeException("pg() is not instance of PGraphicsJava2D");
-	}
-
-	/**
-	 * Casts {@link #pg()} to PGraphicsOpenGL. Throws an exception if {@link #pg()} is not instance of PGraphicsOpenGL.
-	 * 
-	 * @see #pg()
-	 * @see #pgj2d()
-	 * @see #pg2d()
-	 * @see #pg3d()
-	 */
-	public PGraphicsOpenGL pggl() {
-		if (pg() instanceof PGraphicsOpenGL)
-			return (PGraphicsOpenGL) pg();
-		else
-			throw new RuntimeException("pg() is not instance of PGraphicsOpenGL");
-	}
-
-	/**
-	 * Casts {@link #pg()} to PGraphics2D. Throws an exception if {@link #pg()} is not instance of PGraphics2D.
-	 * 
-	 * @see #pg()
-	 * @see #pggl()
-	 * @see #pgj2d()
-	 * @see #pg3d()
-	 */
-	public PGraphics2D pg2d() {
-		if (pg() instanceof PGraphics2D)
-			return (PGraphics2D) ((P5GLMatrixHelper) matrixHelper()).pggl();
-		else
-			throw new RuntimeException("pg() is not instance of PGraphics2D");
-	}
-
-	/**
-	 * Casts {@link #pg()} to PGraphics3D. Throws an exception if {@link #pg()} is not instance of PGraphics3D.
-	 * 
-	 * @see #pg()
-	 * @see #pggl()
-	 * @see #pg2d()
-	 * @see #pgj2d()
-	 */
-	public PGraphics3D pg3d() {
-		if (pg() instanceof PGraphics3D)
-			return (PGraphics3D) ((P5GLMatrixHelper) matrixHelper()).pggl();
-		else
-			throw new RuntimeException("pg() is not instance of PGraphics3D");
 	}
 
 	@Override
@@ -1790,11 +1724,16 @@ public class Scene extends AbstractScene implements PConstants {
 
 	@Override
 	protected Camera.WorldPoint pointUnderPixel(Point pixel) {
+		PGraphicsOpenGL pggl;
+		if (pg() instanceof PGraphicsOpenGL)
+			pggl = (PGraphicsOpenGL) pg();
+		else
+			throw new RuntimeException("pg() is not instance of PGraphicsOpenGL");
 		float[] depth = new float[1];
-		PGL pgl = pggl().beginPGL();
+		PGL pgl = pggl.beginPGL();
 		pgl.readPixels(pixel.x(), (camera().screenHeight() - pixel.y()), 1, 1, PGL.DEPTH_COMPONENT, PGL.FLOAT,
 				FloatBuffer.wrap(depth));
-		pggl().endPGL();
+		pggl.endPGL();
 		Vec point = new Vec(pixel.x(), pixel.y(), depth[0]);
 		point = camera().unprojectedCoordinatesOf(point);
 		return camera().new WorldPoint(point, (depth[0] < 1.0f));

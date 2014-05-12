@@ -67,6 +67,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public Point														upperLeftCorner;
 	protected boolean												offscreen;
 
+	// TODO TimingHandler.frameCount for off-screen rendering
+	protected long													lastEqUpdate;
+
 	// Eventhandling agents
 	// TODO decide if this should here or at the Processing Scene base class ?
 	protected ActionWheeledBiMotionAgent<?>	defMotionAgent;
@@ -896,8 +899,12 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		}
 
 		bind();
-		if (areBoundaryEquationsEnabled())
+		if (areBoundaryEquationsEnabled() && (eye().lastUpdate() > lastEqUpdate || lastEqUpdate == 0)) {
 			eye().updateBoundaryEquations();
+			lastEqUpdate = TimingHandler.frameCount;
+			// TODO testing:
+			System.out.println("eq ipdated " + TimingHandler.frameCount);
+		}
 	}
 
 	/**

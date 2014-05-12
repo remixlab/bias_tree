@@ -19,44 +19,44 @@ public class OctreeNode {
     child = new OctreeNode[8];
   }
 
-  public void draw(PGraphicsOpenGL pg3d) {
-    pg3d.stroke(color(0.3f*level*255, 0.2f*255, (1.0f-0.3f*level)*255));
-    pg3d.strokeWeight(level + 1);
+  public void draw(PGraphics pg) {
+    pg.stroke(color(0.3f*level*255, 0.2f*255, (1.0f-0.3f*level)*255));
+    pg.strokeWeight(level + 1);
 
-    pg3d.beginShape();
-    pg3d.vertex(p1.x(), p1.y(), p1.z());
-    pg3d.vertex(p1.x(), p2.y(), p1.z());
-    pg3d.vertex(p2.x(), p2.y(), p1.z());
-    pg3d.vertex(p2.x(), p1.y(), p1.z());
-    pg3d.vertex(p1.x(), p1.y(), p1.z());
-    pg3d.vertex(p1.x(), p1.y(), p2.z());
-    pg3d.vertex(p1.x(), p2.y(), p2.z());
-    pg3d.vertex(p2.x(), p2.y(), p2.z());
-    pg3d.vertex(p2.x(), p1.y(), p2.z());
-    pg3d.vertex(p1.x(), p1.y(), p2.z());
-    pg3d.endShape();
-    // pg3d.endShape(CLOSE);
+    pg.beginShape();
+    pg.vertex(p1.x(), p1.y(), p1.z());
+    pg.vertex(p1.x(), p2.y(), p1.z());
+    pg.vertex(p2.x(), p2.y(), p1.z());
+    pg.vertex(p2.x(), p1.y(), p1.z());
+    pg.vertex(p1.x(), p1.y(), p1.z());
+    pg.vertex(p1.x(), p1.y(), p2.z());
+    pg.vertex(p1.x(), p2.y(), p2.z());
+    pg.vertex(p2.x(), p2.y(), p2.z());
+    pg.vertex(p2.x(), p1.y(), p2.z());
+    pg.vertex(p1.x(), p1.y(), p2.z());
+    pg.endShape();
+    // pg.endShape(CLOSE);
 
-    pg3d.beginShape(PApplet.LINES);
-    pg3d.vertex(p1.x(), p2.y(), p1.z());
-    pg3d.vertex(p1.x(), p2.y(), p2.z());
-    pg3d.vertex(p2.x(), p2.y(), p1.z());
-    pg3d.vertex(p2.x(), p2.y(), p2.z());
-    pg3d.vertex(p2.x(), p1.y(), p1.z());
-    pg3d.vertex(p2.x(), p1.y(), p2.z());
-    pg3d.endShape();
+    pg.beginShape(PApplet.LINES);
+    pg.vertex(p1.x(), p2.y(), p1.z());
+    pg.vertex(p1.x(), p2.y(), p2.z());
+    pg.vertex(p2.x(), p2.y(), p1.z());
+    pg.vertex(p2.x(), p2.y(), p2.z());
+    pg.vertex(p2.x(), p1.y(), p1.z());
+    pg.vertex(p2.x(), p1.y(), p2.z());
+    pg.endShape();
   }
 
-  public void drawIfAllChildrenAreVisible(PGraphicsOpenGL pg3d, Camera camera) {
+  public void drawIfAllChildrenAreVisible(PGraphics pg, Camera camera) {
     Camera.Visibility vis = camera.boxIsVisible(p1, p2);
     if (vis == Camera.Visibility.VISIBLE)
-      draw(pg3d);
+      draw(pg);
     else if (vis == Camera.Visibility.SEMIVISIBLE)
       if (child[0] != null)
         for (int i = 0; i < 8; ++i)
-          child[i].drawIfAllChildrenAreVisible(pg3d, camera);
+          child[i].drawIfAllChildrenAreVisible(pg, camera);
       else
-        draw(pg3d);
+        draw(pg);
   }
 
   public void buildBoxHierarchy(int l) {
