@@ -15,7 +15,6 @@ import java.util.Iterator;
 
 import remixlab.bias.core.Grabber;
 import remixlab.dandelion.geom.*;
-import remixlab.fpstiming.TimingHandler;
 import remixlab.util.*;
 
 /**
@@ -244,7 +243,7 @@ public abstract class Eye implements Copyable {
 	}
 
 	protected void modified() {
-		lastNonFrameUpdate = TimingHandler.frameCount;
+		lastNonFrameUpdate = scene.timingHandler().frameCount();
 	}
 
 	/**

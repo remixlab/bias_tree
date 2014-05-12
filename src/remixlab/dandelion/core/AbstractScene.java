@@ -901,9 +901,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		bind();
 		if (areBoundaryEquationsEnabled() && (eye().lastUpdate() > lastEqUpdate || lastEqUpdate == 0)) {
 			eye().updateBoundaryEquations();
-			lastEqUpdate = TimingHandler.frameCount;
-			// TODO testing:
-			System.out.println("eq ipdated " + TimingHandler.frameCount);
+			lastEqUpdate = timingHandler().frameCount();
 		}
 	}
 
@@ -927,6 +925,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public void postDraw() {
 		// 1. timers
 		timingHandler().handle();
+		// hack to deal with more than once scene (i.e., off-screen) which ultimately is needed by Frame.modified()
+		// however it presupposes that all all the (off-screen) scenes are instantiated at the same time (common).
+		TimingHandler.frameCount = timingHandler().frameCount();
 		// 2. Agents
 		inputHandler().handle();
 		// 3. Alternative use only
@@ -1996,9 +1997,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * {@code drawArm();} <br>
 	 * {@code popModelView();} <br>
 	 * {@code popModelView();} <br>
-	 * <p>
-	 * If the frame hierarchy to be drawn should be applied to a different renderer context than main one (e.g., an
-	 * off-screen rendering context), you may call {@link #pushModelView()} and {@link #popModelView()}. above.
 	 * <p>
 	 * Note the use of nested {@link #pushModelView()} and {@link #popModelView()} blocks to represent the frame
 	 * hierarchy: {@code leftArm} and {@code rightArm} are both correctly drawn with respect to the {@code body}
