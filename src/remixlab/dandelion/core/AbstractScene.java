@@ -67,7 +67,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public Point														upperLeftCorner;
 	protected boolean												offscreen;
 
-	// TODO TimingHandler.frameCount for off-screen rendering
+	// Only works when all the animators are instantiated at the same time
+	// use frameCount() which is safer
+	protected static long										frameCount;
 	protected long													lastEqUpdate;
 
 	// Eventhandling agents
@@ -927,7 +929,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		timingHandler().handle();
 		// hack to deal with more than once scene (i.e., off-screen) which ultimately is needed by Frame.modified()
 		// however it presupposes that all all the (off-screen) scenes are instantiated at the same time (common).
-		TimingHandler.frameCount = timingHandler().frameCount();
+		frameCount = timingHandler().frameCount();
 		// 2. Agents
 		inputHandler().handle();
 		// 3. Alternative use only
