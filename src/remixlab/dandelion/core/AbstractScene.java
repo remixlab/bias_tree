@@ -87,6 +87,12 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public final static int									ZOOM		= 1 << 4; // prosceneMouse.zoomOnRegion
 	public final static int									ROTATE	= 1 << 5; // prosceneMouse.screenRotate
 
+	protected Platform											platform;
+
+	public enum Platform {
+		DESKTOP, ANDROID, JS
+	}
+
 	// public final static int PUP = 1 << 6;
 	// public final static int ARP = 1 << 7;
 
@@ -115,11 +121,24 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * @see #setEye(Eye)
 	 */
 	public AbstractScene() {
+		setPlatform();
 		setTimingHandler(new TimingHandler(this));
 		iHandler = new InputHandler();
 		setMatrixHelper(new MatrixStackHelper(this));
 		setRightHanded();
 		setVisualHints(AXES | GRID);
+	}
+
+	/**
+	 * Determines under which platform dandelion is running. Either DESKTOP, ANDROID or JS.
+	 */
+	protected abstract void setPlatform();
+
+	/**
+	 * Returns the platform where dandelion is running. Either DESKTOP, ANDROID or JS.
+	 */
+	public Platform platform() {
+		return platform;
 	}
 
 	// AGENTs

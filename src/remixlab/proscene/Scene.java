@@ -22,7 +22,10 @@ import remixlab.fpstiming.*;
 
 import java.lang.reflect.Method;
 import java.nio.FloatBuffer;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
+import java.util.regex.Pattern;
 
 /**
  * A 2D or 3D interactive Processing Scene. The Scene is a specialization of the
@@ -960,6 +963,23 @@ public class Scene extends AbstractScene implements PConstants {
 
 		// 6. Init should be called only once
 		init();
+	}
+
+	@Override
+	protected void setPlatform() {
+		Properties p = System.getProperties();
+		Enumeration<?> keys = p.keys();
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			String value = (String) p.get(key);
+			if (key.contains("java.vm.vendor")) {
+				if (Pattern.compile(Pattern.quote("Android"), Pattern.CASE_INSENSITIVE).matcher(value).find())
+					platform = Platform.ANDROID;
+				else
+					platform = Platform.DESKTOP;
+				break;
+			}
+		}
 	}
 
 	// firstly, of course, dirty things that I love :P

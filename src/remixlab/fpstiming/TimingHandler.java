@@ -35,7 +35,6 @@ public class TimingHandler {
 		fCount = 0;
 		frameRate = 10;
 		frameRateLastMillis = System.currentTimeMillis();
-		// drawing timer pool
 		tPool = new ArrayList<TimingTask>();
 		aPool = new ArrayList<Animator>();
 	}
