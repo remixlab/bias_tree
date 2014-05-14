@@ -24,7 +24,7 @@ void setup() {
   scene = new Scene(this);
   //Set right handed world frame (useful for architects...)
   scene.setRightHanded();
-  //scene.mouseAgent().eyeProfile().setBinding(Constants.B_LEFT, DOF2Action.ROTATE_CAD);
+  //scene.motionAgent().eyeProfile().setBinding(Constants.B_LEFT, DOF2Action.ROTATE_CAD);
   //same as the previous line:
   scene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE_CAD);
   scene.camera().frame().setRotationSensitivity(1.5);
@@ -42,7 +42,7 @@ void draw() {
 
 void keyPressed() {
   if(key == ' ')
-    if( scene.mouseAgent().eyeProfile().isActionBound(DOF2Action.ROTATE_CAD) )
+    if( scene.motionAgent().eyeProfile().isActionBound(DOF2Action.ROTATE_CAD) )
       scene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE);
     else {
       scene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE_CAD);

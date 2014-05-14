@@ -145,16 +145,16 @@ void keyPressed() {
   case ' ':
     if ( scene.avatar() == null && previousAvatar != null) {
       scene.setAvatar(previousAvatar);
-      scene.mouseAgent().setAsThirdPerson();
-      scene.mouseAgent().setDefaultGrabber(previousAvatar);
-      scene.mouseAgent().disableTracking();
+      scene.motionAgent().setAsThirdPerson();
+      scene.motionAgent().setDefaultGrabber(previousAvatar);
+      scene.motionAgent().disableTracking();
     }
     else {
       previousAvatar = (InteractiveAvatarFrame)scene.avatar();
       scene.unsetAvatar(); //simply sets avatar as null      
-      scene.mouseAgent().setAsArcball();
-      scene.mouseAgent().setDefaultGrabber(scene.eye().frame());
-      scene.mouseAgent().enableTracking();
+      scene.motionAgent().setAsArcball();
+      scene.motionAgent().setDefaultGrabber(scene.eye().frame());
+      scene.motionAgent().enableTracking();
       scene.camera().interpolateToFitScene();
     }
     break;

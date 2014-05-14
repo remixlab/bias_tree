@@ -81,7 +81,7 @@ void setup() {
   
   hidAgent.addInPool(iFrame);
   //declare some sensitivities for the space navigator device
-  hidAgent.setSensitivities(0.01, 0.01, 0.01, 0.0001, 0.0001, 0.0001);
+  hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
   //Set by default:  
   //hidAgent.eyeProfile().setBinding(DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
 
@@ -95,16 +95,17 @@ void draw() {
 }
 
 void keyPressed() {
+  if (key == 'x') scene.flip();
   if (key == 'y') {
     enforced = !enforced;
     if(enforced) {
-      scene.mouseAgent().setDefaultGrabber(iFrame);
-      scene.mouseAgent().disableTracking();
+      scene.motionAgent().setDefaultGrabber(iFrame);
+      scene.motionAgent().disableTracking();
       hidAgent.setDefaultGrabber(iFrame);
     }
     else {
-      scene.mouseAgent().setDefaultGrabber(scene.eye().frame());
-      scene.mouseAgent().enableTracking();
+      scene.motionAgent().setDefaultGrabber(scene.eye().frame());
+      scene.motionAgent().enableTracking();
       hidAgent.setDefaultGrabber(scene.eye().frame());
     }
   }
@@ -127,7 +128,7 @@ void renderIFrame() {
   // Draw an axis using the Scene static function
   scene.drawAxes(20);
   // Draw a second box
-  if (iFrame.grabsInput(scene.mouseAgent()) || iFrame.grabsInput(hidAgent) ) {
+  if (iFrame.grabsInput(scene.motionAgent()) || iFrame.grabsInput(hidAgent) ) {
     fill(255, 0, 0);
     box(12, 17, 22);
   }

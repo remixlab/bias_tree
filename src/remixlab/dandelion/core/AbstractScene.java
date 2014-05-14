@@ -1579,6 +1579,16 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
+	 * If {@link #isLeftHanded()} calls {@link #setRightHanded()}, otherwise calls {@link #setLeftHanded()}.
+	 */
+	public void flip() {
+		if (isLeftHanded())
+			setRightHanded();
+		else
+			setLeftHanded();
+	}
+
+	/**
 	 * If {@link #is3D()} returns the associated Camera, never {@code null}. If {@link #is2D()} throws an exception.
 	 * 
 	 * @see #eye()
@@ -1986,6 +1996,13 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 */
 	static public void showOnlyEyeWarning(DandelionAction action) {
 		showWarning(action.name() + " can only be performed by the eye (frame).");
+	}
+	
+	/**
+	 * Display a warning that the specified method is not available under the specified platform.
+	 */
+	static public void showPlatformVariationWarning(String themethod, Platform platform) {
+		showWarning(themethod + " is not available under the " + platform + " platform.");
 	}
 
 	// NICE STUFF

@@ -71,7 +71,7 @@ public void draw() {
 
 public boolean iFrameGrabsInput() {
   if (scene.isMouseAgentEnabled())
-    return iFrame.grabsInput(scene.mouseAgent());
+    return iFrame.grabsInput(scene.motionAgent());
   else
     return grabsInput;
 }
@@ -123,12 +123,12 @@ public void keyPressed() {
     enforced = !enforced;
     if(scene.isMouseAgentEnabled())
       if (enforced) {
-        scene.mouseAgent().setDefaultGrabber(iFrame);
-        scene.mouseAgent().disableTracking();
+        scene.motionAgent().setDefaultGrabber(iFrame);
+        scene.motionAgent().disableTracking();
       }
       else {
-        scene.mouseAgent().setDefaultGrabber(scene.eye().frame());
-        scene.mouseAgent().enableTracking();
+        scene.motionAgent().setDefaultGrabber(scene.eye().frame());
+        scene.motionAgent().enableTracking();
       }
     else
       if (enforced)

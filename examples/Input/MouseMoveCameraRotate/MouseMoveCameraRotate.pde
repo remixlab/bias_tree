@@ -21,7 +21,7 @@ MouseMoveAgent customMouseAgent;
 void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
-  prosceneMouse = scene.mouseAgent();
+  prosceneMouse = scene.motionAgent();
   scene.enableBoundaryEquations();
   scene.setRadius(150);
   scene.showAll();

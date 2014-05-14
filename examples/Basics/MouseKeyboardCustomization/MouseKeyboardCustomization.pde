@@ -40,7 +40,7 @@ void draw() {
   // Draw an axis using the Scene static function
   scene.drawAxes(20);
   // Draw a second box attached to the interactive frame
-  if (iFrame.grabsInput(scene.mouseAgent())) {
+  if (iFrame.grabsInput(scene.motionAgent())) {
     fill(255, 0, 0);
     scene.drawTorusSolenoid();
   }

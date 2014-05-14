@@ -908,7 +908,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 
 		int dofs = currentAction.dofs();
 		boolean fromY = currentAction == DandelionAction.ROTATE_X || currentAction == DandelionAction.TRANSLATE_Y
-				|| currentAction == DandelionAction.SCALE || currentAction == DandelionAction.ZOOM;
+				|| currentAction == DandelionAction.TRANSLATE_Z || currentAction == DandelionAction.SCALE
+				|| currentAction == DandelionAction.ZOOM;
 
 		switch (dofs) {
 		case 1:
@@ -1183,9 +1184,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 					trans.set(e2.dx(), 0.0f, 0.0f);
 			else if (dir == -1)
 				if (e2.isAbsolute())
-					trans.set(0.0f, scene.isLeftHanded() ? e2.y() : -e2.y(), 0.0f);
+					trans.set(0.0f, scene.isRightHanded() ? -e2.y() : e2.y(), 0.0f);
 				else
-					trans.set(0.0f, scene.isLeftHanded() ? e2.dy() : -e2.dy(), 0.0f);
+					trans.set(0.0f, scene.isRightHanded() ? -e2.dy() : e2.dy(), 0.0f);
 			scale2Fit(trans);
 			translateFromEye(trans);
 			break;
@@ -1199,18 +1200,18 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			break;
 		case TRANSLATE_XYZ:
 			if (e3.isRelative())
-				trans = new Vec(e3.dx(), scene.isRightHanded() ? -e3.dy() : e3.dy(), -e3.dz());
+				trans = new Vec(e3.dx(), scene.isRightHanded() ? -e3.dy() : e3.dy(), e3.dz());
 			else
-				trans = new Vec(e3.x(), scene.isRightHanded() ? -e3.y() : e3.y(), -e3.z());
+				trans = new Vec(e3.x(), scene.isRightHanded() ? -e3.y() : e3.y(), e3.z());
 			scale2Fit(trans);
 			translateFromEye(trans);
 			break;
 		case TRANSLATE_XYZ_ROTATE_XYZ:
 			// A. Translate the iFrame
 			if (e6.isRelative())
-				trans = new Vec(e6.dx(), scene.isRightHanded() ? -e6.dy() : e6.dy(), -e6.dz());
+				trans = new Vec(e6.dx(), scene.isRightHanded() ? -e6.dy() : e6.dy(), e6.dz());
 			else
-				trans = new Vec(e6.x(), scene.isRightHanded() ? -e6.y() : e6.y(), -e6.z());
+				trans = new Vec(e6.x(), scene.isRightHanded() ? -e6.y() : e6.y(), e6.z());
 			scale2Fit(trans);
 			translateFromEye(trans);
 			// B. Rotate the iFrame

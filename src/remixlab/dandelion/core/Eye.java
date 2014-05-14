@@ -269,15 +269,12 @@ public abstract class Eye implements Copyable {
 	// 2. POSITION AND ORIENTATION
 
 	/**
-	 * If {@link remixlab.dandelion.core.AbstractScene#isLeftHanded()} calls
-	 * {@link remixlab.dandelion.core.AbstractScene#setRightHanded()}, otherwise calls
-	 * {@link remixlab.dandelion.core.AbstractScene#setLeftHanded()}.
+	 * Same as {@code scene.flip()}.
+	 * 
+	 * @see remixlab.dandelion.core.AbstractScene#flip()
 	 */
 	public void flip() {
-		if (scene.isLeftHanded())
-			scene.setRightHanded();
-		else
-			scene.setLeftHanded();
+		scene.flip();
 	}
 
 	/**

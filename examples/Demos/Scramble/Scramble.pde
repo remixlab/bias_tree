@@ -95,9 +95,9 @@ class MyScene extends Scene {
   public void execAction(DandelionAction a) {
     switch(a) {
     case CUSTOM:
-      if ( mouseAgent().grabber() != null )
-        if ( mouseAgent().grabber() instanceof InteractiveFrame )
-          board.movePatch((Patch)scene.mouseAgent().grabber());
+      if ( motionAgent().grabber() != null )
+        if ( motionAgent().grabber() instanceof InteractiveFrame )
+          board.movePatch((Patch)scene.motionAgent().grabber());
       break;
     default:
       super.execAction(a);

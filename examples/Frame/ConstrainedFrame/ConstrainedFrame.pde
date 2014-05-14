@@ -124,7 +124,7 @@ public void draw() {
     fill(0, 255, 255);
     scene.drawTorusSolenoid();
   }
-  else if (frame.grabsInput(scene.mouseAgent())) {
+  else if (frame.grabsInput(scene.motionAgent())) {
     fill(255, 0, 0);
     scene.drawTorusSolenoid();
   }
@@ -227,12 +227,12 @@ public void displayText() {
 public void keyPressed() {
   if ( key == 'i') {
     if ( focusIFrame ) {
-      scene.mouseAgent().setDefaultGrabber(scene.eye().frame());
-      scene.mouseAgent().enableTracking();
+      scene.motionAgent().setDefaultGrabber(scene.eye().frame());
+      scene.motionAgent().enableTracking();
     } 
     else {
-      scene.mouseAgent().setDefaultGrabber(frame);
-      scene.mouseAgent().disableTracking();
+      scene.motionAgent().setDefaultGrabber(frame);
+      scene.motionAgent().disableTracking();
     }
     focusIFrame = !focusIFrame;
   }

@@ -401,8 +401,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			trans = camera.projectedCoordinatesOf(anchor());
 			float angle = (float) Math.atan2(e2.y() - trans.vec[1], e2.x() - trans.vec[0])
 					- (float) Math.atan2(e2.prevY() - trans.vec[1], e2.prevX() - trans.vec[0]);
-			// lef-handed coordinate system correction
-			// if( scene.isLeftHanded() )
 			if (scene.isLeftHanded())
 				angle = -angle;
 			Rotation rot = new Quat(new Vec(0.0f, 0.0f, 1.0f), angle);
@@ -423,9 +421,9 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 					trans.set(-e2.dx(), 0.0f, 0.0f);
 			else if (dir == -1)
 				if (e2.isAbsolute())
-					trans.set(0.0f, scene.isLeftHanded() ? -e2.y() : e2.y(), 0.0f);
+					trans.set(0.0f, scene.isRightHanded() ? e2.y() : -e2.y(), 0.0f);
 				else
-					trans.set(0.0f, scene.isLeftHanded() ? -e2.dy() : e2.dy(), 0.0f);
+					trans.set(0.0f, scene.isRightHanded() ? e2.dy() : -e2.dy(), 0.0f);
 			scale2Fit(trans);
 			trans = Vec.multiply(trans, translationSensitivity());
 			translate(orientation().rotate(trans));
