@@ -988,7 +988,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 */
 	public void setMouseAsArcball() {
 		if( platform() == Platform.ANDROID ) {
-			AbstractScene.showPlatformVariationWarning("", platform());
+			AbstractScene.showPlatformVariationWarning("setMouseAsArcball", platform());
 			return;
 		}
 		mouseAgent().setAsArcball();
@@ -1002,6 +1002,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #setMouseAsThirdPerson()
 	 */
 	public void setMouseAsFirstPerson() {
+		if( platform() == Platform.ANDROID ) {
+			AbstractScene.showPlatformVariationWarning("setMouseAsFirstPerson", platform());
+			return;
+		}
 		mouseAgent().setAsFirstPerson();
 	}
 
@@ -1013,6 +1017,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #setMouseAsFirstPerson()
 	 */
 	public void setMouseAsThirdPerson() {
+		if( platform() == Platform.ANDROID ) {
+			AbstractScene.showPlatformVariationWarning("setMouseAsThirdPerson", platform());
+			return;
+		}
 		mouseAgent().setAsThirdPerson();
 	}
 
