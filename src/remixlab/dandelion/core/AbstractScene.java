@@ -1997,7 +1997,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	static public void showOnlyEyeWarning(DandelionAction action) {
 		showWarning(action.name() + " can only be performed by the eye (frame).");
 	}
-	
+
 	/**
 	 * Display a warning that the specified method is not available under the specified platform.
 	 */

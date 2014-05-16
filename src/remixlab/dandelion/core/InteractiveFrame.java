@@ -1021,37 +1021,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 				deltaY = scene.isRightHanded() ? e2.y() : -e2.y();
 			translateFromEye(new Vec(deltaX, -deltaY, 0.0f));
 			break;
-		// TODO needs testing with space navigator
-		case TRANSLATE_XYZ_ROTATE_XYZ:
-			// translate
-			deltaX = (e6.isRelative()) ? e6.dx() : e6.x();
-			if (e6.isRelative())
-				deltaY = scene.isRightHanded() ? e6.dy() : -e6.dy();
-			else
-				deltaY = scene.isRightHanded() ? e6.y() : -e6.y();
-			translateFromEye(new Vec(deltaX, -deltaY, 0.0f));
-			// rotate
-			// TODO: next line commented as trans is not used anymore
-			// trans = scene.window().projectedCoordinatesOf(position());
-			// TODO "relative" is experimental here.
-			// Hard to think of a DOF6 relative device in the first place.
-			if (e6.isRelative())
-				rot = new Rot(e6.drx() * rotationSensitivity());
-			else
-				rot = new Rot(e6.rx() * rotationSensitivity());
-			if (scene.isRightHanded())
-				rot.negate();
-			if (e6.isRelative()) {
-				setSpinningRotation(rot);
-				if (Util.nonZero(dampingFriction()))
-					startSpinning(e6);
-				else
-					spin();
-			} else
-				// absolute needs testing
-				// absolute should simply go (only relative has speed which is needed by start spinning):
-				rotate(rot);
-			break;
 		case SCALE:
 			delta = delta1();
 			float s = 1 + Math.abs(delta) / (float) scene.height();
@@ -1094,7 +1063,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			translateFromEye(trans);
 			break;
 		case TRANSLATE_Z:
-			trans = new Vec(0.0f, 0.0f, delta1());
+			trans = new Vec(0.0f, 0.0f, -delta1());
 			scale2Fit(trans);
 			translateFromEye(trans);
 			break;
@@ -1102,10 +1071,10 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			rollPitchYaw(computeAngle(), 0, 0);
 			break;
 		case ROTATE_Y:
-			rollPitchYaw(0, computeAngle(), 0);
+			rollPitchYaw(0, -computeAngle(), 0);
 			break;
 		case ROTATE_Z:
-			rollPitchYaw(0, 0, computeAngle());
+			rollPitchYaw(0, 0, -computeAngle());
 			break;
 		case DRIVE:
 			rotate(turnQuaternion(e2.dof1Event(), scene.camera()));
@@ -1200,18 +1169,18 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			break;
 		case TRANSLATE_XYZ:
 			if (e3.isRelative())
-				trans = new Vec(e3.dx(), scene.isRightHanded() ? -e3.dy() : e3.dy(), e3.dz());
+				trans = new Vec(e3.dx(), scene.isRightHanded() ? -e3.dy() : e3.dy(), -e3.dz());
 			else
-				trans = new Vec(e3.x(), scene.isRightHanded() ? -e3.y() : e3.y(), e3.z());
+				trans = new Vec(e3.x(), scene.isRightHanded() ? -e3.y() : e3.y(), -e3.z());
 			scale2Fit(trans);
 			translateFromEye(trans);
 			break;
 		case TRANSLATE_XYZ_ROTATE_XYZ:
 			// A. Translate the iFrame
 			if (e6.isRelative())
-				trans = new Vec(e6.dx(), scene.isRightHanded() ? -e6.dy() : e6.dy(), e6.dz());
+				trans = new Vec(e6.dx(), scene.isRightHanded() ? -e6.dy() : e6.dy(), -e6.dz());
 			else
-				trans = new Vec(e6.x(), scene.isRightHanded() ? -e6.y() : e6.y(), e6.z());
+				trans = new Vec(e6.x(), scene.isRightHanded() ? -e6.y() : e6.y(), -e6.z());
 			scale2Fit(trans);
 			translateFromEye(trans);
 			// B. Rotate the iFrame
@@ -1250,6 +1219,23 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			break;
 		}
 	}
+
+	/**
+	 * //TODO implement me as an example case GOOGLE_EARTH: Vec t = new Vec(); Quat q = new Quat();
+	 * 
+	 * event6 = (GenericDOF6Event<?>)e; float magic = 0.01f; // rotSens/transSens?
+	 * 
+	 * //t = DLVector.mult(position(), -event6.getZ() * ( rotSens.z/transSens.z ) ); t = Vec.mult(position(),
+	 * -event6.getZ() * (magic) ); translate(t);
+	 * 
+	 * //q.fromEulerAngles(-event6.getY() * ( rotSens.y/transSens.y ), event6.getX() * ( rotSens.x/transSens.x ), 0);
+	 * q.fromEulerAngles(-event6.getY() * (magic), event6.getX() * (magic), 0); rotateAroundPoint(q,
+	 * scene.camera().arcballReferencePoint());
+	 * 
+	 * q.fromEulerAngles(0, 0, event6.yaw()); rotateAroundPoint(q, scene.camera().arcballReferencePoint());
+	 * 
+	 * q.fromEulerAngles(-event6.roll(), 0, 0); rotate(q); break; //
+	 */
 
 	// micro-actions procedures
 

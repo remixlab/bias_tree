@@ -169,6 +169,24 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			anchorPnt.setZ(0);
 	}
 
+	// This methods gives the same results as the super method. It's only provided to simplify computation
+	@Override
+	public void rollPitchYaw(float roll, float pitch, float yaw) {
+		if (scene.is2D()) {
+			AbstractScene.showDepthWarning("rollPitchYaw");
+			return;
+		}
+		Quat q = new Quat();
+		q.fromEulerAngles(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw);
+		rotate(q);
+	}
+
+	// This methods gives the same results as the super method. It's only provided to simplify computation
+	@Override
+	protected void translateFromEye(Vec trans, float sens) {
+		translate(orientation().rotate(Vec.multiply(trans, sens)));
+	}
+
 	@Override
 	protected void execAction2D(DandelionAction a) {
 		if (a == null)
@@ -180,16 +198,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		switch (a) {
 		// better handled these by default (see below)
 		// case CUSTOM: case ROLL: super.execAction2D(a); break;
-		case TRANSLATE_X:
-			translateFromEye(new Vec(-delta1(), 0));
-			break;
-		case TRANSLATE_Y:
-			translateFromEye(new Vec(0, scene.isRightHanded() ? delta1() : -delta1()));
-			break;
-		case ROTATE_Z:
-			rot = new Rot(scene.isRightHanded() ? -computeAngle() : computeAngle());
-			rotate(rot);
-			setSpinningRotation(rot);
 		case ROTATE:
 		case SCREEN_ROTATE:
 			rot = computeRot(window.projectedCoordinatesOf(anchor()));
@@ -245,35 +253,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				deltaY = scene.isRightHanded() ? -e2.y() : e2.y();
 			translateFromEye(new Vec(-deltaX, -deltaY, 0.0f));
 			break;
-		case TRANSLATE_XYZ_ROTATE_XYZ:
-			// translate:
-			deltaX = (e6.isRelative()) ? e6.dx() : e6.x();
-			if (e6.isRelative())
-				deltaY = scene.isRightHanded() ? -e6.dy() : e6.dy();
-			else
-				deltaY = scene.isRightHanded() ? -e6.y() : e6.y();
-			translateFromEye(new Vec(-deltaX, -deltaY, 0.0f));
-			// rotate:
-			// TODO commented because trans is not used
-			// trans = window.projectedCoordinatesOf(anchor());
-			// TODO "relative" is experimental here.
-			// Hard to think of a DOF6 relative device in the first place.
-			if (e6.isRelative())
-				rot = new Rot(e6.drx() * rotationSensitivity());
-			else
-				rot = new Rot(e6.rx() * rotationSensitivity());
-			if (scene.isLeftHanded())
-				rot.negate();
-			if (e6.isRelative()) {
-				setSpinningRotation(rot);
-				if (Util.nonZero(dampingFriction()))
-					startSpinning(e6);
-				else
-					spin();
-			} else
-				// absolute needs testing
-				rotate(rot);
-			break;
 		case SCALE:
 			float delta = delta1();
 			float s = 1 + Math.abs(delta) / (float) -scene.height();
@@ -321,7 +300,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			return;
 		Camera camera = (Camera) eye;
 		Vec trans;
-		Quat q;
 		Camera.WorldPoint wP;
 		float delta;
 		float wheelSensitivityCoef = 8E-4f;
@@ -329,39 +307,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		// better handled these by default (see below)
 		// case CUSTOM: case DRIVE: case LOOK_AROUND: case MOVE_BACKWARD: case MOVE_FORWARD: case ROLL:
 		// super.execAction3D(a); break;
-		case TRANSLATE_X:
-			trans = new Vec(-delta1(), 0.0f, 0.0f);
-			scale2Fit(trans);
-			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
-			break;
-		case TRANSLATE_Y:
-			trans = new Vec(0.0f, scene.isRightHanded() ? delta1() : -delta1(), 0.0f);
-			scale2Fit(trans);
-			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
-			break;
-		case TRANSLATE_Z:
-			trans = new Vec(0.0f, 0.0f, -delta1());
-			scale2Fit(trans);
-			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
-			break;
-		case ROTATE_X:
-			rotateAroundAxis(new Vec(scene.isLeftHanded() ? 1 : -1, 0, 0), computeAngle());
-			break;
-		case ROTATE_Y:
-			rotateAroundAxis(new Vec(0, -1, 0), computeAngle());
-			break;
-		case ROTATE_Z:
-			rotateAroundAxis(new Vec(0, 0, scene.isLeftHanded() ? -1 : 0), computeAngle());
-			break;
-		case ROTATE_XYZ:
-			q = new Quat();
-			if (e3.isAbsolute())
-				q.fromEulerAngles(scene.isLeftHanded() ? -e3.x() : e3.x(), -e3.y(), scene.isLeftHanded() ? e3.z() : -e3.z());
-			else
-				q.fromEulerAngles(scene.isLeftHanded() ? -e3.dx() : e3.dx(), -e3.dy(),
-						scene.isLeftHanded() ? e3.dz() : -e3.dz());
-			rotate(q);
-			break;
 		case ROTATE:
 			if (e2.isAbsolute()) {
 				AbstractScene.showEventVariationWarning(a);
@@ -436,32 +381,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			scale2Fit(trans);
 			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
 			break;
-		case TRANSLATE_XYZ:
-			if (e3.isRelative())
-				trans = new Vec(-e3.dx(), scene.isRightHanded() ? e3.dy() : -e3.dy(), -e3.dz());
-			else
-				trans = new Vec(-e3.x(), scene.isRightHanded() ? e3.y() : -e3.y(), -e3.z());
-			scale2Fit(trans);
-			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
-			break;
-		case TRANSLATE_XYZ_ROTATE_XYZ:
-			// translate
-			if (e6.isRelative())
-				trans = new Vec(-e6.dx(), scene.isRightHanded() ? e6.dy() : -e6.dy(), -e6.dz());
-			else
-				trans = new Vec(-e6.x(), scene.isRightHanded() ? e6.y() : -e6.y(), -e6.z());
-			scale2Fit(trans);
-			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
-			// Rotate
-			q = new Quat();
-			if (e6.isAbsolute())
-				q.fromEulerAngles(scene.isLeftHanded() ? -e6.roll() : e6.roll(), -e6.pitch(), scene.isLeftHanded() ? e6.yaw()
-						: -e6.yaw());
-			else
-				q.fromEulerAngles(scene.isLeftHanded() ? -e6.drx() : e6.drx(), -e6.dry(),
-						scene.isLeftHanded() ? e6.drz() : -e6.drz());
-			rotate(q);
-			break;
 		case SCALE:
 			delta = delta1();
 			float s = 1 + Math.abs(delta) / (float) -scene.height();
@@ -530,23 +449,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			super.execAction3D(a);
 			break;
 		}
-
-		/**
-		 * //TODO implement me as an example case GOOGLE_EARTH: Vec t = new Vec(); Quat q = new Quat();
-		 * 
-		 * event6 = (GenericDOF6Event<?>)e; float magic = 0.01f; // rotSens/transSens?
-		 * 
-		 * //t = DLVector.mult(position(), -event6.getZ() * ( rotSens.z/transSens.z ) ); t = Vec.mult(position(),
-		 * -event6.getZ() * (magic) ); translate(t);
-		 * 
-		 * //q.fromEulerAngles(-event6.getY() * ( rotSens.y/transSens.y ), event6.getX() * ( rotSens.x/transSens.x ), 0);
-		 * q.fromEulerAngles(-event6.getY() * (magic), event6.getX() * (magic), 0); rotateAroundPoint(q,
-		 * scene.camera().arcballReferencePoint());
-		 * 
-		 * q.fromEulerAngles(0, 0, event6.yaw()); rotateAroundPoint(q, scene.camera().arcballReferencePoint());
-		 * 
-		 * q.fromEulerAngles(-event6.roll(), 0, 0); rotate(q); break; //
-		 */
 	}
 
 	@Override

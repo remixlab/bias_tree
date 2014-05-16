@@ -2,8 +2,8 @@
  * Space Navigator
  * by Jean Pierre Charalambos.
  *
- * This demo shows hot to control your scene Eye and iFrames using a Space Navigator
- * (3D mouse), emulating 6 degrees-of-freedom.
+ * This demo shows how to control your scene Eye and iFrames using a Space Navigator
+ * (3D mouse), with 6 degrees-of-freedom.
  *
  * We implement the (non-conventional) user interaction mechanism as a HIDAgent
  * which provides up to 6DOFs. The Agent gathers Space Navigator input data and reduces
@@ -81,7 +81,7 @@ void setup() {
   
   hidAgent.addInPool(iFrame);
   //declare some sensitivities for the space navigator device
-  hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
+  hidAgent.setSensitivities(0.01, 0.01, 0.01, 0.0001, 0.0001, 0.0001);
   //Set by default:  
   //hidAgent.eyeProfile().setBinding(DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
 

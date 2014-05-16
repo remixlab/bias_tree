@@ -949,7 +949,7 @@ public class Scene extends AbstractScene implements PConstants {
 		pApplet().registerMethod("draw", this);
 		// Misc stuff:
 		setDottedGrid(!(platform() == Platform.ANDROID || is2D()));
-		if( platform() == Platform.DESKTOP || platform() == Platform.ANDROID )
+		if (platform() == Platform.DESKTOP || platform() == Platform.ANDROID)
 			this.setNonSeqTimers();
 		// pApplet().frameRate(100);
 
@@ -975,9 +975,9 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	// firstly, of course, dirty things that I love :P
-	
-	//TODO decide whether or not to include the following three under android?
-	//currently not. If they're going to be included, they should be renamed accordingly.
+
+	// TODO decide whether or not to include the following three under android?
+	// currently not. If they're going to be included, they should be renamed accordingly.
 
 	/**
 	 * Set mouse bindings as arcball. Same as {@code defaultMouseAgent().setAsArcball()}.
@@ -987,7 +987,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #setMouseAsThirdPerson()
 	 */
 	public void setMouseAsArcball() {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("setMouseAsArcball", platform());
 			return;
 		}
@@ -1002,7 +1002,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #setMouseAsThirdPerson()
 	 */
 	public void setMouseAsFirstPerson() {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("setMouseAsFirstPerson", platform());
 			return;
 		}
@@ -1017,7 +1017,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #setMouseAsFirstPerson()
 	 */
 	public void setMouseAsThirdPerson() {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("setMouseAsThirdPerson", platform());
 			return;
 		}
@@ -1029,7 +1029,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * (EYE or FRAME).
 	 */
 	public void setMouseButtonBinding(Target target, int mask, int button, DOF2Action action) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("setMouseButtonBinding", platform());
 			return;
 		}
@@ -1043,7 +1043,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * FRAME).
 	 */
 	public void setMouseButtonBinding(Target target, int button, DOF2Action action) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("setMouseButtonBinding", platform());
 			return;
 		}
@@ -1055,7 +1055,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Removes the mask-button mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeMouseButtonBinding(Target target, int mask, int button) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("removeMouseButtonBinding", platform());
 			return;
 		}
@@ -1068,7 +1068,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Removes the button mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeMouseButtonBinding(Target target, int button) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("removeMouseButtonBinding", platform());
 			return;
 		}
@@ -1081,7 +1081,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the mask-button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean isMouseButtonBindingInUse(Target target, int mask, int button) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseButtonBindingInUse", platform());
 			return false;
 		}
@@ -1093,7 +1093,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean isMouseButtonBindingInUse(Target target, int button) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseButtonBindingInUse", platform());
 			return false;
 		}
@@ -1108,7 +1108,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * FRAME).
 	 */
 	public void setMouseWheelBinding(Target target, int mask, WheelAction action) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("setMouseWheelBinding", platform());
 			return;
 		}
@@ -1122,7 +1122,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Binds the wheel to the (wheel) dandelion action to be performed by the given {@code target} (EYE or FRAME).
 	 */
 	public void setMouseWheelBinding(Target target, WheelAction action) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("setMouseWheelBinding", platform());
 			return;
 		}
@@ -1136,7 +1136,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Removes the mask-wheel shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeMouseWheelBinding(Target target, int mask) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("removeMouseWheelBinding", platform());
 			return;
 		}
@@ -1150,7 +1150,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Removes the wheel binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeMouseWheelBinding(Target target) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("removeMouseWheelBinding", platform());
 			return;
 		}
@@ -1164,7 +1164,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the mask-wheel shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean isMouseWheelBindingInUse(Target target, int mask) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseWheelBindingInUse", platform());
 			return false;
 		}
@@ -1177,7 +1177,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the wheel is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean isMouseWheelBindingInUse(Target target) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseWheelBindingInUse", platform());
 			return false;
 		}
@@ -1193,7 +1193,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * given {@code target} (EYE or FRAME).
 	 */
 	public void setMouseClickBinding(Target target, int mask, int button, int ncs, ClickAction action) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("setMouseClickBinding", platform());
 			return;
 		}
@@ -1208,7 +1208,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * {@code target} (EYE or FRAME).
 	 */
 	public void setMouseClickBinding(Target target, int button, int ncs, ClickAction action) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("setMouseClickBinding", platform());
 			return;
 		}
@@ -1223,7 +1223,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * {@code target} (EYE or FRAME).
 	 */
 	public void setMouseClickBinding(Target target, int button, ClickAction action) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("setMouseClickBinding", platform());
 			return;
 		}
@@ -1239,7 +1239,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
 	 */
 	public void removeMouseClickBinding(Target target, int mask, int button, int ncs) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("removeMouseClickBinding", platform());
 			return;
 		}
@@ -1253,7 +1253,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Removes the button-ncs (number-of-clicks) click-shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeMouseClickBinding(Target target, int button, int ncs) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("removeMouseClickBinding", platform());
 			return;
 		}
@@ -1267,7 +1267,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Removes the single-clicked button shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeMouseClickBinding(Target target, int button) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("removeMouseClickBinding", platform());
 			return;
 		}
@@ -1282,7 +1282,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * (EYE or FRAME).
 	 */
 	public boolean isMouseClickBindingInUse(Target target, int mask, int button, int ncs) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseClickBindingInUse", platform());
 			return false;
 		}
@@ -1296,7 +1296,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * or FRAME).
 	 */
 	public boolean isMouseClickBindingInUse(Target target, int button, int ncs) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseClickBindingInUse", platform());
 			return false;
 		}
@@ -1309,7 +1309,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the single-clicked button shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean isMouseClickBindingInUse(Target target, int button) {
-		if( platform() == Platform.ANDROID ) {
+		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseClickBindingInUse", platform());
 			return false;
 		}
