@@ -105,12 +105,16 @@ void keyPressed() {
       hidAgent.eyeProfile().setBinding(DOF6Action.HINGE);
       hidAgent.setSensitivities(0.0001, 0.0001, 0.01, 0.0001, 0.0001, 0.0001); 
       Vec t = new Vec(0,0,0.7*globeRadius);
-      float a = 2;      
+      float a = TWO_PI - 2;      
       Vec tr = scene.camera().frame().rotation().rotate(t);
       scene.camera().setPosition(t);
+      //For HINGE to work flawlessly we need to line up the eye up vector along the anchor and
+      //the camera position:
       scene.camera().setUpVector(Vec.subtract(scene.camera().position(), scene.anchor()));
+      //The rest is just to make the scene appear in front of us. We could have just used
+      //the space navigator itself to make that happen too.
       Quat q = new Quat();
-      q.fromEulerAngles(-a,0,0);
+      q.fromEulerAngles(a,0,0);
       scene.camera().frame().rotate(q);
     }
   if (key == 'y') {

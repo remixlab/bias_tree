@@ -337,7 +337,9 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			// 1. Relate the eye reference frame:
 			Vec pos = position();
 			Quat o = (Quat) orientation();
+			Frame oldRef = referenceFrame();
 			Frame rFrame = new Frame();
+			rFrame.setPosition(anchor());
 			rFrame.setZAxis(Vec.subtract(pos, anchor()));
 			rFrame.setXAxis(xAxis());
 			setReferenceFrame(rFrame);
@@ -365,7 +367,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			// 7. Unrelate the frame and restore state:
 			pos = position();
 			o = (Quat) orientation();
-			setReferenceFrame(null);
+			setReferenceFrame(oldRef);
 			setPosition(pos);
 			setOrientation(o);
 			break;
