@@ -787,26 +787,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	}
 
 	/**
-	 * Rotates the frame around locally defined {@code axis}.
-	 * 
-	 * @param axis
-	 *          Local axis
-	 * @param angle
-	 *          Rotation angle in radians
-	 */
-	// TODO delete
-	public void rotateAroundAxis(Vec axis, float angle) {
-		if (scene.is2D()) {
-			AbstractScene.showDepthWarning("rotateAroundAxis");
-			return;
-		}
-		Quat q = new Quat(axis, angle);
-		rotate(q);
-		setSpinningRotation(q);
-		updateSceneUpVector();
-	}
-
-	/**
 	 * <a href="http://en.wikipedia.org/wiki/Euler_angles#Extrinsic_rotations">Extrinsic rotation</a> about the
 	 * {@link remixlab.dandelion.core.AbstractScene#eye()} {@link remixlab.dandelion.core.InteractiveEyeFrame} axes.
 	 * 
