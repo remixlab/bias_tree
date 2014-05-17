@@ -41,22 +41,22 @@ void draw() {
 }
 
 void keyPressed() {
-  if(key == ' ')
-    if( scene.motionAgent().eyeProfile().isActionBound(DOF2Action.ROTATE_CAD) )
+  if (key == ' ')
+    if ( scene.mouseAgent().eyeProfile().isActionBound(DOF2Action.ROTATE_CAD) )
       scene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE);
     else {
       scene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE_CAD);
       scene.camera().setUpVector(new Vec(0, 1, 0));
     }
   if (key == 'u' || key == 'U')
-    if ( scene.isRightHanded() )
-      scene.setLeftHanded();    
-    else
-      scene.setRightHanded();
-  else if (key == 'x' || key == 'X')
-    scene.camera().setUpVector(new Vec(1, 0, 0));
-  else if (key == 'y' || key == 'Y')
-    scene.camera().setUpVector(new Vec(0, 1, 0));
-  else if (key == 'z' || key == 'Z')
-    scene.camera().setUpVector(new Vec(0, 0, 1));
+    scene.flip();
+  else {
+    if (key == 'x' || key == 'X')
+      scene.camera().setUpVector(new Vec(1, 0, 0));
+    else if (key == 'y' || key == 'Y')
+      scene.camera().setUpVector(new Vec(0, 1, 0));
+    else if (key == 'z' || key == 'Z')
+      scene.camera().setUpVector(new Vec(0, 0, 1));
+    scene.camera().lookAt(scene.center());
+  }
 }

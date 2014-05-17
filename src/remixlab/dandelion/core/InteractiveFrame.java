@@ -794,6 +794,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	 * @param angle
 	 *          Rotation angle in radians
 	 */
+	// TODO delete
 	public void rotateAroundAxis(Vec axis, float angle) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("rotateAroundAxis");
@@ -949,6 +950,10 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		return currentAction;
 	}
 
+	public void performCustomAction() {
+		AbstractScene.showMissingImplementationWarning(DandelionAction.CUSTOM, this.getClass().getName());
+	}
+
 	/**
 	 * Internal use. Main driver implementing all 2D dandelion motion actions.
 	 */
@@ -960,7 +965,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		Rotation rot;
 		switch (a) {
 		case CUSTOM:
-			AbstractScene.showMissingImplementationWarning(a, this.getClass().getName());
+			performCustomAction();
 			break;
 		case TRANSLATE_X:
 			translateFromEye(new Vec(delta1(), 0));
@@ -1050,7 +1055,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		float angle;
 		switch (a) {
 		case CUSTOM:
-			AbstractScene.showMissingImplementationWarning(a, getClass().getName());
+			performCustomAction();
 			break;
 		case TRANSLATE_X:
 			trans = new Vec(delta1(), 0.0f, 0.0f);
@@ -1184,7 +1189,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			scale2Fit(trans);
 			translateFromEye(trans);
 			// B. Rotate the iFrame
-			trans = scene.camera().projectedCoordinatesOf(position());
 			if (e6.isAbsolute())
 				rollPitchYaw(e6.roll(), -e6.pitch(), -e6.yaw());
 			else
@@ -1219,23 +1223,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			break;
 		}
 	}
-
-	/**
-	 * //TODO implement me as an example case GOOGLE_EARTH: Vec t = new Vec(); Quat q = new Quat();
-	 * 
-	 * event6 = (GenericDOF6Event<?>)e; float magic = 0.01f; // rotSens/transSens?
-	 * 
-	 * //t = DLVector.mult(position(), -event6.getZ() * ( rotSens.z/transSens.z ) ); t = Vec.mult(position(),
-	 * -event6.getZ() * (magic) ); translate(t);
-	 * 
-	 * //q.fromEulerAngles(-event6.getY() * ( rotSens.y/transSens.y ), event6.getX() * ( rotSens.x/transSens.x ), 0);
-	 * q.fromEulerAngles(-event6.getY() * (magic), event6.getX() * (magic), 0); rotateAroundPoint(q,
-	 * scene.camera().arcballReferencePoint());
-	 * 
-	 * q.fromEulerAngles(0, 0, event6.yaw()); rotateAroundPoint(q, scene.camera().arcballReferencePoint());
-	 * 
-	 * q.fromEulerAngles(-event6.roll(), 0, 0); rotate(q); break; //
-	 */
 
 	// micro-actions procedures
 

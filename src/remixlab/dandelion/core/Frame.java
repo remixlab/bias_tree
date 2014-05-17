@@ -1221,6 +1221,11 @@ public class Frame implements Copyable {
 			System.out.println("There's no point in setting the Z axis in 2D");
 	}
 
+	/**
+	 * Same as {@code return xAxis(true)}
+	 * 
+	 * @see #xAxis(boolean)
+	 */
 	public Vec xAxis() {
 		return xAxis(true);
 	}
@@ -1247,6 +1252,11 @@ public class Frame implements Copyable {
 		return res;
 	}
 
+	/**
+	 * Same as {@code return yAxis(true)}
+	 * 
+	 * @see #yAxis(boolean)
+	 */
 	public Vec yAxis() {
 		return yAxis(true);
 	}
@@ -1273,6 +1283,11 @@ public class Frame implements Copyable {
 		return res;
 	}
 
+	/**
+	 * Same as {@code return zAxis(true)}
+	 * 
+	 * @see #zAxis(boolean)
+	 */
 	public Vec zAxis() {
 		return zAxis(true);
 	}

@@ -181,12 +181,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		rotate(q);
 	}
 
-	// This methods gives the same results as the super method. It's only provided to simplify computation
-	@Override
-	protected void translateFromEye(Vec trans, float sens) {
-		translate(orientation().rotate(Vec.multiply(trans, sens)));
-	}
-
 	@Override
 	protected void execAction2D(DandelionAction a) {
 		if (a == null)
@@ -301,6 +295,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		Camera camera = (Camera) eye;
 		Vec trans;
 		Camera.WorldPoint wP;
+		Quat q = new Quat();
 		float delta;
 		float wheelSensitivityCoef = 8E-4f;
 		switch (a) {
@@ -337,6 +332,42 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 				startSpinning(e2);
 			else
 				spin();
+			break;
+		case HINGE: // AKA googgle earth
+			// 1. Relate the eye reference frame:
+			Vec pos = position();
+			Quat o = (Quat) orientation();
+			Frame rFrame = new Frame();
+			rFrame.setZAxis(Vec.subtract(pos, anchor()));
+			rFrame.setXAxis(xAxis());
+			setReferenceFrame(rFrame);
+			setPosition(pos);
+			setOrientation(o);
+			// 2. Translate the refFrame along its Z-axis:
+			float deltaZ = e6.isRelative() ? e6.dz() : e6.z();
+			trans = new Vec(0, scene.isRightHanded() ? deltaZ : -deltaZ, 0);
+			scale2Fit(trans);
+			float pmag = trans.magnitude();
+			translate(0, 0, (deltaZ > 0) ? -pmag : pmag);
+			// 3. Rotate the refFrame around its X-axis -> translate forward-backward the frame on the sphere surface
+			float deltaY = e6.isRelative() ? e6.dy() : e6.y();
+			rFrame.rotate(new Quat(new Vec(1, 0, 0), scene.isRightHanded() ? deltaY : -deltaY));
+			// 4. Rotate the refFrame around its Y-axis -> translate left-right the frame on the sphere surface
+			float deltaX = e6.isRelative() ? e6.dx() : e6.x();
+			rFrame.rotate(new Quat(new Vec(0, 1, 0), deltaX));
+			// 5. Rotate the refFrame around its Z-axis -> look around
+			float rZ = e6.isRelative() ? e6.drz() : e6.rz();
+			rFrame.rotate(new Quat(new Vec(0, 0, 1), scene.isRightHanded() ? -rZ : rZ));
+			// 6. Rotate the frame around x-axis -> move head up and down :P
+			float rX = e6.isRelative() ? e6.drx() : e6.rx();
+			q.fromAxisAngle(new Vec(1, 0, 0), scene.isRightHanded() ? rX : -rX);
+			rotate(q);
+			// 7. Unrelate the frame and restore state:
+			pos = position();
+			o = (Quat) orientation();
+			setReferenceFrame(null);
+			setPosition(pos);
+			setOrientation(o);
 			break;
 		case SCREEN_ROTATE:
 			if (e2.isAbsolute()) {

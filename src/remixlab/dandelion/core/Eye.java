@@ -416,7 +416,7 @@ public abstract class Eye implements Copyable {
 	 * observer of the scene (default action binding).
 	 * <p>
 	 * When {@code noMove} is true, the Eye {@link #position()} is left unchanged, which is an intuitive behavior when the
-	 * Eye is in a walkthrough fly mode.
+	 * Eye is in first person mode.
 	 * 
 	 * @see #lookAt(Vec)
 	 * @see #setOrientation(Rotation)

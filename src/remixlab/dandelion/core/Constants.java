@@ -246,12 +246,17 @@ public interface Constants extends EventConstants {
 		 * Rotate frame (camera or interactive frame) from Euler angles
 		 */
 		ROTATE_XYZ("Rotate frame (camera or interactive frame) from Euler angles", false, 3),
-
-		// GOOGLE_EARTH("Google earth emulation", false, 6),
 		/**
-		 * Natural (camera or interactive frame)
+		 * Translate frame (camera or interactive frame) from dx, dy, dz and rotate it from Euler angles simultaneously
 		 */
-		TRANSLATE_XYZ_ROTATE_XYZ("Natural (camera or interactive frame)", false, 6),
+		TRANSLATE_XYZ_ROTATE_XYZ(
+				"Translate frame (camera or interactive frame) from dx, dy, dz and rotate it from Euler angles simultaneously",
+				false, 6),
+		/**
+		 * Move camera on the surface of a sphere using 5-DOF's: 2 rotations around scene anchor, 1 rotation around scene-up
+		 * vector and 1 translation along it, and 1 rotation around eye X-axis.
+		 */
+		HINGE("Move camera on the surface of a sphere using 5-DOF's", false, 6),
 
 		// CUSTOM ACTIONs
 		/**
@@ -651,6 +656,9 @@ public interface Constants extends EventConstants {
 		// DOF_3
 		TRANSLATE_XYZ(DandelionAction.TRANSLATE_XYZ),
 		ROTATE_XYZ(DandelionAction.ROTATE_XYZ),
+
+		// DOF_4
+		HINGE(DandelionAction.HINGE),
 
 		// DOF_6
 		TRANSLATE_XYZ_ROTATE_XYZ(DandelionAction.TRANSLATE_XYZ_ROTATE_XYZ),
