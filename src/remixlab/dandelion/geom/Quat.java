@@ -194,6 +194,34 @@ public class Quat implements Linkable, Rotation {
 		fromEulerAngles(roll, pitch, yaw);
 	}
 
+	/**
+	 * Constructs a Quat from a (supposedly correct) 3x3 rotation matrix given in the upper left 3x3 sub-matrix of the
+	 * Mat.
+	 * 
+	 * @param glMat
+	 * 
+	 * @see #fromMatrix(Mat)
+	 */
+	public Quat(Mat glMat) {
+		fromMatrix(glMat);
+	}
+
+	/**
+	 * Constructs a Quat from the three rotated vectors of an orthogonal basis.
+	 * 
+	 * @param X
+	 *          1st Orthogonal Vec
+	 * @param Y
+	 *          2nd Orthogonal Vec
+	 * @param Z
+	 *          3rd Orthogonal Vec
+	 * 
+	 * @see #fromRotatedBasis(Vec, Vec, Vec)
+	 */
+	public Quat(Vec X, Vec Y, Vec Z) {
+		fromRotatedBasis(X, Y, Z);
+	}
+
 	protected Quat(Quat q1) {
 		set(q1);
 	}
@@ -762,39 +790,6 @@ public class Quat implements Linkable, Rotation {
 			fromAxisAngle(axis, angle);
 		}
 	}
-
-	/**
-	 * Set the Quat from a (supposedly correct) 3x3 rotation matrix.
-	 * <p>
-	 * The matrix is expressed in European format: its three columns are the images by the rotation of the three vectors
-	 * of an orthogonal basis.
-	 * <p>
-	 * {@link #fromRotatedBasis(Vec, Vec, Vec)} sets a Quat from the three axis of a rotated frame. It actually fills the
-	 * three columns of a matrix with these rotated basis vectors and calls this method.
-	 * 
-	 * @param threeXthree
-	 *          the 3*3 matrix of float values
-	 */
-	/**
-	 * @Override public final void fromRotationMatrix(float threeXthree[][]) { // Compute one plus the trace of the matrix
-	 *           float onePlusTrace = 1.0f + threeXthree[0][0] + threeXthree[1][1] + threeXthree[2][2];
-	 * 
-	 *           if (Util.nonZero(onePlusTrace) && onePlusTrace>0) { // Direct computation float s = (float)
-	 *           Math.sqrt(onePlusTrace) * 2.0f; this.quat[0] = (threeXthree[2][1] - threeXthree[1][2]) / s; this.quat[1]
-	 *           = (threeXthree[0][2] - threeXthree[2][0]) / s; this.quat[2] = (threeXthree[1][0] - threeXthree[0][1]) /
-	 *           s; this.quat[3] = 0.25f * s; } else { // Computation depends on major diagonal term if
-	 *           ((threeXthree[0][0] > threeXthree[1][1]) & (threeXthree[0][0] > threeXthree[2][2])) { float s = (float)
-	 *           Math.sqrt(1.0f + threeXthree[0][0] - threeXthree[1][1] - threeXthree[2][2]) * 2.0f; this.quat[0] = 0.25f
-	 *           * s; this.quat[1] = (threeXthree[0][1] + threeXthree[1][0]) / s; this.quat[2] = (threeXthree[0][2] +
-	 *           threeXthree[2][0]) / s; this.quat[3] = (threeXthree[1][2] - threeXthree[2][1]) / s; } else if
-	 *           (threeXthree[1][1] > threeXthree[2][2]) { float s = (float) Math.sqrt(1.0f + threeXthree[1][1] -
-	 *           threeXthree[0][0] - threeXthree[2][2]) * 2.0f; this.quat[0] = (threeXthree[0][1] + threeXthree[1][0]) /
-	 *           s; this.quat[1] = 0.25f * s; this.quat[2] = (threeXthree[1][2] + threeXthree[2][1]) / s; this.quat[3] =
-	 *           (threeXthree[0][2] - threeXthree[2][0]) / s; } else { float s = (float) Math.sqrt(1.0f +
-	 *           threeXthree[2][2] - threeXthree[0][0] - threeXthree[1][1]) * 2.0f; this.quat[0] = (threeXthree[0][2] +
-	 *           threeXthree[2][0]) / s; this.quat[1] = (threeXthree[1][2] + threeXthree[2][1]) / s; this.quat[2] = 0.25f
-	 *           * s; this.quat[3] = (threeXthree[0][1] - threeXthree[1][0]) / s; } } normalize(); }
-	 */
 
 	/**
 	 * Set the Quat from a (supposedly correct) 3x3 rotation matrix given in the upper left 3x3 sub-matrix of the Mat.
