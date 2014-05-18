@@ -171,14 +171,12 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 
 	// This methods gives the same results as the super method. It's only provided to simplify computation
 	@Override
-	public void rollPitchYaw(float roll, float pitch, float yaw) {
+	public void rotateAroundEyeAxes(float roll, float pitch, float yaw) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("rollPitchYaw");
 			return;
 		}
-		Quat q = new Quat();
-		q.fromEulerAngles(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw);
-		rotate(q);
+		rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));
 	}
 
 	@Override
@@ -333,7 +331,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			else
 				spin();
 			break;
-		case HINGE: // AKA googgle earth
+		case HINGE: // aka google earth navigation
 			// 1. Relate the eye reference frame:
 			Vec pos = position();
 			Quat o = (Quat) orientation();

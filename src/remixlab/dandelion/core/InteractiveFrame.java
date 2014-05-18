@@ -799,14 +799,13 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	 * 
 	 * @see remixlab.dandelion.geom.Quat#fromEulerAngles(float, float, float)
 	 */
-	public void rollPitchYaw(float roll, float pitch, float yaw) {
+	public void rotateAroundEyeAxes(float roll, float pitch, float yaw) {
 		if (scene.is2D()) {
-			AbstractScene.showDepthWarning("rollPitchYaw");
+			AbstractScene.showDepthWarning("rotateAroundEyeAxes");
 			return;
 		}
 		Vec trans = new Vec();
-		Quat q = new Quat();
-		q.fromEulerAngles(scene.isLeftHanded() ? roll : -roll, -pitch, scene.isLeftHanded() ? yaw : -yaw);
+		Quat q = new Quat(scene.isLeftHanded() ? roll : -roll, -pitch, scene.isLeftHanded() ? yaw : -yaw);
 		// trans = scene.camera().projectedCoordinatesOf(position());
 		trans.set(-q.x(), -q.y(), -q.z());
 		trans = scene.camera().frame().orientation().rotate(trans);
@@ -1053,13 +1052,13 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			translateFromEye(trans);
 			break;
 		case ROTATE_X:
-			rollPitchYaw(computeAngle(), 0, 0);
+			rotateAroundEyeAxes(computeAngle(), 0, 0);
 			break;
 		case ROTATE_Y:
-			rollPitchYaw(0, -computeAngle(), 0);
+			rotateAroundEyeAxes(0, -computeAngle(), 0);
 			break;
 		case ROTATE_Z:
-			rollPitchYaw(0, 0, -computeAngle());
+			rotateAroundEyeAxes(0, 0, -computeAngle());
 			break;
 		case DRIVE:
 			rotate(turnQuaternion(e2.dof1Event(), scene.camera()));
@@ -1105,9 +1104,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		case ROTATE_XYZ:
 			// trans = scene.camera().projectedCoordinatesOf(position());
 			if (e3.isAbsolute())
-				rollPitchYaw(e3.x(), -e3.y(), -e3.z());
+				rotateAroundEyeAxes(e3.x(), -e3.y(), -e3.z());
 			else
-				rollPitchYaw(e3.dx(), -e3.dy(), -e3.dz());
+				rotateAroundEyeAxes(e3.dx(), -e3.dy(), -e3.dz());
 			break;
 		case SCREEN_ROTATE:
 			if (e2.isAbsolute()) {
@@ -1170,9 +1169,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			translateFromEye(trans);
 			// B. Rotate the iFrame
 			if (e6.isAbsolute())
-				rollPitchYaw(e6.roll(), -e6.pitch(), -e6.yaw());
+				rotateAroundEyeAxes(e6.roll(), -e6.pitch(), -e6.yaw());
 			else
-				rollPitchYaw(e6.drx(), -e6.dry(), -e6.drz());
+				rotateAroundEyeAxes(e6.drx(), -e6.dry(), -e6.drz());
 			break;
 		case SCALE:
 			delta = delta1();

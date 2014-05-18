@@ -178,6 +178,22 @@ public class Quat implements Linkable, Rotation {
 		fromTo(from, to);
 	}
 
+	/**
+	 * Constructs a Quat from the given Euler angles.
+	 * 
+	 * @param roll
+	 *          Rotation angle in radians around the x-Axis
+	 * @param pitch
+	 *          Rotation angle in radians around the y-Axis
+	 * @param yaw
+	 *          Rotation angle in radians around the z-Axis
+	 * 
+	 * @see #fromEulerAngles(float, float, float)
+	 */
+	public Quat(float roll, float pitch, float yaw) {
+		fromEulerAngles(roll, pitch, yaw);
+	}
+
 	protected Quat(Quat q1) {
 		set(q1);
 	}
