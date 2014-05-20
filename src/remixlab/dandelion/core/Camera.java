@@ -255,8 +255,6 @@ public class Camera extends Eye implements Copyable {
 
 	@Override
 	public Vec viewDirection() {
-		// if there were not validateScaling this should do it:
-		// return frame().magnitude().z() > 0 ? frame().zAxis(false) : frame().zAxis();
 		return frame().zAxis(false);
 	}
 

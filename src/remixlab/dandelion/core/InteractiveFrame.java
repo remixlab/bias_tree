@@ -947,10 +947,10 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			performCustomAction();
 			break;
 		case TRANSLATE_X:
-			translateFromEye(new Vec(delta1(), 0));
+			translateFromEye(new Vec(delta1(), 0), (e1.action() != null) ? 1 : translationSensitivity());
 			break;
 		case TRANSLATE_Y:
-			translateFromEye(new Vec(0, scene.isRightHanded() ? -delta1() : delta1()));
+			translateFromEye(new Vec(0, scene.isRightHanded() ? -delta1() : delta1()), (e1.action() != null) ? 1 : translationSensitivity());
 			break;
 		case ROTATE_Z:
 			rot = new Rot(scene.isRightHanded() ? computeAngle() : -computeAngle());
@@ -1039,17 +1039,17 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		case TRANSLATE_X:
 			trans = new Vec(delta1(), 0.0f, 0.0f);
 			scale2Fit(trans);
-			translateFromEye(trans);
+			translateFromEye(trans, (e1.action() != null) ? 1 : translationSensitivity());
 			break;
 		case TRANSLATE_Y:
 			trans = new Vec(0.0f, scene.isRightHanded() ? -delta1() : delta1(), 0.0f);
 			scale2Fit(trans);
-			translateFromEye(trans);
+			translateFromEye(trans, (e1.action() != null) ? 1 : translationSensitivity());
 			break;
 		case TRANSLATE_Z:
-			trans = new Vec(0.0f, 0.0f, -delta1());
+			trans = new Vec(0.0f, 0.0f, delta1());
 			scale2Fit(trans);
-			translateFromEye(trans);
+			translateFromEye(trans, (e1.action() != null) ? 1 : translationSensitivity());
 			break;
 		case ROTATE_X:
 			rotateAroundEyeAxes(computeAngle(), 0, 0);
@@ -1153,18 +1153,18 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			break;
 		case TRANSLATE_XYZ:
 			if (e3.isRelative())
-				trans = new Vec(e3.dx(), scene.isRightHanded() ? -e3.dy() : e3.dy(), -e3.dz());
+				trans = new Vec(e3.dx(), scene.isRightHanded() ? -e3.dy() : e3.dy(), e3.dz());
 			else
-				trans = new Vec(e3.x(), scene.isRightHanded() ? -e3.y() : e3.y(), -e3.z());
+				trans = new Vec(e3.x(), scene.isRightHanded() ? -e3.y() : e3.y(), e3.z());
 			scale2Fit(trans);
 			translateFromEye(trans);
 			break;
 		case TRANSLATE_XYZ_ROTATE_XYZ:
 			// A. Translate the iFrame
 			if (e6.isRelative())
-				trans = new Vec(e6.dx(), scene.isRightHanded() ? -e6.dy() : e6.dy(), -e6.dz());
+				trans = new Vec(e6.dx(), scene.isRightHanded() ? -e6.dy() : e6.dy(), e6.dz());
 			else
-				trans = new Vec(e6.x(), scene.isRightHanded() ? -e6.y() : e6.y(), -e6.z());
+				trans = new Vec(e6.x(), scene.isRightHanded() ? -e6.y() : e6.y(), e6.z());
 			scale2Fit(trans);
 			translateFromEye(trans);
 			// B. Rotate the iFrame
@@ -1265,8 +1265,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 
 	protected void translateFromEye(Vec trans, float sens) {
 		// Transform from eye to world coordinate system.
-		trans = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trans, translationSensitivity()))
-				: scene.camera().frame().orientation().rotate(Vec.multiply(trans, translationSensitivity()));
+		trans = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trans, sens))
+				: scene.camera().frame().orientation().rotate(Vec.multiply(trans, sens));
 
 		// And then down to frame
 		if (referenceFrame() != null)

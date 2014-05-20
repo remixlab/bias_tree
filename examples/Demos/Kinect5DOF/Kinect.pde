@@ -81,9 +81,9 @@ public class Kinect {
     PVector delta=new PVector(0, 0, 0);
     PVector posit=positionVector();
     if (isActiveUser()) {
-      delta.x=initial.x-posit.x;
-      delta.y=initial.y-posit.y;
-      delta.z=initial.z-posit.z;
+      delta.x=posit.x-initial.x;
+      delta.y=posit.y-initial.y;
+      delta.z=posit.z-initial.z;
     }
     return delta;
   }
@@ -148,4 +148,3 @@ public class Kinect {
     curContext.startTrackingSkeleton(userId);
   }
 }
-

@@ -345,10 +345,10 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			setOrientation(o);
 			// 2. Translate the refFrame along its Z-axis:
 			float deltaZ = e6.isRelative() ? e6.dz() : e6.z();
-			trans = new Vec(0, scene.isRightHanded() ? deltaZ : -deltaZ, 0);
+			trans = new Vec(0, scene.isRightHanded() ? -deltaZ : deltaZ, 0);
 			scale2Fit(trans);
 			float pmag = trans.magnitude();
-			translate(0, 0, (deltaZ > 0) ? -pmag : pmag);
+			translate(0, 0, (deltaZ > 0) ? pmag : -pmag);
 			// 3. Rotate the refFrame around its X-axis -> translate forward-backward the frame on the sphere surface
 			float deltaY = e6.isRelative() ? e6.dy() : e6.y();
 			rFrame.rotate(new Quat(new Vec(1, 0, 0), scene.isRightHanded() ? deltaY : -deltaY));

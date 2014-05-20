@@ -29,4 +29,3 @@ public class Hand {
     ellipse(point.x, point.y, rad, rad);
   }
 }
-

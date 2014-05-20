@@ -15,11 +15,8 @@
  */
 
 import processing.opengl.*;
-
 import SimpleOpenNI.*;
-
 import remixlab.proscene.*;
-import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.agent.*;
@@ -31,7 +28,6 @@ HIDAgent agent;
 Kinect kinect;
 PVector kinectPos, kinectRot;
 Box [] boxes;
-boolean cameraMode = true;
 
 void setup() {
   size(800, 600, P3D);
@@ -42,36 +38,14 @@ void setup() {
   scene.showAll();
 
   agent = new HIDAgent(scene, "Kinect") {
-    DOF6Event event, prevEvent;
     @Override
     public DOF6Event feed() {
       if(!kinect.initialDefined) return null;
-      if (cameraMode) { //-> event is absolute
-        setDefaultGrabber(scene.eye().frame()); //set it by default
-        disableTracking();
-        scene.setPickingVisualHint(false);
-        event=new DOF6Event(kinectPos.x, kinectPos.y, kinectPos.z, 0, kinectRot.y, kinectRot.z); 
-      }
-      else { //frame mode -> event is relative
-        setDefaultGrabber(null);
-        enableTracking();
-        scene.setPickingVisualHint(true);
-        event = new DOF6Event(prevEvent, kinect.posit.x, kinect.posit.y, kinect.posit.z, 0, kinectRot.y, kinectRot.z);
-        prevEvent = event.get();
-        //debug:     
-        //println("abs pos: " + event.getX() + ", " + event.getY() + ", " + event.getZ());
-        //println("deltas : " + event.getDX() + ", " + event.getDY() + ", " + event.getDZ());
-        if(trackedGrabber() == null)
-          updateTrackedGrabber(event); 
-      }
-      return event;
+      return new DOF6Event(kinectPos.x, kinectPos.y, kinectPos.z, 0, kinectRot.y, kinectRot.z);
     }
   };  
   agent.setSensitivities(0.03, 0.03, 0.03, 0.00005, 0.00005, 0.00005);
-  agent.eyeProfile().setBinding(DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ); //set by default anyway
-  agent.frameProfile().setBinding(DOF6Action.TRANSLATE_XYZ);
-  //needs fixing in dandelion:
-  //agent.frameProfile().setBinding(DOF6Action.TRANSLATE_ROTATE); //set by default anyway
+  agent.disableTracking();
 
   boxes = new Box[30];
   for (int i = 0; i < boxes.length; i++) {
@@ -94,10 +68,6 @@ void draw() {
   //Get the translation and rotation vectors from Kinect
   kinectPos=kinect.deltaPositionVector();
   kinectRot=kinect.rotationVector();
-}
-
-void keyPressed() {
-  if(key == 'v' || key == 'V')  cameraMode = !cameraMode;
 }
 
 void onNewUser(SimpleOpenNI curContext, int userId) {
