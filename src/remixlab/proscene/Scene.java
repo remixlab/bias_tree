@@ -1588,6 +1588,26 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
+	 * Same as {@link remixlab.dandelion.core.AbstractScene#postDraw()} but overwrites the
+	 * {@link remixlab.dandelion.core.AbstractScene#frameCount} variable (with pApplet().frameCount) to deal with possibly
+	 * asynchronous scene creation. A hack to deal robustly with {@link remixlab.dandelion.core.Frame#lastUpdate()}.
+	 * <p>
+	 * You don't need to call this as it is done automatically by {@link #draw()} and {@link #endDraw()}.
+	 * 
+	 * @see #draw()
+	 * @see #endDraw()
+	 */
+	@Override
+	public void postDraw() {
+		timingHandler().handle();
+		frameCount = pApplet().frameCount;
+		inputHandler().handle();
+		proscenium();
+		invokeDrawHandler();
+		displayVisualHints();
+	}
+
+	/**
 	 * Paint method which is called just after your {@code PApplet.draw()} method. Simply calls {@link #postDraw()}. This
 	 * method is registered at the PApplet and hence you don't need to call it.
 	 * <p>
@@ -1604,8 +1624,6 @@ public class Scene extends AbstractScene implements PConstants {
 		if (isOffscreen())
 			return;
 		postDraw();
-		// overwritten frameCount to deal with possibly asynchronous scene creation (see postDraw comment)
-		frameCount = pApplet().frameCount;
 	}
 
 	/**
@@ -1659,8 +1677,6 @@ public class Scene extends AbstractScene implements PConstants {
 							+ "endDraw() and they cannot be nested. Check your implementation!");
 
 		postDraw();
-		// overwritten frameCount to deal with possibly asynchronous scene creation (see postDraw comment)
-		frameCount = pApplet().frameCount;
 	}
 
 	/**

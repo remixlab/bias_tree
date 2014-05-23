@@ -933,7 +933,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Called before your main drawing, e.g., P5.draw().
+	 * Called after your main drawing, e.g., P5.draw().
 	 * <p>
 	 * Calls:
 	 * <ol>

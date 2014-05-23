@@ -53,7 +53,6 @@ public class HeliCam {
     frame(4).setConstraint(rotor);
     frame(4).setSpinningRotation(rotation);
     frame(4).removeFromAgentPool(((CameraCrane)parent).mainScene.motionAgent());
-    //frame(4).startSpinning(60);
   }
 
   public void draw(Scene scn) {
