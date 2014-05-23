@@ -72,8 +72,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	protected static long										frameCount;
 	protected long													lastEqUpdate;
 
-	// Eventhandling agents
-	// TODO decide if this should here or at the Processing Scene base class ?
 	protected ActionWheeledBiMotionAgent<?>	defMotionAgent;
 	protected KeyboardAgent									defKeyboardAgent;
 

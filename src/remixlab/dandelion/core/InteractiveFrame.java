@@ -950,7 +950,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			translateFromEye(new Vec(delta1(), 0), (e1.action() != null) ? 1 : translationSensitivity());
 			break;
 		case TRANSLATE_Y:
-			translateFromEye(new Vec(0, scene.isRightHanded() ? -delta1() : delta1()), (e1.action() != null) ? 1 : translationSensitivity());
+			translateFromEye(new Vec(0, scene.isRightHanded() ? -delta1() : delta1()), (e1.action() != null) ? 1
+					: translationSensitivity());
 			break;
 		case ROTATE_Z:
 			rot = new Rot(scene.isRightHanded() ? computeAngle() : -computeAngle());

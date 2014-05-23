@@ -976,9 +976,6 @@ public class Scene extends AbstractScene implements PConstants {
 
 	// firstly, of course, dirty things that I love :P
 
-	// TODO decide whether or not to include the following three under android?
-	// currently not. If they're going to be included, they should be renamed accordingly.
-
 	/**
 	 * Set mouse bindings as arcball. Same as {@code defaultMouseAgent().setAsArcball()}.
 	 * 
@@ -1607,6 +1604,8 @@ public class Scene extends AbstractScene implements PConstants {
 		if (isOffscreen())
 			return;
 		postDraw();
+		// overwritten frameCount to deal with possibly asynchronous scene creation (see postDraw comment)
+		frameCount = pApplet().frameCount;
 	}
 
 	/**
@@ -1660,6 +1659,8 @@ public class Scene extends AbstractScene implements PConstants {
 							+ "endDraw() and they cannot be nested. Check your implementation!");
 
 		postDraw();
+		// overwritten frameCount to deal with possibly asynchronous scene creation (see postDraw comment)
+		frameCount = pApplet().frameCount;
 	}
 
 	/**
@@ -2001,12 +2002,13 @@ public class Scene extends AbstractScene implements PConstants {
 	public void drawAxes(float length) {
 		pg().pushStyle();
 		pg().colorMode(PApplet.RGB, 255);
-		final float charWidth = length / 40.0f;
-		final float charHeight = length / 30.0f;
-		final float charShift = 1.04f * length;
+		float charWidth = length / 40.0f;
+		float charHeight = length / 30.0f;
+		float charShift = 1.04f * length;
 
+		pg().pushStyle();
 		pg().beginShape(PApplet.LINES);
-
+		pg().strokeWeight(2);
 		if (is2D()) {
 			// The X
 			pg().stroke(200, 0, 0);
@@ -2016,13 +2018,14 @@ public class Scene extends AbstractScene implements PConstants {
 			vertex(charShift + charWidth, charHeight);
 
 			// The Y
+			charShift *= 1.02;
 			pg().stroke(0, 200, 0);
-			vertex(charWidth, charShift + charHeight);
+			vertex(charWidth, charShift + (isRightHanded() ? charHeight : -charHeight));
 			vertex(0.0f, charShift + 0.0f);
-			vertex(-charWidth, charShift + charHeight);
+			vertex(-charWidth, charShift + (isRightHanded() ? charHeight : -charHeight));
 			vertex(0.0f, charShift + 0.0f);
 			vertex(0.0f, charShift + 0.0f);
-			vertex(0.0f, charShift + -charHeight);
+			vertex(0.0f, charShift + -(isRightHanded() ? charHeight : -charHeight));
 		}
 		else {
 			// The X
@@ -2033,34 +2036,23 @@ public class Scene extends AbstractScene implements PConstants {
 			vertex(charShift, charWidth, charHeight);
 			// The Y
 			pg().stroke(0, 200, 0);
-			vertex(charWidth, charShift, charHeight);
+			vertex(charWidth, charShift, (isLeftHanded() ? charHeight : -charHeight));
 			vertex(0.0f, charShift, 0.0f);
-			vertex(-charWidth, charShift, charHeight);
+			vertex(-charWidth, charShift, (isLeftHanded() ? charHeight : -charHeight));
 			vertex(0.0f, charShift, 0.0f);
 			vertex(0.0f, charShift, 0.0f);
-			vertex(0.0f, charShift, -charHeight);
+			vertex(0.0f, charShift, -(isLeftHanded() ? charHeight : -charHeight));
 			// The Z
 			pg().stroke(0, 100, 200);
-			// left_handed
-			if (isLeftHanded()) {
-				vertex(-charWidth, -charHeight, charShift);
-				vertex(charWidth, -charHeight, charShift);
-				vertex(charWidth, -charHeight, charShift);
-				vertex(-charWidth, charHeight, charShift);
-				vertex(-charWidth, charHeight, charShift);
-				vertex(charWidth, charHeight, charShift);
-			}
-			else {
-				vertex(-charWidth, charHeight, charShift);
-				vertex(charWidth, charHeight, charShift);
-				vertex(charWidth, charHeight, charShift);
-				vertex(-charWidth, -charHeight, charShift);
-				vertex(-charWidth, -charHeight, charShift);
-				vertex(charWidth, -charHeight, charShift);
-			}
+			vertex(-charWidth, isRightHanded() ? charHeight : -charHeight, charShift);
+			vertex(charWidth, isRightHanded() ? charHeight : -charHeight, charShift);
+			vertex(charWidth, isRightHanded() ? charHeight : -charHeight, charShift);
+			vertex(-charWidth, isRightHanded() ? -charHeight : charHeight, charShift);
+			vertex(-charWidth, isRightHanded() ? -charHeight : charHeight, charShift);
+			vertex(charWidth, isRightHanded() ? -charHeight : charHeight, charShift);
 		}
-
 		pg().endShape();
+		pg().popStyle();
 
 		// X Axis
 		pg().stroke(200, 0, 0);
