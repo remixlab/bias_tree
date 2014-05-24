@@ -24,7 +24,7 @@ import remixlab.util.*;
  * around the new translated origin and then scaled.
  * <p>
  * In rare situations a frame can be {@link #linkTo(Frame)}, meaning that it will share its {@link #translation()},
- * {@link #rotation()}, {@link #scaling()}, {@link #referenceFrame()}, and {@link #constraint()} with the other frame,
+ * {@link #rotation()}, {@link #scaling()}, {@link #referenceFrame()} and {@link #constraint()} with the other frame,
  * which can be useful for some off-screen scenes.
  */
 public class Frame implements Copyable {
@@ -32,8 +32,9 @@ public class Frame implements Copyable {
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
 				append(krnl).
-				append(linkedFramesList).
+				append(linkedFrameList).
 				append(srcFrame).
+				append(lastUpdate).
 				toHashCode();
 	}
 
@@ -49,8 +50,9 @@ public class Frame implements Copyable {
 		Frame other = (Frame) obj;
 		return new EqualsBuilder()
 				.append(krnl, other.krnl)
-				.append(linkedFramesList, other.linkedFramesList)
+				.append(linkedFrameList, other.linkedFrameList)
 				.append(srcFrame, other.srcFrame)
+				.append(lastUpdate, other.lastUpdate)
 				.isEquals();
 	}
 
@@ -66,8 +68,7 @@ public class Frame implements Copyable {
 					append(rot).
 					append(scl).
 					append(refFrame).
-					append(constr).
-					append(lastUpdate).
+					append(cnstrnt).
 					toHashCode();
 		}
 
@@ -86,7 +87,7 @@ public class Frame implements Copyable {
 					.append(scl, other.scl)
 					.append(rot, other.rot)
 					.append(refFrame, other.refFrame)
-					.append(constr, other.constr)
+					.append(cnstrnt, other.cnstrnt)
 					.isEquals();
 		}
 
@@ -94,43 +95,31 @@ public class Frame implements Copyable {
 		protected float				scl;
 		protected Rotation		rot;
 		protected Frame				refFrame;
-		protected Constraint	constr;
-		protected long				lastUpdate;
+		protected Constraint	cnstrnt;
 
 		public FrameKernel() {
 			trans = new Vec(0, 0, 0);
 			scl = 1;
-			rot = null;
-			refFrame = null;
-			constr = null;
-			lastUpdate = 0;
 		}
 
 		public FrameKernel(Vec p, Rotation r, float s) {
-			trans = new Vec(p.x(), p.y(), p.z());
-			setScaling(s);
+			trans = p.get();
 			rot = r.get();
-			refFrame = null;
-			constr = null;
-			lastUpdate = 0;
+			setScaling(s);
 		}
 
 		public FrameKernel(Vec p, Rotation r) {
-			trans = new Vec(p.x(), p.y(), p.z());
+			trans = p.get();
 			rot = r.get();
 			scl = 1;
-			refFrame = null;
-			constr = null;
-			lastUpdate = 0;
 		}
 
 		protected FrameKernel(FrameKernel other) {
-			trans = new Vec(other.translation().vec[0], other.translation().vec[1], other.translation().vec[2]);
+			trans = other.translation().get();
 			rot = other.rotation().get();
 			scl = other.scaling();
 			refFrame = other.referenceFrame();
-			constr = other.constraint();
-			lastUpdate = other.lastUpdate();
+			cnstrnt = other.constraint();
 		}
 
 		public final Vec translation() {
@@ -164,18 +153,6 @@ public class Frame implements Copyable {
 			modified();
 		}
 
-		public Constraint constraint() {
-			return constr;
-		}
-
-		public void setConstraint(Constraint c) {
-			constr = c;
-		}
-
-		public final Frame referenceFrame() {
-			return refFrame;
-		}
-
 		public void translate(Vec t) {
 			translation().add(t);
 			modified();
@@ -192,12 +169,16 @@ public class Frame implements Copyable {
 			setScaling(scaling() * s);
 		}
 
-		protected void modified() {
-			lastUpdate = AbstractScene.frameCount;
+		public Constraint constraint() {
+			return cnstrnt;
 		}
 
-		public long lastUpdate() {
-			return lastUpdate;
+		public void setConstraint(Constraint c) {
+			cnstrnt = c;
+		}
+
+		public final Frame referenceFrame() {
+			return refFrame;
 		}
 
 		public final void setReferenceFrame(Frame rFrame) {
@@ -223,7 +204,7 @@ public class Frame implements Copyable {
 	}
 
 	/**
-	 * Internal class. 3D version of AbstractFrameKernel.
+	 * Internal class. 3D version of FrameKernel.
 	 */
 	protected class FrameKernel3D extends FrameKernel {
 		public FrameKernel3D() {
@@ -249,7 +230,7 @@ public class Frame implements Copyable {
 	}
 
 	/**
-	 * Internal class. 2D version of AbstractFrameKernel.
+	 * Internal class. 2D version of FrameKernel.
 	 */
 	protected class FrameKernel2D extends FrameKernel {
 		public FrameKernel2D() {
@@ -274,84 +255,60 @@ public class Frame implements Copyable {
 		}
 	}
 
-	protected FrameKernel	krnl;
-	protected List<Frame>	linkedFramesList;
-	protected Frame				srcFrame;
+	protected AbstractScene	scene;
+	protected FrameKernel		krnl;
+	protected long					lastUpdate;
+	protected List<Frame>		linkedFrameList;
+	protected Frame					srcFrame;
 
 	/**
-	 * Convenience constructor that simply calls {@code this(true)}.
+	 * Creates a Frame for the {@code scene}. Its {@link #position()} is set to 0, its {@link #orientation()} is set to
+	 * the identity rotation and its {@link #scaling()} is set to 1. The {@link #referenceFrame()} and the
+	 * {@link #constraint()} are {@code null}.
+	 */
+	public Frame(AbstractScene scn) {
+		scene = scn;
+		linkedFrameList = new ArrayList<Frame>();
+		krnl = scene.is3D() ? new FrameKernel3D() : new FrameKernel2D();
+	}
+
+	/**
+	 * Creates a Frame for the {@code scene} from {@code p}, {@code r}, and {@code s} which define its {@link #position()}
+	 * , {@link #orientation()} and {@link #magnitude()}.
+	 * <p>
+	 * See the {@link remixlab.dandelion.geom.Vec} and {@link remixlab.dandelion.geom.Rotation} documentations for
+	 * convenient constructors and methods.
+	 * <p>
+	 * The Frame is defined in the {@code scene} world coordinate system (its {@link #referenceFrame()} is {@code null}).
+	 * It has a {@code null} associated {@link #constraint()}.
+	 */
+	public Frame(AbstractScene scn, Vec p, Rotation r, float s) {
+		scene = scn;
+		linkedFrameList = new ArrayList<Frame>();
+		if ((scene.is2D() && r instanceof Quat) || (scene.is3D() && r instanceof Rot))
+			throw new RuntimeException(scene.is3D() ? "Rotations in 3D should be Quats" : "Rotations in 3D should be Rots");
+		krnl = scene.is3D() ? new FrameKernel3D(p, (Quat) r, s) : new FrameKernel2D(p, (Rot) r, s);
+	}
+
+	/**
+	 * Same as {@code this(scn, p, r, 1)}.
 	 * 
-	 * @see #Frame(boolean)
+	 * @see #Frame(AbstractScene, Vec, Rotation, float)
 	 */
-	public Frame() {
-		this(true);
-	}
-
-	/**
-	 * If {@code three_d} is true, creates a 3D frame; otherwise a 2D frame is created.
-	 * <p>
-	 * Its {@link #position()} is set to 0, its {@link #orientation()} is set to the identity rotation and its
-	 * {@link #scaling()} is set to 1. The {@link #referenceFrame()} and the {@link #constraint()} are {@code null}.
-	 */
-	public Frame(boolean three_d) {
-		if (three_d)
-			krnl = new FrameKernel3D();
-		else
-			krnl = new FrameKernel2D();
-		linkedFramesList = new ArrayList<Frame>();
-		srcFrame = null;
-	}
-
-	/**
-	 * Creates a Frame from {@code p}, {@code r}, and {@code s} which define its {@link #position()},
-	 * {@link #orientation()} and {@link #magnitude()}.
-	 * <p>
-	 * See the {@link remixlab.dandelion.geom.Vec} and {@link remixlab.dandelion.geom.Rotation} documentations for
-	 * convenient constructors and methods.
-	 * <p>
-	 * The Frame is defined in the world coordinate system (its {@link #referenceFrame()} is {@code null}). It has a
-	 * {@code null} associated {@link #constraint()}.
-	 */
-	public Frame(Vec p, Rotation r, float s) {
-		if (r instanceof Quat)
-			krnl = new FrameKernel3D(p, (Quat) r, s);
-		else if (r instanceof Rot)
-			krnl = new FrameKernel2D(p, (Rot) r, s);
-
-		linkedFramesList = new ArrayList<Frame>();
-		srcFrame = null;
-	}
-
-	/**
-	 * Creates a Frame from {@code p} and {@code r} which define its {@link #position()} and {@link #orientation()} (its
-	 * {@link #scaling()} is set to 1).
-	 * <p>
-	 * See the {@link remixlab.dandelion.geom.Vec} and {@link remixlab.dandelion.geom.Rotation} documentations for
-	 * convenient constructors and methods.
-	 * <p>
-	 * The Frame is defined in the world coordinate system (its {@link #referenceFrame()} is {@code null}). It has a
-	 * {@code null} associated {@link #constraint()}.
-	 */
-	public Frame(Rotation r, Vec p) {
-		if (r instanceof Quat)
-			krnl = new FrameKernel3D(p, (Quat) r);
-		else if (r instanceof Rot)
-			krnl = new FrameKernel2D(p, (Rot) r);
-
-		linkedFramesList = new ArrayList<Frame>();
-		srcFrame = null;
+	public Frame(AbstractScene scn, Vec p, Rotation r) {
+		this(scn, p, r, 1);
 	}
 
 	protected Frame(Frame other) {
-		if (other.is3D())
-			krnl = new FrameKernel3D((FrameKernel3D) other.kernel());
-		else
-			krnl = new FrameKernel2D((FrameKernel2D) other.kernel());
-		linkedFramesList = new ArrayList<Frame>();
-		Iterator<Frame> iterator = other.linkedFramesList.iterator();
+		scene = other.scene;
+		linkedFrameList = new ArrayList<Frame>();
+		Iterator<Frame> iterator = other.linkedFrameList.iterator();
 		while (iterator.hasNext())
-			linkedFramesList.add(iterator.next());
+			linkedFrameList.add(iterator.next());
+		krnl = other.is3D() ? new FrameKernel3D((FrameKernel3D) other.kernel()) : new FrameKernel2D(
+				(FrameKernel2D) other.kernel());
 		srcFrame = other.srcFrame;
+		lastUpdate = other.lastUpdate();
 	}
 
 	@Override
@@ -368,6 +325,89 @@ public class Frame implements Copyable {
 
 	protected void setKernel(FrameKernel k) {
 		krnl = k;
+	}
+
+	/**
+	 * Returns the current {@link remixlab.dandelion.constraint.Constraint} applied to the Frame.
+	 * <p>
+	 * A {@code null} value (default) means that no Constraint is used to filter the Frame translation and rotation.
+	 * <p>
+	 * See the Constraint class documentation for details.
+	 */
+	public Constraint constraint() {
+		return kernel().constraint();
+	}
+
+	/**
+	 * Sets the {@link #constraint()} attached to the Frame.
+	 * <p>
+	 * A {@code null} value means no constraint.
+	 */
+	public void setConstraint(Constraint c) {
+		kernel().setConstraint(c);
+	}
+
+	/**
+	 * Returns the reference Frame, in which coordinates system the Frame is defined.
+	 * <p>
+	 * The Frame {@link #translation()}, {@link #rotation()} and {@link #scaling()} are defined with respect to the
+	 * {@link #referenceFrame()} coordinate system. A {@code null} reference Frame (default value) means that the Frame is
+	 * defined in the world coordinate system.
+	 * <p>
+	 * Use {@link #position()}, {@link #orientation()} and {@link #magnitude()} to recursively convert values along the
+	 * reference Frame chain and to get values expressed in the world coordinate system. The values match when the
+	 * reference Frame is {@code null}.
+	 * <p>
+	 * Use {@link #setReferenceFrame(Frame)} to set this value and create a Frame hierarchy. Convenient functions allow
+	 * you to convert coordinates from one Frame to another: see {@link #coordinatesOf(Vec)},
+	 * {@link #localCoordinatesOf(Vec)} , {@link #coordinatesOfIn(Vec, Frame)} and their inverse functions.
+	 * <p>
+	 * Vectors can also be converted using {@link #transformOf(Vec)}, {@link #transformOfIn(Vec, Frame)},
+	 * {@link #localTransformOf(Vec)} and their inverse functions.
+	 */
+	public final Frame referenceFrame() {
+		return kernel().referenceFrame();
+	}
+
+	/**
+	 * Sets the {@link #referenceFrame()} of the Frame.
+	 * <p>
+	 * The Frame {@link #translation()}, {@link #rotation()} and {@link #scaling()} are then defined in the
+	 * {@link #referenceFrame()} coordinate system.
+	 * <p>
+	 * Use {@link #position()}, {@link #orientation()} and {@link #magnitude()} to express these in the world coordinate
+	 * system.
+	 * <p>
+	 * Using this method, you can create a hierarchy of Frames. This hierarchy needs to be a tree, which root is the world
+	 * coordinate system (i.e., {@code null} {@link #referenceFrame()}). No action is performed if setting
+	 * {@code refFrame} as the {@link #referenceFrame()} would create a loop in the Frame hierarchy.
+	 */
+	public final void setReferenceFrame(Frame rFrame) {
+		kernel().setReferenceFrame(rFrame);
+	}
+
+	/**
+	 * Returns {@code true} if setting {@code frame} as the Frame's {@link #referenceFrame()} would create a loop in the
+	 * Frame hierarchy.
+	 */
+	public final boolean settingAsReferenceFrameWillCreateALoop(Frame frame) {
+		return kernel().settingAsReferenceFrameWillCreateALoop(frame);
+	}
+
+	/**
+	 * Internal use. Call by the {@link #kernel()} whenever the Frame changes state.
+	 */
+	protected void modified() {
+		lastUpdate = scene.frameCount();
+		for (Frame f : linkedFrameList)
+			f.modified();
+	}
+
+	/**
+	 * @return the last frame the Frame was updated.
+	 */
+	public long lastUpdate() {
+		return lastUpdate;
 	}
 
 	/**
@@ -394,13 +434,6 @@ public class Frame implements Copyable {
 	 */
 	public final float scaling() {
 		return kernel().scaling();
-	}
-
-	/**
-	 * @return the last frame the Frame was updated.
-	 */
-	public long lastUpdate() {
-		return kernel().lastUpdate();
 	}
 
 	/**
@@ -431,42 +464,9 @@ public class Frame implements Copyable {
 	}
 
 	/**
-	 * Returns the reference Frame, in which coordinates system the Frame is defined.
-	 * <p>
-	 * The Frame {@link #translation()}, {@link #rotation()} and {@link #scaling()} are defined with respect to the
-	 * {@link #referenceFrame()} coordinate system. A {@code null} reference Frame (default value) means that the Frame is
-	 * defined in the world coordinate system.
-	 * <p>
-	 * Use {@link #position()}, {@link #orientation()} and {@link #magnitude()} to recursively convert values along the
-	 * reference Frame chain and to get values expressed in the world coordinate system. The values match when the
-	 * reference Frame is {@code null}.
-	 * <p>
-	 * Use {@link #setReferenceFrame(Frame)} to set this value and create a Frame hierarchy. Convenient functions allow
-	 * you to convert coordinates from one Frame to another: see {@link #coordinatesOf(Vec)},
-	 * {@link #localCoordinatesOf(Vec)} , {@link #coordinatesOfIn(Vec, Frame)} and their inverse functions.
-	 * <p>
-	 * Vectors can also be converted using {@link #transformOf(Vec)}, {@link #transformOfIn(Vec, Frame)},
-	 * {@link #localTransformOf(Vec)} and their inverse functions.
-	 */
-	public final Frame referenceFrame() {
-		return kernel().referenceFrame();
-	}
-
-	/**
-	 * Returns the current {@link remixlab.dandelion.constraint.Constraint} applied to the Frame.
-	 * <p>
-	 * A {@code null} value (default) means that no Constraint is used to filter the Frame translation and rotation.
-	 * <p>
-	 * See the Constraint class documentation for details.
-	 */
-	public Constraint constraint() {
-		return kernel().constraint();
-	}
-
-	/**
 	 * Links this frame (referred to as the requested frame) to {@code sourceFrame}, meaning that this frame will take
 	 * (and share by reference) the {@link #translation()}, {@link #rotation()}, {@link #scaling()},
-	 * {@link #referenceFrame()}, and {@link #constraint()} from the {@code sourceFrame}. This can be useful for some
+	 * {@link #referenceFrame()} and {@link #constraint()} from the {@code sourceFrame}. This can be useful for some
 	 * off-screen scenes, e.g., to link a frame defined in one scene to the Eye frame defined in other scene (see the
 	 * CameraCrane example).
 	 * <p>
@@ -489,10 +489,10 @@ public class Frame implements Copyable {
 	 */
 	public boolean linkTo(Frame sourceFrame) {
 		// avoid loops
-		if ((!linkedFramesList.isEmpty()) || sourceFrame.linkedFramesList.contains(this) || (sourceFrame == this))
+		if ((!linkedFrameList.isEmpty()) || sourceFrame.linkedFrameList.contains(this) || (sourceFrame == this))
 			return false;
 
-		if (sourceFrame.linkedFramesList.add(this)) {
+		if (sourceFrame.linkedFrameList.add(this)) {
 			srcFrame = sourceFrame;
 			setKernel(srcFrame.kernel());
 			return true;
@@ -518,10 +518,10 @@ public class Frame implements Copyable {
 	 */
 	public boolean linkFrom(Frame requestedFrame) {
 		// avoid loops
-		if ((!requestedFrame.linkedFramesList.isEmpty()) || linkedFramesList.contains(this) || (requestedFrame == this))
+		if ((!requestedFrame.linkedFrameList.isEmpty()) || linkedFrameList.contains(this) || (requestedFrame == this))
 			return false;
 
-		if (linkedFramesList.add(requestedFrame)) {
+		if (linkedFrameList.add(requestedFrame)) {
 			requestedFrame.srcFrame = this;
 			requestedFrame.setKernel(kernel());
 			return true;
@@ -550,7 +550,7 @@ public class Frame implements Copyable {
 	public boolean unlink() {
 		boolean result = false;
 		if (srcFrame != null) {
-			result = srcFrame.linkedFramesList.remove(this);
+			result = srcFrame.linkedFrameList.remove(this);
 			if (result) {
 				setKernel(is2D() ? new FrameKernel2D(srcFrame.position(), (Rot) srcFrame.orientation(), srcFrame.magnitude())
 						: new FrameKernel3D(srcFrame.position(), (Quat) srcFrame.orientation(), srcFrame.magnitude()));
@@ -581,7 +581,7 @@ public class Frame implements Copyable {
 	public boolean unlinkFrom(Frame requestedFrame) {
 		boolean result = false;
 		if ((srcFrame == null) && (requestedFrame != this)) {
-			result = linkedFramesList.remove(requestedFrame);
+			result = linkedFrameList.remove(requestedFrame);
 			if (result) {
 				requestedFrame.setKernel(is2D() ? new FrameKernel2D(position(), (Rot) orientation(), magnitude())
 						: new FrameKernel3D(position(), (Quat) orientation(), magnitude()));
@@ -605,7 +605,7 @@ public class Frame implements Copyable {
 	 * @see #areLinkedTogether(Frame)
 	 */
 	public boolean isLinked() {
-		if ((srcFrame != null) || (!linkedFramesList.isEmpty()))
+		if ((srcFrame != null) || (!linkedFrameList.isEmpty()))
 			return true;
 		return false;
 	}
@@ -624,7 +624,7 @@ public class Frame implements Copyable {
 	public boolean areLinkedTogether(Frame sourceFrame) {
 		if (sourceFrame == srcFrame)
 			return true;
-		if (linkedFramesList.contains(sourceFrame))
+		if (linkedFrameList.contains(sourceFrame))
 			return true;
 		return false;
 	}
@@ -734,32 +734,6 @@ public class Frame implements Copyable {
 		deltaQ.normalize(); // Prevent numerical drift
 
 		kernel().rotate(deltaQ);
-	}
-
-	/**
-	 * Sets the {@link #referenceFrame()} of the Frame.
-	 * <p>
-	 * The Frame {@link #translation()}, {@link #rotation()} and {@link #scaling()} are then defined in the
-	 * {@link #referenceFrame()} coordinate system.
-	 * <p>
-	 * Use {@link #position()}, {@link #orientation()} and {@link #magnitude()} to express these in the world coordinate
-	 * system.
-	 * <p>
-	 * Using this method, you can create a hierarchy of Frames. This hierarchy needs to be a tree, which root is the world
-	 * coordinate system (i.e., {@code null} {@link #referenceFrame()}). No action is performed if setting
-	 * {@code refFrame} as the {@link #referenceFrame()} would create a loop in the Frame hierarchy.
-	 */
-	public final void setReferenceFrame(Frame rFrame) {
-		kernel().setReferenceFrame(rFrame);
-	}
-
-	/**
-	 * Sets the {@link #constraint()} attached to the Frame.
-	 * <p>
-	 * A {@code null} value means no constraint.
-	 */
-	public void setConstraint(Constraint c) {
-		kernel().setConstraint(c);
 	}
 
 	/**
@@ -1382,6 +1356,24 @@ public class Frame implements Copyable {
 	}
 
 	/**
+	 * Convenience function that simply calls {@code applyTransformation(scene)}.
+	 * 
+	 * @see remixlab.dandelion.core.Frame#applyTransformation(AbstractScene)
+	 */
+	public void applyTransformation() {
+		applyTransformation(scene);
+	}
+
+	/**
+	 * Convenience function that simply calls {@code applyWorldTransformation(scene)}
+	 * 
+	 * @see remixlab.dandelion.core.Frame#applyWorldTransformation(AbstractScene)
+	 */
+	public void applyWorldTransformation() {
+		applyWorldTransformation(scene);
+	}
+
+	/**
 	 * Convenience function that simply calls {@code scn.applyTransformation(this)}.
 	 * 
 	 * @see #matrix()
@@ -1424,7 +1416,7 @@ public class Frame implements Copyable {
 	 */
 	public final Mat worldMatrix() {
 		if (referenceFrame() != null) {
-			final Frame fr = new Frame();
+			final Frame fr = new Frame(scene);
 			fr.setTranslation(position());
 			fr.setRotation(orientation());
 			fr.setScaling(scaling());
@@ -1524,7 +1516,8 @@ public class Frame implements Copyable {
 	 * The resulting Frame has the same {@link #referenceFrame()} as the Frame and a {@code null} {@link #constraint()}.
 	 */
 	public final Frame inverse() {
-		Frame fr = new Frame(Vec.multiply(rotation().inverseRotate(translation()), -1), rotation().inverse(), 1 / scaling());
+		Frame fr = new Frame(scene, Vec.multiply(rotation().inverseRotate(translation()), -1), rotation().inverse(),
+				1 / scaling());
 		fr.setReferenceFrame(referenceFrame());
 		return fr;
 	}
@@ -1542,7 +1535,7 @@ public class Frame implements Copyable {
 	 * Use {@link #inverse()} for a local (i.e., with respect to {@link #referenceFrame()}) transformation inverse.
 	 */
 	public final Frame worldInverse() {
-		return (new Frame(Vec.multiply(orientation().inverseRotate(position()), -1), orientation().inverse(),
+		return (new Frame(scene, Vec.multiply(orientation().inverseRotate(position()), -1), orientation().inverse(),
 				1 / magnitude()));
 	}
 

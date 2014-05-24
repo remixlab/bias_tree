@@ -25,8 +25,7 @@ int h;
 int fSize = 16;
 
 public void setup() {
-  //size(640, 360, P2D);
-  size(640, 360, JAVA2D);
+  size(640, 360, P2D);
 
   img = loadImage("dizzi.jpg");
   scene = new Scene(this);

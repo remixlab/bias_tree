@@ -260,7 +260,7 @@ public class KeyFrameInterpolator implements Copyable {
 	// private Vec sv1, sv2;
 
 	// S C E N E
-	public AbstractScene						scene;
+	protected AbstractScene					scene;
 
 	/**
 	 * Convenience constructor that simply calls {@code this(scn, new Frame())}.
@@ -270,7 +270,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * @see #KeyFrameInterpolator(AbstractScene, Frame)
 	 */
 	public KeyFrameInterpolator(AbstractScene scn) {
-		this(scn, new Frame());
+		this(scn, new Frame(scn));
 	}
 
 	/**
@@ -767,7 +767,8 @@ public class KeyFrameInterpolator implements Copyable {
 				updateModifiedFrameValues();
 
 			if (keyFrameList.get(0) == keyFrameList.get(keyFrameList.size() - 1))
-				path.add(new Frame(keyFrameList.get(0).position(), keyFrameList.get(0).orientation(), keyFrameList.get(0)
+				path.add(new Frame(scene, keyFrameList.get(0).position(), keyFrameList.get(0).orientation(), keyFrameList
+						.get(0)
 						.magnitude()));
 			else {
 				KeyFrame[] kf = new KeyFrame[4];
@@ -787,7 +788,7 @@ public class KeyFrameInterpolator implements Copyable {
 					pvec2 = Vec.add(pvec2, kf[2].tgP());
 
 					for (int step = 0; step < nbSteps; ++step) {
-						Frame frame = new Frame(scene.is3D());
+						Frame frame = new Frame(scene);
 						float alpha = step / (float) nbSteps;
 						frame.setPosition(Vec.add(kf[1].position(), Vec.multiply(
 								Vec.add(kf[1].tgP(), Vec.multiply(Vec.add(pvec1, Vec.multiply(pvec2, alpha)), alpha)), alpha)));
@@ -814,7 +815,7 @@ public class KeyFrameInterpolator implements Copyable {
 					kf[3] = (index < keyFrameList.size()) ? keyFrameList.get(index) : null;
 				}
 				// Add last KeyFrame
-				path.add(new Frame(kf[1].position(), kf[1].orientation(), kf[1].magnitude()));
+				path.add(new Frame(scene, kf[1].position(), kf[1].orientation(), kf[1].magnitude()));
 			}
 			pathIsValid = true;
 		}

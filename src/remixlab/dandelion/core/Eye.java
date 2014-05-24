@@ -92,7 +92,7 @@ public abstract class Eye implements Copyable {
 	protected InteractiveEyeFrame											frm;
 
 	// S C E N E O B J E C T
-	public AbstractScene															scene;
+	protected AbstractScene														scene;
 
 	// C a m e r a p a r a m e t e r s
 	protected int																			scrnWidth, scrnHeight;											// size of the window,

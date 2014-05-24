@@ -102,9 +102,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	protected Vec								flyDisp;
 	protected static final long	FLY_UPDATE_PERDIOD	= 10;
 
-	// P R O S C E N E A N D P R O C E S S I N G A P P L E T A N D O B J E C T S
-	public AbstractScene				scene;
-
 	/**
 	 * Default constructor.
 	 * <p>
@@ -117,8 +114,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	 * pool.
 	 */
 	public InteractiveFrame(AbstractScene scn) {
-		super(scn.is3D());
-		scene = scn;
+		super(scn);
 
 		scene.inputHandler().addInAllAgentPools(this);
 		isInCamPath = false;
@@ -154,8 +150,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
-		this.scene = otherFrame.scene;
-
 		for (Agent element : this.scene.inputHandler().agents()) {
 			if (this.scene.inputHandler().isInAgentPool(otherFrame, element))
 				this.scene.inputHandler().addInAgentPool(this, element);
@@ -210,8 +204,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	 * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
 	 */
 	protected InteractiveFrame(AbstractScene scn, InteractiveEyeFrame iFrame) {
-		super(iFrame.translation(), iFrame.rotation(), iFrame.scaling());
-		scene = scn;
+		super(scn, iFrame.translation(), iFrame.rotation(), iFrame.scaling());
 
 		isInCamPath = true;
 
@@ -239,24 +232,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			}
 		};
 		scene.registerTimingTask(flyTimerTask);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code applyTransformation(AbstractScene)}.
-	 * 
-	 * @see remixlab.dandelion.core.Frame#applyTransformation(AbstractScene)
-	 */
-	public void applyTransformation() {
-		applyTransformation(scene);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code applyWorldTransformation(Abstractscene)}
-	 * 
-	 * @see remixlab.dandelion.core.Frame#applyWorldTransformation(AbstractScene)
-	 */
-	public void applyWorldTransformation() {
-		applyWorldTransformation(scene);
 	}
 
 	/**

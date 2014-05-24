@@ -60,14 +60,8 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 	 */
 	public InteractiveAvatarFrame(AbstractScene scn) {
 		super(scn);
-		if (scene.is3D()) {
-			eFrame = new Frame();
-			q = new Quat();
-			((Quat) q).fromTaitBryan((float) Math.PI / 4, 0, 0);
-		} else {
-			eFrame = new Frame(false);
-			q = new Rot((float) Math.PI / 4);
-		}
+		eFrame = new Frame(scene);
+		q = scene.is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
 		eFrame.setReferenceFrame(this);
 		setTrackingDistance(scene.radius() / 5);
 		updateEyeFrame();

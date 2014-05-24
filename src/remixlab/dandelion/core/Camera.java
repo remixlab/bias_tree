@@ -1098,31 +1098,19 @@ public class Camera extends Eye implements Copyable {
 		final Vec pointY = Vec.add(orig, Vec.multiply(dir, (distToPlane / Vec.dot(dir, vd))));
 
 		float distance = 0.0f;
+		float distX, distY;
 		switch (type()) {
-		case PERSPECTIVE: {
-			final float distX = Vec.distance(pointX, newCenter) / (float) Math.sin(horizontalFieldOfView() / 2.0f);
-			final float distY = Vec.distance(pointY, newCenter) / (float) Math.sin(fieldOfView() / 2.0f);
-
+		case PERSPECTIVE:
+			distX = Vec.distance(pointX, newCenter) / (float) Math.sin(horizontalFieldOfView() / 2.0f);
+			distY = Vec.distance(pointY, newCenter) / (float) Math.sin(fieldOfView() / 2.0f);
 			distance = Math.max(distX, distY);
 			break;
-		}
-		case ORTHOGRAPHIC: {
-			final float dist = Vec.dot(Vec.subtract(newCenter, anchor()), vd);
-			// final float distX = Vec.distance(pointX, newCenter) / frame().scaling().x() / ((aspectRatio() < 1.0) ? 1.0f :
-			// aspectRatio());
-			// final float distY = Vec.distance(pointY, newCenter) / frame().scaling().y() / ((aspectRatio() < 1.0) ? 1.0f /
-			// aspectRatio() : 1.0f);
-			// final float distX = Vec.distance(pointX, newCenter) / Math.max(frame().scaling().x(),frame().scaling().y()) /
-			// ((aspectRatio() < 1.0) ? 1.0f : aspectRatio());
-			// final float distY = Vec.distance(pointY, newCenter) / Math.max(frame().scaling().x(),frame().scaling().y()) /
-			// ((aspectRatio() < 1.0) ? 1.0f / aspectRatio() : 1.0f);
-			final float distX = Vec.distance(pointX, newCenter) / frame().scaling() / aspectRatio();
-			final float distY = Vec.distance(pointY, newCenter) / frame().scaling() / 1.0f;
-
+		case ORTHOGRAPHIC:
+			float dist = Vec.dot(Vec.subtract(newCenter, anchor()), vd);
+			distX = Vec.distance(pointX, newCenter) / frame().scaling() / aspectRatio();
+			distY = Vec.distance(pointY, newCenter) / frame().scaling() / 1.0f;
 			distance = dist + Math.max(distX, distY);
-
 			break;
-		}
 		}
 
 		frame().setPositionWithConstraint(Vec.subtract(newCenter, Vec.multiply(vd, distance)));
@@ -1160,9 +1148,9 @@ public class Camera extends Eye implements Copyable {
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 
-		interpolationKfi.addKeyFrame(new Frame(frame().orientation(),
-				Vec.add(Vec.multiply(frame().position(),
-						0.3f), Vec.multiply(target.point, 0.7f))), 0.4f);
+		interpolationKfi.addKeyFrame(
+				new Frame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target.point, 0.7f)), frame()
+						.orientation()), 0.4f);
 
 		// Small hack: attach a temporary frame to take advantage of lookAt without
 		// modifying frame

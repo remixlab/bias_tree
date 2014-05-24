@@ -37,7 +37,7 @@ import remixlab.dandelion.core.Constants.*;
  */
 public class KeyboardAgent extends ActionKeyboardAgent<KeyboardProfile<KeyboardAction>> implements
 		Constants {
-	AbstractScene	scene;
+	protected AbstractScene	scene;
 
 	/**
 	 * Default constructor. Calls {@link #setDefaultShortcuts()}.
