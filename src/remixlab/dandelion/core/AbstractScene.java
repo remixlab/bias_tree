@@ -32,8 +32,10 @@ import remixlab.fpstiming.*;
  * {@link remixlab.dandelion.core.Eye} class.</li>
  * <li>A {@link #timingHandler()} which control (single-threaded) timing operations. For details please refer to the
  * {@link remixlab.fpstiming.TimingHandler} class.</li>
- * <li>An {@link #inputHandler()} which handles all user input through {@link remixlab.bias.core.Agent}s. For details
- * please refer to the {@link remixlab.bias.core.InputHandler} class.</li>
+ * <li>An {@link #inputHandler()} which handles all user input through {@link remixlab.bias.core.Agent}s (for details
+ * please refer to the {@link remixlab.bias.core.InputHandler} class). The {@link #inputHandler()} holds a (default)
+ * {@link #motionAgent()} and a (default) {@link #keyboardAgent()} which should be instantiated by derived classes at
+ * construction time.</li>
  * <li>A {@link #matrixHelper()} which handles matrix operations either through the
  * {@link remixlab.dandelion.core.MatrixStackHelper} or through a third party matrix stack (like it's done with
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>

@@ -45,14 +45,14 @@ import java.util.regex.Pattern;
  * multiple viewers sharing the same drawing code. See the example <i>StandardCamera</i>.
  * </ol>
  * <h3>Interactivity mechanisms</h3>
+ * 
  * Through Dandelion, Proscene provides powerful interactivity mechanisms allowing a wide range of scene setups ranging
  * from very simple to complex ones. For convenience, two interaction mechanisms are provided by default:
  * {@link #keyboardAgent()}, and {@link #mouseAgent()}:
  * <ol>
- * <li><b>The default keyboard agent</b> provides shortcuts to general keyboard dandelion actions such as
- * {@link #drawGrid()} or {@link #drawAxes()}. See
- * {@link #setKeyboardShortcut(Character, remixlab.dandelion.core.Constants.KeyboardAction)} and
- * {@link #setKeyboardShortcut(int, int, remixlab.dandelion.core.Constants.KeyboardAction)}.
+ * <li><b>The default keyboard agent</b> provides shortcuts to keyboard dandelion actions such as {@link #drawGrid()} or
+ * {@link #drawAxes()}. See {@link #setKeyboardShortcut(Character, remixlab.dandelion.core.Constants.KeyboardAction)}
+ * and {@link #setKeyboardShortcut(int, int, remixlab.dandelion.core.Constants.KeyboardAction)}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage camera and frame motion actions. Please
  * refer to the different {@code setMouseButtonBinding()}, {@code setMouseClickBinding()},
  * {@code setMouseWheelBinding()} methods.

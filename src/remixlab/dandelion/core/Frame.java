@@ -19,13 +19,89 @@ import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
 /**
- * A Frame is a 2D/3D coordinate system, represented by a {@link #position()}, an {@link #orientation()} and
+ * A Frame is a 2D or 3D coordinate system, represented by a {@link #position()}, an {@link #orientation()} and
  * {@link #magnitude()}. The order of these transformations is important: the Frame is first translated, then rotated
  * around the new translated origin and then scaled.
+ * <p>
+ * A Frame is useful to define the position, orientation and magnitude of an object, using its {@link #matrix()} method,
+ * as shown below:
+ * <p>
+ * {@code // Builds a Frame at position (0.5,0,0) and oriented such that its Y axis is along the (1,1,1) } <br>
+ * {@code // direction. One could also have used setPosition() and setOrientation().} <br>
+ * {@code Frame fr(scene, new Vec(0.5,0,0), new Quat(new Vec(0,1,0), new Vec(1,1,1)));} <br>
+ * {@code scene.pushModelView();} <br>
+ * {@code scene.applyModelView(fr.matrix());} <br>
+ * {@code // Draw your object here, in the local fr coordinate system.} <br>
+ * {@code scene.popModelView();} <br>
+ * <p>
+ * Many functions are provided to transform a point from one coordinate system (Frame) to an other: see
+ * {@link #coordinatesOf(Vec)}, {@link #inverseCoordinatesOf(Vec)}, {@link #coordinatesOfIn(Vec, Frame)},
+ * {@link #coordinatesOfFrom(Vec, Frame)}...
+ * <p>
+ * You may also want to transform a vector (such as a normal), which corresponds to applying only the rotational part of
+ * the frame transformation: see {@link #transformOf(Vec)} and {@link #inverseTransformOf(Vec)}.
+ * <p>
+ * The {@link #translation()}, {@link #rotation()} and uniform positive {@link #scaling()} that are encapsulated in a
+ * Frame can also be used to represent an angle preserving transformation of space. Such a transformation can also be
+ * interpreted as a change of coordinate system, and the coordinate system conversion functions actually allow you to
+ * use a Frame as an angle preserving transformation. Use {@link #inverseCoordinatesOf(Vec)} (resp.
+ * {@link #coordinatesOf(Vec)}) to apply the transformation (resp. its inverse). Note the inversion.
+ * <p>
  * <p>
  * In rare situations a frame can be {@link #linkTo(Frame)}, meaning that it will share its {@link #translation()},
  * {@link #rotation()}, {@link #scaling()}, {@link #referenceFrame()} and {@link #constraint()} with the other frame,
  * which can be useful for some off-screen scenes.
+ * 
+ * <h3>Hierarchy of Frames</h3>
+ * 
+ * The position, orientation and magnitude of a Frame are actually defined with respect to a {@link #referenceFrame()}.
+ * The default {@link #referenceFrame()} is the world coordinate system (represented by a {@code null}
+ * {@link #referenceFrame()}). If you {@link #setReferenceFrame(Frame)} to a different Frame, you must then
+ * differentiate:
+ * <p>
+ * <ul>
+ * <li>The <b>local</b> {@link #translation()}, {@link #rotation()} and {@link #scaling()}, defined with respect to the
+ * {@link #referenceFrame()}.</li>
+ * <li>the <b>global</b> {@link #position()}, {@link #orientation()} and {@link #magnitude()}, always defined with
+ * respect to the world coordinate system.</li>
+ * </ul>
+ * <p>
+ * A Frame is actually defined by its {@link #translation()} with respect to its {@link #referenceFrame()}, then by
+ * {@link #rotation()} of the coordinate system around the new translated origin and then by a uniform positive
+ * {@link #scaling()} along its rotated axes.
+ * <p>
+ * This terminology for <b>local</b> ({@link #translation()}, {@link #rotation()} and {@link #scaling()}) and
+ * <b>global</b> ({@link #position()}, {@link #orientation()} and {@link #magnitude()}) definitions is used in all the
+ * methods' names and should be sufficient to prevent ambiguities. These notions are obviously identical when the
+ * {@link #referenceFrame()} is {@code null}, i.e., when the Frame is defined in the world coordinate system (the one
+ * you are left with after calling {@link remixlab.dandelion.core.AbstractScene#preDraw()}).
+ * <p>
+ * Frames can hence easily be organized in a tree hierarchy, which root is the world coordinate system. A loop in the
+ * hierarchy would result in an inconsistent (multiple) Frame definition. Therefore
+ * {@link #settingAsReferenceFrameWillCreateALoop(Frame)} checks this and prevents {@link #referenceFrame()} from
+ * creating such a loop.
+ * <p>
+ * This frame hierarchy is used in methods like {@link #coordinatesOfIn(Vec, Frame)},
+ * {@link #coordinatesOfFrom(Vec, Frame)}... which allow coordinates (or vector) conversions from a Frame to any other
+ * one (including the world coordinate system).
+ * 
+ * <h3>Constraints</h3>
+ * 
+ * An interesting feature of Frames is that their displacements can be constrained. When a
+ * {@link remixlab.dandelion.constraint.Constraint} is attached to a Frame, it filters the input of
+ * {@link #translate(Vec)} and {@link #rotate(Rotation)}, and only the resulting filtered motion is applied to the
+ * Frame. The default {@link #constraint()} {@code null} resulting in no filtering. Use
+ * {@link #setConstraint(Constraint)} to attach a Constraint to a frame.
+ * <p>
+ * Classical constraints are provided for convenience (see {@link remixlab.dandelion.constraint.LocalConstraint},
+ * {@link remixlab.dandelion.constraint.WorldConstraint} and {@link remixlab.dandelion.constraint.EyeConstraint}) and
+ * new constraints can very easily be implemented.
+ * 
+ * <h3>Derived classes</h3>
+ * 
+ * The {@link remixlab.dandelion.core.InteractiveFrame} class inherits Frame and implements all sorts of motion actions
+ * (see {@link remixlab.dandelion.core.Constants.DandelionAction}), so that a Frame (and hence an object) can be
+ * manipulated in the scene by whatever user interaction means you can imagine.
  */
 public class Frame implements Copyable {
 	@Override

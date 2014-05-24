@@ -17,19 +17,19 @@ import remixlab.util.*;
 /**
  * The InteractiveEyeFrame class represents an InteractiveFrame with Eye specific gesture bindings.
  * <p>
- * An InteractiveEyeFrame is a specialization of an InteractiveFrame which can "fly" in the Scene and that is designed
- * to be set as the {@link Eye#frame()}. User gestures are basically interpreted in a negated way respect to those
- * defined for the InteractiveFrame (and also the InteractiveAvatarFrame). For instance, with a move-to-the-right user
- * gesture the InteractiveEyeFrame has to go to the <i>left</i>, so that the <i>scene</i> seems to move to the right.
+ * An InteractiveEyeFrame is a specialization of an InteractiveFrame that is designed to be set as the
+ * {@link Eye#frame()}. Some user gestures (those reduced as DOF2Events) are interpreted in a negated way (respect to
+ * those defined for the InteractiveFrame). For instance, with a move-to-the-right user gesture the InteractiveEyeFrame
+ * has to go to the <i>left</i>, so that the <i>scene</i> seems to move to the right.
  * <p>
- * Depending on the Dandelion action an InteractiveEyeFrame rotates either around its {@link #anchor()} (e.g., ROTATE)
- * which is a wrapper to {@link Eye#anchor()}), or its {@link #sceneUpVector()} (e.g., ROTATE_CAD). In the latter case
- * the {@link #sceneUpVector()} defines a 'vertical' direction around which the camera rotates. The camera can rotate
- * left or right, around this axis. It can also be moved up or down to show the 'top' and 'bottom' views of the scene.
- * As a result, the {@link #sceneUpVector()} will always appear vertical in the scene, and the horizon is preserved and
- * stays projected along the camera's horizontal axis. Use {@link remixlab.dandelion.core.Camera#setUpVector(Vec)} to
- * define the {@link #sceneUpVector()} and align the camera before starting a ROTATE_CAD action to ensure these
- * invariants are preserved.
+ * Depending on the Dandelion action an InteractiveEyeFrame rotates either around its {@link #anchor()} (e.g., ROTATE,
+ * HINGE) which is a wrapper to {@link Eye#anchor()}), or its {@link #sceneUpVector()} (e.g., ROTATE_CAD). In the latter
+ * case the {@link #sceneUpVector()} defines a 'vertical' direction around which the camera rotates. The camera can
+ * rotate left or right, around this axis. It can also be moved up or down to show the 'top' and 'bottom' views of the
+ * scene. As a result, the {@link #sceneUpVector()} will always appear vertical in the scene, and the horizon is
+ * preserved and stays projected along the camera's horizontal axis. Use
+ * {@link remixlab.dandelion.core.Camera#setUpVector(Vec)} to define the {@link #sceneUpVector()} and align the camera
+ * before starting a ROTATE_CAD action to ensure these invariants are preserved.
  * <p>
  * <b>Observation: </b> The InteractiveEyeFrame is not added to the
  * {@link remixlab.dandelion.core.AbstractScene#inputHandler()} {@link remixlab.bias.core.InputHandler#agents()} pool
@@ -475,8 +475,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			}
 			break;
 		default:
-			// Dummie value:
-			// AbstractScene.showMissingImplementationWarning(a, this.getClass().getName());
 			super.execAction3D(a);
 			break;
 		}

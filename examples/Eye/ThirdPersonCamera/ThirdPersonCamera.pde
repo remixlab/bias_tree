@@ -56,8 +56,7 @@ public void draw() {
   // Save the current model view matrix
   pushMatrix();
   // Multiply matrix to get in the frame coordinate system.
-  // applyMatrix(scene.interactiveFrame().matrix()) is possible but inefficient 
-  //scene.interactiveFrame().applyTransformation(this);//very efficient
+  //applyMatrix(Scene.toPMatrix(avatar.matrix())); //is possible but inefficient
   scene.applyTransformation(avatar);
   // Draw an axis using the Scene static function
   scene.drawAxes(20);
