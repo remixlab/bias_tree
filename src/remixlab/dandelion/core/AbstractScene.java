@@ -1960,13 +1960,23 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Display a warning that the specified method is only available with 3D.
+	 * Same as {@code showDepthWarning(method, true)}.
+	 * 
+	 * @see #showDepthWarning(String, boolean)
+	 */
+	static public void showDepthWarning(String method) {
+		showDepthWarning(method, true);
+	}
+
+	/**
+	 * Display a warning that the specified method is only available with 2D (or 3D if {@code twod} is false).
 	 * 
 	 * @param method
 	 *          The method name (no parentheses)
 	 */
-	static public void showDepthWarning(String method) {
-		showWarning(method + "() is not available in 2D.");
+	static public void showDepthWarning(String method, boolean twod) {
+		String dim = twod ? "2D." : "3D.";
+		showWarning(method + "() is not available in " + dim);
 	}
 
 	/**

@@ -2,13 +2,12 @@
  * CameraCrane.
  * by Jean Pierre Charalambos, Ivan Dario Chinome, and David Montanez.
  * 
- * This example illustrates "frame linking" by implementing two camera 
+ * This example illustrates "frame syncing" by implementing two camera 
  * cranes which defines two auxiliary point of views of the same scene.
  * 
- * By linking two frames they will share their translation(), rotation(),
- * referenceFrame(), and constraint() properties. Here we link each
- * auxiliary off-screen scene camera frame to a specific frame found
- * at each crane.
+ * When syncing two frames they will share their state (position, orientation)
+ * taken the one that has been most recently updated. Syncing should always
+ * been called within draw().
  *
  * Press 'f' to display frame selection hints.
  * Press 'l' to enable lighting.
@@ -18,6 +17,7 @@
 
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.core.Constants.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.constraint.*;
 
@@ -58,17 +58,26 @@ public void setup() {
   heliScene.setGridVisualHint(false);
   heliScene.setAxesVisualHint(false);
 
-  // Frame linking
+  // Eyes initial setup
   armCam = new ArmCam(this, 60, -60, 2);
-  armScene.camera().frame().linkTo(armCam.frame(5));
-
   heliCam = new HeliCam(this);
-  heliScene.camera().frame().linkTo(heliCam.frame(3));
+    
+  heliScene.camera().frame().fromFrame(heliCam.frame(3));
+  armScene.camera().frame().fromFrame(armCam.frame(5));  
+  
+  armScene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.LOOK_AROUND);
+  armScene.setMouseButtonBinding(Target.EYE, CENTER, null);
+  armScene.setMouseButtonBinding(Target.EYE, RIGHT, null);
+  heliScene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.LOOK_AROUND);
+  heliScene.setMouseButtonBinding(Target.EYE, CENTER, null);
+  heliScene.setMouseButtonBinding(Target.EYE, RIGHT, null);  
 }
 
 // off-screen rendering
 public void draw() {
   handleMouse();
+  Frame.sync(armScene.camera().frame(), armCam.frame(5));
+  Frame.sync(heliScene.camera().frame(), heliCam.frame(3));
   canvas.beginDraw();
   mainScene.beginDraw();
   drawing(mainScene);
@@ -90,8 +99,7 @@ public void draw() {
   heliScene.endDraw();
   heliCanvas.endDraw();
   // We retrieve the scene upper left coordinates defined above.
-  image(heliCanvas, heliScene.upperLeftCorner.x(), 
-  heliScene.upperLeftCorner.y());
+  image(heliCanvas, heliScene.upperLeftCorner.x(), heliScene.upperLeftCorner.y());
 }
 
 public void handleMouse() {
