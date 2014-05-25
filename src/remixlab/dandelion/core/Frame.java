@@ -175,8 +175,8 @@ public class Frame implements Copyable {
 		childrenList = new ArrayList<Frame>();
 		if ((scene.is2D() && r instanceof Quat) || (scene.is3D() && r instanceof Rot))
 			throw new RuntimeException(scene.is3D() ? "Rotations in 3D should be Quats" : "Rotations in 3D should be Rots");
-		setTranslation(p.get());
-		setRotation(r.get());
+		setTranslation(p);
+		setRotation(r);
 		setScaling(s);
 	}
 

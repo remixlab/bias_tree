@@ -204,7 +204,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	 * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
 	 */
 	protected InteractiveFrame(AbstractScene scn, InteractiveEyeFrame iFrame) {
-		super(scn, iFrame.translation(), iFrame.rotation(), iFrame.scaling());
+		super(scn, iFrame.translation().get(), iFrame.rotation().get(), iFrame.scaling());
 
 		isInCamPath = true;
 
