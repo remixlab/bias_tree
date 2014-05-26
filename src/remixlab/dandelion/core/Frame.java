@@ -808,7 +808,7 @@ public class Frame implements Copyable {
 			setScaling(m);
 	}
 
-	// ---
+	// ALIGNMENT
 
 	/**
 	 * Convenience function that simply calls {@code alignWithFrame(frame, false, 0.85f)}
@@ -1114,6 +1114,8 @@ public class Frame implements Copyable {
 		return res;
 	}
 
+	// CONVERSION
+
 	/**
 	 * Returns the {@link remixlab.dandelion.geom.Mat} associated with this Frame.
 	 * <p>
@@ -1395,6 +1397,8 @@ public class Frame implements Copyable {
 				1 / magnitude()));
 	}
 
+	// POINT CONVERSION
+
 	/**
 	 * Returns the Frame coordinates of the point whose position in the {@code from} coordinate system is {@code src}
 	 * (converts from {@code from} to Frame).
@@ -1433,6 +1437,34 @@ public class Frame implements Copyable {
 	}
 
 	/**
+	 * Returns the Frame coordinates of a point {@code src} defined in the {@link #referenceFrame()} coordinate system
+	 * (converts from {@link #referenceFrame()} to Frame).
+	 * <p>
+	 * {@link #localInverseCoordinatesOf(Vec)} performs the inverse conversion.
+	 * 
+	 * @see #localTransformOf(Vec)
+	 */
+	public final Vec localCoordinatesOf(Vec src) {
+		return Vec.divide(rotation().inverseRotate(Vec.subtract(src, translation())), scaling());
+	}
+
+	/**
+	 * Returns the Frame coordinates of a point {@code src} defined in the world coordinate system (converts from world to
+	 * Frame).
+	 * <p>
+	 * {@link #inverseCoordinatesOf(Vec)} performs the inverse conversion. {@link #transformOf(Vec)} converts vectors
+	 * instead of coordinates.
+	 */
+	public final Vec coordinatesOf(Vec src) {
+		if (referenceFrame() != null)
+			return localCoordinatesOf(referenceFrame().coordinatesOf(src));
+		else
+			return localCoordinatesOf(src);
+	}
+
+	// VECTOR CONVERSION
+
+	/**
 	 * Returns the Frame transform of the vector whose coordinates in the {@code from} coordinate system is {@code src}
 	 * (converts vectors from {@code from} to Frame).
 	 * <p>
@@ -1468,32 +1500,6 @@ public class Frame implements Copyable {
 			res = in.transformOf(res);
 
 		return res;
-	}
-
-	/**
-	 * Returns the Frame coordinates of a point {@code src} defined in the {@link #referenceFrame()} coordinate system
-	 * (converts from {@link #referenceFrame()} to Frame).
-	 * <p>
-	 * {@link #localInverseCoordinatesOf(Vec)} performs the inverse conversion.
-	 * 
-	 * @see #localTransformOf(Vec)
-	 */
-	public final Vec localCoordinatesOf(Vec src) {
-		return Vec.divide(rotation().inverseRotate(Vec.subtract(src, translation())), scaling());
-	}
-
-	/**
-	 * Returns the Frame coordinates of a point {@code src} defined in the world coordinate system (converts from world to
-	 * Frame).
-	 * <p>
-	 * {@link #inverseCoordinatesOf(Vec)} performs the inverse conversion. {@link #transformOf(Vec)} converts vectors
-	 * instead of coordinates.
-	 */
-	public final Vec coordinatesOf(Vec src) {
-		if (referenceFrame() != null)
-			return localCoordinatesOf(referenceFrame().coordinatesOf(src));
-		else
-			return localCoordinatesOf(src);
 	}
 
 	/**

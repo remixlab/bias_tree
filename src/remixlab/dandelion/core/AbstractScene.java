@@ -51,7 +51,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	// E X C E P T I O N H A N D L I N G
 	protected int														startCoordCalls;
 
-	// T i m e r P o o l
+	// NUMBER OF FRAMES SINCE THE FIRST SCENE WAS INSTANTIATED
+	static public long											frameCount;
 
 	// InputHandler
 	protected InputHandler									iHandler;
@@ -119,7 +120,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 */
 	public AbstractScene() {
 		setPlatform();
-		setTimingHandler(new TimingHandler(this));
+		setTimingHandler(new TimingHandler(this, frameCount));
 		iHandler = new InputHandler();
 		setMatrixHelper(new MatrixStackHelper(this));
 		setRightHanded();
@@ -238,6 +239,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 
 	/**
 	 * Returns the number of frames displayed since the scene was instantiated.
+	 * <p>
+	 * Use {@code AbstractScene.frameCount} to retrieve the number of frames displayed since the first scene was
+	 * instantiated.
 	 */
 	public long frameCount() {
 		return timingHandler().frameCount();
@@ -958,6 +962,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public void postDraw() {
 		// 1. timers
 		timingHandler().handle();
+		if (frameCount < frameCount())
+			frameCount = frameCount();
 		// 2. Agents
 		inputHandler().handle();
 		// 3. Alternative use only

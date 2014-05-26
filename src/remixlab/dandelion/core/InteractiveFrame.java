@@ -84,8 +84,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	private TimingTask					spinningTimerTask;
 	private Rotation						spngRotation;
 	protected float							dampFriction;							// new
-	// TODO decide whether or not toss should have its own damp var
-	// currently its share among the two -> test behavior
+	// toss and spin share the damp var:
 	private float								sFriction;									// new
 
 	// Whether the SCREEN_TRANS direction (horizontal or vertical) is fixed or not.

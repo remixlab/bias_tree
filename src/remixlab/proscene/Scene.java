@@ -1462,16 +1462,16 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #enableKeyboardAgent()
 	 */
 	@Override
-	public MouseAgent disableMotionAgent() {
+	public ActionWheeledBiMotionAgent<?> disableMotionAgent() {
 		if (inputHandler().isAgentRegistered(motionAgent())) {
 			parent.unregisterMethod("mouseEvent", motionAgent());
-			return (MouseAgent) inputHandler().unregisterAgent(motionAgent());
+			return (ActionWheeledBiMotionAgent<?>) inputHandler().unregisterAgent(motionAgent());
 		}
-		return mouseAgent();
+		return motionAgent();
 	}
 
 	public MouseAgent disableMouseAgent() {
-		return disableMotionAgent();
+		return (MouseAgent)disableMotionAgent();
 	}
 
 	// 2. Associated objects
