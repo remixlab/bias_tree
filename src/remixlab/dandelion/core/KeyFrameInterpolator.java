@@ -767,7 +767,7 @@ public class KeyFrameInterpolator implements Copyable {
 				updateModifiedFrameValues();
 
 			if (keyFrameList.get(0) == keyFrameList.get(keyFrameList.size() - 1))
-				path.add(new Frame(scene, keyFrameList.get(0).position(), keyFrameList.get(0).orientation(), keyFrameList
+				path.add(new Frame(keyFrameList.get(0).position(), keyFrameList.get(0).orientation(), keyFrameList
 						.get(0)
 						.magnitude()));
 			else {
@@ -815,7 +815,7 @@ public class KeyFrameInterpolator implements Copyable {
 					kf[3] = (index < keyFrameList.size()) ? keyFrameList.get(index) : null;
 				}
 				// Add last KeyFrame
-				path.add(new Frame(scene, kf[1].position(), kf[1].orientation(), kf[1].magnitude()));
+				path.add(new Frame(kf[1].position(), kf[1].orientation(), kf[1].magnitude()));
 			}
 			pathIsValid = true;
 		}

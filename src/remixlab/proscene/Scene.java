@@ -1471,7 +1471,7 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	public MouseAgent disableMouseAgent() {
-		return (MouseAgent)disableMotionAgent();
+		return (MouseAgent) disableMotionAgent();
 	}
 
 	// 2. Associated objects

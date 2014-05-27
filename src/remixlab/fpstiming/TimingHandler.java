@@ -29,37 +29,22 @@ public class TimingHandler {
 	protected ArrayList<Animator>		aPool;
 
 	/**
-	 * Main constructor. Initializes the {@link #timerPool()} and {@link #animatorPool()}.
+	 * Main constructor.
 	 */
 	public TimingHandler() {
-		this(0);
-	}
-
-	/**
-	 * Constructor that takes and registers an animation object. Initializes the {@link #timerPool()} and
-	 * {@link #animatorPool()}.
-	 */
-	public TimingHandler(Animator aObject) {
-		this(aObject, 0);
-	}
-
-	/**
-	 * Same as {@link #TimingHandler(Animator)} but initializes {@link #frameCount()} to {@code count}.
-	 */
-	public TimingHandler(Animator aObject, long count) {
-		this();
-		this.registerAnimator(aObject);
-	}
-
-	/**
-	 * Same as {@link #TimingHandler()} but initializes {@link #frameCount()} to {@code count}.
-	 */
-	public TimingHandler(long count) {
-		fCount = count;
+		fCount = 0;
 		frameRate = 10;
 		frameRateLastMillis = System.currentTimeMillis();
 		tPool = new ArrayList<TimingTask>();
 		aPool = new ArrayList<Animator>();
+	}
+
+	/**
+	 * Constructor that takes and registers an animation object.
+	 */
+	public TimingHandler(Animator aObject) {
+		this();
+		this.registerAnimator(aObject);
 	}
 
 	/**

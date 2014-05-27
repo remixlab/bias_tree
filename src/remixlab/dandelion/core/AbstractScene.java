@@ -120,7 +120,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 */
 	public AbstractScene() {
 		setPlatform();
-		setTimingHandler(new TimingHandler(this, frameCount));
+		setTimingHandler(new TimingHandler(this));
 		iHandler = new InputHandler();
 		setMatrixHelper(new MatrixStackHelper(this));
 		setRightHanded();

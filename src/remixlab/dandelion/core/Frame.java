@@ -28,7 +28,7 @@ import remixlab.util.*;
  * <p>
  * {@code // Builds a Frame at position (0.5,0,0) and oriented such that its Y axis is along the (1,1,1) } <br>
  * {@code // direction. One could also have used setPosition() and setOrientation().} <br>
- * {@code Frame fr(scene, new Vec(0.5,0,0), new Quat(new Vec(0,1,0), new Vec(1,1,1)));} <br>
+ * {@code Frame fr(new Vec(0.5,0,0), new Quat(new Vec(0,1,0), new Vec(1,1,1)));} <br>
  * {@code scene.pushModelView();} <br>
  * {@code scene.applyModelView(fr.matrix());} <br>
  * {@code // Draw your object here, in the local fr coordinate system.} <br>
@@ -48,9 +48,9 @@ import remixlab.util.*;
  * {@link #coordinatesOf(Vec)}) to apply the transformation (resp. its inverse). Note the inversion.
  * <p>
  * <p>
- * A frame can be {@link #sync(Frame, Frame, boolean)} with other frame, which means that the most recently updated in
- * turn updates the other, which can be useful to share frames among different off-screen scenes (see the CameraCrane
- * and the AuxilairViewer examples).
+ * Two frames can be synced together ({@link #sync(Frame, Frame, boolean)}), meaning that they will share their state
+ * (position, orientation and magnitude) taken the one that has been most recently updated. Syncing can be useful to
+ * share frames among different off-screen scenes (see the CameraCrane and the AuxiliarViewer examples).
  * 
  * <h3>Hierarchy of Frames</h3>
  * 
@@ -138,59 +138,63 @@ public class Frame implements Copyable {
 				.isEquals();
 	}
 
-	protected AbstractScene	scene;
-	protected Vec						trans;
-	protected float					scl;
-	protected Rotation			rot;
-	protected Frame					refFrame;
-	protected Constraint		cnstrnt;
-	protected long					lastUpdate;
-	protected List<Frame>		childrenList;
+	protected Vec					trans;
+	protected float				scl;
+	protected Rotation		rot;
+	protected Frame				refFrame;
+	protected Constraint	cnstrnt;
+	protected long				lastUpdate;
+	protected List<Frame>	childrenList;
 
 	/**
-	 * Creates a Frame for the {@code scene}. Its {@link #position()} is set to 0, its {@link #orientation()} is set to
-	 * the identity rotation and its {@link #scaling()} is set to 1. The {@link #referenceFrame()} and the
-	 * {@link #constraint()} are {@code null}.
+	 * Same as {@code this(new Vec(0, 0, 0), new Quat(), 1)}. Creates a 3D Frame.
+	 * 
+	 * @see #Frame(Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn) {
-		scene = scn;
-		childrenList = new ArrayList<Frame>();
-		setTranslation(new Vec(0, 0, 0));
-		setRotation(scene.is3D() ? new Quat() : new Rot());
-		setScaling(1);
+	public Frame() {
+		this(new Vec(0, 0, 0), new Quat(), 1);
 	}
 
 	/**
-	 * Creates a Frame for the {@code scene} from {@code p}, {@code r}, and {@code s} which define its {@link #position()}
-	 * , {@link #orientation()} and {@link #magnitude()}.
-	 * <p>
-	 * See the {@link remixlab.dandelion.geom.Vec} and {@link remixlab.dandelion.geom.Rotation} documentations for
-	 * convenient constructors and methods.
-	 * <p>
-	 * The Frame is defined in the {@code scene} world coordinate system (its {@link #referenceFrame()} is {@code null}).
-	 * It has a {@code null} associated {@link #constraint()}.
+	 * Same as {@code this(new Vec(0, 0, 0), scn.is3D() ? new Quat() : new Rot(), 1)}.
+	 * 
+	 * @see #Frame(Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, Vec p, Rotation r, float s) {
-		scene = scn;
+	public Frame(AbstractScene scn) {
+		this(new Vec(0, 0, 0), scn.is3D() ? new Quat() : new Rot(), 1);
+	}
+
+	/**
+	 * Same as {@code this(new Vec(0, 0, 0), r, 1)}.
+	 * 
+	 * @see #Frame(Vec, Rotation, float)
+	 */
+	public Frame(Rotation r) {
+		this(new Vec(0, 0, 0), r, 1);
+	}
+
+	/**
+	 * Same as {@code this(p, r, 1)}.
+	 * 
+	 * @see #Frame(Vec, Rotation, float)
+	 */
+	public Frame(Vec p, Rotation r) {
+		this(p, r, 1);
+	}
+
+	/**
+	 * Creates a Frame with {@code p}, {@code r} and {@code 1} as {@link #translation()}, {@link #rotation()} and
+	 * {@link #scaling()}, respectively. If {@code r} is instance of {@link remixlab.dandelion.geom.Quat} creates a 3D
+	 * Frame; if it's instance of {@link remixlab.dandelion.geom.Rot}, creates a 2D Frame.
+	 */
+	public Frame(Vec p, Rotation r, float s) {
 		childrenList = new ArrayList<Frame>();
-		if ((scene.is2D() && r instanceof Quat) || (scene.is3D() && r instanceof Rot))
-			throw new RuntimeException(scene.is3D() ? "Rotations in 3D should be Quats" : "Rotations in 3D should be Rots");
 		setTranslation(p);
 		setRotation(r);
 		setScaling(s);
 	}
 
-	/**
-	 * Same as {@code this(scn, p, r, 1)}.
-	 * 
-	 * @see #Frame(AbstractScene, Vec, Rotation, float)
-	 */
-	public Frame(AbstractScene scn, Vec p, Rotation r) {
-		this(scn, p, r, 1);
-	}
-
 	protected Frame(Frame other) {
-		scene = other.scene;
 		childrenList = new ArrayList<Frame>();
 		Iterator<Frame> iterator = other.childrenList.iterator();
 		while (iterator.hasNext())
@@ -254,10 +258,10 @@ public class Frame implements Copyable {
 	// MODIFIED
 
 	/**
-	 * Internal use. Call by the {@link #kernel()} whenever the Frame changes state.
+	 * Internal use. Automatically call by all methods which change the Frame state.
 	 */
 	protected void modified() {
-		lastUpdate = scene.frameCount();
+		lastUpdate = AbstractScene.frameCount;
 		for (Frame child : childrenList)
 			child.modified();
 	}
@@ -662,7 +666,6 @@ public class Frame implements Copyable {
 
 		Rotation q;
 		if (is3D())
-			// q = new Quat(inverseTransformOf(((Quat) rotation).axis()), rotation.angle());//orig
 			q = new Quat(orientation().rotate(((Quat) rotation).axis()), rotation.angle());
 		else
 			q = new Rot(rotation.angle());
@@ -1117,6 +1120,26 @@ public class Frame implements Copyable {
 	// CONVERSION
 
 	/**
+	 * Convenience function that simply calls {@code scn.applyTransformation(this)}.
+	 * 
+	 * @see #matrix()
+	 * @see remixlab.dandelion.core.AbstractScene#applyTransformation(Frame)
+	 */
+	public void applyTransformation(AbstractScene scn) {
+		scn.applyTransformation(this);
+	}
+
+	/**
+	 * Convenience function that simply calls {@code scn.applyWorldTransformation(this)}.
+	 * 
+	 * @see #worldMatrix()
+	 * @see remixlab.dandelion.core.AbstractScene#applyWorldTransformation(Frame)
+	 */
+	public void applyWorldTransformation(AbstractScene scn) {
+		scn.applyWorldTransformation(this);
+	}
+
+	/**
 	 * Returns the {@link remixlab.dandelion.geom.Mat} associated with this Frame.
 	 * <p>
 	 * This method could be used in conjunction with {@code applyMatrix()} to modify the
@@ -1187,44 +1210,6 @@ public class Frame implements Copyable {
 	}
 
 	/**
-	 * Convenience function that simply calls {@code applyTransformation(scene)}.
-	 * 
-	 * @see remixlab.dandelion.core.Frame#applyTransformation(AbstractScene)
-	 */
-	public void applyTransformation() {
-		applyTransformation(scene);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code applyWorldTransformation(scene)}
-	 * 
-	 * @see remixlab.dandelion.core.Frame#applyWorldTransformation(AbstractScene)
-	 */
-	public void applyWorldTransformation() {
-		applyWorldTransformation(scene);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code scn.applyTransformation(this)}.
-	 * 
-	 * @see #matrix()
-	 * @see remixlab.dandelion.core.AbstractScene#applyTransformation(Frame)
-	 */
-	public void applyTransformation(AbstractScene scn) {
-		scn.applyTransformation(this);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code scn.applyWorldTransformation(this)}.
-	 * 
-	 * @see #worldMatrix()
-	 * @see remixlab.dandelion.core.AbstractScene#applyWorldTransformation(Frame)
-	 */
-	public void applyWorldTransformation(AbstractScene scn) {
-		scn.applyWorldTransformation(this);
-	}
-
-	/**
 	 * Returns the transformation matrix represented by the Frame.
 	 * <p>
 	 * This method should be used in conjunction with {@code applyMatrix()} to modify the
@@ -1246,13 +1231,9 @@ public class Frame implements Copyable {
 	 * it immediately (as above).
 	 */
 	public final Mat worldMatrix() {
-		if (referenceFrame() != null) {
-			final Frame fr = new Frame(scene);
-			fr.setTranslation(position());
-			fr.setRotation(orientation());
-			fr.setScaling(scaling());
-			return fr.matrix();
-		} else
+		if (referenceFrame() != null)
+			return new Frame(position(), orientation(), magnitude()).matrix();
+		else
 			return matrix();
 	}
 
@@ -1306,7 +1287,7 @@ public class Frame implements Copyable {
 		r[2][1] = pM.mat[6] / pM.mat[15];
 		r[2][2] = pM.mat[10] / pM.mat[15];
 
-		setScaling(scl);// calls kernel().modified() :P
+		setScaling(scl);// calls modified() :P
 
 		if (scaling() != 1) {
 			r[0][0] = r[0][0] / scaling();
@@ -1374,8 +1355,7 @@ public class Frame implements Copyable {
 	 * The resulting Frame has the same {@link #referenceFrame()} as the Frame and a {@code null} {@link #constraint()}.
 	 */
 	public final Frame inverse() {
-		Frame fr = new Frame(scene, Vec.multiply(rotation().inverseRotate(translation()), -1), rotation().inverse(),
-				1 / scaling());
+		Frame fr = new Frame(Vec.multiply(rotation().inverseRotate(translation()), -1), rotation().inverse(), 1 / scaling());
 		fr.setReferenceFrame(referenceFrame());
 		return fr;
 	}
@@ -1393,7 +1373,7 @@ public class Frame implements Copyable {
 	 * Use {@link #inverse()} for a local (i.e., with respect to {@link #referenceFrame()}) transformation inverse.
 	 */
 	public final Frame worldInverse() {
-		return (new Frame(scene, Vec.multiply(orientation().inverseRotate(position()), -1), orientation().inverse(),
+		return (new Frame(Vec.multiply(orientation().inverseRotate(position()), -1), orientation().inverse(),
 				1 / magnitude()));
 	}
 
@@ -1495,8 +1475,7 @@ public class Frame implements Copyable {
 
 		if (fr != in)
 			// in was not found in the branch of this, res is now expressed in
-			// the world
-			// coordinate system. Simply convert to in coordinate system.
+			// the world coordinate system. Simply convert to in coordinate system.
 			res = in.transformOf(res);
 
 		return res;
