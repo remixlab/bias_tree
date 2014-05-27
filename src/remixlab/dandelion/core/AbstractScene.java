@@ -72,6 +72,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 
 	protected long													lastEqUpdate;
 
+	// FRAME SYNC requires this:
+	private final long											deltaCount;
+
 	protected ActionWheeledBiMotionAgent<?>	defMotionAgent;
 	protected KeyboardAgent									defKeyboardAgent;
 
@@ -121,6 +124,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public AbstractScene() {
 		setPlatform();
 		setTimingHandler(new TimingHandler(this));
+		deltaCount = frameCount;
 		iHandler = new InputHandler();
 		setMatrixHelper(new MatrixStackHelper(this));
 		setRightHanded();
@@ -964,6 +968,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		timingHandler().handle();
 		if (frameCount < frameCount())
 			frameCount = frameCount();
+		if (frameCount < frameCount() + deltaCount)
+			frameCount = frameCount() + deltaCount;
 		// 2. Agents
 		inputHandler().handle();
 		// 3. Alternative use only

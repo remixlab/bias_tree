@@ -327,22 +327,20 @@ public class Frame implements Copyable {
 	 * {@code refFrame} as the {@link #referenceFrame()} would create a loop in the Frame hierarchy.
 	 */
 	public final void setReferenceFrame(Frame rFrame) {
-		if (settingAsReferenceFrameWillCreateALoop(rFrame))
-			System.out.println("Frame.setReferenceFrame would create a loop in Frame hierarchy");
-		else {
-			boolean identical = (referenceFrame() == rFrame);
-			if (!identical && referenceFrame() != null)
-				referenceFrame().childrenList.remove(this);
-			refFrame = rFrame;
-			if (referenceFrame() != null)
-				referenceFrame().childrenList.add(this);
-			if (!identical) {
-				if (referenceFrame() != null)
-					referenceFrame().modified();
-				else
-					modified();
-			}
+		if (settingAsReferenceFrameWillCreateALoop(rFrame)) {
+			System.out.println("Frame.setReferenceFrame would create a loop in Frame hierarchy. Nothing done.");
+			return;
 		}
+		if (referenceFrame() == rFrame) {
+			System.out.println("The given frame has already been set as this frame referenceFrame. Nothing done.");
+			return;
+		}
+		if (referenceFrame() != null) // old
+			referenceFrame().childrenList.remove(this);
+		refFrame = rFrame;
+		if (referenceFrame() != null) // new
+			referenceFrame().childrenList.add(this);
+		modified();
 	}
 
 	/**

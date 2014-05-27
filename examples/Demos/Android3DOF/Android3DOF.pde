@@ -1,10 +1,15 @@
 /**
- * Touch 2 DOF
+ * Android 3-DOF
  * by Victor Manuel Forero and Jean Pierre Charalambos.
  *
+ * This example requires Android mode to run.
+ *
  * This example illustrates how to control the Scene using touch events
- * which requires a customized Agent.
- * 
+ * emulating 3-DOFs, through a customized Touch Agent.
+ *
+ * We've also implemented a customized keyboard agent having similar keyboard
+ * shortcuts to those found at the desktop but with a single eye path. The
+ * Android keyboard is displayed by pressing the lower left corner of the screen.
  */
 
 import java.util.Vector;
@@ -27,7 +32,13 @@ TouchAgent agent;
 Box [] boxes;
 
 public void setup() {
+  
   scene = new Scene(this);  
+  
+  DroidKeyboardAgent keyboardAgent = new DroidKeyboardAgent(scene, "KeyboardAgent");  
+  scene.disableKeyboardAgent();
+  registerMethod("keyEvent", keyboardAgent);
+    
   agent = new TouchAgent(scene, "OtherTouchAgent");
 
   scene.setNonSeqTimers();
@@ -59,7 +70,7 @@ public boolean dispatchTouchEvent(MotionEvent event) {
   switch (action) {        // let us know which action code shows up
   case MotionEvent.ACTION_DOWN:
     agent.addTouCursor(event);
-    if (event.getX()< 10) {
+    if (displayHeight - event.getY() < 10) {
       InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
       imm.toggleSoftInput(0, 0);
     }

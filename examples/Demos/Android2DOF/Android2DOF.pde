@@ -1,14 +1,21 @@
 /**
- * Touch 2 DOF
+ * Android 2-DOF
  * by Victor Manuel Forero and Jean Pierre Charalambos.
  *
+ * This example requires Android mode to run.
+ *
  * This example illustrates how to control the Scene using touch events
- * which requires a customized Agent.
- * 
+ * emulating 2-DOFs, through a customized Touch Agent.
+ *
+ * We've also implemented a customized keyboard agent having similar keyboard
+ * shortcuts to those found at the desktop but with a single eye path. The
+ * Android keyboard is displayed by pressing the lower left corner of the screen.
  */
 
 import java.util.Vector;
 import android.view.MotionEvent;
+import android.content.Context;
+import android.view.inputmethod.InputMethodManager;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
@@ -26,9 +33,12 @@ Box [] boxes;
 
 public void setup() {
   scene = new Scene(this);
-
+  
+  DroidKeyboardAgent keyboardAgent = new DroidKeyboardAgent(scene, "KeyboardAgent");  
+  scene.disableKeyboardAgent();
+  registerMethod("keyEvent", keyboardAgent);
+  
   agent = new TouchAgent(scene, "MyTouchAgent");
-
   scene.setNonSeqTimers();
   boxes = new Box[10];
   scene.setDottedGrid(false);
@@ -59,6 +69,10 @@ public boolean dispatchTouchEvent(MotionEvent event) {
   switch (action) {                              // let us know which action code shows up
   case MotionEvent.ACTION_DOWN:
     agent.addTouCursor(event);
+    if (displayHeight - event.getY() < 10){
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(0, 0);  
+    }
     break;
   case MotionEvent.ACTION_UP:
     agent.removeTouCursor(event);

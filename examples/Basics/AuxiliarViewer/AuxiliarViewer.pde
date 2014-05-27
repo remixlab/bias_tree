@@ -14,8 +14,7 @@ import remixlab.dandelion.geom.*;
 
 Scene scene, auxScene;
 PGraphics canvas, auxCanvas;  
-InteractiveFrame frame1, auxFrame1, frame2, auxFrame2, frame3, auxFrame3;  
-boolean drawHints = false;
+InteractiveFrame frame1, auxFrame1, frame2, auxFrame2, frame3, auxFrame3;
 
 //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
 String renderer = P2D;
@@ -25,6 +24,7 @@ public void setup() {
   canvas = createGraphics(640, 360, renderer);
   canvas.smooth();
   scene = new Scene(this, canvas);
+  scene.setPickingVisualHint(true);
   scene.addDrawHandler(this, "mainDrawing");
   frame1 = new InteractiveFrame(scene);
   frame1.translate(new Vec(30, 30));
@@ -40,6 +40,7 @@ public void setup() {
   // Note that we pass the upper left corner coordinates where the scene
   // is to be drawn (see drawing code below) to its constructor.
   auxScene = new Scene(this, auxCanvas, 0, 360);
+  auxScene.setPickingVisualHint(true);
   auxScene.addDrawHandler(this, "auxDrawing");
   auxScene.setRadius(200);
   auxScene.showAll();
@@ -79,38 +80,45 @@ public void draw() {
   image(auxCanvas, auxScene.upperLeftCorner.x(), auxScene.upperLeftCorner.y());
 }
 
-public void mainDrawing(Scene s) {        
+public void mainDrawing(Scene s) {  
   s.pg().pushStyle();
   s.pushModelView();
-  s.applyTransformation(frame1);  
-  if (drawHints)
-    s.drawAxes(40);
-  if (drawHints && ((s.motionAgent().trackedGrabber() == frame1) || (s.motionAgent().trackedGrabber() == auxFrame1)))
+  //the 'correct way' would be:
+  //s.applyTransformation(s == scene ? frame1 : auxFrame1);
+  //but we do the dirty way, since we can apply either frame to either scene:
+  s.applyTransformation(frame1);
+  s.drawAxes(40);
+  //Note that each frame is registered at a different scene. So if we want to pick the frame in either scene:
+  if ((s.motionAgent().trackedGrabber() == frame1) || (s.motionAgent().trackedGrabber() == auxFrame1))
     s.pg().fill(255, 0, 0);
   else 
     s.pg().fill(0, 0, 255);
   s.pg().rect(0, 0, 40, 10, 5);
 
   s.pushModelView();
-  s.applyTransformation(frame2);  
-  if (drawHints)
-    s.drawAxes(40);
-  if (drawHints && ((s.motionAgent().trackedGrabber() == frame2) || (s.motionAgent().trackedGrabber() == auxFrame2)))
+  //we do it the correct way:
+  s.applyTransformation(s == scene ? frame2 : auxFrame2);
+  //also possible would be:
+  //s.applyTransformation(frame2);
+  s.drawAxes(40);
+  //Note that each frame is registered at a different scene. So if we want to pick the frame in either scene:
+  if ((s.motionAgent().trackedGrabber() == frame2) || (s.motionAgent().trackedGrabber() == auxFrame2))
     s.pg().fill(255, 0, 0);
   else
     s.pg().fill(255, 0, 255);
   s.pg().rect(0, 0, 40, 10, 5);
 
   s.pushModelView();
+  //we do it the dirty way:
   s.applyTransformation(frame3);
-  if (drawHints)
-    s.drawAxes(40);
-  if (drawHints && ((s.motionAgent().trackedGrabber() == frame3) || (s.motionAgent().trackedGrabber() == auxFrame3)))
+  s.drawAxes(40);
+  //Note that each frame is registered at a different scene. So if we want to pick the frame in either scene:
+  if ((s.motionAgent().trackedGrabber() == frame3) || (s.motionAgent().trackedGrabber() == auxFrame3))
     s.pg().fill(255, 0, 0);
   else 
     s.pg().fill(0, 255, 255);
   s.pg().rect(0, 0, 40, 10, 5);
-  
+
   s.popModelView();
   s.popModelView();
   s.popModelView();
@@ -132,26 +140,10 @@ public void handleMouse() {
     scene.enableKeyboardAgent();
     auxScene.disableMouseAgent();
     auxScene.disableKeyboardAgent();
-  } 
-  else {
+  } else {
     scene.disableMouseAgent();
     scene.disableKeyboardAgent();
     auxScene.enableMouseAgent();
     auxScene.enableKeyboardAgent();
-  }
-}
-
-public void printFrame(Frame frame) {
-  println("Translation: " + frame.translation());
-  println("Angle: " + frame.rotation().angle());
-  println("Scaling: " + frame.scaling());
-}
-
-public void keyPressed() {
-  if (key == 'u' || key == 'U') {
-    drawHints = !drawHints;
-  }
-  if (key == 'v' || key == 'V') {
-    scene.flip();
   }
 }

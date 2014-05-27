@@ -956,12 +956,8 @@ public class Camera extends Eye implements Copyable {
 		float ZFar = zFar();
 
 		switch (type()) {
-		case PERSPECTIVE: {
-			// #CONNECTION# all non null coefficients were set to 0.0 in
-			// constructor.
-			// float f = 1.0f / (float) Math.tan(fieldOfView() / 2.0f);
-			// projectionMat.mat[0] = f / aspectRatio();
-			// projectionMat.mat[5] = scene.isLeftHanded() ? -f : f;
+		case PERSPECTIVE:
+			// #CONNECTION# all non null coefficients were set to 0.0 in constructor.
 			projectionMat.mat[0] = 1 / (frame().scaling() * this.aspectRatio());
 			projectionMat.mat[5] = 1 / (scene.isLeftHanded() ? -frame().scaling() : frame().scaling());
 			projectionMat.mat[10] = (ZNear + ZFar) / (ZNear - ZFar);
@@ -970,8 +966,7 @@ public class Camera extends Eye implements Copyable {
 			projectionMat.mat[15] = 0.0f;
 			// same as gluPerspective( 180.0*fieldOfView()/M_PI, aspectRatio(), zNear(), zFar() );
 			break;
-		}
-		case ORTHOGRAPHIC: {
+		case ORTHOGRAPHIC:
 			float[] wh = getBoundaryWidthHeight();
 			projectionMat.mat[0] = 1.0f / wh[0];
 			projectionMat.mat[5] = (scene.isLeftHanded() ? -1.0f : 1.0f) / wh[1];
@@ -981,7 +976,6 @@ public class Camera extends Eye implements Copyable {
 			projectionMat.mat[15] = 1.0f;
 			// same as glOrtho( -w, w, -h, h, zNear(), zFar() );
 			break;
-		}
 		}
 	}
 

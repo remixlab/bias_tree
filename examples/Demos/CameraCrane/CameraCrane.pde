@@ -5,9 +5,9 @@
  * This example illustrates "frame syncing" by implementing two camera 
  * cranes which defines two auxiliary point of views of the same scene.
  * 
- * When syncing two frames they will share their state (position, orientation)
- * taken the one that has been most recently updated. Syncing should always
- * been called within draw().
+ * When syncing two frames they will share their state (postion, orientation
+ * and scaling) taken the one that has been most recently updated. Syncing
+ * should always been called within draw().
  *
  * Press 'f' to display frame selection hints.
  * Press 'l' to enable lighting.
@@ -61,16 +61,16 @@ public void setup() {
   // Eyes initial setup
   armCam = new ArmCam(this, 60, -60, 2);
   heliCam = new HeliCam(this);
-    
+
   heliScene.camera().frame().fromFrame(heliCam.frame(3));
   armScene.camera().frame().fromFrame(armCam.frame(5));  
-  
+
   armScene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.LOOK_AROUND);
   armScene.setMouseButtonBinding(Target.EYE, CENTER, null);
   armScene.setMouseButtonBinding(Target.EYE, RIGHT, null);
   heliScene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.LOOK_AROUND);
   heliScene.setMouseButtonBinding(Target.EYE, CENTER, null);
-  heliScene.setMouseButtonBinding(Target.EYE, RIGHT, null);  
+  heliScene.setMouseButtonBinding(Target.EYE, RIGHT, null);
 }
 
 // off-screen rendering
@@ -110,8 +110,7 @@ public void handleMouse() {
     armScene.disableKeyboardAgent();
     heliScene.disableMouseAgent();
     heliScene.disableKeyboardAgent();
-  } 
-  else {
+  } else {
     if (mouseX < canvas.width / 2) {
       mainScene.disableMouseAgent();
       mainScene.disableKeyboardAgent();
@@ -119,8 +118,7 @@ public void handleMouse() {
       armScene.enableKeyboardAgent();
       heliScene.disableMouseAgent();
       heliScene.disableKeyboardAgent();
-    } 
-    else {
+    } else {
       mainScene.disableMouseAgent();
       mainScene.disableKeyboardAgent();
       armScene.disableMouseAgent();
@@ -140,8 +138,8 @@ public void drawing(Scene scn) {
   }
   // 1. draw the robot cams
 
-  armCam.draw(scn);
-  heliCam.draw(scn);
+  if (scn!=armScene) armCam.draw(scn);
+  if (scn!=heliScene) heliCam.draw(scn);
 
   // 2. draw the scene
 
@@ -178,8 +176,7 @@ public void keyPressed() {
     enabledLights = !enabledLights;
     if (enabledLights) {
       println("camera spot lights enabled");
-    } 
-    else {
+    } else {
       println("camera spot lights disabled");
     }
   }
@@ -187,8 +184,7 @@ public void keyPressed() {
     drawRobotCamFrustum = !drawRobotCamFrustum;
     if (drawRobotCamFrustum) {
       println("draw robot camera frustums");
-    } 
-    else {
+    } else {
       println("don't draw robot camera frustums");
     }
   }

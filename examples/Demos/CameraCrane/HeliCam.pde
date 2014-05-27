@@ -60,24 +60,24 @@ public class HeliCam {
     PGraphics pg3d = scn.pg();
 
     pg3d.pushMatrix();
-    frame(0).applyTransformation();
+    scn.applyTransformation(frame(0));
     setColor(scn, frame(0).grabsInput(scn.motionAgent()));
     drawBody(scn);
 
     pg3d.pushMatrix();
-    frame(1).applyTransformation();
+    scn.applyTransformation(frame(1));
     setColor(scn, frame(1).grabsInput(scn.motionAgent()));
     drawSmallCylinder(scn);
     drawOneArm(scn);
 
     pg3d.pushMatrix();
-    frame(2).applyTransformation();
+    scn.applyTransformation(frame(2));
     setColor(scn, frame(2).grabsInput(scn.motionAgent()));
     drawSmallCylinder(scn);
     drawOneArm(scn);
 
     pg3d.pushMatrix();
-    frame(3).applyTransformation();
+    scn.applyTransformation(frame(3));
     setColor(scn, frame(3).grabsInput(scn.motionAgent()));
     drawHead(scn);
 
@@ -86,15 +86,13 @@ public class HeliCam {
       pg3d.spotLight(155, 255, 255, 0, 0, 0, 0, 0, -1, PApplet.THIRD_PI, 1);
 
     pg3d.popMatrix();// frame(3)
-
     pg3d.popMatrix();// frame(2)
-
     pg3d.popMatrix();// frame(1)
 
     // now it is at frame(0), so we draw the propeller
 
     pg3d.pushMatrix();
-    frame(4).applyTransformation();
+    scn.applyTransformation(frame(4));
     setColor(scn, frame(4).grabsInput(scn.motionAgent()));
     drawPropeller(scn);
 

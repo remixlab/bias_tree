@@ -72,17 +72,17 @@ public class ArmCam {
     PGraphics pg3d = scn.pg();
 
     pg3d.pushMatrix();
-    frame(0).applyTransformation();
+    scn.applyTransformation(frame(0));    
     setColor(scn, frame(0).grabsInput(scn.motionAgent()));
     drawTripod(scn);
 
     pg3d.pushMatrix();
-    frame(1).applyTransformation();
+    scn.applyTransformation(frame(1));
     setColor(scn, frame(1).grabsInput(scn.motionAgent()));
     drawBase(scn);
 
     pg3d.pushMatrix();
-    frame(2).applyTransformation();
+    scn.applyTransformation(frame(2));
     setColor(scn, frame(2).grabsInput(scn.motionAgent()));
     drawLongArm(scn);
 
@@ -97,16 +97,16 @@ public class ArmCam {
 
     if (frame(3).localInverseCoordinatesOf(frame(3).coordinatesOf(frame(3).position())).z() > -4)
       frame(3).setTranslation(0, 0, -4);
-    frame(3).applyTransformation();
+    scn.applyTransformation(frame(3));
     drawHolder(scn);
 
     pg3d.pushMatrix();
-    frame(4).applyTransformation();
+    scn.applyTransformation(frame(4));
     setColor(scn, frame(4).grabsInput(scn.motionAgent()));
     drawInvertedBase(scn);
 
     pg3d.pushMatrix();
-    frame(5).applyTransformation();
+    scn.applyTransformation(frame(5));
     setColor(scn, frame(5).grabsInput(scn.motionAgent()));
     drawHead(scn);
 
@@ -116,19 +116,15 @@ public class ArmCam {
     }
 
     pg3d.popMatrix();// frame(5)
-
     pg3d.popMatrix();// frame(4)
-
     pg3d.popMatrix();// frame(3)
-
     pg3d.popMatrix();// frame(2)
-
     pg3d.popMatrix();// frame(1)
 
     // totally necessary
     pg3d.popMatrix();// frame(0)
 
-    // Scene.drawCamera takes into account the whole scene hierarchy above
+    // Scene.drawEye takes into account the whole scene hierarchy above
     // the camera iFrame. Thus, we call it after restoring the gl state.
     // Calling it before the first push matrix above, should do it too.
     if ( parent.drawRobotCamFrustum && scn.equals(parent.mainScene) )
