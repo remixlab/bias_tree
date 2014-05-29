@@ -21,12 +21,18 @@ public abstract class MatrixHelper {
 	protected AbstractScene	scene;
 
 	protected Mat						projectionViewMat, projectionViewInverseMat;
-	protected boolean				unprojectCacheIsOptimized, projectionViewMatHasInverse;
+	protected boolean				isProjViwInvCached, projectionViewMatHasInv;
 
+	/**
+	 * Instantiates the {@link #projectionView()} matrix and sets {@link #isProjectionViewInverseCached()} to
+	 * {@code false}.
+	 * 
+	 * @param scn
+	 */
 	public MatrixHelper(AbstractScene scn) {
 		scene = scn;
 		projectionViewMat = new Mat();
-		unprojectCacheIsOptimized = false;
+		isProjViwInvCached = false;
 	}
 
 	/**
@@ -35,41 +41,40 @@ public abstract class MatrixHelper {
 	public void bind() {
 		loadProjection();
 		loadModelView();
-		cacheProjectionViewInverse();
+		cacheProjectionView();
 	}
 
 	/**
-	 * Internal use. Called in {@link #bind()}.
+	 * Internal use. Called in {@link #bind()}. Note that P x V is always cached.
 	 */
-	protected void cacheProjectionViewInverse() {
+	protected void cacheProjectionView() {
 		Mat.multiply(projection(), modelView(), projectionViewMat);
-		if (unprojectCacheIsOptimized()) {
+		if (isProjectionViewInverseCached()) {
 			if (projectionViewInverseMat == null)
 				projectionViewInverseMat = new Mat();
-			projectionViewMatHasInverse = projectionViewMat.invert(projectionViewInverseMat);
+			projectionViewMatHasInv = projectionViewMat.invert(projectionViewInverseMat);
 		}
 	}
 
 	/**
 	 * Returns {@code true} if {@code P x M} and {@code inv (P x M)} are being cached, and {@code false} otherwise.
 	 * 
-	 * @see #cacheProjectionViewInverse()
-	 * @see #optimizeUnprojectCache(boolean)
+	 * @see #cacheProjectionView()
+	 * @see #cacheProjectionViewInverse(boolean)
 	 */
-	public boolean unprojectCacheIsOptimized() {
-		return unprojectCacheIsOptimized;
+	public boolean isProjectionViewInverseCached() {
+		return isProjViwInvCached;
 	}
 
 	/**
 	 * Cache {@code inv (P x M)} (and also {@code (P x M)} ) so that
-	 * {@code project(float, float, float, Matrx3D, Matrx3D, int[], float[])} (and also
-	 * {@code unproject(float, float, float, Matrx3D, Matrx3D, int[], float[])}) is optimised.
+	 * {@link remixlab.dandelion.core.AbstractScene#unprojectedCoordinatesOf(Vec)} is optimized.
 	 * 
-	 * @see #unprojectCacheIsOptimized()
-	 * @see #cacheProjectionViewInverse()
+	 * @see #isProjectionViewInverseCached()
+	 * @see #cacheProjectionView()
 	 */
-	public void optimizeUnprojectCache(boolean optimise) {
-		unprojectCacheIsOptimized = optimise;
+	public void cacheProjectionViewInverse(boolean optimise) {
+		isProjViwInvCached = optimise;
 	}
 
 	/**
@@ -80,12 +85,12 @@ public abstract class MatrixHelper {
 	}
 
 	/**
-	 * {@link #optimizeUnprojectCache(boolean)} should be called first for this method to take effect.
+	 * {@link #cacheProjectionViewInverse(boolean)} should be called first for this method to take effect.
 	 * 
 	 * @return inv({@link #projection()} * {@link #modelView()})
 	 */
 	public Mat projectionViewInverse() {
-		if (!unprojectCacheIsOptimized())
+		if (!isProjectionViewInverseCached())
 			throw new RuntimeException("optimizeUnprojectCache(true) should be called first");
 		return projectionViewInverseMat;
 	}

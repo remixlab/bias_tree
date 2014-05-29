@@ -32,12 +32,8 @@ public class Lamp {
     parent = s.pApplet();
     frameArray = new InteractiveFrame[4];
     
-    for (int i = 0; i < 4; ++i) {
-      frameArray[i] = new InteractiveFrame(scene);
-      // Creates a hierarchy of frames
-      if (i > 0)
-        frame(i).setReferenceFrame(frame(i - 1));
-    }
+    for (int i = 0; i < 4; ++i)
+      frameArray[i] = new InteractiveFrame(scene, i>0 ? frameArray[i-1] : null);
 
     // Initialize frames
     frame(1).setTranslation(0, 0, 8); // Base height

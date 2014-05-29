@@ -34,10 +34,8 @@ void setup() {
   nb=4;
   repere0=new InteractiveFrame(scene);
   mobiles=new InteractiveFrame[nb];
-  for (int i=0;i<nb;i++) {
-    mobiles[i]=new InteractiveFrame(scene);
-    if (i>0) mobiles[i].setReferenceFrame(mobiles[i-1]);
-  }
+  for (int i=0;i<nb;i++)
+    mobiles[i]=new InteractiveFrame(scene, i>0 ? mobiles[i-1] : null);
   frameRate(60);
   scene.camera().setPosition(new Vec(0, 0, 1000));
   initialise();

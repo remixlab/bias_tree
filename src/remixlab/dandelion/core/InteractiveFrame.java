@@ -20,8 +20,9 @@ import remixlab.util.*;
  * An InteractiveFrame is a Frame that can be rotated, translated and scaled by user interaction means.
  * <p>
  * It converts user gestures into translation, rotation and scaling updates. An InteractiveFrame is used to move an
- * object in the scene. Combined with object selection, its Grabber properties and a dynamic update of the scene, the
- * InteractiveFrame introduces a great reactivity to your dandelion-based applications.
+ * object in the scene, and thus it's tightly-coupled with it. Combined with object selection, its Grabber properties
+ * and a dynamic update of the scene, the InteractiveFrame introduces a great reactivity to your dandelion-based
+ * applications.
  * <p>
  * <b>Note:</b> Once created, the InteractiveFrame is automatically added to the scene
  * {@link remixlab.bias.core.InputHandler#agents()} pool.
@@ -101,8 +102,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	protected Vec								flyDisp;
 	protected static final long	FLY_UPDATE_PERDIOD	= 10;
 
-	public AbstractScene				scene;
-
 	/**
 	 * Default constructor.
 	 * <p>
@@ -116,7 +115,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	 */
 	public InteractiveFrame(AbstractScene scn) {
 		super(scn);
-		scene = scn;
 
 		scene.inputHandler().addInAllAgentPools(this);
 		isInCamPath = false;
@@ -150,9 +148,17 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		scene.registerTimingTask(flyTimerTask);
 	}
 
+	/**
+	 * Same as {@code this(scn)} and then calls {@link #setReferenceFrame(Frame)} on {@code referenceFrame}.
+	 */
+	public InteractiveFrame(AbstractScene scn, Frame referenceFrame) {
+		this(scn);
+		this.setReferenceFrame(referenceFrame);
+	}
+
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
-		this.scene = otherFrame.scene;
+
 		for (Agent element : this.scene.inputHandler().agents()) {
 			if (this.scene.inputHandler().isInAgentPool(otherFrame, element))
 				this.scene.inputHandler().addInAgentPool(this, element);
@@ -207,8 +213,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	 * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
 	 */
 	protected InteractiveFrame(AbstractScene scn, InteractiveEyeFrame iFrame) {
-		super(iFrame.translation().get(), iFrame.rotation().get(), iFrame.scaling());
-		scene = scn;
+		super(scn, iFrame.translation().get(), iFrame.rotation().get(), iFrame.scaling());
 
 		isInCamPath = true;
 
@@ -236,24 +241,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			}
 		};
 		scene.registerTimingTask(flyTimerTask);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code applyTransformation(scene)}.
-	 * 
-	 * @see remixlab.dandelion.core.Frame#applyTransformation(AbstractScene)
-	 */
-	public void applyTransformation() {
-		applyTransformation(scene);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code applyWorldTransformation(scene)}
-	 * 
-	 * @see remixlab.dandelion.core.Frame#applyWorldTransformation(AbstractScene)
-	 */
-	public void applyWorldTransformation() {
-		applyWorldTransformation(scene);
 	}
 
 	/**

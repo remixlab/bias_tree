@@ -25,7 +25,6 @@ Lamp lamp;
 public void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
-  scene.matrixHelper().optimizeUnprojectCache(true);
   scene.setRadius(100);
   scene.showAll();
   scene.setPickingVisualHint(true);

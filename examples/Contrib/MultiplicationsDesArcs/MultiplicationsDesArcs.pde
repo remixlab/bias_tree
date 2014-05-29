@@ -51,11 +51,9 @@ void setup() {
   repere1=new InteractiveFrame(scene);
   repere2=new InteractiveFrame(scene);
   repere3=new InteractiveFrame(scene);
-  plan1=new InteractiveFrame(scene);
-  plan2=new InteractiveFrame(scene);
+  plan1=new InteractiveFrame(scene, repere1);
+  plan2=new InteractiveFrame(scene, repere2);
   frameM=new InteractiveFrame(scene);
-  plan1.setReferenceFrame(repere1);
-  plan2.setReferenceFrame(repere2);
 
   pivot=new LocalConstraint();
   pivot.setTranslationConstraint(AxisPlaneConstraint.Type.FORBIDDEN, new Vec(0, 0, 0));

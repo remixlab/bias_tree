@@ -46,8 +46,7 @@ void setup() {
 
   dragueur = new InteractiveFrame(scene);
   rotateur=new InteractiveFrame(scene);
-  repere = new InteractiveFrame(scene);
-  rotateur.setReferenceFrame(dragueur);
+  repere = new InteractiveFrame(scene, dragueur);
   repere.setConstraint(pivot);  
   dragueur.setConstraint(drag);    
   rotateur.setConstraint(planaire);

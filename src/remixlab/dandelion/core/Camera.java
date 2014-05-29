@@ -36,6 +36,8 @@ public class Camera extends Eye implements Copyable {
 				append(zClippingCoef).
 				append(zNearCoef).
 				append(rapK).
+				append(viewDirCached).
+				append(lastViewDirUpdated).
 				toHashCode();
 	}
 
@@ -60,6 +62,8 @@ public class Camera extends Eye implements Copyable {
 				.append(zClippingCoef, other.zClippingCoef)
 				.append(zNearCoef, other.zNearCoef)
 				.append(rapK, other.rapK)
+				.append(viewDirCached, other.viewDirCached)
+				.append(lastViewDirUpdated, other.lastViewDirUpdated)
 				.isEquals();
 	}
 
@@ -160,18 +164,22 @@ public class Camera extends Eye implements Copyable {
 	};
 
 	// C a m e r a p a r a m e t e r s
-	private float	zNearCoef;
-	private float	zClippingCoef;
-	private Type	tp;								// PERSPECTIVE or ORTHOGRAPHIC
+	private float		zNearCoef;
+	private float		zClippingCoef;
+	private Type		tp;								// PERSPECTIVE or ORTHOGRAPHIC
 
 	// S t e r e o p a r a m e t e r s
-	private float	IODist;						// inter-ocular distance, in meters
-	private float	focusDist;					// in scene units
-	private float	physicalDist2Scrn;	// in meters
-	private float	physicalScrnWidth;	// in meters
+	private float		IODist;						// inter-ocular distance, in meters
+	private float		focusDist;					// in scene units
+	private float		physicalDist2Scrn;	// in meters
+	private float		physicalScrnWidth;	// in meters
 
 	// rescale ortho when rap changes
-	private float	rapK	= 1;
+	private float		rapK	= 1;
+
+	// BFC optimization
+	protected Vec		viewDirCached;
+	protected long	lastViewDirUpdated;
 
 	/**
 	 * Main constructor.
@@ -189,6 +197,9 @@ public class Camera extends Eye implements Copyable {
 
 		if (scene.is2D())
 			throw new RuntimeException("Use Camera only for a 3D Scene");
+
+		viewDirCached = new Vec();
+		lastViewDirUpdated = -1;
 
 		// dist = new float[6];
 		// normal = new Vec[6];
@@ -228,6 +239,8 @@ public class Camera extends Eye implements Copyable {
 		this.setPhysicalDistanceToScreen(oCam.physicalDistanceToScreen());
 		this.setPhysicalScreenWidth(oCam.physicalScreenWidth());
 		this.rapK = oCam.rapK;
+		this.viewDirCached = oCam.viewDirCached.get();
+		this.lastViewDirUpdated = oCam.lastViewDirUpdated;
 	}
 
 	@Override
@@ -722,18 +735,6 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	/**
-	 * Convenience function that simply calls {coneIsBackFacing(viewDirection, new Cone(normals))}.
-	 * 
-	 * @param viewDirection
-	 *          Cached camera view direction.
-	 * @param normals
-	 *          cone of normals.
-	 */
-	public boolean coneIsBackFacing(Vec viewDirection, ArrayList<Vec> normals) {
-		return coneIsBackFacing(viewDirection, new Cone(normals));
-	}
-
-	/**
 	 * Convenience function that simply calls {@code coneIsBackFacing(new Cone(normals))}.
 	 * 
 	 * @see #coneIsBackFacing(Cone)
@@ -741,18 +742,6 @@ public class Camera extends Eye implements Copyable {
 	 */
 	public boolean coneIsBackFacing(Vec[] normals) {
 		return coneIsBackFacing(new Cone(normals));
-	}
-
-	/**
-	 * Convenience function that simply returns {@code coneIsBackFacing(viewDirection, new Cone(normals))}.
-	 * 
-	 * @param viewDirection
-	 *          Cached camera view direction.
-	 * @param normals
-	 *          cone of normals.
-	 */
-	public boolean coneIsBackFacing(Vec viewDirection, Vec[] normals) {
-		return coneIsBackFacing(viewDirection, new Cone(normals));
 	}
 
 	/**
@@ -766,31 +755,8 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	/**
-	 * Convenience function that simply returns {@code coneIsBackFacing(viewDirection, cone.axis(), cone.angle())}.
-	 * 
-	 * @param viewDirection
-	 *          cached camera view direction.
-	 * @param cone
-	 *          cone of normals
-	 */
-	public boolean coneIsBackFacing(Vec viewDirection, Cone cone) {
-		return coneIsBackFacing(viewDirection, cone.axis(), cone.angle());
-	}
-
-	/**
-	 * Convinience funtion that simply returns {@code coneIsBackFacing(viewDirection(), axis, angle)}.
-	 * <p>
-	 * Non-cached version of {@link #coneIsBackFacing(Vec, Vec, float)}
-	 */
-	public boolean coneIsBackFacing(Vec axis, float angle) {
-		return coneIsBackFacing(viewDirection(), axis, angle);
-	}
-
-	/**
 	 * Returns {@code true} if the given cone is back facing the camera. Otherwise returns {@code false}.
 	 * 
-	 * @param viewDirection
-	 *          cached view direction
 	 * @param axis
 	 *          normalized cone axis
 	 * @param angle
@@ -799,9 +765,10 @@ public class Camera extends Eye implements Copyable {
 	 * @see #coneIsBackFacing(Cone)
 	 * @see #faceIsBackFacing(Vec, Vec, Vec)
 	 */
-	public boolean coneIsBackFacing(Vec viewDirection, Vec axis, float angle) {
+	public boolean coneIsBackFacing(Vec axis, float angle) {
+		cacheViewDirection();
 		if (angle < (float) Math.PI / 2) {
-			float phi = (float) Math.acos(Vec.dot(axis, viewDirection));
+			float phi = (float) Math.acos(Vec.dot(axis, viewDirCached));
 			if (phi >= (float) Math.PI / 2)
 				return false;
 			if ((phi + angle) >= (float) Math.PI / 2)
@@ -812,10 +779,20 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	/**
+	 * Internal use. Caches {@link #viewDirection()} for use in {@link #coneIsBackFacing(Vec, float)}.
+	 */
+	protected void cacheViewDirection() {
+		if (lastUpdate() > lastViewDirUpdated) {
+			this.viewDirCached = this.viewDirection();
+			this.lastViewDirUpdated = scene.frameCount();
+		}
+	}
+
+	/**
 	 * Returns {@code true} if the given face is back facing the camera. Otherwise returns {@code false}.
 	 * <p>
-	 * <b>Attention:</b> This method is not computationally optimized. If you call it several times with no change in the
-	 * matrices, you should buffer the matrices (modelview, projection and then viewport) to speed-up the queries.
+	 * Vertices must given in clockwise order if {@link remixlab.dandelion.core.AbstractScene#isLeftHanded()} or in
+	 * counter-clockwise order if {@link remixlab.dandelion.core.AbstractScene#isRightHanded()}.
 	 * 
 	 * @param a
 	 *          first face vertex
@@ -827,7 +804,17 @@ public class Camera extends Eye implements Copyable {
 	public boolean faceIsBackFacing(Vec a, Vec b, Vec c) {
 		Vec v1 = Vec.subtract(projectedCoordinatesOf(a), projectedCoordinatesOf(b));
 		Vec v2 = Vec.subtract(projectedCoordinatesOf(b), projectedCoordinatesOf(c));
-		return v1.cross(v2).vec[2] <= 0;
+		return scene.isLeftHanded() ? v1.cross(v2).vec[2] <= 0 : v2.cross(v1).vec[2] <= 0;
+	}
+
+	/**
+	 * Returns {@code true} if the given face is back facing the camera. Otherwise returns {@code false}.
+	 * 
+	 * @param normal
+	 *          Normal to the plane containing the face.
+	 */
+	public boolean faceIsBackFacing(Vec normal) {
+		return coneIsBackFacing(normal, 0);
 	}
 
 	// 4. SCENE RADIUS AND CENTER
@@ -1143,7 +1130,7 @@ public class Camera extends Eye implements Copyable {
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 
 		interpolationKfi.addKeyFrame(
-				new Frame(Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target.point, 0.7f)), frame()
+				new Frame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target.point, 0.7f)), frame()
 						.orientation()), 0.4f);
 
 		// Small hack: attach a temporary frame to take advantage of lookAt without

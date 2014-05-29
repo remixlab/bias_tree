@@ -7,10 +7,8 @@ class Plan {
     intersections=new PVector[nb][nb];
     creerTable();
     reperes=new InteractiveFrame[nb];
-    for (int i=0;i<nb;i++) {
-      reperes[i]=new InteractiveFrame(scene);
-      if (i>0) reperes[i].setReferenceFrame( reperes[0]);
-    }
+    for (int i=0;i<nb;i++)
+      reperes[i]=new InteractiveFrame(scene, i>0 ? reperes[0] : null);
     reperes[0].setConstraint(waxial);
     reperes[1].setConstraint(lplanaire);
     reperes[2].setConstraint(lplanaire);

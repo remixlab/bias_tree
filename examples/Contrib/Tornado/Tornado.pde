@@ -46,8 +46,7 @@ class Bande {
     rayon=300;
     plus=280;
     frame0=new InteractiveFrame(scene);
-    frame1=new InteractiveFrame(scene);
-    frame1.setReferenceFrame(frame0);
+    frame1=new InteractiveFrame(scene, frame0);
     huits=new PVector[nbdiv][nbnoeud];
   }
 

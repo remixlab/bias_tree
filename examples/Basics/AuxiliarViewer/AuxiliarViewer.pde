@@ -28,11 +28,9 @@ public void setup() {
   scene.addDrawHandler(this, "mainDrawing");
   frame1 = new InteractiveFrame(scene);
   frame1.translate(new Vec(30, 30));
-  frame2 = new InteractiveFrame(scene);
-  frame2.setReferenceFrame(frame1);
+  frame2 = new InteractiveFrame(scene, frame1);
   frame2.translate(new Vec(40, 0, 0));
-  frame3 = new InteractiveFrame(scene);
-  frame3.setReferenceFrame(frame2);
+  frame3 = new InteractiveFrame(scene, frame2);
   frame3.translate(new Vec(40, 0, 0));
 
   auxCanvas = createGraphics(640, 360, renderer);
@@ -47,11 +45,9 @@ public void setup() {
 
   auxFrame1 = new InteractiveFrame(auxScene);
   auxFrame1.translate(new Vec(30, 30));
-  auxFrame2 = new InteractiveFrame(auxScene);
-  auxFrame2.setReferenceFrame(auxFrame1);
+  auxFrame2 = new InteractiveFrame(auxScene, auxFrame1);
   auxFrame2.translate(new Vec(40, 0, 0));
-  auxFrame3 = new InteractiveFrame(auxScene);
-  auxFrame3.setReferenceFrame(auxFrame2);
+  auxFrame3 = new InteractiveFrame(auxScene, auxFrame2);
   auxFrame3.translate(new Vec(40, 0, 0));
 
   handleMouse();

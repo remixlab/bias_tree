@@ -73,7 +73,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	protected long													lastEqUpdate;
 
 	// FRAME SYNC requires this:
-	private final long											deltaCount;
+	protected final long										deltaCount;
 
 	protected ActionWheeledBiMotionAgent<?>	defMotionAgent;
 	protected KeyboardAgent									defKeyboardAgent;
@@ -742,6 +742,30 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 */
 	public void printProjection() {
 		matrixHelper.printProjection();
+	}
+
+	/**
+	 * Wrapper for {@link remixlab.dandelion.core.MatrixHelper#isProjectionViewInverseCached()}.
+	 * <p>
+	 * Use it only when continuously calling {@link #unprojectedCoordinatesOf(Vec)}.
+	 * 
+	 * @see #optimizeUnprojectedCoordinatesOf(boolean)
+	 * @see #unprojectedCoordinatesOf(Vec)
+	 */
+	public boolean isUnprojectedCoordinatesOfOptimized() {
+		return matrixHelper.isProjectionViewInverseCached();
+	}
+
+	/**
+	 * Wrapper for {@link remixlab.dandelion.core.MatrixHelper#cacheProjectionViewInverse(boolean)}.
+	 * <p>
+	 * Use it only when continuously calling {@link #unprojectedCoordinatesOf(Vec)}.
+	 * 
+	 * @see #isUnprojectedCoordinatesOfOptimized()
+	 * @see #unprojectedCoordinatesOf(Vec)
+	 */
+	public void optimizeUnprojectedCoordinatesOf(boolean optimise) {
+		matrixHelper.cacheProjectionViewInverse(optimise);
 	}
 
 	// DRAWING STUFF
@@ -1796,13 +1820,13 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * If {@link remixlab.dandelion.core.MatrixHelper#unprojectCacheIsOptimized()} (cache version) returns
+	 * If {@link remixlab.dandelion.core.MatrixHelper#isProjectionViewInverseCached()} (cache version) returns
 	 * {@link remixlab.dandelion.core.Eye#unprojectedCoordinatesOf(Mat, Vec)} (Mat is
 	 * {@link remixlab.dandelion.core.MatrixHelper#projectionViewInverse()}). Otherwise (non-cache version) returns
 	 * {@link remixlab.dandelion.core.Eye#unprojectedCoordinatesOf(Vec)}.
 	 */
 	public Vec unprojectedCoordinatesOf(Vec src) {
-		if (this.matrixHelper().unprojectCacheIsOptimized())
+		if (isUnprojectedCoordinatesOfOptimized())
 			return eye().unprojectedCoordinatesOf(this.matrixHelper().projectionViewInverse(), src);
 		else
 			return eye().unprojectedCoordinatesOf(src);
@@ -1981,7 +2005,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Display a warning that the specified method is only available with 2D (or 3D if {@code twod} is false).
+	 * Display a warning that the specified method is only available with 3D (or with 2D if {@code twod} is false).
 	 * 
 	 * @param method
 	 *          The method name (no parentheses)

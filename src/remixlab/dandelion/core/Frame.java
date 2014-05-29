@@ -34,6 +34,9 @@ import remixlab.util.*;
  * {@code // Draw your object here, in the local fr coordinate system.} <br>
  * {@code scene.popModelView();} <br>
  * <p>
+ * The frame is loosely-coupled with the scene object used to instantiate it, i.e., the transformation it represents may
+ * be applied to a different scene. See {@link #applyTransformation()} and {@link #applyTransformation(AbstractScene)}.
+ * <p>
  * Many functions are provided to transform a point from one coordinate system (Frame) to an other: see
  * {@link #coordinatesOf(Vec)}, {@link #inverseCoordinatesOf(Vec)}, {@link #coordinatesOfIn(Vec, Frame)},
  * {@link #coordinatesOfFrom(Vec, Frame)}...
@@ -138,63 +141,81 @@ public class Frame implements Copyable {
 				.isEquals();
 	}
 
-	protected Vec					trans;
-	protected float				scl;
-	protected Rotation		rot;
-	protected Frame				refFrame;
-	protected Constraint	cnstrnt;
-	protected long				lastUpdate;
-	protected List<Frame>	childrenList;
+	protected Vec						trans;
+	protected float					scl;
+	protected Rotation			rot;
+	protected Frame					refFrame;
+	protected Constraint		cnstrnt;
+	protected long					lastUpdate;
+	protected List<Frame>		childrenList;
+
+	protected AbstractScene	scene;
 
 	/**
-	 * Same as {@code this(new Vec(0, 0, 0), new Quat(), 1)}. Creates a 3D Frame.
+	 * Same as {@code this(scn, null)}.
 	 * 
-	 * @see #Frame(Vec, Rotation, float)
-	 */
-	public Frame() {
-		this(new Vec(0, 0, 0), new Quat(), 1);
-	}
-
-	/**
-	 * Same as {@code this(new Vec(0, 0, 0), scn.is3D() ? new Quat() : new Rot(), 1)}.
-	 * 
-	 * @see #Frame(Vec, Rotation, float)
+	 * @see #Frame(AbstractScene, Frame)
+	 * @see #Frame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
 	public Frame(AbstractScene scn) {
-		this(new Vec(0, 0, 0), scn.is3D() ? new Quat() : new Rot(), 1);
+		this(scn, null);
 	}
 
 	/**
-	 * Same as {@code this(new Vec(0, 0, 0), r, 1)}.
+	 * Same as {@code this(scn, p, r, 1)}.
 	 * 
-	 * @see #Frame(Vec, Rotation, float)
+	 * @see #Frame(AbstractScene, Vec, Rotation, float)
+	 * @see #Frame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(Rotation r) {
-		this(new Vec(0, 0, 0), r, 1);
+	public Frame(AbstractScene scn, Vec p, Rotation r) {
+		this(scn, p, r, 1);
 	}
 
 	/**
-	 * Same as {@code this(p, r, 1)}.
+	 * Same as {@code this(scn, null, p, r, s)}.
 	 * 
-	 * @see #Frame(Vec, Rotation, float)
+	 * @see #Frame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(Vec p, Rotation r) {
-		this(p, r, 1);
+	public Frame(AbstractScene scn, Vec p, Rotation r, float s) {
+		this(scn, null, p, r, s);
 	}
 
 	/**
-	 * Creates a Frame with {@code p}, {@code r} and {@code 1} as {@link #translation()}, {@link #rotation()} and
-	 * {@link #scaling()}, respectively. If {@code r} is instance of {@link remixlab.dandelion.geom.Quat} creates a 3D
-	 * Frame; if it's instance of {@link remixlab.dandelion.geom.Rot}, creates a 2D Frame.
+	 * Same as {@code this(scn, referenceFrame, p, r, 1)}.
+	 * 
+	 * @see #Frame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(Vec p, Rotation r, float s) {
+	public Frame(AbstractScene scn, Frame referenceFrame) {
+		this(scn, referenceFrame, new Vec(0, 0, 0), scn.is3D() ? new Quat() : new Rot(), 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, referenceFrame, p, r, 1)}.
+	 * 
+	 * @see #Frame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public Frame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r) {
+		this(scn, referenceFrame, p, r, 1);
+	}
+
+	/**
+	 * Creates a Frame with {@code referenceFrame} as {@link #referenceFrame()}, and {@code p}, {@code r} and {@code s} as
+	 * the frame {@link #translation()}, {@link #rotation()} and {@link #scaling()}, respectively.
+	 */
+	public Frame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
+		scene = scn;
 		childrenList = new ArrayList<Frame>();
 		setTranslation(p);
-		setRotation(r);
+		if ((scene.is3D() && r instanceof Quat) || (scene.is2D() && r instanceof Rot))
+			setRotation(r);
+		else
+			setRotation(scene.is3D() ? new Quat() : new Rot());
 		setScaling(s);
+		setReferenceFrame(referenceFrame);
 	}
 
 	protected Frame(Frame other) {
+		scene = other.scene;
 		childrenList = new ArrayList<Frame>();
 		Iterator<Frame> iterator = other.childrenList.iterator();
 		while (iterator.hasNext())
@@ -248,10 +269,10 @@ public class Frame implements Copyable {
 	 * @see #fromFrame(Frame, boolean)
 	 */
 	public static void sync(Frame f1, Frame f2, boolean global) {
-		if (f1.lastUpdate() == f2.lastUpdate())
+		if (f1.lastGlobalUpdate() == f2.lastGlobalUpdate())
 			return;
-		Frame source = (f1.lastUpdate() > f2.lastUpdate()) ? f1 : f2;
-		Frame target = (f1.lastUpdate() > f2.lastUpdate()) ? f2 : f1;
+		Frame source = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f1 : f2;
+		Frame target = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f2 : f1;
 		target.fromFrame(source, global);
 	}
 
@@ -261,9 +282,16 @@ public class Frame implements Copyable {
 	 * Internal use. Automatically call by all methods which change the Frame state.
 	 */
 	protected void modified() {
-		lastUpdate = AbstractScene.frameCount;
+		lastUpdate = scene.frameCount();
 		for (Frame child : childrenList)
 			child.modified();
+	}
+
+	/**
+	 * Internal use. Needed by {@link #sync(Frame, Frame, boolean)}.
+	 */
+	protected long lastGlobalUpdate() {
+		return lastUpdate + scene.deltaCount;
 	}
 
 	/**
@@ -331,10 +359,8 @@ public class Frame implements Copyable {
 			System.out.println("Frame.setReferenceFrame would create a loop in Frame hierarchy. Nothing done.");
 			return;
 		}
-		if (referenceFrame() == rFrame) {
-			System.out.println("The given frame has already been set as this frame referenceFrame. Nothing done.");
+		if (referenceFrame() == rFrame)
 			return;
-		}
 		if (referenceFrame() != null) // old
 			referenceFrame().childrenList.remove(this);
 		refFrame = rFrame;
@@ -1118,8 +1144,34 @@ public class Frame implements Copyable {
 	// CONVERSION
 
 	/**
-	 * Convenience function that simply calls {@code scn.applyTransformation(this)}.
+	 * Convenience function that simply calls {@code applyTransformation(scene)}. It applies the transformation defined by
+	 * the frame to the scene used to instantiated.
 	 * 
+	 * @see #applyTransformation(AbstractScene)
+	 * @see #matrix()
+	 * @see remixlab.dandelion.core.Frame#applyTransformation(AbstractScene)
+	 */
+	public void applyTransformation() {
+		applyTransformation(scene);
+	}
+
+	/**
+	 * Convenience function that simply calls {@code applyWorldTransformation(scene)}. It applies the world transformation
+	 * defined by the frame to the scene used to instantiated.
+	 * 
+	 * @see #applyWorldTransformation(AbstractScene)
+	 * @see #worldMatrix()
+	 * @see remixlab.dandelion.core.Frame#applyWorldTransformation(AbstractScene)
+	 */
+	public void applyWorldTransformation() {
+		applyWorldTransformation(scene);
+	}
+
+	/**
+	 * Convenience function that simply calls {@code scn.applyTransformation(this)}. You may apply the transformation
+	 * represented by this frame to any scene you want using this method.
+	 * 
+	 * @see #applyTransformation()
 	 * @see #matrix()
 	 * @see remixlab.dandelion.core.AbstractScene#applyTransformation(Frame)
 	 */
@@ -1128,8 +1180,10 @@ public class Frame implements Copyable {
 	}
 
 	/**
-	 * Convenience function that simply calls {@code scn.applyWorldTransformation(this)}.
+	 * Convenience function that simply calls {@code scn.applyWorldTransformation(this)}. You may apply the world
+	 * transformation represented by this frame to any scene you want using this method.
 	 * 
+	 * @see #applyWorldTransformation()
 	 * @see #worldMatrix()
 	 * @see remixlab.dandelion.core.AbstractScene#applyWorldTransformation(Frame)
 	 */
@@ -1230,7 +1284,7 @@ public class Frame implements Copyable {
 	 */
 	public final Mat worldMatrix() {
 		if (referenceFrame() != null)
-			return new Frame(position(), orientation(), magnitude()).matrix();
+			return new Frame(scene, position(), orientation(), magnitude()).matrix();
 		else
 			return matrix();
 	}
@@ -1353,7 +1407,8 @@ public class Frame implements Copyable {
 	 * The resulting Frame has the same {@link #referenceFrame()} as the Frame and a {@code null} {@link #constraint()}.
 	 */
 	public final Frame inverse() {
-		Frame fr = new Frame(Vec.multiply(rotation().inverseRotate(translation()), -1), rotation().inverse(), 1 / scaling());
+		Frame fr = new Frame(scene, Vec.multiply(rotation().inverseRotate(translation()), -1), rotation().inverse(),
+				1 / scaling());
 		fr.setReferenceFrame(referenceFrame());
 		return fr;
 	}
@@ -1371,7 +1426,7 @@ public class Frame implements Copyable {
 	 * Use {@link #inverse()} for a local (i.e., with respect to {@link #referenceFrame()}) transformation inverse.
 	 */
 	public final Frame worldInverse() {
-		return (new Frame(Vec.multiply(orientation().inverseRotate(position()), -1), orientation().inverse(),
+		return (new Frame(scene, Vec.multiply(orientation().inverseRotate(position()), -1), orientation().inverse(),
 				1 / magnitude()));
 	}
 

@@ -9,7 +9,9 @@
  *
  * We've also implemented a customized keyboard agent having similar keyboard
  * shortcuts to those found at the desktop but with a single eye path. The
- * Android keyboard is displayed by pressing the lower left corner of the screen.
+ * Android keyboard is displayed by pressing your device settings key. Note
+ * that we've defined a single eye path. Use the '1' key to add keyframes to it,
+ * '2' to delete the path and '3' to play it.
  */
 
 import java.util.Vector;
@@ -32,13 +34,13 @@ TouchAgent agent;
 Box [] boxes;
 
 public void setup() {
-  
+
   scene = new Scene(this);  
-  
+
   DroidKeyboardAgent keyboardAgent = new DroidKeyboardAgent(scene, "KeyboardAgent");  
   scene.disableKeyboardAgent();
   registerMethod("keyEvent", keyboardAgent);
-    
+
   agent = new TouchAgent(scene, "OtherTouchAgent");
 
   scene.setNonSeqTimers();
@@ -66,14 +68,12 @@ public void draw() {
 
 public boolean dispatchTouchEvent(MotionEvent event) {
 
-  int action = event.getActionMasked();          // get code for action       
+
+  int action = event.getActionMasked();          // get code for action
+
   switch (action) {        // let us know which action code shows up
   case MotionEvent.ACTION_DOWN:
     agent.addTouCursor(event);
-    if (displayHeight - event.getY() < 10) {
-      InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-      imm.toggleSoftInput(0, 0);
-    }
     break;
   case MotionEvent.ACTION_UP:
     agent.removeTouCursor(event);
@@ -88,5 +88,14 @@ public boolean dispatchTouchEvent(MotionEvent event) {
   }
 
   return super.dispatchTouchEvent(event);        // pass data along when done!
+}
+
+void keyPressed() {
+  if (key == CODED) {
+    if (keyCode == MENU) {
+      InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.toggleSoftInput(0, 0);
+    }
+  }
 }
 

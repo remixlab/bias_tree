@@ -134,10 +134,8 @@ class Plan {
   void init() { 
     pabs=new PVector[7];   
     pointSensible= new InteractiveFrame[7];
-    for (int i=0;i<7;i++) {
-      pointSensible[i]=new InteractiveFrame(scene);
-      pointSensible[i].setReferenceFrame(repere);
-    }
+    for (int i=0;i<7;i++)
+      pointSensible[i]=new InteractiveFrame(scene, repere);
     pointSensible[0].setConstraint(libreT);
     pointSensible[1].setConstraint(libreT);
     pointSensible[2].setConstraint(axial);

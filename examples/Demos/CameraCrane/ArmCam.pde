@@ -5,13 +5,8 @@ public class ArmCam {
   ArmCam(CameraCrane pnt, int x, int y, float ang) {
     parent = pnt;
     frameArray = new InteractiveFrame[6];
-    for (int i = 0; i < 6; ++i) {
-      frameArray[i] = new InteractiveFrame(parent.mainScene);      
-      // Creates a hierarchy of frames
-      if (i > 0) {
-        frame(i).setReferenceFrame(frame(i - 1));
-      }
-    }
+    for (int i = 0; i < 6; ++i)
+      frameArray[i] = new InteractiveFrame(parent.mainScene, i>0 ? frameArray[i-1] : null);
 
     // Initialize frames
     frame(0).setTranslation(x, y, 0);

@@ -9,10 +9,7 @@ class Arcad {
     vec2Phi=new PVector();
     repere=new InteractiveFrame(scene);
     dragueur=new InteractiveFrame(scene);  
-    rotateur=new InteractiveFrame(scene); 
-
-    rotateur.setReferenceFrame(repere);
-
+    rotateur=new InteractiveFrame(scene, repere);
     dragueur.setConstraint(drag);
     rotateur.setConstraint(planaire);
 

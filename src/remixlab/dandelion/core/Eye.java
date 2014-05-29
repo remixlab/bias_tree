@@ -943,6 +943,9 @@ public abstract class Eye implements Copyable {
 	 * window. The z coordinate ranges between 0.0 (near plane) and 1.0 (excluded, far plane). See the {@code gluProject}
 	 * man page for details.
 	 * <p>
+	 * Use {@link remixlab.dandelion.core.AbstractScene#projectedCoordinatesOf(Vec)} which is simpler and has been
+	 * optimized by caching the Projection x View matrix.
+	 * <p>
 	 * <b>Attention:</b> This method only uses the intrinsic Eye parameters (see {@link #getView()},
 	 * {@link #getProjection()} and {@link #getViewport()}) and is completely independent of the processing matrices. You
 	 * can hence define a virtual Eye and use this method to compute projections out of a classical rendering context.

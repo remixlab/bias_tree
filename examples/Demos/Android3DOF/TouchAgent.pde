@@ -49,6 +49,7 @@ public class TouchAgent extends JoystickAgent {
     histDistance = 0f;
   }
 
+  //tcur.getX(0),tcur.getY(0)
   public void transalateTouCursor(MotionEvent tcur) {
     float distance;
     if (histDistance == 0) {
@@ -56,6 +57,7 @@ public class TouchAgent extends JoystickAgent {
     } else {
       distance = histDistance - sqrt((tcur.getX(0) - tcur.getX(1))*(tcur.getX(0) - tcur.getX(1)) + (tcur.getY(0) - tcur.getY(1))*(tcur.getY(0) - tcur.getY(1)));
     }
+
     event = new DOF3Event(prevEvent, 
     tcur.getX(0), 
     tcur.getY(0), 

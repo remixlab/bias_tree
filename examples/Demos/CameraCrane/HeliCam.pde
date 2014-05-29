@@ -6,12 +6,8 @@ public class HeliCam {
   HeliCam(CameraCrane pnt) {
     parent = pnt;
     frameArray = new InteractiveFrame[5];
-    for (int i = 0; i < 4; ++i) {
-      frameArray[i] = new InteractiveFrame(parent.mainScene);
-      // Creates a hierarchy of frames from frame(0) to frame(3)
-      if (i > 0)
-        frame(i).setReferenceFrame(frame(i - 1));
-    }
+    for (int i = 0; i < 4; ++i)
+      frameArray[i] = new InteractiveFrame(parent.mainScene, i>0 ? frameArray[i-1] : null);
 
     frameArray[4] = new InteractiveFrame(parent.mainScene);
     // set the propeller's reference frame as the body of the heli

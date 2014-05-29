@@ -31,7 +31,6 @@ void setup() {
   scene.camera().setPosition(new Vec(0, 0, 600));
   vis=new InteractiveFrame(scene);
   manette=new InteractiveFrame(scene);
-  // manette.setReferenceFrame(vis);
   vis.setTranslation(0, 0, 170);
   manette.setTranslation(100, 0, 170);
 

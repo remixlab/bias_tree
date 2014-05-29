@@ -546,7 +546,7 @@ public class Scene extends AbstractScene implements PConstants {
 		public void bind() {
 			scene.eye().computeProjection();
 			scene.eye().computeView();
-			cacheProjectionViewInverse();
+			cacheProjectionView();
 
 			Vec pos = scene.eye().position();
 			Rotation o = scene.eye().frame().orientation();
@@ -560,12 +560,12 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 
 		@Override
-		protected void cacheProjectionViewInverse() {
+		protected void cacheProjectionView() {
 			Mat.multiply(scene.eye().getProjection(), scene.eye().getView(), projectionViewMat);
-			if (unprojectCacheIsOptimized()) {
+			if (isProjectionViewInverseCached()) {
 				if (projectionViewInverseMat == null)
 					projectionViewInverseMat = new Mat();
-				projectionViewMatHasInverse = projectionViewMat.invert(projectionViewInverseMat);
+				projectionViewMatHasInv = projectionViewMat.invert(projectionViewInverseMat);
 			}
 		}
 

@@ -27,10 +27,8 @@ void setup() {
   nb=220;
   reperes=new InteractiveFrame[nb];
   reperes[0]=new InteractiveFrame(scene);
-  for (int i=1;i<nb;i++) {
-    reperes[i]=new InteractiveFrame(scene);
-    reperes[i].setReferenceFrame(reperes[i-1]);
-  }
+  for (int i=1;i<nb;i++)
+    reperes[i]=new InteractiveFrame(scene, reperes[i-1]);
   qua=new Quat(new Vec(1, 0, 0), 0.90);
   qcam=Quat.multiply(new Quat(new Vec(0, 0, 1), PI/2), new Quat(new Vec(1, 0, 0), PI/2));
   qcam.normalize();
