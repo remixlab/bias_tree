@@ -291,8 +291,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 		if (a == null)
 			return;
 		Camera camera = (Camera) eye;
-		Vec trans;
-		Camera.WorldPoint wP;
+		Vec trans, pup;
 		Quat q = new Quat();
 		float delta;
 		float wheelSensitivityCoef = 8E-4f;
@@ -461,9 +460,10 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 			camera.frame().alignWithFrame(null, true);
 			break;
 		case ZOOM_ON_PIXEL:
-			wP = camera.interpolateToZoomOnPixel(camera.pointUnderPixel(new Point(cEvent.x(), cEvent.y())));
-			if (wP.found) {
-				pupVec = wP.point;
+			pup = camera.pointUnderPixel(new Point(cEvent.x(), cEvent.y()));
+			if (pup != null) {
+				camera.interpolateToZoomOnTarget(pup);
+				pupVec = pup;
 				pupFlag = true;
 				timerFx.runOnce(1000);
 			}

@@ -1808,9 +1808,10 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Returns the coordinates of the 3D point located at {@code pixel} (x,y) on screen.
+	 * Returns the coordinates of the 3D point located at {@code pixel} (x,y) on screen. May be null if no pixel is under
+	 * pixel.
 	 */
-	protected abstract Camera.WorldPoint pointUnderPixel(Point pixel);
+	protected abstract Vec pointUnderPixel(Point pixel);
 
 	/**
 	 * Same as {@link remixlab.dandelion.core.Eye#projectedCoordinatesOf(Mat, Vec)}.

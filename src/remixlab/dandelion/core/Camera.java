@@ -64,20 +64,6 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	/**
-	 * Internal class provided to catch the output of {@link remixlab.dandelion.core.Camera#pointUnderPixel(Point)} (which
-	 * should be implemented by an openGL based derived class Camera).
-	 */
-	public class WorldPoint {
-		public WorldPoint(Vec p, boolean f) {
-			point = p;
-			found = f;
-		}
-
-		public Vec			point;
-		public boolean	found;
-	}
-
-	/**
 	 * Enumerates the two possible types of Camera.
 	 * <p>
 	 * This type mainly defines different camera projection matrix. Many other methods take this Type into account.
@@ -795,29 +781,34 @@ public class Camera extends Eye implements Copyable {
 
 	@Override
 	public boolean setAnchorFromPixel(Point pixel) {
-		WorldPoint wP = pointUnderPixel(pixel);
-		if (wP.found)
-			setAnchor(wP.point);
-		return wP.found;
+		Vec pup = pointUnderPixel(pixel);
+		if (pup != null) {
+			setAnchor(pup);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public boolean setSceneCenterFromPixel(Point pixel) {
-		WorldPoint wP = pointUnderPixel(pixel);
-		if (wP.found)
-			setSceneCenter(wP.point);
-		return wP.found;
+		Vec pup = pointUnderPixel(pixel);
+		if (pup != null) {
+			setSceneCenter(pup);
+			return true;
+		}
+		return false;
 	}
 
 	/**
-	 * Returns the coordinates of the 3D point located at {@code pixel} (x,y) on screen.
+	 * Returns the coordinates of the 3D point located at {@code pixel} (x,y) on screen. May be null if no point is found
+	 * under pixel.
 	 * <p>
 	 * Override this method in your jogl-based camera class.
 	 * <p>
 	 * Current implementation always returns {@code WorlPoint.found = false} (dummy value), meaning that no point was
 	 * found under pixel.
 	 */
-	public WorldPoint pointUnderPixel(Point pixel) {
+	public Vec pointUnderPixel(Point pixel) {
 		return scene.pointUnderPixel(pixel);
 	}
 
@@ -1044,22 +1035,22 @@ public class Camera extends Eye implements Copyable {
 
 	@Override
 	public void interpolateToZoomOnPixel(Point pixel) {
-		WorldPoint target = pointUnderPixel(pixel);
+		Vec target = pointUnderPixel(pixel);
 
-		if (!target.found) {
+		if (target == null) {
 			System.out.println("No object under pixel was found");
 			// return target;
 			return;
 		}
 
-		interpolateToZoomOnPixel(target);
+		interpolateToZoomOnTarget(target);
 	}
 
-	protected WorldPoint interpolateToZoomOnPixel(WorldPoint target) {
-		float coef = 0.1f;
+	protected void interpolateToZoomOnTarget(Vec target) {
+		if (target == null)
+			return;
 
-		if (!target.found)
-			return target;
+		float coef = 0.1f;
 
 		// if (interpolationKfi.interpolationIsStarted())
 		// interpolationKfi.stopInterpolation();
@@ -1070,23 +1061,21 @@ public class Camera extends Eye implements Copyable {
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 
 		interpolationKfi.addKeyFrame(
-				new Frame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target.point, 0.7f)), frame()
+				new Frame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame()
 						.orientation()), 0.4f);
 
 		// Small hack: attach a temporary frame to take advantage of lookAt without
 		// modifying frame
 		tempFrame = new InteractiveEyeFrame(this);
 		InteractiveEyeFrame originalFrame = frame();
-		tempFrame.setPosition(Vec.add(Vec.multiply(frame().position(), coef), Vec.multiply(target.point, (1.0f - coef))));
+		tempFrame.setPosition(Vec.add(Vec.multiply(frame().position(), coef), Vec.multiply(target, (1.0f - coef))));
 		tempFrame.setOrientation(frame().orientation().get());
 		setFrame(tempFrame);
-		lookAt(target.point);
+		lookAt(target);
 		setFrame(originalFrame);
 
 		interpolationKfi.addKeyFrame(tempFrame, 1.0f);
 		interpolationKfi.startInterpolation();
-
-		return target;
 	}
 
 	// 13. STEREO PARAMETERS

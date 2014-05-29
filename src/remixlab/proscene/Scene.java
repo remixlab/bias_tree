@@ -1840,7 +1840,7 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	@Override
-	protected Camera.WorldPoint pointUnderPixel(Point pixel) {
+	protected Vec pointUnderPixel(Point pixel) {
 		PGraphicsOpenGL pggl;
 		if (pg() instanceof PGraphicsOpenGL)
 			pggl = (PGraphicsOpenGL) pg();
@@ -1850,12 +1850,10 @@ public class Scene extends AbstractScene implements PConstants {
 		PGL pgl = pggl.beginPGL();
 		pgl.readPixels(pixel.x(), (camera().screenHeight() - pixel.y()), 1, 1, PGL.DEPTH_COMPONENT, PGL.FLOAT,
 				FloatBuffer.wrap(depth));
-		//TODO testing
-		System.out.println("depth value is: " + depth[0]);
 		pggl.endPGL();
 		Vec point = new Vec(pixel.x(), pixel.y(), depth[0]);
-		point = camera().unprojectedCoordinatesOf(point);
-		return camera().new WorldPoint(point, (depth[0] < 1.0f));
+		point = unprojectedCoordinatesOf(point);
+		return (depth[0] < 1.0f) ? point : null;
 	}
 
 	// implementation of abstract drawing methods
