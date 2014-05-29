@@ -1850,6 +1850,8 @@ public class Scene extends AbstractScene implements PConstants {
 		PGL pgl = pggl.beginPGL();
 		pgl.readPixels(pixel.x(), (camera().screenHeight() - pixel.y()), 1, 1, PGL.DEPTH_COMPONENT, PGL.FLOAT,
 				FloatBuffer.wrap(depth));
+		//TODO testing
+		System.out.println("depth value is: " + depth[0]);
 		pggl.endPGL();
 		Vec point = new Vec(pixel.x(), pixel.y(), depth[0]);
 		point = camera().unprojectedCoordinatesOf(point);

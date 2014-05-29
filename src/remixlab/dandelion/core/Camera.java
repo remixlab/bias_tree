@@ -36,8 +36,6 @@ public class Camera extends Eye implements Copyable {
 				append(zClippingCoef).
 				append(zNearCoef).
 				append(rapK).
-				append(viewDirCached).
-				append(lastViewDirUpdated).
 				toHashCode();
 	}
 
@@ -62,82 +60,7 @@ public class Camera extends Eye implements Copyable {
 				.append(zClippingCoef, other.zClippingCoef)
 				.append(zNearCoef, other.zNearCoef)
 				.append(rapK, other.rapK)
-				.append(viewDirCached, other.viewDirCached)
-				.append(lastViewDirUpdated, other.lastViewDirUpdated)
 				.isEquals();
-	}
-
-	/**
-	 * Internal class that represents/holds a cone of normals. Typically needed to perform bfc.
-	 */
-	public class Cone {
-		Vec		axis;
-		float	angle;
-
-		public Cone() {
-			reset();
-		}
-
-		public Cone(Vec vec, float a) {
-			set(vec, a);
-		}
-
-		public Cone(ArrayList<Vec> normals) {
-			set(normals);
-		}
-
-		public Cone(Vec[] normals) {
-			set(normals);
-		}
-
-		public Vec axis() {
-			return axis;
-		}
-
-		public float angle() {
-			return angle;
-		}
-
-		public void reset() {
-			axis = new Vec(0, 0, 1);
-			angle = 0;
-		}
-
-		public void set(Vec vec, float a) {
-			axis = vec;
-			angle = a;
-		}
-
-		public void set(ArrayList<Vec> normals) {
-			set(normals.toArray(new Vec[normals.size()]));
-		}
-
-		public void set(Vec[] normals) {
-			axis = new Vec(0, 0, 0);
-			if (normals.length == 0) {
-				reset();
-				return;
-			}
-
-			Vec[] n = new Vec[normals.length];
-			for (int i = 0; i < normals.length; i++) {
-				n[i] = new Vec();
-				n[i].set(normals[i]);
-				n[i].normalize();
-				axis = Vec.add(axis, n[i]);
-			}
-
-			if (Util.nonZero(axis.magnitude())) {
-				axis.normalize();
-			}
-			else {
-				axis.set(0, 0, 1);
-			}
-
-			angle = 0;
-			for (int i = 0; i < normals.length; i++)
-				angle = Math.max(angle, (float) Math.acos(Vec.dot(n[i], axis)));
-		}
 	}
 
 	/**
@@ -164,22 +87,18 @@ public class Camera extends Eye implements Copyable {
 	};
 
 	// C a m e r a p a r a m e t e r s
-	private float		zNearCoef;
-	private float		zClippingCoef;
-	private Type		tp;								// PERSPECTIVE or ORTHOGRAPHIC
+	private float	zNearCoef;
+	private float	zClippingCoef;
+	private Type	tp;								// PERSPECTIVE or ORTHOGRAPHIC
 
 	// S t e r e o p a r a m e t e r s
-	private float		IODist;						// inter-ocular distance, in meters
-	private float		focusDist;					// in scene units
-	private float		physicalDist2Scrn;	// in meters
-	private float		physicalScrnWidth;	// in meters
+	private float	IODist;						// inter-ocular distance, in meters
+	private float	focusDist;					// in scene units
+	private float	physicalDist2Scrn;	// in meters
+	private float	physicalScrnWidth;	// in meters
 
 	// rescale ortho when rap changes
-	private float		rapK	= 1;
-
-	// BFC optimization
-	protected Vec		viewDirCached;
-	protected long	lastViewDirUpdated;
+	private float	rapK	= 1;
 
 	/**
 	 * Main constructor.
@@ -197,9 +116,6 @@ public class Camera extends Eye implements Copyable {
 
 		if (scene.is2D())
 			throw new RuntimeException("Use Camera only for a 3D Scene");
-
-		viewDirCached = new Vec();
-		lastViewDirUpdated = -1;
 
 		// dist = new float[6];
 		// normal = new Vec[6];
@@ -239,8 +155,6 @@ public class Camera extends Eye implements Copyable {
 		this.setPhysicalDistanceToScreen(oCam.physicalDistanceToScreen());
 		this.setPhysicalScreenWidth(oCam.physicalScreenWidth());
 		this.rapK = oCam.rapK;
-		this.viewDirCached = oCam.viewDirCached.get();
-		this.lastViewDirUpdated = oCam.lastViewDirUpdated;
 	}
 
 	@Override
@@ -725,71 +639,7 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	/**
-	 * Convenience function that simply calls {@code coneIsBackFacing(new Cone(normals))}.
-	 * 
-	 * @see #coneIsBackFacing(Cone)
-	 * @see #coneIsBackFacing(Vec[])
-	 */
-	public boolean coneIsBackFacing(ArrayList<Vec> normals) {
-		return coneIsBackFacing(new Cone(normals));
-	}
-
-	/**
-	 * Convenience function that simply calls {@code coneIsBackFacing(new Cone(normals))}.
-	 * 
-	 * @see #coneIsBackFacing(Cone)
-	 * @see #coneIsBackFacing(ArrayList)
-	 */
-	public boolean coneIsBackFacing(Vec[] normals) {
-		return coneIsBackFacing(new Cone(normals));
-	}
-
-	/**
-	 * Convenience function that simply returns {@code coneIsBackFacing(cone.axis(), cone.angle())}.
-	 * 
-	 * @see #coneIsBackFacing(Vec, float)
-	 * @see #faceIsBackFacing(Vec, Vec, Vec)
-	 */
-	public boolean coneIsBackFacing(Cone cone) {
-		return coneIsBackFacing(cone.axis(), cone.angle());
-	}
-
-	/**
-	 * Returns {@code true} if the given cone is back facing the camera. Otherwise returns {@code false}.
-	 * 
-	 * @param axis
-	 *          normalized cone axis
-	 * @param angle
-	 *          cone angle
-	 * 
-	 * @see #coneIsBackFacing(Cone)
-	 * @see #faceIsBackFacing(Vec, Vec, Vec)
-	 */
-	public boolean coneIsBackFacing(Vec axis, float angle) {
-		cacheViewDirection();
-		if (angle < (float) Math.PI / 2) {
-			float phi = (float) Math.acos(Vec.dot(axis, viewDirCached));
-			if (phi >= (float) Math.PI / 2)
-				return false;
-			if ((phi + angle) >= (float) Math.PI / 2)
-				return false;
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Internal use. Caches {@link #viewDirection()} for use in {@link #coneIsBackFacing(Vec, float)}.
-	 */
-	protected void cacheViewDirection() {
-		if (lastUpdate() > lastViewDirUpdated) {
-			this.viewDirCached = this.viewDirection();
-			this.lastViewDirUpdated = scene.frameCount();
-		}
-	}
-
-	/**
-	 * Returns {@code true} if the given face is back facing the camera. Otherwise returns {@code false}.
+	 * Returns {@code true} if the given face is back-facing the camera. Otherwise returns {@code false}.
 	 * <p>
 	 * Vertices must given in clockwise order if {@link remixlab.dandelion.core.AbstractScene#isLeftHanded()} or in
 	 * counter-clockwise order if {@link remixlab.dandelion.core.AbstractScene#isRightHanded()}.
@@ -800,21 +650,111 @@ public class Camera extends Eye implements Copyable {
 	 *          second face vertex
 	 * @param c
 	 *          third face vertex
+	 * 
+	 * @see #isBackFacing(Vec, Vec)
+	 * @see #isBackFacing(Vec, Vec, float)
 	 */
-	public boolean faceIsBackFacing(Vec a, Vec b, Vec c) {
-		Vec v1 = Vec.subtract(projectedCoordinatesOf(a), projectedCoordinatesOf(b));
-		Vec v2 = Vec.subtract(projectedCoordinatesOf(b), projectedCoordinatesOf(c));
-		return scene.isLeftHanded() ? v1.cross(v2).vec[2] <= 0 : v2.cross(v1).vec[2] <= 0;
+	public boolean isBackFacing(Vec a, Vec b, Vec c) {
+		return isBackFacing(a, scene.isLeftHanded() ? Vec.subtract(b, a).cross(Vec.subtract(c, a)) : Vec.subtract(c, a)
+				.cross(Vec.subtract(b, a)));
 	}
 
 	/**
-	 * Returns {@code true} if the given face is back facing the camera. Otherwise returns {@code false}.
+	 * Returns {@code true} if the given face is back-facing the camera. Otherwise returns {@code false}.
 	 * 
+	 * @param vertex
+	 *          belonging to the face
 	 * @param normal
-	 *          Normal to the plane containing the face.
+	 *          face normal
+	 * 
+	 * @see #isBackFacing(Vec, Vec, Vec)
+	 * @see #isBackFacing(Vec, Vec, float)
 	 */
-	public boolean faceIsBackFacing(Vec normal) {
-		return coneIsBackFacing(normal, 0);
+	public boolean isBackFacing(Vec vertex, Vec normal) {
+		return isBackFacing(vertex, normal, 0);
+	}
+
+	/**
+	 * Returns {@code true} if the given cone is back-facing the camera and {@code false} otherwise.
+	 * 
+	 * @param vertex
+	 *          Cone vertex
+	 * @param normals
+	 *          ArrayList of normals defining the cone.
+	 * 
+	 * @see #isBackFacing(Vec, Vec[])
+	 * @see #isBackFacing(Vec, Vec, float)
+	 */
+	public boolean isBackFacing(Vec vertex, ArrayList<Vec> normals) {
+		return isBackFacing(vertex, normals.toArray(new Vec[normals.size()]));
+	}
+
+	/**
+	 * Returns {@code true} if the given cone is back-facing the camera and {@code false} otherwise.
+	 * 
+	 * @param vertex
+	 *          Cone vertex
+	 * @param normals
+	 *          Array of normals defining the cone.
+	 * 
+	 * @see #isBackFacing(Vec, ArrayList)
+	 * @see #isBackFacing(Vec, Vec, float)
+	 */
+	public boolean isBackFacing(Vec vertex, Vec[] normals) {
+		float angle;
+		Vec axis = new Vec(0, 0, 0);
+
+		if (normals.length == 0)
+			throw new RuntimeException("Normal array provided is empty");
+
+		Vec[] n = new Vec[normals.length];
+		for (int i = 0; i < normals.length; i++) {
+			n[i] = new Vec();
+			n[i].set(normals[i]);
+			n[i].normalize();
+			axis = Vec.add(axis, n[i]);
+		}
+
+		if (Util.nonZero(axis.magnitude()))
+			axis.normalize();
+		else
+			axis.set(0, 0, 1);
+
+		angle = 0;
+		for (int i = 0; i < normals.length; i++)
+			angle = Math.max(angle, (float) Math.acos(Vec.dot(n[i], axis)));
+
+		return isBackFacing(vertex, axis, angle);
+	}
+
+	/**
+	 * Returns {@code true} if the given cone is back-facing the camera and {@code false} otherwise.
+	 * 
+	 * @param vertex
+	 *          Cone vertex
+	 * @param axis
+	 *          Cone axis
+	 * @param angle
+	 *          Cone angle
+	 */
+	public boolean isBackFacing(Vec vertex, Vec axis, float angle) {
+		// more or less inspired by this: http://en.wikipedia.org/wiki/Back-face_culling (perspective case :P)
+		Vec camAxis;
+		if (type() == Type.ORTHOGRAPHIC)
+			camAxis = viewDirection();
+		else {
+			camAxis = Vec.subtract(vertex, position());
+			if (angle != 0)
+				camAxis.normalize();
+		}
+		if (angle == 0)
+			return Vec.dot(camAxis, axis) >= 0;
+		float absAngle = Math.abs(angle);
+		if (absAngle >= Math.PI / 2)
+			return true;
+		Vec faceNormal = axis.get();
+		faceNormal.normalize();
+		return Math.acos(Vec.dot(camAxis, faceNormal)) + absAngle < Math.PI / 2;
 	}
 
 	// 4. SCENE RADIUS AND CENTER

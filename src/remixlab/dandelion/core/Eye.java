@@ -995,7 +995,7 @@ public abstract class Eye implements Copyable {
 	 * Returns the world unprojected coordinates of a point {@code src} defined in the screen coordinate system.
 	 * <p>
 	 * The {@code src.x} and {@code src.y} input values are expressed in pixels, (0,0) being the upper left corner of the
-	 * window. {@code src.z} is a depth value ranging in [0..1] (near and far plane respectively). See the
+	 * window. The {@code src.z} is a depth value ranging in [0..1] (near and far plane respectively). See the
 	 * {@code gluUnProject} man page for details.
 	 * <p>
 	 * The result is expressed in the {@code frame} coordinate system. When {@code frame} is {@code null}, the result is
