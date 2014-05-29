@@ -995,12 +995,15 @@ public abstract class Eye implements Copyable {
 	 * Returns the world unprojected coordinates of a point {@code src} defined in the screen coordinate system.
 	 * <p>
 	 * The {@code src.x} and {@code src.y} input values are expressed in pixels, (0,0) being the upper left corner of the
-	 * window. The {@code src.z} is a depth value ranging in [0..1] (near and far plane respectively). See the
-	 * {@code gluUnProject} man page for details.
+	 * window. The {@code src.z} is a depth value ranging in [0..1] (near and far plane respectively). In 3D Note that
+	 * {@code src.z} is not a linear interpolation between {@link remixlab.dandelion.core.Camera#zNear()} and
+	 * {@link remixlab.dandelion.core.Camera#zFar()}; {@code src.z = zFar() / (zFar() - zNear()) * (1.0f - zNear() / z);}
+	 * where {@code z} is the distance from the point you project to the camera, along the {@link #viewDirection()} . See
+	 * the {@code gluUnProject} man page for details.
 	 * <p>
 	 * The result is expressed in the {@code frame} coordinate system. When {@code frame} is {@code null}, the result is
-	 * expressed in the world coordinates system. The possible {@code frame}
-	 * {@link remixlab.dandelion.core.Frame#referenceFrame()} are taken into account.
+	 * expressed in the world coordinates system. The possible {@code frame} hierarchy (i.e., when
+	 * {@link remixlab.dandelion.core.Frame#referenceFrame()} is non-null) is taken into account.
 	 * <p>
 	 * {@link #projectedCoordinatesOf(Vec, Frame)} performs the inverse transformation.
 	 * <p>

@@ -625,6 +625,15 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	/**
+	 * Same as {@code return !isFaceBackFacing(a, b, c)}.
+	 * 
+	 * @see #isFaceBackFacing(Vec, Vec, Vec)
+	 */
+	public boolean isFaceFrontFacing(Vec a, Vec b, Vec c) {
+		return !isFaceBackFacing(a, b, c);
+	}
+
+	/**
 	 * Returns {@code true} if the given face is back-facing the camera. Otherwise returns {@code false}.
 	 * <p>
 	 * Vertices must given in clockwise order if {@link remixlab.dandelion.core.AbstractScene#isLeftHanded()} or in
@@ -637,12 +646,21 @@ public class Camera extends Eye implements Copyable {
 	 * @param c
 	 *          third face vertex
 	 * 
-	 * @see #isBackFacing(Vec, Vec)
-	 * @see #isBackFacing(Vec, Vec, float)
+	 * @see #isFaceBackFacing(Vec, Vec)
+	 * @see #isConeBackFacing(Vec, Vec, float)
 	 */
-	public boolean isBackFacing(Vec a, Vec b, Vec c) {
-		return isBackFacing(a, scene.isLeftHanded() ? Vec.subtract(b, a).cross(Vec.subtract(c, a)) : Vec.subtract(c, a)
+	public boolean isFaceBackFacing(Vec a, Vec b, Vec c) {
+		return isFaceBackFacing(a, scene.isLeftHanded() ? Vec.subtract(b, a).cross(Vec.subtract(c, a)) : Vec.subtract(c, a)
 				.cross(Vec.subtract(b, a)));
+	}
+
+	/**
+	 * Same as {@code return !isFaceBackFacing(vertex, normal)}.
+	 * 
+	 * @see #isFaceBackFacing(Vec, Vec)
+	 */
+	public boolean isFaceFrontFacing(Vec vertex, Vec normal) {
+		return !isFaceBackFacing(vertex, normal);
 	}
 
 	/**
@@ -653,11 +671,20 @@ public class Camera extends Eye implements Copyable {
 	 * @param normal
 	 *          face normal
 	 * 
-	 * @see #isBackFacing(Vec, Vec, Vec)
-	 * @see #isBackFacing(Vec, Vec, float)
+	 * @see #isFaceBackFacing(Vec, Vec, Vec)
+	 * @see #isConeBackFacing(Vec, Vec, float)
 	 */
-	public boolean isBackFacing(Vec vertex, Vec normal) {
-		return isBackFacing(vertex, normal, 0);
+	public boolean isFaceBackFacing(Vec vertex, Vec normal) {
+		return isConeBackFacing(vertex, normal, 0);
+	}
+
+	/**
+	 * Same as {@code return !isConeBackFacing(vertex, normals)}.
+	 * 
+	 * @see #isConeBackFacing(Vec, ArrayList)
+	 */
+	public boolean isConeFrontFacing(Vec vertex, ArrayList<Vec> normals) {
+		return !isConeBackFacing(vertex, normals);
 	}
 
 	/**
@@ -668,11 +695,20 @@ public class Camera extends Eye implements Copyable {
 	 * @param normals
 	 *          ArrayList of normals defining the cone.
 	 * 
-	 * @see #isBackFacing(Vec, Vec[])
-	 * @see #isBackFacing(Vec, Vec, float)
+	 * @see #isConeBackFacing(Vec, Vec[])
+	 * @see #isConeBackFacing(Vec, Vec, float)
 	 */
-	public boolean isBackFacing(Vec vertex, ArrayList<Vec> normals) {
-		return isBackFacing(vertex, normals.toArray(new Vec[normals.size()]));
+	public boolean isConeBackFacing(Vec vertex, ArrayList<Vec> normals) {
+		return isConeBackFacing(vertex, normals.toArray(new Vec[normals.size()]));
+	}
+
+	/**
+	 * Same as {@code !isConeBackFacing(vertex, normals)}.
+	 * 
+	 * @see #isConeBackFacing(Vec, Vec[])
+	 */
+	public boolean isConeFrontFacing(Vec vertex, Vec[] normals) {
+		return !isConeBackFacing(vertex, normals);
 	}
 
 	/**
@@ -683,10 +719,10 @@ public class Camera extends Eye implements Copyable {
 	 * @param normals
 	 *          Array of normals defining the cone.
 	 * 
-	 * @see #isBackFacing(Vec, ArrayList)
-	 * @see #isBackFacing(Vec, Vec, float)
+	 * @see #isConeBackFacing(Vec, ArrayList)
+	 * @see #isConeBackFacing(Vec, Vec, float)
 	 */
-	public boolean isBackFacing(Vec vertex, Vec[] normals) {
+	public boolean isConeBackFacing(Vec vertex, Vec[] normals) {
 		float angle;
 		Vec axis = new Vec(0, 0, 0);
 
@@ -710,7 +746,16 @@ public class Camera extends Eye implements Copyable {
 		for (int i = 0; i < normals.length; i++)
 			angle = Math.max(angle, (float) Math.acos(Vec.dot(n[i], axis)));
 
-		return isBackFacing(vertex, axis, angle);
+		return isConeBackFacing(vertex, axis, angle);
+	}
+
+	/**
+	 * Same as {@code return !isConeBackFacing(vertex, axis, angle)}.
+	 * 
+	 * @see #isConeBackFacing(Vec, Vec, float)
+	 */
+	public boolean isConeFrontFacing(Vec vertex, Vec axis, float angle) {
+		return !isConeBackFacing(vertex, axis, angle);
 	}
 
 	/**
@@ -723,7 +768,7 @@ public class Camera extends Eye implements Copyable {
 	 * @param angle
 	 *          Cone angle
 	 */
-	public boolean isBackFacing(Vec vertex, Vec axis, float angle) {
+	public boolean isConeBackFacing(Vec vertex, Vec axis, float angle) {
 		// more or less inspired by this: http://en.wikipedia.org/wiki/Back-face_culling (perspective case :P)
 		Vec camAxis;
 		if (type() == Type.ORTHOGRAPHIC)
@@ -1052,24 +1097,21 @@ public class Camera extends Eye implements Copyable {
 
 		float coef = 0.1f;
 
-		// if (interpolationKfi.interpolationIsStarted())
-		// interpolationKfi.stopInterpolation();
 		if (anyInterpolationIsStarted())
 			stopAllInterpolations();
 
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
-
 		interpolationKfi.addKeyFrame(
 				new Frame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame()
-						.orientation()), 0.4f);
+						.orientation(), frame().scaling()), 0.4f);
 
-		// Small hack: attach a temporary frame to take advantage of lookAt without
-		// modifying frame
+		// Small hack: attach a temporary frame to take advantage of lookAt without modifying frame
 		tempFrame = new InteractiveEyeFrame(this);
 		InteractiveEyeFrame originalFrame = frame();
 		tempFrame.setPosition(Vec.add(Vec.multiply(frame().position(), coef), Vec.multiply(target, (1.0f - coef))));
 		tempFrame.setOrientation(frame().orientation().get());
+		tempFrame.setMagnitude(frame().magnitude());
 		setFrame(tempFrame);
 		lookAt(target);
 		setFrame(originalFrame);

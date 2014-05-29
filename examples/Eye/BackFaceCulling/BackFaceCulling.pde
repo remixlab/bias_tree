@@ -38,7 +38,7 @@ public void setup() {
   scene.addDrawHandler(this, "mainDrawing");
 
   auxCanvas = createGraphics(640, 360, P3D);
-  auxScene = new Scene(this, (PGraphicsOpenGL) auxCanvas);
+  auxScene = new Scene(this, auxCanvas);
   auxScene.camera().setType(Camera.Type.ORTHOGRAPHIC);
   auxScene.setAxesVisualHint(false);
   auxScene.setGridVisualHint(false);
@@ -85,7 +85,7 @@ void drawScene(PGraphics p) {
   p.beginShape(QUADS);
 
   //1. Attempt to discard three faces at once using a cone of normals.
-  if (!scene.camera().isBackFacing(new Vec(size, size, size), normals)) {
+  if (!scene.camera().isConeBackFacing(new Vec(size, size, size), normals)) {
     // z-axis
     p.fill(0, size, size);
     p.vertex(-size, size, size);
@@ -119,7 +119,7 @@ void drawScene(PGraphics p) {
 
   //2. Attempt to discard a single face using one of its vertices and its normal.
   // -z-axis
-  if (!scene.camera().isBackFacing(new Vec(size, size, -size), normalZNeg)) {
+  if (!scene.camera().isFaceBackFacing(new Vec(size, size, -size), normalZNeg)) {
     p.fill(size, size, 0);
     p.vertex(size, size, -size);
     p.fill(0, size, 0);
@@ -132,7 +132,7 @@ void drawScene(PGraphics p) {
 
   //3. Attempt to discard a single face using three of its vertices. 
   // -x-axis
-  if (!scene.camera().isBackFacing(new Vec(-size, size, -size), new Vec(-size, -size, -size), 
+  if (!scene.camera().isFaceBackFacing(new Vec(-size, size, -size), new Vec(-size, -size, -size), 
   new Vec(-size, -size, size))) {
     p.fill(0, size, 0);
     p.vertex(-size, size, -size);
@@ -146,7 +146,7 @@ void drawScene(PGraphics p) {
 
   //4. Attempt to discard a single face using one of its vertices and its normal.
   // -y-axis
-  if (!scene.camera().isBackFacing(new Vec(-size, -size, -size), normalYNeg)) {
+  if (!scene.camera().isFaceBackFacing(new Vec(-size, -size, -size), normalYNeg)) {
     p.fill(0, 0, 0);
     p.vertex(-size, -size, -size);
     p.fill(size, 0, 0);
