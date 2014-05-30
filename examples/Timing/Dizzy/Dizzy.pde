@@ -38,37 +38,37 @@ public void setup() {
 
   message1.setPosition(33.699852f, -62.68051f);
   message1.setOrientation(new Rot(-1.5603539f));
-  message1.setScaling(0.8502696f);
+  message1.setMagnitude(0.8502696f);
 
   message2.setPosition(49.460827f, 74.67359f);
   message2.setOrientation(new Rot(-1.533576f));
-  message2.setScaling(0.3391391f);
+  message2.setMagnitude(0.3391391f);
 
   image.setPosition(-314.30075f, -165.1348f);
   image.setOrientation(new Rot(-0.0136114275f));
-  image.setScaling(0.07877492f);
+  image.setMagnitude(0.07877492f);
 
   // create a camera path and add some key frames:
   // key frames can be added at runtime with keys [j..n]
   scene.eye().frame().setPosition(new Vec(89.71913f, -101.32816f));
   scene.eye().frame().setOrientation(new Rot(-1.542718f));
-  scene.eye().frame().setScaling(0.3391391f);
+  scene.eye().frame().setMagnitude(0.3391391f);
   scene.eye().addKeyFrameToPath(1);
 
   scene.eye().frame().setPosition(new Vec(61.501305f, 71.02506f));
   scene.eye().frame().setOrientation(new Rot(-1.5142304f));
-  scene.eye().frame().setScaling(0.13526922f);
+  scene.eye().frame().setMagnitude(0.13526922f);
   scene.eye().addKeyFrameToPath(1);
 
   scene.eye().frame().setPosition(new Vec(-99.00719f, -4.614401f));
   scene.eye().frame().setOrientation(new Rot(-0.010666408f));
-  scene.eye().frame().setScaling(0.8055185f);
+  scene.eye().frame().setMagnitude(0.8055185f);
   scene.eye().addKeyFrameToPath(1);
 
   // re-position the camera:
   scene.eye().frame().setPosition(new Vec(89.71913f, -101.32816f));
   scene.eye().frame().setOrientation(new Rot(-1.542718f));
-  scene.eye().frame().setScaling(0.3391391f);
+  scene.eye().frame().setMagnitude(0.3391391f);
 
   // drawing of camera paths are toggled with key 'r'.
   //scene.setViewPointPathsAreDrawn(true);

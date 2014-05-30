@@ -442,7 +442,7 @@ public abstract class Eye implements Copyable {
 	public abstract void setOrientation(Rotation q);
 
 	/**
-	 * Returns the radius of the scene observed by the Eye.
+	 * Returns the radius of the scene observed by the Eye in scene (world) units.
 	 * <p>
 	 * In the case of a 3D Eye (a Camera) you need to provide such an approximation of the scene dimensions so that the it
 	 * can adapt its {@link remixlab.dandelion.core.Camera#zNear()} and {@link remixlab.dandelion.core.Camera#zFar()}
@@ -459,8 +459,8 @@ public abstract class Eye implements Copyable {
 	}
 
 	/**
-	 * Sets the {@link #sceneRadius()} value. Negative values are ignored. It also sets {@link #flySpeed()} to 1% of
-	 * {@link #sceneRadius()}
+	 * Sets the {@link #sceneRadius()} value in scene (world) units. Negative values are ignored. It also sets
+	 * {@link #flySpeed()} to 1% of {@link #sceneRadius()}
 	 * <p>
 	 * <b>Attention:</b> 3d Camera also sets {@link remixlab.dandelion.core.Camera#focusDistance()} to
 	 * {@code sceneRadius() / tan(fieldOfView()/2)}.
@@ -528,7 +528,7 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * Default value is the world origin. Use {@link #setSceneCenter(Vec)} to change it.
 	 * 
-	 * @see #setSceneBoundingBox(Vec, Vec) *
+	 * @see #setSceneBoundingBox(Vec, Vec)
 	 * @see remixlab.dandelion.core.Camera#zNear()
 	 * @see remixlab.dandelion.core.Camera#zFar()
 	 */
@@ -773,8 +773,8 @@ public abstract class Eye implements Copyable {
 
 		float orthoCoef = this.rescalingOrthoFactor();
 
-		target[0] = (orthoCoef) * (frame().scaling() * this.screenWidth() / 2);
-		target[1] = (orthoCoef) * (frame().scaling() * this.screenHeight() / 2);
+		target[0] = (orthoCoef) * (frame().magnitude() * this.screenWidth() / 2);
+		target[1] = (orthoCoef) * (frame().magnitude() * this.screenHeight() / 2);
 
 		return target;
 	}
@@ -1584,8 +1584,7 @@ public abstract class Eye implements Copyable {
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 
-		// Small hack: attach a temporary frame to take advantage of fitScreenRegion
-		// without modifying frame
+		// Small hack: attach a temporary frame to take advantage of fitScreenRegion without modifying frame
 		tempFrame = new InteractiveEyeFrame(this);
 		InteractiveEyeFrame originalFrame = frame();
 		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
@@ -1615,8 +1614,7 @@ public abstract class Eye implements Copyable {
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 
-		// Small hack: attach a temporary frame to take advantage of showEntireScene
-		// without modifying frame
+		// Small hack: attach a temporary frame to take advantage of showEntireScene without modifying frame
 		tempFrame = new InteractiveEyeFrame(this);
 		InteractiveEyeFrame originalFrame = frame();
 		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));

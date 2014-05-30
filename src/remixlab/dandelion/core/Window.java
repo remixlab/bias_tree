@@ -126,11 +126,7 @@ public class Window extends Eye implements Copyable {
 	@Override
 	public void fitBall(Vec center, float radius) {
 		float size = Math.min(scene.width(), scene.height());
-		// if there were not validateScaling this should do it:
-		// Vec scl = frame().scaling();
-		// frame().setScaling(scl.x() > 0 ? 2*radius / size : -2*radius / size, scl.y() > 0 ? 2*radius / size : -2*radius /
-		// size);
-		frame().setScaling(2 * radius / size);
+		frame().setMagnitude(2 * radius / size);
 
 		lookAt(center);
 	}
@@ -149,14 +145,14 @@ public class Window extends Eye implements Copyable {
 
 		if (aspectRatio() < 1.0f) {
 			if (aspectRatio() < rectRatio)
-				frame().setScaling(frame().scaling() * (float) rectangle.width() / screenWidth());
+				frame().setMagnitude(frame().magnitude() * (float) rectangle.width() / screenWidth());
 			else
-				frame().setScaling(frame().scaling() * (float) rectangle.height() / screenHeight());
+				frame().setMagnitude(frame().magnitude() * (float) rectangle.height() / screenHeight());
 		} else {
 			if (aspectRatio() < rectRatio)
-				frame().setScaling(frame().scaling() * (float) rectangle.width() / screenWidth());
+				frame().setMagnitude(frame().magnitude() * (float) rectangle.width() / screenWidth());
 			else
-				frame().setScaling(frame().scaling() * (float) rectangle.height() / screenHeight());
+				frame().setMagnitude(frame().magnitude() * (float) rectangle.height() / screenHeight());
 		}
 		lookAt(unprojectedCoordinatesOf(new Vec(rectangle.centerX(), rectangle.centerY(), 0)));
 	}
@@ -219,17 +215,10 @@ public class Window extends Eye implements Copyable {
 					+ "enable automatic updates of the equations in your PApplet.setup "
 					+ "with Scene.enableBoundaryEquations()");
 		// check this: http://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
-		float result = (fpCoefficients[index][0] * pos.x() + fpCoefficients[index][1] * pos.y() + fpCoefficients[index][2])
+		return (fpCoefficients[index][0] * pos.x() + fpCoefficients[index][1] * pos.y() + fpCoefficients[index][2])
 				/
 				(float) Math.sqrt(fpCoefficients[index][0] * fpCoefficients[index][0] + fpCoefficients[index][1]
 						* fpCoefficients[index][1]);
-
-		// if there were not validateScaling this should do it:
-		/*
-		 * if(index==0 || index==1) { if(frame().scaling().x()<0) result *= -1; } else if(frame().scaling().y()<0) result *=
-		 * -1;
-		 */
-		return result;
 	}
 
 	@Override

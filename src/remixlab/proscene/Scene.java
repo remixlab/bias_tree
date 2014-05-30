@@ -554,7 +554,7 @@ public class Scene extends AbstractScene implements PConstants {
 
 			if (scene.isRightHanded())
 				scale(1, -1);
-			scale(1 / scene.eye().frame().scaling(), 1 / scene.eye().frame().scaling());
+			scale(1 / scene.eye().frame().magnitude(), 1 / scene.eye().frame().magnitude());
 			rotate(-o.angle());
 			translate(-pos.x(), -pos.y());
 		}
@@ -572,12 +572,12 @@ public class Scene extends AbstractScene implements PConstants {
 		@Override
 		public void beginScreenDrawing() {
 			Vec pos = scene.eye().position();
-			Rotation quat = scene.eye().frame().orientation();
+			Rotation o = scene.eye().frame().orientation();
 
 			pushModelView();
 			translate(pos.x(), pos.y());
-			rotate(quat.angle());
-			scale(scene.window().frame().scaling(), scene.window().frame().scaling());
+			rotate(o.angle());
+			scale(scene.window().frame().magnitude(), scene.window().frame().magnitude());
 			if (scene.isRightHanded())
 				scale(1, -1);
 			translate(-scene.width() / 2, -scene.height() / 2);

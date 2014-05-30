@@ -108,7 +108,7 @@ public class Camera extends Eye implements Copyable {
 		// for (int i = 0; i < normal.length; i++) normal[i] = new Vec();
 
 		// fldOfView = (float) Math.PI / 3.0f; //in Proscene 1.x it was Pi/4
-		// setFieldOfView((float) Math.PI / 2.0f);//fov yScaling -> 1
+		// setFieldOfView((float) Math.PI / 2.0f);//fov yMagnitude -> 1
 		setFieldOfView((float) Math.PI / 3.0f);
 		// Initial value (only scaled after this)
 		// orthoCoef = (float)Math.tan(fieldOfView() / 2.0f);
@@ -152,8 +152,6 @@ public class Camera extends Eye implements Copyable {
 
 	@Override
 	public void setUpVector(Vec up, boolean noMove) {
-		// if there were not validateScaling this should do it:
-		// Quat q = new Quat(new Vec(0.0f, frame().magnitude().y() > 0 ? 1.0f : -1.0f, 0.0f), frame().transformOf(up));
 		Quat q = new Quat(new Vec(0.0f, 1.0f, 0.0f), frame().transformOf(up));
 
 		if (!noMove && scene.is3D())
@@ -272,7 +270,7 @@ public class Camera extends Eye implements Copyable {
 	 * Use {@link #setFOVToFitScene()} to adapt the {@link #fieldOfView()} to a given scene.
 	 */
 	public float fieldOfView() {
-		return 2.0f * (float) Math.atan(frame().scaling());
+		return 2.0f * (float) Math.atan(frame().magnitude());
 	}
 
 	/**
@@ -283,8 +281,8 @@ public class Camera extends Eye implements Copyable {
 	 */
 	public void setFieldOfView(float fov) {
 		// fldOfView = fov;
-		frame().setScaling((float) Math.tan(fov / 2.0f));
-		setFocusDistance(sceneRadius() / frame().scaling());
+		frame().setMagnitude((float) Math.tan(fov / 2.0f));
+		setFocusDistance(sceneRadius() / frame().magnitude());
 	}
 
 	/**
@@ -324,13 +322,11 @@ public class Camera extends Eye implements Copyable {
 	 * Returns the horizontal field of view of the Camera (in radians).
 	 * <p>
 	 * Value is set using {@link #setHorizontalFieldOfView(float)} or {@link #setFieldOfView(float)}. These values are
-	 * always linked by: {@code
-	 * horizontalFieldOfView() = 2.0 * atan ( tan(fieldOfView()/2.0) *
-	 * aspectRatio() )}.
+	 * always linked by: {@code horizontalFieldOfView() = 2.0 * atan ( tan(fieldOfView()/2.0) * aspectRatio() )}.
 	 */
 	public float horizontalFieldOfView() {
 		// return 2.0f * (float) Math.atan((float) Math.tan(fieldOfView() / 2.0f) * aspectRatio());
-		return 2.0f * (float) Math.atan(frame().scaling() * aspectRatio());
+		return 2.0f * (float) Math.atan(frame().magnitude() * aspectRatio());
 	}
 
 	/**
@@ -345,7 +341,7 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	/**
-	 * Returns the near clipping plane distance used by the Camera projection matrix.
+	 * Returns the near clipping plane distance used by the Camera projection matrix in scene (world) units.
 	 * <p>
 	 * The clipping planes' positions depend on the {@link #sceneRadius()} and {@link #sceneCenter()} rather than being
 	 * fixed small-enough and large-enough values. A good scene dimension approximation will hence result in an optimal
@@ -390,7 +386,7 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	/**
-	 * Returns the far clipping plane distance used by the Camera projection matrix.
+	 * Returns the far clipping plane distance used by the Camera projection matrix in scene (world) units.
 	 * <p>
 	 * The far clipping plane is positioned at a distance equal to {@code zClippingCoefficient() * sceneRadius()} behind
 	 * the {@link #sceneCenter()}:
@@ -798,9 +794,6 @@ public class Camera extends Eye implements Copyable {
 
 	@Override
 	public float distanceToSceneCenter() {
-		// return Math.abs((frame().coordinatesOf(sceneCenter())).vec[2]);//before scln
-		// if there were not validateScaling this should do it:
-		// Vec zCam = frame().magnitude().z() > 0 ? frame().zAxis() : frame().zAxis(false);
 		Vec zCam = frame().zAxis();
 		Vec cam2SceneCenter = Vec.subtract(position(), sceneCenter());
 		return Math.abs(Vec.dot(cam2SceneCenter, zCam));
@@ -808,9 +801,6 @@ public class Camera extends Eye implements Copyable {
 
 	@Override
 	public float distanceToAnchor() {
-		// return Math.abs(cameraCoordinatesOf(arcballReferencePoint()).vec[2]);//before scln
-		// if there were not validateScaling this should do it:
-		// Vec zCam = frame().magnitude().z() > 0 ? frame().zAxis() : frame().zAxis(false);
 		Vec zCam = frame().zAxis();
 		Vec cam2anchor = Vec.subtract(position(), anchor());
 		return Math.abs(Vec.dot(cam2anchor, zCam));
@@ -921,8 +911,8 @@ public class Camera extends Eye implements Copyable {
 		switch (type()) {
 		case PERSPECTIVE:
 			// #CONNECTION# all non null coefficients were set to 0.0 in constructor.
-			projectionMat.mat[0] = 1 / (frame().scaling() * this.aspectRatio());
-			projectionMat.mat[5] = 1 / (scene.isLeftHanded() ? -frame().scaling() : frame().scaling());
+			projectionMat.mat[0] = 1 / (frame().magnitude() * this.aspectRatio());
+			projectionMat.mat[5] = 1 / (scene.isLeftHanded() ? -frame().magnitude() : frame().magnitude());
 			projectionMat.mat[10] = (ZNear + ZFar) / (ZNear - ZFar);
 			projectionMat.mat[11] = -1.0f;
 			projectionMat.mat[14] = 2.0f * ZNear * ZFar / (ZNear - ZFar);
@@ -1018,9 +1008,7 @@ public class Camera extends Eye implements Copyable {
 			break;
 		}
 		case ORTHOGRAPHIC: {
-			// distance = Vec.dot(Vec.subtract(center, arcballReferencePoint()), viewDirection()) + (radius / orthoCoef);
-			distance = Vec.dot(Vec.subtract(center, anchor()), viewDirection())
-					+ (radius / frame().scaling());
+			distance = Vec.dot(Vec.subtract(center, anchor()), viewDirection()) + (radius / frame().magnitude());
 			break;
 		}
 		}
@@ -1064,8 +1052,8 @@ public class Camera extends Eye implements Copyable {
 			break;
 		case ORTHOGRAPHIC:
 			float dist = Vec.dot(Vec.subtract(newCenter, anchor()), vd);
-			distX = Vec.distance(pointX, newCenter) / frame().scaling() / aspectRatio();
-			distY = Vec.distance(pointY, newCenter) / frame().scaling() / 1.0f;
+			distX = Vec.distance(pointX, newCenter) / frame().magnitude() / aspectRatio();
+			distY = Vec.distance(pointY, newCenter) / frame().magnitude() / 1.0f;
 			distance = dist + Math.max(distX, distY);
 			break;
 		}
@@ -1104,7 +1092,7 @@ public class Camera extends Eye implements Copyable {
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 		interpolationKfi.addKeyFrame(
 				new Frame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame()
-						.orientation(), frame().scaling()), 0.4f);
+						.orientation(), frame().magnitude()), 0.4f);
 
 		// Small hack: attach a temporary frame to take advantage of lookAt without modifying frame
 		tempFrame = new InteractiveEyeFrame(this);

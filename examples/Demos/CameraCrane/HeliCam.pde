@@ -15,7 +15,7 @@ public class HeliCam {
 
     // Initialize frames
     frame(0).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), PApplet.HALF_PI));
-    frame(0).setTranslation(-25, 56, 62);
+    frame(0).setTranslation(-25, 56, 80);
     frame(1).setTranslation(0, 0, 6);
     frame(2).setTranslation(0, 0, 15);
     frame(3).setTranslation(0, 0, 15);

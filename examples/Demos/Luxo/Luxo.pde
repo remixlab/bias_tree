@@ -24,9 +24,10 @@ Lamp lamp;
 
 public void setup() {
   size(640, 360, P3D);
-  scene = new Scene(this);
+  scene = new Scene(this);  
   scene.setRadius(100);
   scene.showAll();
+  scene.setGridVisualHint(false);
   scene.setPickingVisualHint(true);
   lamp = new Lamp(scene);
 }

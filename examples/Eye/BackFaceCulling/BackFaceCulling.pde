@@ -5,6 +5,9 @@
  * This example illustrates various back face camera culling routines to early
  * discard primitive processing.
  * 
+ * Press 'c' to switch between different back-face culling conditions
+ * (cone or on a face by face basis).
+ * 
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 
@@ -16,14 +19,15 @@ float            size        = 50;
 Scene            scene, auxScene;
 PGraphics        canvas, auxCanvas;
 
-// PGraphics3D g3;
 Vec              normalXPos  = new Vec(1, 0, 0);
 Vec              normalYPos  = new Vec(0, 1, 0);
 Vec              normalZPos  = new Vec(0, 0, 1);
 Vec              normalXNeg  = new Vec(-1, 0, 0);
 Vec              normalYNeg  = new Vec(0, -1, 0);
 Vec              normalZNeg  = new Vec(0, 0, -1);
-ArrayList<Vec>  normals;
+ArrayList<Vec>   normals;
+
+boolean facebyface = true;
 
 public void setup() {
   size(640, 720, P3D);
@@ -43,7 +47,7 @@ public void setup() {
   auxScene.setAxesVisualHint(false);
   auxScene.setGridVisualHint(false);
   auxScene.setRadius(350);
-  auxScene.camera().setPosition(new Vec(125,125,125));
+  auxScene.camera().setPosition(new Vec(125, 125, 125));
   auxScene.camera().lookAt(auxScene.center());
   auxScene.addDrawHandler(this, "auxiliarDrawing");
   colorMode(RGB, 1);
@@ -85,36 +89,42 @@ void drawScene(PGraphics p) {
   p.beginShape(QUADS);
 
   //1. Attempt to discard three faces at once using a cone of normals.
-  if (!scene.camera().isConeBackFacing(new Vec(size, size, size), normals)) {
+  if (facebyface || coneCondition()) {
     // z-axis
-    p.fill(0, size, size);
-    p.vertex(-size, size, size);
-    p.fill(size, size, size);
-    p.vertex(size, size, size);
-    p.fill(size, 0, size);
-    p.vertex(size, -size, size);
-    p.fill(0, 0, size);
-    p.vertex(-size, -size, size);
+    if (zCondition() || !facebyface) {
+      p.fill(0, size, size);
+      p.vertex(-size, size, size);
+      p.fill(size, size, size);
+      p.vertex(size, size, size);
+      p.fill(size, 0, size);
+      p.vertex(size, -size, size);
+      p.fill(0, 0, size);
+      p.vertex(-size, -size, size);
+    }
 
     // x-axis
-    p.fill(size, size, size);
-    p.vertex(size, size, size);
-    p.fill(size, size, 0);
-    p.vertex(size, size, -size);
-    p.fill(size, 0, 0);
-    p.vertex(size, -size, -size);
-    p.fill(size, 0, size);
-    p.vertex(size, -size, size);
+    if (xCondition() || !facebyface) {
+      p.fill(size, size, size);
+      p.vertex(size, size, size);
+      p.fill(size, size, 0);
+      p.vertex(size, size, -size);
+      p.fill(size, 0, 0);
+      p.vertex(size, -size, -size);
+      p.fill(size, 0, size);
+      p.vertex(size, -size, size);
+    }
 
     // y-axis
-    p.fill(0, size, 0);
-    p.vertex(-size, size, -size);
-    p.fill(size, size, 0);
-    p.vertex(size, size, -size);
-    p.fill(size, size, size);
-    p.vertex(size, size, size);
-    p.fill(0, size, size);
-    p.vertex(-size, size, size);
+    if (yCondition() || !facebyface) {
+      p.fill(0, size, 0);
+      p.vertex(-size, size, -size);
+      p.fill(size, size, 0);
+      p.vertex(size, size, -size);
+      p.fill(size, size, size);
+      p.vertex(size, size, size);
+      p.fill(0, size, size);
+      p.vertex(-size, size, size);
+    }
   } // cone condition
 
   //2. Attempt to discard a single face using one of its vertices and its normal.
@@ -132,7 +142,7 @@ void drawScene(PGraphics p) {
 
   //3. Attempt to discard a single face using three of its vertices. 
   // -x-axis
-  if (!scene.camera().isFaceBackFacing(new Vec(-size, size, -size), new Vec(-size, -size, -size), 
+  if (scene.camera().isFaceFrontFacing(new Vec(-size, size, -size), new Vec(-size, -size, -size), 
   new Vec(-size, -size, size))) {
     p.fill(0, size, 0);
     p.vertex(-size, size, -size);
@@ -146,7 +156,7 @@ void drawScene(PGraphics p) {
 
   //4. Attempt to discard a single face using one of its vertices and its normal.
   // -y-axis
-  if (!scene.camera().isFaceBackFacing(new Vec(-size, -size, -size), normalYNeg)) {
+  if (scene.camera().isFaceFrontFacing(new Vec(-size, -size, -size), normalYNeg)) {
     p.fill(0, 0, 0);
     p.vertex(-size, -size, -size);
     p.fill(size, 0, 0);
@@ -160,9 +170,27 @@ void drawScene(PGraphics p) {
   p.endShape();
 }
 
+boolean xCondition() {
+  return scene.camera().isFaceFrontFacing(new Vec(size, size, size), normalXPos);
+}
+
+boolean yCondition() {
+  return scene.camera().isFaceFrontFacing(new Vec(-size, size, -size), normalYPos);
+}
+
+boolean zCondition() {
+  return scene.camera().isFaceFrontFacing(new Vec(-size, size, size), normalZPos);
+}
+
+boolean coneCondition() {
+  return scene.camera().isConeFrontFacing(new Vec(size, size, size), normals);
+}
+
 void keyPressed() {
   if (key == 'u')
     scene.flip();
+  if (key == 'c')
+    facebyface = !facebyface;
 }
 
 void handleMouse() {
