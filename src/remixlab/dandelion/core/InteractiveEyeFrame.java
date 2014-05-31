@@ -31,6 +31,13 @@ import remixlab.util.*;
  * {@link remixlab.dandelion.core.Camera#setUpVector(Vec)} to define the {@link #sceneUpVector()} and align the camera
  * before starting a ROTATE_CAD action to ensure these invariants are preserved.
  * <p>
+ * The possible actions that can interactively be performed by the InteractiveEyeFrame are
+ * {@link remixlab.dandelion.core.Constants.ClickAction}, {@link remixlab.dandelion.core.Constants.WheelAction},
+ * {@link remixlab.dandelion.core.Constants.DOF2Action}, {@link remixlab.dandelion.core.Constants.DOF3Action} and
+ * {@link remixlab.dandelion.core.Constants.DOF6Action}. The {@link remixlab.dandelion.core.AbstractScene#motionAgent()}
+ * provides high-level methods to handle some these actions, e.g., a {@link remixlab.dandelion.agent.MouseAgent} can
+ * handle up to {@link remixlab.dandelion.core.Constants.DOF2Action}s.
+ * <p>
  * <b>Observation: </b> The InteractiveEyeFrame is not added to the
  * {@link remixlab.dandelion.core.AbstractScene#inputHandler()} {@link remixlab.bias.core.InputHandler#agents()} pool
  * upon creation.

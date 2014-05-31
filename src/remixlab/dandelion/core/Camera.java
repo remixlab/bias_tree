@@ -16,11 +16,26 @@ import remixlab.util.*;
 import java.util.ArrayList;
 
 /**
- * 3D implementation of the {@link remixlab.dandelion.core.Eye} abstract class, defining a perspective or orthographic
- * Camera.
+ * 3D implementation of the {@link remixlab.dandelion.core.Eye} abstract class.
  * <p>
- * The Camera dynamically sets up the {@link #zNear()} and {@link #zFar()} values, in order to provide optimal precision
- * of the z-buffer.
+ * The Camera {@link #type()} can be {@code ORTHOGRAPHIC} or {@code PERSPECTIVE} ({@link #fieldOfView()} is meaningless
+ * in the latter case).
+ * <p>
+ * The near and far planes of the Camera are fitted to the scene and determined from the
+ * {@link remixlab.dandelion.core.AbstractScene#radius()}, {@link remixlab.dandelion.core.AbstractScene#center()} and
+ * {@link #zClippingCoefficient()} by the {@link #zNear()} and {@link #zFar()}. Reasonable values on the scene extends
+ * thus have to be provided to the Scene in order for the Camera to correctly display the scene. High level positioning
+ * methods also use this information ({@link #showEntireScene()}, {@link #centerScene()}, ...).
+ * <p>
+ * Stereo display is possible on devices with quad buffer capabilities (with {@code PERSPECTIVE} {@link #type()} only).
+ * <p>
+ * <b>Attention: </b> the {@link #frame()} {@link remixlab.dandelion.core.Frame#magnitude()} is used to set the
+ * {@link #fieldOfView()} or compute {@link #getBoundaryWidthHeight()} if the camera {@link #type()} is
+ * {@code PERSPECTIVE} or {@code ORTHOGRAPHIC}, respectively. The Camera magnitude is thus generally different from that
+ * of the scene. Use {@link #eyeCoordinatesOf(Vec)} and {@link #worldCoordinatesOf(Vec)} (or any of the powerful Frame
+ * transformations ( {@link remixlab.dandelion.core.Frame#coordinatesOf(Vec)},
+ * {@link remixlab.dandelion.core.Frame#transformOf(Vec)}, ...)) to convert to and from the Eye {@link #frame()}
+ * coordinate system.
  */
 public class Camera extends Eye implements Copyable {
 	@Override
@@ -460,16 +475,15 @@ public class Camera extends Eye implements Copyable {
 			return 2.0f * Math.abs((frame().coordinatesOf(position)).vec[2] * frame().magnitude())
 					* (float) Math.tan(fieldOfView() / 2.0f)
 					/ screenHeight();
-		case ORTHOGRAPHIC: {
+		case ORTHOGRAPHIC:
 			float[] wh = getBoundaryWidthHeight();
 			return 2.0f * wh[1] / screenHeight();
-		}
 		}
 		return 1.0f;
 	}
 
 	@Override
-	public boolean pointIsVisible(Vec point) {
+	public boolean isPointVisible(Vec point) {
 		if (!scene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by pointIsVisible) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
@@ -481,7 +495,7 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	@Override
-	public Visibility ballIsVisible(Vec center, float radius) {
+	public Visibility ballVisibility(Vec center, float radius) {
 		if (!scene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by sphereIsVisible) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
@@ -500,7 +514,7 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	@Override
-	public Visibility boxIsVisible(Vec p1, Vec p2) {
+	public Visibility boxVisibility(Vec p1, Vec p2) {
 		if (!scene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by aaBoxIsVisible) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "

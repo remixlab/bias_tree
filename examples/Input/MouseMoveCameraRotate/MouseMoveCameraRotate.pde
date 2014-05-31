@@ -32,7 +32,7 @@ void setup() {
 void draw() {	
   background(0);	
   noStroke();
-  if ( scene.camera().ballIsVisible(new Vec(0, 0, 0), 40) == Camera.Visibility.SEMIVISIBLE )
+  if ( scene.camera().ballVisibility(new Vec(0, 0, 0), 40) == Camera.Visibility.SEMIVISIBLE )
     fill(255, 0, 0);
   else
     fill(0, 255, 0);

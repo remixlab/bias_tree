@@ -51,7 +51,7 @@ import remixlab.util.*;
  * {@link #coordinatesOf(Vec)}) to apply the transformation (resp. its inverse). Note the inversion.
  * <p>
  * <p>
- * Two frames can be synced together ({@link #sync(Frame, Frame, boolean)}), meaning that they will share their state
+ * Two frames can be synced together ({@link #sync(Frame, Frame)}), meaning that they will share their global parameters
  * (position, orientation and magnitude) taken the one that has been most recently updated. Syncing can be useful to
  * share frames among different off-screen scenes (see the CameraCrane and the AuxiliarViewer examples).
  * 
@@ -103,8 +103,8 @@ import remixlab.util.*;
  * <h3>Derived classes</h3>
  * 
  * The {@link remixlab.dandelion.core.InteractiveFrame} class inherits Frame and implements all sorts of motion actions
- * (see {@link remixlab.dandelion.core.Constants.DandelionAction}), so that a Frame (and hence an object) can be
- * manipulated in the scene by whatever user interaction means you can imagine.
+ * (see {@link remixlab.dandelion.core.Constants}), so that a Frame (and hence an object) can be manipulated in the
+ * scene by whatever user interaction means you can imagine.
  */
 public class Frame implements Copyable {
 	@Override
@@ -238,42 +238,28 @@ public class Frame implements Copyable {
 	/**
 	 * Same as {@code sync(this, otherFrame)}.
 	 * 
-	 * @see #sync(Frame, Frame, boolean)
+	 * @see #sync(Frame, Frame)
 	 */
 	public void sync(Frame otherFrame) {
 		sync(this, otherFrame);
 	}
 
 	/**
-	 * Same as {@code sync(this, otherFrame, global)}.
+	 * If {@code f1} has been more recently updated than {@code f2}, calls {@code f2.fromFrame(f1)}, otherwise calls
+	 * {@code f1.fromFrame(f2)}.
+	 * <p>
+	 * This method syncs only the global parameters ({@link #position()}, {@link #orientation()} and {@link #magnitude()})
+	 * among the two frames. The {@link #referenceFrame()} and {@link #constraint()} (if any) of each frame are kept
+	 * separately.
 	 * 
-	 * @see #sync(Frame, Frame, boolean)
-	 */
-	public void sync(Frame otherFrame, boolean global) {
-		sync(this, otherFrame, global);
-	}
-
-	/**
-	 * Same as {@code sync(f1, f2, true)}.
-	 * 
-	 * @see #sync(Frame, Frame, boolean)
+	 * @see #fromFrame(Frame)
 	 */
 	public static void sync(Frame f1, Frame f2) {
-		sync(f1, f2, true);
-	}
-
-	/**
-	 * If {@code f1} has been more recently updated than {@code f2}, calls {@code f2.fromFrame(f1, global)}, otherwise
-	 * calls {@code f1.fromFrame(f2, global)}.
-	 * 
-	 * @see #fromFrame(Frame, boolean)
-	 */
-	public static void sync(Frame f1, Frame f2, boolean global) {
 		if (f1.lastGlobalUpdate() == f2.lastGlobalUpdate())
 			return;
 		Frame source = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f1 : f2;
 		Frame target = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f2 : f1;
-		target.fromFrame(source, global);
+		target.fromFrame(source);
 	}
 
 	// MODIFIED
@@ -291,7 +277,7 @@ public class Frame implements Copyable {
 	 * Internal use. Needed by {@link #sync(Frame, Frame, boolean)}.
 	 */
 	protected long lastGlobalUpdate() {
-		return lastUpdate + scene.deltaCount;
+		return lastUpdate() + scene.deltaCount;
 	}
 
 	/**
@@ -1365,21 +1351,22 @@ public class Frame implements Copyable {
 	}
 
 	/**
-	 * Same as {@code fromFrame(otherFrame, true)}.
+	 * Same as {@code fromFrame(otherFrame, null)}.
 	 * 
-	 * @see #fromFrame(Frame, boolean)
+	 * @see #fromFrame(Frame, Frame)
 	 */
 	public void fromFrame(Frame otherFrame) {
-		fromFrame(otherFrame, true);
+		fromFrame(otherFrame, null);
 	}
 
 	/**
-	 * If {@code global} is {@code true} sets {@link #position()}, {@link #orientation()} and {@link #magnitude()} values
-	 * from {@code otherFrame}. Otherwise, sets {@link #translation()}, {@link #rotation()} and {@link #scaling()} values
-	 * from {@code otherFrame}.
+	 * If {@code referenceFrame == null} sets {@link #position()}, {@link #orientation()} and {@link #magnitude()} values
+	 * from those of {@code otherFrame}. Otherwise, sets {@link #translation()}, {@link #rotation()} and
+	 * {@link #scaling()} values from those of {@code otherFrame} and sets {@code referenceFrame} as
+	 * {@link #referenceFrame()}.
 	 */
-	public void fromFrame(Frame otherFrame, boolean global) {
-		if (global) {
+	public void fromFrame(Frame otherFrame, Frame referenceFrame) {
+		if (referenceFrame == null) {
 			setPosition(otherFrame.position());
 			setOrientation(otherFrame.orientation());
 			setMagnitude(otherFrame.magnitude());
@@ -1388,6 +1375,7 @@ public class Frame implements Copyable {
 			setTranslation(otherFrame.translation().get());
 			setRotation(otherFrame.rotation().get());
 			setScaling(otherFrame.scaling());
+			setReferenceFrame(referenceFrame);
 		}
 	}
 

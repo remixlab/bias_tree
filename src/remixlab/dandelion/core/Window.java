@@ -15,6 +15,12 @@ import remixlab.util.Copyable;
 
 /**
  * 2D implementation of the {@link remixlab.dandelion.core.Eye} abstract class.
+ * <p>
+ * <b>Attention: </b> the {@link #frame()} {@link remixlab.dandelion.core.Frame#magnitude()} is used to scale the view.
+ * The Window magnitude is thus generally different from that of the scene. Use {@link #eyeCoordinatesOf(Vec)} and
+ * {@link #worldCoordinatesOf(Vec)} (or any of the powerful Frame transformations (
+ * {@link remixlab.dandelion.core.Frame#coordinatesOf(Vec)}, {@link remixlab.dandelion.core.Frame#transformOf(Vec)},
+ * ...)) to convert to and from the Eye {@link #frame()} coordinate system.
  */
 public class Window extends Eye implements Copyable {
 	static final float	FAKED_ZNEAR	= -10;
@@ -222,7 +228,7 @@ public class Window extends Eye implements Copyable {
 	}
 
 	@Override
-	public Visibility boxIsVisible(Vec p1, Vec p2) {
+	public Visibility boxVisibility(Vec p1, Vec p2) {
 		if (!scene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by aaBoxIsVisible) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
@@ -252,7 +258,7 @@ public class Window extends Eye implements Copyable {
 	}
 
 	@Override
-	public Visibility ballIsVisible(Vec center, float radius) {
+	public Visibility ballVisibility(Vec center, float radius) {
 		if (!scene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by sphereIsVisible) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
@@ -271,7 +277,7 @@ public class Window extends Eye implements Copyable {
 	}
 
 	@Override
-	public boolean pointIsVisible(Vec point) {
+	public boolean isPointVisible(Vec point) {
 		if (!scene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by pointIsVisible) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "

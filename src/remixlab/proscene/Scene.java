@@ -53,9 +53,9 @@ import java.util.regex.Pattern;
  * <li><b>The default keyboard agent</b> provides shortcuts to keyboard dandelion actions such as {@link #drawGrid()} or
  * {@link #drawAxes()}. See {@link #setKeyboardShortcut(Character, remixlab.dandelion.core.Constants.KeyboardAction)}
  * and {@link #setKeyboardShortcut(int, int, remixlab.dandelion.core.Constants.KeyboardAction)}.
- * <li><b>The default mouse agent</b> provides high-level methods to manage camera and frame motion actions. Please
- * refer to the different {@code setMouseButtonBinding()}, {@code setMouseClickBinding()},
- * {@code setMouseWheelBinding()} methods.
+ * <li><b>The default mouse agent</b> provides high-level methods to manage eye and frame motion actions. Please refer
+ * to the different {@code setMouseButtonBinding()}, {@code setMouseClickBinding()}, {@code setMouseWheelBinding()}
+ * methods.
  * </ol>
  * <h3>Animation mechanisms</h3>
  * Proscene provides three animation mechanisms to define how your scene evolves over time:

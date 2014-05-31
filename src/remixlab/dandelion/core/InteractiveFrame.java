@@ -19,10 +19,17 @@ import remixlab.util.*;
 /**
  * An InteractiveFrame is a Frame that can be rotated, translated and scaled by user interaction means.
  * <p>
- * It converts user gestures into translation, rotation and scaling updates. An InteractiveFrame is used to move an
- * object in the scene, and thus it's tightly-coupled with it. Combined with object selection, its Grabber properties
- * and a dynamic update of the scene, the InteractiveFrame introduces a great reactivity to your dandelion-based
- * applications.
+ * An InteractiveFrame converts user gestures into translation, rotation and scaling updates. An InteractiveFrame is
+ * used to move an object in the scene (and thus it's tightly-coupled with it). Combined with object selection, its
+ * Grabber properties and a dynamic update of the scene, the InteractiveFrame introduces a great reactivity to your
+ * dandelion-based applications.
+ * <p>
+ * The possible actions that can interactively be performed by the InteractiveFrame are
+ * {@link remixlab.dandelion.core.Constants.ClickAction}, {@link remixlab.dandelion.core.Constants.WheelAction},
+ * {@link remixlab.dandelion.core.Constants.DOF2Action}, {@link remixlab.dandelion.core.Constants.DOF3Action} and
+ * {@link remixlab.dandelion.core.Constants.DOF6Action}. The {@link remixlab.dandelion.core.AbstractScene#motionAgent()}
+ * provides high-level methods to handle some of these actions, e.g., a {@link remixlab.dandelion.agent.MouseAgent} can
+ * handle up to {@link remixlab.dandelion.core.Constants.DOF2Action}s
  * <p>
  * <b>Note:</b> Once created, the InteractiveFrame is automatically added to the scene
  * {@link remixlab.bias.core.InputHandler#agents()} pool.

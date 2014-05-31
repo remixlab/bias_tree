@@ -4,14 +4,16 @@
  *
  * This example requires Android mode to run.
  *
- * This example illustrates how to control the Scene using touch events
- * emulating 3-DOFs, through a customized Touch Agent.
+ * Development is taken place at this fork: https://github.com/remixlab/proscene.droid
+ * We hope to integrate it back upstream once TouchEvents are directly supported in P5.
  *
- * We've also implemented a customized keyboard agent having similar keyboard
- * shortcuts to those found at the desktop but with a single eye path. The
- * Android keyboard is displayed by pressing your device settings key. Note
- * that we've defined a single eye path. Use the '1' key to add keyframes to it,
- * '2' to delete the path and '3' to play it.
+ * This example illustrates how to control the Scene using touch events emulating
+ * 3-DOFs, including excerpts of the motion and keyboard agents developed at the fork.
+ *
+ * The customized Android keyboard agent has similar keyboard shortcuts to those found
+ * at the Desktop, but with a single eye path. The Android keyboard is displayed by
+ * pressing your device settings key. Note that we've defined a single eye path. Use
+ * the '1' key to add keyframes to it, '2' to delete the path and '3' to play it.
  */
 
 import java.util.Vector;

@@ -1695,28 +1695,28 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Same as {@code return eye().pointIsVisible(point)}.
 	 * 
-	 * @see remixlab.dandelion.core.Eye#pointIsVisible(Vec)
+	 * @see remixlab.dandelion.core.Eye#isPointVisible(Vec)
 	 */
-	public boolean pointIsVisible(Vec point) {
-		return eye().pointIsVisible(point);
+	public boolean isPointVisible(Vec point) {
+		return eye().isPointVisible(point);
 	}
 
 	/**
 	 * Same as {@code return eye().ballIsVisible(center, radius)}.
 	 * 
-	 * @see remixlab.dandelion.core.Eye#ballIsVisible(Vec, float)
+	 * @see remixlab.dandelion.core.Eye#ballVisibility(Vec, float)
 	 */
-	public Eye.Visibility ballIsVisible(Vec center, float radius) {
-		return eye().ballIsVisible(center, radius);
+	public Eye.Visibility ballVisibility(Vec center, float radius) {
+		return eye().ballVisibility(center, radius);
 	}
 
 	/**
 	 * Same as {@code return eye().boxIsVisible(p1, p2)}.
 	 * 
-	 * @see remixlab.dandelion.core.Eye#boxIsVisible(Vec, Vec)
+	 * @see remixlab.dandelion.core.Eye#boxVisibility(Vec, Vec)
 	 */
-	public Eye.Visibility boxIsVisible(Vec p1, Vec p2) {
-		return eye().boxIsVisible(p1, p2);
+	public Eye.Visibility boxVisibility(Vec p1, Vec p2) {
+		return eye().boxVisibility(p1, p2);
 	}
 
 	/**
@@ -1797,7 +1797,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 */
 	public void toggleCameraType() {
 		if (this.is2D()) {
-			System.out.println("Warning: Camera Type is only available in 3D");
+			AbstractScene.showDepthWarning("toggleCameraType");
+			return;
 		}
 		else {
 			if (((Camera) eye()).type() == Camera.Type.PERSPECTIVE)
@@ -1805,6 +1806,51 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 			else
 				setCameraType(Camera.Type.PERSPECTIVE);
 		}
+	}
+
+	/**
+	 * Same as {@code return camera().isFaceBackFacing(a, b, c)}.
+	 * <p>
+	 * This method is only available in 3D.
+	 * 
+	 * @see remixlab.dandelion.core.Camera#isFaceBackFacing(Vec, Vec, Vec)
+	 */
+	public boolean isFaceBackFacing(Vec a, Vec b, Vec c) {
+		if (this.is2D()) {
+			AbstractScene.showDepthWarning("isFaceBackFacing");
+			return false;
+		}
+		return camera().isFaceBackFacing(a, b, c);
+	}
+
+	/**
+	 * Same as {@code return camera().isConeBackFacing(vertex, normals)}.
+	 * <p>
+	 * This method is only available in 3D.
+	 * 
+	 * @see remixlab.dandelion.core.Camera#isConeBackFacing(Vec, Vec[])
+	 */
+	public boolean isConeBackFacing(Vec vertex, Vec[] normals) {
+		if (this.is2D()) {
+			AbstractScene.showDepthWarning("isConeBackFacing");
+			return false;
+		}
+		return camera().isConeBackFacing(vertex, normals);
+	}
+
+	/**
+	 * Same as {@code return camera().isConeBackFacing(vertex, axis, angle)}.
+	 * <p>
+	 * This method is only available in 3D.
+	 * 
+	 * @see remixlab.dandelion.core.Camera#isConeBackFacing(Vec, Vec, float)
+	 */
+	public boolean isConeBackFacing(Vec vertex, Vec axis, float angle) {
+		if (this.is2D()) {
+			AbstractScene.showDepthWarning("isConeBackFacing");
+			return false;
+		}
+		return camera().isConeBackFacing(vertex, axis, angle);
 	}
 
 	/**

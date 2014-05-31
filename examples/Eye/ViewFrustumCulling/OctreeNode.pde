@@ -48,7 +48,7 @@ public class OctreeNode {
   }
 
   public void drawIfAllChildrenAreVisible(PGraphics pg, Camera camera) {
-    Camera.Visibility vis = camera.boxIsVisible(p1, p2);
+    Camera.Visibility vis = camera.boxVisibility(p1, p2);
     if (vis == Camera.Visibility.VISIBLE)
       draw(pg);
     else if (vis == Camera.Visibility.SEMIVISIBLE)

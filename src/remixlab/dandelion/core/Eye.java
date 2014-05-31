@@ -23,10 +23,25 @@ import remixlab.util.*;
  * An Eye defines some intrinsic parameters ({@link #position()}, {@link #viewDirection()}, {@link #upVector()}...) and
  * useful positioning tools that ease its placement ({@link #showEntireScene()}, {@link #fitBall(Vec, float)},
  * {@link #lookAt(Vec)}...). It exports its associated projection and view matrices and it can interactively be modified
- * using any interaction mechanism you can think of. It holds a collection of paths (
- * {@link #keyFrameInterpolator(int key)}) each of which can be interpolated ({@link #playPath}). It also provides
- * visibility routines ({@link #pointIsVisible(Vec)}, {@link #ballIsVisible(Vec, float)},
- * {@link #boxIsVisible(Vec, Vec)}), from which advanced geometry culling techniques can be implemented.
+ * using any interaction mechanism you can think of (see {@link remixlab.dandelion.core.InteractiveEyeFrame} class).
+ * <p>
+ * An Eye holds a collection of paths ({@link #keyFrameInterpolator(int key)}) each of which can be interpolated (
+ * {@link #playPath}). It also provides visibility routines ({@link #isPointVisible(Vec)},
+ * {@link #ballVisibility(Vec, float)}, {@link #boxVisibility(Vec, Vec)}), from which advanced geometry culling
+ * techniques can be implemented.
+ * <p>
+ * The {@link #position()} and {@link #orientation()} of the Eye are defined by an
+ * {@link remixlab.dandelion.core.InteractiveEyeFrame} (retrieved using {@link #frame()}). These methods are just
+ * convenient wrappers to the equivalent Frame methods. This also means that the Eye {@link #frame()} can be attached to
+ * a {@link remixlab.dandelion.core.Frame#referenceFrame()} which enables complex Eye setups. An Eye has its own
+ * magnitude, different from that of the scene (i.e., {@link remixlab.dandelion.core.Frame#magnitude()} doesn't
+ * necessarily equals {@code 1}), which allows to scale the view. Use {@link #eyeCoordinatesOf(Vec)} and
+ * {@link #worldCoordinatesOf(Vec)} (or any of the powerful Frame transformations, such as
+ * {@link remixlab.dandelion.core.Frame#coordinatesOf(Vec)}, {@link remixlab.dandelion.core.Frame#transformOf(Vec)},
+ * ...) to convert to and from the Eye {@link #frame()} coordinate system. {@link #projectedCoordinatesOf(Vec)} and
+ * {@link #unprojectedCoordinatesOf(Vec)} will convert from screen to 3D coordinates.
+ * <p>
+ * An Eye can also be used outside of an Scene for its coordinate system conversion capabilities.
  */
 public abstract class Eye implements Copyable {
 	@Override
@@ -215,7 +230,7 @@ public abstract class Eye implements Copyable {
 	}
 
 	/**
-	 * Returns the Eye {@link #position()} to {@link #sceneCenter()} distance.
+	 * Returns the Eye {@link #position()} to {@link #sceneCenter()} distance in Scene units.
 	 * <p>
 	 * 3D Cameras return the projected Eye {@link #position()} to {@link #sceneCenter()} distance along the Camera Z axis
 	 * and use it in {@link remixlab.dandelion.core.Camera#zNear()} and {@link remixlab.dandelion.core.Camera#zFar()} to
@@ -224,7 +239,7 @@ public abstract class Eye implements Copyable {
 	public abstract float distanceToSceneCenter();
 
 	/**
-	 * Returns the Eye {@link #position()} to {@link #anchor()} distance.
+	 * Returns the Eye {@link #position()} to {@link #anchor()} distance in Scene units.
 	 * <p>
 	 * 3D Cameras return the projected Eye {@link #position()} to {@link #anchor()} distance along the Camera Z axis and
 	 * use it in {@link #getBoundaryWidthHeight(float[])} so that when the Camera is translated forward then its frustum
@@ -725,13 +740,13 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Computes the projection matrix associated with the Eye.
 	 * <p>
-	 * If Eye is a 3D PERSPECTIVE Camera, defines a projection matrix similar to what would {@code perspective()} do using
-	 * the {@link remixlab.dandelion.core.Camera#fieldOfView()}, window {@link #aspectRatio()},
+	 * If Eye is a 3D PERSPECTIVE Camera, defines a projection matrix using the
+	 * {@link remixlab.dandelion.core.Camera#fieldOfView()}, {@link #aspectRatio()},
 	 * {@link remixlab.dandelion.core.Camera#zNear()} and {@link remixlab.dandelion.core.Camera#zFar()} parameters. If Eye
-	 * is a 3D ORTHOGRAPHIC Camera, the projection matrix is as what {@code ortho()} would do. Frustum's width and height
-	 * are set using {@link #getBoundaryWidthHeight()}. Both types use {@link remixlab.dandelion.core.Camera#zNear()} and
-	 * {@link remixlab.dandelion.core.Camera#zFar()} to place clipping planes. These values are determined from
-	 * sceneRadius() and sceneCenter() so that they best fit the scene size.
+	 * is a 3D ORTHOGRAPHIC Camera, the frustum's width and height are set using {@link #getBoundaryWidthHeight()}. Both
+	 * types use {@link remixlab.dandelion.core.Camera#zNear()} and {@link remixlab.dandelion.core.Camera#zFar()} to place
+	 * clipping planes. These values are determined from sceneRadius() and sceneCenter() so that they best fit the scene
+	 * size.
 	 * <p>
 	 * Use {@link #getProjection()} to retrieve this matrix.
 	 * <p>
@@ -1420,9 +1435,9 @@ public abstract class Eye implements Copyable {
 	 * automatically update the boundary equations every frame instead.
 	 * 
 	 * @see #distanceToBoundary(int, Vec)
-	 * @see #pointIsVisible(Vec)
-	 * @see #ballIsVisible(Vec, float)
-	 * @see #boxIsVisible(Vec, Vec)
+	 * @see #isPointVisible(Vec)
+	 * @see #ballVisibility(Vec, float)
+	 * @see #boxVisibility(Vec, Vec)
 	 * @see #computeBoundaryEquations()
 	 * @see #getBoundaryEquations()
 	 * @see remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()
@@ -1449,9 +1464,9 @@ public abstract class Eye implements Copyable {
 	 * Scene setup (with {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()}).
 	 * 
 	 * @see #distanceToBoundary(int, Vec)
-	 * @see #pointIsVisible(Vec)
-	 * @see #ballIsVisible(Vec, float)
-	 * @see #boxIsVisible(Vec, Vec)
+	 * @see #isPointVisible(Vec)
+	 * @see #ballVisibility(Vec, float)
+	 * @see #boxVisibility(Vec, Vec)
 	 * @see #computeBoundaryEquations()
 	 * @see #updateBoundaryEquations()
 	 * @see remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()
@@ -1465,8 +1480,8 @@ public abstract class Eye implements Copyable {
 	}
 
 	/**
-	 * Returns the signed distance between point {@code pos} and plane {@code index}. The distance is negative if the
-	 * point lies in the planes's boundary halfspace, and positive otherwise.
+	 * Returns the signed distance between point {@code pos} and plane {@code index} in Scene units. The distance is
+	 * negative if the point lies in the planes's boundary halfspace, and positive otherwise.
 	 * <p>
 	 * {@code index} is a value between {@code 0} and {@code 5} which respectively correspond to the left, right, near,
 	 * far, top and bottom Eye boundary planes.
@@ -1475,9 +1490,9 @@ public abstract class Eye implements Copyable {
 	 * them explicitly (by calling {@link #computeBoundaryEquations()} ) or enable them to be automatic updated in your
 	 * Scene setup (with {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()}).
 	 * 
-	 * @see #pointIsVisible(Vec)
-	 * @see #ballIsVisible(Vec, float)
-	 * @see #boxIsVisible(Vec, Vec)
+	 * @see #isPointVisible(Vec)
+	 * @see #ballVisibility(Vec, float)
+	 * @see #boxVisibility(Vec, Vec)
 	 * @see #computeBoundaryEquations()
 	 * @see #updateBoundaryEquations()
 	 * @see #getBoundaryEquations()
@@ -1500,14 +1515,14 @@ public abstract class Eye implements Copyable {
 	 * Scene setup (with {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()}).
 	 * 
 	 * @see #distanceToBoundary(int, Vec)
-	 * @see #ballIsVisible(Vec, float)
-	 * @see #boxIsVisible(Vec, Vec)
+	 * @see #ballVisibility(Vec, float)
+	 * @see #boxVisibility(Vec, Vec)
 	 * @see #computeBoundaryEquations()
 	 * @see #updateBoundaryEquations()
 	 * @see #getBoundaryEquations()
 	 * @see remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()
 	 */
-	public abstract boolean pointIsVisible(Vec point);
+	public abstract boolean isPointVisible(Vec point);
 
 	/**
 	 * Returns {@link remixlab.dandelion.core.Eye.Visibility#VISIBLE},
@@ -1520,14 +1535,14 @@ public abstract class Eye implements Copyable {
 	 * Scene setup (with {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()}).
 	 * 
 	 * @see #distanceToBoundary(int, Vec)
-	 * @see #pointIsVisible(Vec)
-	 * @see #boxIsVisible(Vec, Vec)
+	 * @see #isPointVisible(Vec)
+	 * @see #boxVisibility(Vec, Vec)
 	 * @see #computeBoundaryEquations()
 	 * @see #updateBoundaryEquations()
 	 * @see #getBoundaryEquations()
 	 * @see remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()
 	 */
-	public abstract Visibility ballIsVisible(Vec center, float radius);
+	public abstract Visibility ballVisibility(Vec center, float radius);
 
 	/**
 	 * Returns {@link remixlab.dandelion.core.Eye.Visibility#VISIBLE},
@@ -1540,14 +1555,14 @@ public abstract class Eye implements Copyable {
 	 * Scene setup (with {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()}).
 	 * 
 	 * @see #distanceToBoundary(int, Vec)
-	 * @see #pointIsVisible(Vec)
-	 * @see #ballIsVisible(Vec, float)
+	 * @see #isPointVisible(Vec)
+	 * @see #ballVisibility(Vec, float)
 	 * @see #computeBoundaryEquations()
 	 * @see #updateBoundaryEquations()
 	 * @see #getBoundaryEquations()
 	 * @see remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()
 	 */
-	public abstract Visibility boxIsVisible(Vec p1, Vec p2);
+	public abstract Visibility boxVisibility(Vec p1, Vec p2);
 
 	/**
 	 * Returns the ratio between pixel and scene units at {@code position}.
