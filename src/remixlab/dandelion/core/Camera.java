@@ -98,7 +98,7 @@ public class Camera extends Eye implements Copyable {
 	private float	physicalDist2Scrn;	// in meters
 	private float	physicalScrnWidth;	// in meters
 
-	// rescale ortho when rap changes
+	// rescale ortho when anchor changes
 	private float	rapK	= 1;
 
 	/**
@@ -273,7 +273,8 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	/**
-	 * Returns the vertical field of view of the Camera (in radians).
+	 * Returns the vertical field of view of the Camera (in radians) computed as
+	 * {@code 2.0f * (float) Math.atan(frame().magnitude())}.
 	 * <p>
 	 * Value is set using {@link #setFieldOfView(float)}. Default value is pi/3 radians. This value is meaningless if the
 	 * Camera {@link #type()} is {@link remixlab.dandelion.core.Camera.Type#ORTHOGRAPHIC}.
@@ -283,16 +284,22 @@ public class Camera extends Eye implements Copyable {
 	 * {@link #aspectRatio()} and {@link #horizontalFieldOfView()}).
 	 * <p>
 	 * Use {@link #setFOVToFitScene()} to adapt the {@link #fieldOfView()} to a given scene.
+	 * 
+	 * @see #setFieldOfView(float)
 	 */
 	public float fieldOfView() {
 		return 2.0f * (float) Math.atan(frame().magnitude());
 	}
 
 	/**
-	 * Sets the vertical {@link #fieldOfView()} of the Camera (in radians).
+	 * Sets the vertical {@link #fieldOfView()} of the Camera (in radians). The {@link #fieldOfView()} is encapsulated as
+	 * the camera {@link remixlab.dandelion.core.Frame#magnitude()} using the following expression:
+	 * {@code frame().setMagnitude((float) Math.tan(fov / 2.0f))}.
 	 * <p>
 	 * Note that {@link #focusDistance()} is set to {@link #sceneRadius()} / tan( {@link #fieldOfView()}/2) by this
 	 * method.
+	 * 
+	 * @see #fieldOfView()
 	 */
 	public void setFieldOfView(float fov) {
 		// fldOfView = fov;
@@ -902,6 +909,15 @@ public class Camera extends Eye implements Copyable {
 		viewMat.mat[15] = 1.0f;
 	}
 
+	/**
+	 * Returns a value proportional to the Camera (z projected) distance to the {@link #anchor()} so that when zooming on
+	 * the object, the ortho Camera is translated forward and its boundary is narrowed, making the object appear bigger on
+	 * screen, as intuitively expected.
+	 * <p>
+	 * Value is computed as: {@code 2 * distanceToAnchor() / screenHeight()}.
+	 * 
+	 * @see #getBoundaryWidthHeight(float[])
+	 */
 	@Override
 	protected float rescalingOrthoFactor() {
 		float toAnchor = this.distanceToAnchor();

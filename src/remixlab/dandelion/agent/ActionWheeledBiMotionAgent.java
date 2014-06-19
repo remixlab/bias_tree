@@ -51,16 +51,16 @@ import remixlab.dandelion.core.Constants.*;
  *          MotionProfile parameterized with a Dandelion action
  */
 public class ActionWheeledBiMotionAgent<P extends MotionProfile<?>> extends
-		ActionWheeledMotionAgent<MotionProfile<WheelAction>,
+		ActionWheeledMotionAgent<MotionProfile<DOF1Action>,
 		P,
 		ClickProfile<ClickAction>> implements Constants {
-	protected P														camProfile;
-	protected MotionProfile<WheelAction>	camWheelProfile;
-	protected ClickProfile<ClickAction>		camClickProfile;
-	protected AbstractScene								scene;
+	protected P													camProfile;
+	protected MotionProfile<DOF1Action>	camWheelProfile;
+	protected ClickProfile<ClickAction>	camClickProfile;
+	protected AbstractScene							scene;
 
-	public ActionWheeledBiMotionAgent(MotionProfile<WheelAction> fWProfile,
-			MotionProfile<WheelAction> cWProfile,
+	public ActionWheeledBiMotionAgent(MotionProfile<DOF1Action> fWProfile,
+			MotionProfile<DOF1Action> cWProfile,
 			P fProfile,
 			P cProfile,
 			ClickProfile<ClickAction> c,
@@ -134,7 +134,7 @@ public class ActionWheeledBiMotionAgent<P extends MotionProfile<?>> extends
 	 * Profile defining InteractiveEyeFrame action bindings from (wheel)
 	 * {@link remixlab.bias.event.shortcut.ButtonShortcut}s.
 	 */
-	public MotionProfile<WheelAction> eyeWheelProfile() {
+	public MotionProfile<DOF1Action> eyeWheelProfile() {
 		return camWheelProfile;
 	}
 
@@ -142,21 +142,21 @@ public class ActionWheeledBiMotionAgent<P extends MotionProfile<?>> extends
 	 * Profile defining InteractiveFrame action bindings from (wheel) {@link remixlab.bias.event.shortcut.ButtonShortcut}
 	 * s.
 	 */
-	public MotionProfile<WheelAction> frameWheelProfile() {
+	public MotionProfile<DOF1Action> frameWheelProfile() {
 		return wheelProfile;
 	}
 
 	/**
 	 * Sets the {@link #eyeWheelProfile()}.
 	 */
-	public void setEyeWheelProfile(MotionProfile<WheelAction> profile) {
+	public void setEyeWheelProfile(MotionProfile<DOF1Action> profile) {
 		camWheelProfile = profile;
 	}
 
 	/**
 	 * Sets the {@link #frameWheelProfile()}.
 	 */
-	public void setFrameWheelProfile(MotionProfile<WheelAction> profile) {
+	public void setFrameWheelProfile(MotionProfile<DOF1Action> profile) {
 		setWheelProfile(profile);
 	}
 
@@ -191,7 +191,7 @@ public class ActionWheeledBiMotionAgent<P extends MotionProfile<?>> extends
 	}
 
 	@Override
-	public MotionProfile<WheelAction> wheelProfile() {
+	public MotionProfile<DOF1Action> wheelProfile() {
 		if (inputGrabber() instanceof InteractiveEyeFrame)
 			return eyeWheelProfile();
 		if (inputGrabber() instanceof InteractiveFrame)

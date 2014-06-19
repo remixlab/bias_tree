@@ -25,7 +25,7 @@ import remixlab.util.*;
  * dandelion-based applications.
  * <p>
  * The possible actions that can interactively be performed by the InteractiveFrame are
- * {@link remixlab.dandelion.core.Constants.ClickAction}, {@link remixlab.dandelion.core.Constants.WheelAction},
+ * {@link remixlab.dandelion.core.Constants.ClickAction}, {@link remixlab.dandelion.core.Constants.DOF1Action},
  * {@link remixlab.dandelion.core.Constants.DOF2Action}, {@link remixlab.dandelion.core.Constants.DOF3Action} and
  * {@link remixlab.dandelion.core.Constants.DOF6Action}. The {@link remixlab.dandelion.core.AbstractScene#motionAgent()}
  * provides high-level methods to handle some of these actions, e.g., a {@link remixlab.dandelion.agent.MouseAgent} can

@@ -33,8 +33,8 @@ public class HIDAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF6Actio
 	 *          name
 	 */
 	public HIDAgent(AbstractScene scn, String n) {
-		super(new MotionProfile<WheelAction>(),
-				new MotionProfile<WheelAction>(),
+		super(new MotionProfile<DOF1Action>(),
+				new MotionProfile<DOF1Action>(),
 				new MotionProfile<DOF6Action>(),
 				new MotionProfile<DOF6Action>(),
 				new ClickProfile<ClickAction>(),

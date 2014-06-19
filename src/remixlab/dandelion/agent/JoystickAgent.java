@@ -24,8 +24,8 @@ public class JoystickAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF3
 	 * Default constructor. Nothing fancy.
 	 */
 	public JoystickAgent(AbstractScene scn, String n) {
-		super(new MotionProfile<WheelAction>(),
-				new MotionProfile<WheelAction>(),
+		super(new MotionProfile<DOF1Action>(),
+				new MotionProfile<DOF1Action>(),
 				new MotionProfile<DOF3Action>(),
 				new MotionProfile<DOF3Action>(),
 				new ClickProfile<ClickAction>(),

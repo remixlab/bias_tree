@@ -69,7 +69,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	// offscreen
 	public Point														upperLeftCorner;
 	protected boolean												offscreen;
-
 	protected long													lastEqUpdate;
 
 	// FRAME SYNC requires this:

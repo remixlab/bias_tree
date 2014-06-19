@@ -61,7 +61,7 @@ public void setExoticCustomization() {
   //frame
   scene.setMouseButtonBinding(Target.FRAME, LEFT, DOF2Action.TRANSLATE);
   scene.setMouseButtonBinding(Target.FRAME, CENTER, DOF2Action.SCALE);
-  scene.setMouseWheelBinding(Target.FRAME, WheelAction.ZOOM);
+  scene.setMouseWheelBinding(Target.FRAME, DOF1Action.ZOOM);
   scene.setMouseButtonBinding(Target.FRAME, RIGHT, DOF2Action.ROTATE_X);
   //keyboard
   scene.setKeyboardShortcut('g',KeyboardAction.TOGGLE_AXES_VISUAL_HINT);

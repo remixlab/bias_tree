@@ -29,8 +29,8 @@ public class MouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Act
 	 *          Agents name
 	 */
 	public MouseAgent(AbstractScene scn, String n) {
-		super(new MotionProfile<WheelAction>(),
-				new MotionProfile<WheelAction>(),
+		super(new MotionProfile<DOF1Action>(),
+				new MotionProfile<DOF1Action>(),
 				new MotionProfile<DOF2Action>(),
 				new MotionProfile<DOF2Action>(),
 				new ClickProfile<ClickAction>(),
@@ -66,7 +66,7 @@ public class MouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Act
 		eyeProfile().setBinding(B_NOMODIFIER_MASK, B_LEFT, DOF2Action.MOVE_FORWARD);
 		eyeProfile().setBinding(B_NOMODIFIER_MASK, B_RIGHT, DOF2Action.MOVE_BACKWARD);
 		eyeProfile().setBinding(B_SHIFT, B_LEFT, DOF2Action.ROTATE_Z);
-		eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.ROTATE_Z);
+		eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, DOF1Action.ROTATE_Z);
 		if (scene.is3D()) {
 			eyeProfile().setBinding(B_NOMODIFIER_MASK, B_CENTER, DOF2Action.LOOK_AROUND);
 			eyeProfile().setBinding(B_SHIFT, B_CENTER, DOF2Action.DRIVE);
@@ -149,8 +149,8 @@ public class MouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Act
 		eyeClickProfile().setClickBinding(B_NOMODIFIER_MASK, B_RIGHT, 2, ClickAction.CENTER_FRAME);
 		frameClickProfile().setClickBinding(B_NOMODIFIER_MASK, B_LEFT, 2, ClickAction.ALIGN_FRAME);
 		frameClickProfile().setClickBinding(B_NOMODIFIER_MASK, B_RIGHT, 2, ClickAction.CENTER_FRAME);
-		eyeWheelProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, scene.is3D() ? WheelAction.ZOOM : WheelAction.SCALE);
-		frameWheelProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, WheelAction.SCALE);
+		eyeWheelProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, scene.is3D() ? DOF1Action.ZOOM : DOF1Action.SCALE);
+		frameWheelProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, DOF1Action.SCALE);
 	}
 
 	@Override

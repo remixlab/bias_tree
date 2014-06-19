@@ -461,8 +461,57 @@ public interface Constants extends EventConstants {
 	}
 
 	/**
-	 * Wheel action sub-group.
+	 * DOF1 action sub-group.
 	 */
+	public enum DOF1Action implements Action<DandelionAction> {
+		// DOF_1
+		SCALE(DandelionAction.SCALE),
+		ZOOM(DandelionAction.ZOOM),
+		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
+		TRANSLATE_X(DandelionAction.TRANSLATE_X),
+		TRANSLATE_Y(DandelionAction.TRANSLATE_Y),
+		TRANSLATE_Z(DandelionAction.TRANSLATE_Z),
+		ROTATE_X(DandelionAction.ROTATE_X),
+		ROTATE_Y(DandelionAction.ROTATE_Y),
+		ROTATE_Z(DandelionAction.ROTATE_Z),
+
+		CUSTOM(DandelionAction.CUSTOM);
+
+		@Override
+		public DandelionAction referenceAction() {
+			return act;
+		}
+
+		@Override
+		public String description() {
+			return this.referenceAction().description();
+		}
+
+		@Override
+		public int dofs() {
+			return act.dofs();
+		}
+
+		/**
+		 * Whether or not this action item is available in 2D. All actions are available in 3D.
+		 */
+		public boolean is2D() {
+			return act.is2D();
+		}
+
+		DandelionAction	act;
+
+		DOF1Action(DandelionAction a) {
+			act = a;
+		}
+	}
+
+	/**
+	 * Wheel action sub-group.
+	 * 
+	 * @deprecated Please refrain from using this type, it will be removed from future releases. Use DOF1Action instead.
+	 */
+	@Deprecated
 	public enum WheelAction implements Action<DandelionAction> {
 		// DOF_1
 		SCALE(DandelionAction.SCALE),

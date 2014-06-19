@@ -1,5 +1,5 @@
 /**************************************************************************************
- * ProScene (version 2.0.0)
+ * ProScene (version 2.0.1)
  * Copyright (c) 2010-2014 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  * 
@@ -376,7 +376,7 @@ public class Scene extends AbstractScene implements PConstants {
 			eyeProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.MOVE_FORWARD);
 			eyeProfile().setBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, DOF2Action.MOVE_BACKWARD);
 			eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.ROTATE_Z);
-			eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, WheelAction.ROTATE_Z);
+			eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, DOF1Action.ROTATE_Z);
 			if (is3D()) {
 				eyeProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, DOF2Action.LOOK_AROUND);
 				eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_CENTER), B_CENTER, DOF2Action.DRIVE);
@@ -425,8 +425,8 @@ public class Scene extends AbstractScene implements PConstants {
 			eyeClickProfile().setClickBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, 2, ClickAction.CENTER_FRAME);
 			frameClickProfile().setClickBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, 2, ClickAction.ALIGN_FRAME);
 			frameClickProfile().setClickBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, 2, ClickAction.CENTER_FRAME);
-			eyeWheelProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, is3D() ? WheelAction.ZOOM : WheelAction.SCALE);
-			frameWheelProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, WheelAction.SCALE);
+			eyeWheelProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, is3D() ? DOF1Action.ZOOM : DOF1Action.SCALE);
+			frameWheelProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, DOF1Action.SCALE);
 		}
 	}
 
@@ -848,9 +848,9 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 	}
 
-	public static final String	prettyVersion	= "2.0.0";
+	public static final String	prettyVersion	= "2.0.1";
 
-	public static final String	version				= "16";
+	public static final String	version				= "17";
 
 	// P R O C E S S I N G A P P L E T A N D O B J E C T S
 	protected PApplet						parent;
@@ -1101,29 +1101,117 @@ public class Scene extends AbstractScene implements PConstants {
 	// wheel here
 
 	/**
-	 * Binds the mask-wheel shortcut to the (wheel) dandelion action to be performed by the given {@code target} (EYE or
+	 * Use setMouseWheelBinding(Target, int, DOF1Action) instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public void setMouseWheelBinding(Target target, int mask, WheelAction action) {
+		DOF1Action dof1Action = null;
+		if (action != null)
+			switch (action) {
+			case CUSTOM:
+				dof1Action = DOF1Action.CUSTOM;
+				break;
+			case ROTATE_X:
+				dof1Action = DOF1Action.ROTATE_X;
+				break;
+			case ROTATE_Y:
+				dof1Action = DOF1Action.ROTATE_Y;
+				break;
+			case ROTATE_Z:
+				dof1Action = DOF1Action.ROTATE_Z;
+				break;
+			case SCALE:
+				dof1Action = DOF1Action.SCALE;
+				break;
+			case TRANSLATE_X:
+				dof1Action = DOF1Action.TRANSLATE_X;
+				break;
+			case TRANSLATE_Y:
+				dof1Action = DOF1Action.TRANSLATE_Y;
+				break;
+			case TRANSLATE_Z:
+				dof1Action = DOF1Action.TRANSLATE_Z;
+				break;
+			case ZOOM:
+				dof1Action = DOF1Action.ZOOM;
+				break;
+			case ZOOM_ON_ANCHOR:
+				dof1Action = DOF1Action.ZOOM_ON_ANCHOR;
+				break;
+			}
+		setMouseWheelBinding(target, mask, dof1Action);
+	}
+
+	/**
+	 * Use setMouseWheelBinding(Target, DOF1Action) instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public void setMouseWheelBinding(Target target, WheelAction action) {
+		DOF1Action dof1Action = null;
+		if (action != null)
+			switch (action) {
+			case CUSTOM:
+				dof1Action = DOF1Action.CUSTOM;
+				break;
+			case ROTATE_X:
+				dof1Action = DOF1Action.ROTATE_X;
+				break;
+			case ROTATE_Y:
+				dof1Action = DOF1Action.ROTATE_Y;
+				break;
+			case ROTATE_Z:
+				dof1Action = DOF1Action.ROTATE_Z;
+				break;
+			case SCALE:
+				dof1Action = DOF1Action.SCALE;
+				break;
+			case TRANSLATE_X:
+				dof1Action = DOF1Action.TRANSLATE_X;
+				break;
+			case TRANSLATE_Y:
+				dof1Action = DOF1Action.TRANSLATE_Y;
+				break;
+			case TRANSLATE_Z:
+				dof1Action = DOF1Action.TRANSLATE_Z;
+				break;
+			case ZOOM:
+				dof1Action = DOF1Action.ZOOM;
+				break;
+			case ZOOM_ON_ANCHOR:
+				dof1Action = DOF1Action.ZOOM_ON_ANCHOR;
+				break;
+			}
+		setMouseWheelBinding(target, dof1Action);
+	}
+
+	/**
+	 * Binds the mask-wheel shortcut to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or
 	 * FRAME).
 	 */
-	public void setMouseWheelBinding(Target target, int mask, WheelAction action) {
+	public void setMouseWheelBinding(Target target, int mask, DOF1Action action) {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("setMouseWheelBinding", platform());
 			return;
 		}
-		MotionProfile<WheelAction> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
 		if (profile != null)
 			profile.setBinding(mask, B_NOBUTTON, action);
 	}
 
 	/**
-	 * Binds the wheel to the (wheel) dandelion action to be performed by the given {@code target} (EYE or FRAME).
+	 * Binds the wheel to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME).
 	 */
-	public void setMouseWheelBinding(Target target, WheelAction action) {
+	public void setMouseWheelBinding(Target target, DOF1Action action) {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("setMouseWheelBinding", platform());
 			return;
 		}
-		MotionProfile<WheelAction> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
 		if (profile != null)
 			profile.setBinding(action);
@@ -1137,7 +1225,7 @@ public class Scene extends AbstractScene implements PConstants {
 			AbstractScene.showPlatformVariationWarning("removeMouseWheelBinding", platform());
 			return;
 		}
-		MotionProfile<WheelAction> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
 		if (profile != null)
 			profile.removeBinding(mask, B_NOBUTTON);
@@ -1151,7 +1239,7 @@ public class Scene extends AbstractScene implements PConstants {
 			AbstractScene.showPlatformVariationWarning("removeMouseWheelBinding", platform());
 			return;
 		}
-		MotionProfile<WheelAction> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
 		if (profile != null)
 			profile.removeBinding();
@@ -1165,7 +1253,7 @@ public class Scene extends AbstractScene implements PConstants {
 			AbstractScene.showPlatformVariationWarning("isMouseWheelBindingInUse", platform());
 			return false;
 		}
-		MotionProfile<WheelAction> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
 		return profile.isBindingInUse(mask, B_NOBUTTON);
 	}
@@ -1178,7 +1266,7 @@ public class Scene extends AbstractScene implements PConstants {
 			AbstractScene.showPlatformVariationWarning("isMouseWheelBindingInUse", platform());
 			return false;
 		}
-		MotionProfile<WheelAction> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
 		return profile.isBindingInUse();
 	}
@@ -1421,6 +1509,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #keyboardAgent()
 	 */
 	public MouseAgent mouseAgent() {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("mouseAgent", platform());
+			return null;
+		}
 		return (MouseAgent) motionAgent();
 	}
 
@@ -1432,6 +1524,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #isKeyboardAgentEnabled()
 	 */
 	public boolean isMouseAgentEnabled() {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("isMouseAgentEnabled", platform());
+			return false;
+		}
 		return isMotionAgentEnabled();
 	}
 
@@ -1451,6 +1547,10 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	public void enableMouseAgent() {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("enableMouseAgent", platform());
+			return;
+		}
 		enableMotionAgent();
 	}
 
@@ -1900,7 +2000,7 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void drawHollowCylinder(int detail, float w, float h, Vec m, Vec n) {
 		if (is2D()) {
-			AbstractScene.showDepthWarning("drawCylinder");
+			AbstractScene.showDepthWarning("drawHollowCylinder");
 			return;
 		}
 
@@ -1937,7 +2037,7 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void drawCone(int detail, float x, float y, float r, float h) {
 		if (is2D()) {
-			AbstractScene.showDepthWarning("drawCylinder");
+			AbstractScene.showDepthWarning("drawCone");
 			return;
 		}
 		pg().pushStyle();
@@ -1965,7 +2065,7 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void drawCone(int detail, float x, float y, float r1, float r2, float h) {
 		if (is2D()) {
-			AbstractScene.showDepthWarning("drawCylinder");
+			AbstractScene.showDepthWarning("drawCone");
 			return;
 		}
 		pg().pushStyle();

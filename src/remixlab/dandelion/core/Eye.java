@@ -768,11 +768,12 @@ public abstract class Eye implements Copyable {
 	}
 
 	/**
-	 * Fills in {@code target} with the {@code halfWidth} and {@code halfHeight} of the Eye boundary and returns it.
+	 * Fills in {@code target} with the {@code halfWidth} and {@code halfHeight} of the Eye boundary and returns it. While
+	 * {@code target[0]} holds {@code halfWidth}, {@code target[1]} holds {@code halfHeight}. Values are computed as:
+	 * {@code target[0] = rescalingOrthoFactor() * (frame().magnitude() * this.screenWidth() / 2)} and
+	 * {@code rescalingOrthoFactor() * (frame().magnitude() * this.screenHeight() / 2)}.
 	 * <p>
-	 * While {@code target[0]} holds {@code halfWidth}, {@code target[1]} holds {@code halfHeight}.
-	 * <p>
-	 * These values are valid for 2d Windows and the ortho Cameras (but not persp) and they are expressed in virtual scene
+	 * These values are valid for 2d Windows and ortho Cameras (but not persp) and they are expressed in virtual scene
 	 * units.
 	 * <p>
 	 * In the case of ortho Cameras these values are proportional to the Camera (z projected) distance to the
@@ -780,6 +781,8 @@ public abstract class Eye implements Copyable {
 	 * making the object appear bigger on screen, as intuitively expected.
 	 * <p>
 	 * Overload this method to change this behavior if desired.
+	 * 
+	 * @see #rescalingOrthoFactor()
 	 */
 	public float[] getBoundaryWidthHeight(float[] target) {
 		if ((target == null) || (target.length != 2)) {
@@ -794,7 +797,12 @@ public abstract class Eye implements Copyable {
 		return target;
 	}
 
-	// standard cameras and 2d :)
+	/**
+	 * Simply returns {@code 1} which is valid for 2d Windows and ortho Cameras. Returned value is overriden by the camera
+	 * class.
+	 * 
+	 * @see #getBoundaryWidthHeight(float[])
+	 */
 	protected float rescalingOrthoFactor() {
 		return 1.0f;
 	}

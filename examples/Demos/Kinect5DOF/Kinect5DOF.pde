@@ -11,6 +11,8 @@
  * it as "bogus" 6DOF event from which the following proscene built-in actions are
  * bound: TRANSLATE_ROTATE and TRANSLATE_XYZ.
  *
+ * See the gestures used to control the eye: https://www.youtube.com/watch?v=G8SEzFMmMyI
+ *
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 
