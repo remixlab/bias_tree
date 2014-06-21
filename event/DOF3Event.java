@@ -98,7 +98,7 @@ public class DOF3Event extends MotionEvent {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.button = B_NOBUTTON;
+		this.button = NOBUTTON;
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class DOF3Event extends MotionEvent {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.button = B_NOBUTTON;
+		this.button = NOBUTTON;
 		setPreviousEvent(prevEvent);
 	}
 

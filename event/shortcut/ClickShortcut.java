@@ -61,7 +61,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	 *          button
 	 */
 	public ClickShortcut(Integer b) {
-		this(B_NOMODIFIER_MASK, b, 1);
+		this(BogusEvent.NOMODIFIER_MASK, b, 1);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	 *          number of clicks
 	 */
 	public ClickShortcut(Integer b, Integer c) {
-		this(B_NOMODIFIER_MASK, b, c);
+		this(BogusEvent.NOMODIFIER_MASK, b, c);
 	}
 
 	/**
@@ -112,13 +112,13 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	 * @return description
 	 */
 	public String description() {
-		String description = new String();
+		String r = new String();
 		if (mask != 0)
-			description += BogusEvent.modifiersText(mask) + " + " + button.toString() + "_BUTTON";
+			r += BogusEvent.modifiersText(mask) + " + " + button.toString() + "_BUTTON";
 		if (numberOfClicks == 1)
-			description += " + " + numberOfClicks.toString() + " click";
+			r += (r.length() > 0) ? " + " + numberOfClicks.toString() + " click" : numberOfClicks.toString() + " click";
 		else
-			description += " + " + numberOfClicks.toString() + " clicks";
-		return description;
+			r += (r.length() > 0) ? " + " + numberOfClicks.toString() + " clicks" : numberOfClicks.toString() + " clicks";
+		return r;
 	}
 }

@@ -11,7 +11,6 @@
 package remixlab.bias.event.shortcut;
 
 import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.EventConstants;
 import remixlab.util.Copyable;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
@@ -22,7 +21,7 @@ import remixlab.util.HashCodeBuilder;
  * Shortcuts can represent, for instance, the button being dragged and the modifier key pressed at the very moment an
  * user interaction takes place, such as when she/he drags a giving mouse button while pressing the 'CTRL' modifier key.
  */
-public class Shortcut implements EventConstants, Copyable {
+public class Shortcut implements Copyable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -60,7 +59,7 @@ public class Shortcut implements EventConstants, Copyable {
 	 * B_NOMODIFIER_MASK.
 	 */
 	public Shortcut() {
-		mask = B_NOMODIFIER_MASK;
+		mask = BogusEvent.NOMODIFIER_MASK;
 	}
 
 	protected Shortcut(Shortcut other) {

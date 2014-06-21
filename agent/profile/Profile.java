@@ -16,7 +16,6 @@ import java.util.Map.Entry;
 
 import remixlab.bias.core.Action;
 import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.EventConstants;
 import remixlab.bias.event.shortcut.*;
 import remixlab.util.Copyable;
 import remixlab.util.EqualsBuilder;
@@ -31,7 +30,7 @@ import remixlab.util.HashCodeBuilder;
  * @param <A>
  *          {@link remixlab.bias.core.Action} : User-defined action.
  */
-public class Profile<K extends Shortcut, A extends Action<?>> implements EventConstants, Copyable {
+public class Profile<K extends Shortcut, A extends Action<?>> implements Copyable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).append(map).toHashCode();

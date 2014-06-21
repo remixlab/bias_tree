@@ -11,6 +11,7 @@
 package remixlab.bias.event.shortcut;
 
 import remixlab.bias.core.BogusEvent;
+import remixlab.bias.event.MotionEvent;
 import remixlab.util.Copyable;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
@@ -56,7 +57,7 @@ public final class ButtonShortcut extends Shortcut implements Copyable {
 	 * Constructs an "empty" shortcut by conveniently calling {@code this(B_NOMODIFIER_MASK, B_NOBUTTON);}
 	 */
 	public ButtonShortcut() {
-		this(B_NOMODIFIER_MASK, B_NOBUTTON);
+		this(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
 	}
 
 	/**
@@ -66,7 +67,7 @@ public final class ButtonShortcut extends Shortcut implements Copyable {
 	 *          button
 	 */
 	public ButtonShortcut(Integer b) {
-		this(B_NOMODIFIER_MASK, b);
+		this(MotionEvent.NOMODIFIER_MASK, b);
 	}
 
 	/**
@@ -106,20 +107,8 @@ public final class ButtonShortcut extends Shortcut implements Copyable {
 	 */
 	protected String description(Integer b) {
 		String r = BogusEvent.modifiersText(mask);
-		switch (b) {
-		case B_LEFT:
-			r += (r.length() > 0) ? "+LEFT_BUTTON" : "LEFT_BUTTON";
-			break;
-		case B_CENTER:
-			r += (r.length() > 0) ? "+MIDDLE_BUTTON" : "MIDDLE_BUTTON";
-			break;
-		case B_RIGHT:
-			r += (r.length() > 0) ? "+RIGHT_BUTTON" : "RIGHT_BUTTON";
-			break;
-		default:
-			r += (r.length() > 0) ? "+NO_BUTTON" : "NO_BUTTON";
-			break;
-		}
+		String bn = (b == MotionEvent.NOBUTTON) ? "NO_BUTTON" : b.toString() + "_BUTTON";
+		r += (r.length() > 0) ? "+" + bn : bn;
 		return r;
 	}
 }

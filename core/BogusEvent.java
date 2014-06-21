@@ -30,7 +30,15 @@ import remixlab.util.HashCodeBuilder;
  * {@link remixlab.bias.core.Agent#feed()} provides a callback alternative when none of these mechanisms are available
  * (as it often happens when dealing with specialized, non-default input hardware).
  */
-public class BogusEvent implements EventConstants, Copyable {
+public class BogusEvent implements Copyable {
+	// modifier keys
+	public static final int	NOMODIFIER_MASK	= 0;
+	public static final int	SHIFT						= 1 << 0;
+	public static final int	CTRL						= 1 << 1;
+	public static final int	META						= 1 << 2;
+	public static final int	ALT							= 1 << 3;
+	public static final int	ALT_GRAPH				= 1 << 4;
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -154,35 +162,35 @@ public class BogusEvent implements EventConstants, Copyable {
 	 * @return true if Shift was down when the event occurs
 	 */
 	public boolean isShiftDown() {
-		return (modifiers & B_SHIFT) != 0;
+		return (modifiers & SHIFT) != 0;
 	}
 
 	/**
 	 * @return true if Ctrl was down when the event occurs
 	 */
 	public boolean isControlDown() {
-		return (modifiers & B_CTRL) != 0;
+		return (modifiers & CTRL) != 0;
 	}
 
 	/**
 	 * @return true if Meta was down when the event occurs
 	 */
 	public boolean isMetaDown() {
-		return (modifiers & B_META) != 0;
+		return (modifiers & META) != 0;
 	}
 
 	/**
 	 * @return true if Alt was down when the event occurs
 	 */
 	public boolean isAltDown() {
-		return (modifiers & B_ALT) != 0;
+		return (modifiers & ALT) != 0;
 	}
 
 	/**
 	 * @return true if AltGraph was down when the event occurs
 	 */
 	public boolean isAltGraph() {
-		return (modifiers & B_ALT_GRAPH) != 0;
+		return (modifiers & ALT_GRAPH) != 0;
 	}
 
 	/**
@@ -192,15 +200,15 @@ public class BogusEvent implements EventConstants, Copyable {
 	 */
 	public static String modifiersText(int mask) {
 		String r = new String();
-		if ((B_ALT & mask) == B_ALT)
+		if ((ALT & mask) == ALT)
 			r += "ALT";
-		if ((B_SHIFT & mask) == B_SHIFT)
+		if ((SHIFT & mask) == SHIFT)
 			r += (r.length() > 0) ? "+SHIFT" : "SHIFT";
-		if ((B_CTRL & mask) == B_CTRL)
+		if ((CTRL & mask) == CTRL)
 			r += (r.length() > 0) ? "+CTRL" : "CTRL";
-		if ((B_META & mask) == B_META)
+		if ((META & mask) == META)
 			r += (r.length() > 0) ? "+META" : "META";
-		if ((B_ALT_GRAPH & mask) == B_ALT_GRAPH)
+		if ((ALT_GRAPH & mask) == ALT_GRAPH)
 			r += (r.length() > 0) ? "+ALT_GRAPH" : "ALT_GRAPH";
 		return r;
 	}

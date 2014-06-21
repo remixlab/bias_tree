@@ -11,6 +11,7 @@
 package remixlab.bias.agent.profile;
 
 import remixlab.bias.core.Action;
+import remixlab.bias.event.MotionEvent;
 import remixlab.bias.event.shortcut.*;
 
 /**
@@ -22,7 +23,7 @@ import remixlab.bias.event.shortcut.*;
  */
 public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, A> {
 	public boolean isBindingInUse() {
-		return isBindingInUse(B_NOMODIFIER_MASK, B_NOBUTTON);
+		return isBindingInUse(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
 	}
 
 	/**
@@ -31,7 +32,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * @param button
 	 */
 	public boolean isBindingInUse(Integer button) {
-		return isBindingInUse(B_NOMODIFIER_MASK, button);
+		return isBindingInUse(MotionEvent.NOMODIFIER_MASK, button);
 	}
 
 	/**
@@ -55,7 +56,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * Convenience function that simply calls {@code setWheelShortcut(0, action)}.
 	 */
 	public void setBinding(A action) {
-		setBinding(B_NOBUTTON, action);
+		setBinding(MotionEvent.NOBUTTON, action);
 	}
 
 	/**
@@ -65,7 +66,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * @param action
 	 */
 	public void setBinding(Integer button, A action) {
-		setBinding(B_NOMODIFIER_MASK, button, action);
+		setBinding(MotionEvent.NOMODIFIER_MASK, button, action);
 	}
 
 	/**
@@ -87,7 +88,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * Convenience function that simply calls {@code removeWheelShortcut(0)}.
 	 */
 	public void removeBinding() {
-		removeBinding(B_NOMODIFIER_MASK, B_NOBUTTON);
+		removeBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
 	}
 
 	/**
@@ -96,7 +97,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * @param button
 	 */
 	public void removeBinding(Integer button) {
-		removeBinding(B_NOMODIFIER_MASK, button);
+		removeBinding(MotionEvent.NOMODIFIER_MASK, button);
 	}
 
 	/**
@@ -110,7 +111,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	}
 
 	public Action<?> binding() {
-		return binding(B_NOMODIFIER_MASK, B_NOBUTTON);
+		return binding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
 	}
 
 	/**
@@ -119,7 +120,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * @param button
 	 */
 	public Action<?> binding(Integer button) {
-		return binding(B_NOMODIFIER_MASK, button);
+		return binding(MotionEvent.NOMODIFIER_MASK, button);
 	}
 
 	/**
