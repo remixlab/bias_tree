@@ -29,7 +29,7 @@ ProScene
 * Screen drawing (i.e., drawing of 2D primitives on top of a 3D scene).
 * Off-screen rendering mode support.
 * Handy set of complete documented examples that illustrates the use of the package.
-* Released under the terms of the (GPL-v3)[http://www.gnu.org/copyleft/gpl.html].
+* Released under the terms of the [GPL-v3](http://www.gnu.org/copyleft/gpl.html).
 * A complete [reference documentation](http://otrolado.info/prosceneApi/).
 * Active support and continuous discussions led by the [Processing community](http://forum.processing.org/two/search?Search=proscene).
 
