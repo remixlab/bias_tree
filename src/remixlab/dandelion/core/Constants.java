@@ -11,9 +11,8 @@
 package remixlab.dandelion.core;
 
 import remixlab.bias.core.Action;
-import remixlab.bias.core.EventConstants;
 
-public interface Constants extends EventConstants {
+public interface Constants {
 	/**
 	 * Which object is performing the motion action.
 	 */

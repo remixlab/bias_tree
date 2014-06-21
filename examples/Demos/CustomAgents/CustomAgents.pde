@@ -17,18 +17,18 @@ import remixlab.proscene.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
 
-public class MouseAgent extends ActionMotionAgent<MotionProfile<MotionAction>, ClickProfile<ClickAction>> implements EventConstants {
+public class MouseAgent extends ActionMotionAgent<MotionProfile<MotionAction>, ClickProfile<ClickAction>> {
   DOF2Event event, prevEvent;
   public MouseAgent(InputHandler scn, String n) {
     super(new MotionProfile<MotionAction>(), 
           new ClickProfile<ClickAction>(), scn, n);
     //default bindings
-    clickProfile().setClickBinding(B_LEFT, 1, ClickAction.CHANGE_COLOR);
-    clickProfile().setClickBinding(B_META, B_RIGHT, 1, ClickAction.CHANGE_STROKE_WEIGHT);
-    clickProfile().setClickBinding((B_META | B_SHIFT), B_RIGHT, 1, ClickAction.CHANGE_STROKE_WEIGHT);
-    profile().setBinding(B_LEFT, MotionAction.CHANGE_POSITION);
-    profile().setBinding(B_SHIFT, B_LEFT, MotionAction.CHANGE_SHAPE);
-    profile().setBinding(B_META, B_RIGHT, MotionAction.CHANGE_SHAPE);
+    clickProfile().setClickBinding(LEFT, 1, ClickAction.CHANGE_COLOR);
+    clickProfile().setClickBinding(DOF2Event.META, RIGHT, 1, ClickAction.CHANGE_STROKE_WEIGHT);
+    clickProfile().setClickBinding((DOF2Event.META | DOF2Event.SHIFT), RIGHT, 1, ClickAction.CHANGE_STROKE_WEIGHT);
+    profile().setBinding(LEFT, MotionAction.CHANGE_POSITION);
+    profile().setBinding(DOF2Event.SHIFT, LEFT, MotionAction.CHANGE_SHAPE);
+    profile().setBinding(DOF2Event.META, RIGHT, MotionAction.CHANGE_SHAPE);
   }
 
   public void mouseEvent(processing.event.MouseEvent e) {      

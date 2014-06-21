@@ -13,6 +13,7 @@ package remixlab.dandelion.agent;
 import remixlab.bias.agent.profile.ClickProfile;
 import remixlab.bias.agent.profile.MotionProfile;
 import remixlab.bias.event.DOF6Event;
+import remixlab.bias.event.MotionEvent;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
@@ -39,8 +40,8 @@ public class HIDAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF6Actio
 				new MotionProfile<DOF6Action>(),
 				new ClickProfile<ClickAction>(),
 				new ClickProfile<ClickAction>(), scn, n);
-		eyeProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
-		frameProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+		eyeProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+		frameProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
 	}
 
 	@Override

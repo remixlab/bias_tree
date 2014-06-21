@@ -14,8 +14,8 @@ public class TouchAgent extends MouseAgent {
     event = new DOF2Event(prevEvent, 
     tcur.getX(), 
     tcur.getY(), 
-    B_NOMODIFIER_MASK, 
-    B_NOBUTTON);
+    DOF2Event.NOMODIFIER_MASK, 
+    DOF2Event.NOBUTTON);
     updateTrackedGrabber(event);
     prevEvent = event.get();
   }
@@ -25,8 +25,8 @@ public class TouchAgent extends MouseAgent {
     event = new DOF2Event(prevEvent, 
     tcur.getX(), 
     tcur.getY(), 
-    B_NOMODIFIER_MASK, 
-    B_NOBUTTON);
+    DOF2Event.NOMODIFIER_MASK, 
+    DOF2Event.NOBUTTON);
     handle(event);
     prevEvent = event.get();
   }
@@ -36,8 +36,8 @@ public class TouchAgent extends MouseAgent {
     event = new DOF2Event(prevEvent, 
     tcur.getX(), 
     tcur.getY(), 
-    B_NOMODIFIER_MASK, 
-    B_NOBUTTON);
+    DOF2Event.NOMODIFIER_MASK, 
+    DOF2Event.NOBUTTON);
     prevEvent = event.get();
     disableTracking();
     enableTracking();
@@ -47,8 +47,8 @@ public class TouchAgent extends MouseAgent {
     event = new DOF2Event(prevEvent, 
     tcur.getX(), 
     tcur.getY(), 
-    B_NOMODIFIER_MASK, 
-    B_CENTER);
+    DOF2Event.NOMODIFIER_MASK, 
+    CENTER);
     handle(event);
     prevEvent = event.get();
   }

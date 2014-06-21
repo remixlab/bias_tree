@@ -198,9 +198,7 @@ public class Agent {
 	/**
 	 * Callback (user-space) event reduction routine. Obtains data from the outside world and returns an BogusEvent i.e.,
 	 * reduces external data into an BogusEvent. Automatically call by the main event loop (
-	 * {@link remixlab.bias.core.InputHandler#handle()}).
-	 * <p>
-	 * See the Space Navigator example.
+	 * {@link remixlab.bias.core.InputHandler#handle()}). See ProScene's Space-Navigator example.
 	 * 
 	 * @see remixlab.bias.core.InputHandler#handle()
 	 */

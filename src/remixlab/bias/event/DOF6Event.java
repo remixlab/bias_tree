@@ -129,7 +129,7 @@ public class DOF6Event extends MotionEvent {
 		this.rx = rx;
 		this.ry = ry;
 		this.rz = rz;
-		this.button = B_NOBUTTON;
+		this.button = NOBUTTON;
 	}
 
 	/**
@@ -151,7 +151,7 @@ public class DOF6Event extends MotionEvent {
 		this.rx = rx;
 		this.ry = ry;
 		this.rz = rz;
-		this.button = B_NOBUTTON;
+		this.button = NOBUTTON;
 		setPreviousEvent(prevEvent);
 	}
 

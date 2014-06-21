@@ -24,6 +24,9 @@ import remixlab.util.HashCodeBuilder;
  * {@link #speed()}, and {@link #delay()}, absolute motion events don't.
  */
 public class MotionEvent extends BogusEvent {
+	// some motion actions may be performed without any button, e.g., mouse move (instead of drag).
+	public static final int	NOBUTTON	= 0;
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode())
@@ -66,7 +69,7 @@ public class MotionEvent extends BogusEvent {
 	 */
 	public MotionEvent() {
 		super();
-		this.button = B_NOBUTTON;
+		this.button = NOBUTTON;
 	}
 
 	/**
@@ -75,7 +78,7 @@ public class MotionEvent extends BogusEvent {
 	 */
 	public MotionEvent(int modifiers) {
 		super(modifiers);
-		this.button = B_NOBUTTON;
+		this.button = NOBUTTON;
 	}
 
 	/**

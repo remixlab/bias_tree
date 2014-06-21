@@ -77,7 +77,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #p5ButtonModifiersFix(int, int)
 	 */
 	public static int p5ButtonModifiersFix(int button) {
-		return p5ButtonModifiersFix(B_NOMODIFIER_MASK, button);
+		return p5ButtonModifiersFix(BogusEvent.NOMODIFIER_MASK, button);
 	}
 
 	/**
@@ -93,11 +93,11 @@ public class Scene extends AbstractScene implements PConstants {
 	public static int p5ButtonModifiersFix(int m, int button) {
 		int mask = m;
 		// ALT
-		if (button == B_CENTER)
-			mask = (B_ALT | m);
+		if (button == PApplet.CENTER)
+			mask = (BogusEvent.ALT | m);
 		// META
-		else if (button == B_RIGHT)
-			mask = (B_META | m);
+		else if (button == PApplet.RIGHT)
+			mask = (BogusEvent.META | m);
 		return mask;
 	}
 
@@ -195,12 +195,16 @@ public class Scene extends AbstractScene implements PConstants {
 		/**
 		 * Calls {@link remixlab.dandelion.agent.KeyboardAgent#setDefaultShortcuts()} and then adds the following:
 		 * <p>
-		 * {@code B_CTRL + java.awt.event.KeyEvent.VK_1 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_1}<br>
-		 * {@code B_ALT + java.awt.event.KeyEvent.VK_1 -> KeyboardAction.DELETE_PATH_1}<br>
-		 * {@code B_CTRL + java.awt.event.KeyEvent.VK_2 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_2}<br>
-		 * {@code B_ALT + java.awt.event.KeyEvent.VK_2 -> KeyboardAction.DELETE_PATH_2}<br>
-		 * {@code B_CTRL + java.awt.event.KeyEvent.VK_3 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_3}<br>
-		 * {@code B_ALT + java.awt.event.KeyEvent.VK_3 -> KeyboardAction.DELETE_PATH_3}<br>
+		 * {@code left_arrow -> KeyboardAction.MOVE_LEFT}<br>
+		 * {@code right_arrow -> KeyboardAction.MOVE_RIGHT}<br>
+		 * {@code up_arrow -> KeyboardAction.MOVE_UP}<br>
+		 * {@code down_arrow -> KeyboardAction.MOVE_DOWN	}<br>
+		 * {@code CTRL + java.awt.event.KeyEvent.VK_1 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_1}<br>
+		 * {@code ALT + java.awt.event.KeyEvent.VK_1 -> KeyboardAction.DELETE_PATH_1}<br>
+		 * {@code CTRL + java.awt.event.KeyEvent.VK_2 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_2}<br>
+		 * {@code ALT + java.awt.event.KeyEvent.VK_2 -> KeyboardAction.DELETE_PATH_2}<br>
+		 * {@code CTRL + java.awt.event.KeyEvent.VK_3 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_3}<br>
+		 * {@code ALT + java.awt.event.KeyEvent.VK_3 -> KeyboardAction.DELETE_PATH_3}<br>
 		 * <p>
 		 * Finally, it calls: {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_1, 1)},
 		 * {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_2, 2)} and
@@ -211,24 +215,28 @@ public class Scene extends AbstractScene implements PConstants {
 		 */
 		@Override
 		public void setDefaultShortcuts() {
+			// VK values here: http://docs.oracle.com/javase/7/docs/api/constant-values.html
 			super.setDefaultShortcuts();
-			// keyboardProfile().setShortcut(B_CTRL, java.awt.event.KeyEvent.VK_1, KeyboardAction.ADD_KEYFRAME_TO_PATH_1);
-			keyboardProfile().setShortcut(B_CTRL, 49, KeyboardAction.ADD_KEYFRAME_TO_PATH_1);
-			// keyboardProfile().setShortcut(B_ALT, java.awt.event.KeyEvent.VK_1, KeyboardAction.DELETE_PATH_1);
-			keyboardProfile().setShortcut(B_ALT, 49, KeyboardAction.DELETE_PATH_1);
-			// keyboardProfile().setShortcut(B_CTRL, java.awt.event.KeyEvent.VK_2, KeyboardAction.ADD_KEYFRAME_TO_PATH_2);
-			keyboardProfile().setShortcut(B_CTRL, 50, KeyboardAction.ADD_KEYFRAME_TO_PATH_2);
-			// keyboardProfile().setShortcut(B_ALT, java.awt.event.KeyEvent.VK_2, KeyboardAction.DELETE_PATH_2);
-			keyboardProfile().setShortcut(B_ALT, 50, KeyboardAction.DELETE_PATH_2);
-			// keyboardProfile().setShortcut(B_CTRL, java.awt.event.KeyEvent.VK_3, KeyboardAction.ADD_KEYFRAME_TO_PATH_3);
-			keyboardProfile().setShortcut(B_CTRL, 51, KeyboardAction.ADD_KEYFRAME_TO_PATH_3);
-			// keyboardProfile().setShortcut(B_ALT, java.awt.event.KeyEvent.VK_3, KeyboardAction.DELETE_PATH_3);
-			keyboardProfile().setShortcut(B_ALT, 51, KeyboardAction.DELETE_PATH_3);
-			// setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_1, 1);
+			// VK_LEFT : 37
+			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, 37, KeyboardAction.MOVE_LEFT);
+			// VK_UP : 38
+			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, 38, KeyboardAction.MOVE_UP);
+			// VK_RIGHT : 39
+			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, 39, KeyboardAction.MOVE_RIGHT);
+			// VK_DOWN : 40
+			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, 40, KeyboardAction.MOVE_DOWN);
+
+			// VK_1 : 49
+			keyboardProfile().setShortcut(BogusEvent.CTRL, 49, KeyboardAction.ADD_KEYFRAME_TO_PATH_1);
+			keyboardProfile().setShortcut(BogusEvent.ALT, 49, KeyboardAction.DELETE_PATH_1);
 			setKeyCodeToPlayPath(49, 1);
-			// setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_2, 2);
+			// VK_2 : 50
+			keyboardProfile().setShortcut(BogusEvent.CTRL, 50, KeyboardAction.ADD_KEYFRAME_TO_PATH_2);
+			keyboardProfile().setShortcut(BogusEvent.ALT, 50, KeyboardAction.DELETE_PATH_2);
 			setKeyCodeToPlayPath(50, 2);
-			// setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_3, 3);
+			// VK_3 : 51
+			keyboardProfile().setShortcut(BogusEvent.CTRL, 51, KeyboardAction.ADD_KEYFRAME_TO_PATH_3);
+			keyboardProfile().setShortcut(BogusEvent.ALT, 51, KeyboardAction.DELETE_PATH_3);
 			setKeyCodeToPlayPath(51, 3);
 		}
 
@@ -254,6 +262,7 @@ public class Scene extends AbstractScene implements PConstants {
 
 		public ProsceneMouse(Scene scn, String n) {
 			super(scn, n);
+			setAsArcball();
 			inputHandler().unregisterAgent(this);
 			scene = scn;
 		}
@@ -353,7 +362,7 @@ public class Scene extends AbstractScene implements PConstants {
 					((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * radius());
 			}
 			if (e.getAction() == processing.event.MouseEvent.WHEEL) {
-				handle(new DOF1Event(e.getCount(), e.getModifiers(), B_NOBUTTON));
+				handle(new DOF1Event(e.getCount(), e.getModifiers(), MotionEvent.NOBUTTON));
 			}
 			if (e.getAction() == processing.event.MouseEvent.CLICK) {
 				handle(new ClickEvent(e.getX() - scene.upperLeftCorner.x(), e.getY()
@@ -370,63 +379,77 @@ public class Scene extends AbstractScene implements PConstants {
 		 * <li>Whenever B_RIGHT appears B_META should be present.</li>
 		 * </ol>
 		 */
-		@Override
 		public void setAsFirstPerson() {
 			resetAllProfiles();
-			eyeProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.MOVE_FORWARD);
-			eyeProfile().setBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, DOF2Action.MOVE_BACKWARD);
-			eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.ROTATE_Z);
-			eyeWheelProfile().setBinding(B_CTRL, B_NOBUTTON, DOF1Action.ROTATE_Z);
+			eyeProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, DOF2Action.MOVE_FORWARD);
+			eyeProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, DOF2Action.MOVE_BACKWARD);
+			eyeProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.LEFT), PApplet.LEFT,
+					DOF2Action.ROTATE_Z);
+			eyeWheelProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF1Action.ROTATE_Z);
 			if (is3D()) {
-				eyeProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, DOF2Action.LOOK_AROUND);
-				eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_CENTER), B_CENTER, DOF2Action.DRIVE);
+				eyeProfile().setBinding(p5ButtonModifiersFix(PApplet.CENTER), PApplet.CENTER, DOF2Action.LOOK_AROUND);
+				eyeProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.CENTER), PApplet.CENTER,
+						DOF2Action.DRIVE);
 			}
-			frameProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.ROTATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, DOF2Action.SCALE);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, DOF2Action.TRANSLATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_CENTER), B_CENTER, DOF2Action.SCREEN_TRANSLATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_RIGHT), B_RIGHT, DOF2Action.SCREEN_ROTATE);
+			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, DOF2Action.ROTATE);
+			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.CENTER), PApplet.CENTER, DOF2Action.SCALE);
+			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, DOF2Action.TRANSLATE);
+			frameProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.CENTER), PApplet.CENTER,
+					DOF2Action.SCREEN_TRANSLATE);
+			frameProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.RIGHT), PApplet.RIGHT,
+					DOF2Action.SCREEN_ROTATE);
 			setCommonBindings();
 		}
 
-		@Override
 		public void setAsThirdPerson() {
 			resetAllProfiles();
-			frameProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.MOVE_FORWARD);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, DOF2Action.MOVE_BACKWARD);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.ROTATE_Z);
+			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, DOF2Action.MOVE_FORWARD);
+			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, DOF2Action.MOVE_BACKWARD);
+			frameProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.LEFT), PApplet.LEFT,
+					DOF2Action.ROTATE_Z);
 			if (is3D()) {
-				frameProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, DOF2Action.LOOK_AROUND);
-				frameProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_CENTER), B_CENTER, DOF2Action.DRIVE);
+				frameProfile().setBinding(p5ButtonModifiersFix(PApplet.CENTER), PApplet.CENTER,
+						DOF2Action.LOOK_AROUND);
+				frameProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.CENTER), PApplet.CENTER,
+						DOF2Action.DRIVE);
 			}
 			setCommonBindings();
 		}
 
-		@Override
 		public void setAsArcball() {
 			resetAllProfiles();
-			eyeProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.ROTATE);
-			eyeProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
-			eyeProfile().setBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, DOF2Action.TRANSLATE);
-			eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_LEFT), B_LEFT, DOF2Action.ZOOM_ON_REGION);
-			eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_CENTER), B_CENTER, DOF2Action.SCREEN_TRANSLATE);
-			eyeProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_RIGHT), B_RIGHT, DOF2Action.SCREEN_ROTATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, DOF2Action.ROTATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_CENTER), B_CENTER, DOF2Action.SCALE);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, DOF2Action.TRANSLATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_CENTER), B_CENTER, DOF2Action.SCREEN_TRANSLATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(B_SHIFT, B_RIGHT), B_RIGHT, DOF2Action.SCREEN_ROTATE);
+			eyeProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, DOF2Action.ROTATE);
+			eyeProfile().setBinding(p5ButtonModifiersFix(PApplet.CENTER), PApplet.CENTER,
+					is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
+			eyeProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, DOF2Action.TRANSLATE);
+			eyeProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.LEFT), PApplet.LEFT,
+					DOF2Action.ZOOM_ON_REGION);
+			eyeProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.CENTER), PApplet.CENTER,
+					DOF2Action.SCREEN_TRANSLATE);
+			eyeProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.RIGHT), PApplet.RIGHT,
+					DOF2Action.SCREEN_ROTATE);
+			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, DOF2Action.ROTATE);
+			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.CENTER), PApplet.CENTER, DOF2Action.SCALE);
+			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, DOF2Action.TRANSLATE);
+			frameProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.CENTER), PApplet.CENTER,
+					DOF2Action.SCREEN_TRANSLATE);
+			frameProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.RIGHT), PApplet.RIGHT,
+					DOF2Action.SCREEN_ROTATE);
 			setCommonBindings();
 		}
 
-		@Override
 		protected void setCommonBindings() {
-			eyeClickProfile().setClickBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, 2, ClickAction.ALIGN_FRAME);
-			eyeClickProfile().setClickBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, 2, ClickAction.CENTER_FRAME);
-			frameClickProfile().setClickBinding(p5ButtonModifiersFix(B_LEFT), B_LEFT, 2, ClickAction.ALIGN_FRAME);
-			frameClickProfile().setClickBinding(p5ButtonModifiersFix(B_RIGHT), B_RIGHT, 2, ClickAction.CENTER_FRAME);
-			eyeWheelProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, is3D() ? DOF1Action.ZOOM : DOF1Action.SCALE);
-			frameWheelProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, DOF1Action.SCALE);
+			eyeClickProfile().setClickBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, 2,
+					ClickAction.ALIGN_FRAME);
+			eyeClickProfile().setClickBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, 2,
+					ClickAction.CENTER_FRAME);
+			frameClickProfile().setClickBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, 2,
+					ClickAction.ALIGN_FRAME);
+			frameClickProfile().setClickBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, 2,
+					ClickAction.CENTER_FRAME);
+			eyeWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON,
+					is3D() ? DOF1Action.ZOOM : DOF1Action.SCALE);
+			frameWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON, DOF1Action.SCALE);
 		}
 	}
 
@@ -977,9 +1000,30 @@ public class Scene extends AbstractScene implements PConstants {
 	// firstly, of course, dirty things that I love :P
 
 	/**
-	 * Set mouse bindings as arcball. Same as {@code defaultMouseAgent().setAsArcball()}.
+	 * Set mouse bindings as 'arcball':
+	 * <p>
+	 * 1. <b>InteractiveFrame bindings</b><br>
+	 * Left button -> ROTATE<br>
+	 * Center button -> SCALE<br>
+	 * Right button -> TRANSLATE<br>
+	 * Shift + Center button -> SCREEN_TRANSLATE<br>
+	 * Shift + Right button -> SCREEN_ROTATE<br>
+	 * <p>
+	 * 2. <b>InteractiveEyeFrame bindings</b><br>
+	 * Left button -> ROTATE<br>
+	 * Center button -> ZOOM<br>
+	 * Right button -> TRANSLATE<br>
+	 * Shift + Left button -> ZOOM_ON_REGION<br>
+	 * Shift + Center button -> SCREEN_TRANSLATE<br>
+	 * Shift + Right button -> SCREEN_ROTATE.
+	 * <p>
+	 * Also set the following (common) bindings are:
+	 * <p>
+	 * 2 left clicks -> ALIGN_FRAME<br>
+	 * 2right clicks -> CENTER_FRAME<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * 
-	 * @see remixlab.dandelion.agent.MouseAgent#setAsArcball()
 	 * @see #setMouseAsFirstPerson()
 	 * @see #setMouseAsThirdPerson()
 	 */
@@ -992,9 +1036,31 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
-	 * Set mouse bindings as first-person. Same as {@code defaultMouseAgent().setAsFirstPerson()}.
+	 * Set mouse bindings as 'first-person':
+	 * <p>
+	 * 1. <b>InteractiveFrame bindings</b><br>
+	 * Left button -> ROTATE<br>
+	 * Center button -> SCALE<br>
+	 * Right button -> TRANSLATE<br>
+	 * Shift + Center button -> SCREEN_TRANSLATE<br>
+	 * Shift + Right button -> SCREEN_ROTATE<br>
+	 * <p>
+	 * 2. <b>InteractiveEyeFrame bindings</b><br>
+	 * Left button -> MOVE_FORWARD<br>
+	 * Center button -> LOOK_AROUND<br>
+	 * Right button -> MOVE_BACKWARD<br>
+	 * Shift + Left button -> ROLL<br>
+	 * Shift + Center button -> DRIVE<br>
+	 * Ctrl + Wheel -> ROLL<br>
+	 * Shift + Wheel -> DRIVE<br>
+	 * <p>
+	 * Also set the following (common) bindings are:
+	 * <p>
+	 * 2 left clicks -> ALIGN_FRAME<br>
+	 * 2right clicks -> CENTER_FRAME<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * 
-	 * @see remixlab.dandelion.agent.MouseAgent#setAsFirstPerson()
 	 * @see #setMouseAsArcball()
 	 * @see #setMouseAsThirdPerson()
 	 */
@@ -1007,9 +1073,21 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
-	 * Set mouse bindings as third-person. Same as {@code defaultMouseAgent().setAsThirdPerson()}.
+	 * Set mouse bindings as third-person:
+	 * <p>
+	 * Left button -> MOVE_FORWARD<br>
+	 * Center button -> LOOK_AROUND<br>
+	 * Right button -> MOVE_BACKWARD<br>
+	 * Shift + Left button -> ROLL<br>
+	 * Shift + Center button -> DRIVE<br>
+	 * <p>
+	 * Also set the following (common) bindings are:
+	 * <p>
+	 * 2 left clicks -> ALIGN_FRAME<br>
+	 * 2right clicks -> CENTER_FRAME<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * 
-	 * @see remixlab.dandelion.agent.MouseAgent#setAsThirdPerson()
 	 * @see #setMouseAsArcball()
 	 * @see #setMouseAsFirstPerson()
 	 */
@@ -1200,7 +1278,7 @@ public class Scene extends AbstractScene implements PConstants {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
 		if (profile != null)
-			profile.setBinding(mask, B_NOBUTTON, action);
+			profile.setBinding(mask, MotionEvent.NOBUTTON, action);
 	}
 
 	/**
@@ -1228,7 +1306,7 @@ public class Scene extends AbstractScene implements PConstants {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
 		if (profile != null)
-			profile.removeBinding(mask, B_NOBUTTON);
+			profile.removeBinding(mask, MotionEvent.NOBUTTON);
 	}
 
 	/**
@@ -1255,7 +1333,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
-		return profile.isBindingInUse(mask, B_NOBUTTON);
+		return profile.isBindingInUse(mask, MotionEvent.NOBUTTON);
 	}
 
 	/**
@@ -1406,7 +1484,30 @@ public class Scene extends AbstractScene implements PConstants {
 	// keyboard here
 
 	/**
-	 * Restores the default keyboard shortcuts.
+	 * Restores the default keyboard shortcuts:
+	 * <p>
+	 * {@code 'a' -> KeyboardAction.TOGGLE_AXES_VISUAL_HINT}<br>
+	 * {@code 'f' -> KeyboardAction.TOGGLE_FRAME_VISUAL_HINT}<br>
+	 * {@code 'g' -> KeyboardAction.TOGGLE_GRID_VISUAL_HINT}<br>
+	 * {@code 'm' -> KeyboardAction.TOGGLE_ANIMATION}<br>
+	 * {@code 'e' -> KeyboardAction.TOGGLE_CAMERA_TYPE}<br>
+	 * {@code 'h' -> KeyboardAction.DISPLAY_INFO}<br>
+	 * {@code 'r' -> KeyboardAction.TOGGLE_PATHS_VISUAL_HINT}<br>
+	 * {@code 's' -> KeyboardAction.INTERPOLATE_TO_FIT}<br>
+	 * {@code 'S' -> KeyboardAction.SHOW_ALL}<br>
+	 * {@code left_arrow -> KeyboardAction.MOVE_LEFT}<br>
+	 * {@code right_arrow -> KeyboardAction.MOVE_RIGHT}<br>
+	 * {@code up_arrow -> KeyboardAction.MOVE_UP}<br>
+	 * {@code down_arrow -> KeyboardAction.MOVE_DOWN	}<br>
+	 * {@code 'CTRL' + '1' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_1}<br>
+	 * {@code 'ALT' + '1' -> KeyboardAction.DELETE_PATH_1}<br>
+	 * {@code '1' -> KeyboardAction.PLAY_PATH_1}<br>
+	 * {@code 'CTRL' + '2' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_2}<br>
+	 * {@code 'ALT' + '2' -> KeyboardAction.DELETE_PATH_2}<br>
+	 * {@code '2' -> KeyboardAction.PLAY_PATH_2}<br>
+	 * {@code 'CTRL' + '3' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_3}<br>
+	 * {@code 'ALT' + '3' -> KeyboardAction.DELETE_PATH_3}<br>
+	 * {@code '3' -> KeyboardAction.PLAY_PATH_3}<br>
 	 * 
 	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultShortcuts()
 	 * @see #setMouseAsArcball()
@@ -1508,12 +1609,12 @@ public class Scene extends AbstractScene implements PConstants {
 	 * 
 	 * @see #keyboardAgent()
 	 */
-	public MouseAgent mouseAgent() {
+	public ProsceneMouse mouseAgent() {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("mouseAgent", platform());
 			return null;
 		}
-		return (MouseAgent) motionAgent();
+		return (ProsceneMouse) motionAgent();
 	}
 
 	/**
@@ -1788,6 +1889,16 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	// 8. Keyboard customization
+	@Override
+	public String info() {
+		String info = super.info();
+		info = info.replace("37_BUTTON", "LEFT_BUTTON").replace("3_BUTTON", "CENTER_BUTTON")
+				.replace("39_BUTTON", "RIGHT_BUTTON");
+		String keyboardtitle = keyboardAgent().name()
+				+ " (key-codes are defined here: http://docs.oracle.com/javase/7/docs/api/constant-values.html)";
+		info = info.replace(keyboardAgent().name(), keyboardtitle);
+		return info;
+	}
 
 	@Override
 	public void displayInfo(boolean onConsole) {
@@ -2704,10 +2815,10 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	protected void drawScreenRotateHint() {
 		pg().pushStyle();
-		if (!(mouseAgent() instanceof ProsceneMouse))
+		if (!(motionAgent() instanceof ProsceneMouse))
 			return;
-		float p1x = (float) ((ProsceneMouse) mouseAgent()).lCorner.x();
-		float p1y = (float) ((ProsceneMouse) mouseAgent()).lCorner.y();
+		float p1x = (float) mouseAgent().lCorner.x();
+		float p1y = (float) mouseAgent().lCorner.y();
 		Vec p2 = eye().projectedCoordinatesOf(anchor());
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
@@ -2720,13 +2831,13 @@ public class Scene extends AbstractScene implements PConstants {
 
 	@Override
 	protected void drawZoomWindowHint() {
-		if (!(mouseAgent() instanceof ProsceneMouse))
+		if (!(motionAgent() instanceof ProsceneMouse))
 			return;
 		pg().pushStyle();
-		float p1x = (float) ((ProsceneMouse) mouseAgent()).fCorner.x();
-		float p1y = (float) ((ProsceneMouse) mouseAgent()).fCorner.y();
-		float p2x = (float) ((ProsceneMouse) mouseAgent()).lCorner.x();
-		float p2y = (float) ((ProsceneMouse) mouseAgent()).lCorner.y();
+		float p1x = (float) mouseAgent().fCorner.x();
+		float p1y = (float) mouseAgent().fCorner.y();
+		float p2x = (float) mouseAgent().lCorner.x();
+		float p2y = (float) mouseAgent().lCorner.y();
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
 		pg().strokeWeight(2);

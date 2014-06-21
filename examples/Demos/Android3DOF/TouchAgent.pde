@@ -8,8 +8,8 @@ public class TouchAgent extends JoystickAgent {
     scene = scn;
     eyeProfile().setBinding(DOF3Action.ROTATE);
     frameProfile().setBinding(DOF3Action.ROTATE);
-    eyeProfile().setBinding(B_NOMODIFIER_MASK, B_CENTER, DOF3Action.TRANSLATE_XYZ);
-    frameProfile().setBinding(B_NOMODIFIER_MASK, B_CENTER, DOF3Action.TRANSLATE_XYZ);
+    eyeProfile().setBinding(DOF3Event.NOMODIFIER_MASK, CENTER, DOF3Action.TRANSLATE_XYZ);
+    frameProfile().setBinding(DOF3Event.NOMODIFIER_MASK, CENTER, DOF3Action.TRANSLATE_XYZ);
   }
 
   public void addTouCursor(MotionEvent tcur) {      
@@ -17,8 +17,8 @@ public class TouchAgent extends JoystickAgent {
     tcur.getX(), 
     tcur.getY(), 
     0, 
-    B_NOMODIFIER_MASK, 
-    B_NOBUTTON);
+    DOF3Event.NOMODIFIER_MASK, 
+    DOF3Event.NOBUTTON);
     updateTrackedGrabber(event);
     prevEvent = event.get();
   }
@@ -29,8 +29,8 @@ public class TouchAgent extends JoystickAgent {
     tcur.getX(), 
     tcur.getY(), 
     0, 
-    B_NOMODIFIER_MASK, 
-    B_NOBUTTON);
+    DOF3Event.NOMODIFIER_MASK, 
+    DOF3Event.NOBUTTON);
     handle(event);
     prevEvent = event.get();
   }
@@ -41,8 +41,8 @@ public class TouchAgent extends JoystickAgent {
     tcur.getX(), 
     tcur.getY(), 
     0, 
-    B_NOMODIFIER_MASK, 
-    B_NOBUTTON);
+    DOF3Event.NOMODIFIER_MASK, 
+    DOF3Event.NOBUTTON);
     prevEvent = event.get();
     disableTracking();
     enableTracking();
@@ -62,8 +62,8 @@ public class TouchAgent extends JoystickAgent {
     tcur.getX(0), 
     tcur.getY(0), 
     distance, 
-    B_NOMODIFIER_MASK, 
-    B_CENTER);
+    DOF3Event.NOMODIFIER_MASK, 
+    CENTER);
     histDistance = sqrt((tcur.getX(0) - tcur.getX(1))*(tcur.getX(0) - tcur.getX(1)) + (tcur.getY(0) - tcur.getY(1))*(tcur.getY(0) - tcur.getY(1)));
     handle(event);
     prevEvent = event.get();

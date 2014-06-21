@@ -84,7 +84,7 @@ public class DOF1Event extends MotionEvent {
 	public DOF1Event(float x) {
 		super();
 		this.x = x;
-		this.button = B_NOBUTTON;
+		this.button = NOBUTTON;
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class DOF1Event extends MotionEvent {
 	public DOF1Event(DOF1Event prevEvent, float x) {
 		super();
 		this.x = x;
-		this.button = B_NOBUTTON;
+		this.button = NOBUTTON;
 		setPreviousEvent(prevEvent);
 	}
 

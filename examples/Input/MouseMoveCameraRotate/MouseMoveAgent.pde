@@ -8,10 +8,10 @@ public class MouseMoveAgent extends MouseAgent {
     // while camera rotation requires no mouse button press:
     eyeProfile().setBinding(DOF2Action.ROTATE); // -> MouseEvent.MOVE
     // camera translation requires a mouse left button press:
-    eyeProfile().setBinding(B_LEFT, DOF2Action.TRANSLATE); // -> MouseEvent.DRAG
+    eyeProfile().setBinding(LEFT, DOF2Action.TRANSLATE); // -> MouseEvent.DRAG
     // Disable center and right button camera actions (inherited from MouseAgent):
-    eyeProfile().setBinding(B_META, B_RIGHT, null);
-    eyeProfile().setBinding(B_ALT, B_CENTER, null);
+    eyeProfile().setBinding(DOF2Event.META, RIGHT, null);
+    eyeProfile().setBinding(DOF2Event.ALT, CENTER, null);
   }
   public void mouseEvent(processing.event.MouseEvent e) {
     //don't even necessary :P

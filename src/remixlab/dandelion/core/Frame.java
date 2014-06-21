@@ -53,7 +53,7 @@ import remixlab.util.*;
  * <p>
  * Two frames can be synced together ({@link #sync(Frame, Frame)}), meaning that they will share their global parameters
  * (position, orientation and magnitude) taken the one that has been most recently updated. Syncing can be useful to
- * share frames among different off-screen scenes (see the CameraCrane and the AuxiliarViewer examples).
+ * share frames among different off-screen scenes (see ProScene's CameraCrane and the AuxiliarViewer examples).
  * 
  * <h3>Hierarchy of Frames</h3>
  * 

@@ -12,6 +12,7 @@ package remixlab.dandelion.agent;
 
 import remixlab.bias.agent.*;
 import remixlab.bias.agent.profile.*;
+import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
@@ -63,10 +64,6 @@ public class KeyboardAgent extends ActionKeyboardAgent<KeyboardProfile<KeyboardA
 	 * {@code 'r' -> KeyboardAction.TOGGLE_PATHS_VISUAL_HINT}<br>
 	 * {@code 's' -> KeyboardAction.INTERPOLATE_TO_FIT}<br>
 	 * {@code 'S' -> KeyboardAction.SHOW_ALL}<br>
-	 * {@code left_arrow -> KeyboardAction.MOVE_EYE_RIGHT}<br>
-	 * {@code right_arrow -> KeyboardAction.MOVE_EYE_LEFT}<br>
-	 * {@code up_arrow -> KeyboardAction.MOVE_EYE_UP}<br>
-	 * {@code down_arrow -> KeyboardAction.MOVE_EYE_DOWN}<br>
 	 */
 	public void setDefaultShortcuts() {
 		keyboardProfile().removeAllBindings();
@@ -81,11 +78,6 @@ public class KeyboardAgent extends ActionKeyboardAgent<KeyboardProfile<KeyboardA
 
 		keyboardProfile().setShortcut('s', KeyboardAction.INTERPOLATE_TO_FIT);
 		keyboardProfile().setShortcut('S', KeyboardAction.SHOW_ALL);
-
-		keyboardProfile().setShortcut(B_NOMODIFIER_MASK, B_RIGHT, KeyboardAction.MOVE_RIGHT);
-		keyboardProfile().setShortcut(B_NOMODIFIER_MASK, B_LEFT, KeyboardAction.MOVE_LEFT);
-		keyboardProfile().setShortcut(B_NOMODIFIER_MASK, B_UP, KeyboardAction.MOVE_UP);
-		keyboardProfile().setShortcut(B_NOMODIFIER_MASK, B_DOWN, KeyboardAction.MOVE_DOWN);
 	}
 
 	/**
@@ -94,13 +86,13 @@ public class KeyboardAgent extends ActionKeyboardAgent<KeyboardProfile<KeyboardA
 	public void setKeyCodeToPlayPath(int vkey, int path) {
 		switch (path) {
 		case 1:
-			keyboardProfile().setShortcut(B_NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_1);
+			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_1);
 			break;
 		case 2:
-			keyboardProfile().setShortcut(B_NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_2);
+			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_2);
 			break;
 		case 3:
-			keyboardProfile().setShortcut(B_NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_3);
+			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_3);
 			break;
 		default:
 			break;

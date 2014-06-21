@@ -23,7 +23,7 @@ import remixlab.util.*;
  * application (which will be interpolated). In this case, when the user {@link #startInterpolation()}, the
  * KeyFrameInterpolator regularly updates the {@link #frame()} position, orientation and magnitude along the path.
  * <p>
- * Here is a typical utilization example (see also the examples FrameInterpolation and CameraInterpolation):
+ * Here is a typical utilization example (see also ProScene's FrameInterpolation and CameraInterpolation examples):
  * <p>
  * {@code //init() should look like:}<br>
  * {@code // The KeyFrameInterpolator kfi is given the Frame that it will drive over time.}<br>
