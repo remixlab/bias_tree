@@ -1891,12 +1891,27 @@ public class Scene extends AbstractScene implements PConstants {
 	// 8. Keyboard customization
 	@Override
 	public String info() {
+		String l = Integer.toString(PApplet.LEFT) + "_BUTTON";
+		String c = Integer.toString(PApplet.CENTER) + "_BUTTON";
+		String r = Integer.toString(PApplet.RIGHT) + "_BUTTON";
+
 		String info = super.info();
-		info = info.replace("37_BUTTON", "LEFT_BUTTON").replace("3_BUTTON", "CENTER_BUTTON")
-				.replace("39_BUTTON", "RIGHT_BUTTON");
+		info = info.replace(l, "LEFT_BUTTON").replace(c, "CENTER_BUTTON").replace(r, "RIGHT_BUTTON");
 		String keyboardtitle = keyboardAgent().name()
 				+ " (key-codes are defined here: http://docs.oracle.com/javase/7/docs/api/constant-values.html)";
 		info = info.replace(keyboardAgent().name(), keyboardtitle);
+
+		String vk_1 = "virtual_key (" + Integer.toString(49) + ")";
+		String vk_2 = "virtual_key (" + Integer.toString(50) + ")";
+		String vk_3 = "virtual_key (" + Integer.toString(51) + ")";
+		String vk_l = "virtual_key (" + Integer.toString(37) + ")";
+		String vk_u = "virtual_key (" + Integer.toString(38) + ")";
+		String vk_r = "virtual_key (" + Integer.toString(39) + ")";
+		String vk_d = "virtual_key (" + Integer.toString(40) + ")";
+
+		info = info.replace(vk_1, "VK_1").replace(vk_2, "VK_2").replace(vk_3, "VK_3")
+				.replace(vk_l, "VK_LEFT").replace(vk_u, "VK_UP").replace(vk_r, "VK_RIGHT").replace(vk_d, "VK_DOWN");
+
 		return info;
 	}
 
