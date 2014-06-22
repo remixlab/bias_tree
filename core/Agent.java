@@ -182,7 +182,7 @@ public class Agent {
 	 * Main agent method. Non-generic agents (like this one) simply call
 	 * {@code inputHandler().enqueueEventTuple(new EventGrabberTuple(event, grabber()))}.
 	 * <p>
-	 * Non-generic agents parse the bogus event to determine the user-defined action the {@link #inputGrabber()} should
+	 * Generic agents parse the bogus event to determine the user-defined action the {@link #inputGrabber()} should
 	 * perform.
 	 * <p>
 	 * <b>Note</b> that the agent must be registered at the {@link #inputHandler()} for this method to take effect.
@@ -196,8 +196,8 @@ public class Agent {
 	}
 
 	/**
-	 * Callback (user-space) event reduction routine. Obtains data from the outside world and returns an BogusEvent i.e.,
-	 * reduces external data into an BogusEvent. Automatically call by the main event loop (
+	 * Callback (user-space) event reduction routine. Obtains data from the outside world and returns a BogusEvent i.e.,
+	 * reduces external data into a BogusEvent. Automatically call by the main event loop (
 	 * {@link remixlab.bias.core.InputHandler#handle()}). See ProScene's Space-Navigator example.
 	 * 
 	 * @see remixlab.bias.core.InputHandler#handle()

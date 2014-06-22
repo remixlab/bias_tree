@@ -114,11 +114,11 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	public String description() {
 		String r = new String();
 		if (mask != 0)
-			r += BogusEvent.modifiersText(mask) + " + " + button.toString() + "_BUTTON";
+			r += BogusEvent.modifiersText(mask) + "+" + button.toString() + "_BUTTON";
 		if (numberOfClicks == 1)
-			r += (r.length() > 0) ? " + " + numberOfClicks.toString() + " click" : numberOfClicks.toString() + " click";
+			r += (r.length() > 0) ? "+" + numberOfClicks.toString() + "_click" : numberOfClicks.toString() + "_click";
 		else
-			r += (r.length() > 0) ? " + " + numberOfClicks.toString() + " clicks" : numberOfClicks.toString() + " clicks";
+			r += (r.length() > 0) ? "+" + numberOfClicks.toString() + "_clicks" : numberOfClicks.toString() + "_clicks";
 		return r;
 	}
 }

@@ -98,9 +98,9 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 			description = key.toString();
 		else {
 			if (mask == 0)
-				description = "virtual_ key(" + vKey.toString() + ")";
+				description = "virtual_key (" + vKey.toString() + ")";
 			else
-				description = BogusEvent.modifiersText(mask) + "+ virtual key (" + vKey.toString() + ")";
+				description = BogusEvent.modifiersText(mask) + "+virtual_key (" + vKey.toString() + ")";
 		}
 		return description;
 	}
