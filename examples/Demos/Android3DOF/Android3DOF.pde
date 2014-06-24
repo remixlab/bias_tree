@@ -36,7 +36,6 @@ TouchAgent agent;
 Box [] boxes;
 
 public void setup() {
-
   scene = new Scene(this);  
 
   DroidKeyboardAgent keyboardAgent = new DroidKeyboardAgent(scene, "KeyboardAgent");  
@@ -69,27 +68,24 @@ public void draw() {
 }
 
 public boolean dispatchTouchEvent(MotionEvent event) {
-
-
-  int action = event.getActionMasked();          // get code for action
-
-  switch (action) {        // let us know which action code shows up
-  case MotionEvent.ACTION_DOWN:
+  int action = event.getActionMasked(); // get code for action
+  switch (action) { // let us know which action code shows up
+  case MotionEvent.ACTION_DOWN: 
+  case MotionEvent.ACTION_POINTER_1_DOWN:
     agent.addTouCursor(event);
     break;
-  case MotionEvent.ACTION_UP:
+  case MotionEvent.ACTION_UP: 
+  case MotionEvent.ACTION_POINTER_1_UP:
     agent.removeTouCursor(event);
     break;
   case MotionEvent.ACTION_MOVE:
-    if (event.getPointerCount() == 1) {
+    if (event.getPointerCount() == 1)
       agent.updateTouCursor(event);
-    } else {
+    else
       agent.transalateTouCursor(event);
-    }
     break;
   }
-
-  return super.dispatchTouchEvent(event);        // pass data along when done!
+  return super.dispatchTouchEvent(event); // pass data along when done!
 }
 
 void keyPressed() {
@@ -99,5 +95,8 @@ void keyPressed() {
       imm.toggleSoftInput(0, 0);
     }
   }
+  //press the space bar to switch camera as first person 
+  if (keyCode == 62)
+    agent.setAsFirstPerson(!agent.isAsFirstPerson());
 }
 

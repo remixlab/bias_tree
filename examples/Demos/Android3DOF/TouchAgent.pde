@@ -2,6 +2,8 @@ public class TouchAgent extends JoystickAgent {
   Scene scene;
   DOF3Event event, prevEvent;
   float histDistance;
+  boolean firstPerson;
+  
   public TouchAgent(Scene scn, String n) {
     super(scn, n);
     this.enableTracking();
@@ -12,14 +14,24 @@ public class TouchAgent extends JoystickAgent {
     frameProfile().setBinding(DOF3Event.NOMODIFIER_MASK, CENTER, DOF3Action.TRANSLATE_XYZ);
   }
 
-  public void addTouCursor(MotionEvent tcur) {      
-    event = new DOF3Event(prevEvent, 
-    tcur.getX(), 
-    tcur.getY(), 
-    0, 
-    DOF3Event.NOMODIFIER_MASK, 
-    DOF3Event.NOBUTTON);
-    updateTrackedGrabber(event);
+  public void addTouCursor(MotionEvent tcur) {
+    if(tcur.getPointerCount() == 1 || firstPerson || (inputGrabber() instanceof InteractiveFrame && !(inputGrabber() instanceof InteractiveEyeFrame)) ) {
+        event = new DOF3Event(prevEvent, 
+              tcur.getX(), 
+              tcur.getY(), 
+              0, 
+              DOF3Event.NOMODIFIER_MASK, 
+              DOF3Event.NOBUTTON);
+    }else {
+      event = new DOF3Event(prevEvent, 
+              tcur.getX()*-1, 
+              tcur.getY()*-1, 
+              0, 
+              DOF3Event.NOMODIFIER_MASK, 
+              DOF3Event.NOBUTTON);
+    }
+
+    if( tcur.getPointerCount() == 1) updateTrackedGrabber(event);
     prevEvent = event.get();
   }
 
@@ -57,16 +69,34 @@ public class TouchAgent extends JoystickAgent {
     } else {
       distance = histDistance - sqrt((tcur.getX(0) - tcur.getX(1))*(tcur.getX(0) - tcur.getX(1)) + (tcur.getY(0) - tcur.getY(1))*(tcur.getY(0) - tcur.getY(1)));
     }
-
-    event = new DOF3Event(prevEvent, 
-    tcur.getX(0), 
-    tcur.getY(0), 
-    distance, 
-    DOF3Event.NOMODIFIER_MASK, 
-    CENTER);
+  
+    if(firstPerson || (inputGrabber() instanceof InteractiveFrame && !(inputGrabber() instanceof InteractiveEyeFrame)) ) {
+        event = new DOF3Event(prevEvent, 
+                              tcur.getX(0), 
+                              tcur.getY(0), 
+                              distance * -1, 
+                              DOF3Event.NOMODIFIER_MASK, 
+                              CENTER);
+    } else {
+        event = new DOF3Event(prevEvent, 
+                              tcur.getX(0) * -1, 
+                              tcur.getY(0) * -1, 
+                              distance, 
+                              DOF3Event.NOMODIFIER_MASK, 
+                              CENTER);
+    }
+    
     histDistance = sqrt((tcur.getX(0) - tcur.getX(1))*(tcur.getX(0) - tcur.getX(1)) + (tcur.getY(0) - tcur.getY(1))*(tcur.getY(0) - tcur.getY(1)));
     handle(event);
     prevEvent = event.get();
+  }
+  
+  public boolean isAsFirstPerson() {
+      return firstPerson;
+  }
+
+  public void setAsFirstPerson(boolean cameraFirstPerson) {
+    firstPerson = cameraFirstPerson;
   }
 }
 

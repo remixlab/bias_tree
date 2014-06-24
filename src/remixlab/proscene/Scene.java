@@ -46,19 +46,19 @@ import java.util.regex.Pattern;
  * </ol>
  * <h3>Interactivity mechanisms</h3>
  * 
- * Through Dandelion, Proscene provides powerful interactivity mechanisms allowing a wide range of scene setups ranging
- * from very simple to complex ones. For convenience, two interaction mechanisms are provided by default:
- * {@link #keyboardAgent()}, and {@link #mouseAgent()}:
+ * ProScene provides powerful interactivity mechanisms allowing a wide range of scene setups ranging from very simple to
+ * complex ones. For convenience, two interaction mechanisms are provided by default: {@link #keyboardAgent()}, and
+ * {@link #mouseAgent()}:
  * <ol>
- * <li><b>The default keyboard agent</b> provides shortcuts to keyboard dandelion actions such as {@link #drawGrid()} or
+ * <li><b>The default keyboard agent</b> provides shortcuts to Dandelion keyboard actions such as {@link #drawGrid()} or
  * {@link #drawAxes()}. See {@link #setKeyboardShortcut(Character, remixlab.dandelion.core.Constants.KeyboardAction)}
  * and {@link #setKeyboardShortcut(int, int, remixlab.dandelion.core.Constants.KeyboardAction)}.
- * <li><b>The default mouse agent</b> provides high-level methods to manage eye and frame motion actions. Please refer
+ * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame motion actions. Please refer
  * to the different {@code setMouseButtonBinding()}, {@code setMouseClickBinding()}, {@code setMouseWheelBinding()}
  * methods.
  * </ol>
  * <h3>Animation mechanisms</h3>
- * Proscene provides three animation mechanisms to define how your scene evolves over time:
+ * ProScene provides three animation mechanisms to define how your scene evolves over time:
  * <ol>
  * <li><b>Overriding the Dandelion {@link #animate()} method.</b> In this case, once you declare a Scene derived class,
  * you should implement {@link #animate()} which defines how your scene objects evolve over time. See the example
@@ -1891,11 +1891,12 @@ public class Scene extends AbstractScene implements PConstants {
 	// 8. Keyboard customization
 	@Override
 	public String info() {
+		String info = super.info();
+
 		String l = Integer.toString(PApplet.LEFT) + "_BUTTON";
 		String c = Integer.toString(PApplet.CENTER) + "_BUTTON";
 		String r = Integer.toString(PApplet.RIGHT) + "_BUTTON";
 
-		String info = super.info();
 		info = info.replace(l, "LEFT_BUTTON").replace(c, "CENTER_BUTTON").replace(r, "RIGHT_BUTTON");
 		String keyboardtitle = keyboardAgent().name()
 				+ " (key-codes are defined here: http://docs.oracle.com/javase/7/docs/api/constant-values.html)";
