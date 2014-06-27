@@ -298,7 +298,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		return timingHandler().isAnimatorRegistered(object);
 	}
 
-	// E V E N T H A N D L I N G, T E R S E H A N D L I N G S T U F F
+	// E V E N T H A N D L I N G
 
 	/**
 	 * Returns the scene {@link remixlab.bias.core.InputHandler}.
