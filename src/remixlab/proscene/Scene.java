@@ -331,7 +331,14 @@ public class Scene extends AbstractScene implements PConstants {
 							- scene.upperLeftCorner.y(), e.getModifiers(), e.getButton());
 					if (drive && inputGrabber() instanceof InteractiveFrame)
 						((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * radius() * 0.01f * (event.y() - pressEvent.y()));
-					handle(event);
+					// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
+					Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) event)
+							: frameProfile().handle((BogusEvent) event);
+					if (a == null)
+						return;
+					DandelionAction dA = (DandelionAction) a.referenceAction();
+					if (dA != DandelionAction.ZOOM_ON_REGION)
+						handle(event);
 					prevEvent = event.get();
 				}
 			}
