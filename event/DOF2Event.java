@@ -88,7 +88,6 @@ public class DOF2Event extends MotionEvent {
 		super();
 		this.x = x;
 		this.y = y;
-		this.button = NOBUTTON;
 	}
 
 	/**
@@ -102,7 +101,6 @@ public class DOF2Event extends MotionEvent {
 		super();
 		this.x = x;
 		this.y = y;
-		this.button = NOBUTTON;
 		setPreviousEvent(prevEvent);
 	}
 
