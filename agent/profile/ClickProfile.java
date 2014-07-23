@@ -28,7 +28,7 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param button
 	 *          binding
 	 */
-	public boolean isClickBindingInUse(Integer button) {
+	public boolean isBindingInUse(Integer button) {
 		return isBindingInUse(new ClickShortcut(button));
 	}
 
@@ -40,7 +40,7 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param nc
 	 *          number of clicks defining the binding
 	 */
-	public boolean isClickBindingInUse(Integer button, Integer nc) {
+	public boolean isBindingInUse(Integer button, Integer nc) {
 		return isBindingInUse(new ClickShortcut(button, nc));
 	}
 
@@ -54,15 +54,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param nc
 	 *          number of clicks defining the binding
 	 */
-	public boolean isClickBindingInUse(Integer mask, Integer button, Integer nc) {
+	public boolean isBindingInUse(Integer mask, Integer button, Integer nc) {
 		return isBindingInUse(new ClickShortcut(mask, button, nc));
-	}
-
-	/**
-	 * Returns true if the given click-action is bound.
-	 */
-	public boolean isClickActionBound(A action) {
-		return isActionMapped(action);
 	}
 
 	/**
@@ -73,9 +66,9 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param action
 	 *          action to be bound
 	 */
-	public void setClickBinding(Integer button, A action) {
-		if (isClickBindingInUse(button)) {
-			Action<?> a = clickBinding(button);
+	public void setBinding(Integer button, A action) {
+		if (isBindingInUse(button)) {
+			Action<?> a = binding(button);
 			System.out.println("Warning: overwritting binding which was previously associated to " + a);
 		}
 		setBinding(new ClickShortcut(button), action);
@@ -91,9 +84,9 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param action
 	 *          action to be bound
 	 */
-	public void setClickBinding(Integer button, Integer nc, A action) {
-		if (isClickBindingInUse(button, nc)) {
-			Action<?> a = clickBinding(button, nc);
+	public void setBinding(Integer button, Integer nc, A action) {
+		if (isBindingInUse(button, nc)) {
+			Action<?> a = binding(button, nc);
 			System.out.println("Warning: overwritting binding which was previously associated to " + a);
 		}
 		setBinding(new ClickShortcut(button, nc), action);
@@ -111,9 +104,9 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param action
 	 *          action to be bound
 	 */
-	public void setClickBinding(Integer mask, Integer button, Integer nc, A action) {
-		if (isClickBindingInUse(mask, button, nc)) {
-			Action<?> a = clickBinding(mask, button, nc);
+	public void setBinding(Integer mask, Integer button, Integer nc, A action) {
+		if (isBindingInUse(mask, button, nc)) {
+			Action<?> a = binding(mask, button, nc);
 			System.out.println("Warning: overwritting binding which was previously associated to " + a);
 		}
 		setBinding(new ClickShortcut(mask, button, nc), action);
@@ -125,7 +118,7 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param button
 	 *          binding
 	 */
-	public void removeClickBinding(Integer button) {
+	public void removeBinding(Integer button) {
 		removeBinding(new ClickShortcut(button));
 	}
 
@@ -137,7 +130,7 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param nc
 	 *          number of clicks defining the binding
 	 */
-	public void removeClickBinding(Integer button, Integer nc) {
+	public void removeBinding(Integer button, Integer nc) {
 		removeBinding(new ClickShortcut(button, nc));
 	}
 
@@ -151,7 +144,7 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param nc
 	 *          number of clicks defining the binding
 	 */
-	public void removeClickBinding(Integer mask, Integer button, Integer nc) {
+	public void removeBinding(Integer mask, Integer button, Integer nc) {
 		removeBinding(new ClickShortcut(mask, button, nc));
 	}
 
@@ -161,7 +154,7 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param button
 	 *          binding
 	 */
-	public Action<?> clickBinding(Integer button) {
+	public Action<?> binding(Integer button) {
 		return binding(new ClickShortcut(button));
 	}
 
@@ -173,7 +166,7 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param nc
 	 *          number of clicks defining the binding
 	 */
-	public Action<?> clickBinding(Integer button, Integer nc) {
+	public Action<?> binding(Integer button, Integer nc) {
 		return binding(new ClickShortcut(button, nc));
 	}
 
@@ -187,6 +180,124 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param nc
 	 *          number of clicks defining the binding
 	 */
+	public Action<?> binding(Integer mask, Integer button, Integer nc) {
+		return binding(new ClickShortcut(mask, button, nc));
+	}
+
+	// Deprecated
+
+	/**
+	 * Use the isBindingInUse version with the same parameters instead
+	 */
+	@Deprecated
+	public boolean isClickBindingInUse(Integer button) {
+		return isBindingInUse(new ClickShortcut(button));
+	}
+
+	/**
+	 * Use the isBindingInUse version with the same parameters instead
+	 */
+	@Deprecated
+	public boolean isClickBindingInUse(Integer button, Integer nc) {
+		return isBindingInUse(new ClickShortcut(button, nc));
+	}
+
+	/**
+	 * Use the isBindingInUse version with the same parameters instead
+	 */
+	@Deprecated
+	public boolean isClickBindingInUse(Integer mask, Integer button, Integer nc) {
+		return isBindingInUse(new ClickShortcut(mask, button, nc));
+	}
+
+	/**
+	 * Use isActionBound instead
+	 */
+	@Deprecated
+	public boolean isClickActionBound(A action) {
+		return isActionBound(action);
+	}
+
+	/**
+	 * Use the setBinding version with the same parameters instead
+	 */
+	@Deprecated
+	public void setClickBinding(Integer button, A action) {
+		if (isClickBindingInUse(button)) {
+			Action<?> a = clickBinding(button);
+			System.out.println("Warning: overwritting binding which was previously associated to " + a);
+		}
+		setBinding(new ClickShortcut(button), action);
+	}
+
+	/**
+	 * Use the setBinding version with the same parameters instead
+	 */
+	@Deprecated
+	public void setClickBinding(Integer button, Integer nc, A action) {
+		if (isClickBindingInUse(button, nc)) {
+			Action<?> a = clickBinding(button, nc);
+			System.out.println("Warning: overwritting binding which was previously associated to " + a);
+		}
+		setBinding(new ClickShortcut(button, nc), action);
+	}
+
+	/**
+	 * Use the setBinding version with the same parameters instead
+	 */
+	@Deprecated
+	public void setClickBinding(Integer mask, Integer button, Integer nc, A action) {
+		if (isClickBindingInUse(mask, button, nc)) {
+			Action<?> a = clickBinding(mask, button, nc);
+			System.out.println("Warning: overwritting binding which was previously associated to " + a);
+		}
+		setBinding(new ClickShortcut(mask, button, nc), action);
+	}
+
+	/**
+	 * Use the removeBinding version with the same parameters instead
+	 */
+	@Deprecated
+	public void removeClickBinding(Integer button) {
+		removeBinding(new ClickShortcut(button));
+	}
+
+	/**
+	 * Use the removeBinding version with the same parameters instead
+	 */
+	@Deprecated
+	public void removeClickBinding(Integer button, Integer nc) {
+		removeBinding(new ClickShortcut(button, nc));
+	}
+
+	/**
+	 * Use the removeBinding version with the same parameters instead
+	 */
+	@Deprecated
+	public void removeClickBinding(Integer mask, Integer button, Integer nc) {
+		removeBinding(new ClickShortcut(mask, button, nc));
+	}
+
+	/**
+	 * Use the binding version with the same parameters instead
+	 */
+	@Deprecated
+	public Action<?> clickBinding(Integer button) {
+		return binding(new ClickShortcut(button));
+	}
+
+	/**
+	 * Use the binding version with the same parameters instead
+	 */
+	@Deprecated
+	public Action<?> clickBinding(Integer button, Integer nc) {
+		return binding(new ClickShortcut(button, nc));
+	}
+
+	/**
+	 * Use the binding version with the same parameters instead
+	 */
+	@Deprecated
 	public Action<?> clickBinding(Integer mask, Integer button, Integer nc) {
 		return binding(new ClickShortcut(mask, button, nc));
 	}

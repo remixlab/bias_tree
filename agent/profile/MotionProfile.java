@@ -46,13 +46,6 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	}
 
 	/**
-	 * Returns true if the given action is bound.
-	 */
-	public boolean isActionBound(A action) {
-		return isActionMapped(action);
-	}
-
-	/**
 	 * Convenience function that simply calls {@code setWheelShortcut(0, action)}.
 	 */
 	public void setBinding(A action) {

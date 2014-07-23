@@ -29,9 +29,9 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 * @param action
 	 *          action to be bound
 	 */
-	public void setShortcut(Character key, A action) {
-		if (isShortcutInUse(key)) {
-			Action<?> a = shortcut(key);
+	public void setBinding(Character key, A action) {
+		if (isBindingInUse(key)) {
+			Action<?> a = binding(key);
 			System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
 		}
 		setBinding(new KeyboardShortcut(key), action);
@@ -47,9 +47,9 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 * @param action
 	 *          action to be bound
 	 */
-	public void setShortcut(Integer mask, Integer vKey, A action) {
-		if (isShortcutInUse(mask, vKey)) {
-			Action<?> a = shortcut(mask, vKey);
+	public void setBinding(Integer mask, Integer vKey, A action) {
+		if (isBindingInUse(mask, vKey)) {
+			Action<?> a = binding(mask, vKey);
 			System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
 		}
 		setBinding(new KeyboardShortcut(mask, vKey), action);
@@ -61,7 +61,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 * @param key
 	 *          shortcut
 	 */
-	public void removeShortcut(Character key) {
+	public void removeBinding(Character key) {
 		removeBinding(new KeyboardShortcut(key));
 	}
 
@@ -73,7 +73,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 * @param vKey
 	 *          coded key defining the shortcut
 	 */
-	public void removeShortcut(Integer mask, Integer vKey) {
+	public void removeBinding(Integer mask, Integer vKey) {
 		removeBinding(new KeyboardShortcut(mask, vKey));
 	}
 
@@ -84,7 +84,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 *          shortcut
 	 * @return action
 	 */
-	public Action<?> shortcut(Character key) {
+	public Action<?> binding(Character key) {
 		return binding(new KeyboardShortcut(key));
 	}
 
@@ -97,7 +97,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 *          coded key defining the shortcut
 	 * @return action
 	 */
-	public Action<?> shortcut(Integer mask, Integer vKey) {
+	public Action<?> binding(Integer mask, Integer vKey) {
 		return binding(new KeyboardShortcut(mask, vKey));
 	}
 
@@ -107,7 +107,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 * @param key
 	 *          shortcut
 	 */
-	public boolean isShortcutInUse(Character key) {
+	public boolean isBindingInUse(Character key) {
 		return isBindingInUse(new KeyboardShortcut(key));
 	}
 
@@ -119,14 +119,89 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 * @param vKey
 	 *          coded key defining the shortcut
 	 */
+	public boolean isBindingInUse(Integer mask, Integer vKey) {
+		return isBindingInUse(new KeyboardShortcut(mask, vKey));
+	}
+
+	// Deprecated
+
+	/**
+	 * Use the setBinding version with the same parameters instead
+	 */
+	@Deprecated
+	public void setShortcut(Character key, A action) {
+		if (isShortcutInUse(key)) {
+			Action<?> a = shortcut(key);
+			System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
+		}
+		setBinding(new KeyboardShortcut(key), action);
+	}
+
+	/**
+	 * Use the setBinding version with the same parameters instead
+	 */
+	@Deprecated
+	public void setShortcut(Integer mask, Integer vKey, A action) {
+		if (isShortcutInUse(mask, vKey)) {
+			Action<?> a = shortcut(mask, vKey);
+			System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
+		}
+		setBinding(new KeyboardShortcut(mask, vKey), action);
+	}
+
+	/**
+	 * Use the removeBinding version with the same parameters instead
+	 */
+	@Deprecated
+	public void removeShortcut(Character key) {
+		removeBinding(new KeyboardShortcut(key));
+	}
+
+	/**
+	 * Use the removeBinding version with the same parameters instead
+	 */
+	@Deprecated
+	public void removeShortcut(Integer mask, Integer vKey) {
+		removeBinding(new KeyboardShortcut(mask, vKey));
+	}
+
+	/**
+	 * Use the binding version with the same parameters instead
+	 */
+	@Deprecated
+	public Action<?> shortcut(Character key) {
+		return binding(new KeyboardShortcut(key));
+	}
+
+	/**
+	 * Use the binding version with the same parameters instead
+	 */
+	@Deprecated
+	public Action<?> shortcut(Integer mask, Integer vKey) {
+		return binding(new KeyboardShortcut(mask, vKey));
+	}
+
+	/**
+	 * Use the isBindingInUse version with the same parameters instead
+	 */
+	@Deprecated
+	public boolean isShortcutInUse(Character key) {
+		return isBindingInUse(new KeyboardShortcut(key));
+	}
+
+	/**
+	 * Use the isBindingInUse version with the same parameters instead
+	 */
+	@Deprecated
 	public boolean isShortcutInUse(Integer mask, Integer vKey) {
 		return isBindingInUse(new KeyboardShortcut(mask, vKey));
 	}
 
 	/**
-	 * Returns true if there is a keyboard shortcut for the given action.
+	 * Use isActionBound instead
 	 */
+	@Deprecated
 	public boolean isKeyboardActionBound(A action) {
-		return isActionMapped(action);
+		return isActionBound(action);
 	}
 }
