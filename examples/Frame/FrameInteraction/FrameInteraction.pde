@@ -19,7 +19,6 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 
 Scene scene;
-boolean focusIFrame;
 InteractiveFrame iFrame;
 
 //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
@@ -30,7 +29,8 @@ public void setup() {
   scene = new Scene(this);	
   iFrame = new InteractiveFrame(scene);
   iFrame.translate(new Vec(50, 50));
-  scene.setNonSeqTimers();
+  // Simply testing non sequential timers:
+  scene.setNonSeqTimers(); // comment it to use sequential timers instead (default)
 }
 
 public void draw() {
@@ -47,7 +47,7 @@ public void draw() {
   scene.drawAxes(20);
 
   // Draw a second box
-  if (focusIFrame) {
+  if (scene.motionAgent().defaultGrabber() == iFrame) {
     fill(0, 255, 255);
     scene.drawTorusSolenoid();
   }
@@ -64,15 +64,6 @@ public void draw() {
 }
 
 public void keyPressed() {
-  if ( key == 'i') {
-    if ( focusIFrame ) {
-      scene.motionAgent().setDefaultGrabber(scene.eye().frame());
-      scene.motionAgent().enableTracking();
-    } 
-    else {
-      scene.motionAgent().setDefaultGrabber(iFrame);
-      scene.motionAgent().disableTracking();
-    }
-    focusIFrame = !focusIFrame;
-  }
+  if ( key == 'i')
+    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
 }

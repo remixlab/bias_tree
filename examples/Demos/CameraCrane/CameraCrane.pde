@@ -104,26 +104,26 @@ public void draw() {
 
 public void handleMouse() {
   if (mouseY < canvas.height) {
-    mainScene.enableMouseAgent();
+    mainScene.enableMotionAgent();
     mainScene.enableKeyboardAgent();
-    armScene.disableMouseAgent();
+    armScene.disableMotionAgent();
     armScene.disableKeyboardAgent();
-    heliScene.disableMouseAgent();
+    heliScene.disableMotionAgent();
     heliScene.disableKeyboardAgent();
   } else {
     if (mouseX < canvas.width / 2) {
-      mainScene.disableMouseAgent();
+      mainScene.disableMotionAgent();
       mainScene.disableKeyboardAgent();
-      armScene.enableMouseAgent();
+      armScene.enableMotionAgent();
       armScene.enableKeyboardAgent();
-      heliScene.disableMouseAgent();
+      heliScene.disableMotionAgent();
       heliScene.disableKeyboardAgent();
     } else {
-      mainScene.disableMouseAgent();
+      mainScene.disableMotionAgent();
       mainScene.disableKeyboardAgent();
-      armScene.disableMouseAgent();
+      armScene.disableMotionAgent();
       armScene.disableKeyboardAgent();
-      heliScene.enableMouseAgent();
+      heliScene.enableMotionAgent();
       heliScene.enableKeyboardAgent();
     }
   }

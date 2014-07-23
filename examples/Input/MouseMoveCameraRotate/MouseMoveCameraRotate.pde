@@ -16,13 +16,11 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
 Scene scene;
-MouseAgent prosceneMouse;
 MouseMoveAgent customMouseAgent;
 
 void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
-  prosceneMouse = scene.mouseAgent();
   scene.enableBoundaryEquations();
   scene.setRadius(150);
   scene.showAll();
@@ -41,15 +39,15 @@ void draw() {
 }
 
 void switchAgents() {
-  if( scene.isMouseAgentEnabled() ) {
-    scene.disableMouseAgent();
+  if( scene.isMotionAgentEnabled() ) {
+    scene.disableMotionAgent();
     scene.inputHandler().registerAgent(customMouseAgent);
     registerMethod("mouseEvent", customMouseAgent);
   }
   else {
     scene.inputHandler().unregisterAgent(customMouseAgent);
     unregisterMethod("mouseEvent", customMouseAgent);
-    scene.enableMouseAgent();
+    scene.enableMotionAgent();
   }
 }
 

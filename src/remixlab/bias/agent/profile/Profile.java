@@ -156,7 +156,7 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	 *          {@link remixlab.bias.core.Action}
 	 * @return true if this object maps one or more shortcuts to the specified action.
 	 */
-	public boolean isActionMapped(A action) {
+	public boolean isActionBound(A action) {
 		return map.containsValue(action);
 	}
 
@@ -169,5 +169,15 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 			if (entry.getKey() != null && entry.getValue() != null)
 				result += entry.getKey().description() + " -> " + entry.getValue().description() + "\n";
 		return result;
+	}
+
+	// Deprecated
+
+	/**
+	 * Use isActionBound instead.
+	 */
+	@Deprecated
+	public boolean isActionMapped(A action) {
+		return map.containsValue(action);
 	}
 }

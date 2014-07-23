@@ -195,14 +195,14 @@ void keyPressed() {
 
 void handleMouse() {
   if (mouseY < 360) {
-    scene.enableMouseAgent();
+    scene.enableMotionAgent();
     scene.enableKeyboardAgent();
-    auxScene.disableMouseAgent();
+    auxScene.disableMotionAgent();
     auxScene.disableKeyboardAgent();
   } else {
-    scene.disableMouseAgent();
+    scene.disableMotionAgent();
     scene.disableKeyboardAgent();
-    auxScene.enableMouseAgent();
+    auxScene.enableMotionAgent();
     auxScene.enableKeyboardAgent();
   }
 }

@@ -14,7 +14,6 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 
 Scene scene;
-boolean focusIFrame;
 InteractiveFrame iFrame;
 PShader prosceneShader;
 Mat pmv;
@@ -42,7 +41,7 @@ void draw() {
   //iFrame.applyTransformation();//also possible here
   //model-view changed:
   setUniforms();
-  if (focusIFrame) {
+  if (scene.motionAgent().defaultGrabber() == iFrame) {
     fill(0, 255, 255);
     scene.drawTorusSolenoid();
   }
@@ -55,6 +54,11 @@ void draw() {
     scene.drawTorusSolenoid();
   } 
   scene.popModelView();
+}
+
+public void keyPressed() {
+  if ( key == 'i')
+    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
 }
 
 //Whenever the model-view (or projection) matrices changes

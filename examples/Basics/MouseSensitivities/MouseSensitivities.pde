@@ -23,7 +23,6 @@ import remixlab.bias.event.*;
 Scene scene;
 ArrayList buttons;	
 int xM = 10;
-boolean focusIFrame;
 InteractiveFrame interactiveFrame;
 boolean isIFrame = false;
 boolean dispControls = true;
@@ -84,7 +83,7 @@ void draw() {
   scene.drawAxes(20);				
   // Draw a second box
   // Draw a second box
-  if (focusIFrame) {
+  if (scene.motionAgent().defaultGrabber() == interactiveFrame) {
     fill(0, 255, 255);
     scene.drawTorusSolenoid();    
   }
@@ -265,15 +264,6 @@ void keyPressed() {
     else
       setDefaults( scene.eye().frame() );
   }
-  if ( key == 'i') {
-    if ( focusIFrame ) {
-      scene.motionAgent().setDefaultGrabber(scene.eye().frame());
-      scene.motionAgent().enableTracking();
-    } 
-    else {
-      scene.motionAgent().setDefaultGrabber(interactiveFrame);
-      scene.motionAgent().disableTracking();
-    }
-    focusIFrame = !focusIFrame;
-  }
+  if ( key == 'i')
+    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == interactiveFrame ? scene.eye().frame() : interactiveFrame);
 }

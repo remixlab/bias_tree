@@ -13,7 +13,6 @@ import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
 
 Scene scene;
-boolean focusIFrame;
 boolean firstPerson;
 InteractiveFrame iFrame;
 
@@ -22,7 +21,7 @@ void setup() {
   scene = new Scene(this);	
   iFrame = new InteractiveFrame(scene);
   iFrame.translate(new Vec(30, 30, 0));
-  scene.mouseAgent().setAsFirstPerson();
+  scene.setMouseAsFirstPerson();
   firstPerson = true;
 }
 
@@ -40,7 +39,7 @@ void draw() {
   scene.drawAxes(20);
 
   // Draw a second torus
-  if (focusIFrame) {
+  if (scene.motionAgent().defaultGrabber() == iFrame) {
     fill(0, 255, 255);
     scene.drawTorusSolenoid();
   }
@@ -57,24 +56,15 @@ void draw() {
 }
 
 public void keyPressed() {
-  if ( key == 'i') {
-    if ( focusIFrame ) {
-      scene.motionAgent().setDefaultGrabber(scene.eye().frame());
-      scene.motionAgent().enableTracking();
-    } 
-    else {
-      scene.motionAgent().setDefaultGrabber(iFrame);
-      scene.motionAgent().disableTracking();
-    }
-    focusIFrame = !focusIFrame;
-  }
+  if ( key == 'i')
+    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
   if ( key == ' ') {
     firstPerson = !firstPerson;
     if ( firstPerson ) {
-      scene.mouseAgent().setAsFirstPerson();
+      scene.setMouseAsFirstPerson();
     }
     else {
-      scene.mouseAgent().setAsArcball();
+      scene.setMouseAsArcball();
     }
   }
 }

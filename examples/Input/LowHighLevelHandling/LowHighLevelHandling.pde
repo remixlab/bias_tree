@@ -70,7 +70,7 @@ public void draw() {
 }
 
 public boolean iFrameGrabsInput() {
-  if (scene.isMouseAgentEnabled())
+  if (scene.isMotionAgentEnabled())
     return iFrame.grabsInput(scene.motionAgent());
   else
     return grabsInput;
@@ -78,7 +78,7 @@ public boolean iFrameGrabsInput() {
 
 @Override
 public void mouseMoved() {
-  if (!scene.isMouseAgentEnabled()) {
+  if (!scene.isMotionAgentEnabled()) {
     event = new DOF2Event(prevEvent, (float) mouseX, (float) mouseY);
     if (enforced)
       grabsInput = true;
@@ -90,7 +90,7 @@ public void mouseMoved() {
 
 @Override
 public void mouseDragged() {
-  if (!scene.isMouseAgentEnabled()) {
+  if (!scene.isMotionAgentEnabled()) {
     event = new DOF2Event(prevEvent, (float) mouseX, (float) mouseY);
     scene.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, mouseAction, grabsInput ? iFrame : scene.eye().frame()));
     prevEvent = event.get();
@@ -121,7 +121,7 @@ public void keyPressed() {
   }
   if (key == 'y') {
     enforced = !enforced;
-    if(scene.isMouseAgentEnabled())
+    if(scene.isMotionAgentEnabled())
       if (enforced) {
         scene.motionAgent().setDefaultGrabber(iFrame);
         scene.motionAgent().disableTracking();
@@ -137,12 +137,12 @@ public void keyPressed() {
         grabsInput = false;
   }
   if ( key == 'm' || key == 'M' ) {
-    if (scene.isMouseAgentEnabled()) {
-      scene.disableMouseAgent();
+    if (scene.isMotionAgentEnabled()) {
+      scene.disableMotionAgent();
       println("Low level mouse event handling");
     }
     else {
-      scene.enableMouseAgent();
+      scene.enableMotionAgent();
       println("High level mouse event handling");
     }
   }    

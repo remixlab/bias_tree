@@ -23,7 +23,6 @@ InteractiveFrame frame;
 AxisPlaneConstraint constraints[] = new AxisPlaneConstraint[3];
 int activeConstraint;
 boolean wC = true;
-boolean focusIFrame;
 
 //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
 String renderer = P3D;
@@ -120,7 +119,7 @@ public void draw() {
   pushMatrix();
   frame.applyTransformation();
   scene.drawAxes(40);  
-  if (focusIFrame) {
+  if (scene.motionAgent().defaultGrabber() == frame) {
     fill(0, 255, 255);
     scene.drawTorusSolenoid();
   }
@@ -225,17 +224,8 @@ public void displayText() {
 }
 
 public void keyPressed() {
-  if ( key == 'i') {
-    if ( focusIFrame ) {
-      scene.motionAgent().setDefaultGrabber(scene.eye().frame());
-      scene.motionAgent().enableTracking();
-    } 
-    else {
-      scene.motionAgent().setDefaultGrabber(frame);
-      scene.motionAgent().disableTracking();
-    }
-    focusIFrame = !focusIFrame;
-  }
+  if ( key == 'i')
+    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == frame ? scene.eye().frame() : frame);
   if (key == 'b' || key == 'B') {
     rotDir = (rotDir + 1) % 3;
   }

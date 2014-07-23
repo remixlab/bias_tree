@@ -13,9 +13,9 @@ import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.Constants.*;
 
 Scene scene;
-boolean focusIFrame;
 InteractiveAvatarFrame iFrame;
 boolean displayPaths = true;
+Point fCorner = new Point();
 
 //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
 String renderer = P3D;
@@ -25,7 +25,7 @@ public void setup() {
   scene = new CustomizedScene(this);
   iFrame = new InteractiveAvatarFrame(scene);
   iFrame.translate(new Vec(30, -30, 0));
-  scene.keyboardAgent().profile().setShortcut('r', null);
+  scene.setKeyboardShortcut('r', null);
   scene.setNonSeqTimers();
   scene.setVisualHints(Scene.AXES | Scene.GRID | Scene.PICKING );
   //create a eye path and add some key frames:
@@ -66,7 +66,7 @@ public void draw() {
   scene.drawAxes(20);
 
   // Draw a second box
-  if (focusIFrame) {
+  if (scene.motionAgent().defaultGrabber() == iFrame) {
     fill(0, 255, 255);
     scene.drawTorusSolenoid(6, 10);
   }
@@ -83,17 +83,8 @@ public void draw() {
 }
 
 public void keyPressed() {
-  if ( key == 'i') {
-    if ( focusIFrame ) {
-      scene.motionAgent().setDefaultGrabber(scene.eye().frame());
-      scene.motionAgent().enableTracking();
-    } 
-    else {
-      scene.motionAgent().setDefaultGrabber(iFrame);
-      scene.motionAgent().disableTracking();
-    }
-    focusIFrame = !focusIFrame;
-  }
+  if ( key == 'i')
+    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
   if(key == 'u')
     displayPaths = !displayPaths;
 }
@@ -111,6 +102,10 @@ public void drawPaths() {
     scene.hideEyePaths();
 }
 
+void mousePressed() {
+  fCorner.set(mouseX, mouseY);
+}
+
 public class CustomizedScene extends Scene {
   // We need to call super(p) to instantiate the base class
   public CustomizedScene(PApplet p) {
@@ -124,6 +119,46 @@ public class CustomizedScene extends Scene {
     pg().strokeWeight(1);
     pg().stroke(0,220,0);
     drawPickingTargets();
+    pg().popStyle();
+  }
+  
+  @Override
+  protected void drawZoomWindowHint() {
+    if (!(motionAgent() instanceof ProsceneMouse))
+      return;
+    pg().pushStyle();
+    float p1x = fCorner.x();
+    float p1y = fCorner.y();
+    float p2x = mouseX;
+    float p2y = mouseY;
+    beginScreenDrawing();
+    pg().stroke(0, 255, 255);
+    pg().strokeWeight(2);
+    pg().noFill();
+    pg().beginShape();
+    vertex(p1x, p1y);
+    vertex(p2x, p1y);
+    vertex(p2x, p2y);
+    vertex(p1x, p2y);
+    pg().endShape(CLOSE);
+    endScreenDrawing();
+    pg().popStyle();
+  }
+  
+  @Override
+  protected void drawScreenRotateHint() {
+    pg().pushStyle();
+    if (!(motionAgent() instanceof ProsceneMouse))
+      return;
+    float p1x = mouseX;
+    float p1y = mouseY;
+    Vec p2 = eye().projectedCoordinatesOf(anchor());
+    beginScreenDrawing();
+    pg().stroke(255, 255, 0);
+    pg().strokeWeight(2);
+    pg().noFill();
+    line(p2.x(), p2.y(), p1x, p1y);
+    endScreenDrawing();
     pg().popStyle();
   }
 }

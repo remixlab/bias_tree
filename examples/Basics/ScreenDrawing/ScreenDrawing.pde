@@ -80,10 +80,10 @@ void draw() {
 
 void keyPressed() {
   if ((key == 'x') || (key == 'X')) {
-    if(scene.isMouseAgentEnabled())
-      scene.disableMouseAgent();
+    if(scene.isMotionAgentEnabled())
+      scene.disableMotionAgent();
     else
-      scene.enableMouseAgent();
+      scene.enableMotionAgent();
     onScreen = !onScreen;
     if(!additionalInstructions)
       additionalInstructions = true;
@@ -93,6 +93,6 @@ void keyPressed() {
 }
 
 void mouseDragged() {
-  if(!scene.isMouseAgentEnabled())
+  if(!scene.isMotionAgentEnabled())
     points.add(new Point(mouseX, mouseY));
 }

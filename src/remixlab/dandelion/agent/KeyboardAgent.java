@@ -67,17 +67,17 @@ public class KeyboardAgent extends ActionKeyboardAgent<KeyboardProfile<KeyboardA
 	 */
 	public void setDefaultShortcuts() {
 		keyboardProfile().removeAllBindings();
-		keyboardProfile().setShortcut('a', KeyboardAction.TOGGLE_AXES_VISUAL_HINT);
-		keyboardProfile().setShortcut('f', KeyboardAction.TOGGLE_PICKING_VISUAL_HINT);
-		keyboardProfile().setShortcut('g', KeyboardAction.TOGGLE_GRID_VISUAL_HINT);
-		keyboardProfile().setShortcut('m', KeyboardAction.TOGGLE_ANIMATION);
+		keyboardProfile().setBinding('a', KeyboardAction.TOGGLE_AXES_VISUAL_HINT);
+		keyboardProfile().setBinding('f', KeyboardAction.TOGGLE_PICKING_VISUAL_HINT);
+		keyboardProfile().setBinding('g', KeyboardAction.TOGGLE_GRID_VISUAL_HINT);
+		keyboardProfile().setBinding('m', KeyboardAction.TOGGLE_ANIMATION);
 
-		keyboardProfile().setShortcut('e', KeyboardAction.TOGGLE_CAMERA_TYPE);
-		keyboardProfile().setShortcut('h', KeyboardAction.DISPLAY_INFO);
-		keyboardProfile().setShortcut('r', KeyboardAction.TOGGLE_PATHS_VISUAL_HINT);
+		keyboardProfile().setBinding('e', KeyboardAction.TOGGLE_CAMERA_TYPE);
+		keyboardProfile().setBinding('h', KeyboardAction.DISPLAY_INFO);
+		keyboardProfile().setBinding('r', KeyboardAction.TOGGLE_PATHS_VISUAL_HINT);
 
-		keyboardProfile().setShortcut('s', KeyboardAction.INTERPOLATE_TO_FIT);
-		keyboardProfile().setShortcut('S', KeyboardAction.SHOW_ALL);
+		keyboardProfile().setBinding('s', KeyboardAction.INTERPOLATE_TO_FIT);
+		keyboardProfile().setBinding('S', KeyboardAction.SHOW_ALL);
 	}
 
 	/**
@@ -86,13 +86,13 @@ public class KeyboardAgent extends ActionKeyboardAgent<KeyboardProfile<KeyboardA
 	public void setKeyCodeToPlayPath(int vkey, int path) {
 		switch (path) {
 		case 1:
-			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_1);
+			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_1);
 			break;
 		case 2:
-			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_2);
+			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_2);
 			break;
 		case 3:
-			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_3);
+			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_3);
 			break;
 		default:
 			break;

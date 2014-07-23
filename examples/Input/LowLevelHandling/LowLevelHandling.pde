@@ -40,7 +40,7 @@ public void setup() {
   // Low-level handling (mouse and keyboard in the case)
   // requires disabling high level handling ;)
   scene.disableKeyboardAgent();
-  scene.disableMouseAgent();
+  scene.disableMotionAgent();
 
   iFrame = new InteractiveFrame(scene);
   iFrame.translate(new Vec(30, 30, 0));

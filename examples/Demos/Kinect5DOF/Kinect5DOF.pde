@@ -2,7 +2,7 @@
  * Kinect 5DOF
  * by Miguel Parra and Pierre Charalambos.
  *
- * This demo shows hot to control your scene Eye and iFrames using kinect
+ * This demo shows how to control your scene Eye and iFrames using kinect
  * gestures, emulating 5 degrees-of-freedom; the three translations and two
  * rotations: rotation along y and rotation along z.
  *

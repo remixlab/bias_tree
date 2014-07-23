@@ -1,5 +1,5 @@
 /**************************************************************************************
- * ProScene (version 2.0.2)
+ * ProScene (version 2.0.3)
  * Copyright (c) 2010-2014 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  * 
@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
  * 
  * ProScene provides powerful interactivity mechanisms allowing a wide range of scene setups ranging from very simple to
  * complex ones. For convenience, two interaction mechanisms are provided by default: {@link #keyboardAgent()}, and
- * {@link #mouseAgent()}:
+ * {@link #motionAgent()} (which in the desktop version of proscene defaults to a {@link #mouseAgent()}):
  * <ol>
  * <li><b>The default keyboard agent</b> provides shortcuts to Dandelion keyboard actions such as {@link #drawGrid()} or
  * {@link #drawAxes()}. See {@link #setKeyboardShortcut(Character, remixlab.dandelion.core.Constants.KeyboardAction)}
@@ -218,25 +218,25 @@ public class Scene extends AbstractScene implements PConstants {
 			// VK values here: http://docs.oracle.com/javase/7/docs/api/constant-values.html
 			super.setDefaultShortcuts();
 			// VK_LEFT : 37
-			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, 37, KeyboardAction.MOVE_LEFT);
+			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, 37, KeyboardAction.MOVE_LEFT);
 			// VK_UP : 38
-			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, 38, KeyboardAction.MOVE_UP);
+			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, 38, KeyboardAction.MOVE_UP);
 			// VK_RIGHT : 39
-			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, 39, KeyboardAction.MOVE_RIGHT);
+			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, 39, KeyboardAction.MOVE_RIGHT);
 			// VK_DOWN : 40
-			keyboardProfile().setShortcut(BogusEvent.NOMODIFIER_MASK, 40, KeyboardAction.MOVE_DOWN);
+			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, 40, KeyboardAction.MOVE_DOWN);
 
 			// VK_1 : 49
-			keyboardProfile().setShortcut(BogusEvent.CTRL, 49, KeyboardAction.ADD_KEYFRAME_TO_PATH_1);
-			keyboardProfile().setShortcut(BogusEvent.ALT, 49, KeyboardAction.DELETE_PATH_1);
+			keyboardProfile().setBinding(BogusEvent.CTRL, 49, KeyboardAction.ADD_KEYFRAME_TO_PATH_1);
+			keyboardProfile().setBinding(BogusEvent.ALT, 49, KeyboardAction.DELETE_PATH_1);
 			setKeyCodeToPlayPath(49, 1);
 			// VK_2 : 50
-			keyboardProfile().setShortcut(BogusEvent.CTRL, 50, KeyboardAction.ADD_KEYFRAME_TO_PATH_2);
-			keyboardProfile().setShortcut(BogusEvent.ALT, 50, KeyboardAction.DELETE_PATH_2);
+			keyboardProfile().setBinding(BogusEvent.CTRL, 50, KeyboardAction.ADD_KEYFRAME_TO_PATH_2);
+			keyboardProfile().setBinding(BogusEvent.ALT, 50, KeyboardAction.DELETE_PATH_2);
 			setKeyCodeToPlayPath(50, 2);
 			// VK_3 : 51
-			keyboardProfile().setShortcut(BogusEvent.CTRL, 51, KeyboardAction.ADD_KEYFRAME_TO_PATH_3);
-			keyboardProfile().setShortcut(BogusEvent.ALT, 51, KeyboardAction.DELETE_PATH_3);
+			keyboardProfile().setBinding(BogusEvent.CTRL, 51, KeyboardAction.ADD_KEYFRAME_TO_PATH_3);
+			keyboardProfile().setBinding(BogusEvent.ALT, 51, KeyboardAction.DELETE_PATH_3);
 			setKeyCodeToPlayPath(51, 3);
 		}
 
@@ -446,13 +446,13 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 
 		protected void setCommonBindings() {
-			eyeClickProfile().setClickBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, 2,
+			eyeClickProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, 2,
 					ClickAction.ALIGN_FRAME);
-			eyeClickProfile().setClickBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, 2,
+			eyeClickProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, 2,
 					ClickAction.CENTER_FRAME);
-			frameClickProfile().setClickBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, 2,
+			frameClickProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, 2,
 					ClickAction.ALIGN_FRAME);
-			frameClickProfile().setClickBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, 2,
+			frameClickProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, 2,
 					ClickAction.CENTER_FRAME);
 			eyeWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON,
 					is3D() ? DOF1Action.ZOOM : DOF1Action.SCALE);
@@ -878,9 +878,9 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 	}
 
-	public static final String	prettyVersion	= "2.0.2";
+	public static final String	prettyVersion	= "2.0.3";
 
-	public static final String	version				= "18";
+	public static final String	version				= "19";
 
 	// P R O C E S S I N G A P P L E T A N D O B J E C T S
 	protected PApplet						parent;
@@ -1183,6 +1183,18 @@ public class Scene extends AbstractScene implements PConstants {
 		return profile.isBindingInUse(p5ButtonModifiersFix(button), button);
 	}
 
+	/**
+	 * Returns {@code true} if the mouse action is bound to the given {@code target} (EYE or FRAME).
+	 */
+	public boolean isMouseButtonActionBound(Target target, DOF2Action action) {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("isMouseButtonActionBound", platform());
+			return false;
+		}
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
+		return profile.isActionBound(action);
+	}
+
 	// wheel here
 
 	/**
@@ -1356,6 +1368,19 @@ public class Scene extends AbstractScene implements PConstants {
 		return profile.isBindingInUse();
 	}
 
+	/**
+	 * Returns {@code true} if the mouse wheel action is bound to the given {@code target} (EYE or FRAME).
+	 */
+	public boolean isMouseWheelActionBound(Target target, DOF1Action action) {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("isMouseWheelActionBound", platform());
+			return false;
+		}
+		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+				.frameWheelProfile();
+		return profile.isActionBound(action);
+	}
+
 	// mouse click
 
 	/**
@@ -1370,7 +1395,7 @@ public class Scene extends AbstractScene implements PConstants {
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
 		if (profile != null)
-			profile.setClickBinding(p5ButtonModifiersFix(mask, button), button, ncs, action);
+			profile.setBinding(p5ButtonModifiersFix(mask, button), button, ncs, action);
 	}
 
 	/**
@@ -1385,7 +1410,7 @@ public class Scene extends AbstractScene implements PConstants {
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
 		if (profile != null)
-			profile.setClickBinding(p5ButtonModifiersFix(button), button, ncs, action);
+			profile.setBinding(p5ButtonModifiersFix(button), button, ncs, action);
 	}
 
 	/**
@@ -1400,7 +1425,7 @@ public class Scene extends AbstractScene implements PConstants {
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
 		if (profile != null)
-			profile.setClickBinding(p5ButtonModifiersFix(button), button, 1, action);
+			profile.setBinding(p5ButtonModifiersFix(button), button, 1, action);
 	}
 
 	/**
@@ -1416,7 +1441,7 @@ public class Scene extends AbstractScene implements PConstants {
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
 		if (profile != null)
-			profile.removeClickBinding(p5ButtonModifiersFix(mask, button), button, ncs);
+			profile.removeBinding(p5ButtonModifiersFix(mask, button), button, ncs);
 	}
 
 	/**
@@ -1430,7 +1455,7 @@ public class Scene extends AbstractScene implements PConstants {
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
 		if (profile != null)
-			profile.removeClickBinding(p5ButtonModifiersFix(button), button, ncs);
+			profile.removeBinding(p5ButtonModifiersFix(button), button, ncs);
 	}
 
 	/**
@@ -1444,7 +1469,7 @@ public class Scene extends AbstractScene implements PConstants {
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
 		if (profile != null)
-			profile.removeClickBinding(p5ButtonModifiersFix(button), button, 1);
+			profile.removeBinding(p5ButtonModifiersFix(button), button, 1);
 	}
 
 	/**
@@ -1458,7 +1483,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
-		return profile.isClickBindingInUse(p5ButtonModifiersFix(mask, button), button, ncs);
+		return profile.isBindingInUse(p5ButtonModifiersFix(mask, button), button, ncs);
 	}
 
 	/**
@@ -1472,7 +1497,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
-		return profile.isClickBindingInUse(p5ButtonModifiersFix(button), button, ncs);
+		return profile.isBindingInUse(p5ButtonModifiersFix(button), button, ncs);
 	}
 
 	/**
@@ -1485,7 +1510,20 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
-		return profile.isClickBindingInUse(p5ButtonModifiersFix(button), button, 1);
+		return profile.isBindingInUse(p5ButtonModifiersFix(button), button, 1);
+	}
+
+	/**
+	 * Returns {@code true} if the mouse click action is bound to the given {@code target} (EYE or FRAME).
+	 */
+	public boolean isMouseClickActionBound(Target target, ClickAction action) {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("isMouseClickBindingInUse", platform());
+			return false;
+		}
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
+		return profile.isActionBound(action);
 	}
 
 	// keyboard here
@@ -1537,42 +1575,42 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setKeyboardShortcut(Character key, KeyboardAction action) {
-		keyboardAgent().keyboardProfile().setShortcut(key, action);
+		keyboardAgent().keyboardProfile().setBinding(key, action);
 	}
 
 	/**
 	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setKeyboardShortcut(int mask, int vKey, KeyboardAction action) {
-		keyboardAgent().keyboardProfile().setShortcut(mask, vKey, action);
+		keyboardAgent().keyboardProfile().setBinding(mask, vKey, action);
 	}
 
 	/**
 	 * Removes key shortcut binding (if present).
 	 */
 	public void removeKeyboardShortcut(Character key) {
-		keyboardAgent().keyboardProfile().removeShortcut(key);
+		keyboardAgent().keyboardProfile().removeBinding(key);
 	}
 
 	/**
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
 	public void removeKeyboardShortcut(int mask, int vKey) {
-		keyboardAgent().keyboardProfile().removeShortcut(mask, vKey);
+		keyboardAgent().keyboardProfile().removeBinding(mask, vKey);
 	}
 
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean isKeyboardShortcutInUse(Character key) {
-		return keyboardAgent().keyboardProfile().isShortcutInUse(key);
+		return keyboardAgent().keyboardProfile().isBindingInUse(key);
 	}
 
 	/**
 	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean isKeyboardShortcutInUse(int mask, int vKey) {
-		return keyboardAgent().keyboardProfile().isShortcutInUse(mask, vKey);
+		return keyboardAgent().keyboardProfile().isBindingInUse(mask, vKey);
 	}
 
 	@Override
@@ -1585,7 +1623,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * 
 	 * @see #isKeyboardAgentEnabled()
 	 * @see #disableKeyboardAgent()
-	 * @see #enableMouseAgent()
+	 * @see #enableMotionAgent()
 	 */
 	@Override
 	public void enableKeyboardAgent() {
@@ -1600,7 +1638,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * 
 	 * @see #isKeyboardAgentEnabled()
 	 * @see #enableKeyboardAgent()
-	 * @see #disableMouseAgent()
+	 * @see #disableMotionAgent()
 	 */
 	@Override
 	public KeyboardAgent disableKeyboardAgent() {
@@ -1612,7 +1650,16 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
-	 * Returns the default mouse agent handling Processing mouse events.
+	 * Returns the default mouse agent handling Processing mouse events. Simply returns a ProsceneMouse cast of the
+	 * {@link #motionAgent()}.
+	 * <p>
+	 * The use of {@link #motionAgent()} is preferable and encouraged since it's more general and platform independent,
+	 * i.e., it returns a "mouse agent" for the proscene desktop version or a "touch agent" for the android version.
+	 * <p>
+	 * If you plan to customize your mouse you can either use this method or one of multiple the high-level methods
+	 * provided (recommended and simpler way) in this class: {@code setMouseAsArcball}, {@code setMouseAsFirstPerson()},
+	 * {@code setMouseAsThirdPerson()}, {@code setMouseButtonBinding}, {@code setMouseClickBinding},
+	 * {@code setMouseWheelBinding}, etc.
 	 * 
 	 * @see #keyboardAgent()
 	 */
@@ -1625,12 +1672,9 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
-	 * Returns {@code true} if the {@link #mouseAgent()} is enabled and {@code false} otherwise.
-	 * 
-	 * @see #enableMouseAgent()
-	 * @see #disableMouseAgent()
-	 * @see #isKeyboardAgentEnabled()
+	 * Use {@link #isMotionAgentEnabled()} instead.
 	 */
+	@Deprecated
 	public boolean isMouseAgentEnabled() {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseAgentEnabled", platform());
@@ -1642,8 +1686,8 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Enables Proscene mouse handling through the {@link #mouseAgent()}.
 	 * 
-	 * @see #isMouseAgentEnabled()
-	 * @see #disableMouseAgent()
+	 * @see #isMotionAgentEnabled()
+	 * @see #disableMotionAgent()
 	 * @see #enableKeyboardAgent()
 	 */
 	@Override
@@ -1654,6 +1698,10 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 	}
 
+	/**
+	 * Use {@link #enableMotionAgent()} instead.
+	 */
+	@Deprecated
 	public void enableMouseAgent() {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("enableMouseAgent", platform());
@@ -1665,8 +1713,8 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Disables the default mouse agent and returns it.
 	 * 
-	 * @see #isMouseAgentEnabled()
-	 * @see #enableMouseAgent()
+	 * @see #isMotionAgentEnabled()
+	 * @see #enableMotionAgent()
 	 * @see #enableKeyboardAgent()
 	 */
 	@Override
@@ -1678,6 +1726,10 @@ public class Scene extends AbstractScene implements PConstants {
 		return motionAgent();
 	}
 
+	/**
+	 * Use {@link #disableMotionAgent()} instead.
+	 */
+	@Deprecated
 	public MouseAgent disableMouseAgent() {
 		return (MouseAgent) disableMotionAgent();
 	}

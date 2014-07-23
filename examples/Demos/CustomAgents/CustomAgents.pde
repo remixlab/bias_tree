@@ -23,9 +23,9 @@ public class MouseAgent extends ActionMotionAgent<MotionProfile<MotionAction>, C
     super(new MotionProfile<MotionAction>(), 
           new ClickProfile<ClickAction>(), scn, n);
     //default bindings
-    clickProfile().setClickBinding(LEFT, 1, ClickAction.CHANGE_COLOR);
-    clickProfile().setClickBinding(DOF2Event.META, RIGHT, 1, ClickAction.CHANGE_STROKE_WEIGHT);
-    clickProfile().setClickBinding((DOF2Event.META | DOF2Event.SHIFT), RIGHT, 1, ClickAction.CHANGE_STROKE_WEIGHT);
+    clickProfile().setBinding(LEFT, 1, ClickAction.CHANGE_COLOR);
+    clickProfile().setBinding(DOF2Event.META, RIGHT, 1, ClickAction.CHANGE_STROKE_WEIGHT);
+    clickProfile().setBinding((DOF2Event.META | DOF2Event.SHIFT), RIGHT, 1, ClickAction.CHANGE_STROKE_WEIGHT);
     profile().setBinding(LEFT, MotionAction.CHANGE_POSITION);
     profile().setBinding(DOF2Event.SHIFT, LEFT, MotionAction.CHANGE_SHAPE);
     profile().setBinding(DOF2Event.META, RIGHT, MotionAction.CHANGE_SHAPE);
@@ -183,7 +183,7 @@ void draw() {
       circles[i].draw();
   }
   scene.beginScreenDrawing();
-  if(scene.isMouseAgentEnabled()) {
+  if(scene.isMotionAgentEnabled()) {
     fill(255,0,0);
     text("Proscene's default mouse agent can handle your eye, but not your custom actions", 5, 17);
   }
@@ -195,17 +195,17 @@ void draw() {
   fill(0,0,255);
   text("Press 'u' to change the mouse agent", 5, 57);
   scene.endScreenDrawing();
-  if(drawSelectionHints && !scene.isMouseAgentEnabled()) drawSelectionHints();
+  if(drawSelectionHints && !scene.isMotionAgentEnabled()) drawSelectionHints();
 }
 
 void keyPressed() {
   if(key == 'u') {
-    if(scene.isMouseAgentEnabled()) {
-      scene.disableMouseAgent();
+    if(scene.isMotionAgentEnabled()) {
+      scene.disableMotionAgent();
       scene.inputHandler().registerAgent(agent);
       registerMethod("mouseEvent", agent);
     } else {
-      scene.enableMouseAgent();
+      scene.enableMotionAgent();
       scene.inputHandler().unregisterAgent(agent);
       unregisterMethod("mouseEvent", agent);
     }

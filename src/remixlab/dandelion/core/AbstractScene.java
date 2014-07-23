@@ -316,11 +316,19 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		return inputHandler().grabsAnyAgentInput(grabber);
 	}
 
+	/**
+	 * Implementation of the {@link remixlab.bias.core.Grabber#grabsInput(Agent)} method. Internal use. You should not use
+	 * this.
+	 */
 	@Override
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
 
+	/**
+	 * Implementation of the {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} method. Internal use. You
+	 * should not use this.
+	 */
 	@Override
 	public boolean checkIfGrabsInput(BogusEvent event) {
 		return (event instanceof KeyboardEvent || event instanceof ClickEvent);
@@ -357,6 +365,10 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 			AbstractScene.showMissingImplementationWarning("displayInfo", getClass().getName());
 	}
 
+	/**
+	 * Implementation of the {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)} method. Internal use. You
+	 * should not use this.
+	 */
 	@Override
 	public void performInteraction(BogusEvent event) {
 		if (!(event instanceof ClickEvent) && !(event instanceof KeyboardEvent))
@@ -1594,7 +1606,14 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	// 3. EYE STUFF
 
 	/**
-	 * Returns the associated Eye, never {@code null}.
+	 * Returns the associated Eye, never {@code null}. This is the high level version of {@link #window()} and
+	 * {@link #camera()} which holds that which is common of the two.
+	 * <p>
+	 * 2D applications should simply use {@link #window()} and 3D applications should simply use {@link #camera()}. If you
+	 * plan to implement two versions of the same application one in 2D and the other in 3D, use this method.
+	 * <p>
+	 * <b>Note</b> that not all methods defined in the Camera class are available in the Eye class and that all methods
+	 * defined in the Window class are.
 	 */
 	public Eye eye() {
 		return eye;
