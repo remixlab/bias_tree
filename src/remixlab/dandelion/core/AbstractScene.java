@@ -67,6 +67,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	protected int														width, height;
 
 	// offscreen
+	// TODO should be protected
 	public Point														upperLeftCorner;
 	protected boolean												offscreen;
 	protected long													lastEqUpdate;
@@ -128,6 +129,15 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		setMatrixHelper(new MatrixStackHelper(this));
 		setRightHanded();
 		setVisualHints(AXES | GRID);
+		upperLeftCorner = new Point(0, 0);
+	}
+
+	/**
+	 * Returns the upper left corner of the Scene window. It's always (0,0) for on-screen scenes, but off-screen scenes
+	 * may be defined elsewhere on a canvas.
+	 */
+	public Point origin() {
+		return upperLeftCorner;
 	}
 
 	/**

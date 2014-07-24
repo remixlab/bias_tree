@@ -254,10 +254,10 @@ public class Scene extends AbstractScene implements PConstants {
 	public class ProsceneMouse extends MouseAgent {
 		Scene							scene;
 		boolean						bypassNullEvent, need4Spin, drive, rotateMode;
-		Point							fCorner		= new Point();
-		Point							lCorner		= new Point();
+		Point							fCorner	= new Point();
+		Point							lCorner	= new Point();
 		DOF2Event					event, prevEvent, pressEvent;
-		float							dFriction	= eye().frame().dampingFriction();
+		float							dFriction;
 		InteractiveFrame	iFrame;
 
 		public ProsceneMouse(Scene scn, String n) {
@@ -269,14 +269,14 @@ public class Scene extends AbstractScene implements PConstants {
 
 		public void mouseEvent(processing.event.MouseEvent e) {
 			if (e.getAction() == processing.event.MouseEvent.MOVE) {
-				event = new DOF2Event(prevEvent, e.getX() - scene.upperLeftCorner.x(), e.getY()
-						- scene.upperLeftCorner.y());
+				event = new DOF2Event(prevEvent, e.getX() - origin().x(), e.getY()
+						- origin().y());
 				updateTrackedGrabber(event);
 				prevEvent = event.get();
 			}
 			if (e.getAction() == processing.event.MouseEvent.PRESS) {
-				event = new DOF2Event(prevEvent, e.getX() - scene.upperLeftCorner.x(), e.getY()
-						- scene.upperLeftCorner.y(), e.getModifiers(), e.getButton());
+				event = new DOF2Event(prevEvent, e.getX() - origin().x(), e.getY()
+						- origin().y(), e.getModifiers(), e.getButton());
 				pressEvent = event.get();
 				if (inputGrabber() instanceof InteractiveFrame) {
 					if (need4Spin)
@@ -312,9 +312,9 @@ public class Scene extends AbstractScene implements PConstants {
 							handler.eventTupleQueue().add(new EventGrabberTuple(event, a, inputGrabber()));
 						}
 						if (zoomVisualHint() || rotateVisualHint()) {
-							lCorner.set(e.getX() - scene.upperLeftCorner.x(), e.getY() - scene.upperLeftCorner.y());
+							lCorner.set(e.getX() - origin().x(), e.getY() - origin().y());
 							if (zoomVisualHint())
-								fCorner.set(e.getX() - scene.upperLeftCorner.x(), e.getY() - scene.upperLeftCorner.y());
+								fCorner.set(e.getX() - origin().x(), e.getY() - origin().y());
 						}
 					}
 					else
@@ -325,10 +325,10 @@ public class Scene extends AbstractScene implements PConstants {
 			}
 			if (e.getAction() == processing.event.MouseEvent.DRAG) {
 				if (zoomVisualHint() || rotateVisualHint())
-					lCorner.set(e.getX() - scene.upperLeftCorner.x(), e.getY() - scene.upperLeftCorner.y());
+					lCorner.set(e.getX() - origin().x(), e.getY() - origin().y());
 				if (!zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
-					event = new DOF2Event(prevEvent, e.getX() - scene.upperLeftCorner.x(), e.getY()
-							- scene.upperLeftCorner.y(), e.getModifiers(), e.getButton());
+					event = new DOF2Event(prevEvent, e.getX() - origin().x(), e.getY()
+							- origin().y(), e.getModifiers(), e.getButton());
 					if (drive && inputGrabber() instanceof InteractiveFrame)
 						((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * radius() * 0.01f * (event.y() - pressEvent.y()));
 					// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
@@ -346,8 +346,8 @@ public class Scene extends AbstractScene implements PConstants {
 				if (inputGrabber() instanceof InteractiveFrame)
 					if (need4Spin && (prevEvent.speed() >= ((InteractiveFrame) inputGrabber()).spinningSensitivity()))
 						((InteractiveFrame) inputGrabber()).startSpinning(prevEvent);
-				event = new DOF2Event(prevEvent, e.getX() - scene.upperLeftCorner.x(), e.getY()
-						- scene.upperLeftCorner.y(), e.getModifiers(), e.getButton());
+				event = new DOF2Event(prevEvent, e.getX() - origin().x(), e.getY()
+						- origin().y(), e.getModifiers(), e.getButton());
 				if (zoomVisualHint()) {
 					// at first glance this should work
 					// handle(event);
@@ -372,8 +372,8 @@ public class Scene extends AbstractScene implements PConstants {
 				handle(new DOF1Event(e.getCount(), e.getModifiers(), MotionEvent.NOBUTTON));
 			}
 			if (e.getAction() == processing.event.MouseEvent.CLICK) {
-				handle(new ClickEvent(e.getX() - scene.upperLeftCorner.x(), e.getY()
-						- scene.upperLeftCorner.y(), e.getModifiers(), e.getButton(), e.getCount()));
+				handle(new ClickEvent(e.getX() - origin().x(), e.getY()
+						- origin().y(), e.getModifiers(), e.getButton(), e.getCount()));
 			}
 		}
 
@@ -974,7 +974,7 @@ public class Scene extends AbstractScene implements PConstants {
 		defKeyboardAgent = new ProsceneKeyboard(this, "proscene_keyboard");
 		enableKeyboardAgent();
 		defMotionAgent = new ProsceneMouse(this, "proscene_mouse");
-		enableMouseAgent();
+		enableMotionAgent();
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
 		// Misc stuff:

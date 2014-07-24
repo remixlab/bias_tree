@@ -13,8 +13,6 @@
  */
 
 import remixlab.proscene.*;
-
-import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 
@@ -68,7 +66,7 @@ public void draw() {
   auxScene.endDraw();
   auxCanvas.endDraw();
   // We retrieve the scene upper left coordinates defined above.
-  image(auxCanvas, auxScene.upperLeftCorner.x(), auxScene.upperLeftCorner.y());
+  image(auxCanvas, auxScene.origin().x(), auxScene.origin().y());
 }
 
 public void handleMouse() {

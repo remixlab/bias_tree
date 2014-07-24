@@ -91,7 +91,7 @@ public void draw() {
   armScene.endDraw();
   armCanvas.endDraw();
   // We retrieve the scene upper left coordinates defined above.
-  image(armCanvas, armScene.upperLeftCorner.x(), armScene.upperLeftCorner.y());
+  image(armCanvas, armScene.origin().x(), armScene.origin().y());
 
   heliCanvas.beginDraw();
   heliScene.beginDraw();
@@ -99,7 +99,7 @@ public void draw() {
   heliScene.endDraw();
   heliCanvas.endDraw();
   // We retrieve the scene upper left coordinates defined above.
-  image(heliCanvas, heliScene.upperLeftCorner.x(), heliScene.upperLeftCorner.y());
+  image(heliCanvas, heliScene.origin().x(), heliScene.origin().y());
 }
 
 public void handleMouse() {

@@ -73,7 +73,7 @@ public void draw() {
   auxCanvas.endDraw();
 
   // We retrieve the scene upper left coordinates defined above.
-  image(auxCanvas, auxScene.upperLeftCorner.x(), auxScene.upperLeftCorner.y());
+  image(auxCanvas, auxScene.origin().x(), auxScene.origin().y());
 }
 
 public void mainDrawing(Scene s) {  
