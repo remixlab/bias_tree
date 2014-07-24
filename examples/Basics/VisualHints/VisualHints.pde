@@ -2,7 +2,7 @@
  * Visual Hints.
  * by Jean Pierre Charalambos.
  * 
- * This illustrates how to customize the looking of proscene visual hints.
+ * This example illustrates how to customize proscene visual hints look and feel.
  * 
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
