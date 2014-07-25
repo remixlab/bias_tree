@@ -16,7 +16,7 @@ public class MouseMoveAgent extends MouseAgent {
   public void mouseEvent(processing.event.MouseEvent e) {
     //don't even necessary :P
     //if( e.getAction() == processing.event.MouseEvent.MOVE || e.getAction() == processing.event.MouseEvent.DRAG) {
-    event = new DOF2Event(prevEvent, e.getX() - scene.origin().x(), e.getY() - scene.origin().y(), e.getModifiers(), e.getButton());
+    event = new DOF2Event(prevEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(), e.getModifiers(), e.getButton());
     handle(event);
     prevEvent = event.get();
     //}

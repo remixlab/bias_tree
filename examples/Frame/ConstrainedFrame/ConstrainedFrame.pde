@@ -224,8 +224,10 @@ public void displayText() {
 }
 
 public void keyPressed() {
-  if ( key == 'i')
+  if ( key == 'i') {
     scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == frame ? scene.eye().frame() : frame);
+    scene.motionAgent().setTracking(scene.motionAgent().defaultGrabber() == scene.eye().frame());
+  }
   if (key == 'b' || key == 'B') {
     rotDir = (rotDir + 1) % 3;
   }

@@ -124,8 +124,6 @@ public class CustomizedScene extends Scene {
   
   @Override
   protected void drawZoomWindowHint() {
-    if (!(motionAgent() instanceof ProsceneMouse))
-      return;
     pg().pushStyle();
     float p1x = fCorner.x();
     float p1y = fCorner.y();
@@ -148,8 +146,6 @@ public class CustomizedScene extends Scene {
   @Override
   protected void drawScreenRotateHint() {
     pg().pushStyle();
-    if (!(motionAgent() instanceof ProsceneMouse))
-      return;
     float p1x = mouseX;
     float p1y = mouseY;
     Vec p2 = eye().projectedCoordinatesOf(anchor());

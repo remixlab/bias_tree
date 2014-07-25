@@ -44,7 +44,6 @@ int SINCOS_LENGTH = int(360.0 / SINCOS_PRECISION);
 Scene scene;
 InteractiveFrame iFrame;
 HIDAgent hidAgent;
-boolean enforced = false;
 
 ControllIO controll;
 ControllDevice device; // my SpaceNavigator
@@ -87,7 +86,12 @@ void setup() {
 }
 
 void draw() {    
-  background(0);            
+  background(0);
+  // the hidAgent sensitivities should not vary when its input grabber is the iFrame:
+  if( hidAgent.inputGrabber() == iFrame )
+    hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
+  else if(hidAgent.eyeProfile().isActionBound(DOF6Action.HINGE))
+    hidAgent.setSensitivities(0.0001, 0.0001, -0.01, 0.0001, 0.0001, 0.0001);      
   renderGlobe();
   renderIFrame();
 }
@@ -117,18 +121,9 @@ void keyPressed() {
       q.fromEulerAngles(a,0,0);
       scene.camera().frame().rotate(q);
     }
-  if (key == 'y') {
-    enforced = !enforced;
-    if(enforced) {
-      scene.motionAgent().setDefaultGrabber(iFrame);
-      scene.motionAgent().disableTracking();
-      hidAgent.setDefaultGrabber(iFrame);
-    }
-    else {
-      scene.motionAgent().setDefaultGrabber(scene.eye().frame());
-      scene.motionAgent().enableTracking();
-      hidAgent.setDefaultGrabber(scene.eye().frame());
-    }
+  if ( key == 'i') {
+    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
+    hidAgent.setDefaultGrabber(hidAgent.defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
   }
 }
 

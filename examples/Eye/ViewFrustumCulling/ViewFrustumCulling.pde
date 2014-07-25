@@ -66,7 +66,7 @@ public void draw() {
   auxScene.endDraw();
   auxCanvas.endDraw();
   // We retrieve the scene upper left coordinates defined above.
-  image(auxCanvas, auxScene.origin().x(), auxScene.origin().y());
+  image(auxCanvas, auxScene.originCorner().x(), auxScene.originCorner().y());
 }
 
 public void handleMouse() {

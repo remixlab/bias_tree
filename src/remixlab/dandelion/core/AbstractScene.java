@@ -136,7 +136,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * Returns the upper left corner of the Scene window. It's always (0,0) for on-screen scenes, but off-screen scenes
 	 * may be defined elsewhere on a canvas.
 	 */
-	public Point origin() {
+	public Point originCorner() {
 		return upperLeftCorner;
 	}
 
