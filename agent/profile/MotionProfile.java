@@ -22,8 +22,11 @@ import remixlab.bias.event.shortcut.*;
  *          {@link remixlab.bias.core.Action} : User-defined action.
  */
 public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, A> {
-	public boolean isBindingInUse() {
-		return isBindingInUse(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
+	/**
+	 * Returns true if the given binding binds an action.
+	 */
+	public boolean hasBinding() {
+		return hasBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
 	}
 
 	/**
@@ -31,8 +34,8 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * 
 	 * @param button
 	 */
-	public boolean isBindingInUse(Integer button) {
-		return isBindingInUse(MotionEvent.NOMODIFIER_MASK, button);
+	public boolean hasBinding(Integer button) {
+		return hasBinding(MotionEvent.NOMODIFIER_MASK, button);
 	}
 
 	/**
@@ -41,8 +44,8 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * @param mask
 	 * @param button
 	 */
-	public boolean isBindingInUse(Integer mask, Integer button) {
-		return isBindingInUse(new ButtonShortcut(mask, button));
+	public boolean hasBinding(Integer mask, Integer button) {
+		return hasBinding(new ButtonShortcut(mask, button));
 	}
 
 	/**
@@ -70,8 +73,8 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * @param action
 	 */
 	public void setBinding(Integer mask, Integer button, A action) {
-		if (isBindingInUse(mask, button)) {
-			Action<?> a = binding(mask, button);
+		if (hasBinding(mask, button)) {
+			Action<?> a = action(mask, button);
 			System.out.println("Warning: overwritting binding which was previously associated to " + a);
 		}
 		setBinding(new ButtonShortcut(mask, button), action);
@@ -103,8 +106,11 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 		removeBinding(new ButtonShortcut(mask, button));
 	}
 
-	public Action<?> binding() {
-		return binding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
+	/**
+	 * Returns the action associated to the given binding.
+	 */
+	public Action<?> action() {
+		return action(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
 	}
 
 	/**
@@ -112,8 +118,8 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * 
 	 * @param button
 	 */
-	public Action<?> binding(Integer button) {
-		return binding(MotionEvent.NOMODIFIER_MASK, button);
+	public Action<?> action(Integer button) {
+		return action(MotionEvent.NOMODIFIER_MASK, button);
 	}
 
 	/**
@@ -122,7 +128,69 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * @param mask
 	 * @param button
 	 */
+	public Action<?> action(Integer mask, Integer button) {
+		return action(new ButtonShortcut(mask, button));
+	}
+
+	// Deprecated
+
+	/**
+	 * Use the hasBinding version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isBindingInUse() {
+		return isBindingInUse(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
+	}
+
+	/**
+	 * Use the hasBinding version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isBindingInUse(Integer button) {
+		return isBindingInUse(MotionEvent.NOMODIFIER_MASK, button);
+	}
+
+	/**
+	 * Use the hasBinding version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isBindingInUse(Integer mask, Integer button) {
+		return hasBinding(new ButtonShortcut(mask, button));
+	}
+
+	/**
+	 * Use the action version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public Action<?> binding() {
+		return action(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
+	}
+
+	/**
+	 * Use the action version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public Action<?> binding(Integer button) {
+		return action(MotionEvent.NOMODIFIER_MASK, button);
+	}
+
+	/**
+	 * Use the action version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
 	public Action<?> binding(Integer mask, Integer button) {
-		return binding(new ButtonShortcut(mask, button));
+		return action(new ButtonShortcut(mask, button));
 	}
 }

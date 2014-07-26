@@ -90,7 +90,7 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	 */
 	public Action<?> handle(BogusEvent event) {
 		if (event != null)
-			return binding(event.shortcut());
+			return action(event.shortcut());
 		return null;
 	}
 
@@ -105,7 +105,7 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	 * Returns the {@link remixlab.bias.core.Action} binding for the given {@link remixlab.bias.event.shortcut.Shortcut}
 	 * key.
 	 */
-	public A binding(Shortcut key) {
+	public A action(Shortcut key) {
 		return map.get(key);
 	}
 
@@ -145,7 +145,7 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	 *          {@link remixlab.bias.event.shortcut.Shortcut}
 	 * @return true if this object contains a binding for the specified shortcut.
 	 */
-	public boolean isBindingInUse(K key) {
+	public boolean hasBinding(K key) {
 		return map.containsKey(key);
 	}
 
@@ -174,7 +174,29 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	// Deprecated
 
 	/**
+	 * Use hasBinding instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isBindingInUse(K key) {
+		return map.containsKey(key);
+	}
+
+	/**
+	 * Use the action version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public A binding(Shortcut key) {
+		return map.get(key);
+	}
+
+	/**
 	 * Use isActionBound instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public boolean isActionMapped(A action) {

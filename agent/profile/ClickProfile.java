@@ -28,8 +28,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param button
 	 *          binding
 	 */
-	public boolean isBindingInUse(Integer button) {
-		return isBindingInUse(new ClickShortcut(button));
+	public boolean hasBinding(Integer button) {
+		return hasBinding(new ClickShortcut(button));
 	}
 
 	/**
@@ -40,8 +40,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param nc
 	 *          number of clicks defining the binding
 	 */
-	public boolean isBindingInUse(Integer button, Integer nc) {
-		return isBindingInUse(new ClickShortcut(button, nc));
+	public boolean hasBinding(Integer button, Integer nc) {
+		return hasBinding(new ClickShortcut(button, nc));
 	}
 
 	/**
@@ -54,8 +54,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param nc
 	 *          number of clicks defining the binding
 	 */
-	public boolean isBindingInUse(Integer mask, Integer button, Integer nc) {
-		return isBindingInUse(new ClickShortcut(mask, button, nc));
+	public boolean hasBinding(Integer mask, Integer button, Integer nc) {
+		return hasBinding(new ClickShortcut(mask, button, nc));
 	}
 
 	/**
@@ -67,8 +67,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 *          action to be bound
 	 */
 	public void setBinding(Integer button, A action) {
-		if (isBindingInUse(button)) {
-			Action<?> a = binding(button);
+		if (hasBinding(button)) {
+			Action<?> a = action(button);
 			System.out.println("Warning: overwritting binding which was previously associated to " + a);
 		}
 		setBinding(new ClickShortcut(button), action);
@@ -85,8 +85,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 *          action to be bound
 	 */
 	public void setBinding(Integer button, Integer nc, A action) {
-		if (isBindingInUse(button, nc)) {
-			Action<?> a = binding(button, nc);
+		if (hasBinding(button, nc)) {
+			Action<?> a = action(button, nc);
 			System.out.println("Warning: overwritting binding which was previously associated to " + a);
 		}
 		setBinding(new ClickShortcut(button, nc), action);
@@ -105,8 +105,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 *          action to be bound
 	 */
 	public void setBinding(Integer mask, Integer button, Integer nc, A action) {
-		if (isBindingInUse(mask, button, nc)) {
-			Action<?> a = binding(mask, button, nc);
+		if (hasBinding(mask, button, nc)) {
+			Action<?> a = action(mask, button, nc);
 			System.out.println("Warning: overwritting binding which was previously associated to " + a);
 		}
 		setBinding(new ClickShortcut(mask, button, nc), action);
@@ -154,8 +154,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param button
 	 *          binding
 	 */
-	public Action<?> binding(Integer button) {
-		return binding(new ClickShortcut(button));
+	public Action<?> action(Integer button) {
+		return action(new ClickShortcut(button));
 	}
 
 	/**
@@ -166,8 +166,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param nc
 	 *          number of clicks defining the binding
 	 */
-	public Action<?> binding(Integer button, Integer nc) {
-		return binding(new ClickShortcut(button, nc));
+	public Action<?> action(Integer button, Integer nc) {
+		return action(new ClickShortcut(button, nc));
 	}
 
 	/**
@@ -180,14 +180,76 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	 * @param nc
 	 *          number of clicks defining the binding
 	 */
-	public Action<?> binding(Integer mask, Integer button, Integer nc) {
-		return binding(new ClickShortcut(mask, button, nc));
+	public Action<?> action(Integer mask, Integer button, Integer nc) {
+		return action(new ClickShortcut(mask, button, nc));
 	}
 
 	// Deprecated
 
 	/**
+	 * Use the hasBinding version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isBindingInUse(Integer button) {
+		return hasBinding(new ClickShortcut(button));
+	}
+
+	/**
+	 * Use the hasBinding version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isBindingInUse(Integer button, Integer nc) {
+		return hasBinding(new ClickShortcut(button, nc));
+	}
+
+	/**
+	 * Use the hasBinding version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isBindingInUse(Integer mask, Integer button, Integer nc) {
+		return hasBinding(new ClickShortcut(mask, button, nc));
+	}
+
+	/**
+	 * Use the action version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public Action<?> binding(Integer button) {
+		return action(new ClickShortcut(button));
+	}
+
+	/**
+	 * Use the action version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public Action<?> binding(Integer button, Integer nc) {
+		return action(new ClickShortcut(button, nc));
+	}
+
+	/**
+	 * Use the action version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public Action<?> binding(Integer mask, Integer button, Integer nc) {
+		return action(new ClickShortcut(mask, button, nc));
+	}
+
+	/**
 	 * Use the isBindingInUse version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public boolean isClickBindingInUse(Integer button) {
@@ -196,6 +258,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 
 	/**
 	 * Use the isBindingInUse version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public boolean isClickBindingInUse(Integer button, Integer nc) {
@@ -204,6 +268,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 
 	/**
 	 * Use the isBindingInUse version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public boolean isClickBindingInUse(Integer mask, Integer button, Integer nc) {
@@ -212,6 +278,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 
 	/**
 	 * Use isActionBound instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public boolean isClickActionBound(A action) {
@@ -220,6 +288,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 
 	/**
 	 * Use the setBinding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public void setClickBinding(Integer button, A action) {
@@ -232,6 +302,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 
 	/**
 	 * Use the setBinding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public void setClickBinding(Integer button, Integer nc, A action) {
@@ -244,6 +316,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 
 	/**
 	 * Use the setBinding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public void setClickBinding(Integer mask, Integer button, Integer nc, A action) {
@@ -256,6 +330,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 
 	/**
 	 * Use the removeBinding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public void removeClickBinding(Integer button) {
@@ -264,6 +340,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 
 	/**
 	 * Use the removeBinding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public void removeClickBinding(Integer button, Integer nc) {
@@ -272,6 +350,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 
 	/**
 	 * Use the removeBinding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public void removeClickBinding(Integer mask, Integer button, Integer nc) {
@@ -280,6 +360,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 
 	/**
 	 * Use the binding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public Action<?> clickBinding(Integer button) {
@@ -288,6 +370,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 
 	/**
 	 * Use the binding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public Action<?> clickBinding(Integer button, Integer nc) {
@@ -296,6 +380,8 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 
 	/**
 	 * Use the binding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public Action<?> clickBinding(Integer mask, Integer button, Integer nc) {
