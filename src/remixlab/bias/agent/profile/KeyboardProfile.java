@@ -30,8 +30,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 *          action to be bound
 	 */
 	public void setBinding(Character key, A action) {
-		if (isBindingInUse(key)) {
-			Action<?> a = binding(key);
+		if (hasBinding(key)) {
+			Action<?> a = action(key);
 			System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
 		}
 		setBinding(new KeyboardShortcut(key), action);
@@ -48,8 +48,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 *          action to be bound
 	 */
 	public void setBinding(Integer mask, Integer vKey, A action) {
-		if (isBindingInUse(mask, vKey)) {
-			Action<?> a = binding(mask, vKey);
+		if (hasBinding(mask, vKey)) {
+			Action<?> a = action(mask, vKey);
 			System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
 		}
 		setBinding(new KeyboardShortcut(mask, vKey), action);
@@ -84,8 +84,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 *          shortcut
 	 * @return action
 	 */
-	public Action<?> binding(Character key) {
-		return binding(new KeyboardShortcut(key));
+	public Action<?> action(Character key) {
+		return action(new KeyboardShortcut(key));
 	}
 
 	/**
@@ -97,8 +97,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 *          coded key defining the shortcut
 	 * @return action
 	 */
-	public Action<?> binding(Integer mask, Integer vKey) {
-		return binding(new KeyboardShortcut(mask, vKey));
+	public Action<?> action(Integer mask, Integer vKey) {
+		return action(new KeyboardShortcut(mask, vKey));
 	}
 
 	/**
@@ -107,8 +107,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 * @param key
 	 *          shortcut
 	 */
-	public boolean isBindingInUse(Character key) {
-		return isBindingInUse(new KeyboardShortcut(key));
+	public boolean hasBinding(Character key) {
+		return hasBinding(new KeyboardShortcut(key));
 	}
 
 	/**
@@ -119,14 +119,56 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 * @param vKey
 	 *          coded key defining the shortcut
 	 */
-	public boolean isBindingInUse(Integer mask, Integer vKey) {
-		return isBindingInUse(new KeyboardShortcut(mask, vKey));
+	public boolean hasBinding(Integer mask, Integer vKey) {
+		return hasBinding(new KeyboardShortcut(mask, vKey));
 	}
 
 	// Deprecated
 
 	/**
-	 * Use the setBinding version with the same parameters instead
+	 * Use the action version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public Action<?> binding(Character key) {
+		return action(new KeyboardShortcut(key));
+	}
+
+	/**
+	 * Use the action version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public Action<?> binding(Integer mask, Integer vKey) {
+		return action(new KeyboardShortcut(mask, vKey));
+	}
+
+	/**
+	 * Use the hasBinding version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isBindingInUse(Character key) {
+		return hasBinding(new KeyboardShortcut(key));
+	}
+
+	/**
+	 * Use the hasBinding version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isBindingInUse(Integer mask, Integer vKey) {
+		return hasBinding(new KeyboardShortcut(mask, vKey));
+	}
+
+	/**
+	 * Use the setBinding version with the same parameters instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public void setShortcut(Character key, A action) {
@@ -139,6 +181,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 
 	/**
 	 * Use the setBinding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public void setShortcut(Integer mask, Integer vKey, A action) {
@@ -151,6 +195,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 
 	/**
 	 * Use the removeBinding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public void removeShortcut(Character key) {
@@ -159,6 +205,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 
 	/**
 	 * Use the removeBinding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public void removeShortcut(Integer mask, Integer vKey) {
@@ -167,6 +215,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 
 	/**
 	 * Use the binding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public Action<?> shortcut(Character key) {
@@ -175,6 +225,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 
 	/**
 	 * Use the binding version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public Action<?> shortcut(Integer mask, Integer vKey) {
@@ -183,6 +235,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 
 	/**
 	 * Use the isBindingInUse version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public boolean isShortcutInUse(Character key) {
@@ -191,6 +245,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 
 	/**
 	 * Use the isBindingInUse version with the same parameters instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public boolean isShortcutInUse(Integer mask, Integer vKey) {
@@ -199,6 +255,8 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 
 	/**
 	 * Use isActionBound instead
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
 	 */
 	@Deprecated
 	public boolean isKeyboardActionBound(A action) {

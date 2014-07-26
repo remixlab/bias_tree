@@ -1,5 +1,5 @@
 /**************************************************************************************
- * ProScene (version 2.0.3)
+ * ProScene (version 2.0.4)
  * Copyright (c) 2010-2014 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  * 
@@ -878,9 +878,9 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 	}
 
-	public static final String	prettyVersion	= "2.0.3";
+	public static final String	prettyVersion	= "2.0.4";
 
-	public static final String	version				= "19";
+	public static final String	version				= "20";
 
 	// P R O C E S S I N G A P P L E T A N D O B J E C T S
 	protected PApplet						parent;
@@ -1162,25 +1162,45 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Returns {@code true} if the mask-button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean isMouseButtonBindingInUse(Target target, int mask, int button) {
+	public boolean hasMouseButtonBinding(Target target, int mask, int button) {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseButtonBindingInUse", platform());
 			return false;
 		}
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		return profile.isBindingInUse(p5ButtonModifiersFix(mask, button), button);
+		return profile.hasBinding(p5ButtonModifiersFix(mask, button), button);
+	}
+
+	/**
+	 * Use {@link #hasMouseButtonBinding(remixlab.dandelion.core.Constants.Target, int, int)} instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isMouseButtonBindingInUse(Target target, int mask, int button) {
+		return hasMouseButtonBinding(target, mask, button);
 	}
 
 	/**
 	 * Returns {@code true} if the button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean isMouseButtonBindingInUse(Target target, int button) {
+	public boolean hasMouseButtonBinding(Target target, int button) {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseButtonBindingInUse", platform());
 			return false;
 		}
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		return profile.isBindingInUse(p5ButtonModifiersFix(button), button);
+		return profile.hasBinding(p5ButtonModifiersFix(button), button);
+	}
+
+	/**
+	 * Use {@link #hasMouseButtonBinding(remixlab.dandelion.core.Constants.Target, int)} instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isMouseButtonBindingInUse(Target target, int button) {
+		return hasMouseButtonBinding(target, button);
 	}
 
 	/**
@@ -1345,27 +1365,47 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Returns {@code true} if the mask-wheel shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean isMouseWheelBindingInUse(Target target, int mask) {
+	public boolean hasMouseWheelBinding(Target target, int mask) {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseWheelBindingInUse", platform());
 			return false;
 		}
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
-		return profile.isBindingInUse(mask, MotionEvent.NOBUTTON);
+		return profile.hasBinding(mask, MotionEvent.NOBUTTON);
+	}
+
+	/**
+	 * Use {@link #hasMouseWheelBinding(remixlab.dandelion.core.Constants.Target, int)} instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isMouseWheelBindingInUse(Target target, int mask) {
+		return hasMouseWheelBinding(target, mask);
 	}
 
 	/**
 	 * Returns {@code true} if the wheel is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean isMouseWheelBindingInUse(Target target) {
+	public boolean hasMouseWheelBinding(Target target) {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseWheelBindingInUse", platform());
 			return false;
 		}
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
-		return profile.isBindingInUse();
+		return profile.hasBinding();
+	}
+
+	/**
+	 * Use {@link #hasMouseWheelBinding(remixlab.dandelion.core.Constants.Target)} instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isMouseWheelBindingInUse(Target target) {
+		return hasMouseWheelBinding(target);
 	}
 
 	/**
@@ -1476,41 +1516,71 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the mask-button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target}
 	 * (EYE or FRAME).
 	 */
-	public boolean isMouseClickBindingInUse(Target target, int mask, int button, int ncs) {
+	public boolean hasMouseClickBinding(Target target, int mask, int button, int ncs) {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseClickBindingInUse", platform());
 			return false;
 		}
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
-		return profile.isBindingInUse(p5ButtonModifiersFix(mask, button), button, ncs);
+		return profile.hasBinding(p5ButtonModifiersFix(mask, button), button, ncs);
+	}
+
+	/**
+	 * Use {@link #hasMouseClickBinding(remixlab.dandelion.core.Constants.Target, int, int, int)} instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isMouseClickBindingInUse(Target target, int mask, int button, int ncs) {
+		return hasMouseClickBinding(target, mask, button, ncs);
 	}
 
 	/**
 	 * Returns {@code true} if the button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target} (EYE
 	 * or FRAME).
 	 */
-	public boolean isMouseClickBindingInUse(Target target, int button, int ncs) {
+	public boolean hasMouseClickBinding(Target target, int button, int ncs) {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseClickBindingInUse", platform());
 			return false;
 		}
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
-		return profile.isBindingInUse(p5ButtonModifiersFix(button), button, ncs);
+		return profile.hasBinding(p5ButtonModifiersFix(button), button, ncs);
+	}
+
+	/**
+	 * Use {@link #hasMouseClickBinding(remixlab.dandelion.core.Constants.Target, int, int)} instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isMouseClickBindingInUse(Target target, int button, int ncs) {
+		return hasMouseClickBinding(target, button, ncs);
 	}
 
 	/**
 	 * Returns {@code true} if the single-clicked button shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean isMouseClickBindingInUse(Target target, int button) {
+	public boolean hasMouseClickBinding(Target target, int button) {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseClickBindingInUse", platform());
 			return false;
 		}
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
-		return profile.isBindingInUse(p5ButtonModifiersFix(button), button, 1);
+		return profile.hasBinding(p5ButtonModifiersFix(button), button, 1);
+	}
+
+	/**
+	 * Use {@link #hasMouseClickBinding(remixlab.dandelion.core.Constants.Target, int)} instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean isMouseClickBindingInUse(Target target, int button) {
+		return hasMouseClickBinding(target, button);
 	}
 
 	/**
@@ -1602,15 +1672,35 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
+	public boolean hasKeyboardShortcut(Character key) {
+		return keyboardAgent().keyboardProfile().hasBinding(key);
+	}
+
+	/**
+	 * Use {@link #hasKeyboardShortcut(Character)} instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
 	public boolean isKeyboardShortcutInUse(Character key) {
-		return keyboardAgent().keyboardProfile().isBindingInUse(key);
+		return hasKeyboardShortcut(key);
 	}
 
 	/**
 	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
 	 */
+	public boolean hasKeyboardShortcut(int mask, int vKey) {
+		return keyboardAgent().keyboardProfile().hasBinding(mask, vKey);
+	}
+
+	/**
+	 * Use {@link #hasKeyboardShortcut(int, int)} instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
 	public boolean isKeyboardShortcutInUse(int mask, int vKey) {
-		return keyboardAgent().keyboardProfile().isBindingInUse(mask, vKey);
+		return hasKeyboardShortcut(mask, vKey);
 	}
 
 	@Override
