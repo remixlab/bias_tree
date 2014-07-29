@@ -48,14 +48,14 @@ public class MouseAgent extends ActionMotionAgent<MotionProfile<MotionAction>, C
   }
 }
 
-public class GrabbableCircle extends GrabberObject {
+public class Ellipse extends GrabberObject {
   public float radiusX, radiusY;
   public PVector center;
   public color colour;
   public int contourColour;
   public int sWeight;
 
-  public GrabbableCircle(Agent agent) {
+  public Ellipse(Agent agent) {
     agent.addInPool(this);
     setColor();
     setPosition();
@@ -63,7 +63,7 @@ public class GrabbableCircle extends GrabberObject {
     contourColour = color(0, 0, 0);
   }
 
-  public GrabbableCircle(Agent agent, PVector c, float r) {
+  public Ellipse(Agent agent, PVector c, float r) {
     agent.addInPool(this);
     radiusX = r;
     radiusY = r;
@@ -152,7 +152,7 @@ public class GrabbableCircle extends GrabberObject {
 int w = 600;
 int h = 600;
 MouseAgent agent;
-GrabbableCircle [] circles;
+Ellipse [] ellipses;
 boolean drawSelectionHints = false;
 Scene scene;
 PFont font;
@@ -166,9 +166,9 @@ void setup() {
   scene.setCenter(new Vec(w/2,h/2));
   scene.showAll();
   agent = new MouseAgent(scene.inputHandler(), "my_mouse");
-  circles = new GrabbableCircle[10];
-  for (int i = 0; i < circles.length; i++)
-    circles[i] = new GrabbableCircle(agent);
+  ellipses = new Ellipse[10];
+  for (int i = 0; i < ellipses.length; i++)
+    ellipses[i] = new Ellipse(agent);
   scene.inputHandler().unregisterAgent(agent);
   font = loadFont("FreeSans-16.vlw");
   textFont(font);
@@ -176,11 +176,11 @@ void setup() {
 
 void draw() {
   background(120);
-  for (int i = 0; i < circles.length; i++) {
-    if ( circles[i].grabsInput(agent) )
-      circles[i].draw(color(255, 0, 0));
+  for (int i = 0; i < ellipses.length; i++) {
+    if ( ellipses[i].grabsInput(agent) )
+      ellipses[i].draw(color(255, 0, 0));
     else
-      circles[i].draw();
+      ellipses[i].draw();
   }
   scene.beginScreenDrawing();
   if(scene.isMotionAgentEnabled()) {
@@ -216,9 +216,9 @@ void keyPressed() {
 
 void drawSelectionHints() {
   scene.beginScreenDrawing();
-  for (int i = 0; i < circles.length; i++) {
-    color c = circles[i].colour;
-    circles[i].draw(color(red(c), green(c), blue(c), 100));
+  for (int i = 0; i < ellipses.length; i++) {
+    color c = ellipses[i].colour;
+    ellipses[i].draw(color(red(c), green(c), blue(c), 100));
   }
   scene.endScreenDrawing();
   pushMatrix();

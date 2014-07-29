@@ -103,7 +103,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	 * {@link #enqueueEventTuple(EventGrabberTuple)}), used to instruct the {@link #inputGrabber()} the user-defined
 	 * action to perform.
 	 * <p>
-	 * <b>Note 1:</b> {@link #alienGrabber()}s always make the tuple to be enqueued even if the action in non-null (see
+	 * <b>Note 1:</b> {@link #alienGrabber()}s always make the tuple to be enqueued even if the action is null (see
 	 * {@link #enqueueEventTuple(EventGrabberTuple, boolean)}).
 	 * <p>
 	 * <b>Note 2:</b> This method should be overridden only in the (rare) case the ActionAgent should deal with custom
