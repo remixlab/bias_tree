@@ -17,8 +17,6 @@ import remixlab.bias.core.InputHandler;
  * This class is provided purely for symmetry and style reasons against the events and shortcuts API. Only needed if you
  * plan to implement your own KeyboardAgent.
  * 
- * @see remixlab.dandelion.agent.KeyboardAgent
- * 
  * @param <K>
  *          The {@link remixlab.bias.agent.profile.KeyboardProfile} to parameterize this Agent with.
  */
