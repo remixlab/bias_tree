@@ -9,7 +9,7 @@ ProScene
 
 **ProScene** provides seemless integration with **Processing**: its API has been designed to fit that of **Processing** and its implementation has been optimized to work along side with it. It suppports all major **Processing** flavours: Desktop, JS, and Android.
 
-**ProScene** support is led by the active and great Processing community at its [forum](http://forum.processing.org/search/proscene) where you can reach us.
+**ProScene** support is led by the active and great Processing community at its [forum](http://forum.processing.org/two/search?Search=proscene) where you can reach us.
 
 # Key features
 
@@ -50,6 +50,8 @@ See the examples **BasicUse**, **AlternativeUse**, and **StandardCamera** for an
 # Installation
 
 Import/update it directly from your PDE. Otherwise download your release from [here](https://github.com/remixlab/proscene/releases) and extract it to your sketchbook `libraries` folder.
+
+For detailed Processing third party library installation instructions check [here](http://wiki.processing.org/w/How_to_Install_a_Contributed_Library#Manual_Install).
 
 # Acknowledgements
 
