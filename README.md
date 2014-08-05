@@ -3,7 +3,7 @@ ProScene
 
 # Description
 
-[ProScene](http://nakednous.github.io/projects/proscene/) (pronounced similar as the Czech word **"prosím"** which means **"please"**) is a free-software java library which provides classes to ease the creation of interactive 3D scenes in [Processing](http://processing.org).
+[ProScene](http://nakednous.github.io/projects/proscene/) (pronounced similar as the Czech word **"prosím"** which means **"please"**) is a free-software java library which provides classes to ease the creation of interactive 2D/3D scenes in [Processing](http://processing.org).
 
 **ProScene** extensively uses **interactive frames**, i.e., coordinate systems that can be controlled with any [HID](http://en.wikipedia.org/wiki/Human_interface_device), allowing to easily setup an interactive 2D or 3D scene.
 
