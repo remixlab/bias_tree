@@ -1692,6 +1692,13 @@ public class Scene extends AbstractScene implements PConstants {
 	public boolean hasKeyboardShortcut(int mask, int vKey) {
 		return keyboardAgent().keyboardProfile().hasBinding(mask, vKey);
 	}
+	
+	/**
+	 * Returns {@code true} if the keyboard action is bound.
+	 */
+	public boolean isKeyboardActionBound(KeyboardAction action) {
+		return keyboardAgent().keyboardProfile().isActionBound(action);
+	}
 
 	/**
 	 * Use {@link #hasKeyboardShortcut(int, int)} instead.
