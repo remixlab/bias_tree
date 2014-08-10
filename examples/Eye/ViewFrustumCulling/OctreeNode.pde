@@ -35,9 +35,8 @@ public class OctreeNode {
     pg.vertex(p2.x(), p1.y(), p2.z());
     pg.vertex(p1.x(), p1.y(), p2.z());
     pg.endShape();
-    // pg.endShape(CLOSE);
 
-    pg.beginShape(PApplet.LINES);
+    pg.beginShape(LINES);
     pg.vertex(p1.x(), p2.y(), p1.z());
     pg.vertex(p1.x(), p2.y(), p2.z());
     pg.vertex(p2.x(), p2.y(), p1.z());

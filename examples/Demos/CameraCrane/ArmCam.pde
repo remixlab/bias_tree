@@ -18,8 +18,8 @@ public class ArmCam {
     frame(5).setTranslation(0, -3, 12);
     frame(2).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), 1.8f));
     frame(3).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), 0.0f));
-    frame(4).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), PApplet.HALF_PI));
-    frame(5).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), PApplet.HALF_PI));
+    frame(4).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), HALF_PI));
+    frame(5).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), HALF_PI));
 
     // Set frame constraints
     WorldConstraint baseConstraint = new WorldConstraint();
@@ -52,7 +52,7 @@ public class ArmCam {
     camBase.setRotationConstraint(AxisPlaneConstraint.Type.AXIS, 
     new Vec(0.0f, 0.0f, 1.0f));
     frame(4).setConstraint(camBase);
-    frame(4).rotate(new Quat(new Vec(0, 0, 1), -PApplet.HALF_PI));
+    frame(4).rotate(new Quat(new Vec(0, 0, 1), -HALF_PI));
 
     LocalConstraint headConstraint = new LocalConstraint();
     headConstraint.setTranslationConstraint(
@@ -107,7 +107,7 @@ public class ArmCam {
 
     // Add light if the flag enables it
     if (parent.enabledLights) {
-      pg3d.spotLight(155, 255, 255, 0, 0, 0, 0, 0, -1, PApplet.THIRD_PI, 1);
+      pg3d.spotLight(155, 255, 255, 0, 0, 0, 0, 0, -1, THIRD_PI, 1);
     }
 
     pg3d.popMatrix();// frame(5)
@@ -137,7 +137,7 @@ public class ArmCam {
     drawCone(scn, 0, 36, 1, 1, 10);
     pg3d.translate(2, 0, 0);
     pg3d.pushMatrix();
-    pg3d.rotate(PApplet.HALF_PI, 0, 1, 0);
+    pg3d.rotate(HALF_PI, 0, 1, 0);
     pg3d.translate(-35, 0, 0);
     drawCone(scn, -3, 3, 2, 2, 20);
     pg3d.popMatrix();
@@ -166,7 +166,7 @@ public class ArmCam {
   public void drawCylinder(Scene scn) {
     PGraphics pg3d = scn.pg();
     pg3d.pushMatrix();
-    pg3d.rotate(PApplet.HALF_PI, 0, 1, 0);
+    pg3d.rotate(HALF_PI, 0, 1, 0);
     drawCone(scn, -5, 5, 2, 2, 20);
     pg3d.popMatrix();
   }
@@ -212,7 +212,7 @@ public class ArmCam {
     pg3d.translate(0, 0, -13);
     drawCylinder(scn);
     pg3d.pushMatrix();
-    pg3d.rotateX(PApplet.HALF_PI);
+    pg3d.rotateX(HALF_PI);
     pg3d.translate(2, 0, 0);
     drawCone(scn, 0, 10, 1, 1, 10);
     pg3d.translate(-4, 0, 0);
@@ -225,9 +225,9 @@ public class ArmCam {
     PGraphics pg3d = scn.pg();
     pg3d.pushMatrix();
     pg3d.translate(0, 0, 21);
-    pg3d.rotateX(PApplet.PI);
+    pg3d.rotateX(PI);
     drawStick(scn);
-    pg3d.rotateZ((2 * PApplet.PI) / 3);
+    pg3d.rotateZ((2 * PI) / 3);
     drawStick(scn);
     pg3d.rotateZ(90);
     drawStick(scn);
@@ -237,7 +237,7 @@ public class ArmCam {
   public void drawStick(Scene scn) {
     PGraphics pg3d = scn.pg();
     pg3d.pushMatrix();
-    pg3d.rotateX((float) (PApplet.PI / 5.5));
+    pg3d.rotateX((float) (PI / 5.5));
     drawCone(scn, 0, 25, 1, 1, 10);
     pg3d.popMatrix();
   }

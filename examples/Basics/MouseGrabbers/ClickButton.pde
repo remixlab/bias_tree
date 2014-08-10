@@ -11,9 +11,9 @@ public class ClickButton extends Button2D {
     if (event instanceof ClickEvent)
       if (((ClickEvent) event).clickCount() == 1) {
         if (addBox)
-          ((MouseGrabbers)parent).addTorus();
+          addTorus();
         else
-          ((MouseGrabbers)parent).removeTorus();
+          removeTorus();
       }
   }
 }

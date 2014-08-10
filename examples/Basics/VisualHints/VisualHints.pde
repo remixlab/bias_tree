@@ -92,7 +92,7 @@ public void keyPressed() {
 public void drawPaths() {
   if(displayPaths) {
     pushStyle();
-    colorMode(PApplet.RGB, 255);
+    colorMode(RGB, 255);
     strokeWeight(3);
     stroke(220,0,220);
     scene.drawEyePaths();
@@ -115,7 +115,7 @@ public class CustomizedScene extends Scene {
   @Override
   protected void drawPickingHint() {
     pg().pushStyle();
-    pg().colorMode(PApplet.RGB, 255);
+    pg().colorMode(RGB, 255);
     pg().strokeWeight(1);
     pg().stroke(0,220,0);
     drawPickingTargets();

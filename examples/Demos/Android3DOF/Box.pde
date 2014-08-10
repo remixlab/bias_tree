@@ -30,24 +30,24 @@ public class Box {
   }
 
   public void draw(boolean drawAxis) {
-    scene.pg().pushMatrix();
+    pushMatrix();
     iFrame.applyWorldTransformation();
 
-    scene.pg().noStroke();
+    noStroke();
     if (scene.grabsAnyAgentInput(iFrame))
-      scene.pg().fill(255, 0, 0);
+      fill(255, 0, 0);
     else
-      scene.pg().fill(getColor());
+      fill(getColor());
     //Draw a box    
-    scene.pg().box(w, h, d);
+    box(w, h, d);
 
-    scene.pg().popMatrix();
+    popMatrix();
   }
 
   public void setSize() {
-    w = scene.pApplet().random(10, 40);
-    h = scene.pApplet().random(10, 40);
-    d = scene.pApplet().random(10, 40);
+    w = random(10, 40);
+    h = random(10, 40);
+    d = random(10, 40);
   }
 
   public void setSize(float myW, float myH, float myD) {
@@ -61,7 +61,7 @@ public class Box {
   }
 
   public void setColor() {
-    c = color(scene.pApplet().random(0, 255), scene.pApplet().random(0, 255), scene.pApplet().random(0, 255));
+    c = color(random(0, 255), random(0, 255), random(0, 255));
   }
 
   public void setColor(int myC) {
@@ -75,7 +75,7 @@ public class Box {
   public void setPosition() {
     float low = -100;
     float high = 100;
-    iFrame.setPosition(new Vec(scene.pApplet().random(low, high), scene.pApplet().random(low, high), scene.pApplet().random(low, high)));
+    iFrame.setPosition(new Vec(random(low, high), random(low, high), random(low, high)));
   }
 
   public void setPosition(Vec pos) {

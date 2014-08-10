@@ -83,26 +83,3 @@ void keyTyped() {
     }
   }
 }
-
-/**
-class MyScene extends Scene {
-  // We need to call super(p) to instantiate the base class
-  public MyScene(PApplet p) {
-    super(p);
-  }
-
-  @Override
-  public void execAction(DandelionAction a) {
-    switch(a) {
-    case CUSTOM:
-      if ( motionAgent().grabber() != null )
-        if ( motionAgent().grabber() instanceof InteractiveFrame )
-          board.movePatch((Patch)scene.motionAgent().grabber());
-      break;
-    default:
-      super.execAction(a);
-      break;
-    }
-  }
-}
-*/

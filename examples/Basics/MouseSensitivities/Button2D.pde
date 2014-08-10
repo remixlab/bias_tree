@@ -7,8 +7,7 @@
  */
 
 public abstract class Button2D extends GrabberObject {
-  public Scene scene;  
-  public PApplet parent;
+  public Scene scene;
   String myText;
   PFont myFont;
   public int myWidth;
@@ -21,7 +20,6 @@ public abstract class Button2D extends GrabberObject {
 
   public Button2D(Scene scn, PVector p, PFont font, String t) {
     scene = scn;
-    parent = scene.pApplet();
     position = p;
     myText = t;
     myFont = font;
@@ -33,21 +31,21 @@ public abstract class Button2D extends GrabberObject {
 
   public void setText(String text) {
     myText = text;
-    myWidth = (int) parent.textWidth(myText);
-    myHeight = (int) (parent.textAscent() + parent.textDescent());
+    myWidth = (int) textWidth(myText);
+    myHeight = (int) (textAscent() + textDescent());
   }
 
   public void display() {
-    parent.pushStyle();    
-    parent.fill(255);
+    pushStyle();    
+    fill(255);
     if (grabsInput(scene.motionAgent()))
        fill(255);
     else
       fill(150);
     scene.beginScreenDrawing();
-    parent.text(myText, position.x, position.y, myWidth, myHeight);
+    text(myText, position.x, position.y, myWidth, myHeight);
     scene.endScreenDrawing();
-    parent.popStyle();
+    popStyle();
   }
 
   @Override

@@ -21,21 +21,18 @@
 
 public class Sphere {
   Scene scene;
-  PApplet parent;
   InteractiveFrame iFrame;
   float r;
   int c;
 
   public Sphere(Scene scn, InteractiveFrame iF) {
     scene = scn;
-    parent = scn.pApplet();
     iFrame = iF;
     setRadius(10);
   }
 
   public Sphere(Scene scn) {
     scene = scn;
-    parent = scn.pApplet();
     iFrame = new InteractiveFrame(scn);
     setRadius(10);
   }
@@ -45,7 +42,7 @@ public class Sphere {
   }
 
   public void draw(boolean drawAxes) {
-    parent.pushMatrix();
+    pushMatrix();
     //iFrame.applyTransformation(parent);
     iFrame.applyTransformation(scene);
 
@@ -53,14 +50,14 @@ public class Sphere {
       //DrawingUtils.drawAxes(parent, radius()*1.3f);
       scene.drawAxes(radius()*1.3f);
     if (scene.grabsAnyAgentInput(iFrame)) {
-      parent.fill(255, 0, 0);
-      parent.sphere(radius()*1.2f);
+      fill(255, 0, 0);
+      sphere(radius()*1.2f);
     }
     else {
-      parent.fill(getColor());
-      parent.sphere(radius());
+      fill(getColor());
+      sphere(radius());
     }    
-    parent.popMatrix();
+    popMatrix();
   }
 
   public float radius() {
@@ -76,7 +73,7 @@ public class Sphere {
   }
 
   public void setColor() {
-    c = color(parent.random(0, 255), parent.random(0, 255), parent.random(0, 255));
+    c = color(random(0, 255), random(0, 255), random(0, 255));
   }
 
   public void setColor(int myC) {

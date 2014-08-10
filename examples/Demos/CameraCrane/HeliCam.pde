@@ -14,16 +14,16 @@ public class HeliCam {
     frame(4).setReferenceFrame(frame(0));
 
     // Initialize frames
-    frame(0).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), PApplet.HALF_PI));
+    frame(0).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), HALF_PI));
     frame(0).setTranslation(-25, 56, 80);
     frame(1).setTranslation(0, 0, 6);
     frame(2).setTranslation(0, 0, 15);
     frame(3).setTranslation(0, 0, 15);
     frame(4).setTranslation(0, 6, 0);
     frame(1).setRotation( new Quat(new Vec(1.0f, 0.0f, 0.0f), 0.6f));
-    frame(2).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), PApplet.HALF_PI));
+    frame(2).setRotation(new Quat(new Vec(1.0f, 0.0f, 0.0f), HALF_PI));
     frame(3).setRotation(new Quat(new Vec(1.0f, -0.3f, 0.0f), 1.7f));
-    frame(4).setRotation(new Quat(new Vec(1.0f, -0.0f, 0.0f), -PApplet.HALF_PI));
+    frame(4).setRotation(new Quat(new Vec(1.0f, -0.0f, 0.0f), -HALF_PI));
 
     // Set frame constraints
     WorldConstraint baseConstraint = new WorldConstraint();
@@ -79,7 +79,7 @@ public class HeliCam {
 
     // Add light if the flag enables it
     if (parent.enabledLights)
-      pg3d.spotLight(155, 255, 255, 0, 0, 0, 0, 0, -1, PApplet.THIRD_PI, 1);
+      pg3d.spotLight(155, 255, 255, 0, 0, 0, 0, 0, -1, THIRD_PI, 1);
 
     pg3d.popMatrix();// frame(3)
     pg3d.popMatrix();// frame(2)
@@ -115,11 +115,11 @@ public class HeliCam {
     pg3d.sphere(2);
     drawCone(scn, 0, 5, 1, 1, 10);
     drawBlade(scn);
-    pg3d.rotateZ(PApplet.HALF_PI);
+    pg3d.rotateZ(HALF_PI);
     drawBlade(scn);
-    pg3d.rotateZ(PApplet.HALF_PI);
+    pg3d.rotateZ(HALF_PI);
     drawBlade(scn);
-    pg3d.rotateZ(PApplet.HALF_PI);
+    pg3d.rotateZ(HALF_PI);
     drawBlade(scn);
     pg3d.translate(0, 0, 5);
     pg3d.sphere(2);
@@ -130,7 +130,7 @@ public class HeliCam {
     PGraphics pg3d = scn.pg();
     pg3d.pushMatrix();
     pg3d.translate(0, 0, 5);
-    pg3d.rotateX(PApplet.HALF_PI);
+    pg3d.rotateX(HALF_PI);
     drawCone(scn, 0, 12, 1, 2, 2);
     pg3d.popMatrix();
   }
@@ -162,7 +162,7 @@ public class HeliCam {
   public void drawCylinder(Scene scn) {
     PGraphics pg3d = scn.pg();
     pg3d.pushMatrix();
-    pg3d.rotate(PApplet.HALF_PI, 0, 1, 0);
+    pg3d.rotate(HALF_PI, 0, 1, 0);
     drawCone(scn, -5, 5, 2, 2, 20);
     pg3d.popMatrix();
   }
@@ -170,7 +170,7 @@ public class HeliCam {
   public void drawSmallCylinder(Scene scn) {
     PGraphics pg3d = scn.pg();
     pg3d.pushMatrix();
-    pg3d.rotate(PApplet.HALF_PI, 0, 1, 0);
+    pg3d.rotate(HALF_PI, 0, 1, 0);
     drawCone(scn, -2, 2, 2, 2, 20);
     pg3d.popMatrix();
   }
