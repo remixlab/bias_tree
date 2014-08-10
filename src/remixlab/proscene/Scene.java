@@ -2124,6 +2124,35 @@ public class Scene extends AbstractScene implements PConstants {
 	public PGraphics pg() {
 		return pgraphics;
 	}
+	
+	/**
+	 * Need to override it because of this issue: https://github.com/remixlab/proscene/issues/1
+	 */
+	@Override
+	public void beginScreenDrawing() {
+		if (startCoordCalls != 0)
+			throw new RuntimeException("There should be exactly one beginScreenDrawing() call followed by a "
+					+ "endScreenDrawing() and they cannot be nested. Check your implementation!");
+
+		startCoordCalls++;
+
+		pg().hint(PApplet.DISABLE_OPTIMIZED_STROKE);
+		matrixHelper.beginScreenDrawing();
+	}
+
+	/**
+	 * Need to override it because of this issue: https://github.com/remixlab/proscene/issues/1
+	 */
+	@Override
+	public void endScreenDrawing() {
+		startCoordCalls--;
+		if (startCoordCalls != 0)
+			throw new RuntimeException("There should be exactly one beginScreenDrawing() call followed by a "
+					+ "endScreenDrawing() and they cannot be nested. Check your implementation!");
+
+		matrixHelper.endScreenDrawing();
+		pg().hint(PApplet.ENABLE_OPTIMIZED_STROKE);
+	}
 
 	@Override
 	public void disableDepthTest() {
