@@ -1116,8 +1116,7 @@ public class Scene extends AbstractScene implements PConstants {
 			return;
 		}
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		if (profile != null)
-			profile.setBinding(p5ButtonModifiersFix(mask, button), button, action);
+		profile.setBinding(p5ButtonModifiersFix(mask, button), button, action);
 	}
 
 	/**
@@ -1142,8 +1141,7 @@ public class Scene extends AbstractScene implements PConstants {
 			return;
 		}
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		if (profile != null)
-			profile.removeBinding(p5ButtonModifiersFix(mask, button), button);
+		profile.removeBinding(p5ButtonModifiersFix(mask, button), button);
 	}
 
 	/**
@@ -1155,8 +1153,7 @@ public class Scene extends AbstractScene implements PConstants {
 			return;
 		}
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		if (profile != null)
-			profile.removeBinding(p5ButtonModifiersFix(button), button);
+		profile.removeBinding(p5ButtonModifiersFix(button), button);
 	}
 
 	/**
@@ -1213,6 +1210,32 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
 		return profile.isActionBound(action);
+	}
+
+	/**
+	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
+	 * given mask-button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 */
+	public DOF2Action mouseButtonAction(Target target, int mask, int button) {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("setMouseButtonBinding", platform());
+			return null;
+		}
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
+		return (DOF2Action) profile.action(p5ButtonModifiersFix(mask, button), button);
+	}
+
+	/**
+	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
+	 * given button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 */
+	public DOF2Action mouseButtonAction(Target target, int button) {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("setMouseButtonBinding", platform());
+			return null;
+		}
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
+		return (DOF2Action) profile.action(p5ButtonModifiersFix(button), button);
 	}
 
 	// wheel here
@@ -1316,8 +1339,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
-		if (profile != null)
-			profile.setBinding(mask, MotionEvent.NOBUTTON, action);
+		profile.setBinding(mask, MotionEvent.NOBUTTON, action);
 	}
 
 	/**
@@ -1330,8 +1352,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
-		if (profile != null)
-			profile.setBinding(action);
+		profile.setBinding(action);
 	}
 
 	/**
@@ -1344,8 +1365,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
-		if (profile != null)
-			profile.removeBinding(mask, MotionEvent.NOBUTTON);
+		profile.removeBinding(mask, MotionEvent.NOBUTTON);
 	}
 
 	/**
@@ -1358,8 +1378,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
 				.frameWheelProfile();
-		if (profile != null)
-			profile.removeBinding();
+		profile.removeBinding();
 	}
 
 	/**
@@ -1421,6 +1440,34 @@ public class Scene extends AbstractScene implements PConstants {
 		return profile.isActionBound(action);
 	}
 
+	/**
+	 * Returns the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
+	 * given mask-wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 */
+	public DOF1Action mouseWheelAction(Target target, int mask, DOF1Action action) {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("setMouseWheelBinding", platform());
+			return null;
+		}
+		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+				.frameWheelProfile();
+		return (DOF1Action) profile.action(mask, MotionEvent.NOBUTTON);
+	}
+
+	/**
+	 * Returns the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
+	 * given wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 */
+	public DOF1Action mouseWheelAction(Target target, DOF1Action action) {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("setMouseWheelBinding", platform());
+			return null;
+		}
+		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
+				.frameWheelProfile();
+		return (DOF1Action) profile.action(MotionEvent.NOBUTTON);
+	}
+
 	// mouse click
 
 	/**
@@ -1434,8 +1481,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
-		if (profile != null)
-			profile.setBinding(p5ButtonModifiersFix(mask, button), button, ncs, action);
+		profile.setBinding(p5ButtonModifiersFix(mask, button), button, ncs, action);
 	}
 
 	/**
@@ -1449,8 +1495,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
-		if (profile != null)
-			profile.setBinding(p5ButtonModifiersFix(button), button, ncs, action);
+		profile.setBinding(p5ButtonModifiersFix(button), button, ncs, action);
 	}
 
 	/**
@@ -1464,8 +1509,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
-		if (profile != null)
-			profile.setBinding(p5ButtonModifiersFix(button), button, 1, action);
+		profile.setBinding(p5ButtonModifiersFix(button), button, 1, action);
 	}
 
 	/**
@@ -1480,8 +1524,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
-		if (profile != null)
-			profile.removeBinding(p5ButtonModifiersFix(mask, button), button, ncs);
+		profile.removeBinding(p5ButtonModifiersFix(mask, button), button, ncs);
 	}
 
 	/**
@@ -1494,8 +1537,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
-		if (profile != null)
-			profile.removeBinding(p5ButtonModifiersFix(button), button, ncs);
+		profile.removeBinding(p5ButtonModifiersFix(button), button, ncs);
 	}
 
 	/**
@@ -1508,8 +1550,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
-		if (profile != null)
-			profile.removeBinding(p5ButtonModifiersFix(button), button, 1);
+		profile.removeBinding(p5ButtonModifiersFix(button), button, 1);
 	}
 
 	/**
@@ -1594,6 +1635,50 @@ public class Scene extends AbstractScene implements PConstants {
 		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
 				.frameClickProfile();
 		return profile.isActionBound(action);
+	}
+
+	/**
+	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
+	 * the given mask-button-ncs (number-of-clicks) click-shortcut. Returns {@code null} if no action is bound to the
+	 * given shortcut.
+	 */
+	public ClickAction mouseClickAction(Target target, int mask, int button, int ncs) {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("setMouseClickBinding", platform());
+			return null;
+		}
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
+		return (ClickAction) profile.action(p5ButtonModifiersFix(mask, button), button, ncs);
+	}
+
+	/**
+	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
+	 * the given button-ncs (number-of-clicks) click-shortcut. Returns {@code null} if no action is bound to the given
+	 * shortcut.
+	 */
+	public ClickAction mouseClickAction(Target target, int button, int ncs) {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("setMouseClickBinding", platform());
+			return null;
+		}
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
+		return (ClickAction) profile.action(p5ButtonModifiersFix(button), button, ncs);
+	}
+
+	/**
+	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
+	 * the given single-clicked button shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 */
+	public ClickAction mouseClickAction(Target target, int button) {
+		if (platform() == Platform.ANDROID) {
+			AbstractScene.showPlatformVariationWarning("setMouseClickBinding", platform());
+			return null;
+		}
+		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
+				.frameClickProfile();
+		return (ClickAction) profile.action(p5ButtonModifiersFix(button), button, 1);
 	}
 
 	// keyboard here
@@ -1692,7 +1777,7 @@ public class Scene extends AbstractScene implements PConstants {
 	public boolean hasKeyboardShortcut(int mask, int vKey) {
 		return keyboardAgent().keyboardProfile().hasBinding(mask, vKey);
 	}
-	
+
 	/**
 	 * Returns {@code true} if the keyboard action is bound.
 	 */
@@ -1708,6 +1793,22 @@ public class Scene extends AbstractScene implements PConstants {
 	@Deprecated
 	public boolean isKeyboardShortcutInUse(int mask, int vKey) {
 		return hasKeyboardShortcut(mask, vKey);
+	}
+
+	/**
+	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
+	 * is bound to the given shortcut.
+	 */
+	public KeyboardAction keyboardAction(Character key) {
+		return (KeyboardAction) keyboardAgent().keyboardProfile().action(key);
+	}
+
+	/**
+	 * Returns the (Keyboard) dandelion action that is bound to the given mask-vKey (virtual key) shortcut. Returns
+	 * {@code null} if no action is bound to the given shortcut.
+	 */
+	public KeyboardAction keyboardAction(int mask, int vKey) {
+		return (KeyboardAction) keyboardAgent().keyboardProfile().action(mask, vKey);
 	}
 
 	@Override

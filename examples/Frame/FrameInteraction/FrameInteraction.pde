@@ -46,7 +46,7 @@ public void draw() {
   // Draw an axis using the Scene static function
   scene.drawAxes(20);
 
-  // Draw a second box
+  // Draw a second torus
   if (scene.motionAgent().defaultGrabber() == iFrame) {
     fill(0, 255, 255);
     scene.drawTorusSolenoid();
