@@ -1,15 +1,13 @@
 public class HeliCam {
-  CameraCrane parent;
   InteractiveFrame[] frameArray;
   Quat rotation = new Quat(new Vec(0.0f, 0.0f, 1.0f), 0.3f);
 
-  HeliCam(CameraCrane pnt) {
-    parent = pnt;
+  HeliCam() {
     frameArray = new InteractiveFrame[5];
     for (int i = 0; i < 4; ++i)
-      frameArray[i] = new InteractiveFrame(parent.mainScene, i>0 ? frameArray[i-1] : null);
+      frameArray[i] = new InteractiveFrame(mainScene, i>0 ? frameArray[i-1] : null);
 
-    frameArray[4] = new InteractiveFrame(parent.mainScene);
+    frameArray[4] = new InteractiveFrame(mainScene);
     // set the propeller's reference frame as the body of the heli
     frame(4).setReferenceFrame(frame(0));
 
@@ -48,7 +46,7 @@ public class HeliCam {
     rotor.setRotationConstraint(AxisPlaneConstraint.Type.AXIS, new Vec(0.0f, 0.0f, 1.0f));
     frame(4).setConstraint(rotor);
     frame(4).setSpinningRotation(rotation);
-    frame(4).removeFromAgentPool(((CameraCrane)parent).mainScene.motionAgent());
+    frame(4).removeFromAgentPool(mainScene.motionAgent());
   }
 
   public void draw(Scene scn) {
@@ -78,7 +76,7 @@ public class HeliCam {
     drawHead(scn);
 
     // Add light if the flag enables it
-    if (parent.enabledLights)
+    if (enabledLights)
       pg3d.spotLight(155, 255, 255, 0, 0, 0, 0, 0, -1, THIRD_PI, 1);
 
     pg3d.popMatrix();// frame(3)
@@ -100,8 +98,8 @@ public class HeliCam {
     // Scene.drawCamera takes into account the whole scene hierarchy above
     // the camera iFrame. Thus, we call it after restoring the gl state.
     // Calling it before the first push matrix above, should do it too.
-    if ( parent.drawRobotCamFrustum && scn.equals(parent.mainScene) )
-      scn.drawEye( parent.heliScene.camera() );
+    if ( drawRobotCamFrustum && scn.equals(mainScene) )
+      scn.drawEye( heliScene.camera() );
   }
 
   public void drawBody(Scene scn) {
@@ -149,8 +147,8 @@ public class HeliCam {
   }
 
   public void drawHead(Scene scn) {
-    if (parent.drawRobotCamFrustum && scn.equals(parent.mainScene))
-      scn.drawAxes( parent.heliScene.camera().sceneRadius() * 1.2f );
+    if (drawRobotCamFrustum && scn.equals(mainScene))
+      scn.drawAxes( heliScene.camera().sceneRadius() * 1.2f );
     drawCone(scn, 9, 12, 7, 0, 6);
     drawCone(scn, 8, 9, 6, 7, 6);
     drawCone(scn, 5, 8, 8, 6, 30);

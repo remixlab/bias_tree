@@ -1,12 +1,10 @@
 public class ArmCam {
   InteractiveFrame[] frameArray;
-  CameraCrane parent;
 
-  ArmCam(CameraCrane pnt, int x, int y, float ang) {
-    parent = pnt;
+  ArmCam(int x, int y, float ang) {
     frameArray = new InteractiveFrame[6];
     for (int i = 0; i < 6; ++i)
-      frameArray[i] = new InteractiveFrame(parent.mainScene, i>0 ? frameArray[i-1] : null);
+      frameArray[i] = new InteractiveFrame(mainScene, i>0 ? frameArray[i-1] : null);
 
     // Initialize frames
     frame(0).setTranslation(x, y, 0);
@@ -106,7 +104,7 @@ public class ArmCam {
     drawHead(scn);
 
     // Add light if the flag enables it
-    if (parent.enabledLights) {
+    if (enabledLights) {
       pg3d.spotLight(155, 255, 255, 0, 0, 0, 0, 0, -1, THIRD_PI, 1);
     }
 
@@ -122,8 +120,8 @@ public class ArmCam {
     // Scene.drawEye takes into account the whole scene hierarchy above
     // the camera iFrame. Thus, we call it after restoring the gl state.
     // Calling it before the first push matrix above, should do it too.
-    if ( parent.drawRobotCamFrustum && scn.equals(parent.mainScene) )
-      scn.drawEye( parent.armScene.camera() );
+    if ( drawRobotCamFrustum && scn.equals(mainScene) )
+      scn.drawEye( armScene.camera() );
   }
 
   public void drawBase(Scene scn) {
@@ -153,8 +151,8 @@ public class ArmCam {
   }
 
   public void drawHead(Scene scn) {
-    if ( parent.drawRobotCamFrustum && scn.equals( parent.mainScene) )
-      scn.drawAxes( parent.armScene.camera().sceneRadius() * 1.2f );
+    if ( drawRobotCamFrustum && scn.equals( mainScene) )
+      scn.drawAxes( armScene.camera().sceneRadius() * 1.2f );
     drawCone(scn, 9, 12, 7, 0, 6);
     drawCone(scn, 8, 9, 6, 7, 6);
     drawCone(scn, 5, 8, 8, 6, 30);

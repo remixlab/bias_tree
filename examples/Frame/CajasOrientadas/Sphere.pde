@@ -43,11 +43,9 @@ public class Sphere {
 
   public void draw(boolean drawAxes) {
     pushMatrix();
-    //iFrame.applyTransformation(parent);
     iFrame.applyTransformation(scene);
 
     if (drawAxes)
-      //DrawingUtils.drawAxes(parent, radius()*1.3f);
       scene.drawAxes(radius()*1.3f);
     if (scene.grabsAnyAgentInput(iFrame)) {
       fill(255, 0, 0);

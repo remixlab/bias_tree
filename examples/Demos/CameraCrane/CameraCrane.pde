@@ -59,8 +59,8 @@ public void setup() {
   heliScene.setAxesVisualHint(false);
 
   // Eyes initial setup
-  armCam = new ArmCam(this, 60, -60, 2);
-  heliCam = new HeliCam(this);
+  armCam = new ArmCam(60, -60, 2);
+  heliCam = new HeliCam();
 
   heliScene.camera().frame().fromFrame(heliCam.frame(3));
   armScene.camera().frame().fromFrame(armCam.frame(5));  
@@ -162,10 +162,8 @@ public void drawing(Scene scn) {
   for (int j = 0; j < nbPatches; ++j) {
     pg3d.beginShape(QUAD_STRIP);
     for (int i = 0; i <= nbPatches; ++i) {
-      pg3d.vertex((200 * (float) i / nbPatches - 100), (200 * j
-        / nbPatches - 100));
-      pg3d.vertex((200 * (float) i / nbPatches - 100), (200
-        * (float) (j + 1) / nbPatches - 100));
+      pg3d.vertex((200 * (float) i / nbPatches - 100), (200 * j / nbPatches - 100));
+      pg3d.vertex((200 * (float) i / nbPatches - 100), (200 * (float) (j + 1) / nbPatches - 100));
     }
     pg3d.endShape();
   }

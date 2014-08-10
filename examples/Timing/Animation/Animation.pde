@@ -63,14 +63,14 @@ class MyScene extends Scene {
 
   // Define here what is actually going to be drawn.
   public void proscenium() {
-    parent.pushStyle();
+    pushStyle();
     strokeWeight(3); // Default
     beginShape(POINTS);
     for (int i = 0; i < nbPart; i++) {
       particle[i].draw();
     }
     endShape();
-    parent.popStyle();
+    popStyle();
   }
 
   // Define here your animation.
