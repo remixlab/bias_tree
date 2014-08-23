@@ -5,7 +5,7 @@
  * This demo shows how to implement a custom bias mouse agent with its own
  * set of actions.
  * 
- * Press 'u' to toggle the mouse agent (proscene or custom).
+ * Press ' ' (the spacebar) to toggle the mouse agent (proscene or custom).
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 
@@ -193,13 +193,13 @@ void draw() {
     text("Press 'v' to toggle the display of the circle positions displacement due to the eye", 5, 37);
   }
   fill(0,0,255);
-  text("Press 'u' to change the mouse agent", 5, 57);
+  text("Press the spacebar to change the mouse agent", 5, 57);
   scene.endScreenDrawing();
   if(drawSelectionHints && !scene.isMotionAgentEnabled()) drawSelectionHints();
 }
 
 void keyPressed() {
-  if(key == 'u') {
+  if(key == ' ') {
     if(scene.isMotionAgentEnabled()) {
       scene.disableMotionAgent();
       scene.inputHandler().registerAgent(agent);
