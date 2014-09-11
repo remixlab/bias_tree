@@ -587,7 +587,8 @@ public class KeyFrameInterpolator implements Copyable {
 				setInterpolationTime(keyFrameList.get(0).time());
 			if ((interpolationSpeed() < 0.0) && (interpolationTime() <= keyFrameList.get(0).time()))
 				setInterpolationTime(keyFrameList.get(keyFrameList.size() - 1).time());
-			interpolationTimerTask.run(interpolationPeriod());
+			if(keyFrameList.size()>1)
+				interpolationTimerTask.run(interpolationPeriod());
 			interpolationStrt = true;
 			update();
 		}

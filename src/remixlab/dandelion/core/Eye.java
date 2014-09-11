@@ -1302,7 +1302,10 @@ public abstract class Eye implements Copyable {
 				if (anyInterpolationIsStarted())
 					stopAllInterpolations();
 				kfi.get(key).startInterpolation();
-				System.out.println("Path " + key + " started");
+				if(kfi.get(key).numberOfKeyFrames() > 1)
+					System.out.println("Path " + key + " started");
+				else
+					System.out.println("Position " + key + " restored");
 			}
 		}
 	}
