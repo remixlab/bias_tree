@@ -25,7 +25,7 @@ class Interpolation {
   }
   
   void dessin(float lng) {
-    if (!kfi.interpolationIsStarted()&& !enmarche) { 
+    if (!kfi.interpolationStarted()&& !enmarche) { 
       kfi.startInterpolation();
       enmarche=true;
     }

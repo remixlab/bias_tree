@@ -29,10 +29,8 @@ public class ClickButton extends Button2D {
         text = "edit camera paths";
     else {
       if (grabsInput(scene.motionAgent())) {
-        if (scene.eye().keyFrameInterpolator(path)
-          .numberOfKeyFrames() > 1)
-          if (scene.eye().keyFrameInterpolator(path)
-            .interpolationIsStarted())
+        if (scene.eye().keyFrameInterpolator(path).numberOfKeyFrames() > 1)
+          if (scene.eye().keyFrameInterpolator(path).interpolationStarted())
             text = "stop path ";
           else
             text = "play path ";

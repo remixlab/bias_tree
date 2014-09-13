@@ -64,7 +64,7 @@ import remixlab.util.*;
  * <p>
  * <b>Attention:</b> If a Constraint is attached to the {@link #frame()} (see
  * {@link remixlab.dandelion.core.Frame#constraint()}), it should be deactivated before
- * {@link #interpolationIsStarted()}, otherwise the interpolated motion (computed as if there was no constraint) will
+ * {@link #interpolationStarted()}, otherwise the interpolated motion (computed as if there was no constraint) will
  * probably be erroneous.
  */
 public class KeyFrameInterpolator implements Copyable {
@@ -381,7 +381,7 @@ public class KeyFrameInterpolator implements Copyable {
 	/**
 	 * Returns the associated Frame that is interpolated by the KeyFrameInterpolator.
 	 * <p>
-	 * When {@link #interpolationIsStarted()}, this Frame's position, orientation and magnitude will regularly be updated
+	 * When {@link #interpolationStarted()}, this Frame's position, orientation and magnitude will regularly be updated
 	 * by a timer, so that they follow the KeyFrameInterpolator path.
 	 * <p>
 	 * Set using {@link #setFrame(Frame)} or with the KeyFrameInterpolator constructor.
@@ -400,7 +400,7 @@ public class KeyFrameInterpolator implements Copyable {
 	/**
 	 * Returns the current interpolation time (in seconds) along the KeyFrameInterpolator path.
 	 * <p>
-	 * This time is regularly updated when {@link #interpolationIsStarted()}. Can be set directly with
+	 * This time is regularly updated when {@link #interpolationStarted()}. Can be set directly with
 	 * {@link #setInterpolationTime(float)} or {@link #interpolateAtTime(float)}.
 	 */
 	public float interpolationTime() {
@@ -423,7 +423,7 @@ public class KeyFrameInterpolator implements Copyable {
 
 	/**
 	 * Returns the current interpolation period, expressed in milliseconds. The update of the {@link #frame()} state will
-	 * be done by a timer at this period when {@link #interpolationIsStarted()}.
+	 * be done by a timer at this period when {@link #interpolationStarted()}.
 	 * <p>
 	 * This period (multiplied by {@link #interpolationSpeed()}) is added to the {@link #interpolationTime()} at each
 	 * update, and the {@link #frame()} state is modified accordingly (see {@link #interpolateAtTime(float)}). Default
@@ -492,16 +492,26 @@ public class KeyFrameInterpolator implements Copyable {
 	 * Returns {@code true} when the interpolation is being performed. Use {@link #startInterpolation()},
 	 * {@link #stopInterpolation()} or {@link #toggleInterpolation()} to modify this state.
 	 */
-	public boolean interpolationIsStarted() {
+	public boolean interpolationStarted() {
 		return interpolationStrt;
 	}
-
+	
 	/**
-	 * Calls {@link #startInterpolation()} or {@link #stopInterpolation()}, depending on {@link #interpolationIsStarted()}
+	 * Use {@link #interpolationStarted()} instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean interpolationIsStarted() {
+		return interpolationStarted();
+	}
+	
+	/**
+	 * Calls {@link #startInterpolation()} or {@link #stopInterpolation()}, depending on {@link #interpolationStarted()}
 	 * .
 	 */
 	public void toggleInterpolation() {
-		if (interpolationIsStarted())
+		if (interpolationStarted())
 			stopInterpolation();
 		else
 			startInterpolation();
@@ -511,7 +521,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * Updates {@link #frame()} state according to current {@link #interpolationTime()}. Then adds
 	 * {@link #interpolationPeriod()}* {@link #interpolationSpeed()} to {@link #interpolationTime()}.
 	 * <p>
-	 * This internal method is called by a timer when {@link #interpolationIsStarted()}. It can be used for debugging
+	 * This internal method is called by a timer when {@link #interpolationStarted()}. It can be used for debugging
 	 * purpose. {@link #stopInterpolation()} is called when {@link #interpolationTime()} reaches {@link #firstTime()} or
 	 * {@link #lastTime()}, unless {@link #loopInterpolation()} is {@code true}.
 	 */
@@ -563,7 +573,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * Starts the interpolation process.
 	 * <p>
 	 * A timer is started with an {@link #interpolationPeriod()} period that updates the {@link #frame()}'s position,
-	 * orientation and magnitude. {@link #interpolationIsStarted()} will return {@code true} until
+	 * orientation and magnitude. {@link #interpolationStarted()} will return {@code true} until
 	 * {@link #stopInterpolation()} or {@link #toggleInterpolation()} is called.
 	 * <p>
 	 * If {@code period} is positive, it is set as the new {@link #interpolationPeriod()}. The previous
@@ -595,7 +605,7 @@ public class KeyFrameInterpolator implements Copyable {
 	}
 
 	/**
-	 * Stops an interpolation started with {@link #startInterpolation()}. See {@link #interpolationIsStarted()} and
+	 * Stops an interpolation started with {@link #startInterpolation()}. See {@link #interpolationStarted()} and
 	 * {@link #toggleInterpolation()}.
 	 */
 	public void stopInterpolation() {
@@ -666,7 +676,7 @@ public class KeyFrameInterpolator implements Copyable {
 
 	/**
 	 * Remove KeyFrame according to {@code index} in the list and {@link #stopInterpolation()} if
-	 * {@link #interpolationIsStarted()}. If {@code index < 0 || index >= keyFr.size()} the call is silently ignored.
+	 * {@link #interpolationStarted()}. If {@code index < 0 || index >= keyFr.size()} the call is silently ignored.
 	 */
 	public void removeKeyFrame(int index) {
 		if (index < 0 || index >= keyFrameList.size())
@@ -674,7 +684,7 @@ public class KeyFrameInterpolator implements Copyable {
 		valuesAreValid = false;
 		pathIsValid = false;
 		currentFrmValid = false;
-		if (interpolationIsStarted())
+		if (interpolationStarted())
 			stopInterpolation();
 		KeyFrame kf = keyFrameList.remove(index);
 		if (kf.frm instanceof InteractiveFrame)

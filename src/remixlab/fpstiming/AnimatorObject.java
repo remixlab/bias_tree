@@ -15,7 +15,7 @@ package remixlab.fpstiming;
  */
 public class AnimatorObject implements Animator {
 	protected SeqTimer			animationTimer;
-	protected boolean				animationStarted;
+	protected boolean				started;
 	protected long					animationPeriod;
 	protected TimingHandler	handler;
 
@@ -57,7 +57,7 @@ public class AnimatorObject implements Animator {
 	/**
 	 * Return {@code true} when the animation loop is started.
 	 * <p>
-	 * The timing handler will check when {@link #isAnimationStarted()} and then called the animation callback method
+	 * The timing handler will check when {@link #animationStarted()} and then called the animation callback method
 	 * every {@link #animationPeriod()} milliseconds.
 	 * <p>
 	 * Use {@link #startAnimation()}, {@link #stopAnimation()} or {@link #toggleAnimation()} to change this value.
@@ -66,12 +66,23 @@ public class AnimatorObject implements Animator {
 	 * @see #animate()
 	 */
 	@Override
+	public boolean animationStarted() {
+		return started;
+	}
+	
+	/**
+	 * Use {@link #animationStarted()} instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	@Override
 	public boolean isAnimationStarted() {
-		return animationStarted;
+		return animationStarted();
 	}
 
 	/**
-	 * The animation loop period, in milliseconds. When {@link #isAnimationStarted()}, this is the delay that takes place
+	 * The animation loop period, in milliseconds. When {@link #animationStarted()}, this is the delay that takes place
 	 * between two consecutive iterations of the animation loop.
 	 * <p>
 	 * This delay defines a target frame rate that will only be achieved if your {@link #animate()} methods is fast
@@ -80,7 +91,7 @@ public class AnimatorObject implements Animator {
 	 * Default value is 40 milliseconds (25 Hz).
 	 * <p>
 	 * <b>Note:</b> This value is taken into account only the next time you call {@link #startAnimation()}. If
-	 * {@link #isAnimationStarted()}, you should {@link #stopAnimation()} first. See {@link #restartAnimation()} and
+	 * {@link #animationStarted()}, you should {@link #stopAnimation()} first. See {@link #restartAnimation()} and
 	 * {@link #setAnimationPeriod(long, boolean)}.
 	 * 
 	 * @see #setAnimationPeriod(long, boolean)
@@ -101,7 +112,7 @@ public class AnimatorObject implements Animator {
 	}
 
 	/**
-	 * Sets the {@link #animationPeriod()}, in milliseconds. If restart is {@code true} and {@link #isAnimationStarted()}
+	 * Sets the {@link #animationPeriod()}, in milliseconds. If restart is {@code true} and {@link #animationStarted()}
 	 * then {@link #restartAnimation()} is called.
 	 * 
 	 * @see #startAnimation()
@@ -110,7 +121,7 @@ public class AnimatorObject implements Animator {
 	public void setAnimationPeriod(long period, boolean restart) {
 		if (period > 0) {
 			animationPeriod = period;
-			if (isAnimationStarted() && restart)
+			if (animationStarted() && restart)
 				restartAnimation();
 		}
 	}
@@ -118,11 +129,11 @@ public class AnimatorObject implements Animator {
 	/**
 	 * Stops animation.
 	 * 
-	 * @see #isAnimationStarted()
+	 * @see #animationStarted()
 	 */
 	@Override
 	public void stopAnimation() {
-		animationStarted = false;
+		started = false;
 		if (timer() != null)
 			timer().stop();
 	}
@@ -130,11 +141,11 @@ public class AnimatorObject implements Animator {
 	/**
 	 * Starts the animation loop.
 	 * 
-	 * @see #isAnimationStarted()
+	 * @see #animationStarted()
 	 */
 	@Override
 	public void startAnimation() {
-		animationStarted = true;
+		started = true;
 		if (timer() != null)
 			timer().run(animationPeriod);
 	}
@@ -151,11 +162,11 @@ public class AnimatorObject implements Animator {
 	}
 
 	/**
-	 * Calls {@link #startAnimation()} or {@link #stopAnimation()}, depending on {@link #isAnimationStarted()}.
+	 * Calls {@link #startAnimation()} or {@link #stopAnimation()}, depending on {@link #animationStarted()}.
 	 */
 	@Override
 	public void toggleAnimation() {
-		if (isAnimationStarted())
+		if (animationStarted())
 			stopAnimation();
 		else
 			startAnimation();

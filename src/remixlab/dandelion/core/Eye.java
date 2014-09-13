@@ -1295,11 +1295,11 @@ public abstract class Eye implements Copyable {
 	 */
 	public void playPath(int key) {
 		if (kfi.containsKey(key)) {
-			if (kfi.get(key).interpolationIsStarted()) {
+			if (kfi.get(key).interpolationStarted()) {
 				kfi.get(key).stopInterpolation();
 				System.out.println("Path " + key + " stopped");
 			} else {
-				if (anyInterpolationIsStarted())
+				if (anyInterpolationStarted())
 					stopAllInterpolations();
 				kfi.get(key).startInterpolation();
 				if(kfi.get(key).numberOfKeyFrames() > 1)
@@ -1326,13 +1326,13 @@ public abstract class Eye implements Copyable {
 	 * Resets the path of the {@link #keyFrameInterpolator(int)} number {@code key}.
 	 * <p>
 	 * If this path is not being played (see {@link #playPath(int)} and
-	 * {@link remixlab.dandelion.core.KeyFrameInterpolator#interpolationIsStarted()}), resets it to its starting position
+	 * {@link remixlab.dandelion.core.KeyFrameInterpolator#interpolationStarted()}), resets it to its starting position
 	 * (see {@link remixlab.dandelion.core.KeyFrameInterpolator#resetInterpolation()}). If the path is played, simply
 	 * stops interpolation.
 	 */
 	public void resetPath(int key) {
 		if (kfi.containsKey(key)) {
-			if ((kfi.get(key).interpolationIsStarted()))
+			if ((kfi.get(key).interpolationStarted()))
 				kfi.get(key).stopInterpolation();
 			else {
 				kfi.get(key).resetInterpolation();
@@ -1345,14 +1345,24 @@ public abstract class Eye implements Copyable {
 	 * Returns {@code true} if any interpolation associated with this Eye is currently being performed (and {@code false}
 	 * otherwise).
 	 */
-	public boolean anyInterpolationIsStarted() {
+	public boolean anyInterpolationStarted() {
 		Iterator<Integer> itrtr = kfi.keySet().iterator();
 		while (itrtr.hasNext()) {
 			Integer key = itrtr.next();
-			if (kfi.get(key).interpolationIsStarted())
+			if (kfi.get(key).interpolationStarted())
 				return true;
 		}
-		return interpolationKfi.interpolationIsStarted();
+		return interpolationKfi.interpolationStarted();
+	}
+	
+	/**
+	 * Use {@link #anyInterpolationStarted()} instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean anyInterpolationIsStarted() {
+		return anyInterpolationStarted();
 	}
 
 	/**
@@ -1362,10 +1372,10 @@ public abstract class Eye implements Copyable {
 		Iterator<Integer> itrtr = kfi.keySet().iterator();
 		while (itrtr.hasNext()) {
 			Integer key = itrtr.next();
-			if (kfi.get(key).interpolationIsStarted())
+			if (kfi.get(key).interpolationStarted())
 				kfi.get(key).stopInterpolation();
 		}
-		if (interpolationKfi.interpolationIsStarted())
+		if (interpolationKfi.interpolationStarted())
 			interpolationKfi.stopInterpolation();
 	}
 
@@ -1604,7 +1614,7 @@ public abstract class Eye implements Copyable {
 	 * @see #fitScreenRegion(Rect)
 	 */
 	public void interpolateToZoomOnRegion(Rect rectangle) {
-		if (anyInterpolationIsStarted())
+		if (anyInterpolationStarted())
 			stopAllInterpolations();
 
 		interpolationKfi.deletePath();
@@ -1634,7 +1644,7 @@ public abstract class Eye implements Copyable {
 	 * @see #interpolateToZoomOnPixel(Point)
 	 */
 	public void interpolateToFitScene() {
-		if (anyInterpolationIsStarted())
+		if (anyInterpolationStarted())
 			stopAllInterpolations();
 
 		interpolationKfi.deletePath();
@@ -1675,7 +1685,7 @@ public abstract class Eye implements Copyable {
 	public void interpolateTo(Frame fr, float duration) {
 		// if (interpolationKfi.interpolationIsStarted())
 		// interpolationKfi.stopInterpolation();
-		if (anyInterpolationIsStarted())
+		if (anyInterpolationStarted())
 			stopAllInterpolations();
 
 		interpolationKfi.deletePath();

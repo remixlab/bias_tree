@@ -1115,7 +1115,7 @@ public class Camera extends Eye implements Copyable {
 
 		float coef = 0.1f;
 
-		if (anyInterpolationIsStarted())
+		if (anyInterpolationStarted())
 			stopAllInterpolations();
 
 		interpolationKfi.deletePath();

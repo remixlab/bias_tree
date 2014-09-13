@@ -113,7 +113,7 @@ void adjustFrameRate() {
     frameRate(1000/scene.animationPeriod());
   else
     frameRate(60);
-  if (scene.isAnimationStarted())
+  if (scene.animationStarted())
     scene.restartAnimation();
 }
 

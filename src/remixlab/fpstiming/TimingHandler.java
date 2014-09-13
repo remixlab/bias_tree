@@ -61,7 +61,7 @@ public class TimingHandler {
 						((SeqTimer) task.timer()).execute();
 		// Animation
 		for (Animator aObj : aPool)
-			if (aObj.isAnimationStarted())
+			if (aObj.animationStarted())
 				if (aObj.timer().trigggered())
 					if (!aObj.invokeAnimationHandler())
 						aObj.animate();

@@ -978,7 +978,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * {@link remixlab.dandelion.core.Eye#updateBoundaryEquations()} if {@link #areBoundaryEquationsEnabled()}.
 	 */
 	public void preDraw() {
-		if (avatar() != null && (!eye().anyInterpolationIsStarted())) {
+		if (avatar() != null && (!eye().anyInterpolationStarted())) {
 			eye().frame().setPosition(avatar().eyeFrame().position());
 			eye().frame().setOrientation(avatar().eyeFrame().orientation());
 			eye().frame().setScaling(avatar().eyeFrame().scaling());
@@ -1589,7 +1589,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 			((InteractiveFrame) (avatar())).stopSpinning();
 
 		// perform small animation ;)
-		if (eye().anyInterpolationIsStarted())
+		if (eye().anyInterpolationStarted())
 			eye().stopAllInterpolations();
 		// eye().interpolateTo(avatar().eyeFrame());//works only when eyeFrame scaling = magnitude
 		Frame eyeFrameCopy = avatar().eyeFrame().get();
