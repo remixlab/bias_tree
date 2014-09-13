@@ -51,8 +51,7 @@ public class MouseAgent extends ActionMotionAgent<MotionProfile<MotionAction>, C
 public class Ellipse extends GrabberObject {
   public float radiusX, radiusY;
   public PVector center;
-  public color colour;
-  public int contourColour;
+  public color colour, contourColour;
   public int sWeight;
 
   public Ellipse(Agent agent) {

@@ -2353,7 +2353,7 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	@Override
-	protected Vec pointUnderPixel(Point pixel) {
+	public Vec pointUnderPixel(Point pixel) {
 		PGraphicsOpenGL pggl;
 		if (pg() instanceof PGraphicsOpenGL)
 			pggl = (PGraphicsOpenGL) pg();
@@ -2366,6 +2366,10 @@ public class Scene extends AbstractScene implements PConstants {
 		pggl.endPGL();
 		Vec point = new Vec(pixel.x(), pixel.y(), depth[0]);
 		point = unprojectedCoordinatesOf(point);
+		if (pg().smooth) {
+			System.out.println("Warning: pointUnderPixel requires scene.pg().noSmooth()");
+			return null;
+		}
 		return (depth[0] < 1.0f) ? point : null;
 	}
 
