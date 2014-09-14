@@ -2136,7 +2136,8 @@ public class Scene extends AbstractScene implements PConstants {
 
 		startCoordCalls++;
 
-		pg().hint(PApplet.DISABLE_OPTIMIZED_STROKE);
+		pg().hint(PApplet.DISABLE_OPTIMIZED_STROKE);// -> new line not present in AbstractScene.bS
+		disableDepthTest();
 		matrixHelper.beginScreenDrawing();
 	}
 
@@ -2151,7 +2152,8 @@ public class Scene extends AbstractScene implements PConstants {
 					+ "endScreenDrawing() and they cannot be nested. Check your implementation!");
 
 		matrixHelper.endScreenDrawing();
-		pg().hint(PApplet.ENABLE_OPTIMIZED_STROKE);
+		enableDepthTest();
+		pg().hint(PApplet.ENABLE_OPTIMIZED_STROKE);// -> new line not present in AbstractScene.bS
 	}
 
 	@Override
