@@ -63,9 +63,8 @@ import remixlab.util.*;
  * along a path.
  * <p>
  * <b>Attention:</b> If a Constraint is attached to the {@link #frame()} (see
- * {@link remixlab.dandelion.core.Frame#constraint()}), it should be deactivated before
- * {@link #interpolationStarted()}, otherwise the interpolated motion (computed as if there was no constraint) will
- * probably be erroneous.
+ * {@link remixlab.dandelion.core.Frame#constraint()}), it should be deactivated before {@link #interpolationStarted()},
+ * otherwise the interpolated motion (computed as if there was no constraint) will probably be erroneous.
  */
 public class KeyFrameInterpolator implements Copyable {
 	@Override
@@ -381,8 +380,8 @@ public class KeyFrameInterpolator implements Copyable {
 	/**
 	 * Returns the associated Frame that is interpolated by the KeyFrameInterpolator.
 	 * <p>
-	 * When {@link #interpolationStarted()}, this Frame's position, orientation and magnitude will regularly be updated
-	 * by a timer, so that they follow the KeyFrameInterpolator path.
+	 * When {@link #interpolationStarted()}, this Frame's position, orientation and magnitude will regularly be updated by
+	 * a timer, so that they follow the KeyFrameInterpolator path.
 	 * <p>
 	 * Set using {@link #setFrame(Frame)} or with the KeyFrameInterpolator constructor.
 	 */
@@ -495,7 +494,7 @@ public class KeyFrameInterpolator implements Copyable {
 	public boolean interpolationStarted() {
 		return interpolationStrt;
 	}
-	
+
 	/**
 	 * Use {@link #interpolationStarted()} instead.
 	 * 
@@ -505,10 +504,9 @@ public class KeyFrameInterpolator implements Copyable {
 	public boolean interpolationIsStarted() {
 		return interpolationStarted();
 	}
-	
+
 	/**
-	 * Calls {@link #startInterpolation()} or {@link #stopInterpolation()}, depending on {@link #interpolationStarted()}
-	 * .
+	 * Calls {@link #startInterpolation()} or {@link #stopInterpolation()}, depending on {@link #interpolationStarted()} .
 	 */
 	public void toggleInterpolation() {
 		if (interpolationStarted())
@@ -597,7 +595,7 @@ public class KeyFrameInterpolator implements Copyable {
 				setInterpolationTime(keyFrameList.get(0).time());
 			if ((interpolationSpeed() < 0.0) && (interpolationTime() <= keyFrameList.get(0).time()))
 				setInterpolationTime(keyFrameList.get(keyFrameList.size() - 1).time());
-			if(keyFrameList.size()>1)
+			if (keyFrameList.size() > 1)
 				interpolationTimerTask.run(interpolationPeriod());
 			interpolationStrt = true;
 			update();

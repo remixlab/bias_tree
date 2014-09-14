@@ -1302,7 +1302,7 @@ public abstract class Eye implements Copyable {
 				if (anyInterpolationStarted())
 					stopAllInterpolations();
 				kfi.get(key).startInterpolation();
-				if(kfi.get(key).numberOfKeyFrames() > 1)
+				if (kfi.get(key).numberOfKeyFrames() > 1)
 					System.out.println("Path " + key + " started");
 				else
 					System.out.println("Position " + key + " restored");
@@ -1354,7 +1354,7 @@ public abstract class Eye implements Copyable {
 		}
 		return interpolationKfi.interpolationStarted();
 	}
-	
+
 	/**
 	 * Use {@link #anyInterpolationStarted()} instead.
 	 * 

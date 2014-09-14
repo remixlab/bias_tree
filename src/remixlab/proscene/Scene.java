@@ -2124,7 +2124,7 @@ public class Scene extends AbstractScene implements PConstants {
 	public PGraphics pg() {
 		return pgraphics;
 	}
-	
+
 	/**
 	 * Need to override it because of this issue: https://github.com/remixlab/proscene/issues/1
 	 */
@@ -2353,7 +2353,9 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	@Override
-	public Vec pointUnderPixel(Point pixel) {
+	public float pixelDepth(Point pixel) {
+		if (pg().smooth)
+			throw new RuntimeException("pixelDepth requires scene.pg().noSmooth()");
 		PGraphicsOpenGL pggl;
 		if (pg() instanceof PGraphicsOpenGL)
 			pggl = (PGraphicsOpenGL) pg();
@@ -2364,13 +2366,7 @@ public class Scene extends AbstractScene implements PConstants {
 		pgl.readPixels(pixel.x(), (camera().screenHeight() - pixel.y()), 1, 1, PGL.DEPTH_COMPONENT, PGL.FLOAT,
 				FloatBuffer.wrap(depth));
 		pggl.endPGL();
-		Vec point = new Vec(pixel.x(), pixel.y(), depth[0]);
-		point = unprojectedCoordinatesOf(point);
-		if (pg().smooth) {
-			System.out.println("Warning: pointUnderPixel requires scene.pg().noSmooth()");
-			return null;
-		}
-		return (depth[0] < 1.0f) ? point : null;
+		return depth[0];
 	}
 
 	// implementation of abstract drawing methods

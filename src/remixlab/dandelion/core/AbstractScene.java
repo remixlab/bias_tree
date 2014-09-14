@@ -1882,10 +1882,25 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Returns the coordinates of the 3D point located at {@code pixel} (x,y) on screen. May be null if no pixel is under
-	 * pixel.
+	 * Returns the world coordinates of the 3D point located at {@code pixel} (x,y) on screen. May be null if no pixel is
+	 * under pixel.
 	 */
-	public abstract Vec pointUnderPixel(Point pixel);
+	public Vec pointUnderPixel(Point pixel) {
+		float depth = pixelDepth(pixel);
+		Vec point = unprojectedCoordinatesOf(new Vec(pixel.x(), pixel.y(), depth));
+		return (depth < 1.0f) ? point : null;
+	}
+
+	/**
+	 * Returns the depth (z-value) of the object under the {@code pixel}.
+	 * <p>
+	 * The z-value ranges in [0..1] (near and far plane respectively). In 3D Note that this value is not a linear
+	 * interpolation between {@link remixlab.dandelion.core.Camera#zNear()} and
+	 * {@link remixlab.dandelion.core.Camera#zFar()}; {@code z = zFar() / (zFar() - zNear()) * (1.0f - zNear() / z');}
+	 * where {@code z'} is the distance from the point you project to the camera, along the
+	 * {@link remixlab.dandelion.core.Camera#viewDirection()}. See the {@code gluUnProject} man page for details.
+	 */
+	public abstract float pixelDepth(Point pixel);
 
 	/**
 	 * Same as {@link remixlab.dandelion.core.Eye#projectedCoordinatesOf(Mat, Vec)}.

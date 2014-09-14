@@ -57,8 +57,8 @@ public class AnimatorObject implements Animator {
 	/**
 	 * Return {@code true} when the animation loop is started.
 	 * <p>
-	 * The timing handler will check when {@link #animationStarted()} and then called the animation callback method
-	 * every {@link #animationPeriod()} milliseconds.
+	 * The timing handler will check when {@link #animationStarted()} and then called the animation callback method every
+	 * {@link #animationPeriod()} milliseconds.
 	 * <p>
 	 * Use {@link #startAnimation()}, {@link #stopAnimation()} or {@link #toggleAnimation()} to change this value.
 	 * 
@@ -69,7 +69,7 @@ public class AnimatorObject implements Animator {
 	public boolean animationStarted() {
 		return started;
 	}
-	
+
 	/**
 	 * Use {@link #animationStarted()} instead.
 	 * 

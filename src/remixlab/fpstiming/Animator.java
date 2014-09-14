@@ -63,7 +63,7 @@ public interface Animator {
 	 * Returns {@code true} if animation was started and {@code false} otherwise.
 	 */
 	boolean animationStarted();
-	
+
 	/**
 	 * Use {@link #animationStarted()} instead.
 	 * 
