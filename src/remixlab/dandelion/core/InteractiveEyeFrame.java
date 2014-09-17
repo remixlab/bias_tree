@@ -35,7 +35,7 @@ import remixlab.util.*;
  * {@link remixlab.dandelion.core.Constants.ClickAction}, {@link remixlab.dandelion.core.Constants.DOF1Action},
  * {@link remixlab.dandelion.core.Constants.DOF2Action}, {@link remixlab.dandelion.core.Constants.DOF3Action} and
  * {@link remixlab.dandelion.core.Constants.DOF6Action}. The {@link remixlab.dandelion.core.AbstractScene#motionAgent()}
- * provides high-level methods to handle some these actions, e.g., a {@link remixlab.dandelion.agent.MouseAgent} can
+ * provides high-level methods to handle some these actions, e.g., a {@link remixlab.dandelion.agent.WheeledMouseAgent} can
  * handle up to {@link remixlab.dandelion.core.Constants.DOF2Action}s.
  * <p>
  * <b>Observation: </b> The InteractiveEyeFrame is not added to the

@@ -888,16 +888,16 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Internal :p
+	 * Internal. Third parties should not call this.
 	 */
-	protected boolean zoomVisualHint() {
+	public boolean zoomVisualHint() {
 		return ((visualHintMask & ZOOM) != 0);
 	}
 
 	/**
-	 * Internal :p
+	 * Internal. Third parties should not call this.
 	 */
-	protected boolean rotateVisualHint() {
+	public boolean rotateVisualHint() {
 		return ((visualHintMask & ROTATE) != 0);
 	}
 
@@ -952,9 +952,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Internal :p
+	 * Internal. Third parties should not call this.
 	 */
-	protected void setZoomVisualHint(boolean draw) {
+	public void setZoomVisualHint(boolean draw) {
 		if (draw)
 			visualHintMask |= ZOOM;
 		else
@@ -962,9 +962,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Internal :p
+	 * Internal. Third parties should not call this.
 	 */
-	protected void setRotateVisualHint(boolean draw) {
+	public void setRotateVisualHint(boolean draw) {
 		if (draw)
 			visualHintMask |= ROTATE;
 		else

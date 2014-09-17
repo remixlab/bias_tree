@@ -1,4 +1,4 @@
-public class TouchAgent extends MouseAgent {
+public class TouchAgent extends WheeledMouseAgent {
   Scene scene;
   DOF2Event event, prevEvent;
 

@@ -1,4 +1,4 @@
-public class TUIOAgent extends MouseAgent {
+public class TUIOAgent extends WheeledMouseAgent {
   Scene scene;
   DOF2Event event, prevEvent;
 

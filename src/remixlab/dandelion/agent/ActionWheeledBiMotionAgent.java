@@ -19,7 +19,7 @@ import remixlab.dandelion.core.Constants.*;
  * An {@link remixlab.bias.agent.ActionWheeledMotionAgent} that handles Dandelion motion actions (i.e., actions
  * triggered from a {@link remixlab.bias.event.MotionEvent}). You should not instantiate this class but one of its
  * derived ones: {@link remixlab.dandelion.agent.HIDAgent}, {@link remixlab.dandelion.agent.JoystickAgent} or
- * {@link remixlab.dandelion.agent.MouseAgent}.
+ * {@link remixlab.dandelion.agent.WheeledMouseAgent}.
  * <p>
  * Dandelion actions can be handled by an {@link remixlab.dandelion.core.AbstractScene}, an
  * {@link remixlab.dandelion.core.InteractiveFrame} or by an {@link remixlab.dandelion.core.InteractiveEyeFrame}. This

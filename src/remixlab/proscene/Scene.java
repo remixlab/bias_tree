@@ -1,5 +1,5 @@
 /**************************************************************************************
- * ProScene (version 2.0.5)
+ * ProScene (version 2.1.0)
  * Copyright (c) 2010-2014 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  * 
@@ -12,9 +12,7 @@ package remixlab.proscene;
 
 import processing.core.*;
 import processing.opengl.*;
-import remixlab.bias.agent.profile.*;
 import remixlab.bias.core.*;
-import remixlab.bias.event.*;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
@@ -71,36 +69,6 @@ import java.util.regex.Pattern;
  * <i>AnimationHandler</i>.
  */
 public class Scene extends AbstractScene implements PConstants {
-	/**
-	 * Convenience function that simply returns {@code p5ButtonModifiersFix(B_NOMODIFIER_MASK, button)}.
-	 * 
-	 * @see #p5ButtonModifiersFix(int, int)
-	 */
-	public static int p5ButtonModifiersFix(int button) {
-		return p5ButtonModifiersFix(BogusEvent.NOMODIFIER_MASK, button);
-	}
-
-	/**
-	 * Hack to fix <a href="https://github.com/processing/processing/issues/1693">Processing MouseEvent.getModifiers()
-	 * issue</a>
-	 * 
-	 * @param m
-	 *          original Processing modifiers mask
-	 * @param button
-	 *          original Processing button
-	 * @return fixed mask
-	 */
-	public static int p5ButtonModifiersFix(int m, int button) {
-		int mask = m;
-		// ALT
-		if (button == PApplet.CENTER)
-			mask = (BogusEvent.ALT | m);
-		// META
-		else if (button == PApplet.RIGHT)
-			mask = (BogusEvent.META | m);
-		return mask;
-	}
-
 	/**
 	 * Wrapper for PGraphics.vertex(x,y,z)
 	 */
@@ -183,702 +151,7 @@ public class Scene extends AbstractScene implements PConstants {
 				a[4], a[5], a[7]);
 	}
 
-	/**
-	 * Proscene {@link remixlab.dandelion.agent.KeyboardAgent}.
-	 */
-	public class ProsceneKeyboard extends KeyboardAgent {
-		public ProsceneKeyboard(Scene scn, String n) {
-			super(scn, n);
-			inputHandler().unregisterAgent(this);
-		}
-
-		/**
-		 * Calls {@link remixlab.dandelion.agent.KeyboardAgent#setDefaultShortcuts()} and then adds the following:
-		 * <p>
-		 * {@code left_arrow -> KeyboardAction.MOVE_LEFT}<br>
-		 * {@code right_arrow -> KeyboardAction.MOVE_RIGHT}<br>
-		 * {@code up_arrow -> KeyboardAction.MOVE_UP}<br>
-		 * {@code down_arrow -> KeyboardAction.MOVE_DOWN	}<br>
-		 * {@code CTRL + java.awt.event.KeyEvent.VK_1 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_1}<br>
-		 * {@code ALT + java.awt.event.KeyEvent.VK_1 -> KeyboardAction.DELETE_PATH_1}<br>
-		 * {@code CTRL + java.awt.event.KeyEvent.VK_2 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_2}<br>
-		 * {@code ALT + java.awt.event.KeyEvent.VK_2 -> KeyboardAction.DELETE_PATH_2}<br>
-		 * {@code CTRL + java.awt.event.KeyEvent.VK_3 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_3}<br>
-		 * {@code ALT + java.awt.event.KeyEvent.VK_3 -> KeyboardAction.DELETE_PATH_3}<br>
-		 * <p>
-		 * Finally, it calls: {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_1, 1)},
-		 * {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_2, 2)} and
-		 * {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_3, 3)} to play the paths.
-		 * 
-		 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultShortcuts()
-		 * @see remixlab.dandelion.agent.KeyboardAgent#setKeyCodeToPlayPath(int, int)
-		 */
-		@Override
-		public void setDefaultShortcuts() {
-			// VK values here: http://docs.oracle.com/javase/7/docs/api/constant-values.html
-			super.setDefaultShortcuts();
-			// VK_LEFT : 37
-			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, 37, KeyboardAction.MOVE_LEFT);
-			// VK_UP : 38
-			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, 38, KeyboardAction.MOVE_UP);
-			// VK_RIGHT : 39
-			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, 39, KeyboardAction.MOVE_RIGHT);
-			// VK_DOWN : 40
-			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, 40, KeyboardAction.MOVE_DOWN);
-
-			// VK_1 : 49
-			keyboardProfile().setBinding(BogusEvent.CTRL, 49, KeyboardAction.ADD_KEYFRAME_TO_PATH_1);
-			keyboardProfile().setBinding(BogusEvent.ALT, 49, KeyboardAction.DELETE_PATH_1);
-			setKeyCodeToPlayPath(49, 1);
-			// VK_2 : 50
-			keyboardProfile().setBinding(BogusEvent.CTRL, 50, KeyboardAction.ADD_KEYFRAME_TO_PATH_2);
-			keyboardProfile().setBinding(BogusEvent.ALT, 50, KeyboardAction.DELETE_PATH_2);
-			setKeyCodeToPlayPath(50, 2);
-			// VK_3 : 51
-			keyboardProfile().setBinding(BogusEvent.CTRL, 51, KeyboardAction.ADD_KEYFRAME_TO_PATH_3);
-			keyboardProfile().setBinding(BogusEvent.ALT, 51, KeyboardAction.DELETE_PATH_3);
-			setKeyCodeToPlayPath(51, 3);
-		}
-
-		public void keyEvent(processing.event.KeyEvent e) {
-			if (e.getAction() == processing.event.KeyEvent.TYPE)
-				handle(new KeyboardEvent(e.getKey()));
-			else if (e.getAction() == processing.event.KeyEvent.RELEASE)
-				handle(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
-		}
-	}
-
-	/**
-	 * Proscene {@link remixlab.dandelion.agent.MouseAgent}.
-	 */
-	public class ProsceneMouse extends MouseAgent {
-		Scene							scene;
-		boolean						bypassNullEvent, need4Spin, drive, rotateMode;
-		Point							fCorner	= new Point();
-		Point							lCorner	= new Point();
-		DOF2Event					event, prevEvent, pressEvent;
-		float							dFriction;
-		InteractiveFrame	iFrame;
-
-		public ProsceneMouse(Scene scn, String n) {
-			super(scn, n);
-			setAsArcball();
-			inputHandler().unregisterAgent(this);
-			scene = scn;
-		}
-
-		public void mouseEvent(processing.event.MouseEvent e) {
-			if (e.getAction() == processing.event.MouseEvent.MOVE) {
-				event = new DOF2Event(prevEvent, e.getX() - originCorner().x(), e.getY()
-						- originCorner().y());
-				updateTrackedGrabber(event);
-				prevEvent = event.get();
-			}
-			if (e.getAction() == processing.event.MouseEvent.PRESS) {
-				event = new DOF2Event(prevEvent, e.getX() - originCorner().x(), e.getY()
-						- originCorner().y(), e.getModifiers(), e.getButton());
-				pressEvent = event.get();
-				if (inputGrabber() instanceof InteractiveFrame) {
-					if (need4Spin)
-						((InteractiveFrame) inputGrabber()).stopSpinning();
-					iFrame = (InteractiveFrame) inputGrabber();
-					Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) event)
-							: frameProfile().handle((BogusEvent) event);
-					if (a == null)
-						return;
-					DandelionAction dA = (DandelionAction) a.referenceAction();
-					if (dA == DandelionAction.SCREEN_TRANSLATE)
-						((InteractiveFrame) inputGrabber()).dirIsFixed = false;
-					rotateMode = ((dA == DandelionAction.ROTATE) || (dA == DandelionAction.ROTATE_XYZ)
-							|| (dA == DandelionAction.ROTATE_CAD)
-							|| (dA == DandelionAction.SCREEN_ROTATE) || (dA == DandelionAction.TRANSLATE_XYZ_ROTATE_XYZ));
-					if (rotateMode && scene.is3D())
-						scene.camera().frame().cadRotationIsReversed = scene.camera().frame()
-								.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
-					need4Spin = (rotateMode && (((InteractiveFrame) inputGrabber()).dampingFriction() == 0));
-					drive = (dA == DandelionAction.DRIVE);
-					bypassNullEvent = (dA == DandelionAction.MOVE_FORWARD) || (dA == DandelionAction.MOVE_BACKWARD)
-							|| (drive) && scene.inputHandler().isAgentRegistered(this);
-					setZoomVisualHint(dA == DandelionAction.ZOOM_ON_REGION && (inputGrabber() instanceof InteractiveEyeFrame)
-							&& scene.inputHandler().isAgentRegistered(this));
-					setRotateVisualHint(dA == DandelionAction.SCREEN_ROTATE && (inputGrabber() instanceof InteractiveEyeFrame)
-							&& scene.inputHandler().isAgentRegistered(this));
-					if (bypassNullEvent || zoomVisualHint() || rotateVisualHint()) {
-						if (bypassNullEvent) {
-							// This is needed for first person:
-							((InteractiveFrame) inputGrabber()).updateSceneUpVector();
-							dFriction = ((InteractiveFrame) inputGrabber()).dampingFriction();
-							((InteractiveFrame) inputGrabber()).setDampingFriction(0);
-							handler.eventTupleQueue().add(new EventGrabberTuple(event, a, inputGrabber()));
-						}
-						if (zoomVisualHint() || rotateVisualHint()) {
-							lCorner.set(e.getX() - originCorner().x(), e.getY() - originCorner().y());
-							if (zoomVisualHint())
-								fCorner.set(e.getX() - originCorner().x(), e.getY() - originCorner().y());
-						}
-					}
-					else
-						handle(event);
-				} else
-					handle(event);
-				prevEvent = event.get();
-			}
-			if (e.getAction() == processing.event.MouseEvent.DRAG) {
-				if (zoomVisualHint() || rotateVisualHint())
-					lCorner.set(e.getX() - originCorner().x(), e.getY() - originCorner().y());
-				if (!zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
-					event = new DOF2Event(prevEvent, e.getX() - originCorner().x(), e.getY()
-							- originCorner().y(), e.getModifiers(), e.getButton());
-					if (drive && inputGrabber() instanceof InteractiveFrame)
-						((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * radius() * 0.01f * (event.y() - pressEvent.y()));
-					// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-					Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) event)
-							: frameProfile().handle((BogusEvent) event);
-					if (a == null)
-						return;
-					DandelionAction dA = (DandelionAction) a.referenceAction();
-					if (dA != DandelionAction.ZOOM_ON_REGION)
-						handle(event);
-					prevEvent = event.get();
-				}
-			}
-			if (e.getAction() == processing.event.MouseEvent.RELEASE) {
-				if (inputGrabber() instanceof InteractiveFrame)
-					if (need4Spin && (prevEvent.speed() >= ((InteractiveFrame) inputGrabber()).spinningSensitivity()))
-						((InteractiveFrame) inputGrabber()).startSpinning(prevEvent);
-				event = new DOF2Event(prevEvent, e.getX() - originCorner().x(), e.getY()
-						- originCorner().y(), e.getModifiers(), e.getButton());
-				if (zoomVisualHint()) {
-					// at first glance this should work
-					// handle(event);
-					// but the problem is that depending on the order the button and the modifiers are released,
-					// different actions maybe triggered, so we go for sure ;) :
-					enqueueEventTuple(new EventGrabberTuple(event, DOF2Action.ZOOM_ON_REGION, inputGrabber()));
-					setZoomVisualHint(false);
-				}
-				if (rotateVisualHint())
-					setRotateVisualHint(false);
-				updateTrackedGrabber(event);
-				prevEvent = event.get();
-				if (bypassNullEvent) {
-					iFrame.setDampingFriction(dFriction);
-					bypassNullEvent = !bypassNullEvent;
-				}
-				// restore speed after drive action terminates:
-				if (drive && inputGrabber() instanceof InteractiveFrame)
-					((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * radius());
-			}
-			if (e.getAction() == processing.event.MouseEvent.WHEEL) {
-				handle(new DOF1Event(e.getCount(), e.getModifiers(), MotionEvent.NOBUTTON));
-			}
-			if (e.getAction() == processing.event.MouseEvent.CLICK) {
-				handle(new ClickEvent(e.getX() - originCorner().x(), e.getY()
-						- originCorner().y(), e.getModifiers(), e.getButton(), e.getCount()));
-			}
-		}
-
-		/**
-		 * Hack to deal with this: https://github.com/processing/processing/issues/1693 is to override all the following so
-		 * that:
-		 * <p>
-		 * <ol>
-		 * <li>Whenever B_CENTER appears B_ALT should be present.</li>
-		 * <li>Whenever B_RIGHT appears B_META should be present.</li>
-		 * </ol>
-		 */
-		public void setAsFirstPerson() {
-			resetAllProfiles();
-			eyeProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, DOF2Action.MOVE_FORWARD);
-			eyeProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, DOF2Action.MOVE_BACKWARD);
-			eyeProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.LEFT), PApplet.LEFT,
-					DOF2Action.ROTATE_Z);
-			eyeWheelProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF1Action.ROTATE_Z);
-			if (is3D()) {
-				eyeProfile().setBinding(p5ButtonModifiersFix(PApplet.CENTER), PApplet.CENTER, DOF2Action.LOOK_AROUND);
-				eyeProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.CENTER), PApplet.CENTER,
-						DOF2Action.DRIVE);
-			}
-			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, DOF2Action.ROTATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.CENTER), PApplet.CENTER, DOF2Action.SCALE);
-			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, DOF2Action.TRANSLATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.CENTER), PApplet.CENTER,
-					DOF2Action.SCREEN_TRANSLATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.RIGHT), PApplet.RIGHT,
-					DOF2Action.SCREEN_ROTATE);
-			setCommonBindings();
-		}
-
-		public void setAsThirdPerson() {
-			resetAllProfiles();
-			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, DOF2Action.MOVE_FORWARD);
-			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, DOF2Action.MOVE_BACKWARD);
-			frameProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.LEFT), PApplet.LEFT,
-					DOF2Action.ROTATE_Z);
-			if (is3D()) {
-				frameProfile().setBinding(p5ButtonModifiersFix(PApplet.CENTER), PApplet.CENTER,
-						DOF2Action.LOOK_AROUND);
-				frameProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.CENTER), PApplet.CENTER,
-						DOF2Action.DRIVE);
-			}
-			setCommonBindings();
-		}
-
-		public void setAsArcball() {
-			resetAllProfiles();
-			eyeProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, DOF2Action.ROTATE);
-			eyeProfile().setBinding(p5ButtonModifiersFix(PApplet.CENTER), PApplet.CENTER,
-					is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
-			eyeProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, DOF2Action.TRANSLATE);
-			eyeProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.LEFT), PApplet.LEFT,
-					DOF2Action.ZOOM_ON_REGION);
-			eyeProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.CENTER), PApplet.CENTER,
-					DOF2Action.SCREEN_TRANSLATE);
-			eyeProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.RIGHT), PApplet.RIGHT,
-					DOF2Action.SCREEN_ROTATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, DOF2Action.ROTATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.CENTER), PApplet.CENTER, DOF2Action.SCALE);
-			frameProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, DOF2Action.TRANSLATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.CENTER), PApplet.CENTER,
-					DOF2Action.SCREEN_TRANSLATE);
-			frameProfile().setBinding(p5ButtonModifiersFix(MotionEvent.SHIFT, PApplet.RIGHT), PApplet.RIGHT,
-					DOF2Action.SCREEN_ROTATE);
-			setCommonBindings();
-		}
-
-		protected void setCommonBindings() {
-			eyeClickProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, 2,
-					ClickAction.ALIGN_FRAME);
-			eyeClickProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, 2,
-					ClickAction.CENTER_FRAME);
-			frameClickProfile().setBinding(p5ButtonModifiersFix(PApplet.LEFT), PApplet.LEFT, 2,
-					ClickAction.ALIGN_FRAME);
-			frameClickProfile().setBinding(p5ButtonModifiersFix(PApplet.RIGHT), PApplet.RIGHT, 2,
-					ClickAction.CENTER_FRAME);
-			eyeWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON,
-					is3D() ? DOF1Action.ZOOM : DOF1Action.SCALE);
-			frameWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON, DOF1Action.SCALE);
-		}
-	}
-
-	/**
-	 * Non-seq timer based on java.util.Timer and java.util.TimerTask.
-	 */
-	protected class NonSeqTimer implements Timer {
-		Scene								scene;
-		java.util.Timer			timer;
-		java.util.TimerTask	timerTask;
-		Taskable						tmnTask;
-		boolean							runOnlyOnce;
-		boolean							active;
-		long								prd;
-
-		public NonSeqTimer(Scene scn, Taskable o) {
-			this(scn, o, false);
-		}
-
-		public NonSeqTimer(Scene scn, Taskable o, boolean singleShot) {
-			scene = scn;
-			runOnlyOnce = singleShot;
-			tmnTask = o;
-		}
-
-		@Override
-		public Taskable timingTask() {
-			return tmnTask;
-		}
-
-		@Override
-		public void create() {
-			stop();
-			timer = new java.util.Timer();
-			timerTask = new java.util.TimerTask() {
-				public void run() {
-					tmnTask.execute();
-				}
-			};
-		}
-
-		@Override
-		public void run(long period) {
-			setPeriod(period);
-			run();
-		}
-
-		@Override
-		public void run() {
-			create();
-			if (isSingleShot())
-				timer.schedule(timerTask, prd);
-			else
-				timer.scheduleAtFixedRate(timerTask, 0, prd);
-			active = true;
-		}
-
-		@Override
-		public void cancel() {
-			stop();
-		}
-
-		@Override
-		public void stop() {
-			if (timer != null) {
-				timer.cancel();
-				timer.purge();
-			}
-			active = false;
-		}
-
-		@Override
-		public boolean isActive() {
-			return timer != null && active;
-		}
-
-		@Override
-		public long period() {
-			return prd;
-		}
-
-		@Override
-		public void setPeriod(long period) {
-			prd = period;
-		}
-
-		@Override
-		public boolean isSingleShot() {
-			return runOnlyOnce;
-		}
-
-		@Override
-		public void setSingleShot(boolean singleShot) {
-			runOnlyOnce = singleShot;
-		}
-	}
-
-	/**
-	 * Internal {@link remixlab.dandelion.core.MatrixHelper} based on PGraphicsJava2D graphics transformations.
-	 */
-	protected class P5Java2DMatrixHelper extends MatrixHelper {
-		protected PGraphics	pg;
-
-		public P5Java2DMatrixHelper(Scene scn, PGraphics renderer) {
-			super(scn);
-			pg = renderer;
-		}
-
-		public PGraphics pg() {
-			return pg;
-		}
-
-		// Comment the above line and uncomment this one to develop the driver:
-		// public PGraphicsJava2D pg() { return (PGraphicsJava2D) pg; }
-
-		@Override
-		public void bind() {
-			scene.eye().computeProjection();
-			scene.eye().computeView();
-			cacheProjectionView();
-
-			Vec pos = scene.eye().position();
-			Rotation o = scene.eye().frame().orientation();
-			translate(scene.width() / 2, scene.height() / 2);
-
-			if (scene.isRightHanded())
-				scale(1, -1);
-			scale(1 / scene.eye().frame().magnitude(), 1 / scene.eye().frame().magnitude());
-			rotate(-o.angle());
-			translate(-pos.x(), -pos.y());
-		}
-
-		@Override
-		protected void cacheProjectionView() {
-			Mat.multiply(scene.eye().getProjection(), scene.eye().getView(), projectionViewMat);
-			if (isProjectionViewInverseCached()) {
-				if (projectionViewInverseMat == null)
-					projectionViewInverseMat = new Mat();
-				projectionViewMatHasInv = projectionViewMat.invert(projectionViewInverseMat);
-			}
-		}
-
-		@Override
-		public void beginScreenDrawing() {
-			Vec pos = scene.eye().position();
-			Rotation o = scene.eye().frame().orientation();
-
-			pushModelView();
-			translate(pos.x(), pos.y());
-			rotate(o.angle());
-			scale(scene.window().frame().magnitude(), scene.window().frame().magnitude());
-			if (scene.isRightHanded())
-				scale(1, -1);
-			translate(-scene.width() / 2, -scene.height() / 2);
-		}
-
-		@Override
-		public void endScreenDrawing() {
-			popModelView();
-		}
-
-		@Override
-		public void pushModelView() {
-			pg().pushMatrix();
-		}
-
-		@Override
-		public void popModelView() {
-			pg().popMatrix();
-		}
-
-		@Override
-		public void resetModelView() {
-			pg().resetMatrix();
-		}
-
-		@Override
-		public Mat modelView() {
-			return Scene.toMat(new PMatrix2D(pg().getMatrix()));
-		}
-
-		@Override
-		public Mat getModelView(Mat target) {
-			if (target == null)
-				target = Scene.toMat((PMatrix2D) pg().getMatrix()).get();
-			else
-				target.set(Scene.toMat((PMatrix2D) pg().getMatrix()));
-			return target;
-		}
-
-		@Override
-		public void setModelView(Mat source) {
-			pg().setMatrix(Scene.toPMatrix2D(source));
-		}
-
-		@Override
-		public void printModelView() {
-			pg().printMatrix();
-		}
-
-		@Override
-		public void printProjection() {
-			pg().printProjection();
-		}
-
-		@Override
-		public void applyModelView(Mat source) {
-			pg().applyMatrix(Scene.toPMatrix2D(source));
-		}
-
-		@Override
-		public void translate(float tx, float ty) {
-			pg().translate(tx, ty);
-		}
-
-		@Override
-		public void translate(float tx, float ty, float tz) {
-			pg().translate(tx, ty, tz);
-		}
-
-		@Override
-		public void rotate(float angle) {
-			pg().rotate(angle);
-		}
-
-		@Override
-		public void rotateX(float angle) {
-			pg().rotateX(angle);
-		}
-
-		@Override
-		public void rotateY(float angle) {
-			pg().rotateY(angle);
-		}
-
-		@Override
-		public void rotateZ(float angle) {
-			pg().rotateZ(angle);
-		}
-
-		@Override
-		public void rotate(float angle, float vx, float vy, float vz) {
-			pg().rotate(angle, vx, vy, vz);
-		}
-
-		@Override
-		public void scale(float s) {
-			pg().scale(s);
-		}
-
-		@Override
-		public void scale(float sx, float sy) {
-			pg().scale(sx, sy);
-		}
-
-		@Override
-		public void scale(float x, float y, float z) {
-			pg().scale(x, y, z);
-		}
-	}
-
-	/**
-	 * Internal {@link remixlab.dandelion.core.MatrixHelper} based on PGraphicsOpenGL graphics transformation.
-	 */
-	protected class P5GLMatrixHelper extends MatrixHelper {
-		PGraphicsOpenGL	pg;
-
-		public P5GLMatrixHelper(Scene scn, PGraphicsOpenGL renderer) {
-			super(scn);
-			pg = renderer;
-		}
-
-		public PGraphicsOpenGL pggl() {
-			return pg;
-		}
-
-		@Override
-		public void pushProjection() {
-			pggl().pushProjection();
-		}
-
-		@Override
-		public void popProjection() {
-			pggl().popProjection();
-		}
-
-		@Override
-		public void resetProjection() {
-			pggl().resetProjection();
-		}
-
-		@Override
-		public void printProjection() {
-			pggl().printProjection();
-		}
-
-		@Override
-		public Mat projection() {
-			return Scene.toMat(pggl().projection.get());
-		}
-
-		@Override
-		public Mat getProjection(Mat target) {
-			if (target == null)
-				target = Scene.toMat(pggl().projection.get()).get();
-			else
-				target.set(Scene.toMat(pggl().projection.get()));
-			return target;
-		}
-
-		@Override
-		public void applyProjection(Mat source) {
-			pggl().applyProjection(Scene.toPMatrix(source));
-		}
-
-		@Override
-		public void pushModelView() {
-			pggl().pushMatrix();
-		}
-
-		@Override
-		public void popModelView() {
-			pggl().popMatrix();
-		}
-
-		@Override
-		public void resetModelView() {
-			pggl().resetMatrix();
-		}
-
-		@Override
-		public Mat modelView() {
-			return Scene.toMat((PMatrix3D) pggl().getMatrix());
-		}
-
-		@Override
-		public Mat getModelView(Mat target) {
-			if (target == null)
-				target = Scene.toMat((PMatrix3D) pggl().getMatrix()).get();
-			else
-				target.set(Scene.toMat((PMatrix3D) pggl().getMatrix()));
-			return target;
-		}
-
-		@Override
-		public void printModelView() {
-			pggl().printMatrix();
-		}
-
-		@Override
-		public void applyModelView(Mat source) {
-			pggl().applyMatrix(Scene.toPMatrix(source));
-		}
-
-		@Override
-		public void translate(float tx, float ty) {
-			pggl().translate(tx, ty);
-		}
-
-		@Override
-		public void translate(float tx, float ty, float tz) {
-			pggl().translate(tx, ty, tz);
-		}
-
-		@Override
-		public void rotate(float angle) {
-			pggl().rotate(angle);
-		}
-
-		@Override
-		public void rotateX(float angle) {
-			pggl().rotateX(angle);
-		}
-
-		@Override
-		public void rotateY(float angle) {
-			pggl().rotateY(angle);
-		}
-
-		@Override
-		public void rotateZ(float angle) {
-			pggl().rotateZ(angle);
-		}
-
-		@Override
-		public void rotate(float angle, float vx, float vy, float vz) {
-			pggl().rotate(angle, vx, vy, vz);
-		}
-
-		@Override
-		public void scale(float s) {
-			pggl().scale(s);
-		}
-
-		@Override
-		public void scale(float sx, float sy) {
-			pggl().scale(sx, sy);
-		}
-
-		@Override
-		public void scale(float x, float y, float z) {
-			pggl().scale(x, y, z);
-		}
-
-		@Override
-		public void setProjection(Mat source) {
-			pggl().setProjection(Scene.toPMatrix(source));
-		}
-
-		@Override
-		public void setModelView(Mat source) {
-			if (is3D())
-				pggl().setMatrix(Scene.toPMatrix(source));// in P5 this caches projmodelview
-			else {
-				pggl().modelview.set(Scene.toPMatrix(source));
-				pggl().projmodelview.set(Mat.multiply(scene.eye().getProjection(false), scene.eye().getView(false))
-						.getTransposed(new float[16]));
-			}
-		}
-	}
-
-	public static final String	prettyVersion	= "2.0.5";
+	public static final String	prettyVersion	= "2.1.0";
 
 	public static final String	version				= "21";
 
@@ -930,7 +203,7 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Main constructor defining a left-handed Processing compatible Scene. Calls {@link #setMatrixHelper(MatrixHelper)}
 	 * using a customized {@link remixlab.dandelion.core.MatrixHelper} depending on the {@code pg} type (see
-	 * {@link remixlab.proscene.Scene.P5Java2DMatrixHelper} and {@link remixlab.proscene.Scene.P5GLMatrixHelper}). The
+	 * {@link remixlab.proscene.Java2DMatrixHelper} and {@link remixlab.proscene.GLMatrixHelper}). The
 	 * constructor instantiates the {@link #inputHandler()} and the {@link #timingHandler()}, sets the AXIS and GRID
 	 * visual hint flags, instantiates the {@link #eye()} (a {@link remixlab.dandelion.core.Camera} if the Scene
 	 * {@link #is3D()} or a {@link remixlab.dandelion.core.Window} if the Scene {@link #is2D()}). It also instantiates the
@@ -953,11 +226,11 @@ public class Scene extends AbstractScene implements PConstants {
 
 		// 2. Matrix helper
 		if (pg instanceof PGraphics3D)
-			setMatrixHelper(new P5GLMatrixHelper(this, (PGraphics3D) pg));
+			setMatrixHelper(new GLMatrixHelper(this, (PGraphics3D) pg));
 		else if (pg instanceof PGraphics2D)
-			setMatrixHelper(new P5GLMatrixHelper(this, (PGraphics2D) pg));
+			setMatrixHelper(new GLMatrixHelper(this, (PGraphics2D) pg));
 		else
-			setMatrixHelper(new P5Java2DMatrixHelper(this, pg));
+			setMatrixHelper(new Java2DMatrixHelper(this, pg));
 
 		// 3. Eye
 		setLeftHanded();
@@ -971,9 +244,9 @@ public class Scene extends AbstractScene implements PConstants {
 		upperLeftCorner = offscreen ? new Point(x, y) : new Point(0, 0);
 
 		// 5. Create agents and register P5 methods
-		defKeyboardAgent = new ProsceneKeyboard(this, "proscene_keyboard");
+		defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
 		enableKeyboardAgent();
-		defMotionAgent = new ProsceneMouse(this, "proscene_mouse");
+		defMotionAgent = new MouseAgent(this, "proscene_mouse");
 		enableMotionAgent();
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
@@ -1035,10 +308,6 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #setMouseAsThirdPerson()
 	 */
 	public void setMouseAsArcball() {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseAsArcball", platform());
-			return;
-		}
 		mouseAgent().setAsArcball();
 	}
 
@@ -1072,10 +341,6 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #setMouseAsThirdPerson()
 	 */
 	public void setMouseAsFirstPerson() {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseAsFirstPerson", platform());
-			return;
-		}
 		mouseAgent().setAsFirstPerson();
 	}
 
@@ -1099,10 +364,6 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #setMouseAsFirstPerson()
 	 */
 	public void setMouseAsThirdPerson() {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseAsThirdPerson", platform());
-			return;
-		}
 		mouseAgent().setAsThirdPerson();
 	}
 
@@ -1111,12 +372,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * (EYE or FRAME).
 	 */
 	public void setMouseButtonBinding(Target target, int mask, int button, DOF2Action action) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseButtonBinding", platform());
-			return;
-		}
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		profile.setBinding(p5ButtonModifiersFix(mask, button), button, action);
+		mouseAgent().setButtonBinding(target, mask, button, action);
 	}
 
 	/**
@@ -1124,48 +380,28 @@ public class Scene extends AbstractScene implements PConstants {
 	 * FRAME).
 	 */
 	public void setMouseButtonBinding(Target target, int button, DOF2Action action) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseButtonBinding", platform());
-			return;
-		}
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		profile.setBinding(p5ButtonModifiersFix(button), button, action);
+		mouseAgent().setButtonBinding(target, button, action);
 	}
 
 	/**
 	 * Removes the mask-button mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeMouseButtonBinding(Target target, int mask, int button) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("removeMouseButtonBinding", platform());
-			return;
-		}
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		profile.removeBinding(p5ButtonModifiersFix(mask, button), button);
+		mouseAgent().removeButtonBinding(target, mask, button);
 	}
 
 	/**
 	 * Removes the button mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeMouseButtonBinding(Target target, int button) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("removeMouseButtonBinding", platform());
-			return;
-		}
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		profile.removeBinding(p5ButtonModifiersFix(button), button);
+		mouseAgent().removeButtonBinding(target, button);
 	}
 
 	/**
 	 * Returns {@code true} if the mask-button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasMouseButtonBinding(Target target, int mask, int button) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("isMouseButtonBindingInUse", platform());
-			return false;
-		}
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		return profile.hasBinding(p5ButtonModifiersFix(mask, button), button);
+		return mouseAgent().hasButtonBinding(target, mask, button);
 	}
 
 	/**
@@ -1182,12 +418,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasMouseButtonBinding(Target target, int button) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("isMouseButtonBindingInUse", platform());
-			return false;
-		}
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		return profile.hasBinding(p5ButtonModifiersFix(button), button);
+		return mouseAgent().hasButtonBinding(target, button);
 	}
 
 	/**
@@ -1204,12 +435,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the mouse action is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean isMouseButtonActionBound(Target target, DOF2Action action) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("isMouseButtonActionBound", platform());
-			return false;
-		}
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		return profile.isActionBound(action);
+		return mouseAgent().isButtonActionBound(target, action);
 	}
 
 	/**
@@ -1217,12 +443,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * given mask-button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public DOF2Action mouseButtonAction(Target target, int mask, int button) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseButtonBinding", platform());
-			return null;
-		}
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		return (DOF2Action) profile.action(p5ButtonModifiersFix(mask, button), button);
+		return mouseAgent().buttonAction(target, mask, button);
 	}
 
 	/**
@@ -1230,12 +451,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * given button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public DOF2Action mouseButtonAction(Target target, int button) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseButtonBinding", platform());
-			return null;
-		}
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? mouseAgent().eyeProfile() : mouseAgent().frameProfile();
-		return (DOF2Action) profile.action(p5ButtonModifiersFix(button), button);
+		return mouseAgent().buttonAction(target, button);
 	}
 
 	// wheel here
@@ -1333,65 +549,35 @@ public class Scene extends AbstractScene implements PConstants {
 	 * FRAME).
 	 */
 	public void setMouseWheelBinding(Target target, int mask, DOF1Action action) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseWheelBinding", platform());
-			return;
-		}
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
-				.frameWheelProfile();
-		profile.setBinding(mask, MotionEvent.NOBUTTON, action);
+		mouseAgent().setWheelBinding(target, mask, action);
 	}
 
 	/**
 	 * Binds the wheel to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME).
 	 */
 	public void setMouseWheelBinding(Target target, DOF1Action action) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseWheelBinding", platform());
-			return;
-		}
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
-				.frameWheelProfile();
-		profile.setBinding(action);
+		mouseAgent().setWheelBinding(target, action);
 	}
 
 	/**
 	 * Removes the mask-wheel shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeMouseWheelBinding(Target target, int mask) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("removeMouseWheelBinding", platform());
-			return;
-		}
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
-				.frameWheelProfile();
-		profile.removeBinding(mask, MotionEvent.NOBUTTON);
+		mouseAgent().removeWheelBinding(target, mask);
 	}
 
 	/**
 	 * Removes the wheel binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeMouseWheelBinding(Target target) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("removeMouseWheelBinding", platform());
-			return;
-		}
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
-				.frameWheelProfile();
-		profile.removeBinding();
+		mouseAgent().removeWheelBinding(target);
 	}
 
 	/**
 	 * Returns {@code true} if the mask-wheel shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasMouseWheelBinding(Target target, int mask) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("isMouseWheelBindingInUse", platform());
-			return false;
-		}
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
-				.frameWheelProfile();
-		return profile.hasBinding(mask, MotionEvent.NOBUTTON);
+		return mouseAgent().hasWheelBinding(target, mask);
 	}
 
 	/**
@@ -1408,13 +594,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the wheel is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasMouseWheelBinding(Target target) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("isMouseWheelBindingInUse", platform());
-			return false;
-		}
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
-				.frameWheelProfile();
-		return profile.hasBinding();
+		return mouseAgent().hasWheelBinding(target);
 	}
 
 	/**
@@ -1431,13 +611,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the mouse wheel action is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean isMouseWheelActionBound(Target target, DOF1Action action) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("isMouseWheelActionBound", platform());
-			return false;
-		}
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
-				.frameWheelProfile();
-		return profile.isActionBound(action);
+		return mouseAgent().isWheelActionBound(target, action);
 	}
 
 	/**
@@ -1445,13 +619,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * given mask-wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public DOF1Action mouseWheelAction(Target target, int mask, DOF1Action action) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseWheelBinding", platform());
-			return null;
-		}
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
-				.frameWheelProfile();
-		return (DOF1Action) profile.action(mask, MotionEvent.NOBUTTON);
+		return mouseAgent().wheelAction(target, mask, action);
 	}
 
 	/**
@@ -1459,13 +627,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * given wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public DOF1Action mouseWheelAction(Target target, DOF1Action action) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseWheelBinding", platform());
-			return null;
-		}
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? mouseAgent().wheelProfile() : mouseAgent()
-				.frameWheelProfile();
-		return (DOF1Action) profile.action(MotionEvent.NOBUTTON);
+		return mouseAgent().wheelAction(target, action);
 	}
 
 	// mouse click
@@ -1475,13 +637,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * given {@code target} (EYE or FRAME).
 	 */
 	public void setMouseClickBinding(Target target, int mask, int button, int ncs, ClickAction action) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseClickBinding", platform());
-			return;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		profile.setBinding(p5ButtonModifiersFix(mask, button), button, ncs, action);
+		mouseAgent().setClickBinding(target, mask, button, ncs, action);
 	}
 
 	/**
@@ -1489,13 +645,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * {@code target} (EYE or FRAME).
 	 */
 	public void setMouseClickBinding(Target target, int button, int ncs, ClickAction action) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseClickBinding", platform());
-			return;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		profile.setBinding(p5ButtonModifiersFix(button), button, ncs, action);
+		mouseAgent().setClickBinding(target, button, ncs, action);
 	}
 
 	/**
@@ -1503,13 +653,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * {@code target} (EYE or FRAME).
 	 */
 	public void setMouseClickBinding(Target target, int button, ClickAction action) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseClickBinding", platform());
-			return;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		profile.setBinding(p5ButtonModifiersFix(button), button, 1, action);
+		mouseAgent().setClickBinding(target, button, action);
 	}
 
 	/**
@@ -1518,39 +662,21 @@ public class Scene extends AbstractScene implements PConstants {
 	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
 	 */
 	public void removeMouseClickBinding(Target target, int mask, int button, int ncs) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("removeMouseClickBinding", platform());
-			return;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		profile.removeBinding(p5ButtonModifiersFix(mask, button), button, ncs);
+		mouseAgent().removeClickBinding(target, mask, button, ncs);
 	}
 
 	/**
 	 * Removes the button-ncs (number-of-clicks) click-shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeMouseClickBinding(Target target, int button, int ncs) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("removeMouseClickBinding", platform());
-			return;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		profile.removeBinding(p5ButtonModifiersFix(button), button, ncs);
+		mouseAgent().removeClickBinding(target, button, ncs);
 	}
 
 	/**
 	 * Removes the single-clicked button shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeMouseClickBinding(Target target, int button) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("removeMouseClickBinding", platform());
-			return;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		profile.removeBinding(p5ButtonModifiersFix(button), button, 1);
+		mouseAgent().removeClickBinding(target, button);
 	}
 
 	/**
@@ -1558,13 +684,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * (EYE or FRAME).
 	 */
 	public boolean hasMouseClickBinding(Target target, int mask, int button, int ncs) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("isMouseClickBindingInUse", platform());
-			return false;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		return profile.hasBinding(p5ButtonModifiersFix(mask, button), button, ncs);
+		return mouseAgent().hasClickBinding(target, mask, button, ncs);
 	}
 
 	/**
@@ -1582,13 +702,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * or FRAME).
 	 */
 	public boolean hasMouseClickBinding(Target target, int button, int ncs) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("isMouseClickBindingInUse", platform());
-			return false;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		return profile.hasBinding(p5ButtonModifiersFix(button), button, ncs);
+		return mouseAgent().hasClickBinding(target, button, ncs);
 	}
 
 	/**
@@ -1605,13 +719,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the single-clicked button shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasMouseClickBinding(Target target, int button) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("isMouseClickBindingInUse", platform());
-			return false;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		return profile.hasBinding(p5ButtonModifiersFix(button), button, 1);
+		return mouseAgent().hasClickBinding(target, button);
 	}
 
 	/**
@@ -1628,13 +736,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the mouse click action is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean isMouseClickActionBound(Target target, ClickAction action) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("isMouseClickBindingInUse", platform());
-			return false;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		return profile.isActionBound(action);
+		return mouseAgent().isClickActionBound(target, action);
 	}
 
 	/**
@@ -1643,13 +745,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * given shortcut.
 	 */
 	public ClickAction mouseClickAction(Target target, int mask, int button, int ncs) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseClickBinding", platform());
-			return null;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		return (ClickAction) profile.action(p5ButtonModifiersFix(mask, button), button, ncs);
+		return mouseAgent().clickAction(target, mask, button, ncs);
 	}
 
 	/**
@@ -1658,13 +754,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * shortcut.
 	 */
 	public ClickAction mouseClickAction(Target target, int button, int ncs) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseClickBinding", platform());
-			return null;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		return (ClickAction) profile.action(p5ButtonModifiersFix(button), button, ncs);
+		return mouseAgent().clickAction(target, button, ncs);
 	}
 
 	/**
@@ -1672,13 +762,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * the given single-clicked button shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public ClickAction mouseClickAction(Target target, int button) {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("setMouseClickBinding", platform());
-			return null;
-		}
-		ClickProfile<ClickAction> profile = target == Target.EYE ? mouseAgent().clickProfile() : mouseAgent()
-				.frameClickProfile();
-		return (ClickAction) profile.action(p5ButtonModifiersFix(button), button, 1);
+		return mouseAgent().clickAction(target, button);
 	}
 
 	// keyboard here
@@ -1861,12 +945,12 @@ public class Scene extends AbstractScene implements PConstants {
 	 * 
 	 * @see #keyboardAgent()
 	 */
-	public ProsceneMouse mouseAgent() {
+	public MouseAgent mouseAgent() {
 		if (platform() == Platform.ANDROID) {
 			AbstractScene.showPlatformVariationWarning("mouseAgent", platform());
 			return null;
 		}
-		return (ProsceneMouse) motionAgent();
+		return (MouseAgent) motionAgent();
 	}
 
 	/**
@@ -1928,8 +1012,8 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Use {@link #disableMotionAgent()} instead.
 	 */
 	@Deprecated
-	public MouseAgent disableMouseAgent() {
-		return (MouseAgent) disableMotionAgent();
+	public WheeledMouseAgent disableMouseAgent() {
+		return (WheeledMouseAgent) disableMotionAgent();
 	}
 
 	// 2. Associated objects
@@ -3115,14 +2199,14 @@ public class Scene extends AbstractScene implements PConstants {
 		drawCross(v.vec[0], v.vec[1], 15);
 		pg().popStyle();
 	}
-
+	
 	@Override
 	protected void drawScreenRotateHint() {
 		pg().pushStyle();
-		if (!(motionAgent() instanceof ProsceneMouse))
+		if (!(motionAgent() instanceof MouseAgent))
 			return;
-		float p1x = (float) mouseAgent().lCorner.x();
-		float p1y = (float) mouseAgent().lCorner.y();
+		float p1x = mouseAgent().lastEvent().x() - originCorner().x();
+		float p1y = mouseAgent().lastEvent().y() - originCorner().y();
 		Vec p2 = eye().projectedCoordinatesOf(anchor());
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
@@ -3132,16 +2216,16 @@ public class Scene extends AbstractScene implements PConstants {
 		endScreenDrawing();
 		pg().popStyle();
 	}
-
+	
 	@Override
 	protected void drawZoomWindowHint() {
-		if (!(motionAgent() instanceof ProsceneMouse))
+		if (!(motionAgent() instanceof MouseAgent))
 			return;
 		pg().pushStyle();
-		float p1x = (float) mouseAgent().fCorner.x();
-		float p1y = (float) mouseAgent().fCorner.y();
-		float p2x = (float) mouseAgent().lCorner.x();
-		float p2y = (float) mouseAgent().lCorner.y();
+		float p1x = mouseAgent().pressEvent().x() - originCorner().x();
+		float p1y = mouseAgent().pressEvent().y() - originCorner().y();		
+		float p2x = mouseAgent().lastEvent().x() - originCorner().x();
+		float p2y = mouseAgent().lastEvent().y() - originCorner().y();
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
 		pg().strokeWeight(2);
