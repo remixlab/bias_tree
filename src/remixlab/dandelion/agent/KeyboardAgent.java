@@ -52,6 +52,16 @@ public class KeyboardAgent extends ActionKeyboardAgent<KeyboardProfile<KeyboardA
 		setDefaultShortcuts();
 	}
 
+	@Override
+	public KeyboardEvent feed() {
+		return null;
+	}
+
+	@Override
+	public KeyboardProfile<KeyboardAction> keyboardProfile() {
+		return profile;
+	}
+
 	/**
 	 * Set the default keyboard shortcuts as follows:
 	 * <p>
@@ -99,13 +109,68 @@ public class KeyboardAgent extends ActionKeyboardAgent<KeyboardProfile<KeyboardA
 		}
 	}
 
-	@Override
-	public KeyboardEvent feed() {
-		return null;
+	/**
+	 * Binds the key shortcut to the (Keyboard) dandelion action.
+	 */
+	public void setShortcut(Character key, KeyboardAction action) {
+		keyboardProfile().setBinding(key, action);
 	}
 
-	@Override
-	public KeyboardProfile<KeyboardAction> keyboardProfile() {
-		return profile;
+	/**
+	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
+	 */
+	public void setShortcut(int mask, int vKey, KeyboardAction action) {
+		keyboardProfile().setBinding(mask, vKey, action);
+	}
+
+	/**
+	 * Removes key shortcut binding (if present).
+	 */
+	public void removeShortcut(Character key) {
+		keyboardProfile().removeBinding(key);
+	}
+
+	/**
+	 * Removes mask-vKey (virtual key) shortcut binding (if present).
+	 */
+	public void removeShortcut(int mask, int vKey) {
+		keyboardProfile().removeBinding(mask, vKey);
+	}
+
+	/**
+	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
+	 */
+	public boolean hasShortcut(Character key) {
+		return keyboardProfile().hasBinding(key);
+	}
+
+	/**
+	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
+	 */
+	public boolean hasShortcut(int mask, int vKey) {
+		return keyboardProfile().hasBinding(mask, vKey);
+	}
+
+	/**
+	 * Returns {@code true} if the keyboard action is bound.
+	 */
+	public boolean isActionBound(KeyboardAction action) {
+		return keyboardProfile().isActionBound(action);
+	}
+
+	/**
+	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
+	 * is bound to the given shortcut.
+	 */
+	public KeyboardAction action(Character key) {
+		return (KeyboardAction) keyboardProfile().action(key);
+	}
+
+	/**
+	 * Returns the (Keyboard) dandelion action that is bound to the given mask-vKey (virtual key) shortcut. Returns
+	 * {@code null} if no action is bound to the given shortcut.
+	 */
+	public KeyboardAction action(int mask, int vKey) {
+		return (KeyboardAction) keyboardProfile().action(mask, vKey);
 	}
 }

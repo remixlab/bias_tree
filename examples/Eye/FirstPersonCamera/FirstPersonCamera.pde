@@ -21,7 +21,7 @@ void setup() {
   scene = new Scene(this);	
   iFrame = new InteractiveFrame(scene);
   iFrame.translate(new Vec(30, 30, 0));
-  scene.setMouseAsFirstPerson();
+  scene.mouseAgent().setAsFirstPerson();
   firstPerson = true;
 }
 
@@ -61,10 +61,10 @@ public void keyPressed() {
   if ( key == ' ') {
     firstPerson = !firstPerson;
     if ( firstPerson ) {
-      scene.setMouseAsFirstPerson();
+      scene.mouseAgent().setAsFirstPerson();
     }
     else {
-      scene.setMouseAsArcball();
+      scene.mouseAgent().setAsArcball();
     }
   }
 }

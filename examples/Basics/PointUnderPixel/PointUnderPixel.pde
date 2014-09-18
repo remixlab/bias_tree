@@ -28,9 +28,9 @@ void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
   scene.setKeyboardShortcut('z', Scene.KeyboardAction.RESET_ANCHOR);
-  scene.setMouseClickBinding(Target.EYE, LEFT, 1, ClickAction.ZOOM_ON_PIXEL);
-  scene.setMouseClickBinding(Target.EYE, CENTER, 1, ClickAction.SHOW_ALL);
-  scene.setMouseClickBinding(Target.EYE, Event.CTRL, LEFT, 1, ClickAction.ANCHOR_FROM_PIXEL);
+  scene.mouseAgent().setClickBinding(Target.EYE, LEFT, 1, ClickAction.ZOOM_ON_PIXEL);
+  scene.mouseAgent().setClickBinding(Target.EYE, CENTER, 1, ClickAction.SHOW_ALL);
+  scene.mouseAgent().setClickBinding(Target.EYE, Event.CTRL, LEFT, 1, ClickAction.ANCHOR_FROM_PIXEL);
   //Point under pixel requires noSmooth, see here: 
   //https://github.com/processing/processing/issues/2771
   noSmooth();

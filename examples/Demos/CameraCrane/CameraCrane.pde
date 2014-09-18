@@ -65,12 +65,12 @@ public void setup() {
   heliScene.camera().frame().fromFrame(heliCam.frame(3));
   armScene.camera().frame().fromFrame(armCam.frame(5));  
 
-  armScene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.LOOK_AROUND);
-  armScene.setMouseButtonBinding(Target.EYE, CENTER, null);
-  armScene.setMouseButtonBinding(Target.EYE, RIGHT, null);
-  heliScene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.LOOK_AROUND);
-  heliScene.setMouseButtonBinding(Target.EYE, CENTER, null);
-  heliScene.setMouseButtonBinding(Target.EYE, RIGHT, null);
+  armScene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.LOOK_AROUND);
+  armScene.mouseAgent().setButtonBinding(Target.EYE, CENTER, null);
+  armScene.mouseAgent().setButtonBinding(Target.EYE, RIGHT, null);
+  heliScene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.LOOK_AROUND);
+  heliScene.mouseAgent().setButtonBinding(Target.EYE, CENTER, null);
+  heliScene.mouseAgent().setButtonBinding(Target.EYE, RIGHT, null);
 }
 
 // off-screen rendering

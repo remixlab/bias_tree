@@ -91,7 +91,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	protected Platform											platform;
 
 	public enum Platform {
-		DESKTOP, ANDROID, JS
+		PROCESSING_DESKTOP, PROCESSING_ANDROID, PROCESSING_JS
 	}
 
 	// public final static int PUP = 1 << 6;

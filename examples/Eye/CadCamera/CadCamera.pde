@@ -26,7 +26,7 @@ void setup() {
   scene.setRightHanded();
   //scene.motionAgent().eyeProfile().setBinding(Constants.B_LEFT, DOF2Action.ROTATE_CAD);
   //same as the previous line:
-  scene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE_CAD);
+  scene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE_CAD);
   scene.camera().frame().setRotationSensitivity(1.5);
   //no spinning:
   scene.camera().frame().setSpinningSensitivity(100);
@@ -42,10 +42,10 @@ void draw() {
 
 void keyPressed() {
   if (key == ' ')
-    if ( scene.isMouseButtonActionBound(Target.EYE, DOF2Action.ROTATE_CAD) )
-      scene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE);
+    if ( scene.mouseAgent().isButtonActionBound(Target.EYE, DOF2Action.ROTATE_CAD) )
+      scene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE);
     else {
-      scene.setMouseButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE_CAD);
+      scene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE_CAD);
       scene.camera().setUpVector(new Vec(0, 1, 0));
     }
   if (key == 'u' || key == 'U')

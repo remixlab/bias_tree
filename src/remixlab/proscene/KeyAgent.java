@@ -71,6 +71,9 @@ public class KeyAgent extends KeyboardAgent {
 		setKeyCodeToPlayPath(51, 3);
 	}
 
+	/**
+	 * Processing keyEvent method to be registered at the PApplet's instance.
+	 */
 	public void keyEvent(processing.event.KeyEvent e) {
 		if (e.getAction() == processing.event.KeyEvent.TYPE)
 			handle(new KeyboardEvent(e.getKey()));

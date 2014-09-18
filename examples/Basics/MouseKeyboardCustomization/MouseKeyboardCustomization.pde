@@ -17,6 +17,8 @@ import remixlab.dandelion.core.Constants.*;
 import remixlab.dandelion.agent.*;
 
 Scene scene;
+MouseAgent mouse;
+KeyboardAgent keyboard;
 InteractiveFrame iFrame;
 
 //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
@@ -25,6 +27,8 @@ String renderer = P3D;
 void setup() {
   size(640, 360, renderer);
   scene = new Scene(this);
+  mouse = scene.mouseAgent();
+  keyboard = scene.keyboardAgent();
   iFrame = new InteractiveFrame(scene);
   iFrame.translate(new Vec(30, 30));
   setExoticCustomization();
@@ -66,29 +70,29 @@ public <T extends Enum<?>> T randomAction(Class<T> actionClass) {
 public void setExoticCustomization() {
   // 1. Randomless:
   // 1a. mouse
-  scene.removeMouseButtonBinding(Target.EYE, CENTER);
-  scene.setMouseButtonBinding(Target.EYE, Event.SHIFT, LEFT, DOF2Action.TRANSLATE); 
-  scene.setMouseButtonBinding(Target.FRAME, RIGHT, DOF2Action.TRANSLATE);
-  scene.setMouseClickBinding(Target.FRAME, Event.SHIFT, RIGHT, 2, ClickAction.ALIGN_FRAME);  
-  scene.setMouseWheelBinding(Target.FRAME, Event.CTRL, DOF1Action.ZOOM_ON_ANCHOR);  
+  mouse.removeButtonBinding(Target.EYE, CENTER);
+  mouse.setButtonBinding(Target.EYE, Event.SHIFT, LEFT, DOF2Action.TRANSLATE); 
+  mouse.setButtonBinding(Target.FRAME, RIGHT, DOF2Action.TRANSLATE);
+  mouse.setClickBinding(Target.FRAME, Event.SHIFT, RIGHT, 2, ClickAction.ALIGN_FRAME);  
+  mouse.setWheelBinding(Target.FRAME, Event.CTRL, DOF1Action.ZOOM_ON_ANCHOR);  
   // 1b. keyboard
-  scene.setKeyboardShortcut(Event.CTRL, java.awt.event.KeyEvent.VK_A, KeyboardAction.TOGGLE_GRID_VISUAL_HINT);
+  keyboard.setShortcut(Event.CTRL, java.awt.event.KeyEvent.VK_A, KeyboardAction.TOGGLE_GRID_VISUAL_HINT);
   // 2. Random
   // 2a. mouse
-  scene.setMouseButtonBinding(Target.FRAME, Event.CTRL, LEFT, randomAction(DOF2Action.class));
-  scene.setMouseButtonBinding(Target.EYE, RIGHT, randomAction(DOF2Action.class));
-  scene.setMouseClickBinding(Target.EYE, LEFT, randomAction(ClickAction.class));
-  scene.setMouseWheelBinding(Target.EYE, randomAction(DOF1Action.class));
+  mouse.setButtonBinding(Target.FRAME, Event.CTRL, LEFT, randomAction(DOF2Action.class));
+  mouse.setButtonBinding(Target.EYE, RIGHT, randomAction(DOF2Action.class));
+  mouse.setClickBinding(Target.EYE, LEFT, randomAction(ClickAction.class));
+  mouse.setWheelBinding(Target.EYE, randomAction(DOF1Action.class));
   // 2b. keyboard
-  scene.setKeyboardShortcut('a', randomAction(KeyboardAction.class));
+  keyboard.setShortcut('a', randomAction(KeyboardAction.class));
 }
 
 public void keyPressed() {
   if(key == ' ')
     setExoticCustomization();
   if(key == 'u') {
-    scene.setMouseAsArcball();
-    scene.setDefaultKeyboardShortcuts();
+    mouse.setAsArcball();
+    keyboard.setDefaultShortcuts();
   }
   if(key == 'q') {
     String info;

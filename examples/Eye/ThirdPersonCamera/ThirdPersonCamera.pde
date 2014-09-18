@@ -82,11 +82,11 @@ public void keyPressed() {
   if ( key == ' ' )
     if ( scene.avatar() == null ) {
       scene.setAvatar(avatar);
-      scene.setMouseAsThirdPerson();
+      scene.mouseAgent().setAsThirdPerson();
     }
     else {
       scene.unsetAvatar();
-      scene.setMouseAsArcball();
+      scene.mouseAgent().setAsArcball();
       scene.eye().interpolateToFitScene();
     }
   if(key=='i') ((InteractiveAvatarFrame) scene.avatar()).setInclination(((InteractiveAvatarFrame) scene.avatar()).inclination() - PI / 64);

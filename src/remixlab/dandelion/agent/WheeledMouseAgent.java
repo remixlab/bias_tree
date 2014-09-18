@@ -28,14 +28,25 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	DOF2Event					event, pressEvent;
 	float							dFriction;
 	InteractiveFrame	iFrame;
-	protected int LEFT = 1, CENTER = 2, RIGHT = 3;
-	
+	protected int			left	= 1, center = 2, right = 3;
+
+	/**
+	 * Same as {@code return buttonModifiersFix(BogusEvent.NOMODIFIER_MASK, button)}.
+	 * 
+	 * @see #buttonModifiersFix(int, int)
+	 */
 	public int buttonModifiersFix(int button) {
 		return buttonModifiersFix(BogusEvent.NOMODIFIER_MASK, button);
 	}
-	
-	public int buttonModifiersFix(int m, int button) {
-		return m;
+
+	/**
+	 * Hack to deal with some platforms not reporting correctly the mouse event mask, such as with Processing:
+	 * https://github.com/processing/processing/issues/1693
+	 * <p>
+	 * Default implementation simple returns the same mask.
+	 */
+	public int buttonModifiersFix(int mask, int button) {
+		return mask;
 	}
 
 	/**
@@ -52,7 +63,7 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 				new MotionProfile<DOF2Action>(),
 				new MotionProfile<DOF2Action>(),
 				new ClickProfile<ClickAction>(),
-				new ClickProfile<ClickAction>(), scn, n); 
+				new ClickProfile<ClickAction>(), scn, n);
 	}
 
 	@Override
@@ -94,6 +105,10 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 		updateTrackedGrabber(event);
 	}
 
+	/**
+	 * Begin interaction and call {@link #handle(BogusEvent)} on the given event. Keeps track of the {@link #pressEvent()}
+	 * .
+	 */
 	public void press(DOF2Event e) {
 		event = e;
 		pressEvent = event.get();
@@ -158,6 +173,9 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 		}
 	}
 
+	/**
+	 * Ends interaction and calls {@link #updateTrackedGrabber(BogusEvent)} on the given event.
+	 */
 	public void release(DOF2Event e) {
 		DOF2Event prevEvent = lastEvent().get();
 		event = e;
@@ -185,74 +203,169 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 		if (drive && inputGrabber() instanceof InteractiveFrame)
 			((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius());
 	}
-	
+
+	/**
+	 * Return the last press event processed by the agent.
+	 * 
+	 * @see #press(DOF2Event)
+	 */
 	public DOF2Event pressEvent() {
 		return pressEvent;
 	}
 
+	/**
+	 * Return the last event processed by the agent.
+	 */
 	public DOF2Event lastEvent() {
 		return event;
 	}
-	
+
 	// HIGH-LEVEL
-	
+
+	/**
+	 * Set mouse bindings as 'first-person':
+	 * <p>
+	 * 1. <b>InteractiveFrame bindings</b><br>
+	 * Left button -> ROTATE<br>
+	 * Center button -> SCALE<br>
+	 * Right button -> TRANSLATE<br>
+	 * Shift + Center button -> SCREEN_TRANSLATE<br>
+	 * Shift + Right button -> SCREEN_ROTATE<br>
+	 * <p>
+	 * 2. <b>InteractiveEyeFrame bindings</b><br>
+	 * Left button -> MOVE_FORWARD<br>
+	 * Center button -> LOOK_AROUND<br>
+	 * Right button -> MOVE_BACKWARD<br>
+	 * Shift + Left button -> ROLL<br>
+	 * Shift + Center button -> DRIVE<br>
+	 * Ctrl + Wheel -> ROLL<br>
+	 * Shift + Wheel -> DRIVE<br>
+	 * <p>
+	 * Also set the following (common) bindings are:
+	 * <p>
+	 * 2 left clicks -> ALIGN_FRAME<br>
+	 * 2right clicks -> CENTER_FRAME<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * 
+	 * @see #setAsArcball()
+	 * @see #setAsThirdPerson()
+	 */
 	public void setAsFirstPerson() {
 		resetAllProfiles();
-		eyeProfile().setBinding(buttonModifiersFix(LEFT), LEFT, DOF2Action.MOVE_FORWARD);
-		eyeProfile().setBinding(buttonModifiersFix(RIGHT), RIGHT, DOF2Action.MOVE_BACKWARD);
-		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, LEFT), LEFT, DOF2Action.ROTATE_Z);
+		eyeProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.MOVE_FORWARD);
+		eyeProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.MOVE_BACKWARD);
+		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, left), left, DOF2Action.ROTATE_Z);
 		eyeWheelProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF1Action.ROTATE_Z);
 		if (scene.is3D()) {
-			eyeProfile().setBinding(buttonModifiersFix(CENTER), CENTER, DOF2Action.LOOK_AROUND);
-			eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, CENTER), CENTER, DOF2Action.DRIVE);
+			eyeProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.LOOK_AROUND);
+			eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.DRIVE);
 		}
-		frameProfile().setBinding(buttonModifiersFix(LEFT), LEFT, DOF2Action.ROTATE);
-		frameProfile().setBinding(buttonModifiersFix(CENTER), CENTER, DOF2Action.SCALE);
-		frameProfile().setBinding(buttonModifiersFix(RIGHT), RIGHT, DOF2Action.TRANSLATE);
-		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, CENTER), CENTER, DOF2Action.SCREEN_TRANSLATE);
-		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, RIGHT), RIGHT, DOF2Action.SCREEN_ROTATE);
+		frameProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
+		frameProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.SCALE);
+		frameProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
+		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
+		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);
 		setCommonBindings();
 	}
 
+	/**
+	 * Set mouse bindings as third-person:
+	 * <p>
+	 * Left button -> MOVE_FORWARD<br>
+	 * Center button -> LOOK_AROUND<br>
+	 * Right button -> MOVE_BACKWARD<br>
+	 * Shift + Left button -> ROLL<br>
+	 * Shift + Center button -> DRIVE<br>
+	 * <p>
+	 * Also set the following (common) bindings are:
+	 * <p>
+	 * 2 left clicks -> ALIGN_FRAME<br>
+	 * 2right clicks -> CENTER_FRAME<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * 
+	 * @see #setAsArcball()
+	 * @see #setAsFirstPerson()
+	 */
 	public void setAsThirdPerson() {
 		resetAllProfiles();
-		frameProfile().setBinding(buttonModifiersFix(LEFT), LEFT, DOF2Action.MOVE_FORWARD);
-		frameProfile().setBinding(buttonModifiersFix(RIGHT), RIGHT, DOF2Action.MOVE_BACKWARD);
-		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, LEFT), LEFT, DOF2Action.ROTATE_Z);
+		frameProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.MOVE_FORWARD);
+		frameProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.MOVE_BACKWARD);
+		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, left), left, DOF2Action.ROTATE_Z);
 		if (scene.is3D()) {
-			frameProfile().setBinding(buttonModifiersFix(CENTER), CENTER, DOF2Action.LOOK_AROUND);
-			frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, CENTER), CENTER, DOF2Action.DRIVE);
+			frameProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.LOOK_AROUND);
+			frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.DRIVE);
 		}
 		setCommonBindings();
 	}
 
+	/**
+	 * Set mouse bindings as 'arcball':
+	 * <p>
+	 * 1. <b>InteractiveFrame bindings</b><br>
+	 * Left button -> ROTATE<br>
+	 * Center button -> SCALE<br>
+	 * Right button -> TRANSLATE<br>
+	 * Shift + Center button -> SCREEN_TRANSLATE<br>
+	 * Shift + Right button -> SCREEN_ROTATE<br>
+	 * <p>
+	 * 2. <b>InteractiveEyeFrame bindings</b><br>
+	 * Left button -> ROTATE<br>
+	 * Center button -> ZOOM<br>
+	 * Right button -> TRANSLATE<br>
+	 * Shift + Left button -> ZOOM_ON_REGION<br>
+	 * Shift + Center button -> SCREEN_TRANSLATE<br>
+	 * Shift + Right button -> SCREEN_ROTATE.
+	 * <p>
+	 * Also set the following (common) bindings are:
+	 * <p>
+	 * 2 left clicks -> ALIGN_FRAME<br>
+	 * 2right clicks -> CENTER_FRAME<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * 
+	 * @see #setAsFirstPerson()
+	 * @see #setAsThirdPerson()
+	 */
 	public void setAsArcball() {
 		resetAllProfiles();
-		eyeProfile().setBinding(buttonModifiersFix(LEFT), LEFT, DOF2Action.ROTATE);
-		eyeProfile().setBinding(buttonModifiersFix(CENTER), CENTER,	scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
-		eyeProfile().setBinding(buttonModifiersFix(RIGHT), RIGHT, DOF2Action.TRANSLATE);
-		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, LEFT), LEFT, DOF2Action.ZOOM_ON_REGION);
-		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, CENTER), CENTER, DOF2Action.SCREEN_TRANSLATE);
-		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, RIGHT), RIGHT, DOF2Action.SCREEN_ROTATE);
-		frameProfile().setBinding(buttonModifiersFix(LEFT), LEFT, DOF2Action.ROTATE);
-		frameProfile().setBinding(buttonModifiersFix(CENTER), CENTER, DOF2Action.SCALE);
-		frameProfile().setBinding(buttonModifiersFix(RIGHT), RIGHT, DOF2Action.TRANSLATE);
-		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, CENTER), CENTER, DOF2Action.SCREEN_TRANSLATE);
-		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, RIGHT), RIGHT, DOF2Action.SCREEN_ROTATE);
+		eyeProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
+		eyeProfile().setBinding(buttonModifiersFix(center), center, scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
+		eyeProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
+		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, left), left, DOF2Action.ZOOM_ON_REGION);
+		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
+		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);
+		frameProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
+		frameProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.SCALE);
+		frameProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
+		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
+		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);
 		setCommonBindings();
 	}
 
+	/**
+	 * Set the following (common) bindings:
+	 * <p>
+	 * 2 left clicks -> ALIGN_FRAME<br>
+	 * 2right clicks -> CENTER_FRAME<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * <p>
+	 * which are used in {@link #setAsArcball()}, {@link #setAsFirstPerson()} and {@link #setAsThirdPerson()}
+	 */
 	protected void setCommonBindings() {
-		eyeClickProfile().setBinding(buttonModifiersFix(LEFT), LEFT, 2, ClickAction.ALIGN_FRAME);
-		eyeClickProfile().setBinding(buttonModifiersFix(RIGHT), RIGHT, 2, ClickAction.CENTER_FRAME);
-		frameClickProfile().setBinding(buttonModifiersFix(LEFT), LEFT, 2, ClickAction.ALIGN_FRAME);
-		frameClickProfile().setBinding(buttonModifiersFix(RIGHT), RIGHT, 2, ClickAction.CENTER_FRAME);
-		eyeWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON,	scene.is3D() ? DOF1Action.ZOOM : DOF1Action.SCALE);
+		eyeClickProfile().setBinding(buttonModifiersFix(left), left, 2, ClickAction.ALIGN_FRAME);
+		eyeClickProfile().setBinding(buttonModifiersFix(right), right, 2, ClickAction.CENTER_FRAME);
+		frameClickProfile().setBinding(buttonModifiersFix(left), left, 2, ClickAction.ALIGN_FRAME);
+		frameClickProfile().setBinding(buttonModifiersFix(right), right, 2, ClickAction.CENTER_FRAME);
+		eyeWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON,
+				scene.is3D() ? DOF1Action.ZOOM : DOF1Action.SCALE);
 		frameWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON, DOF1Action.SCALE);
 	}
-	
+
 	// WRAPPERS
-	
+
 	/**
 	 * Binds the mask-button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target}
 	 * (EYE or FRAME).
@@ -282,7 +395,7 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	/**
 	 * Removes the button mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeButtonBinding(Target target, int button) {		
+	public void removeButtonBinding(Target target, int button) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		profile.removeBinding(buttonModifiersFix(button), button);
 	}

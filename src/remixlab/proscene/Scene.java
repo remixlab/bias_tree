@@ -203,10 +203,10 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Main constructor defining a left-handed Processing compatible Scene. Calls {@link #setMatrixHelper(MatrixHelper)}
 	 * using a customized {@link remixlab.dandelion.core.MatrixHelper} depending on the {@code pg} type (see
-	 * {@link remixlab.proscene.Java2DMatrixHelper} and {@link remixlab.proscene.GLMatrixHelper}). The
-	 * constructor instantiates the {@link #inputHandler()} and the {@link #timingHandler()}, sets the AXIS and GRID
-	 * visual hint flags, instantiates the {@link #eye()} (a {@link remixlab.dandelion.core.Camera} if the Scene
-	 * {@link #is3D()} or a {@link remixlab.dandelion.core.Window} if the Scene {@link #is2D()}). It also instantiates the
+	 * {@link remixlab.proscene.Java2DMatrixHelper} and {@link remixlab.proscene.GLMatrixHelper}). The constructor
+	 * instantiates the {@link #inputHandler()} and the {@link #timingHandler()}, sets the AXIS and GRID visual hint
+	 * flags, instantiates the {@link #eye()} (a {@link remixlab.dandelion.core.Camera} if the Scene {@link #is3D()} or a
+	 * {@link remixlab.dandelion.core.Window} if the Scene {@link #is2D()}). It also instantiates the
 	 * {@link #keyboardAgent()} and the {@link #mouseAgent()}, and finally calls {@link #init()}.
 	 * <p>
 	 * An off-screen Processing Scene is defined if {@code pg != p.g}. In this case the {@code x} and {@code y} parameters
@@ -251,8 +251,8 @@ public class Scene extends AbstractScene implements PConstants {
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
 		// Misc stuff:
-		setDottedGrid(!(platform() == Platform.ANDROID || is2D()));
-		if (platform() == Platform.DESKTOP || platform() == Platform.ANDROID)
+		setDottedGrid(!(platform() == Platform.PROCESSING_ANDROID || is2D()));
+		if (platform() == Platform.PROCESSING_DESKTOP || platform() == Platform.PROCESSING_ANDROID)
 			this.setNonSeqTimers();
 		// pApplet().frameRate(100);
 
@@ -269,9 +269,9 @@ public class Scene extends AbstractScene implements PConstants {
 			String value = (String) p.get(key);
 			if (key.contains("java.vm.vendor")) {
 				if (Pattern.compile(Pattern.quote("Android"), Pattern.CASE_INSENSITIVE).matcher(value).find())
-					platform = Platform.ANDROID;
+					platform = Platform.PROCESSING_ANDROID;
 				else
-					platform = Platform.DESKTOP;
+					platform = Platform.PROCESSING_DESKTOP;
 				break;
 			}
 		}
@@ -814,35 +814,35 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setKeyboardShortcut(Character key, KeyboardAction action) {
-		keyboardAgent().keyboardProfile().setBinding(key, action);
+		keyboardAgent().setShortcut(key, action);
 	}
 
 	/**
 	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setKeyboardShortcut(int mask, int vKey, KeyboardAction action) {
-		keyboardAgent().keyboardProfile().setBinding(mask, vKey, action);
+		keyboardAgent().setShortcut(mask, vKey, action);
 	}
 
 	/**
 	 * Removes key shortcut binding (if present).
 	 */
 	public void removeKeyboardShortcut(Character key) {
-		keyboardAgent().keyboardProfile().removeBinding(key);
+		keyboardAgent().removeShortcut(key);
 	}
 
 	/**
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
 	public void removeKeyboardShortcut(int mask, int vKey) {
-		keyboardAgent().keyboardProfile().removeBinding(mask, vKey);
+		keyboardAgent().removeShortcut(mask, vKey);
 	}
 
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasKeyboardShortcut(Character key) {
-		return keyboardAgent().keyboardProfile().hasBinding(key);
+		return keyboardAgent().hasShortcut(key);
 	}
 
 	/**
@@ -859,14 +859,14 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasKeyboardShortcut(int mask, int vKey) {
-		return keyboardAgent().keyboardProfile().hasBinding(mask, vKey);
+		return keyboardAgent().hasShortcut(mask, vKey);
 	}
 
 	/**
 	 * Returns {@code true} if the keyboard action is bound.
 	 */
 	public boolean isKeyboardActionBound(KeyboardAction action) {
-		return keyboardAgent().keyboardProfile().isActionBound(action);
+		return keyboardAgent().isActionBound(action);
 	}
 
 	/**
@@ -884,7 +884,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * is bound to the given shortcut.
 	 */
 	public KeyboardAction keyboardAction(Character key) {
-		return (KeyboardAction) keyboardAgent().keyboardProfile().action(key);
+		return (KeyboardAction) keyboardAgent().action(key);
 	}
 
 	/**
@@ -892,7 +892,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
 	public KeyboardAction keyboardAction(int mask, int vKey) {
-		return (KeyboardAction) keyboardAgent().keyboardProfile().action(mask, vKey);
+		return (KeyboardAction) keyboardAgent().action(mask, vKey);
 	}
 
 	@Override
@@ -946,9 +946,8 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #keyboardAgent()
 	 */
 	public MouseAgent mouseAgent() {
-		if (platform() == Platform.ANDROID) {
-			AbstractScene.showPlatformVariationWarning("mouseAgent", platform());
-			return null;
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene mouseAgent() is not available in Android mode");
 		}
 		return (MouseAgent) motionAgent();
 	}
@@ -958,7 +957,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 */
 	@Deprecated
 	public boolean isMouseAgentEnabled() {
-		if (platform() == Platform.ANDROID) {
+		if (platform() == Platform.PROCESSING_ANDROID) {
 			AbstractScene.showPlatformVariationWarning("isMouseAgentEnabled", platform());
 			return false;
 		}
@@ -985,7 +984,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 */
 	@Deprecated
 	public void enableMouseAgent() {
-		if (platform() == Platform.ANDROID) {
+		if (platform() == Platform.PROCESSING_ANDROID) {
 			AbstractScene.showPlatformVariationWarning("enableMouseAgent", platform());
 			return;
 		}
@@ -2199,7 +2198,7 @@ public class Scene extends AbstractScene implements PConstants {
 		drawCross(v.vec[0], v.vec[1], 15);
 		pg().popStyle();
 	}
-	
+
 	@Override
 	protected void drawScreenRotateHint() {
 		pg().pushStyle();
@@ -2216,14 +2215,14 @@ public class Scene extends AbstractScene implements PConstants {
 		endScreenDrawing();
 		pg().popStyle();
 	}
-	
+
 	@Override
 	protected void drawZoomWindowHint() {
 		if (!(motionAgent() instanceof MouseAgent))
 			return;
 		pg().pushStyle();
 		float p1x = mouseAgent().pressEvent().x() - originCorner().x();
-		float p1y = mouseAgent().pressEvent().y() - originCorner().y();		
+		float p1y = mouseAgent().pressEvent().y() - originCorner().y();
 		float p2x = mouseAgent().lastEvent().x() - originCorner().x();
 		float p2y = mouseAgent().lastEvent().y() - originCorner().y();
 		beginScreenDrawing();

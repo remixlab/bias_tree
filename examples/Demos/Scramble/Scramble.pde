@@ -29,7 +29,7 @@ void setup() {
   board = new Board(3, null); // create a new 3x3 board
   scene.camera().setPosition(new Vec(-20, 100, 230)); // move the camera
   scene.camera().lookAt(new Vec(0, 0, 0)); // make the camera look at the center of the board
-  scene.setMouseClickBinding(Target.FRAME, LEFT, 1, ClickAction.CUSTOM);
+  scene.mouseAgent().setClickBinding(Target.FRAME, LEFT, 1, ClickAction.CUSTOM);
   font1 = loadFont("FreeSans-16.vlw");
   font2 = loadFont("FreeSans-36.vlw");
 }

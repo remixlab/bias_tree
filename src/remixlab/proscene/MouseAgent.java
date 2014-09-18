@@ -24,13 +24,13 @@ import remixlab.dandelion.agent.WheeledMouseAgent;
 public class MouseAgent extends WheeledMouseAgent {
 	public MouseAgent(Scene scn, String n) {
 		super(scn, n);
-		LEFT = PApplet.LEFT;
-		CENTER = PApplet.CENTER;
-		RIGHT = PApplet.RIGHT;
+		left = PApplet.LEFT;
+		center = PApplet.CENTER;
+		right = PApplet.RIGHT;
 		setAsArcball();
-		inputHandler().unregisterAgent(this);//TODO record why this line?
+		inputHandler().unregisterAgent(this);// TODO record why this line?
 	}
-	
+
 	/**
 	 * Hack to deal with this: https://github.com/processing/processing/issues/1693 is to override all the following so
 	 * that:
@@ -44,14 +44,17 @@ public class MouseAgent extends WheeledMouseAgent {
 	public int buttonModifiersFix(int m, int button) {
 		int mask = m;
 		// ALT
-		if (button == CENTER)
+		if (button == center)
 			mask = (BogusEvent.ALT | m);
 		// META
-		else if (button == RIGHT)
+		else if (button == right)
 			mask = (BogusEvent.META | m);
 		return mask;
 	}
 
+	/**
+	 * Processing mouseEvent method to be registered at the PApplet's instance.
+	 */
 	public void mouseEvent(processing.event.MouseEvent e) {
 		if (e.getAction() == processing.event.MouseEvent.MOVE) {
 			move(new DOF2Event(lastEvent(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y()));
