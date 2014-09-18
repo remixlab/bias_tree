@@ -884,7 +884,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * is bound to the given shortcut.
 	 */
 	public KeyboardAction keyboardAction(Character key) {
-		return (KeyboardAction) keyboardAgent().action(key);
+		return keyboardAgent().action(key);
 	}
 
 	/**
@@ -892,7 +892,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
 	public KeyboardAction keyboardAction(int mask, int vKey) {
-		return (KeyboardAction) keyboardAgent().action(mask, vKey);
+		return keyboardAgent().action(mask, vKey);
 	}
 
 	@Override
