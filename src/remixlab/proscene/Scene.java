@@ -18,12 +18,17 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
 
-import java.lang.reflect.Method;
-import java.nio.FloatBuffer;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
+
+// begin: GWT-incompatible
+///*
+import java.lang.reflect.Method;
+import java.nio.FloatBuffer;
+// end: GWT-incompatible
+//*/
 
 /**
  * A 2D or 3D interactive Processing Scene. The Scene is a specialization of the
@@ -69,6 +74,176 @@ import java.util.regex.Pattern;
  * <i>AnimationHandler</i>.
  */
 public class Scene extends AbstractScene implements PConstants {
+	// begin: GWT-incompatible
+	// /*
+	// Reflection
+	// 1. Draw
+	protected Object						drawHandlerObject;
+	// The method in drawHandlerObject to execute
+	protected Method						drawHandlerMethod;
+	// the name of the method to handle the event
+	protected String						drawHandlerMethodName;
+	// 2. Animation
+	// The object to handle the animation
+	protected Object						animateHandlerObject;
+	// The method in animateHandlerObject to execute
+	protected Method						animateHandlerMethod;
+	// the name of the method to handle the animation
+	protected String						animateHandlerMethodName;
+
+	// Timing
+	protected boolean						javaTiming;
+	// end: GWT-incompatible
+	// */
+
+	public static final String	prettyVersion	= "2.1.0";
+
+	public static final String	version				= "21";
+
+	// P R O C E S S I N G A P P L E T A N D O B J E C T S
+	protected PApplet						parent;
+	protected PGraphics					pgraphics;
+
+	// E X C E P T I O N H A N D L I N G
+	protected int								beginOffScreenDrawingCalls;
+
+	// CONSTRUCTORS
+
+	/**
+	 * Constructor that defines an on-screen Processing Scene. Same as {@code this(p, p.g}.
+	 * 
+	 * @see #Scene(PApplet, PGraphics)
+	 * @see #Scene(PApplet, PGraphics, int, int)
+	 */
+	public Scene(PApplet p) {
+		this(p, p.g);
+	}
+
+	/**
+	 * Same as {@code this(p, renderer, 0, 0)}.
+	 * 
+	 * @see #Scene(PApplet)
+	 * @see #Scene(PApplet, PGraphics, int, int)
+	 */
+	public Scene(PApplet p, PGraphics renderer) {
+		this(p, renderer, 0, 0);
+	}
+
+	/**
+	 * Main constructor defining a left-handed Processing compatible Scene. Calls {@link #setMatrixHelper(MatrixHelper)}
+	 * using a customized {@link remixlab.dandelion.core.MatrixHelper} depending on the {@code pg} type (see
+	 * {@link remixlab.proscene.Java2DMatrixHelper} and {@link remixlab.proscene.GLMatrixHelper}). The constructor
+	 * instantiates the {@link #inputHandler()} and the {@link #timingHandler()}, sets the AXIS and GRID visual hint
+	 * flags, instantiates the {@link #eye()} (a {@link remixlab.dandelion.core.Camera} if the Scene {@link #is3D()} or a
+	 * {@link remixlab.dandelion.core.Window} if the Scene {@link #is2D()}). It also instantiates the
+	 * {@link #keyboardAgent()} and the {@link #mouseAgent()}, and finally calls {@link #init()}.
+	 * <p>
+	 * An off-screen Processing Scene is defined if {@code pg != p.g}. In this case the {@code x} and {@code y} parameters
+	 * define the position of the upper-left corner where the off-screen Scene is expected to be displayed, e.g., for
+	 * instance with a call to Processing the {@code image(img, x, y)} function. If {@code pg == p.g}) (which defines an
+	 * on-screen Scene, see also {@link #isOffscreen()}), the values of x and y are meaningless (both are set to 0 to be
+	 * taken as dummy values).
+	 * 
+	 * @see remixlab.dandelion.core.AbstractScene#AbstractScene()
+	 * @see #Scene(PApplet)
+	 * @see #Scene(PApplet, PGraphics)
+	 */
+	public Scene(PApplet p, PGraphics pg, int x, int y) {
+		// 1. P5 objects
+		parent = p;
+		pgraphics = pg;
+
+		// 2. Matrix helper
+		if (pg instanceof PGraphics3D)
+			setMatrixHelper(new GLMatrixHelper(this, (PGraphics3D) pg));
+		else if (pg instanceof PGraphics2D)
+			setMatrixHelper(new GLMatrixHelper(this, (PGraphics2D) pg));
+		else
+			setMatrixHelper(new Java2DMatrixHelper(this, pg));
+
+		// 3. Eye
+		setLeftHanded();
+		width = pg.width;
+		height = pg.height;
+		eye = is3D() ? new Camera(this) : new Window(this);
+		setEye(eye());// calls showAll();
+
+		// 4. Off-screen?
+		offscreen = pg != p.g;
+		upperLeftCorner = offscreen ? new Point(x, y) : new Point(0, 0);
+
+		// 5. Create agents and register P5 methods
+		defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
+		enableKeyboardAgent();
+		defMotionAgent = new MouseAgent(this, "proscene_mouse");
+		enableMotionAgent();
+		pApplet().registerMethod("pre", this);
+		pApplet().registerMethod("draw", this);
+		// Misc stuff:
+		setDottedGrid(!(platform() == Platform.PROCESSING_ANDROID || is2D()));
+		if (platform() == Platform.PROCESSING_DESKTOP || platform() == Platform.PROCESSING_ANDROID)
+			this.setNonSeqTimers();
+		// pApplet().frameRate(100);
+
+		// 6. Init should be called only once
+		init();
+	}
+
+	// P5 STUFF
+
+	/**
+	 * Returns the PApplet instance this Scene is related to.
+	 */
+	public PApplet pApplet() {
+		return parent;
+	}
+
+	/**
+	 * Returns the PGraphics instance this Scene is related to. It may be the PApplets one, if the Scene is on-screen or
+	 * an user-defined if the Scene {@link #isOffscreen()}.
+	 */
+	public PGraphics pg() {
+		return pgraphics;
+	}
+
+	@Override
+	public int width() {
+		return pg().width;
+	}
+
+	@Override
+	public int height() {
+		return pg().height;
+	}
+
+	// DIM
+
+	@Override
+	public boolean is3D() {
+		return (pgraphics instanceof PGraphics3D);
+	}
+
+	// CHOOSE PLATFORM
+
+	@Override
+	protected void setPlatform() {
+		Properties p = System.getProperties();
+		Enumeration<?> keys = p.keys();
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			String value = (String) p.get(key);
+			if (key.contains("java.vm.vendor")) {
+				if (Pattern.compile(Pattern.quote("Android"), Pattern.CASE_INSENSITIVE).matcher(value).find())
+					platform = Platform.PROCESSING_ANDROID;
+				else
+					platform = Platform.PROCESSING_DESKTOP;
+				break;
+			}
+		}
+	}
+
+	// P5-WRAPPERS
+
 	/**
 	 * Wrapper for PGraphics.vertex(x,y,z)
 	 */
@@ -151,133 +326,95 @@ public class Scene extends AbstractScene implements PConstants {
 				a[4], a[5], a[7]);
 	}
 
-	public static final String	prettyVersion	= "2.1.0";
+	// firstly, of course, dirty things that I used to love :P
 
-	public static final String	version				= "21";
-
-	// P R O C E S S I N G A P P L E T A N D O B J E C T S
-	protected PApplet						parent;
-	protected PGraphics					pgraphics;
-
-	// E X C E P T I O N H A N D L I N G
-	protected int								beginOffScreenDrawingCalls;
-
-	// R E G I S T E R D R A W A N D A N I M A T I O N M E T H O D S
-	// Draw
-	/** The object to handle the draw event */
-	protected Object						drawHandlerObject;
-	/** The method in drawHandlerObject to execute */
-	protected Method						drawHandlerMethod;
-	/** the name of the method to handle the event */
-	protected String						drawHandlerMethodName;
-	// Animation
-	/** The object to handle the animation */
-	protected Object						animateHandlerObject;
-	/** The method in animateHandlerObject to execute */
-	protected Method						animateHandlerMethod;
-	/** the name of the method to handle the animation */
-	protected String						animateHandlerMethodName;
-
-	protected boolean						javaTiming;
+	// DEFAULT MOTION-AGENT
 
 	/**
-	 * Constructor that defines an on-screen Processing Scene. Same as {@code this(p, p.g}.
+	 * Enables Proscene mouse handling through the {@link #mouseAgent()}.
 	 * 
-	 * @see #Scene(PApplet, PGraphics)
-	 * @see #Scene(PApplet, PGraphics, int, int)
+	 * @see #isMotionAgentEnabled()
+	 * @see #disableMotionAgent()
+	 * @see #enableKeyboardAgent()
 	 */
-	public Scene(PApplet p) {
-		this(p, p.g);
-	}
-
-	/**
-	 * Same as {@code this(p, renderer, 0, 0)}.
-	 * 
-	 * @see #Scene(PApplet)
-	 * @see #Scene(PApplet, PGraphics, int, int)
-	 */
-	public Scene(PApplet p, PGraphics renderer) {
-		this(p, renderer, 0, 0);
-	}
-
-	/**
-	 * Main constructor defining a left-handed Processing compatible Scene. Calls {@link #setMatrixHelper(MatrixHelper)}
-	 * using a customized {@link remixlab.dandelion.core.MatrixHelper} depending on the {@code pg} type (see
-	 * {@link remixlab.proscene.Java2DMatrixHelper} and {@link remixlab.proscene.GLMatrixHelper}). The constructor
-	 * instantiates the {@link #inputHandler()} and the {@link #timingHandler()}, sets the AXIS and GRID visual hint
-	 * flags, instantiates the {@link #eye()} (a {@link remixlab.dandelion.core.Camera} if the Scene {@link #is3D()} or a
-	 * {@link remixlab.dandelion.core.Window} if the Scene {@link #is2D()}). It also instantiates the
-	 * {@link #keyboardAgent()} and the {@link #mouseAgent()}, and finally calls {@link #init()}.
-	 * <p>
-	 * An off-screen Processing Scene is defined if {@code pg != p.g}. In this case the {@code x} and {@code y} parameters
-	 * define the position of the upper-left corner where the off-screen Scene is expected to be displayed, e.g., for
-	 * instance with a call to Processing the {@code image(img, x, y)} function. If {@code pg == p.g}) (which defines an
-	 * on-screen Scene, see also {@link #isOffscreen()}), the values of x and y are meaningless (both are set to 0 to be
-	 * taken as dummy values).
-	 * 
-	 * @see remixlab.dandelion.core.AbstractScene#AbstractScene()
-	 * @see #Scene(PApplet)
-	 * @see #Scene(PApplet, PGraphics)
-	 */
-	public Scene(PApplet p, PGraphics pg, int x, int y) {
-		// 1. P5 objects
-		parent = p;
-		pgraphics = pg;
-
-		// 2. Matrix helper
-		if (pg instanceof PGraphics3D)
-			setMatrixHelper(new GLMatrixHelper(this, (PGraphics3D) pg));
-		else if (pg instanceof PGraphics2D)
-			setMatrixHelper(new GLMatrixHelper(this, (PGraphics2D) pg));
-		else
-			setMatrixHelper(new Java2DMatrixHelper(this, pg));
-
-		// 3. Eye
-		setLeftHanded();
-		width = pg.width;
-		height = pg.height;
-		eye = is3D() ? new Camera(this) : new Window(this);
-		setEye(eye());// calls showAll();
-
-		// 4. Off-screen?
-		offscreen = pg != p.g;
-		upperLeftCorner = offscreen ? new Point(x, y) : new Point(0, 0);
-
-		// 5. Create agents and register P5 methods
-		defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
-		enableKeyboardAgent();
-		defMotionAgent = new MouseAgent(this, "proscene_mouse");
-		enableMotionAgent();
-		pApplet().registerMethod("pre", this);
-		pApplet().registerMethod("draw", this);
-		// Misc stuff:
-		setDottedGrid(!(platform() == Platform.PROCESSING_ANDROID || is2D()));
-		if (platform() == Platform.PROCESSING_DESKTOP || platform() == Platform.PROCESSING_ANDROID)
-			this.setNonSeqTimers();
-		// pApplet().frameRate(100);
-
-		// 6. Init should be called only once
-		init();
-	}
-
 	@Override
-	protected void setPlatform() {
-		Properties p = System.getProperties();
-		Enumeration<?> keys = p.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
-			String value = (String) p.get(key);
-			if (key.contains("java.vm.vendor")) {
-				if (Pattern.compile(Pattern.quote("Android"), Pattern.CASE_INSENSITIVE).matcher(value).find())
-					platform = Platform.PROCESSING_ANDROID;
-				else
-					platform = Platform.PROCESSING_DESKTOP;
-				break;
-			}
+	public void enableMotionAgent() {
+		if (!inputHandler().isAgentRegistered(motionAgent())) {
+			inputHandler().registerAgent(motionAgent());
+			parent.registerMethod("mouseEvent", motionAgent());
 		}
 	}
 
-	// firstly, of course, dirty things that I love :P
+	/**
+	 * Disables the default mouse agent and returns it.
+	 * 
+	 * @see #isMotionAgentEnabled()
+	 * @see #enableMotionAgent()
+	 * @see #enableKeyboardAgent()
+	 */
+	@Override
+	public ActionWheeledBiMotionAgent<?> disableMotionAgent() {
+		if (inputHandler().isAgentRegistered(motionAgent())) {
+			parent.unregisterMethod("mouseEvent", motionAgent());
+			return (ActionWheeledBiMotionAgent<?>) inputHandler().unregisterAgent(motionAgent());
+		}
+		return motionAgent();
+	}
+
+	// MOUSE
+
+	/**
+	 * Returns the default mouse agent handling Processing mouse events. Simply returns a ProsceneMouse cast of the
+	 * {@link #motionAgent()}.
+	 * <p>
+	 * The use of {@link #motionAgent()} is preferable and encouraged since it's more general and platform independent,
+	 * i.e., it returns a "mouse agent" for the proscene desktop version or a "touch agent" for the android version.
+	 * <p>
+	 * If you plan to customize your mouse you can either use this method or one of the multiple high-level methods
+	 * provided (recommended and simpler way), such as {@code setMouseAsArcball}, {@code setMouseAsFirstPerson()},
+	 * {@code setMouseAsThirdPerson()}, {@code setMouseButtonBinding}, {@code setMouseClickBinding},
+	 * {@code setMouseWheelBinding}, etc. All those methods actually wrap the mouse agent to achieve their functionality.
+	 * 
+	 * @see #keyboardAgent()
+	 */
+	public MouseAgent mouseAgent() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene mouseAgent() is not available in Android mode");
+		}
+		return (MouseAgent) motionAgent();
+	}
+
+	/**
+	 * Use {@link #enableMotionAgent()} instead.
+	 */
+	@Deprecated
+	public void enableMouseAgent() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			AbstractScene.showPlatformVariationWarning("enableMouseAgent", platform());
+			return;
+		}
+		enableMotionAgent();
+	}
+
+	/**
+	 * Use {@link #disableMotionAgent()} instead.
+	 */
+	@Deprecated
+	public WheeledMouseAgent disableMouseAgent() {
+		return (WheeledMouseAgent) disableMotionAgent();
+	}
+
+	/**
+	 * Use {@link #isMotionAgentEnabled()} instead.
+	 */
+	@Deprecated
+	public boolean isMouseAgentEnabled() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			AbstractScene.showPlatformVariationWarning("isMouseAgentEnabled", platform());
+			return false;
+		}
+		return isMotionAgentEnabled();
+	}
 
 	/**
 	 * Set mouse bindings as 'arcball':
@@ -765,7 +902,7 @@ public class Scene extends AbstractScene implements PConstants {
 		return mouseAgent().clickAction(target, button);
 	}
 
-	// keyboard here
+	// KEYBOARD
 
 	/**
 	 * Restores the default keyboard shortcuts:
@@ -895,11 +1032,6 @@ public class Scene extends AbstractScene implements PConstants {
 		return keyboardAgent().action(mask, vKey);
 	}
 
-	@Override
-	public boolean is3D() {
-		return (pgraphics instanceof PGraphics3D);
-	}
-
 	/**
 	 * Enables Proscene keyboard handling through the {@link #keyboardAgent()}.
 	 * 
@@ -931,91 +1063,53 @@ public class Scene extends AbstractScene implements PConstants {
 		return keyboardAgent();
 	}
 
-	/**
-	 * Returns the default mouse agent handling Processing mouse events. Simply returns a ProsceneMouse cast of the
-	 * {@link #motionAgent()}.
-	 * <p>
-	 * The use of {@link #motionAgent()} is preferable and encouraged since it's more general and platform independent,
-	 * i.e., it returns a "mouse agent" for the proscene desktop version or a "touch agent" for the android version.
-	 * <p>
-	 * If you plan to customize your mouse you can either use this method or one of the multiple high-level methods
-	 * provided (recommended and simpler way), such as {@code setMouseAsArcball}, {@code setMouseAsFirstPerson()},
-	 * {@code setMouseAsThirdPerson()}, {@code setMouseButtonBinding}, {@code setMouseClickBinding},
-	 * {@code setMouseWheelBinding}, etc. All those methods actually wrap the mouse agent to achieve their functionality.
-	 * 
-	 * @see #keyboardAgent()
-	 */
-	public MouseAgent mouseAgent() {
-		if (platform() == Platform.PROCESSING_ANDROID) {
-			throw new RuntimeException("Proscene mouseAgent() is not available in Android mode");
-		}
-		return (MouseAgent) motionAgent();
-	}
+	// INFO
 
-	/**
-	 * Use {@link #isMotionAgentEnabled()} instead.
-	 */
-	@Deprecated
-	public boolean isMouseAgentEnabled() {
-		if (platform() == Platform.PROCESSING_ANDROID) {
-			AbstractScene.showPlatformVariationWarning("isMouseAgentEnabled", platform());
-			return false;
-		}
-		return isMotionAgentEnabled();
-	}
-
-	/**
-	 * Enables Proscene mouse handling through the {@link #mouseAgent()}.
-	 * 
-	 * @see #isMotionAgentEnabled()
-	 * @see #disableMotionAgent()
-	 * @see #enableKeyboardAgent()
-	 */
 	@Override
-	public void enableMotionAgent() {
-		if (!inputHandler().isAgentRegistered(motionAgent())) {
-			inputHandler().registerAgent(motionAgent());
-			parent.registerMethod("mouseEvent", motionAgent());
-		}
+	public String info() {
+		String info = super.info();
+
+		String l = Integer.toString(PApplet.LEFT) + "_BUTTON";
+		String c = Integer.toString(PApplet.CENTER) + "_BUTTON";
+		String r = Integer.toString(PApplet.RIGHT) + "_BUTTON";
+
+		info = info.replace(l, "LEFT_BUTTON").replace(c, "CENTER_BUTTON").replace(r, "RIGHT_BUTTON");
+		String keyboardtitle = keyboardAgent().name()
+				+ " (key-codes are defined here: http://docs.oracle.com/javase/7/docs/api/constant-values.html)";
+		info = info.replace(keyboardAgent().name(), keyboardtitle);
+
+		String vk_1 = "virtual_key (" + Integer.toString(49) + ")";
+		String vk_2 = "virtual_key (" + Integer.toString(50) + ")";
+		String vk_3 = "virtual_key (" + Integer.toString(51) + ")";
+		String vk_l = "virtual_key (" + Integer.toString(37) + ")";
+		String vk_u = "virtual_key (" + Integer.toString(38) + ")";
+		String vk_r = "virtual_key (" + Integer.toString(39) + ")";
+		String vk_d = "virtual_key (" + Integer.toString(40) + ")";
+
+		info = info.replace(vk_1, "VK_1").replace(vk_2, "VK_2").replace(vk_3, "VK_3")
+				.replace(vk_l, "VK_LEFT").replace(vk_u, "VK_UP").replace(vk_r, "VK_RIGHT").replace(vk_d, "VK_DOWN");
+
+		return info;
 	}
 
-	/**
-	 * Use {@link #enableMotionAgent()} instead.
-	 */
-	@Deprecated
-	public void enableMouseAgent() {
-		if (platform() == Platform.PROCESSING_ANDROID) {
-			AbstractScene.showPlatformVariationWarning("enableMouseAgent", platform());
-			return;
-		}
-		enableMotionAgent();
-	}
-
-	/**
-	 * Disables the default mouse agent and returns it.
-	 * 
-	 * @see #isMotionAgentEnabled()
-	 * @see #enableMotionAgent()
-	 * @see #enableKeyboardAgent()
-	 */
 	@Override
-	public ActionWheeledBiMotionAgent<?> disableMotionAgent() {
-		if (inputHandler().isAgentRegistered(motionAgent())) {
-			parent.unregisterMethod("mouseEvent", motionAgent());
-			return (ActionWheeledBiMotionAgent<?>) inputHandler().unregisterAgent(motionAgent());
+	public void displayInfo(boolean onConsole) {
+		if (onConsole)
+			System.out.println(info());
+		else { // on applet
+			pg().textFont(parent.createFont("Arial", 12));
+			beginScreenDrawing();
+			pg().fill(0, 255, 0);
+			pg().textLeading(20);
+			pg().text(info(), 10, 10, (pg().width - 20), (pg().height - 20));
+			endScreenDrawing();
 		}
-		return motionAgent();
 	}
 
-	/**
-	 * Use {@link #disableMotionAgent()} instead.
-	 */
-	@Deprecated
-	public WheeledMouseAgent disableMouseAgent() {
-		return (WheeledMouseAgent) disableMotionAgent();
-	}
+	// begin: GWT-incompatible
+	// /*
 
-	// 2. Associated objects
+	// TIMING
 
 	@Override
 	public void registerTimingTask(TimingTask task) {
@@ -1097,7 +1191,168 @@ public class Scene extends AbstractScene implements PConstants {
 			setSeqTimers();
 	}
 
-	// 5. Drawing methods
+	// DRAW METHOD REG
+
+	@Override
+	protected boolean invokeDrawHandler() {
+		// 3. Draw external registered method
+		if (drawHandlerObject != null) {
+			try {
+				drawHandlerMethod.invoke(drawHandlerObject, new Object[] { this });
+				return true;
+			} catch (Exception e) {
+				PApplet.println("Something went wrong when invoking your " + drawHandlerMethodName + " method");
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Attempt to add a 'draw' handler method to the Scene. The default event handler is a method that returns void and
+	 * has one single Scene parameter.
+	 * 
+	 * @param obj
+	 *          the object to handle the event
+	 * @param methodName
+	 *          the method to execute in the object handler class
+	 * 
+	 * @see #removeDrawHandler()
+	 * @see #invokeDrawHandler()
+	 */
+	public void addDrawHandler(Object obj, String methodName) {
+		try {
+			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
+			drawHandlerObject = obj;
+			drawHandlerMethodName = methodName;
+		} catch (Exception e) {
+			PApplet.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Unregisters the 'draw' handler method (if any has previously been added to the Scene).
+	 * 
+	 * @see #addDrawHandler(Object, String)
+	 * @see #invokeDrawHandler()
+	 */
+	public void removeDrawHandler() {
+		drawHandlerMethod = null;
+		drawHandlerObject = null;
+		drawHandlerMethodName = null;
+	}
+
+	/**
+	 * Returns {@code true} if the user has registered a 'draw' handler method to the Scene and {@code false} otherwise.
+	 * 
+	 * @see #addDrawHandler(Object, String)
+	 * @see #invokeDrawHandler()
+	 */
+	public boolean hasDrawHandler() {
+		if (drawHandlerMethodName == null)
+			return false;
+		return true;
+	}
+
+	// ANIMATION METHOD REG
+
+	@Override
+	public boolean invokeAnimationHandler() {
+		if (animateHandlerObject != null) {
+			try {
+				animateHandlerMethod.invoke(animateHandlerObject, new Object[] { this });
+				return true;
+			} catch (Exception e) {
+				PApplet.println("Something went wrong when invoking your " + animateHandlerMethodName + " method");
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Attempt to add an 'animation' handler method to the Scene. The default event handler is a method that returns void
+	 * and has one single Scene parameter.
+	 * 
+	 * @param obj
+	 *          the object to handle the event
+	 * @param methodName
+	 *          the method to execute in the object handler class
+	 * 
+	 * @see #animate()
+	 * @see #removeAnimationHandler()
+	 */
+	public void addAnimationHandler(Object obj, String methodName) {
+		try {
+			animateHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
+			animateHandlerObject = obj;
+			animateHandlerMethodName = methodName;
+		} catch (Exception e) {
+			PApplet.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Unregisters the 'animation' handler method (if any has previously been added to the Scene).
+	 * 
+	 * @see #addAnimationHandler(Object, String)
+	 */
+	public void removeAnimationHandler() {
+		animateHandlerMethod = null;
+		animateHandlerObject = null;
+		animateHandlerMethodName = null;
+	}
+
+	/**
+	 * Returns {@code true} if the user has registered an 'animation' handler method to the Scene and {@code false}
+	 * otherwise.
+	 * 
+	 * @see #addAnimationHandler(Object, String)
+	 * @see #removeAnimationHandler()
+	 */
+	public boolean hasAnimationHandler() {
+		if (animateHandlerMethodName == null)
+			return false;
+		return true;
+	}
+
+	// OPENGL
+
+	@Override
+	public float pixelDepth(Point pixel) {
+		if (pg().smooth)
+			throw new RuntimeException("pixelDepth requires scene.pg().noSmooth()");
+		PGraphicsOpenGL pggl;
+		if (pg() instanceof PGraphicsOpenGL)
+			pggl = (PGraphicsOpenGL) pg();
+		else
+			throw new RuntimeException("pg() is not instance of PGraphicsOpenGL");
+		float[] depth = new float[1];
+		PGL pgl = pggl.beginPGL();
+		pgl.readPixels(pixel.x(), (camera().screenHeight() - pixel.y()), 1, 1, PGL.DEPTH_COMPONENT, PGL.FLOAT,
+				FloatBuffer.wrap(depth));
+		pggl.endPGL();
+		return depth[0];
+	}
+
+	@Override
+	public void disableDepthTest() {
+		pg().hint(PApplet.DISABLE_DEPTH_TEST);
+	}
+
+	@Override
+	public void enableDepthTest() {
+		pg().hint(PApplet.ENABLE_DEPTH_TEST);
+	}
+
+	// end: GWT-incompatible
+	// */
+
+	// 3. Drawing methods
 
 	/**
 	 * Paint method which is called just before your {@code PApplet.draw()} method. Simply calls {@link #preDraw()}. This
@@ -1200,13 +1455,7 @@ public class Scene extends AbstractScene implements PConstants {
 		postDraw();
 	}
 
-	/**
-	 * Returns the PGraphics instance this Scene is related to. It may be the PApplets one, if the Scene is on-screen or
-	 * an user-defined if the Scene {@link #isOffscreen()}.
-	 */
-	public PGraphics pg() {
-		return pgraphics;
-	}
+	// SCREENDRAWING
 
 	/**
 	 * Need to override it because of this issue: https://github.com/remixlab/proscene/issues/1
@@ -1239,222 +1488,7 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().hint(PApplet.ENABLE_OPTIMIZED_STROKE);// -> new line not present in AbstractScene.bS
 	}
 
-	@Override
-	public void disableDepthTest() {
-		pg().hint(PApplet.DISABLE_DEPTH_TEST);
-	}
-
-	@Override
-	public void enableDepthTest() {
-		pg().hint(PApplet.ENABLE_DEPTH_TEST);
-	}
-
-	@Override
-	public int width() {
-		return pg().width;
-	}
-
-	@Override
-	public int height() {
-		return pg().height;
-	}
-
-	// 8. Keyboard customization
-	@Override
-	public String info() {
-		String info = super.info();
-
-		String l = Integer.toString(PApplet.LEFT) + "_BUTTON";
-		String c = Integer.toString(PApplet.CENTER) + "_BUTTON";
-		String r = Integer.toString(PApplet.RIGHT) + "_BUTTON";
-
-		info = info.replace(l, "LEFT_BUTTON").replace(c, "CENTER_BUTTON").replace(r, "RIGHT_BUTTON");
-		String keyboardtitle = keyboardAgent().name()
-				+ " (key-codes are defined here: http://docs.oracle.com/javase/7/docs/api/constant-values.html)";
-		info = info.replace(keyboardAgent().name(), keyboardtitle);
-
-		String vk_1 = "virtual_key (" + Integer.toString(49) + ")";
-		String vk_2 = "virtual_key (" + Integer.toString(50) + ")";
-		String vk_3 = "virtual_key (" + Integer.toString(51) + ")";
-		String vk_l = "virtual_key (" + Integer.toString(37) + ")";
-		String vk_u = "virtual_key (" + Integer.toString(38) + ")";
-		String vk_r = "virtual_key (" + Integer.toString(39) + ")";
-		String vk_d = "virtual_key (" + Integer.toString(40) + ")";
-
-		info = info.replace(vk_1, "VK_1").replace(vk_2, "VK_2").replace(vk_3, "VK_3")
-				.replace(vk_l, "VK_LEFT").replace(vk_u, "VK_UP").replace(vk_r, "VK_RIGHT").replace(vk_d, "VK_DOWN");
-
-		return info;
-	}
-
-	@Override
-	public void displayInfo(boolean onConsole) {
-		if (onConsole)
-			System.out.println(info());
-		else { // on applet
-			pg().textFont(parent.createFont("Arial", 12));
-			beginScreenDrawing();
-			pg().fill(0, 255, 0);
-			pg().textLeading(20);
-			pg().text(info(), 10, 10, (pg().width - 20), (pg().height - 20));
-			endScreenDrawing();
-		}
-	}
-
-	/**
-	 * Returns the PApplet instance this Scene is related to.
-	 */
-	public PApplet pApplet() {
-		return parent;
-	}
-
-	// 10. Draw method registration
-
-	@Override
-	protected boolean invokeDrawHandler() {
-		// 3. Draw external registered method
-		if (drawHandlerObject != null) {
-			try {
-				drawHandlerMethod.invoke(drawHandlerObject, new Object[] { this });
-				return true;
-			} catch (Exception e) {
-				PApplet.println("Something went wrong when invoking your " + drawHandlerMethodName + " method");
-				e.printStackTrace();
-				return false;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Attempt to add a 'draw' handler method to the Scene. The default event handler is a method that returns void and
-	 * has one single Scene parameter.
-	 * 
-	 * @param obj
-	 *          the object to handle the event
-	 * @param methodName
-	 *          the method to execute in the object handler class
-	 * 
-	 * @see #removeDrawHandler()
-	 * @see #invokeDrawHandler()
-	 */
-	public void addDrawHandler(Object obj, String methodName) {
-		try {
-			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
-			drawHandlerObject = obj;
-			drawHandlerMethodName = methodName;
-		} catch (Exception e) {
-			PApplet.println("Something went wrong when registering your " + methodName + " method");
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Unregisters the 'draw' handler method (if any has previously been added to the Scene).
-	 * 
-	 * @see #addDrawHandler(Object, String)
-	 * @see #invokeDrawHandler()
-	 */
-	public void removeDrawHandler() {
-		drawHandlerMethod = null;
-		drawHandlerObject = null;
-		drawHandlerMethodName = null;
-	}
-
-	/**
-	 * Returns {@code true} if the user has registered a 'draw' handler method to the Scene and {@code false} otherwise.
-	 * 
-	 * @see #addDrawHandler(Object, String)
-	 * @see #invokeDrawHandler()
-	 */
-	public boolean hasDrawHandler() {
-		if (drawHandlerMethodName == null)
-			return false;
-		return true;
-	}
-
-	// 11. Animation
-
-	@Override
-	public boolean invokeAnimationHandler() {
-		if (animateHandlerObject != null) {
-			try {
-				animateHandlerMethod.invoke(animateHandlerObject, new Object[] { this });
-				return true;
-			} catch (Exception e) {
-				PApplet.println("Something went wrong when invoking your " + animateHandlerMethodName + " method");
-				e.printStackTrace();
-				return false;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Attempt to add an 'animation' handler method to the Scene. The default event handler is a method that returns void
-	 * and has one single Scene parameter.
-	 * 
-	 * @param obj
-	 *          the object to handle the event
-	 * @param methodName
-	 *          the method to execute in the object handler class
-	 * 
-	 * @see #animate()
-	 * @see #removeAnimationHandler()
-	 */
-	public void addAnimationHandler(Object obj, String methodName) {
-		try {
-			animateHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
-			animateHandlerObject = obj;
-			animateHandlerMethodName = methodName;
-		} catch (Exception e) {
-			PApplet.println("Something went wrong when registering your " + methodName + " method");
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Unregisters the 'animation' handler method (if any has previously been added to the Scene).
-	 * 
-	 * @see #addAnimationHandler(Object, String)
-	 */
-	public void removeAnimationHandler() {
-		animateHandlerMethod = null;
-		animateHandlerObject = null;
-		animateHandlerMethodName = null;
-	}
-
-	/**
-	 * Returns {@code true} if the user has registered an 'animation' handler method to the Scene and {@code false}
-	 * otherwise.
-	 * 
-	 * @see #addAnimationHandler(Object, String)
-	 * @see #removeAnimationHandler()
-	 */
-	public boolean hasAnimationHandler() {
-		if (animateHandlerMethodName == null)
-			return false;
-		return true;
-	}
-
-	@Override
-	public float pixelDepth(Point pixel) {
-		if (pg().smooth)
-			throw new RuntimeException("pixelDepth requires scene.pg().noSmooth()");
-		PGraphicsOpenGL pggl;
-		if (pg() instanceof PGraphicsOpenGL)
-			pggl = (PGraphicsOpenGL) pg();
-		else
-			throw new RuntimeException("pg() is not instance of PGraphicsOpenGL");
-		float[] depth = new float[1];
-		PGL pgl = pggl.beginPGL();
-		pgl.readPixels(pixel.x(), (camera().screenHeight() - pixel.y()), 1, 1, PGL.DEPTH_COMPONENT, PGL.FLOAT,
-				FloatBuffer.wrap(depth));
-		pggl.endPGL();
-		return depth[0];
-	}
-
-	// implementation of abstract drawing methods
+	// DRAWING
 
 	@Override
 	public void drawCylinder(float w, float h) {
