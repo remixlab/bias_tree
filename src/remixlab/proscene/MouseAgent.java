@@ -11,12 +11,9 @@
 package remixlab.proscene;
 
 import processing.core.PApplet;
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.event.ClickEvent;
-import remixlab.bias.event.DOF1Event;
-import remixlab.bias.event.DOF2Event;
-import remixlab.bias.event.MotionEvent;
 import remixlab.dandelion.agent.WheeledMouseAgent;
+import remixlab.bias.core.BogusEvent;
+import remixlab.bias.event.*;
 
 /**
  * Proscene {@link remixlab.dandelion.agent.WheeledMouseAgent}.
@@ -28,7 +25,9 @@ public class MouseAgent extends WheeledMouseAgent {
 		center = PApplet.CENTER;
 		right = PApplet.RIGHT;
 		setAsArcball();
-		inputHandler().unregisterAgent(this);// TODO record why this line?
+		// registration requires a call to PApplet.registerMethod("mouseEvent", motionAgent());
+		// which is done in Scene.enableMotionAgent(), which also register the agent at the inputHandler
+		inputHandler().unregisterAgent(this);
 	}
 
 	/**

@@ -3,16 +3,14 @@
  * by Jean Pierre Charalambos.
  *
  * Using a mouse move event (instead of a mouse drag) to perform proscene actions
- * requires a custom mouse agent. Here we show hoew simple is it to create one.
+ * requires a custom mouse agent. Here we show how simple it is to create one.
  * 
  * Press the space bar to change the mouse agent. 
  */
 
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
 import remixlab.proscene.*;
-import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
 Scene scene;

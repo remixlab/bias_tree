@@ -31,25 +31,6 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	protected int			left	= 1, center = 2, right = 3;
 
 	/**
-	 * Same as {@code return buttonModifiersFix(BogusEvent.NOMODIFIER_MASK, button)}.
-	 * 
-	 * @see #buttonModifiersFix(int, int)
-	 */
-	public int buttonModifiersFix(int button) {
-		return buttonModifiersFix(BogusEvent.NOMODIFIER_MASK, button);
-	}
-
-	/**
-	 * Hack to deal with some platforms not reporting correctly the mouse event mask, such as with Processing:
-	 * https://github.com/processing/processing/issues/1693
-	 * <p>
-	 * Default implementation simple returns the same mask.
-	 */
-	public int buttonModifiersFix(int mask, int button) {
-		return mask;
-	}
-
-	/**
 	 * Constructs a MouseAgent. Nothing fancy.
 	 * 
 	 * @param scn
@@ -221,6 +202,25 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	}
 
 	// HIGH-LEVEL
+
+	/**
+	 * Same as {@code return buttonModifiersFix(BogusEvent.NOMODIFIER_MASK, button)}.
+	 * 
+	 * @see #buttonModifiersFix(int, int)
+	 */
+	public int buttonModifiersFix(int button) {
+		return buttonModifiersFix(BogusEvent.NOMODIFIER_MASK, button);
+	}
+
+	/**
+	 * Hack to deal with some platforms not reporting correctly the mouse event mask, such as with Processing:
+	 * https://github.com/processing/processing/issues/1693
+	 * <p>
+	 * Default implementation simple returns the same mask.
+	 */
+	public int buttonModifiersFix(int mask, int button) {
+		return mask;
+	}
 
 	/**
 	 * Set mouse bindings as 'first-person':

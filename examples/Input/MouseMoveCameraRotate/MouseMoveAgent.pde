@@ -1,6 +1,6 @@
-public class MouseMoveAgent extends WheeledMouseAgent {
+public class MouseMoveAgent extends MouseAgent {
   DOF2Event event, prevEvent;
-  public MouseMoveAgent(AbstractScene scn, String n) {
+  public MouseMoveAgent(Scene scn, String n) {
     super(scn, n);
     // agents creation registers it at the inputHandler.
     // we unregister it here, keeping the default mouse agent

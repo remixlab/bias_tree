@@ -20,6 +20,8 @@ import remixlab.dandelion.agent.KeyboardAgent;
 public class KeyAgent extends KeyboardAgent {
 	public KeyAgent(Scene scn, String n) {
 		super(scn, n);
+		// registration requires a call to PApplet.registerMethod("keyEvent", keyboardAgent());
+		// which is done in Scene.enableKeyboardAgent(), which also register the agent at the inputHandler
 		inputHandler().unregisterAgent(this);
 	}
 
