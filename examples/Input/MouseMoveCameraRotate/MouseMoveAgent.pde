@@ -1,4 +1,4 @@
-public class MouseMoveAgent extends MouseAgent {
+public class MouseMoveAgent extends WheeledMouseAgent {
   DOF2Event event, prevEvent;
   public MouseMoveAgent(Scene scn, String n) {
     super(scn, n);

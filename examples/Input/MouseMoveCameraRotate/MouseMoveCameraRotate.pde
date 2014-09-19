@@ -8,8 +8,9 @@
  * Press the space bar to change the mouse agent. 
  */
 
-import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.geom.*;
+import remixlab.dandelion.agent.*;
 import remixlab.proscene.*;
 import remixlab.bias.event.*;
 
