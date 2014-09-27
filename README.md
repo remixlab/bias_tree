@@ -1,9 +1,6 @@
 ProScene
 ========
 
-* auto-gen TOC:
-{:toc}
-
 # Description
 
 [ProScene](http://nakednous.github.io/projects/proscene/) (pronounced similar as the Czech word **"prosím"** which means **"please"**) is a free-software java library which provides classes to ease the creation of interactive 2D/3D scenes in [Processing](http://processing.org).
