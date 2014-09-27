@@ -2273,6 +2273,9 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().popStyle();
 	}
 	
+	// decide whether or not to include these in the 2.1 release:
+	/*
+	
 	// PVector <-> toVec
 	
 	public void drawArrow(PVector from, PVector to, float radius) {
@@ -2384,4 +2387,5 @@ public class Scene extends AbstractScene implements PConstants {
 	public void setProjection(PMatrix3D source) {
 		setProjection(Scene.toMat(source));
 	}
+	// */
 }
