@@ -1,4 +1,4 @@
-ProScene
+ProScene  [![License](http://img.shields.io/badge/license-GPL%203-blue.svg)](http://www.gnu.org/licenses/gpl.html)
 ========
 
 **Table of Contents**
