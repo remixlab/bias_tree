@@ -19,7 +19,7 @@ ProScene
 
 **ProScene** provides seemless integration with **Processing**: its API has been designed to fit that of **Processing** and its implementation has been optimized to work along side with it. It suppports all major **Processing** flavours: Desktop, JS, and Android.
 
-**ProScene** support is led by the active and great Processing community at its [forum](http://forum.processing.org/search/proscene) where you can reach us. News and Technical details are found at our [blog](http://otrolado.info).
+**ProScene** support is led by the active and great Processing community at its [forum](http://forum.processing.org/search/proscene) where you can reach us. News and technical details are found at our [blog](http://otrolado.info).
 
 # Key features
 
