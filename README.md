@@ -1,4 +1,4 @@
-ProScene  [![License](http://img.shields.io/badge/license-GPL%203-blue.svg)](http://www.gnu.org/licenses/gpl.html)
+ProScene  [![Version](http://img.shields.io/badge/proscene-v2.0.5-brightgreen.svg)](https://github.com/remixlab/proscene/releases/download/v-2.0.5/proscene-2.0.5.zip) [![Dependencies](http://img.shields.io/badge/dependencies-processing-green.svg)](http://processing.org/) [![License](http://img.shields.io/badge/license-GPL%203-blue.svg)](http://www.gnu.org/licenses/gpl.html)
 ========
 
 **Table of Contents**
