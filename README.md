@@ -39,7 +39,7 @@ ProScene [![Version](http://img.shields.io/badge/proscene-v2.0.5-brightgreen.svg
 * Screen drawing, i.e., drawing of 2d primitives on top of another (2d or 3d) scene.
 * Off-screen rendering mode support.
 * Handy set of complete documented [examples](https://github.com/remixlab/proscene/tree/master/examples) that illustrates the use of the package.
-* A complete [reference documentation](http://otrolado.info/prosceneApi/).
+* A complete [API reference documentation](http://otrolado.info/prosceneApi/).
 * Active support and continuous discussions led by the [Processing community](http://forum.processing.org/two/search?Search=proscene).
 * Last but not least, released as free software under the terms of the [GPL-v3](http://www.gnu.org/licenses/gpl.html).
 
