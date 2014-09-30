@@ -1,16 +1,16 @@
 public class ClickButton extends Button2D {
-  boolean addBox;
+  boolean addTorus;
 
-  public ClickButton(Scene scn, PVector p, PFont font, String t, boolean addB) {
+  public ClickButton(Scene scn, PVector p, PFont font, String t, boolean addT) {
     super(scn, p, font, t);
-    addBox = addB;
+    addTorus = addT;
   }
 
   @Override
   public void performInteraction(BogusEvent event) {
     if (event instanceof ClickEvent)
       if (((ClickEvent) event).clickCount() == 1) {
-        if (addBox)
+        if (addTorus)
           addTorus();
         else
           removeTorus();

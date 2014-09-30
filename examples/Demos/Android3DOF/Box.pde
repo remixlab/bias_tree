@@ -32,15 +32,12 @@ public class Box {
   public void draw(boolean drawAxis) {
     pushMatrix();
     iFrame.applyWorldTransformation();
-
     noStroke();
     if (scene.grabsAnyAgentInput(iFrame))
       fill(255, 0, 0);
     else
       fill(getColor());
-    //Draw a box    
     box(w, h, d);
-
     popMatrix();
   }
 

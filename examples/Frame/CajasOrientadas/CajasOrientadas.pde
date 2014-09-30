@@ -19,26 +19,20 @@ Box [] cajas;
 Sphere esfera;
 
 public void setup() {
-  //size(640, 360, P3D);
-  size(640, 360, OPENGL);
+  size(640, 360, P3D);
   scene = new Scene(this);  
-  scene.setAxesVisualHint(false);    
+  scene.setAxesVisualHint(false);
+  scene.setDottedGrid(false);
   scene.setCameraType(Camera.Type.ORTHOGRAPHIC);
   scene.setRadius(160);
-  //scene.camera().setPosition(new PVector(10,0,0));
-  //scene.camera().lookAt( scene.center() );
-  scene.showAll();    
-  //scene.disableBackgroundHanddling();    
+  scene.showAll();
 
   esfera = new Sphere(scene);
-  esfera.setPosition(new Vec(0.0f, 1.4f, 0.0f));
   esfera.setColor(color(0, 0, 255));
 
   cajas = new Box[30];
   for (int i = 0; i < cajas.length; i++)
     cajas[i] = new Box(scene);
-
-  frameRate(500);
 }
 
 public void draw() {
@@ -48,19 +42,5 @@ public void draw() {
   for (int i = 0; i < cajas.length; i++) {
     cajas[i].setOrientation(esfera.getPosition());
     cajas[i].draw(true);
-  }
-}
-
-public void keyPressed() {
-  if ((key == 'y') || (key == 'Y')) {
-    scene.setDottedGrid(!scene.gridIsDotted());
-  }
-  if ((key == 'u') || (key == 'U')) {
-    println("papplet's frame count: " + frameCount);
-    println("scene's frame count: " + scene.timingHandler().frameCount());
-  }
-  if ((key == 'v') || (key == 'V')) {
-    println("papplet's frame rate: " + frameRate);
-    println("scene's frame rate: " + scene.timingHandler().frameRate());
   }
 }

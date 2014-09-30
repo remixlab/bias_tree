@@ -28,7 +28,6 @@ public class Box {
   public void draw(boolean drawAxes) {
     pushMatrix();
     iFrame.applyWorldTransformation();
-
     if (drawAxes)
       scene.drawAxes(max(w, h, d)*1.3f);
     noStroke();
@@ -36,9 +35,7 @@ public class Box {
       fill(255, 0, 0);
     else
       fill(getColor());
-    //Draw a box    
     box(w, h, d);
-
     popMatrix();
   }
 

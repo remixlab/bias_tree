@@ -51,18 +51,7 @@ public class Box {
 
   public void draw(boolean drawAxes) {
     pushMatrix();
-
-    /**
-     PMatrix3D pM3d =  new PMatrix3D();
-     float [] m = new float [16];
-     Mat m3d = iFrame.matrix();
-     m = m3d.getTransposed(m);
-     pM3d.set(m);
-     scene.pg().applyMatrix(pM3d);
-     // */
-    //Same as the previous commented lines, but a lot more efficient:
     iFrame.applyWorldTransformation();
-
     if (drawAxes)
       scene.drawAxes(max(w, h, d)*1.3f);
     noStroke();
@@ -70,9 +59,7 @@ public class Box {
       fill(255, 0, 0);
     else
       fill(getColor());
-    //Draw a box    
     box(w, h, d);
-
     popMatrix();
   }
 
