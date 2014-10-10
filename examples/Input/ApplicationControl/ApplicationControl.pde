@@ -190,13 +190,11 @@ void ctrlDrawing(PGraphics pg) {
 }
 
 void handleMouse() {
-  if ((oX < mouseX) && (oY < mouseY)) {    
+  scene.enableMotionAgent();
+  disableCustomAgent();
+  if((oX < mouseX) && (oY < mouseY) && showAid) {
     scene.disableMotionAgent();
-    scene.disableKeyboardAgent();
     enableCustomAgent();
-  } else {
-    scene.enableMotionAgent();
-    scene.enableKeyboardAgent();
   }
 }
 
@@ -215,8 +213,4 @@ void disableCustomAgent(){
 void keyPressed() {
   if(key == ' ')
     showAid = !showAid;
-  if(showAid)
-    enableCustomAgent();
-  else
-    disableCustomAgent();
 }
