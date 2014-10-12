@@ -20,7 +20,8 @@ class Boid {
     avatarColor = color(255,0,0);		
     pos = new PVector();
     pos.set(inPos);
-    frame = new InteractiveAvatarFrame(scene);	
+    frame = new InteractiveAvatarFrame(scene);
+    frame.setGrabsInputThreshold(13, true);
     frame.setPosition(new Vec(pos.x, pos.y, pos.z));
     frame.setAzimuth(-HALF_PI);
     frame.setInclination(PI*(4/5));
@@ -36,6 +37,7 @@ class Boid {
     pos = new PVector();
     pos.set(inPos);
     frame = new InteractiveAvatarFrame(scene);
+    frame.setGrabsInputThreshold(13, true);
     frame.setPosition(new Vec(pos.x, pos.y, pos.z));
     frame.setAzimuth(-HALF_PI);
     frame.setTrackingDistance(scene.radius()/10);

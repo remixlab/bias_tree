@@ -1355,7 +1355,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * Convenience function that simply calls {@code drawCross(pg3d.color(255, 255, 255), px, py, 15, 3)}.
 	 */
 	public void drawCross(float px, float py) {
-		drawCross(px, py, 15);
+		drawCross(px, py, 30);
 	}
 
 	/**

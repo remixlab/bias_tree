@@ -32,7 +32,6 @@ public class Box {
   public Box(Scene scn, InteractiveFrame iF) {
     scene = scn;
     iFrame = iF;
-    iFrame.setGrabsInputThreshold(25);
     setSize();
     setColor();
   }
@@ -67,12 +66,14 @@ public class Box {
     w = random(10, 40);
     h = random(10, 40);
     d = random(10, 40);
+    iFrame.setGrabsInputThreshold(max(w,h,d), true);
   }
 
   public void setSize(float myW, float myH, float myD) {
     w=myW; 
     h=myH; 
     d=myD;
+    iFrame.setGrabsInputThreshold(max(w,h,d), true);
   }  
 
   public int getColor() {

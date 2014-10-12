@@ -25,6 +25,7 @@ void setup() {
   scene = new Scene(this);
   scene.setMatrixHelper(new MatrixStackHelper(scene));
   iFrame = new InteractiveFrame(scene);
+  iFrame.setGrabsInputThreshold(scene.radius()/4, true);
   iFrame.translate(new Vec(30, 30, 0));
 }
 

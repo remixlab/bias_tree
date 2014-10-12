@@ -41,6 +41,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		return new HashCodeBuilder(17, 37).
 				appendSuper(super.hashCode()).
 				append(grabsInputThreshold).
+				append(adpThreshold).
 				append(isInCamPath).
 				append(rotSensitivity).
 				append(spngRotation).
@@ -68,6 +69,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(grabsInputThreshold, other.grabsInputThreshold)
+				.append(adpThreshold, other.adpThreshold)
 				.append(isInCamPath, other.isInCamPath)
 				.append(dampFriction, other.dampFriction)
 				.append(sFriction, other.sFriction)
@@ -82,7 +84,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 				.isEquals();
 	}
 
-	private int									grabsInputThreshold;
+	private float								grabsInputThreshold;
+	private boolean							adpThreshold;
 	private float								rotSensitivity;
 	private float								transSensitivity;
 	private float								wheelSensitivity;
@@ -127,7 +130,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		scene.inputHandler().addInAllAgentPools(this);
 		isInCamPath = false;
 
-		setGrabsInputThreshold(10);
+		setGrabsInputThreshold(20);
+		// TODO future versions should go (except for iFrames in eyePath?):
+		// setGrabsInputThreshold(Math.round(scene.radius()/10f), true);
 		setRotationSensitivity(1.0f);
 		setTranslationSensitivity(1.0f);
 		setWheelSensitivity(20.0f);
@@ -174,7 +179,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 
 		this.isInCamPath = otherFrame.isInCamPath;
 
-		this.setGrabsInputThreshold(otherFrame.grabsInputThreshold());
+		this.setGrabsInputThreshold(otherFrame.grabsInputThreshold(), otherFrame.adaptiveGrabsInputThreshold());
 		this.setRotationSensitivity(otherFrame.rotationSensitivity());
 		this.setTranslationSensitivity(otherFrame.translationSensitivity());
 		this.setWheelSensitivity(otherFrame.wheelSensitivity());
@@ -225,7 +230,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 
 		isInCamPath = true;
 
-		setGrabsInputThreshold(10);
+		setGrabsInputThreshold(20);
+		// TODO future versions should go (except for iFrames in eyePath?):
+		// setGrabsInputThreshold(Math.round(scene.radius()/10f), true);
 		setRotationSensitivity(1.0f);
 		setTranslationSensitivity(1.0f);
 		setWheelSensitivity(20.0f);
@@ -260,36 +267,66 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	}
 
 	/**
-	 * Returns the grabs input threshold which is used by this interactive frame to {@link #checkIfGrabsInput(BogusEvent)}
-	 * .
+	 * Returns the grabs input threshold which is used by the interactive frame to {@link #checkIfGrabsInput(BogusEvent)}.
 	 * 
-	 * @see #setGrabsInputThreshold(int)
+	 * @see #setGrabsInputThreshold(float)
 	 */
-	public int grabsInputThreshold() {
+	public float grabsInputThreshold() {
+		if (adaptiveGrabsInputThreshold())
+			return grabsInputThreshold * scaling() * scene.eye().pixelToSceneRatio(position());
 		return grabsInputThreshold;
 	}
 
 	/**
-	 * Sets the number of pixels that defined the {@link #checkIfGrabsInput(BogusEvent)} condition.
+	 * Returns {@code true} if the {@link #checkIfGrabsInput(BogusEvent)} test is adaptive and {@code false} otherwise.
 	 * 
-	 * @param threshold
-	 *          number of pixels that defined the {@link #checkIfGrabsInput(BogusEvent)} condition. Default value is 10
-	 *          pixels (which is set in the constructor). Negative values are silently ignored.
+	 * @see #setGrabsInputThreshold(float, boolean)
+	 */
+	public boolean adaptiveGrabsInputThreshold() {
+		return adpThreshold;
+	}
+
+	/**
+	 * Convenience function that simply calls {@code setGrabsInputThreshold(threshold, false)}.
+	 * 
+	 * @see #setGrabsInputThreshold(float, boolean)
+	 */
+	public void setGrabsInputThreshold(float threshold) {
+		setGrabsInputThreshold(threshold, false);
+	}
+
+	/**
+	 * Sets the length of the hint that defined the {@link #checkIfGrabsInput(BogusEvent)} condition used for frame
+	 * picking.
+	 * <p>
+	 * If {@code adaptive} is {@code false}, the {@code threshold} is expressed in pixels and directly defines the fixed
+	 * length of the {@link remixlab.dandelion.core.AbstractScene#drawShooterTarget(Vec, float)}, centered at the
+	 * projection of the frame origin onto the screen.
+	 * <p>
+	 * If {@code adaptive} is {@code true}, the {@code threshold} is expressed in object space (world units) and defines
+	 * the edge length of a squared bounding box that leads to an adaptive length of the
+	 * {@link remixlab.dandelion.core.AbstractScene#drawShooterTarget(Vec, float)}, centered at the projection of the
+	 * frame origin onto the screen. Use this version only if you have a good idea of the bounding box size of the object
+	 * you are attaching to the frame.
+	 * <p>
+	 * Default behavior is to set the {@link #grabsInputThreshold()} to 20 pixels length (in a non-adaptive manner).
+	 * <p>
+	 * Negative {@code threshold} values are silently ignored.
 	 * 
 	 * @see #grabsInputThreshold()
 	 * @see #checkIfGrabsInput(BogusEvent)
 	 */
-	public void setGrabsInputThreshold(int threshold) {
-		if (threshold >= 0)
+	public void setGrabsInputThreshold(float threshold, boolean adaptive) {
+		if (threshold >= 0) {
+			adpThreshold = adaptive;
 			grabsInputThreshold = threshold;
+		}
 	}
 
 	/**
-	 * Implementation of the Grabber main method.
-	 * <p>
-	 * The InteractiveFrame {@link #grabsInput(Agent)} when the event coordinates is within a
-	 * {@link #grabsInputThreshold()} pixels region around its
-	 * {@link remixlab.dandelion.core.Eye#projectedCoordinatesOf(Vec)} {@link #position()}.
+	 * Default implementation of the Grabber main method which uses the {@link #grabsInputThreshold()}.
+	 * 
+	 * @see #setGrabsInputThreshold(float, boolean)
 	 */
 	@Override
 	public boolean checkIfGrabsInput(BogusEvent event) {
@@ -307,8 +344,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			event2 = ((DOF6Event) event).dof3Event().dof2Event();
 
 		Vec proj = scene.eye().projectedCoordinatesOf(position());
-
-		return ((Math.abs(event2.x() - proj.vec[0]) < grabsInputThreshold()) && (Math.abs(event2.y() - proj.vec[1]) < grabsInputThreshold()));
+		float halfThreshold = grabsInputThreshold() / 2;
+		return ((Math.abs(event2.x() - proj.vec[0]) < halfThreshold) && (Math.abs(event2.y() - proj.vec[1]) < halfThreshold));
 	}
 
 	/**

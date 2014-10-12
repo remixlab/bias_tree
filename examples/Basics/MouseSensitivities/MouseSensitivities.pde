@@ -42,6 +42,7 @@ void setup() {
   scene = new Scene(this);
   scene.setGridVisualHint(false);
   interactiveFrame = new InteractiveFrame(scene);
+  interactiveFrame.setGrabsInputThreshold(scene.radius()/4, true);
   interactiveFrame.translate(new Vec(60, 60));
 
   buttons = new ArrayList();

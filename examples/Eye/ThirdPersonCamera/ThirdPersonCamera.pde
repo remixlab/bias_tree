@@ -41,6 +41,8 @@ public void setup() {
   // press 'f' to display frame selection hints
 
   avatar = new InteractiveAvatarFrame(scene);
+  // we simply take the box longest edge here:
+  avatar.setGrabsInputThreshold(30, true);
   avatar.setTrackingDistance(300);
   avatar.setAzimuth(PI/12);
   avatar.setInclination(PI/6);

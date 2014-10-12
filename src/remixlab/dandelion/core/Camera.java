@@ -476,7 +476,7 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	@Override
-	public float pixelSceneRatio(Vec position) {
+	public float sceneToPixelRatio(Vec position) {
 		switch (type()) {
 		case PERSPECTIVE:
 			return 2.0f * Math.abs((frame().coordinatesOf(position)).vec[2] * frame().magnitude())

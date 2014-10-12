@@ -2000,14 +2000,15 @@ public class Scene extends AbstractScene implements PConstants {
 
 	@Override
 	public void drawCross(float px, float py, float size) {
+		float half_size = size / 2f;
 		pg().pushStyle();
 		beginScreenDrawing();
 		pg().noFill();
 		pg().beginShape(LINES);
-		vertex(px - size, py);
-		vertex(px + size, py);
-		vertex(px, py - size);
-		vertex(px, py + size);
+		vertex(px - half_size, py);
+		vertex(px + half_size, py);
+		vertex(px, py - half_size);
+		vertex(px, py + half_size);
 		pg().endShape();
 		endScreenDrawing();
 		pg().popStyle();
@@ -2036,16 +2037,17 @@ public class Scene extends AbstractScene implements PConstants {
 
 	@Override
 	public void drawFilledSquare(Vec center, float edge) {
+		float half_edge = edge / 2f;
 		pg().pushStyle();
 		float x = center.x();
 		float y = center.y();
 		beginScreenDrawing();
 		pg().noStroke();
 		pg().beginShape(QUADS);
-		vertex(x - edge, y + edge);
-		vertex(x + edge, y + edge);
-		vertex(x + edge, y - edge);
-		vertex(x - edge, y - edge);
+		vertex(x - half_edge, y + half_edge);
+		vertex(x + half_edge, y + half_edge);
+		vertex(x + half_edge, y - half_edge);
+		vertex(x - half_edge, y - half_edge);
 		pg().endShape();
 		endScreenDrawing();
 		pg().popStyle();
@@ -2053,6 +2055,7 @@ public class Scene extends AbstractScene implements PConstants {
 
 	@Override
 	public void drawShooterTarget(Vec center, float length) {
+		float half_length = length / 2f;
 		pg().pushStyle();
 		float x = center.x();
 		float y = center.y();
@@ -2060,27 +2063,27 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().noFill();
 
 		pg().beginShape();
-		vertex((x - length), (y - length) + (0.6f * length));
-		vertex((x - length), (y - length));
-		vertex((x - length) + (0.6f * length), (y - length));
+		vertex((x - half_length), (y - half_length) + (0.6f * half_length));
+		vertex((x - half_length), (y - half_length));
+		vertex((x - half_length) + (0.6f * half_length), (y - half_length));
 		pg().endShape();
 
 		pg().beginShape();
-		vertex((x + length) - (0.6f * length), (y - length));
-		vertex((x + length), (y - length));
-		vertex((x + length), ((y - length) + (0.6f * length)));
+		vertex((x + half_length) - (0.6f * half_length), (y - half_length));
+		vertex((x + half_length), (y - half_length));
+		vertex((x + half_length), ((y - half_length) + (0.6f * half_length)));
 		pg().endShape();
 
 		pg().beginShape();
-		vertex((x + length), ((y + length) - (0.6f * length)));
-		vertex((x + length), (y + length));
-		vertex(((x + length) - (0.6f * length)), (y + length));
+		vertex((x + half_length), ((y + half_length) - (0.6f * half_length)));
+		vertex((x + half_length), (y + half_length));
+		vertex(((x + half_length) - (0.6f * half_length)), (y + half_length));
 		pg().endShape();
 
 		pg().beginShape();
-		vertex((x - length) + (0.6f * length), (y + length));
-		vertex((x - length), (y + length));
-		vertex((x - length), ((y + length) - (0.6f * length)));
+		vertex((x - half_length) + (0.6f * half_length), (y + half_length));
+		vertex((x - half_length), (y + half_length));
+		vertex((x - half_length), ((y + half_length) - (0.6f * half_length)));
 		pg().endShape();
 		endScreenDrawing();
 		drawCross(center.x(), center.y(), 0.6f * length);
@@ -2229,7 +2232,7 @@ public class Scene extends AbstractScene implements PConstants {
 		Vec v = eye().projectedCoordinatesOf(eye().frame().pupVec);
 		pg().stroke(255);
 		pg().strokeWeight(3);
-		drawCross(v.vec[0], v.vec[1], 15);
+		drawCross(v.vec[0], v.vec[1], 30);
 		pg().popStyle();
 	}
 
@@ -2272,120 +2275,73 @@ public class Scene extends AbstractScene implements PConstants {
 		endScreenDrawing();
 		pg().popStyle();
 	}
-	
+
 	// decide whether or not to include these in the 2.1 release:
 	/*
-	
-	// PVector <-> toVec
-	
-	public void drawArrow(PVector from, PVector to, float radius) {
-		drawArrow(Scene.toVec(from), Scene.toVec(to), radius);
-	}
-	
-	public void drawFilledCircle(PVector center, float radius) {
-		drawFilledCircle(Scene.toVec(center), radius);
-	}
-	
-	public void drawHollowCylinder(int detail, float w, float h, PVector m, PVector n) {
-		drawHollowCylinder(detail, w, h, Scene.toVec(m), Scene.toVec(n));
-	}
-	
-	public void drawFilledSquare(PVector center, float edge) {
-		drawFilledSquare(Scene.toVec(center), edge);
-	}
-	
-	public void drawShooterTarget(PVector center, float length) {
-		drawShooterTarget(Scene.toVec(center), length);
-	}
-	
-	public boolean isPointVisible(PVector point) {
-		return isPointVisible(Scene.toVec(point));
-	}
-	
-	public Eye.Visibility ballVisibility(PVector center, float radius) {
-		return ballVisibility(Scene.toVec(center), radius);
-	}
-	
-	public Eye.Visibility boxVisibility(PVector p1, PVector p2) {
-		return boxVisibility(Scene.toVec(p1), Scene.toVec(p2));
-	}
-	
-	public boolean isFaceBackFacing(PVector a, PVector b, PVector c) {
-		return isFaceBackFacing(Scene.toVec(a), Scene.toVec(b), Scene.toVec(c));
-	}
-	
-	public PVector worldPointUnderPixel(Point pixel) {
-		return Scene.toPVector(pointUnderPixel(pixel));
-	}
-	
-	public PVector eyeProjectedCoordinatesOf(PVector src) {
-		return Scene.toPVector(projectedCoordinatesOf(Scene.toVec(src)));
-	}
-	
-	public PVector eyeUnprojectedCoordinatesOf(PVector src) {
-		return Scene.toPVector(unprojectedCoordinatesOf(Scene.toVec(src)));
-	}
-	
-	public PVector sceneCenter() {
-		return Scene.toPVector(center());
-	}
-	
-	public void setCenter(PVector center) {
-		setCenter(Scene.toVec(center));
-	}
-	
-	public PVector sceneAnchor() {
-		return Scene.toPVector(anchor());
-	}
-	
-	public void setAnchor(PVector anchor) {
-		setAnchor(Scene.toVec(anchor));
-	}
-	
-	public void setBoundingBox(PVector min, PVector max) {
-		setBoundingBox(Scene.toVec(min),Scene.toVec(max));
-	}
-	
-	public void setBoundingRect(PVector min, PVector max) { 
-		setBoundingRect(Scene.toVec(min), Scene.toVec(max));
-	}
-	
-  //PMatrix <-> toMat
-	
-	public void applyModelView(PMatrix2D source) {
-		applyModelView(Scene.toMat(source));
-	}
-	
-	public void applyModelView(PMatrix3D source) {
-		applyModelView(Scene.toMat(source));
-	}
-	
-	public void applyProjection(PMatrix3D source) {
-		applyProjection(Scene.toMat(source));
-	}
-	
-	public PMatrix2D modelViewMatrix2D() {
-		return Scene.toPMatrix2D(modelView());
-	}
-	
-	public PMatrix3D modelViewMatrix() {
-		return Scene.toPMatrix(modelView());
-	}
-	
-	public PMatrix3D projectionMatrix() {
-		return Scene.toPMatrix(projection());
-	}
-	
-	public void setModelView(PMatrix2D source) {
-		setModelView(Scene.toMat(source));
-	}
-	
-	public void setModelView(PMatrix3D source) {
-		setModelView(Scene.toMat(source));
-	}
-	
-	public void setProjection(PMatrix3D source) {
-		setProjection(Scene.toMat(source));
-	}
-	// */
+	 * 
+	 * // PVector <-> toVec
+	 * 
+	 * public void drawArrow(PVector from, PVector to, float radius) { drawArrow(Scene.toVec(from), Scene.toVec(to),
+	 * radius); }
+	 * 
+	 * public void drawFilledCircle(PVector center, float radius) { drawFilledCircle(Scene.toVec(center), radius); }
+	 * 
+	 * public void drawHollowCylinder(int detail, float w, float h, PVector m, PVector n) { drawHollowCylinder(detail, w,
+	 * h, Scene.toVec(m), Scene.toVec(n)); }
+	 * 
+	 * public void drawFilledSquare(PVector center, float edge) { drawFilledSquare(Scene.toVec(center), edge); }
+	 * 
+	 * public void drawShooterTarget(PVector center, float length) { drawShooterTarget(Scene.toVec(center), length); }
+	 * 
+	 * public boolean isPointVisible(PVector point) { return isPointVisible(Scene.toVec(point)); }
+	 * 
+	 * public Eye.Visibility ballVisibility(PVector center, float radius) { return ballVisibility(Scene.toVec(center),
+	 * radius); }
+	 * 
+	 * public Eye.Visibility boxVisibility(PVector p1, PVector p2) { return boxVisibility(Scene.toVec(p1),
+	 * Scene.toVec(p2)); }
+	 * 
+	 * public boolean isFaceBackFacing(PVector a, PVector b, PVector c) { return isFaceBackFacing(Scene.toVec(a),
+	 * Scene.toVec(b), Scene.toVec(c)); }
+	 * 
+	 * public PVector worldPointUnderPixel(Point pixel) { return Scene.toPVector(pointUnderPixel(pixel)); }
+	 * 
+	 * public PVector eyeProjectedCoordinatesOf(PVector src) { return
+	 * Scene.toPVector(projectedCoordinatesOf(Scene.toVec(src))); }
+	 * 
+	 * public PVector eyeUnprojectedCoordinatesOf(PVector src) { return
+	 * Scene.toPVector(unprojectedCoordinatesOf(Scene.toVec(src))); }
+	 * 
+	 * public PVector sceneCenter() { return Scene.toPVector(center()); }
+	 * 
+	 * public void setCenter(PVector center) { setCenter(Scene.toVec(center)); }
+	 * 
+	 * public PVector sceneAnchor() { return Scene.toPVector(anchor()); }
+	 * 
+	 * public void setAnchor(PVector anchor) { setAnchor(Scene.toVec(anchor)); }
+	 * 
+	 * public void setBoundingBox(PVector min, PVector max) { setBoundingBox(Scene.toVec(min),Scene.toVec(max)); }
+	 * 
+	 * public void setBoundingRect(PVector min, PVector max) { setBoundingRect(Scene.toVec(min), Scene.toVec(max)); }
+	 * 
+	 * //PMatrix <-> toMat
+	 * 
+	 * public void applyModelView(PMatrix2D source) { applyModelView(Scene.toMat(source)); }
+	 * 
+	 * public void applyModelView(PMatrix3D source) { applyModelView(Scene.toMat(source)); }
+	 * 
+	 * public void applyProjection(PMatrix3D source) { applyProjection(Scene.toMat(source)); }
+	 * 
+	 * public PMatrix2D modelViewMatrix2D() { return Scene.toPMatrix2D(modelView()); }
+	 * 
+	 * public PMatrix3D modelViewMatrix() { return Scene.toPMatrix(modelView()); }
+	 * 
+	 * public PMatrix3D projectionMatrix() { return Scene.toPMatrix(projection()); }
+	 * 
+	 * public void setModelView(PMatrix2D source) { setModelView(Scene.toMat(source)); }
+	 * 
+	 * public void setModelView(PMatrix3D source) { setModelView(Scene.toMat(source)); }
+	 * 
+	 * public void setProjection(PMatrix3D source) { setProjection(Scene.toMat(source)); } //
+	 */
 }

@@ -6,8 +6,8 @@
  * default proscene mouse and keyboard agents. The default 'a' and
  * 'g' keyboard shortcuts are intertwined.
  *
- * Press 'c' to change the mouse action (only when the mouse agent is disabled).
- * Press 'h' to display the key shortcuts and mouse bindings in the console.
+ * Press 'f' to display the picking visual hint. 
+ * Press 'c' to change the mouse action.
  */
  
 import remixlab.proscene.*;
@@ -19,7 +19,8 @@ import remixlab.dandelion.core.Constants.*;
 
 Scene scene;
 
-boolean enforced = false;	
+boolean enforced = false;
+boolean pickingHint;	
 boolean iFrameGrabsInput;
 
 KeyboardAction keyAction;
@@ -43,6 +44,7 @@ public void setup() {
   scene.disableMotionAgent();
 
   iFrame = new InteractiveFrame(scene);
+  iFrame.setGrabsInputThreshold(scene.radius()/4, true);
   iFrame.translate(new Vec(30, 30, 0));
 
   mouseAction = DOF2Action.ROTATE;
@@ -70,6 +72,15 @@ public void draw() {
   }
 
   popMatrix();
+  
+  if (pickingHint) {
+    Vec center = scene.projectedCoordinatesOf(iFrame.position());
+    pushStyle();
+    strokeWeight(2);
+    stroke(255);
+    scene.drawShooterTarget(center, (iFrame.grabsInputThreshold()));
+    popStyle();
+  }
 }
 
 @Override
@@ -114,7 +125,9 @@ public void keyPressed() {
       iFrameGrabsInput = true;
     else
       iFrameGrabsInput = false;
-  }	
+  }
+  if (key == 'f')
+    pickingHint = !pickingHint;
   // The default mouse action (to be performed when dragging it) may be change here:	
   if (key == 'c')
     if (mouseAction == DOF2Action.ROTATE)

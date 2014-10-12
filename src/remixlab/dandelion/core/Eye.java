@@ -1586,9 +1586,9 @@ public abstract class Eye implements Copyable {
 	public abstract Visibility boxVisibility(Vec p1, Vec p2);
 
 	/**
-	 * Returns the ratio between pixel and scene units at {@code position}.
+	 * Returns the ratio of scene (units) to pixel at {@code position}.
 	 * <p>
-	 * A line of {@code n * pixelSceneRatio()} scene units, located at {@code position} in the world coordinates system,
+	 * A line of {@code n * sceneToPixelRatio()} scene units, located at {@code position} in the world coordinates system,
 	 * will be projected with a length of {@code n} pixels on screen.
 	 * <p>
 	 * Use this method to scale objects so that they have a constant pixel size on screen. The following code will draw a
@@ -1596,11 +1596,32 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * {@code beginShape(LINES);}<br>
 	 * {@code vertex(sceneCenter().x, sceneCenter().y, sceneCenter().z);}<br>
-	 * {@code Vec v = Vec.add(sceneCenter(), Vec.mult(upVector(), 20 * pixelSceneRatio(sceneCenter())));}<br>
+	 * {@code Vec v = Vec.add(sceneCenter(), Vec.mult(upVector(), 20 * sceneToPixelRatio(sceneCenter())));}<br>
 	 * {@code vertex(v.x, v.y, v.z);}<br>
 	 * {@code endShape();}<br>
 	 */
-	public abstract float pixelSceneRatio(Vec position);
+	public abstract float sceneToPixelRatio(Vec position);
+
+	/**
+	 * Returns the pixel to scene (units) ratio at {@code position}.
+	 * <p>
+	 * Convenience function that simply returns {@code 1 / sceneToPixelRatio(position)}.
+	 * 
+	 * @see #sceneToPixelRatio(Vec)
+	 */
+	public float pixelToSceneRatio(Vec position) {
+		return 1 / sceneToPixelRatio(position);
+	}
+
+	/**
+	 * Same as sceneToPixelRatio(position) which should be used instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public float pixelSceneRatio(Vec position) {
+		return sceneToPixelRatio(position);
+	}
 
 	/**
 	 * Smoothly moves the Eye so that the rectangular screen region defined by {@code rectangle} (pixel units, with origin

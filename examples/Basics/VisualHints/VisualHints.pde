@@ -24,6 +24,7 @@ public void setup() {
   size(640, 360, renderer);
   scene = new CustomizedScene(this);
   iFrame = new InteractiveAvatarFrame(scene);
+  iFrame.setGrabsInputThreshold(scene.radius()/4, true);
   iFrame.translate(new Vec(30, -30, 0));
   scene.setKeyboardShortcut('r', null);
   scene.setNonSeqTimers();

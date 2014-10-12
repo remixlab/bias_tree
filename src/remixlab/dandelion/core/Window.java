@@ -289,7 +289,7 @@ public class Window extends Eye implements Copyable {
 	}
 
 	@Override
-	public float pixelSceneRatio(Vec position) {
+	public float sceneToPixelRatio(Vec position) {
 		float[] wh = getBoundaryWidthHeight();
 		return 2.0f * wh[1] / screenHeight();
 	}

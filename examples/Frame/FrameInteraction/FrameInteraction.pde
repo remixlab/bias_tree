@@ -28,6 +28,7 @@ public void setup() {
   size(640, 360, renderer);		
   scene = new Scene(this);	
   iFrame = new InteractiveFrame(scene);
+  iFrame.setGrabsInputThreshold(scene.radius()/4, true);
   iFrame.translate(new Vec(50, 50));
   // Simply testing non sequential timers:
   scene.setNonSeqTimers(); // comment it to use sequential timers instead (default)
