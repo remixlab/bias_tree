@@ -579,8 +579,18 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Wrapper for {@link remixlab.dandelion.core.MatrixHelper#bind()}
 	 */
-	protected void bind() {
+	protected void bindMatrices() {
 		matrixHelper.bind();
+	}
+	
+	/**
+	 * Same as bindMatrices()
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	protected void bind() {
+		bindMatrices();
 	}
 
 	/**
@@ -974,7 +984,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Called before your main drawing, e.g., P5.pre().
 	 * <p>
-	 * Handles the {@link #avatar()}, then calls {@link #bind()} and finally
+	 * Handles the {@link #avatar()}, then calls {@link #bindMatrices()} and finally
 	 * {@link remixlab.dandelion.core.Eye#updateBoundaryEquations()} if {@link #areBoundaryEquationsEnabled()}.
 	 */
 	public void preDraw() {
@@ -984,7 +994,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 			eye().frame().setScaling(avatar().eyeFrame().scaling());
 		}
 
-		bind();
+		bindMatrices();
 		if (areBoundaryEquationsEnabled() && (eye().lastUpdate() > lastEqUpdate || lastEqUpdate == 0)) {
 			eye().updateBoundaryEquations();
 			lastEqUpdate = timingHandler().frameCount();
@@ -1035,7 +1045,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Internal use. Display various on-screen visual hints to be called from {@link #pre()} or {@link #draw()}.
+	 * Internal use. Display various on-screen visual hints to be called from {@link #postDraw()}.
 	 */
 	protected void displayVisualHints() {
 		if (gridVisualHint())
@@ -2235,7 +2245,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * your own Scene object (for instance, in Processing you should just overload {@code PApplet.draw()} to define your
 	 * scene).
 	 * <p>
-	 * The eye matrices set in {@link #bind()} converts from the world to the camera coordinate systems. Thus vertices
+	 * The eye matrices set in {@link #bindMatrices()} converts from the world to the camera coordinate systems. Thus vertices
 	 * given here can then be considered as being given in the world coordinate system. The eye is moved in this world
 	 * using the mouse. This representation is much more intuitive than a camera-centric system (which for instance is the
 	 * standard in OpenGL).

@@ -103,6 +103,8 @@ public class Scene extends AbstractScene implements PConstants {
 	// P R O C E S S I N G A P P L E T A N D O B J E C T S
 	protected PApplet						parent;
 	protected PGraphics					pgraphics;
+	protected PGraphics					pickingBuffer;
+	protected MatrixHelper      pickingMatrixHelper;
 
 	// E X C E P T I O N H A N D L I N G
 	protected int								beginOffScreenDrawingCalls;
@@ -160,6 +162,8 @@ public class Scene extends AbstractScene implements PConstants {
 			setMatrixHelper(new GLMatrixHelper(this, (PGraphics2D) pg));
 		else
 			setMatrixHelper(new Java2DMatrixHelper(this, pg));
+		
+		initPickingBuffer();
 
 		// 3. Eye
 		setLeftHanded();
@@ -188,6 +192,36 @@ public class Scene extends AbstractScene implements PConstants {
 		// 6. Init should be called only once
 		init();
 	}
+	
+	//TODO testing:
+	protected void initPickingBuffer() {
+		if (pg() instanceof PGraphics3D) {
+			pickingBuffer = pApplet().createGraphics(pg().width, pg().height, P3D);
+			pickingMatrixHelper = new GLMatrixHelper(this, (PGraphicsOpenGL) pickingBuffer);
+		}
+		else if (pg() instanceof PGraphics2D) {
+			pickingBuffer = pApplet().createGraphics(pg().width, pg().height, P2D);
+			pickingMatrixHelper = new GLMatrixHelper(this, (PGraphicsOpenGL) pickingBuffer);
+		}
+		else {
+			pickingBuffer = pApplet().createGraphics(pg().width, pg().height, P2D);
+			pickingMatrixHelper = new Java2DMatrixHelper(this, pickingBuffer);
+		}
+		pickingBuffer.smooth();
+	}
+	
+  //TODO: decide about this
+	public void postDraw() {
+		super.postDraw();
+		for (Grabber mg : inputHandler().globalGrabberList()) {
+			if (mg instanceof Model) {
+				Model iF = (Model) mg;// downcast needed
+				//if(iF) //TODO pending conditional for the update
+				iF.invokePGraphicsHandler();
+			}
+		}
+		this.drawIntoPickingBuffer();
+	}
 
 	// P5 STUFF
 
@@ -204,6 +238,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 */
 	public PGraphics pg() {
 		return pgraphics;
+	}
+	
+	public PGraphics pickingBuffer() {
+		return pickingBuffer;
 	}
 
 	@Override
@@ -2125,6 +2163,24 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		pg().popStyle();
 	}
+	
+	//TODO
+	protected void drawIntoPickingBuffer() {
+		pickingBuffer.beginDraw();
+		pickingMatrixHelper.bind();
+		pickingBuffer.pushStyle();
+		pickingBuffer.background(0);
+		for (Grabber mg : inputHandler().globalGrabberList()) {
+			if (mg instanceof Model) {
+				Model iF = (Model) mg;// downcast needed
+				//if(iF) //TODO pending conditional for the update
+				iF.invokePGraphicsHandlerB();
+				iF.drawIntoBuffer(pickingBuffer);
+			}
+		}
+		pickingBuffer.popStyle();
+		pickingBuffer.endDraw();
+	}
 
 	/**
 	 * Code contributed by Jacques Maire (http://www.alcys.com/) See also:
@@ -2274,6 +2330,33 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().endShape(CLOSE);
 		endScreenDrawing();
 		pg().popStyle();
+	}
+	
+  //TODO doc
+	public static void applyTransformation(PGraphics pgraphics, Frame frame) {
+		if (pgraphics instanceof PGraphics3D) {
+			pgraphics.translate(frame.translation().vec[0], frame.translation().vec[1], frame.translation().vec[2]);
+			pgraphics.rotate(frame.rotation().angle(), ((Quat) frame.rotation()).axis().vec[0],
+					((Quat) frame.rotation()).axis().vec[1], ((Quat) frame.rotation()).axis().vec[2]);
+			pgraphics.scale(frame.scaling(), frame.scaling(), frame.scaling());
+		}
+		else {			
+			pgraphics.translate(frame.translation().x(), frame.translation().y());
+			pgraphics.rotate(frame.rotation().angle());
+			pgraphics.scale(frame.scaling(), frame.scaling());
+		}
+	}
+	
+	//TODO doc
+	public static void applyWorldTransformation(PGraphics pgraphics, Frame frame) {
+		Frame refFrame = frame.referenceFrame();
+		if (refFrame != null) {
+			applyWorldTransformation(pgraphics, refFrame);
+			applyTransformation(pgraphics, frame);
+		}
+		else {
+			applyTransformation(pgraphics, frame);
+		}
 	}
 
 	// decide whether or not to include these in the 2.1 release:
