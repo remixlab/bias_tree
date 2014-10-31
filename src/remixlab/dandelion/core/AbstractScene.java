@@ -582,7 +582,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	protected void bindMatrices() {
 		matrixHelper.bind();
 	}
-	
+
 	/**
 	 * Same as bindMatrices()
 	 * 
@@ -2245,10 +2245,10 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * your own Scene object (for instance, in Processing you should just overload {@code PApplet.draw()} to define your
 	 * scene).
 	 * <p>
-	 * The eye matrices set in {@link #bindMatrices()} converts from the world to the camera coordinate systems. Thus vertices
-	 * given here can then be considered as being given in the world coordinate system. The eye is moved in this world
-	 * using the mouse. This representation is much more intuitive than a camera-centric system (which for instance is the
-	 * standard in OpenGL).
+	 * The eye matrices set in {@link #bindMatrices()} converts from the world to the camera coordinate systems. Thus
+	 * vertices given here can then be considered as being given in the world coordinate system. The eye is moved in this
+	 * world using the mouse. This representation is much more intuitive than a camera-centric system (which for instance
+	 * is the standard in OpenGL).
 	 */
 	public void proscenium() {
 	}

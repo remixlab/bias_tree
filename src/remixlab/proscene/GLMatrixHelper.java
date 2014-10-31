@@ -18,7 +18,7 @@ import remixlab.dandelion.geom.Mat;
 /**
  * Internal {@link remixlab.dandelion.core.MatrixHelper} based on PGraphicsOpenGL graphics transformation.
  */
-//TODO remove public
+// TODO remove public
 public class GLMatrixHelper extends MatrixHelper {
 	PGraphicsOpenGL	pg;
 
