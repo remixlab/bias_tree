@@ -21,12 +21,11 @@ import remixlab.dandelion.core.*;
 import remixlab.util.*;
 
 /**
- * A model is a (2d or 3d) thing drawn onto the screen that can be picked and manipulated by any user means, being it a
- * hardware such as a joystick, or a software entity like a user coded intelligent-agent. Ain't it cool? Enjoy.
- * <p>
- * A model is an InteractiveFrame specialization having an attached shape to it. While the
+ * A model is an InteractiveFrame implementing the modelable interface: It provides default 2D/3D high-level picking &
+ * interaction to modalables (PShape or graphics procedures defined upon a PGraphics).
  */
-public class Model extends InteractiveFrame implements Copyable {
+public class Model extends InteractiveFrame implements Modelable {
+	// TODO complete hashCode and equals, once the rest is done
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -57,8 +56,8 @@ public class Model extends InteractiveFrame implements Copyable {
 	protected Method		drawPGraphicsMethod;
 	// the name of the method to handle the event
 	protected String		drawPGraphicsMethodName;
-	
-	//TODO implement me
+
+	// TODO implement me
 	// 2. Animation
 	// The object to handle the animation
 	protected Object		animateHandlerObject;
@@ -107,6 +106,7 @@ public class Model extends InteractiveFrame implements Copyable {
 		id = idCount++;
 	}
 
+	// TODO fix when implementation is complete
 	protected Model(Model otherFrame) {
 		super(otherFrame);
 		this.pshape = otherFrame.pshape;
@@ -130,9 +130,9 @@ public class Model extends InteractiveFrame implements Copyable {
 	public boolean checkIfGrabsInput(BogusEvent event) {
 		DOF2Event event2 = null;
 
-		if ((!(event instanceof MotionEvent)) || (event instanceof DOF1Event)) {
-			throw new RuntimeException("Grabbing an interactive frame requires at least a DOF2 event");
-		}
+		if (((event instanceof KeyboardEvent)) || (event instanceof DOF1Event))
+			throw new RuntimeException("Grabbing an interactive frame is not possible with a "
+					+ ((event instanceof KeyboardEvent) ? "Keyboard" : "DOF1") + "Event");
 
 		if (event instanceof DOF2Event)
 			event2 = ((DOF2Event) event).get();
@@ -140,12 +140,17 @@ public class Model extends InteractiveFrame implements Copyable {
 			event2 = ((DOF3Event) event).dof2Event();
 		else if (event instanceof DOF6Event)
 			event2 = ((DOF6Event) event).dof3Event().dof2Event();
+		else if (event instanceof ClickEvent)
+			event2 = new DOF2Event(((ClickEvent) event).x(), ((ClickEvent) event).y());
 
 		int pick = ((Scene) scene).pickingBuffer().get((int) event2.x(), (int) event2.y());
 		return getID(pick) == id;
 	}
 
-	public void draw() {
+	@Override
+	public void drawShape() {
+		if (pshape == null)
+			return;
 		PGraphics pg = ((Scene) scene).pg();
 		pg.pushStyle();
 		pg.pushMatrix();
@@ -157,7 +162,8 @@ public class Model extends InteractiveFrame implements Copyable {
 		pg.popStyle();
 	}
 
-	protected void drawIntoBuffer(PGraphics pg) {
+	@Override
+	public void drawShape(PGraphics pg) {
 		if (pshape == null)
 			return;
 		pg.pushStyle();
@@ -171,11 +177,13 @@ public class Model extends InteractiveFrame implements Copyable {
 	}
 
 	/**
-	 * Invokes an external drawing method (if registered). Called by {@link #postDraw()}.
+	 * Invokes an external drawing method (if registered). Called by
+	 * {@link remixlab.dandelion.core.AbstractScene#postDraw()}.
 	 * <p>
 	 * Requires reflection.
 	 */
-	protected boolean invokeHandler() {
+	@Override
+	public boolean invokeGraphicsHandler() {
 		// 3. Draw external registered method
 		if (drawPGraphicsObject != null) {
 			try {
@@ -198,12 +206,12 @@ public class Model extends InteractiveFrame implements Copyable {
 		return false;
 	}
 
-	// TODO correct name
-	protected boolean invokeHandlerIntoPickingBuffer() {
+	@Override
+	public boolean invokeGraphicsHandler(PGraphics pickingBuffer) {
 		// 3. Draw external registered method
 		if (drawPGraphicsObject != null) {
 			try {
-				PGraphics pickingBuffer = ((Scene) scene).pickingBuffer();
+				// PGraphics pickingBuffer = ((Scene) scene).pickingBuffer();
 				pickingBuffer.pushStyle();
 				pickingBuffer.fill(getColor(id));
 				pickingBuffer.stroke(getColor(id));
@@ -232,10 +240,11 @@ public class Model extends InteractiveFrame implements Copyable {
 	 * @param methodName
 	 *          the method to execute in the object handler class
 	 * 
-	 * @see #removePGraphicsHandler()
-	 * @see #invokeHandler()
+	 * @see #removeGraphicsHandler()
+	 * @see #invokeGraphicsHandler()
 	 */
-	public void addPGraphicsHandler(Object obj, String methodName) {
+	@Override
+	public void addGraphicsHandler(Object obj, String methodName) {
 		try {
 			drawPGraphicsMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
 			drawPGraphicsObject = obj;
@@ -249,10 +258,11 @@ public class Model extends InteractiveFrame implements Copyable {
 	/**
 	 * Unregisters the 'draw' handler method (if any has previously been added to the Scene).
 	 * 
-	 * @see #addPGraphicsHandler(Object, String)
-	 * @see #invokeHandler()
+	 * @see #addGraphicsHandler(Object, String)
+	 * @see #invokeGraphicsHandler()
 	 */
-	public void removePGraphicsHandler() {
+	@Override
+	public void removeGraphicsHandler() {
 		drawPGraphicsMethod = null;
 		drawPGraphicsObject = null;
 		drawPGraphicsMethodName = null;
@@ -261,10 +271,11 @@ public class Model extends InteractiveFrame implements Copyable {
 	/**
 	 * Returns {@code true} if the user has registered a 'draw' handler method to the Scene and {@code false} otherwise.
 	 * 
-	 * @see #addPGraphicsHandler(Object, String)
-	 * @see #invokeHandler()
+	 * @see #addGraphicsHandler(Object, String)
+	 * @see #invokeGraphicsHandler()
 	 */
-	public boolean hasPGraphicsHandler() {
+	@Override
+	public boolean hasGraphicsHandler() {
 		if (drawPGraphicsMethodName == null)
 			return false;
 		return true;

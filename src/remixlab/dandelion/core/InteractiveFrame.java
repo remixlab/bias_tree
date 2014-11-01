@@ -332,9 +332,9 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	public boolean checkIfGrabsInput(BogusEvent event) {
 		DOF2Event event2 = null;
 
-		if ((!(event instanceof MotionEvent)) || (event instanceof DOF1Event)) {
-			throw new RuntimeException("Grabbing an interactive frame requires at least a DOF2 event");
-		}
+		if (((event instanceof KeyboardEvent)) || (event instanceof DOF1Event))
+			throw new RuntimeException("Grabbing an interactive frame is not possible with a "
+					+ ((event instanceof KeyboardEvent) ? "Keyboard" : "DOF1") + "Event");
 
 		if (event instanceof DOF2Event)
 			event2 = ((DOF2Event) event).get();
@@ -342,6 +342,8 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 			event2 = ((DOF3Event) event).dof2Event();
 		else if (event instanceof DOF6Event)
 			event2 = ((DOF6Event) event).dof3Event().dof2Event();
+		else if (event instanceof ClickEvent)
+			event2 = new DOF2Event(((ClickEvent) event).x(), ((ClickEvent) event).y());
 
 		Vec proj = scene.eye().projectedCoordinatesOf(position());
 		float halfThreshold = grabsInputThreshold() / 2;

@@ -39,7 +39,7 @@ public void setup() {
   canvas = createGraphics(640, 360, P3D);
   scene = new Scene(this, canvas);
   scene.setGridVisualHint(false);
-  scene.addDrawHandler(this, "mainDrawing");
+  scene.addGraphicsHandler(this, "mainDrawing");
 
   auxCanvas = createGraphics(640, 360, P3D);
   auxScene = new Scene(this, auxCanvas);
@@ -49,7 +49,7 @@ public void setup() {
   auxScene.setRadius(350);
   auxScene.camera().setPosition(new Vec(125, 125, 125));
   auxScene.camera().lookAt(auxScene.center());
-  auxScene.addDrawHandler(this, "auxiliarDrawing");
+  auxScene.addGraphicsHandler(this, "auxiliarDrawing");
   colorMode(RGB, 1);
   handleMouse();
 }

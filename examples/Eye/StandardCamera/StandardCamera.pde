@@ -36,7 +36,7 @@ void setup() {
   // enable computation of the frustum planes equations (disabled by default)
   scene.enableBoundaryEquations();
   scene.setGridVisualHint(false);
-  scene.addDrawHandler(this, "mainDrawing");
+  scene.addGraphicsHandler(this, "mainDrawing");
 
   auxCanvas = createGraphics(640, 360, P3D);
   // Note that we pass the upper left corner coordinates where the scene
@@ -47,7 +47,7 @@ void setup() {
   auxScene.setGridVisualHint(false);
   auxScene.setRadius(400);
   auxScene.showAll();
-  auxScene.addDrawHandler(this, "auxiliarDrawing");
+  auxScene.addGraphicsHandler(this, "auxiliarDrawing");
 }
 
 public void mainDrawing(Scene s) {

@@ -43,9 +43,9 @@ import java.nio.FloatBuffer;
  * {@link #proscenium()} which defines the objects in your scene. Just make sure to define the {@code PApplet.draw()}
  * method, even if it's empty. See the example <i>AlternativeUse</i>.
  * <li><b>External draw handler registration</b>. In addition (not being part of Dandelion), you can even declare an
- * external drawing method and then register it at the Scene with {@link #addDrawHandler(Object, String)}. That method
- * should return {@code void} and have one single {@code Scene} parameter. This strategy may be useful when there are
- * multiple viewers sharing the same drawing code. See the example <i>StandardCamera</i>.
+ * external drawing method and then register it at the Scene with {@link #addGraphicsHandler(Object, String)}. That
+ * method should return {@code void} and have one single {@code Scene} parameter. This strategy may be useful when there
+ * are multiple viewers sharing the same drawing code. See the example <i>StandardCamera</i>.
  * </ol>
  * <h3>Interactivity mechanisms</h3>
  * 
@@ -163,64 +163,68 @@ public class Scene extends AbstractScene implements PConstants {
 		else
 			setMatrixHelper(new Java2DMatrixHelper(this, pg));
 
-		initPickingBuffer();
+		// 3. Picking buffer
+		if (pg() instanceof processing.opengl.PGraphicsOpenGL) {
+			pickingBuffer = pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D);
+			// we can go simply as:
+			// pickingMatrixHelper = new GLMatrixHelper(this, (PGraphicsOpenGL) pickingBuffer);
+			// but we don't recompute matrices since it's done in the main scene
+			pickingMatrixHelper = new GLMatrixHelper(this, (PGraphicsOpenGL) pickingBuffer) {
+				@Override
+				public void bind() {
+					setProjection(scene.eye().getProjection());
+					setModelView(scene.eye().getView());
+				}
+			};
+		}
+		else {
+			pickingBuffer = pApplet().createGraphics(pg().width, pg().height, JAVA2D);
+			// we can go simply as:
+			// pickingMatrixHelper = new Java2DMatrixHelper(this, pickingBuffer);
+			// but we don't recompute matrices since it's done in the main scene
+			pickingMatrixHelper = new Java2DMatrixHelper(this, pickingBuffer) {
+				@Override
+				public void bind() {
+					Vec pos = scene.eye().position();
+					Rotation o = scene.eye().frame().orientation();
+					translate(scene.width() / 2, scene.height() / 2);
+					if (scene.isRightHanded())
+						scale(1, -1);
+					scale(1 / scene.eye().frame().magnitude(), 1 / scene.eye().frame().magnitude());
+					rotate(-o.angle());
+					translate(-pos.x(), -pos.y());
+				}
+			};
+		}
 
-		// 3. Eye
+		// 4. Eye
 		setLeftHanded();
 		width = pg.width;
 		height = pg.height;
 		eye = is3D() ? new Camera(this) : new Window(this);
 		setEye(eye());// calls showAll();
 
-		// 4. Off-screen?
+		// 5. Off-screen?
 		offscreen = pg != p.g;
 		upperLeftCorner = offscreen ? new Point(x, y) : new Point(0, 0);
 
-		// 5. Create agents and register P5 methods
+		// 6. Create agents and register P5 methods
 		defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
 		enableKeyboardAgent();
 		defMotionAgent = new MouseAgent(this, "proscene_mouse");
 		enableMotionAgent();
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
+		pApplet().registerMethod("post", this);// -> handle picking buffer
+
 		// Misc stuff:
 		setDottedGrid(!(platform() == Platform.PROCESSING_ANDROID || is2D()));
 		if (platform() == Platform.PROCESSING_DESKTOP || platform() == Platform.PROCESSING_ANDROID)
 			this.setNonSeqTimers();
 		// pApplet().frameRate(100);
 
-		// 6. Init should be called only once
+		// 7. Init should be called only once
 		init();
-	}
-
-	// TODO testing:
-	protected void initPickingBuffer() {
-		if (pg() instanceof PGraphics3D) {
-			pickingBuffer = pApplet().createGraphics(pg().width, pg().height, P3D);
-			pickingMatrixHelper = new GLMatrixHelper(this, (PGraphicsOpenGL) pickingBuffer);
-		}
-		else if (pg() instanceof PGraphics2D) {
-			pickingBuffer = pApplet().createGraphics(pg().width, pg().height, P2D);
-			pickingMatrixHelper = new GLMatrixHelper(this, (PGraphicsOpenGL) pickingBuffer);
-		}
-		else {
-			pickingBuffer = pApplet().createGraphics(pg().width, pg().height, P2D);
-			pickingMatrixHelper = new Java2DMatrixHelper(this, pickingBuffer);
-		}
-		pickingBuffer.smooth();
-	}
-
-	// TODO: decide about this
-	public void postDraw() {
-		super.postDraw();
-		for (Grabber mg : inputHandler().globalGrabberList()) {
-			if (mg instanceof Model) {
-				Model iF = (Model) mg;// downcast needed
-				// if(iF) //TODO pending conditional for the update
-				iF.invokeHandler();
-			}
-		}
-		this.drawIntoPickingBuffer();
 	}
 
 	// P5 STUFF
@@ -1232,19 +1236,38 @@ public class Scene extends AbstractScene implements PConstants {
 	// DRAW METHOD REG
 
 	@Override
-	protected boolean invokeDrawHandler() {
-		// 3. Draw external registered method
+	protected boolean invokeGraphicsHandler() {
+		boolean result = false;
 		if (drawHandlerObject != null) {
 			try {
 				drawHandlerMethod.invoke(drawHandlerObject, new Object[] { this });
-				return true;
 			} catch (Exception e) {
 				PApplet.println("Something went wrong when invoking your " + drawHandlerMethodName + " method");
 				e.printStackTrace();
-				return false;
 			}
 		}
-		return false;
+		result = true;
+		// TODO testing:
+		for (Grabber mg : inputHandler().globalGrabberList()) {
+			if (mg instanceof Modelable) {
+				Modelable model = (Modelable) mg;// downcast needed
+				// if(iF) //TODO pending conditional for the update
+				result = model.invokeGraphicsHandler();
+				if (!result)
+					break;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Use addGraphicsHandler instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public void addDrawHandler(Object obj, String methodName) {
+		addGraphicsHandler(obj, methodName);
 	}
 
 	/**
@@ -1256,10 +1279,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @param methodName
 	 *          the method to execute in the object handler class
 	 * 
-	 * @see #removeDrawHandler()
-	 * @see #invokeDrawHandler()
+	 * @see #removeGraphicsHandler()
+	 * @see #invokeGraphicsHandler()
 	 */
-	public void addDrawHandler(Object obj, String methodName) {
+	public void addGraphicsHandler(Object obj, String methodName) {
 		try {
 			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
 			drawHandlerObject = obj;
@@ -1271,24 +1294,44 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
+	 * Use removeGraphicsHandler instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public void removeDrawHandler() {
+		removeGraphicsHandler();
+	}
+
+	/**
 	 * Unregisters the 'draw' handler method (if any has previously been added to the Scene).
 	 * 
-	 * @see #addDrawHandler(Object, String)
-	 * @see #invokeDrawHandler()
+	 * @see #addGraphicsHandler(Object, String)
+	 * @see #invokeGraphicsHandler()
 	 */
-	public void removeDrawHandler() {
+	public void removeGraphicsHandler() {
 		drawHandlerMethod = null;
 		drawHandlerObject = null;
 		drawHandlerMethodName = null;
 	}
 
 	/**
+	 * Use hasGraphicsHandler instead.
+	 * 
+	 * @deprecated Please refrain from using this method, it will be removed from future releases.
+	 */
+	@Deprecated
+	public boolean hasDrawHandler() {
+		return hasGraphicsHandler();
+	}
+
+	/**
 	 * Returns {@code true} if the user has registered a 'draw' handler method to the Scene and {@code false} otherwise.
 	 * 
-	 * @see #addDrawHandler(Object, String)
-	 * @see #invokeDrawHandler()
+	 * @see #addGraphicsHandler(Object, String)
+	 * @see #invokeGraphicsHandler()
 	 */
-	public boolean hasDrawHandler() {
+	public boolean hasGraphicsHandler() {
 		if (drawHandlerMethodName == null)
 			return false;
 		return true;
@@ -1491,6 +1534,24 @@ public class Scene extends AbstractScene implements PConstants {
 							+ "endDraw() and they cannot be nested. Check your implementation!");
 
 		postDraw();
+	}
+
+	public void post() {
+		// draw into picking buffer
+		pickingBuffer.beginDraw();
+		pickingMatrixHelper.bind();
+		pickingBuffer.pushStyle();
+		pickingBuffer.background(0);
+		for (Grabber mg : inputHandler().globalGrabberList()) {
+			if (mg instanceof Modelable) {
+				Modelable model = (Modelable) mg;// downcast needed
+				// if(iF) //TODO pending conditional for the update
+				model.invokeGraphicsHandler(pickingBuffer());
+				model.drawShape(pickingBuffer());
+			}
+		}
+		pickingBuffer.popStyle();
+		pickingBuffer.endDraw();
 	}
 
 	// SCREENDRAWING
@@ -2162,24 +2223,6 @@ public class Scene extends AbstractScene implements PConstants {
 			}
 		}
 		pg().popStyle();
-	}
-
-	// TODO
-	protected void drawIntoPickingBuffer() {
-		pickingBuffer.beginDraw();
-		pickingMatrixHelper.bind();
-		pickingBuffer.pushStyle();
-		pickingBuffer.background(0);
-		for (Grabber mg : inputHandler().globalGrabberList()) {
-			if (mg instanceof Model) {
-				Model iF = (Model) mg;// downcast needed
-				// if(iF) //TODO pending conditional for the update
-				iF.invokeHandlerIntoPickingBuffer();
-				iF.drawIntoBuffer(pickingBuffer);
-			}
-		}
-		pickingBuffer.popStyle();
-		pickingBuffer.endDraw();
 	}
 
 	/**

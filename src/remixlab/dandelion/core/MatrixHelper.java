@@ -96,8 +96,8 @@ public abstract class MatrixHelper {
 	}
 
 	/**
-	 * Computes the projection matrix from {@link remixlab.dandelion.core.AbstractScene#eye()} parameters and loads it the
-	 * matrix helper. Used in {@link #bind()}.
+	 * Computes the projection matrix from {@link remixlab.dandelion.core.AbstractScene#eye()} parameters and loads it
+	 * into the matrix helper. Used in {@link #bind()}.
 	 * 
 	 * @see remixlab.dandelion.core.Eye#getProjection(boolean)
 	 */
@@ -106,25 +106,16 @@ public abstract class MatrixHelper {
 	}
 
 	/**
-	 * Convenience function that simply calls {@code loadModelView(true)}.
-	 */
-	public void loadModelView() {
-		loadModelView(true);
-	}
-
-	/**
-	 * Computes the view matrix from {@link remixlab.dandelion.core.AbstractScene#eye()} parameters and loads it the
+	 * Computes the view matrix from {@link remixlab.dandelion.core.AbstractScene#eye()} parameters and loads it into the
 	 * matrix helper. Used in {@link #bind()}. If {@code includeView} is {@code false}
 	 * 
 	 * @see remixlab.dandelion.core.Eye#getView(boolean)
 	 */
-	public void loadModelView(boolean includeView) {
-		// TODO test also: initModelView(false); //webgl context?
-		scene.eye().computeView();
-		if (includeView)
-			setModelView(scene.eye().getView(false));
-		else
-			resetModelView();// loads identity -> only model, (excludes view)
+	public void loadModelView() {
+		setModelView(scene.eye().getView(true));
+		// other way is to compute view but load identity. Maybe usfull for a webgl context?
+		// scene.eye().computeView();
+		// resetModelView();// loads identity -> only model, (excludes view)
 	}
 
 	/**

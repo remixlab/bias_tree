@@ -24,11 +24,11 @@ import remixlab.dandelion.core.Constants.*;
  * Degrees-Of-Freedom (e.g., two translations or two rotations), such as most mice.
  */
 public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Action>> {
-	boolean						bypassNullEvent, need4Spin, drive, rotateMode;
-	DOF2Event					event, pressEvent;
-	float							dFriction;
-	InteractiveFrame	iFrame;
-	protected int			left	= 1, center = 2, right = 3;
+	boolean	bypassNullEvent, need4Spin, drive, rotateMode;
+	protected DOF2Event	event, pressEvent;
+	float								dFriction;
+	InteractiveFrame		iFrame;
+	protected int				left	= 1, center = 2, right = 3;
 
 	/**
 	 * Constructs a MouseAgent. Nothing fancy.

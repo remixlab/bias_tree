@@ -1009,12 +1009,12 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * <li>{@link remixlab.fpstiming.TimingHandler#handle()}</li>
 	 * <li>{@link remixlab.bias.core.InputHandler#handle()}</li>
 	 * <li>{@link #proscenium()}</li>
-	 * <li> {@link #invokeDrawHandler()}</li>
+	 * <li> {@link #invokeGraphicsHandler()}</li>
 	 * <li>{@link #displayVisualHints()}.</li>
 	 * </ol>
 	 * 
 	 * @see #proscenium()
-	 * @see #invokeDrawHandler()
+	 * @see #invokeGraphicsHandler()
 	 * @see #gridVisualHint()
 	 * @see #visualHints()
 	 */
@@ -1030,7 +1030,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		// 3. Alternative use only
 		proscenium();
 		// 4. Draw external registered method (only in java sub-classes)
-		invokeDrawHandler(); // abstract
+		invokeGraphicsHandler(); // abstract
 		// 5. Display visual hints
 		displayVisualHints(); // abstract
 	}
@@ -1038,9 +1038,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Invokes an external drawing method (if registered). Called by {@link #postDraw()}.
 	 * <p>
-	 * Requires reflection and thus it's made abstract. See proscene.Scene for an implementation.
+	 * Requires reflection and thus default implementation is empty. See proscene.Scene for an implementation.
 	 */
-	protected boolean invokeDrawHandler() {
+	protected boolean invokeGraphicsHandler() {
 		return false;
 	}
 

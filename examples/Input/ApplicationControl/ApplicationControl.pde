@@ -143,7 +143,7 @@ void setup() {
 
   canvas = createGraphics(640, 360, P3D); 
   scene = new Scene(this, canvas);
-  scene.addDrawHandler(this, "drawing");
+  scene.addGraphicsHandler(this, "drawing");
 
   ctrlCanvas = createGraphics(w, h);  
   agent = new MouseAgent(scene.inputHandler(), "my_mouse");
