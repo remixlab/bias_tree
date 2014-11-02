@@ -2,7 +2,7 @@
  * Space Navigator
  * by Jean Pierre Charalambos.
  *
- * This demo shows how to control your scene Eye and iFrames using a Space Navigator
+ * This demo shows how to control your scene Eye and a model using a Space Navigator
  * (3D mouse), with 6 degrees-of-freedom.
  *
  * We implement the (non-conventional) user interaction mechanism as a HIDAgent
@@ -42,7 +42,8 @@ float SINCOS_PRECISION = 0.5;
 int SINCOS_LENGTH = int(360.0 / SINCOS_PRECISION);
 
 Scene scene;
-InteractiveFrame iFrame;
+PShape satellite;
+Model model;
 HIDAgent hidAgent;
 
 ControllIO controll;
@@ -67,8 +68,10 @@ void setup() {
   scene.setRadius(260);
   scene.showAll();
   
-  iFrame = new InteractiveFrame(scene);
-  iFrame.translate(new Vec(180, 180, 0));
+  satellite = loadShape("satellite.obj");
+  model = new Model(scene, satellite);
+  model.translate(new Vec(180, 180, 0));
+  model.scale(50);
 
   hidAgent = new HIDAgent(scene, "SpaceNavigator") {
     @Override
@@ -78,7 +81,7 @@ void setup() {
     }
   };
   
-  hidAgent.addInPool(iFrame);
+  hidAgent.addInPool(model);
   //declare some sensitivities for the space navigator device
   hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
 
@@ -87,13 +90,13 @@ void setup() {
 
 void draw() {    
   background(0);
-  // the hidAgent sensitivities should not vary when its input grabber is the iFrame:
-  if( hidAgent.inputGrabber() == iFrame )
+  // the hidAgent sensitivities should not vary when its input grabber is the model:
+  if( hidAgent.inputGrabber() == model )
     hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
   else if(hidAgent.eyeProfile().isActionBound(DOF6Action.HINGE))
     hidAgent.setSensitivities(0.0001, 0.0001, -0.01, 0.0001, 0.0001, 0.0001);      
   renderGlobe();
-  renderIFrame();
+  model.drawShape();
 }
 
 void keyPressed() {
@@ -122,8 +125,8 @@ void keyPressed() {
       scene.camera().frame().rotate(q);
     }
   if ( key == 'i') {
-    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
-    hidAgent.setDefaultGrabber(hidAgent.defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
+    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == model ? scene.eye().frame() : model);
+    hidAgent.setDefaultGrabber(hidAgent.defaultGrabber() == model ? scene.eye().frame() : model);
   }
 }
 
@@ -133,26 +136,6 @@ void renderGlobe() {
   noStroke();
   textureMode(IMAGE);  
   texturedSphere(globeRadius, texmap);
-}
-
-void renderIFrame() {
-  // Save the current model view matrix
-  pushMatrix();
-  // Multiply matrix to get in the frame coordinate system.
-  // applyMatrix(scene.interactiveFrame().matrix()) is handy but inefficient 
-  iFrame.applyTransformation(); //optimum
-  // Draw an axis using the Scene static function
-  scene.drawAxes(20);
-  // Draw a second box
-  if (iFrame.grabsInput(scene.motionAgent()) || iFrame.grabsInput(hidAgent) ) {
-    fill(255, 0, 0);
-    box(12, 17, 22);
-  }
-  else {
-    fill(0, 0, 255);
-    box(10, 15, 20);
-  }  
-  popMatrix();
 }
 
 void initializeSphere(int res)
