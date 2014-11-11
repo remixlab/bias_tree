@@ -18,6 +18,7 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -1483,6 +1484,24 @@ public class Scene extends AbstractScene implements PConstants {
 		postDraw();
 	}
 
+	public void post() {
+		// draw into picking buffer
+		pickingBuffer().beginDraw();
+		pickingMatrixHelper.bind();
+		pickingBuffer().pushStyle();
+		pickingBuffer().background(0);
+		for (Grabber mg : inputHandler().globalGrabberList()) {
+			if (mg instanceof Modelable) {
+				Modelable model = (Modelable) mg;
+				model.invokeGraphicsHandler(pickingBuffer());
+				model.drawShape(pickingBuffer());
+			}
+		}
+		pickingBuffer().popStyle();
+		pickingBuffer().endDraw();
+		pickingBuffer().loadPixels();
+	}
+
 	/**
 	 * Only if the Scene {@link #isOffscreen()}. This method should be called just after the {@link #pg()} beginDraw()
 	 * method. Simply calls {@link #preDraw()}.
@@ -1498,20 +1517,23 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #isOffscreen()
 	 */
 	public void beginDraw() {
-		if (isOffscreen()) {
-			if (beginOffScreenDrawingCalls != 0)
-				throw new RuntimeException("There should be exactly one beginDraw() call followed by a "
-						+ "endDraw() and they cannot be nested. Check your implementation!");
-			beginOffScreenDrawingCalls++;
+		if (!isOffscreen())
+			throw new RuntimeException(
+					"begin(/end)Draw() should be used only within offscreen scenes. Check your implementation!");
 
-			if ((width != pg().width) || (height != pg().height)) {
-				width = pg().width;
-				height = pg().height;
-				eye().setScreenWidthAndHeight(width, height);
-			}
+		if (beginOffScreenDrawingCalls != 0)
+			throw new RuntimeException("There should be exactly one beginDraw() call followed by a "
+					+ "endDraw() and they cannot be nested. Check your implementation!");
 
-			preDraw();
+		beginOffScreenDrawingCalls++;
+
+		if ((width != pg().width) || (height != pg().height)) {
+			width = pg().width;
+			height = pg().height;
+			eye().setScreenWidthAndHeight(width, height);
 		}
+
+		preDraw();
 	}
 
 	/**
@@ -1526,6 +1548,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #isOffscreen()
 	 */
 	public void endDraw() {
+		if (!isOffscreen())
+			throw new RuntimeException(
+					"(begin/)endDraw() should be used only within offscreen scenes. Check your implementation!");
+
 		beginOffScreenDrawingCalls--;
 
 		if (beginOffScreenDrawingCalls != 0)
@@ -1536,23 +1562,90 @@ public class Scene extends AbstractScene implements PConstants {
 		postDraw();
 	}
 
-	public void post() {
-		// draw into picking buffer
-		pickingBuffer.beginDraw();
-		pickingMatrixHelper.bind();
-		pickingBuffer.pushStyle();
-		pickingBuffer.background(0);
+	/**
+	 * Draw all scene models. Just draws all models' pshapes (it doesn't invoke the models' graphics handler).
+	 */
+	public void drawModels() {
+		//for(Modelable model : models()) model.drawShape();
+		///*
 		for (Grabber mg : inputHandler().globalGrabberList()) {
 			if (mg instanceof Modelable) {
-				Modelable model = (Modelable) mg;// downcast needed
-				// if(iF) //TODO pending conditional for the update
-				model.invokeGraphicsHandler(pickingBuffer());
-				model.drawShape(pickingBuffer());
+				Modelable model = (Modelable) mg;
+				// already called by scene.invokeGraphicsHandler()
+				// model.invokeGraphicsHandler();
+				model.drawShape();
 			}
 		}
-		pickingBuffer.popStyle();
-		pickingBuffer.endDraw();
+		//*/
 	}
+	
+	public List<Modelable> models() {
+		ArrayList<Modelable> models = new ArrayList<Modelable>();
+		for (Grabber mg : inputHandler().globalGrabberList()) {
+			if (mg instanceof Modelable) {
+				models.add((Modelable)mg);
+			}
+		}
+		return models;
+	}
+
+	/**
+	 * Draw all models into pgraphics. This tries to be agnostic and thus third parties should
+	 * call {@code pgraphics.beginDraw()/endDraw()} accordingly.
+	 * <p>
+	 * This version of the method allows chaining of shaders.
+	 * 
+	 * @param pgraphics
+	 * 
+	 * @see #drawModels()
+	 */
+	public void drawModels(PGraphics pgraphics) {
+		//TODO Decide whether or not should be available only onscreen since
+		//this works best when scene is off-screen.
+		if (pgraphics instanceof processing.opengl.PGraphicsOpenGL) {
+			// pgraphics.beginDraw();
+
+			if (pgraphics != pg()) {// TODO: seems overkill, fix me at the end
+				MatrixHelper mh = new GLMatrixHelper(this, (PGraphicsOpenGL) pgraphics) {
+					@Override
+					public void bind() {
+						setProjection(scene.eye().getProjection());
+						setModelView(scene.eye().getView());
+					}
+				};
+				mh.bind();
+			}
+			// pgraphics.pushStyle();
+			/*
+			for(Modelable model : models()) {
+				model.invokeGraphicsHandler(pgraphics);
+				model.drawShape(pgraphics);
+			}
+			//*/
+			///*
+			for (Grabber mg : inputHandler().globalGrabberList()) {
+				if (mg instanceof Modelable) {
+					Modelable model = (Modelable) mg;// downcast needed
+					model.invokeGraphicsHandler(pgraphics);
+					model.drawShape(pgraphics);
+				}
+			}
+			//*/
+			// pgraphics.popStyle();
+			// pgraphics.endDraw();
+		}
+		else
+			throw new RuntimeException("PGraphics should be instance of P3D or P2D ");
+	}
+
+	/**
+	 * Draws all scene models using the given shader. Simply call: {@code drawModels(pg(), s)}.
+	 * 
+	 * @see #drawModels()
+	 */
+	/*
+	 * public void drawModels(PShader s) { pg().shader(s); drawModels(pg()); //pgraphics.resetShader(); } //
+	 */
 
 	// SCREENDRAWING
 

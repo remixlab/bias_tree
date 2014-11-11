@@ -8,7 +8,7 @@ import remixlab.bias.core.*;
  * A modelable is a PShape or graphics procedure that can be picked and manipulated by any user means, being it a
  * hardware such as a joystick, or a software entity like a user coded intelligent-agent.
  * <p>
- * Third-parties should implement the {@link remixlab.bias.core.Grabber} behavior. A {@link remixlab.proscene.Model} 
+ * Third-parties should implement the {@link remixlab.bias.core.Grabber} behavior. A {@link remixlab.proscene.Model}
  * provides default 2D/3D high-level interactivity.
  * <p>
  * TODO: doc about: animation handler, how precise picking was implemented, are missed

@@ -48,8 +48,8 @@ void mainDrawing(Scene s) {
     else
       models[i].shape().setFill(color(0, 0, 255));
     models[i].shape().setStroke(color(255, 0, 0));
-    models[i].drawShape();
   }
+  s.drawModels();
 }
 
 PShape drawRandomPolygon(int num_vertex) {

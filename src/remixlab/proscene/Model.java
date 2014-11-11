@@ -21,8 +21,8 @@ import remixlab.dandelion.core.*;
 import remixlab.util.*;
 
 /**
- * A model is an InteractiveFrame implementing the modelable interface: It provides default 2D/3D high-level picking &
- * interaction to modalables (PShape or graphics procedures defined upon a PGraphics).
+ * A model is an InteractiveFrame implementing the modelable interface: It provides default 2D/3D high-level precise
+ * picking & interaction to modalables (PShape or graphics procedures defined upon a PGraphics).
  */
 public class Model extends InteractiveFrame implements Modelable {
 	// TODO complete hashCode and equals, once the rest is done
@@ -76,34 +76,47 @@ public class Model extends InteractiveFrame implements Modelable {
 	public Model(Scene scn) {
 		super(scn);
 		id = idCount++;
+		if (idCount > 0)
+			((Scene) scene).pickingBuffer().loadPixels();
 	}
 
 	public Model(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		id = idCount++;
+		if (idCount > 0)
+			((Scene) scene).pickingBuffer().loadPixels();
 	}
 
 	protected Model(Scene scn, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame);
 		id = idCount++;
+		if (idCount > 0)
+			((Scene) scene).pickingBuffer().loadPixels();
 	}
 
 	public Model(Scene scn, PShape ps) {
 		super(scn);
 		pshape = ps;
 		id = idCount++;
+		if (idCount > 0)
+			((Scene) scene).pickingBuffer().loadPixels();
 	}
 
 	public Model(Scene scn, PShape ps, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		pshape = ps;
 		id = idCount++;
+		if (idCount > 0)
+			((Scene) scene).pickingBuffer().loadPixels();
 	}
 
+	// TODO: is needed?
 	protected Model(Scene scn, PShape ps, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame);
 		pshape = ps;
 		id = idCount++;
+		if (idCount > 0)
+			((Scene) scene).pickingBuffer().loadPixels();
 	}
 
 	// TODO fix when implementation is complete
@@ -143,8 +156,18 @@ public class Model extends InteractiveFrame implements Modelable {
 		else if (event instanceof ClickEvent)
 			event2 = new DOF2Event(((ClickEvent) event).x(), ((ClickEvent) event).y());
 
-		int pick = ((Scene) scene).pickingBuffer().get((int) event2.x(), (int) event2.y());
-		return getID(pick) == id;
+		// int pick = ((Scene) scene).pickingBuffer().get((int) event2.x(), (int) event2.y());
+
+		((Scene) scene).pickingBuffer().pushStyle();
+		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
+		int index = (int) event2.y() * scene.width() + (int) event2.x();
+		boolean result = false;
+		if (index < ((Scene) scene).width() * ((Scene) scene).height()) {
+			int pick = ((Scene) scene).pickingBuffer().pixels[index];
+			result = getID(pick) == id;
+		}
+		((Scene) scene).pickingBuffer().popStyle();
+		return result;
 	}
 
 	@Override
@@ -167,8 +190,15 @@ public class Model extends InteractiveFrame implements Modelable {
 		if (pshape == null)
 			return;
 		pg.pushStyle();
-		pshape.setFill(getColor(id));
-		pshape.setStroke(getColor(id));
+		// TODO: this check seems over-kill since when pg!=((Scene) scene).pickingBuffer()
+		// then a shader should be in control
+		if (pg == ((Scene) scene).pickingBuffer()) {
+			// -debug:
+			// System.out.println("setFill and setColor in Model.drawShape!!!");
+			pg.colorMode(PApplet.RGB, 255);
+			pshape.setFill(getColor(id));
+			pshape.setStroke(getColor(id));
+		}
 		pg.pushMatrix();
 		Scene.applyWorldTransformation(pg, this);
 		pg.shape(pshape);
@@ -207,19 +237,26 @@ public class Model extends InteractiveFrame implements Modelable {
 	}
 
 	@Override
-	public boolean invokeGraphicsHandler(PGraphics pickingBuffer) {
+	public boolean invokeGraphicsHandler(PGraphics pg) {
 		// 3. Draw external registered method
 		if (drawPGraphicsObject != null) {
 			try {
 				// PGraphics pickingBuffer = ((Scene) scene).pickingBuffer();
-				pickingBuffer.pushStyle();
-				pickingBuffer.fill(getColor(id));
-				pickingBuffer.stroke(getColor(id));
-				pickingBuffer.pushMatrix();
-				Scene.applyWorldTransformation(pickingBuffer, this);
-				drawPGraphicsMethod.invoke(drawPGraphicsObject, new Object[] { pickingBuffer });
-				pickingBuffer.popMatrix();
-				pickingBuffer.popStyle();
+				pg.pushStyle();
+				// TODO: this check seems over-kill since when pg!=((Scene) scene).pickingBuffer()
+				// then a shader should be in control
+				if (pg == ((Scene) scene).pickingBuffer()) {
+					// -debug:
+					// System.out.println("setFill and setColor done in Model.invokeGraphicsHandler!!!");
+					pg.colorMode(PApplet.RGB, 255);
+					pg.fill(getColor(id));
+					pg.stroke(getColor(id));
+				}
+				pg.pushMatrix();
+				Scene.applyWorldTransformation(pg, this);
+				drawPGraphicsMethod.invoke(drawPGraphicsObject, new Object[] { pg });
+				pg.popMatrix();
+				pg.popStyle();
 				return true;
 			} catch (Exception e) {
 				PApplet.println("Something went wrong when invoking your " + drawPGraphicsMethodName

@@ -32,6 +32,9 @@ void setup() {
 
 void draw() {
   background(0);
+  scene.drawModels();
+  //Same but with custom coloring
+  /*
   for (int i = 0; i < models.length; i++) {
     if (scene.grabsAnyAgentInput(models[i]))
       models[i].shape().setFill(color(255, 0, 0));
@@ -40,6 +43,7 @@ void draw() {
     models[i].shape().setStroke(color(255, 0, 0));
     models[i].drawShape();
   }
+  */
 }
 
 PShape drawRandomPolygon(int num_vertex) {
@@ -102,4 +106,3 @@ public class CustomMouseAgent extends MouseAgent {
     }
   }
 }
-
