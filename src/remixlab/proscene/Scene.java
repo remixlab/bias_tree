@@ -106,6 +106,7 @@ public class Scene extends AbstractScene implements PConstants {
 	protected PGraphics					pgraphics;
 	protected PGraphics					pickingBuffer;
 	protected MatrixHelper			pickingMatrixHelper;
+	protected List<Modelable>   models;
 
 	// E X C E P T I O N H A N D L I N G
 	protected int								beginOffScreenDrawingCalls;
@@ -165,6 +166,7 @@ public class Scene extends AbstractScene implements PConstants {
 			setMatrixHelper(new Java2DMatrixHelper(this, pg));
 
 		// 3. Picking buffer
+		models = new ArrayList<Modelable>();
 		if (pg() instanceof processing.opengl.PGraphicsOpenGL) {
 			pickingBuffer = pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D);
 			// we can go simply as:
@@ -1561,32 +1563,25 @@ public class Scene extends AbstractScene implements PConstants {
 
 		postDraw();
 	}
-
+	
+	public List<Modelable> models() {
+		return models;
+	}
+	
+	public boolean addModel(Modelable model) {
+		return models().add(model);
+	}
+	
+	public boolean removeModel(Modelable model) {
+		return models().remove(model);
+	}
+	
 	/**
 	 * Draw all scene models. Just draws all models' pshapes (it doesn't invoke the models' graphics handler).
 	 */
 	public void drawModels() {
-		//for(Modelable model : models()) model.drawShape();
-		///*
-		for (Grabber mg : inputHandler().globalGrabberList()) {
-			if (mg instanceof Modelable) {
-				Modelable model = (Modelable) mg;
-				// already called by scene.invokeGraphicsHandler()
-				// model.invokeGraphicsHandler();
-				model.drawShape();
-			}
-		}
-		//*/
-	}
-	
-	public List<Modelable> models() {
-		ArrayList<Modelable> models = new ArrayList<Modelable>();
-		for (Grabber mg : inputHandler().globalGrabberList()) {
-			if (mg instanceof Modelable) {
-				models.add((Modelable)mg);
-			}
-		}
-		return models;
+		for(Modelable model : models()) 
+			model.drawShape();
 	}
 
 	/**
@@ -1599,43 +1594,42 @@ public class Scene extends AbstractScene implements PConstants {
 	 * 
 	 * @see #drawModels()
 	 */
-	public void drawModels(PGraphics pgraphics) {
+	public void drawModels(PGraphics pgraphics) {		
 		//TODO Decide whether or not should be available only onscreen since
 		//this works best when scene is off-screen.
+		// 1. Set pgraphics matrices using a custom MatrixHelper
+		MatrixHelper mh;
 		if (pgraphics instanceof processing.opengl.PGraphicsOpenGL) {
-			// pgraphics.beginDraw();
-
-			if (pgraphics != pg()) {// TODO: seems overkill, fix me at the end
-				MatrixHelper mh = new GLMatrixHelper(this, (PGraphicsOpenGL) pgraphics) {
-					@Override
-					public void bind() {
-						setProjection(scene.eye().getProjection());
-						setModelView(scene.eye().getView());
-					}
-				};
-				mh.bind();
-			}
-			// pgraphics.pushStyle();
-			/*
-			for(Modelable model : models()) {
-				model.invokeGraphicsHandler(pgraphics);
-				model.drawShape(pgraphics);
-			}
-			//*/
-			///*
-			for (Grabber mg : inputHandler().globalGrabberList()) {
-				if (mg instanceof Modelable) {
-					Modelable model = (Modelable) mg;// downcast needed
-					model.invokeGraphicsHandler(pgraphics);
-					model.drawShape(pgraphics);
+			mh = new GLMatrixHelper(this, (PGraphicsOpenGL) pgraphics) {
+				@Override
+				public void bind() {
+					setProjection(scene.eye().getProjection());
+					setModelView(scene.eye().getView());
 				}
-			}
-			//*/
-			// pgraphics.popStyle();
-			// pgraphics.endDraw();
+			};
 		}
-		else
-			throw new RuntimeException("PGraphics should be instance of P3D or P2D ");
+		else {
+			mh = new Java2DMatrixHelper(this, pgraphics) {
+				@Override
+				public void bind() {
+					Vec pos = scene.eye().position();
+					Rotation o = scene.eye().frame().orientation();
+					translate(scene.width() / 2, scene.height() / 2);
+					if (scene.isRightHanded())
+						scale(1, -1);
+					scale(1 / scene.eye().frame().magnitude(), 1 / scene.eye().frame().magnitude());
+					rotate(-o.angle());
+					translate(-pos.x(), -pos.y());
+				}
+			};
+		}
+		mh.bind();
+		
+		// 2. Draw all models into pgraphics
+		for(Modelable model : models()) {
+			model.invokeGraphicsHandler(pgraphics);
+			model.drawShape(pgraphics);
+		}
 	}
 
 	/**

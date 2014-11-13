@@ -75,6 +75,7 @@ public class Model extends InteractiveFrame implements Modelable {
 
 	public Model(Scene scn) {
 		super(scn);
+		((Scene)scene).addModel(this);
 		id = idCount++;
 		if (idCount > 0)
 			((Scene) scene).pickingBuffer().loadPixels();
@@ -82,6 +83,7 @@ public class Model extends InteractiveFrame implements Modelable {
 
 	public Model(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
+		((Scene)scene).addModel(this);
 		id = idCount++;
 		if (idCount > 0)
 			((Scene) scene).pickingBuffer().loadPixels();
@@ -89,6 +91,7 @@ public class Model extends InteractiveFrame implements Modelable {
 
 	protected Model(Scene scn, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame);
+		((Scene)scene).addModel(this);
 		id = idCount++;
 		if (idCount > 0)
 			((Scene) scene).pickingBuffer().loadPixels();
@@ -96,6 +99,7 @@ public class Model extends InteractiveFrame implements Modelable {
 
 	public Model(Scene scn, PShape ps) {
 		super(scn);
+		((Scene)scene).addModel(this);
 		pshape = ps;
 		id = idCount++;
 		if (idCount > 0)
@@ -104,6 +108,7 @@ public class Model extends InteractiveFrame implements Modelable {
 
 	public Model(Scene scn, PShape ps, Frame referenceFrame) {
 		super(scn, referenceFrame);
+		((Scene)scene).addModel(this);
 		pshape = ps;
 		id = idCount++;
 		if (idCount > 0)
@@ -113,6 +118,7 @@ public class Model extends InteractiveFrame implements Modelable {
 	// TODO: is needed?
 	protected Model(Scene scn, PShape ps, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame);
+		((Scene)scene).addModel(this);
 		pshape = ps;
 		id = idCount++;
 		if (idCount > 0)
@@ -161,13 +167,12 @@ public class Model extends InteractiveFrame implements Modelable {
 		((Scene) scene).pickingBuffer().pushStyle();
 		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
 		int index = (int) event2.y() * scene.width() + (int) event2.x();
-		boolean result = false;
 		if (index < ((Scene) scene).width() * ((Scene) scene).height()) {
 			int pick = ((Scene) scene).pickingBuffer().pixels[index];
-			result = getID(pick) == id;
+			return getID(pick) == id;
 		}
 		((Scene) scene).pickingBuffer().popStyle();
-		return result;
+		return false;
 	}
 
 	@Override
@@ -184,27 +189,75 @@ public class Model extends InteractiveFrame implements Modelable {
 		pg.popMatrix();
 		pg.popStyle();
 	}
-
+	
+	/*
 	@Override
 	public void drawShape(PGraphics pg) {
 		if (pshape == null)
 			return;
-		pg.pushStyle();
-		// TODO: this check seems over-kill since when pg!=((Scene) scene).pickingBuffer()
-		// then a shader should be in control
-		if (pg == ((Scene) scene).pickingBuffer()) {
-			// -debug:
-			// System.out.println("setFill and setColor in Model.drawShape!!!");
-			pg.colorMode(PApplet.RGB, 255);
-			pshape.setFill(getColor(id));
-			pshape.setStroke(getColor(id));
-		}
+		pg.pushStyle();		
 		pg.pushMatrix();
 		Scene.applyWorldTransformation(pg, this);
 		pg.shape(pshape);
 		pg.popMatrix();
 		pg.popStyle();
 	}
+	//*/
+	
+	
+	@Override
+	public void drawShape(PGraphics pg) {
+		if (pshape == null)
+			return;
+		pg.pushStyle();
+		//pshape.disableStyle();
+		// TODO: this check seems over-kill since when pg!=((Scene) scene).pickingBuffer()
+		// then a shader should be in control
+		if (pg == ((Scene) scene).pickingBuffer()) {
+			// -debug:
+			// System.out.println("setFill and setColor in Model.drawShape!!!");
+			pshape.disableStyle();
+			/*
+			pg.colorMode(PApplet.RGB, 255);
+			pshape.setFill(getColor(id));
+			pshape.setStroke(getColor(id));
+			*/
+			pg.colorMode(PApplet.RGB, 255);
+			pg.fill(getColor(id));
+			pg.stroke(getColor(id));
+		}
+		pg.pushMatrix();
+		Scene.applyWorldTransformation(pg, this);
+		pg.shape(pshape);
+		pg.popMatrix();
+		if (pg == ((Scene) scene).pickingBuffer()) pshape.enableStyle();
+		pg.popStyle();
+	}
+	
+	/*
+	@Override
+	public void drawShape(PGraphics pg) {
+		if (pshape == null)
+			return;
+		pg.pushStyle();
+		//TODO should go separated?
+		if (pg == ((Scene) scene).pickingBuffer()) {
+			// -debug:
+			// System.out.println("setFill and setColor in Model.drawShape!!!");
+			
+			pshape.disableStyle();
+			pg.colorMode(PApplet.RGB, 255);
+			pg.fill(getColor(id));
+			pg.stroke(getColor(id));
+		}
+		pg.pushMatrix();
+		Scene.applyWorldTransformation(pg, this);
+		pg.shape(pshape);
+		pg.popMatrix();
+		pshape.enableStyle();
+		pg.popStyle();
+	}
+	//*/
 
 	/**
 	 * Invokes an external drawing method (if registered). Called by
