@@ -36,15 +36,15 @@ class Java2DMatrixHelper extends MatrixHelper {
 	// public PGraphicsJava2D pg() { return (PGraphicsJava2D) pg; }
 
 	@Override
-	public void bind() {
-		scene.eye().computeProjection();
-		scene.eye().computeView();
-		cacheProjectionView();
-
+	public void bind(boolean recompute) {
+		if (recompute) {
+			scene.eye().computeProjection();
+			scene.eye().computeView();
+			cacheProjectionView();
+		}
 		Vec pos = scene.eye().position();
 		Rotation o = scene.eye().frame().orientation();
 		translate(scene.width() / 2, scene.height() / 2);
-
 		if (scene.isRightHanded())
 			scale(1, -1);
 		scale(1 / scene.eye().frame().magnitude(), 1 / scene.eye().frame().magnitude());

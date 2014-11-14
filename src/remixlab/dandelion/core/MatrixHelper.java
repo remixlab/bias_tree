@@ -35,13 +35,18 @@ public abstract class MatrixHelper {
 		isProjViwInvCached = false;
 	}
 
+	public void bind(boolean recompute) {
+		loadProjection(recompute);
+		loadModelView(recompute);
+		if (recompute)
+			cacheProjectionView();
+	}
+
 	/**
 	 * Load {@link #projection()} and {@link #modelView()} in {@link remixlab.dandelion.core.AbstractScene#preDraw()}.
 	 */
 	public void bind() {
-		loadProjection();
-		loadModelView();
-		cacheProjectionView();
+		bind(true);
 	}
 
 	/**
@@ -95,6 +100,11 @@ public abstract class MatrixHelper {
 		return projectionViewInverseMat;
 	}
 
+	// TODO doc me
+	public void loadProjection(boolean recompute) {
+		setProjection(scene.eye().getProjection(recompute));
+	}
+
 	/**
 	 * Computes the projection matrix from {@link remixlab.dandelion.core.AbstractScene#eye()} parameters and loads it
 	 * into the matrix helper. Used in {@link #bind()}.
@@ -102,7 +112,12 @@ public abstract class MatrixHelper {
 	 * @see remixlab.dandelion.core.Eye#getProjection(boolean)
 	 */
 	public void loadProjection() {
-		setProjection(scene.eye().getProjection(true));
+		loadProjection(true);
+	}
+
+	// TODO doc me
+	public void loadModelView(boolean recompute) {
+		setModelView(scene.eye().getView(recompute));
 	}
 
 	/**
@@ -112,7 +127,7 @@ public abstract class MatrixHelper {
 	 * @see remixlab.dandelion.core.Eye#getView(boolean)
 	 */
 	public void loadModelView() {
-		setModelView(scene.eye().getView(true));
+		loadModelView(true);
 		// other way is to compute view but load identity. Maybe usfull for a webgl context?
 		// scene.eye().computeView();
 		// resetModelView();// loads identity -> only model, (excludes view)

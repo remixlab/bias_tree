@@ -104,9 +104,10 @@ public class Scene extends AbstractScene implements PConstants {
 	// P R O C E S S I N G A P P L E T A N D O B J E C T S
 	protected PApplet						parent;
 	protected PGraphics					pgraphics;
+
+	// Models
 	protected PGraphics					pickingBuffer;
-	protected MatrixHelper			pickingMatrixHelper;
-	protected List<Modelable>   models;
+	protected List<Model>				models;
 
 	// E X C E P T I O N H A N D L I N G
 	protected int								beginOffScreenDrawingCalls;
@@ -166,39 +167,10 @@ public class Scene extends AbstractScene implements PConstants {
 			setMatrixHelper(new Java2DMatrixHelper(this, pg));
 
 		// 3. Picking buffer
-		models = new ArrayList<Modelable>();
-		if (pg() instanceof processing.opengl.PGraphicsOpenGL) {
-			pickingBuffer = pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D);
-			// we can go simply as:
-			// pickingMatrixHelper = new GLMatrixHelper(this, (PGraphicsOpenGL) pickingBuffer);
-			// but we don't recompute matrices since it's done in the main scene
-			pickingMatrixHelper = new GLMatrixHelper(this, (PGraphicsOpenGL) pickingBuffer) {
-				@Override
-				public void bind() {
-					setProjection(scene.eye().getProjection());
-					setModelView(scene.eye().getView());
-				}
-			};
-		}
-		else {
-			pickingBuffer = pApplet().createGraphics(pg().width, pg().height, JAVA2D);
-			// we can go simply as:
-			// pickingMatrixHelper = new Java2DMatrixHelper(this, pickingBuffer);
-			// but we don't recompute matrices since it's done in the main scene
-			pickingMatrixHelper = new Java2DMatrixHelper(this, pickingBuffer) {
-				@Override
-				public void bind() {
-					Vec pos = scene.eye().position();
-					Rotation o = scene.eye().frame().orientation();
-					translate(scene.width() / 2, scene.height() / 2);
-					if (scene.isRightHanded())
-						scale(1, -1);
-					scale(1 / scene.eye().frame().magnitude(), 1 / scene.eye().frame().magnitude());
-					rotate(-o.angle());
-					translate(-pos.x(), -pos.y());
-				}
-			};
-		}
+		models = new ArrayList<Model>();
+		pickingBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width,
+				pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height,
+				JAVA2D);
 
 		// 4. Eye
 		setLeftHanded();
@@ -1240,27 +1212,18 @@ public class Scene extends AbstractScene implements PConstants {
 
 	@Override
 	protected boolean invokeGraphicsHandler() {
-		boolean result = false;
+		// 3. Draw external registered method
 		if (drawHandlerObject != null) {
 			try {
 				drawHandlerMethod.invoke(drawHandlerObject, new Object[] { this });
+				return true;
 			} catch (Exception e) {
 				PApplet.println("Something went wrong when invoking your " + drawHandlerMethodName + " method");
 				e.printStackTrace();
+				return false;
 			}
 		}
-		result = true;
-		// TODO testing:
-		for (Grabber mg : inputHandler().globalGrabberList()) {
-			if (mg instanceof Modelable) {
-				Modelable model = (Modelable) mg;// downcast needed
-				// if(iF) //TODO pending conditional for the update
-				result = model.invokeGraphicsHandler();
-				if (!result)
-					break;
-			}
-		}
-		return result;
+		return false;
 	}
 
 	/**
@@ -1489,16 +1452,9 @@ public class Scene extends AbstractScene implements PConstants {
 	public void post() {
 		// draw into picking buffer
 		pickingBuffer().beginDraw();
-		pickingMatrixHelper.bind();
 		pickingBuffer().pushStyle();
 		pickingBuffer().background(0);
-		for (Grabber mg : inputHandler().globalGrabberList()) {
-			if (mg instanceof Modelable) {
-				Modelable model = (Modelable) mg;
-				model.invokeGraphicsHandler(pickingBuffer());
-				model.drawShape(pickingBuffer());
-			}
-		}
+		drawModels(pickingBuffer());
 		pickingBuffer().popStyle();
 		pickingBuffer().endDraw();
 		pickingBuffer().loadPixels();
@@ -1563,30 +1519,34 @@ public class Scene extends AbstractScene implements PConstants {
 
 		postDraw();
 	}
-	
-	public List<Modelable> models() {
+
+	public List<Model> models() {
 		return models;
 	}
-	
-	public boolean addModel(Modelable model) {
+
+	public boolean addModel(Model model) {
+		if (models().contains(model))
+			return false;
+		if (models().size() == 0)
+			pickingBuffer().loadPixels();
 		return models().add(model);
 	}
-	
-	public boolean removeModel(Modelable model) {
+
+	public boolean removeModel(Model model) {
 		return models().remove(model);
 	}
-	
+
 	/**
 	 * Draw all scene models. Just draws all models' pshapes (it doesn't invoke the models' graphics handler).
 	 */
 	public void drawModels() {
-		for(Modelable model : models()) 
-			model.drawShape();
+		for (Model model : models())
+			model.draw(pg());
 	}
 
 	/**
-	 * Draw all models into pgraphics. This tries to be agnostic and thus third parties should
-	 * call {@code pgraphics.beginDraw()/endDraw()} accordingly.
+	 * Draw all models into pgraphics. This tries to be agnostic and thus third parties should call
+	 * {@code pgraphics.beginDraw()/endDraw()} accordingly.
 	 * <p>
 	 * This version of the method allows chaining of shaders.
 	 * 
@@ -1594,41 +1554,60 @@ public class Scene extends AbstractScene implements PConstants {
 	 * 
 	 * @see #drawModels()
 	 */
-	public void drawModels(PGraphics pgraphics) {		
-		//TODO Decide whether or not should be available only onscreen since
-		//this works best when scene is off-screen.
+	public void drawModels(PGraphics pgraphics) {
+		// TODO Decide whether or not should be available only onscreen since
+		// this works best when scene is off-screen.
 		// 1. Set pgraphics matrices using a custom MatrixHelper
-		MatrixHelper mh;
-		if (pgraphics instanceof processing.opengl.PGraphicsOpenGL) {
-			mh = new GLMatrixHelper(this, (PGraphicsOpenGL) pgraphics) {
-				@Override
-				public void bind() {
-					setProjection(scene.eye().getProjection());
-					setModelView(scene.eye().getView());
-				}
-			};
+		bindMatrices(pgraphics);
+
+		// 2. Draw all models into pgraphics
+		for (Model model : models())
+			model.draw(pgraphics);
+	}
+
+	/**
+	 * Only when {@link #pg()} is different than {@code pgraphics}.
+	 * 
+	 * @param pgraphics
+	 */
+	public void bindMatrices(PGraphics pgraphics) {
+		if (this.pg() == pgraphics)
+			return;
+		MatrixHelper mh = (pgraphics instanceof processing.opengl.PGraphicsOpenGL) ? new GLMatrixHelper(this,
+				(PGraphicsOpenGL) pgraphics) : new Java2DMatrixHelper(this, pgraphics);
+		mh.bind(false);
+	}
+
+	public void applyTransformation(PGraphics pgraphics, Frame frame) {
+		if (pgraphics instanceof PGraphics3D) {
+			pgraphics.translate(frame.translation().vec[0], frame.translation().vec[1], frame.translation().vec[2]);
+			pgraphics.rotate(frame.rotation().angle(), ((Quat) frame.rotation()).axis().vec[0],
+					((Quat) frame.rotation()).axis().vec[1], ((Quat) frame.rotation()).axis().vec[2]);
+			pgraphics.scale(frame.scaling(), frame.scaling(), frame.scaling());
 		}
 		else {
-			mh = new Java2DMatrixHelper(this, pgraphics) {
-				@Override
-				public void bind() {
-					Vec pos = scene.eye().position();
-					Rotation o = scene.eye().frame().orientation();
-					translate(scene.width() / 2, scene.height() / 2);
-					if (scene.isRightHanded())
-						scale(1, -1);
-					scale(1 / scene.eye().frame().magnitude(), 1 / scene.eye().frame().magnitude());
-					rotate(-o.angle());
-					translate(-pos.x(), -pos.y());
-				}
-			};
+			pgraphics.translate(frame.translation().x(), frame.translation().y());
+			pgraphics.rotate(frame.rotation().angle());
+			pgraphics.scale(frame.scaling(), frame.scaling());
 		}
-		mh.bind();
-		
-		// 2. Draw all models into pgraphics
-		for(Modelable model : models()) {
-			model.invokeGraphicsHandler(pgraphics);
-			model.drawShape(pgraphics);
+	}
+
+	/**
+	 * TODO
+	 * <p>
+	 * {@link #bindMatrices(PGraphics)} should be call first
+	 * 
+	 * @param pgraphics
+	 * @param frame
+	 */
+	public void applyWorldTransformation(PGraphics pgraphics, Frame frame) {
+		Frame refFrame = frame.referenceFrame();
+		if (refFrame != null) {
+			applyWorldTransformation(pgraphics, refFrame);
+			applyTransformation(pgraphics, frame);
+		}
+		else {
+			applyTransformation(pgraphics, frame);
 		}
 	}
 
@@ -2460,33 +2439,6 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().endShape(CLOSE);
 		endScreenDrawing();
 		pg().popStyle();
-	}
-
-	// TODO doc
-	public static void applyTransformation(PGraphics pgraphics, Frame frame) {
-		if (pgraphics instanceof PGraphics3D) {
-			pgraphics.translate(frame.translation().vec[0], frame.translation().vec[1], frame.translation().vec[2]);
-			pgraphics.rotate(frame.rotation().angle(), ((Quat) frame.rotation()).axis().vec[0],
-					((Quat) frame.rotation()).axis().vec[1], ((Quat) frame.rotation()).axis().vec[2]);
-			pgraphics.scale(frame.scaling(), frame.scaling(), frame.scaling());
-		}
-		else {
-			pgraphics.translate(frame.translation().x(), frame.translation().y());
-			pgraphics.rotate(frame.rotation().angle());
-			pgraphics.scale(frame.scaling(), frame.scaling());
-		}
-	}
-
-	// TODO doc
-	public static void applyWorldTransformation(PGraphics pgraphics, Frame frame) {
-		Frame refFrame = frame.referenceFrame();
-		if (refFrame != null) {
-			applyWorldTransformation(pgraphics, refFrame);
-			applyTransformation(pgraphics, frame);
-		}
-		else {
-			applyTransformation(pgraphics, frame);
-		}
 	}
 
 	// decide whether or not to include these in the 2.1 release:

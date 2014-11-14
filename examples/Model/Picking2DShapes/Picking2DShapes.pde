@@ -1,5 +1,5 @@
 /**
- * Picking 2DShapes.
+ * Picking 3DShapes.
  * by Sebastian Chaparro, William Rodriguez and Jean Pierre Charalambos.
  * 
  * TODO: doc me
@@ -12,18 +12,16 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
 Scene scene;
-Model[] models;
-String renderer = JAVA2D;
-//String renderer = P2D;
+InteractiveModel[] models;
 
 void setup() {
-  size(640, 360, renderer);
+  size(640, 360, P2D);
+  //Scene instantiation
   scene = new Scene(this);
-  models = new Model[10];
+  models = new InteractiveModel[10];
 
   for (int i = 0; i < models.length; i++) {
-    models[i] = new Model(scene);
-    models[i].addGraphicsHandler(this, "drawRect");
+    models[i] = new InteractiveModel(scene, createShape(RECT, 0, 0, 20, 20));
     models[i].translate(10*i, 10*i, 10*i);
   }
   smooth();
@@ -31,9 +29,16 @@ void setup() {
 
 void draw() {
   background(0);
+  updatePickedModelColor();
+  scene.drawModels();
 }
 
-void drawRect(PGraphics pg) {
-  fill(255, 0, 255);// :P
-  pg.rect(20, 15, 30, 20);
+void updatePickedModelColor() {
+  for (int i = 0; i < models.length; i++) {
+    if (scene.grabsAnyAgentInput(models[i]))
+      models[i].shape().setFill(color(255, 0, 0));
+    else
+      models[i].shape().setFill(color(0, 0, 255));
+    models[i].shape().setStroke(color(255, 0, 0));
+  }
 }
