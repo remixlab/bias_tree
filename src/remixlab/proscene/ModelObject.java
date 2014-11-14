@@ -1,3 +1,12 @@
+/**************************************************************************************
+ * ProScene (version 2.1.0)
+ * Copyright (c) 2010-2014 National University of Colombia, https://github.com/remixlab
+ * @author Jean Pierre Charalambos, http://otrolado.info/
+ * 
+ * All rights reserved. Library that eases the creation of interactive scenes
+ * in Processing, released under the terms of the GNU Public License v3.0
+ * which is available at http://www.gnu.org/licenses/gpl.html
+ **************************************************************************************/
 
 package remixlab.proscene;
 
@@ -5,6 +14,17 @@ import processing.core.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
+/**
+ * Default basic implementation of the Model interface provided for convenience.
+ * <p>
+ * ModelObjects provides default precise picking to pshapes without interactive behavior, i.e., third-parties should
+ * implement that behavior ({@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}) to provide pshapes with
+ * interactivity. Refer to examples.
+ * <p>
+ * Refer to examples.Model.ApplicationControl for a nice illustration.
+ * 
+ * @see remixlab.bias.core.Grabber#performInteraction(BogusEvent)
+ */
 public abstract class ModelObject implements Model {
 	protected Scene		scene;
 	protected int			id;
