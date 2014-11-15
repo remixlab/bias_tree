@@ -12,16 +12,16 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
 Scene scene;
-InteractiveModel[] models;
+InteractiveModelFrame[] models;
 
 void setup() {
   size(640, 360, P3D);
   //Scene instantiation
   scene = new Scene(this);
-  models = new InteractiveModel[10];
+  models = new InteractiveModelFrame[10];
 
   for (int i = 0; i < models.length; i++) {
-    models[i] = new InteractiveModel(scene, polygon(50));
+    models[i] = new InteractiveModelFrame(scene, polygon(50));
     models[i].translate(10*i, 10*i, 10*i);
   }
   smooth();

@@ -13,7 +13,7 @@ import remixlab.bias.event.*;
 
 PGraphics main_buffer;
 Scene scene;
-InteractiveModel[] models;
+InteractiveModelFrame[] models;
 
 void setup() {
   size(640, 720, P3D);
@@ -21,9 +21,9 @@ void setup() {
   main_buffer = createGraphics(640, 360, P3D);
   main_buffer.smooth();
   scene = new Scene(this, main_buffer);
-  models = new InteractiveModel[10];
+  models = new InteractiveModelFrame[10];
   for (int i = 0; i < models.length; i++) {
-    models[i] = new InteractiveModel(scene, polygon(50));
+    models[i] = new InteractiveModelFrame(scene, polygon(50));
     models[i].translate(10*i, 10*i, 10*i);
   }
 }

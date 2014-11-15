@@ -20,7 +20,7 @@ import remixlab.bias.core.*;
  * a software entity like a user coded intelligent-agent.
  * <p>
  * Third-parties should implement the {@link remixlab.bias.core.Grabber} behavior. A
- * {@link remixlab.proscene.InteractiveModel} provides default 2D/3D high-level interactivity.
+ * {@link remixlab.proscene.InteractiveModelFrame} provides default 2D/3D high-level interactivity.
  */
 public interface Model extends Grabber /* , Animator */{
 	PShape shape();

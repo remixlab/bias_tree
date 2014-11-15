@@ -22,7 +22,7 @@ import remixlab.util.*;
  * A model is an InteractiveFrame implementing the model interface: It provides default 2D/3D high-level precise picking
  * & interaction to pshapes.
  */
-public class InteractiveModel extends InteractiveFrame implements Model {
+public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	// TODO complete hashCode and equals, once the rest is done
 	@Override
 	public int hashCode() {
@@ -41,7 +41,7 @@ public class InteractiveModel extends InteractiveFrame implements Model {
 		if (obj.getClass() != getClass())
 			return false;
 
-		InteractiveModel other = (InteractiveModel) obj;
+		InteractiveModelFrame other = (InteractiveModelFrame) obj;
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(id, other.id)
@@ -51,32 +51,32 @@ public class InteractiveModel extends InteractiveFrame implements Model {
 	protected PShape	pshape;
 	protected int			id;
 
-	public InteractiveModel(Scene scn) {
+	public InteractiveModelFrame(Scene scn) {
 		super(scn);
 		id = ((Scene) scene).models().size();
 		((Scene) scene).addModel(this);
 	}
 
-	public InteractiveModel(Scene scn, Frame referenceFrame) {
+	public InteractiveModelFrame(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		id = ((Scene) scene).models().size();
 		((Scene) scene).addModel(this);
 	}
 
-	protected InteractiveModel(Scene scn, InteractiveEyeFrame iFrame) {
+	protected InteractiveModelFrame(Scene scn, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame);
 		id = ((Scene) scene).models().size();
 		((Scene) scene).addModel(this);
 	}
 
-	public InteractiveModel(Scene scn, PShape ps) {
+	public InteractiveModelFrame(Scene scn, PShape ps) {
 		super(scn);
 		id = ((Scene) scene).models().size();
 		((Scene) scene).addModel(this);
 		pshape = ps;
 	}
 
-	public InteractiveModel(Scene scn, PShape ps, Frame referenceFrame) {
+	public InteractiveModelFrame(Scene scn, PShape ps, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		id = ((Scene) scene).models().size();
 		((Scene) scene).addModel(this);
@@ -84,22 +84,22 @@ public class InteractiveModel extends InteractiveFrame implements Model {
 	}
 
 	// TODO: is needed?
-	protected InteractiveModel(Scene scn, PShape ps, InteractiveEyeFrame iFrame) {
+	protected InteractiveModelFrame(Scene scn, PShape ps, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame);
 		id = ((Scene) scene).models().size();
 		((Scene) scene).addModel(this);
 	}
 
 	// TODO fix when implementation is complete
-	protected InteractiveModel(InteractiveModel otherFrame) {
+	protected InteractiveModelFrame(InteractiveModelFrame otherFrame) {
 		super(otherFrame);
 		this.pshape = otherFrame.pshape;
 		this.id = otherFrame.id;
 	}
 
 	@Override
-	public InteractiveModel get() {
-		return new InteractiveModel(this);
+	public InteractiveModelFrame get() {
+		return new InteractiveModelFrame(this);
 	}
 
 	@Override
