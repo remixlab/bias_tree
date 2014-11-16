@@ -159,14 +159,9 @@ public class Scene extends AbstractScene implements PConstants {
 		pgraphics = pg;
 
 		// 2. Matrix helper
-		if (pg instanceof PGraphics3D)
-			setMatrixHelper(new GLMatrixHelper(this, (PGraphics3D) pg));
-		else if (pg instanceof PGraphics2D)
-			setMatrixHelper(new GLMatrixHelper(this, (PGraphics2D) pg));
-		else
-			setMatrixHelper(new Java2DMatrixHelper(this, pg));
+		setMatrixHelper(matrixHelper(pg));
 
-		// 3. Picking buffer
+		// 3. Models & picking buffer
 		models = new ArrayList<Model>();
 		pickingBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width,
 				pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height,
@@ -1565,17 +1560,19 @@ public class Scene extends AbstractScene implements PConstants {
 			model.draw(pgraphics);
 	}
 
+	public MatrixHelper matrixHelper(PGraphics pgraphics) {
+		return (pgraphics instanceof processing.opengl.PGraphicsOpenGL) ? new GLMatrixHelper(this,
+				(PGraphicsOpenGL) pgraphics) : new Java2DMatrixHelper(this, pgraphics);
+	}
+
 	/**
 	 * Only when {@link #pg()} is different than {@code pgraphics}.
 	 * 
 	 * @param pgraphics
 	 */
 	public void bindMatrices(PGraphics pgraphics) {
-		if (this.pg() == pgraphics)
-			return;
-		MatrixHelper mh = (pgraphics instanceof processing.opengl.PGraphicsOpenGL) ? new GLMatrixHelper(this,
-				(PGraphicsOpenGL) pgraphics) : new Java2DMatrixHelper(this, pgraphics);
-		mh.bind(false);
+		if (this.pg() == pgraphics) return;
+		matrixHelper(pgraphics).bind(false);
 	}
 
 	public void applyTransformation(PGraphics pgraphics, Frame frame) {
@@ -1610,15 +1607,6 @@ public class Scene extends AbstractScene implements PConstants {
 			applyTransformation(pgraphics, frame);
 		}
 	}
-
-	/**
-	 * Draws all scene models using the given shader. Simply call: {@code drawModels(pg(), s)}.
-	 * 
-	 * @see #drawModels()
-	 */
-	/*
-	 * public void drawModels(PShader s) { pg().shader(s); drawModels(pg()); //pgraphics.resetShader(); } //
-	 */
 
 	// SCREENDRAWING
 
