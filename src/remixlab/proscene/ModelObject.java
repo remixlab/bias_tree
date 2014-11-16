@@ -33,14 +33,14 @@ public abstract class ModelObject implements Model {
 	public ModelObject(Scene scn, PShape ps) {
 		scene = scn;
 		pshape = ps;
-		id = scene.models().size();
 		scene.addModel(this);
+		id = scene.models().size();
 	}
 
 	public ModelObject(Scene scn) {
 		scene = scn;
-		id = scene.models().size();
 		scene.addModel(this);
+		id = scene.models().size();
 	}
 
 	public void setShape(PShape ps) {
@@ -68,11 +68,10 @@ public abstract class ModelObject implements Model {
 		if (pg == scene.pickingBuffer()) {
 			shape().disableStyle();
 			pg.colorMode(PApplet.RGB, 255);
-			pg.fill(getColor(id));
-			pg.stroke(getColor(id));
+			pg.fill(getColor());
+			pg.stroke(getColor());
 		}
 		pg.pushMatrix();
-		// ((Scene) scene).applyWorldTransformation(pg, this);//needs testing! needs bind
 		pg.shape(shape());
 		pg.popMatrix();
 		if (pg == scene.pickingBuffer())
@@ -100,10 +99,8 @@ public abstract class ModelObject implements Model {
 		scene.pickingBuffer().pushStyle();
 		scene.pickingBuffer().colorMode(PApplet.RGB, 255);
 		int index = (int) event2.y() * scene.width() + (int) event2.x();
-		if ((0 <= index) && (index < scene.pickingBuffer().pixels.length)) {
-			int pick = scene.pickingBuffer().pixels[index];
-			return getID(pick) == id;
-		}
+		if ((0 <= index) && (index < scene.pickingBuffer().pixels.length))
+			return scene.pickingBuffer().pixels[index] == getColor();
 		scene.pickingBuffer().popStyle();
 		return false;
 	}
@@ -113,12 +110,8 @@ public abstract class ModelObject implements Model {
 		return agent.inputGrabber() == this;
 	}
 
-	protected int getColor(int id) {
-		return scene.pApplet().color(10 + id, 20 + id, 30 + id);
-	}
-
-	protected int getID(int c) {
-		int r = (int) scene.pApplet().red(c);
-		return r - 10;
+	protected int getColor() {
+		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
+		return scene.pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
 	}
 }

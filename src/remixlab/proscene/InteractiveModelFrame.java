@@ -53,41 +53,42 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 
 	public InteractiveModelFrame(Scene scn) {
 		super(scn);
-		id = ((Scene) scene).models().size();
 		((Scene) scene).addModel(this);
+		id = ((Scene) scene).models().size();
 	}
 
 	public InteractiveModelFrame(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
-		id = ((Scene) scene).models().size();
 		((Scene) scene).addModel(this);
+		id = ((Scene) scene).models().size();
 	}
 
 	protected InteractiveModelFrame(Scene scn, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame);
-		id = ((Scene) scene).models().size();
 		((Scene) scene).addModel(this);
+		id = ((Scene) scene).models().size();
 	}
 
 	public InteractiveModelFrame(Scene scn, PShape ps) {
 		super(scn);
-		id = ((Scene) scene).models().size();
 		((Scene) scene).addModel(this);
+		id = ((Scene) scene).models().size();
 		pshape = ps;
 	}
 
 	public InteractiveModelFrame(Scene scn, PShape ps, Frame referenceFrame) {
 		super(scn, referenceFrame);
-		id = ((Scene) scene).models().size();
 		((Scene) scene).addModel(this);
+		id = ((Scene) scene).models().size();
 		pshape = ps;
 	}
 
 	// TODO: is needed?
 	protected InteractiveModelFrame(Scene scn, PShape ps, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame);
-		id = ((Scene) scene).models().size();
 		((Scene) scene).addModel(this);
+		id = ((Scene) scene).models().size();
+		pshape = ps;
 	}
 
 	// TODO fix when implementation is complete
@@ -131,10 +132,8 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		((Scene) scene).pickingBuffer().pushStyle();
 		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
 		int index = (int) event2.y() * scene.width() + (int) event2.x();
-		if ((0 <= index) && (index < ((Scene) scene).pickingBuffer().pixels.length)) {
-			int pick = ((Scene) scene).pickingBuffer().pixels[index];
-			return getID(pick) == id;
-		}
+		if ((0 <= index) && (index < ((Scene) scene).pickingBuffer().pixels.length))
+			return ((Scene) scene).pickingBuffer().pixels[index] == getColor();
 		((Scene) scene).pickingBuffer().popStyle();
 		return false;
 	}
@@ -155,8 +154,8 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		if (pg == ((Scene) scene).pickingBuffer()) {
 			shape().disableStyle();
 			pg.colorMode(PApplet.RGB, 255);
-			pg.fill(getColor(id));
-			pg.stroke(getColor(id));
+			pg.fill(getColor());
+			pg.stroke(getColor());
 		}
 		pg.pushMatrix();
 		((Scene) scene).applyWorldTransformation(pg, this);
@@ -175,14 +174,8 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		((Scene) scene).applyWorldTransformation(pg, this);
 	}
 
-	// TODO: improve next two methods
-
-	protected int getColor(int id) {
-		return ((Scene) scene).pApplet().color(10 + id, 20 + id, 30 + id);
-	}
-
-	protected int getID(int c) {
-		int r = (int) ((Scene) scene).pApplet().red(c);
-		return r - 10;
+	protected int getColor() {
+		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
+		return ((Scene) scene).pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
 	}
 }
