@@ -1515,10 +1515,26 @@ public class Scene extends AbstractScene implements PConstants {
 		postDraw();
 	}
 
+	/**
+	 * Returns all the models handled by the scene.
+	 * 
+	 * @see #drawModels()
+	 * @see #drawModels(PGraphics)
+	 * @see #addModel(Model)
+	 * @see #removeModel(Model)
+	 */
 	public List<Model> models() {
 		return models;
 	}
 
+	/**
+	 * Add the {@code model} into the scene. Does nothing if the current models belongs to the scene.
+	 * 
+	 * @see #models()
+	 * @see #drawModels()
+	 * @see #drawModels(PGraphics)
+	 * @see #removeModel(Model)
+	 */
 	public boolean addModel(Model model) {
 		if (models().contains(model))
 			return false;
@@ -1527,12 +1543,25 @@ public class Scene extends AbstractScene implements PConstants {
 		return models().add(model);
 	}
 
+	/**
+	 * Remove the {@code model} from the scene.
+	 * 
+	 * @see #models()
+	 * @see #drawModels()
+	 * @see #drawModels(PGraphics)
+	 * @see #addModel(Model)
+	 */
 	public boolean removeModel(Model model) {
 		return models().remove(model);
 	}
 
 	/**
-	 * Draw all scene models. Just draws all models' pshapes (it doesn't invoke the models' graphics handler).
+	 * Draw all scene {@link #models()}. Shader chaining may be accomplished by {@link #drawModels(PGraphics)}.
+	 * 
+	 * @see #models()
+	 * @see #drawModels(PGraphics)
+	 * @see #addModel(Model)
+	 * @see #removeModel(Model)
 	 */
 	public void drawModels() {
 		for (Model model : models())
@@ -1540,18 +1569,19 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
-	 * Draw all models into pgraphics. This tries to be agnostic and thus third parties should call
-	 * {@code pgraphics.beginDraw()/endDraw()} accordingly.
+	 * Draw all {@link #models()} into the given pgraphics without calling {@code pgraphics.beginDraw()/endDraw()} (which
+	 * should be called manually).
 	 * <p>
-	 * This version of the method allows chaining of shaders.
+	 * This method allows shader chaining.
 	 * 
 	 * @param pgraphics
 	 * 
+	 * @see #models()
 	 * @see #drawModels()
+	 * @see #addModel(Model)
+	 * @see #removeModel(Model)
 	 */
 	public void drawModels(PGraphics pgraphics) {
-		// TODO Decide whether or not should be available only onscreen since
-		// this works best when scene is off-screen.
 		// 1. Set pgraphics matrices using a custom MatrixHelper
 		bindMatrices(pgraphics);
 
@@ -1560,21 +1590,45 @@ public class Scene extends AbstractScene implements PConstants {
 			model.draw(pgraphics);
 	}
 
+	/**
+	 * Returns a new matrix helper for the given {@code pgraphics}. Rarely needed.
+	 * <p>
+	 * Note that the current scene matrix helper may be retrieved by {@link #matrixHelper()}.
+	 * 
+	 * @see #matrixHelper()
+	 * @see #setMatrixHelper(MatrixHelper)
+	 * @see #drawModels()
+	 * @see #drawModels(PGraphics)
+	 * @see #applyWorldTransformation(PGraphics, Frame)
+	 */
 	public MatrixHelper matrixHelper(PGraphics pgraphics) {
 		return (pgraphics instanceof processing.opengl.PGraphicsOpenGL) ? new GLMatrixHelper(this,
 				(PGraphicsOpenGL) pgraphics) : new Java2DMatrixHelper(this, pgraphics);
 	}
 
 	/**
-	 * Only when {@link #pg()} is different than {@code pgraphics}.
-	 * 
-	 * @param pgraphics
+	 * Same as {@code matrixHelper(pgraphics).bind(false)}. Set the {@code pgraphics} matrices by calling
+	 * {@link remixlab.dandelion.core.MatrixHelper#loadProjection(boolean)} and
+	 * {@link remixlab.dandelion.core.MatrixHelper#loadModelView(boolean)} (only makes sense when {@link #pg()} is
+	 * different than {@code pgraphics}).
+	 * <p>
+	 * This method doesn't perform any computation, but simple retrieve the current matrices whose actual computation has
+	 * been updated in {@link #preDraw()}.
 	 */
 	public void bindMatrices(PGraphics pgraphics) {
-		if (this.pg() == pgraphics) return;
+		if (this.pg() == pgraphics)
+			return;
 		matrixHelper(pgraphics).bind(false);
 	}
 
+	/**
+	 * Apply the local transformation defined by the given {@code frame} on the given {@code pgraphics}. This method
+	 * doesn't call {@link #bindMatrices(PGraphics)} which should be called manually (only makes sense when {@link #pg()}
+	 * is different than {@code pgraphics}). Needed by {@link #applyWorldTransformation(PGraphics, Frame)}.
+	 * 
+	 * @see #applyWorldTransformation(PGraphics, Frame)
+	 * @see #bindMatrices(PGraphics)
+	 */
 	public void applyTransformation(PGraphics pgraphics, Frame frame) {
 		if (pgraphics instanceof PGraphics3D) {
 			pgraphics.translate(frame.translation().vec[0], frame.translation().vec[1], frame.translation().vec[2]);
@@ -1590,12 +1644,13 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
-	 * TODO
-	 * <p>
-	 * {@link #bindMatrices(PGraphics)} should be call first
+	 * Apply the global transformation defined by the given {@code frame} on the given {@code pgraphics}. This method
+	 * doesn't call {@link #bindMatrices(PGraphics)} which should be called manually (only makes sense when {@link #pg()}
+	 * is different than {@code pgraphics}). Needed by {@link remixlab.proscene.Model#draw(PGraphics)}
 	 * 
-	 * @param pgraphics
-	 * @param frame
+	 * @see remixlab.proscene.Model#draw(PGraphics)
+	 * @see #applyTransformation(PGraphics, Frame)
+	 * @see #bindMatrices(PGraphics)
 	 */
 	public void applyWorldTransformation(PGraphics pgraphics, Frame frame) {
 		Frame refFrame = frame.referenceFrame();

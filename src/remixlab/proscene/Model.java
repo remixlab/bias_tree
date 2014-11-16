@@ -16,8 +16,8 @@ import remixlab.bias.core.*;
 //import remixlab.fpstiming.*;
 
 /**
- * A model is a pshape that can be picked and manipulated by any user means, being it a hardware such as a joystick, or
- * a software entity like a user coded intelligent-agent.
+ * A model is a wrapper for a pshape which can then be picked and manipulated by any user means, being it a hardware
+ * such as a joystick, or a software entity like a user coded intelligent-agent.
  * <p>
  * Third-parties should implement the {@link remixlab.bias.core.Grabber} behavior. A
  * {@link remixlab.proscene.InteractiveModelFrame} provides default 2D/3D high-level interactivity.
