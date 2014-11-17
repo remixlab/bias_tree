@@ -54,32 +54,32 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	public InteractiveModelFrame(Scene scn) {
 		super(scn);
 		((Scene) scene).addModel(this);
-		id = ((Scene) scene).models().size();
+		id = ++Scene.modelCount;
 	}
 
 	public InteractiveModelFrame(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		((Scene) scene).addModel(this);
-		id = ((Scene) scene).models().size();
+		id = ++Scene.modelCount;
 	}
 
 	protected InteractiveModelFrame(Scene scn, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame);
 		((Scene) scene).addModel(this);
-		id = ((Scene) scene).models().size();
+		id = ++Scene.modelCount;
 	}
 
 	public InteractiveModelFrame(Scene scn, PShape ps) {
 		super(scn);
 		((Scene) scene).addModel(this);
-		id = ((Scene) scene).models().size();
+		id = ++Scene.modelCount;
 		pshape = ps;
 	}
 
 	public InteractiveModelFrame(Scene scn, PShape ps, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		((Scene) scene).addModel(this);
-		id = ((Scene) scene).models().size();
+		id = ++Scene.modelCount;
 		pshape = ps;
 	}
 
@@ -87,7 +87,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	protected InteractiveModelFrame(Scene scn, PShape ps, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame);
 		((Scene) scene).addModel(this);
-		id = ((Scene) scene).models().size();
+		id = ++Scene.modelCount;
 		pshape = ps;
 	}
 

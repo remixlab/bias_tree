@@ -34,13 +34,13 @@ public abstract class ModelObject implements Model {
 		scene = scn;
 		pshape = ps;
 		scene.addModel(this);
-		id = scene.models().size();
+		id = ++Scene.modelCount;
 	}
 
 	public ModelObject(Scene scn) {
 		scene = scn;
 		scene.addModel(this);
-		id = scene.models().size();
+		id = ++Scene.modelCount;
 	}
 
 	public void setShape(PShape ps) {

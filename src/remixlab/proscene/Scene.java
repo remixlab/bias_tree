@@ -106,6 +106,7 @@ public class Scene extends AbstractScene implements PConstants {
 	protected PGraphics					pgraphics;
 
 	// Models
+	protected static int modelCount;
 	protected PGraphics					pickingBuffer;
 	protected List<Model>				models;
 
