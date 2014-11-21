@@ -186,7 +186,10 @@ public class Scene extends AbstractScene implements PConstants {
 		enableMotionAgent();
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
-		pApplet().registerMethod("post", this);// -> handle picking buffer
+		
+	  //Android: remove the following 2 lines if needed to compile the project
+		if (platform() == Platform.PROCESSING_DESKTOP)
+			pApplet().registerMethod("post", this);// -> handle picking buffer
 
 		// Misc stuff:
 		setDottedGrid(!(platform() == Platform.PROCESSING_ANDROID || is2D()));
@@ -1444,16 +1447,29 @@ public class Scene extends AbstractScene implements PConstants {
 			return;
 		postDraw();
 	}
+	
+	@Override
+	public void postDraw() {
+		super.postDraw();
+		if (platform() == Platform.PROCESSING_ANDROID)
+			fixP5AndroidPost();
+	}
 
+	//Android: remove this method if needed to compile the project
 	public void post() {
+		fixP5AndroidPost();
+	}
+	
+	protected void fixP5AndroidPost() {
 		// draw into picking buffer
 		pickingBuffer().beginDraw();
 		pickingBuffer().pushStyle();
 		pickingBuffer().background(0);
-		drawModels(pickingBuffer());
+		if(models().size() > 0)
+			drawModels(pickingBuffer());
 		pickingBuffer().popStyle();
 		pickingBuffer().endDraw();
-		pickingBuffer().loadPixels();
+		pickingBuffer().loadPixels();			
 	}
 
 	/**
