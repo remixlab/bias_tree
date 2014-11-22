@@ -41,12 +41,12 @@ Scene scene;
 boolean showAid = true;
 
 void setup() {
-  size(640, 360, P3D);
+  size(640, 360, P2D);
 
   canvas = createGraphics(640, 360, P3D); 
   scene = new Scene(this, canvas);
 
-  ctrlCanvas = createGraphics(w, h, P3D);
+  ctrlCanvas = createGraphics(w, h, P2D);
   ctrlScene = new Scene(this, ctrlCanvas, oX, oY);
   ctrlScene.setAxesVisualHint(false);
   ctrlScene.setGridVisualHint(false);
