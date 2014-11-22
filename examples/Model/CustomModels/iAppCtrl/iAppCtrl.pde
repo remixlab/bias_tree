@@ -3,6 +3,7 @@ import remixlab.bias.event.*;
 import remixlab.proscene.*;
 import remixlab.dandelion.core.Constants.*;
 
+//same as ApplicationControl, but with an InteractiveModelFrame
 public class ModelEllipse extends InteractiveModelFrame {
   float radiusX = 30, radiusY = 30;
   color colour = color(255, 0, 0);

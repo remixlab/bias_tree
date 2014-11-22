@@ -2,6 +2,7 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.proscene.*;
 
+//same as iAppCtrl, but with a ModelObject
 public class ModelEllipse extends ModelObject {
   float radiusX = 30, radiusY = 30;
   color colour = color(255, 0, 0);
