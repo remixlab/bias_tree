@@ -23,7 +23,7 @@ public class ModelEllipse extends ModelObject {
   }
   
   void update() {
-    setShape(createShape(ELLIPSE, center.x-radiusX, center.y-radiusY, 2*radiusX, 2*radiusY));
+    setShape(createShape(ELLIPSE, -radiusX, -radiusY, 2*radiusX, 2*radiusY));
     shape().setFill(color(colour));
   }
 }
@@ -34,7 +34,6 @@ int oX = 640-w;
 int oY = 360-h;
 PGraphics ctrlCanvas;
 Scene ctrlScene;
-public PVector center;
 public PShape eShape;
 ModelEllipse e;
 PGraphics canvas;
@@ -51,7 +50,6 @@ void setup() {
   ctrlScene = new Scene(this, ctrlCanvas, oX, oY);
   ctrlScene.setAxesVisualHint(false);
   ctrlScene.setGridVisualHint(false);
-  center = new PVector();
   e = new ModelEllipse(ctrlScene);
   ctrlScene.motionAgent().addInPool(e);
 }
