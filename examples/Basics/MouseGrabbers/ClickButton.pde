@@ -7,13 +7,12 @@ public class ClickButton extends Button2D {
   }
 
   @Override
-  public void performInteraction(BogusEvent event) {
-    if (event instanceof ClickEvent)
-      if (((ClickEvent) event).clickCount() == 1) {
-        if (addTorus)
-          addTorus();
-        else
-          removeTorus();
-      }
+  public void performInteraction(ClickEvent event) {
+    if (event.clickCount() == 1) {
+      if (addTorus)
+        addTorus();
+      else
+        removeTorus();
+    }
   }
 }

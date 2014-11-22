@@ -106,7 +106,7 @@ public class Scene extends AbstractScene implements PConstants {
 	protected PGraphics					pgraphics;
 
 	// Models
-	protected static int modelCount;
+	protected static int				modelCount;
 	protected PGraphics					pickingBuffer;
 	protected List<Model>				models;
 
@@ -186,8 +186,8 @@ public class Scene extends AbstractScene implements PConstants {
 		enableMotionAgent();
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
-		
-	  //Android: remove the following 2 lines if needed to compile the project
+
+		// Android: remove the following 2 lines if needed to compile the project
 		if (platform() == Platform.PROCESSING_DESKTOP)
 			pApplet().registerMethod("post", this);// -> handle picking buffer
 
@@ -1447,7 +1447,7 @@ public class Scene extends AbstractScene implements PConstants {
 			return;
 		postDraw();
 	}
-	
+
 	@Override
 	public void postDraw() {
 		super.postDraw();
@@ -1455,21 +1455,21 @@ public class Scene extends AbstractScene implements PConstants {
 			fixP5AndroidPost();
 	}
 
-	//Android: remove this method if needed to compile the project
+	// Android: remove this method if needed to compile the project
 	public void post() {
 		fixP5AndroidPost();
 	}
-	
+
 	protected void fixP5AndroidPost() {
 		// draw into picking buffer
 		pickingBuffer().beginDraw();
 		pickingBuffer().pushStyle();
 		pickingBuffer().background(0);
-		if(models().size() > 0)
+		if (models().size() > 0)
 			drawModels(pickingBuffer());
 		pickingBuffer().popStyle();
 		pickingBuffer().endDraw();
-		pickingBuffer().loadPixels();			
+		pickingBuffer().loadPixels();
 	}
 
 	/**

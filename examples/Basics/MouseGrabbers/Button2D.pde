@@ -47,7 +47,15 @@ public abstract class Button2D extends GrabberObject {
     scene.endScreenDrawing();
     popStyle();
   }
+  
+  @Override
+  public boolean checkIfGrabsInput(DOF2Event event) {
+    float x = event.x();
+    float y = event.y();
+    return ((position.x <= x) && (x <= position.x + myWidth) && (position.y <= y) && (y <= position.y + myHeight));
+  }
 
+  /*
   @Override
   public boolean checkIfGrabsInput(BogusEvent event) {
     if (event instanceof DOF2Event) {
@@ -58,4 +66,5 @@ public abstract class Button2D extends GrabberObject {
     else
       return false;
   }
+  */
 }

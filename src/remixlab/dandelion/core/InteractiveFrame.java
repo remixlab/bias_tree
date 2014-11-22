@@ -854,33 +854,40 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		stopTossing();
 		if (e == null)
 			return;
+		// same as no action
+		if (e.action() == null)
+			return;
 		if (e instanceof KeyboardEvent) {
-			scene.performInteraction(e);
+			if (e.action() == KeyboardAction.CUSTOM) {
+				kEvent = (KeyboardEvent) e;
+				if (scene.is2D())
+					execAction2D((DandelionAction) e.action().referenceAction());
+				else
+					execAction3D((DandelionAction) e.action().referenceAction());
+			}
+			else
+				scene.performInteraction(e);
 			return;
 		}
 		// new
 		if (e instanceof ClickEvent) {
-			ClickEvent clickEvent = (ClickEvent) e;
-			if (clickEvent.action() == null)
-				return;
-			if (clickEvent.action() != ClickAction.CENTER_FRAME &&
-					clickEvent.action() != ClickAction.ALIGN_FRAME &&
-					clickEvent.action() != ClickAction.ZOOM_ON_PIXEL &&
-					clickEvent.action() != ClickAction.ANCHOR_FROM_PIXEL &&
-					clickEvent.action() != ClickAction.CUSTOM) {
-				scene.performInteraction(e); // ;)
-				return;
+			cEvent = (ClickEvent) e;
+			if (cEvent.action() == ClickAction.CENTER_FRAME ||
+					cEvent.action() == ClickAction.ALIGN_FRAME ||
+					cEvent.action() == ClickAction.ZOOM_ON_PIXEL ||
+					cEvent.action() == ClickAction.ANCHOR_FROM_PIXEL ||
+					cEvent.action() == ClickAction.CUSTOM) {
+				if (scene.is2D())
+					if (((DandelionAction) cEvent.action().referenceAction()).is2D())
+						execAction2D(((DandelionAction) e.action().referenceAction()));
+					else
+						AbstractScene.showDepthWarning((DandelionAction) cEvent.action().referenceAction());
+				else if (scene.is3D())
+					execAction3D(((DandelionAction) e.action().referenceAction()));
 			}
-			if ((scene.is2D()) && (((DandelionAction) clickEvent.action().referenceAction()).is2D())) {
-				cEvent = (ClickEvent) e.get();
-				execAction2D(((DandelionAction) clickEvent.action().referenceAction()));
-				return;
-			}
-			else if (scene.is3D()) {
-				cEvent = (ClickEvent) e.get();
-				execAction3D(((DandelionAction) clickEvent.action().referenceAction()));
-				return;
-			}
+			else
+				scene.performInteraction(e);
+			return;
 		}
 		// end
 		// then it's a MotionEvent
@@ -888,9 +895,6 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		if (e instanceof MotionEvent)
 			motionEvent = (MotionEvent) e;
 		else
-			return;
-		// same as no action
-		if (motionEvent.action() == null)
 			return;
 		if (scene.is2D())
 			if ((((DandelionAction) motionEvent.action().referenceAction()).is2D()))
@@ -902,6 +906,7 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 	}
 
 	// MotionEvent currentEvent;
+	KeyboardEvent		kEvent;
 	ClickEvent			cEvent;
 	DOF1Event				e1;
 	DOF2Event				e2;
@@ -960,8 +965,29 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		return currentAction;
 	}
 
-	public void performCustomAction() {
-		AbstractScene.showMissingImplementationWarning(DandelionAction.CUSTOM, this.getClass().getName());
+	public void performInteraction(KeyboardEvent event) {
+		AbstractScene
+				.showMissingImplementationWarning("performInteraction(KeyboardEvent event)", this.getClass().getName());
+	}
+
+	public void performInteraction(ClickEvent event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
+	}
+
+	public void performInteraction(DOF1Event event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
+	}
+
+	public void performInteraction(DOF2Event event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
+	}
+
+	public void performInteraction(DOF3Event event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
+	}
+
+	public void performInteraction(DOF6Event event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
 	}
 
 	/**
@@ -974,8 +1000,23 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		float deltaX, deltaY, delta;
 		Rotation rot;
 		switch (a) {
-		case CUSTOM:
-			performCustomAction();
+		case CUSTOM_KEYBOARD_ACTION:
+			performInteraction(kEvent);
+			break;
+		case CUSTOM_CLICK_ACTION:
+			performInteraction(cEvent);
+			break;
+		case CUSTOM_DOF1_ACTION:
+			performInteraction(e1);
+			break;
+		case CUSTOM_DOF2_ACTION:
+			performInteraction(e2);
+			break;
+		case CUSTOM_DOF3_ACTION:
+			performInteraction(e3);
+			break;
+		case CUSTOM_DOF6_ACTION:
+			performInteraction(e6);
 			break;
 		case TRANSLATE_X:
 			translateFromEye(new Vec(delta1(), 0), (e1.action() != null) ? 1 : translationSensitivity());
@@ -1065,8 +1106,23 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		float delta;
 		float angle;
 		switch (a) {
-		case CUSTOM:
-			performCustomAction();
+		case CUSTOM_KEYBOARD_ACTION:
+			performInteraction(kEvent);
+			break;
+		case CUSTOM_CLICK_ACTION:
+			performInteraction(cEvent);
+			break;
+		case CUSTOM_DOF1_ACTION:
+			performInteraction(e1);
+			break;
+		case CUSTOM_DOF2_ACTION:
+			performInteraction(e2);
+			break;
+		case CUSTOM_DOF3_ACTION:
+			performInteraction(e3);
+			break;
+		case CUSTOM_DOF6_ACTION:
+			performInteraction(e6);
 			break;
 		case TRANSLATE_X:
 			trans = new Vec(delta1(), 0.0f, 0.0f);

@@ -1122,8 +1122,6 @@ public class Frame implements Copyable {
 			if (Util.diff(magnitude(), 1))
 				res.normalize();
 		}
-		else
-			System.out.println("There's no point in setting the Z axis in 2D");
 		return res;
 	}
 

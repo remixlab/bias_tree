@@ -160,7 +160,7 @@ public interface Constants {
 
 		// Wheel
 		/**
-		 * Scale frame
+		 * custom Scale frame
 		 */
 		SCALE("Scale frame", true, 1),
 		/**
@@ -258,10 +258,36 @@ public interface Constants {
 		HINGE("Move camera on the surface of a sphere using 5-DOF's", false, 6),
 
 		// CUSTOM ACTIONs
+
 		/**
 		 * User defined action
 		 */
-		CUSTOM("User defined action");
+		CUSTOM_CLICK_ACTION("User defined action", 0),
+
+		/**
+		 * User defined click-action
+		 */
+		CUSTOM_KEYBOARD_ACTION("User defined click-action", 0),
+
+		/**
+		 * User defined dof1-action
+		 */
+		CUSTOM_DOF1_ACTION("User defined dof1-action", 1),
+
+		/**
+		 * User defined dof2-action
+		 */
+		CUSTOM_DOF2_ACTION("User defined dof2-action", 2),
+
+		/**
+		 * User defined dof3-action
+		 */
+		CUSTOM_DOF3_ACTION("User defined dof3-action", 3),
+
+		/**
+		 * User defined dof6-action
+		 */
+		CUSTOM_DOF6_ACTION("User defined dof6-action", 6);
 
 		String	description;
 		boolean	twoD;
@@ -358,7 +384,7 @@ public interface Constants {
 		INCREASE_FLY_SPEED(DandelionAction.INCREASE_FLY_SPEED),
 		DECREASE_FLY_SPEED(DandelionAction.DECREASE_FLY_SPEED),
 
-		CUSTOM(DandelionAction.CUSTOM);
+		CUSTOM(DandelionAction.CUSTOM_CLICK_ACTION);
 
 		@Override
 		public DandelionAction referenceAction() {
@@ -428,7 +454,7 @@ public interface Constants {
 		INCREASE_FLY_SPEED(DandelionAction.INCREASE_FLY_SPEED),
 		DECREASE_FLY_SPEED(DandelionAction.DECREASE_FLY_SPEED),
 
-		CUSTOM(DandelionAction.CUSTOM);
+		CUSTOM(DandelionAction.CUSTOM_KEYBOARD_ACTION);
 
 		@Override
 		public DandelionAction referenceAction() {
@@ -474,7 +500,7 @@ public interface Constants {
 		ROTATE_Y(DandelionAction.ROTATE_Y),
 		ROTATE_Z(DandelionAction.ROTATE_Z),
 
-		CUSTOM(DandelionAction.CUSTOM);
+		CUSTOM(DandelionAction.CUSTOM_DOF1_ACTION);
 
 		@Override
 		public DandelionAction referenceAction() {
@@ -506,9 +532,9 @@ public interface Constants {
 	}
 
 	/**
-	 * Wheel action sub-group.
+	 * Wheel action sub-group. Use DOF1Action instead.
 	 * 
-	 * @deprecated Please refrain from using this type, it will be removed from future releases. Use DOF1Action instead.
+	 * @deprecated Please refrain from using this type, it will be removed from future releases.
 	 */
 	@Deprecated
 	public enum WheelAction implements Action<DandelionAction> {
@@ -523,7 +549,7 @@ public interface Constants {
 		ROTATE_Y(DandelionAction.ROTATE_Y),
 		ROTATE_Z(DandelionAction.ROTATE_Z),
 
-		CUSTOM(DandelionAction.CUSTOM);
+		CUSTOM(DandelionAction.CUSTOM_DOF1_ACTION);
 
 		@Override
 		public DandelionAction referenceAction() {
@@ -581,7 +607,7 @@ public interface Constants {
 		SCREEN_TRANSLATE(DandelionAction.SCREEN_TRANSLATE),
 		ZOOM_ON_REGION(DandelionAction.ZOOM_ON_REGION),
 
-		CUSTOM(DandelionAction.CUSTOM);
+		CUSTOM(DandelionAction.CUSTOM_DOF2_ACTION);
 
 		@Override
 		public DandelionAction referenceAction() {
@@ -643,7 +669,7 @@ public interface Constants {
 		TRANSLATE_XYZ(DandelionAction.TRANSLATE_XYZ),
 		ROTATE_XYZ(DandelionAction.ROTATE_XYZ),
 
-		CUSTOM(DandelionAction.CUSTOM);
+		CUSTOM(DandelionAction.CUSTOM_DOF3_ACTION);
 
 		@Override
 		public DandelionAction referenceAction() {
@@ -711,7 +737,7 @@ public interface Constants {
 		// DOF_6
 		TRANSLATE_XYZ_ROTATE_XYZ(DandelionAction.TRANSLATE_XYZ_ROTATE_XYZ),
 
-		CUSTOM(DandelionAction.CUSTOM);
+		CUSTOM(DandelionAction.CUSTOM_DOF6_ACTION);
 
 		@Override
 		public DandelionAction referenceAction() {

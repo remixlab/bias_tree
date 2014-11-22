@@ -1,8 +1,9 @@
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.proscene.*;
+import remixlab.dandelion.core.Constants.*;
 
-public class ModelEllipse extends ModelObject {
+public class ModelEllipse extends InteractiveModelFrame {
   float radiusX = 30, radiusY = 30;
   color colour = color(255, 0, 0);
   public ModelEllipse(Scene scn) {
@@ -69,6 +70,8 @@ void setup() {
   ctrlScene.setGridVisualHint(false);
   e = new ModelEllipse(ctrlScene);
   ctrlScene.motionAgent().addInPool(e);
+  ctrlScene.mouseAgent().setButtonBinding(Target.FRAME, RIGHT, DOF2Action.CUSTOM);
+  ctrlScene.mouseAgent().setClickBinding(Target.FRAME, RIGHT, ClickAction.CUSTOM);
 }
 
 void draw() {

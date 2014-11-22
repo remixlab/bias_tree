@@ -504,21 +504,10 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 			eye().frame().anchorFlag = true;
 			eye().frame().timerFx.runOnce(1000);
 			break;
-		case CUSTOM:
-			performCustomAction();
-			break;
 		default:
-			System.out.println("Action cannot be handled here!");
+			System.out.println(id + " Action cannot be handled here!");
 			break;
 		}
-	}
-
-	/**
-	 * Method invoked when the Dandelion.CUSTOM action is bound. Default implementation is empty. Override it at derived
-	 * classes.
-	 */
-	protected void performCustomAction() {
-		AbstractScene.showMissingImplementationWarning(DandelionAction.CUSTOM, this.getClass().getName());
 	}
 
 	// 1. Scene overloaded
