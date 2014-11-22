@@ -24,22 +24,6 @@ public class ModelEllipse extends InteractiveModelFrame {
     update();
   }
   
-  /*
-  //same as the prev two methods combined, but we don't want
-  //to expose too much the casting ugly stuff  
-  @Override
-  public void performInteraction(BogusEvent event) {
-    if (event instanceof ClickEvent) {
-      colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
-    }
-    if (event instanceof DOF2Event) {
-      radiusX += ((DOF2Event)event).dx();
-      radiusY += ((DOF2Event)event).dy();
-    }
-    update();
-  }
-  //*/
-  
   void update() {
     setShape(createShape(ELLIPSE, -radiusX, -radiusY, 2*radiusX, 2*radiusY));
     shape().setFill(color(colour));
@@ -70,8 +54,8 @@ void setup() {
   ctrlScene.setGridVisualHint(false);
   e = new ModelEllipse(ctrlScene);
   ctrlScene.motionAgent().addInPool(e);
-  ctrlScene.mouseAgent().setButtonBinding(Target.FRAME, RIGHT, DOF2Action.CUSTOM);
-  ctrlScene.mouseAgent().setClickBinding(Target.FRAME, RIGHT, ClickAction.CUSTOM);
+  ctrlScene.mouseAgent().setButtonBinding(Target.FRAME, LEFT, DOF2Action.CUSTOM);
+  ctrlScene.mouseAgent().setClickBinding(Target.FRAME, LEFT, ClickAction.CUSTOM);
 }
 
 void draw() {
