@@ -56,7 +56,7 @@ public class MouseAgent extends WheeledMouseAgent {
 	 */
 	public void mouseEvent(processing.event.MouseEvent e) {
 		if (e.getAction() == processing.event.MouseEvent.MOVE) {
-			move(new DOF2Event(lastEvent(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y()));
+			move(new DOF2Event(lastEvent(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(), e.getModifiers(), MotionEvent.NOBUTTON));
 		}
 		if (e.getAction() == processing.event.MouseEvent.PRESS) {
 			press(new DOF2Event(lastEvent(), e.getX() - scene.originCorner().x(),

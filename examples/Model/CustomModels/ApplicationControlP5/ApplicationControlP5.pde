@@ -10,18 +10,6 @@ public class RectModel extends ModelObject {
     update();
   }
   
-  @Override
-  public void performInteraction(DOF2Event event) {
-    edge += event.dx();
-    update();
-  }
-  
-  @Override
-  public void performInteraction(ClickEvent event) {
-    colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
-    update();
-  }
-  
   void update() {
     setShape(createShape(RECT, -edge/2, -edge/2, edge, edge));
     shape().setFill(color(colour));
@@ -34,19 +22,6 @@ public class ModelEllipse extends ModelObject {
   color colour = color(255, 0, 0);
   public ModelEllipse(Scene scn) {
     super(scn);
-    update();
-  }
-  
-  @Override
-  public void performInteraction(DOF2Event event) {
-    radiusX += event.dx();
-    radiusY += event.dy();
-    update();
-  }
-  
-  @Override
-  public void performInteraction(ClickEvent event) {
-    colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
     update();
   }
   
@@ -81,9 +56,32 @@ void setup() {
   ctrlScene.setGridVisualHint(false);
   e = new ModelEllipse(ctrlScene);
   r = new RectModel(ctrlScene);
-  ctrlScene.removeModel(r);//re-add me when implementing me 
+  ctrlScene.removeModel(r);//re-add me when implementing me
   ctrlScene.motionAgent().addInPool(e);
   ctrlScene.motionAgent().addInPool(r);
+}
+
+void mouseClicked() {
+  if (ctrlScene.mouseAgent().trackedGrabber()==e) {
+    e.colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
+    e.update();
+  }
+  if (ctrlScene.mouseAgent().trackedGrabber()==r) {
+    r.colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
+    r.update();
+  }
+}
+
+void mouseDragged() {
+  if (ctrlScene.mouseAgent().trackedGrabber()==e) {
+    e.radiusX += mouseX -pmouseX;
+    e.radiusY += mouseY -pmouseY;
+    e.update();
+  }
+  if (ctrlScene.mouseAgent().trackedGrabber()==r) {
+    r.edge += mouseX -pmouseX;
+    r.update();
+  }
 }
 
 void draw() {

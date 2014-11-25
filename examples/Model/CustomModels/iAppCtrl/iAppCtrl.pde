@@ -3,6 +3,32 @@ import remixlab.bias.event.*;
 import remixlab.proscene.*;
 import remixlab.dandelion.core.Constants.*;
 
+public class RectModel extends InteractiveModelFrame {
+  float edge = 30;
+  color colour = color(255, 0, 0);
+  public RectModel(Scene scn) {
+    super(scn);
+    update();
+  }
+  
+  @Override
+  public void performInteraction(DOF2Event event) {
+    edge += event.dx();
+    update();
+  }
+  
+  @Override
+  public void performInteraction(ClickEvent event) {
+    colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
+    update();
+  }
+  
+  void update() {
+    setShape(createShape(RECT, -edge/2, -edge/2, edge, edge));
+    shape().setFill(color(colour));
+  }
+}
+
 //same as ApplicationControl, but with an InteractiveModelFrame
 public class ModelEllipse extends InteractiveModelFrame {
   float radiusX = 30, radiusY = 30;
@@ -39,6 +65,7 @@ PGraphics ctrlCanvas;
 Scene ctrlScene;
 public PShape eShape;
 ModelEllipse e;
+RectModel r;
 PGraphics canvas;
 Scene scene;
 boolean showAid = true;
@@ -53,10 +80,13 @@ void setup() {
   ctrlScene = new Scene(this, ctrlCanvas, oX, oY);
   ctrlScene.setAxesVisualHint(false);
   ctrlScene.setGridVisualHint(false);
+  
   e = new ModelEllipse(ctrlScene);
-  ctrlScene.motionAgent().addInPool(e);
-  ctrlScene.mouseAgent().setButtonBinding(Target.FRAME, LEFT, DOF2Action.CUSTOM);
-  ctrlScene.mouseAgent().setClickBinding(Target.FRAME, LEFT, ClickAction.CUSTOM);
+  r = new RectModel(ctrlScene);
+  ctrlScene.removeModel(r);//re-add me when implementing me
+  
+  ctrlScene.mouseAgent().setButtonBinding(Target.FRAME, RIGHT, DOF2Action.CUSTOM);
+  ctrlScene.mouseAgent().setClickBinding(Target.FRAME, RIGHT, ClickAction.CUSTOM);
 }
 
 void draw() {
