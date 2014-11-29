@@ -43,7 +43,7 @@ int SINCOS_LENGTH = int(360.0 / SINCOS_PRECISION);
 
 Scene scene;
 PShape satellite;
-Model model;
+InteractiveModelFrame model;
 HIDAgent hidAgent;
 
 ControllIO controll;
@@ -69,7 +69,7 @@ void setup() {
   scene.showAll();
   
   satellite = loadShape("satellite.obj");
-  model = new Model(scene, satellite);
+  model = new InteractiveModelFrame(scene, satellite);
   model.translate(new Vec(180, 180, 0));
   model.scale(50);
 
@@ -96,7 +96,7 @@ void draw() {
   else if(hidAgent.eyeProfile().isActionBound(DOF6Action.HINGE))
     hidAgent.setSensitivities(0.0001, 0.0001, -0.01, 0.0001, 0.0001, 0.0001);      
   renderGlobe();
-  model.drawShape();
+  model.draw();
 }
 
 void keyPressed() {
