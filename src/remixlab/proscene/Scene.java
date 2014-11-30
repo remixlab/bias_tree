@@ -182,8 +182,16 @@ public class Scene extends AbstractScene implements PConstants {
 		// 6. Create agents and register P5 methods
 		defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
 		enableKeyboardAgent();
-		defMotionAgent = new MouseAgent(this, "proscene_mouse");
-		enableMotionAgent();
+		
+		//TODO warning as this might break android mode
+		trackpadAgent = new TrackpadAgent(this, "proscene_trackpad");
+		mouseAgent = new MouseAgent(this, "proscene_mouse");
+		defMotionAgent = mouseAgent;
+		enableMotionAgent();		
+	  // prev three almost the same as the next two:
+		//defMotionAgent = new MouseAgent(this, "proscene_mouse");
+		//enableMotionAgent();
+		
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
 
@@ -357,7 +365,13 @@ public class Scene extends AbstractScene implements PConstants {
 	public void enableMotionAgent() {
 		if (!inputHandler().isAgentRegistered(motionAgent())) {
 			inputHandler().registerAgent(motionAgent());
-			parent.registerMethod("mouseEvent", motionAgent());
+			//TODO tessting
+			if(isTrackpadEnabled()) {				
+				parent.registerMethod("mouseEvent", trackpadAgent());
+			}
+			else {
+				parent.registerMethod("mouseEvent", mouseAgent());
+			}
 		}
 	}
 
@@ -378,7 +392,85 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	// MOUSE
-
+	
+  //mouse
+	protected MouseAgent mouseAgent;
+	protected TrackpadAgent trackpadAgent;
+	
+  //TODO think again a bit about the trackpad api :P
+	public void enableTrackpad() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			System.out.println("Nothing done! Trackpad is not available in Android mode");
+			return;
+		}		
+		disableMotionAgent();
+		defMotionAgent = trackpadAgent;
+		enableMotionAgent();
+		
+		for (Grabber g : mouseAgent.pool())
+			trackpadAgent.addInPool(g);
+		
+		/*
+		if(!isTrackpadEnabled()) {
+			//TODO testing against GrabberObject
+			for (Grabber g : mouseAgent.pool())
+				trackpadAgent.addInPool(g);
+			defMotionAgent = trackpadAgent;
+			enableMotionAgent();
+		}
+	  */
+	}
+	
+	public void disableTrackpad() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			System.out.println("Nothing done! Trackpad is not available in Android mode");
+			return;
+		}
+		disableMotionAgent();
+		defMotionAgent = mouseAgent;
+		enableMotionAgent();
+		
+		for (Grabber g : trackpadAgent.pool())
+			mouseAgent.addInPool(g);
+		
+		/*
+		if(isTrackpadEnabled()) {
+		//TODO testing against GrabberObject
+			for (Grabber g : trackpadAgent.pool())
+				mouseAgent.addInPool(g);
+			defMotionAgent = mouseAgent;
+			enableMotionAgent();
+		}
+		*/
+	}
+	
+	public boolean isTrackpadEnabled() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			return false;
+		}
+		return defMotionAgent instanceof TrackpadAgent;
+	}
+	
+	public void toggleTrackpad() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			System.out.println("Nothing done! Trackpad is not available in Android mode");
+			return;
+		}
+		if(isTrackpadEnabled())
+			disableTrackpad();
+		else
+			enableTrackpad();
+	}
+	
+	//TODO how to customise the track pad
+	//TODO dont like too much the idea of returning the trackpad :P
+	public TrackpadAgent trackpadAgent() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene trackpadAgent() is not available in Android mode");
+		}
+		return trackpadAgent;
+	}
+	
 	/**
 	 * Returns the default mouse agent handling Processing mouse events. Simply returns a ProsceneMouse cast of the
 	 * {@link #motionAgent()}.
@@ -393,11 +485,20 @@ public class Scene extends AbstractScene implements PConstants {
 	 * 
 	 * @see #keyboardAgent()
 	 */
+	/*
+	public WheeledPointingAgent mouseAgent() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene mouseAgent() is not available in Android mode");
+		}
+		return (WheeledPointingAgent)motionAgent();
+	}
+	*/
+	//TODO testing
 	public MouseAgent mouseAgent() {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			throw new RuntimeException("Proscene mouseAgent() is not available in Android mode");
 		}
-		return (MouseAgent) motionAgent();
+		return mouseAgent;
 	}
 
 	/**
@@ -1557,7 +1658,9 @@ public class Scene extends AbstractScene implements PConstants {
 			return false;
 		if (models().size() == 0)
 			pickingBuffer().loadPixels();
-		return models().add(model);
+		boolean result = models().add(model);
+		inputHandler().addInAllAgentPools(model);
+		return result;
 	}
 
 	/**
@@ -2483,8 +2586,9 @@ public class Scene extends AbstractScene implements PConstants {
 		if (!(motionAgent() instanceof MouseAgent))
 			return;
 		pg().pushStyle();
-		float p1x = mouseAgent().pressEvent().x() - originCorner().x();
-		float p1y = mouseAgent().pressEvent().y() - originCorner().y();
+		//TODO horrible cast is due to poor ZOOM_ON_REGION handling
+		float p1x = ((MouseAgent)mouseAgent()).pressEvent().x() - originCorner().x();
+		float p1y = ((MouseAgent)mouseAgent()).pressEvent().y() - originCorner().y();
 		float p2x = mouseAgent().lastEvent().x() - originCorner().x();
 		float p2y = mouseAgent().lastEvent().y() - originCorner().y();
 		beginScreenDrawing();

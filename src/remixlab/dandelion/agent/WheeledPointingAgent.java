@@ -22,7 +22,7 @@ import remixlab.dandelion.core.Constants.*;
  * Degrees-Of-Freedom (e.g., two translations or two rotations), such as most mice.
  */
 public abstract class WheeledPointingAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Action>> {
-	protected DOF2Event	event;
+	protected DOF2Event	lastEvent;
 	protected int				left	= 1, center = 2, right = 3;
 
 	/**
@@ -72,18 +72,10 @@ public abstract class WheeledPointingAgent extends ActionWheeledBiMotionAgent<Mo
 	}
 
 	/**
-	 * Call {@link #handle(BogusEvent)} on the given event.
-	 */
-	public void perform(DOF2Event e) {
-		event = e;
-		handle(event);
-	}
-
-	/**
 	 * Return the last event processed by the agent.
 	 */
 	public DOF2Event lastEvent() {
-		return event;
+		return lastEvent;
 	}
 
 	/**
@@ -114,6 +106,82 @@ public abstract class WheeledPointingAgent extends ActionWheeledBiMotionAgent<Mo
 	public abstract void setAsArcball();
 
 	// WRAPPERS
+	
+	/**
+	 * Binds the mask-button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target}
+	 * (EYE or FRAME).
+	 */
+	public void setButtonBinding(Target target, int mask, int button, DOF2Action action) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		profile.setBinding(buttonModifiersFix(mask, button), button, action);
+	}
+
+	/**
+	 * Binds the button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or
+	 * FRAME).
+	 */
+	public void setButtonBinding(Target target, int button, DOF2Action action) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		profile.setBinding(buttonModifiersFix(button), button, action);
+	}
+
+	/**
+	 * Removes the mask-button mouse shortcut binding from the given {@code target} (EYE or FRAME).
+	 */
+	public void removeButtonBinding(Target target, int mask, int button) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		profile.removeBinding(buttonModifiersFix(mask, button), button);
+	}
+
+	/**
+	 * Removes the button mouse shortcut binding from the given {@code target} (EYE or FRAME).
+	 */
+	public void removeButtonBinding(Target target, int button) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		profile.removeBinding(buttonModifiersFix(button), button);
+	}
+
+	/**
+	 * Returns {@code true} if the mask-button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
+	 */
+	public boolean hasButtonBinding(Target target, int mask, int button) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		return profile.hasBinding(buttonModifiersFix(mask, button), button);
+	}
+
+	/**
+	 * Returns {@code true} if the button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
+	 */
+	public boolean hasButtonBinding(Target target, int button) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		return profile.hasBinding(buttonModifiersFix(button), button);
+	}
+
+	/**
+	 * Returns {@code true} if the mouse action is bound to the given {@code target} (EYE or FRAME).
+	 */
+	public boolean isButtonActionBound(Target target, DOF2Action action) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		return profile.isActionBound(action);
+	}
+
+	/**
+	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
+	 * given mask-button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 */
+	public DOF2Action buttonAction(Target target, int mask, int button) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		return (DOF2Action) profile.action(buttonModifiersFix(mask, button), button);
+	}
+
+	/**
+	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
+	 * given button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 */
+	public DOF2Action buttonAction(Target target, int button) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		return (DOF2Action) profile.action(buttonModifiersFix(button), button);
+	}
 
 	// wheel here
 

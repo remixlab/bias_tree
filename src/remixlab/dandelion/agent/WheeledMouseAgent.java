@@ -10,7 +10,6 @@
 
 package remixlab.dandelion.agent;
 
-import remixlab.bias.agent.profile.*;
 import remixlab.bias.core.Action;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.core.EventGrabberTuple;
@@ -42,12 +41,10 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 
 	/**
 	 * Call {@link #updateTrackedGrabber(BogusEvent)} on the given event.
-	 * <p>
-	 * Use {@link #perform(DOF2Event)} if you want to perform an action on the event.
 	 */
 	public void move(DOF2Event e) {
-		event = e;
-		updateTrackedGrabber(event);
+		lastEvent = e;
+		updateTrackedGrabber(lastEvent);
 	}
 
 	/**
@@ -55,14 +52,14 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 	 * .
 	 */
 	public void press(DOF2Event e) {
-		event = e;
-		pressEvent = event.get();
+		lastEvent = e;
+		pressEvent = lastEvent.get();
 		if (inputGrabber() instanceof InteractiveFrame) {
 			if (need4Spin)
 				((InteractiveFrame) inputGrabber()).stopSpinning();
 			iFrame = (InteractiveFrame) inputGrabber();
-			Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) event)
-					: frameProfile().handle((BogusEvent) event);
+			Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
+					: frameProfile().handle((BogusEvent) lastEvent);
 			if (a == null)
 				return;
 			DandelionAction dA = (DandelionAction) a.referenceAction();
@@ -88,32 +85,31 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 					((InteractiveFrame) inputGrabber()).updateSceneUpVector();
 					dFriction = ((InteractiveFrame) inputGrabber()).dampingFriction();
 					((InteractiveFrame) inputGrabber()).setDampingFriction(0);
-					handler.eventTupleQueue().add(new EventGrabberTuple(event, a, inputGrabber()));
+					handler.eventTupleQueue().add(new EventGrabberTuple(lastEvent, a, inputGrabber()));
 				}
 			}
 			else
-				handle(event);
+				handle(lastEvent);
 		} else
-			handle(event);
+			handle(lastEvent);
 	}
 
 	/**
 	 * Call {@link #handle(BogusEvent)} on the given event.
 	 */
-	@Override
-	public void perform(DOF2Event e) {
-		event = e;
+	public void drag(DOF2Event e) {
+		lastEvent = e;
 		if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
 			if (drive && inputGrabber() instanceof InteractiveFrame)
-				((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f * (event.y() - pressEvent.y()));
+				((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f * (lastEvent.y() - pressEvent.y()));
 			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-			Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) event)
-					: frameProfile().handle((BogusEvent) event);
+			Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
+					: frameProfile().handle((BogusEvent) lastEvent);
 			if (a == null)
 				return;
 			DandelionAction dA = (DandelionAction) a.referenceAction();
 			if (dA != DandelionAction.ZOOM_ON_REGION)
-				handle(event);
+				handle(lastEvent);
 		}
 	}
 
@@ -122,7 +118,7 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 	 */
 	public void release(DOF2Event e) {
 		DOF2Event prevEvent = lastEvent().get();
-		event = e;
+		lastEvent = e;
 		if (inputGrabber() instanceof InteractiveFrame)
 			// note that the following two lines fail on event when need4Spin
 			if (need4Spin && (prevEvent.speed() >= ((InteractiveFrame) inputGrabber()).spinningSensitivity()))
@@ -132,13 +128,13 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 			// handle(event);
 			// but the problem is that depending on the order the button and the modifiers are released,
 			// different actions maybe triggered, so we go for sure ;) :
-			event.setPreviousEvent(pressEvent);
-			enqueueEventTuple(new EventGrabberTuple(event, DOF2Action.ZOOM_ON_REGION, inputGrabber()));
+			lastEvent.setPreviousEvent(pressEvent);
+			enqueueEventTuple(new EventGrabberTuple(lastEvent, DOF2Action.ZOOM_ON_REGION, inputGrabber()));
 			scene.setZoomVisualHint(false);
 		}
 		if (scene.rotateVisualHint())
 			scene.setRotateVisualHint(false);
-		updateTrackedGrabber(event);
+		updateTrackedGrabber(lastEvent);
 		if (bypassNullEvent) {
 			iFrame.setDampingFriction(dFriction);
 			bypassNullEvent = !bypassNullEvent;
@@ -302,83 +298,5 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 		eyeWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON,
 				scene.is3D() ? DOF1Action.ZOOM : DOF1Action.SCALE);
 		frameWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON, DOF1Action.SCALE);
-	}
-
-	// WRAPPERS
-
-	/**
-	 * Binds the mask-button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target}
-	 * (EYE or FRAME).
-	 */
-	public void setButtonBinding(Target target, int mask, int button, DOF2Action action) {
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		profile.setBinding(buttonModifiersFix(mask, button), button, action);
-	}
-
-	/**
-	 * Binds the button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or
-	 * FRAME).
-	 */
-	public void setButtonBinding(Target target, int button, DOF2Action action) {
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		profile.setBinding(buttonModifiersFix(button), button, action);
-	}
-
-	/**
-	 * Removes the mask-button mouse shortcut binding from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeButtonBinding(Target target, int mask, int button) {
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		profile.removeBinding(buttonModifiersFix(mask, button), button);
-	}
-
-	/**
-	 * Removes the button mouse shortcut binding from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeButtonBinding(Target target, int button) {
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		profile.removeBinding(buttonModifiersFix(button), button);
-	}
-
-	/**
-	 * Returns {@code true} if the mask-button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean hasButtonBinding(Target target, int mask, int button) {
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		return profile.hasBinding(buttonModifiersFix(mask, button), button);
-	}
-
-	/**
-	 * Returns {@code true} if the button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean hasButtonBinding(Target target, int button) {
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		return profile.hasBinding(buttonModifiersFix(button), button);
-	}
-
-	/**
-	 * Returns {@code true} if the mouse action is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean isButtonActionBound(Target target, DOF2Action action) {
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		return profile.isActionBound(action);
-	}
-
-	/**
-	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given mask-button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
-	 */
-	public DOF2Action buttonAction(Target target, int mask, int button) {
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		return (DOF2Action) profile.action(buttonModifiersFix(mask, button), button);
-	}
-
-	/**
-	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
-	 */
-	public DOF2Action buttonAction(Target target, int button) {
-		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		return (DOF2Action) profile.action(buttonModifiersFix(button), button);
 	}
 }

@@ -2,6 +2,7 @@
 package remixlab.proscene;
 
 import processing.core.PApplet;
+import processing.event.MouseEvent;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
 import remixlab.dandelion.agent.*;
@@ -42,10 +43,12 @@ public class TrackpadAgent extends WheeledTrackpadAgent {
 	/**
 	 * Processing mouseEvent method to be registered at the PApplet's instance.
 	 */
-	public void mouseEvent(processing.event.MouseEvent e) {
-		if (e.getAction() == processing.event.MouseEvent.MOVE) {
-			perform(new DOF2Event(lastEvent(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
-					e.getModifiers(), MotionEvent.NOBUTTON));
+	public void mouseEvent(MouseEvent e) {
+		if (e.getAction() == MouseEvent.MOVE || e.getAction() == MouseEvent.DRAG || e.getAction() == MouseEvent.RELEASE) {
+			DOF2Event dof2Event = new DOF2Event(lastEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
+					e.getModifiers(), e.getButton());
+			handle(dof2Event);
+			lastEvent = dof2Event;
 		}
 		if (e.getAction() == processing.event.MouseEvent.WHEEL) {
 			handle(new DOF1Event(e.getCount(), e.getModifiers(), MotionEvent.NOBUTTON));
@@ -54,5 +57,5 @@ public class TrackpadAgent extends WheeledTrackpadAgent {
 			updateTrackedGrabber(new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
 					e.getModifiers(), e.getButton(), e.getCount()));
 		}
-	}
+  }
 }

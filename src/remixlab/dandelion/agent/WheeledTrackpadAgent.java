@@ -186,17 +186,37 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 	}
 
 	// WRAPPERS
+	
+	/**
+	 * Binds the mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME).
+	 */
+	public void setBinding(Target target, DOF2Action action) {
+		if (action == DOF2Action.ZOOM_ON_REGION) {
+			AbstractScene.showMissingImplementationWarning(action.name(), WheeledMouseAgent.class.getName());
+			return;
+		}
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		profile.setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON, action);
+	}
 
 	/**
 	 * Binds the mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME).
 	 */
 	public void setBinding(Target target, int mask, DOF2Action action) {
-		if (action == DOF2Action.SCREEN_ROTATE || action == DOF2Action.ZOOM_ON_REGION) {
+		if (action == DOF2Action.ZOOM_ON_REGION) {
 			AbstractScene.showMissingImplementationWarning(action.name(), WheeledMouseAgent.class.getName());
 			return;
 		}
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		profile.setBinding(mask, MotionEvent.NOBUTTON, action);
+	}
+	
+	/**
+	 * Removes the mouse shortcut binding from the given {@code target} (EYE or FRAME).
+	 */
+	public void removeBinding(Target target) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		profile.removeBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
 	}
 
 	/**
@@ -206,6 +226,14 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		profile.removeBinding(mask, MotionEvent.NOBUTTON);
 	}
+	
+	/**
+	 * Returns {@code true} if the mouse shortcut is bound to the given {@code target} (EYE or FRAME).
+	 */
+	public boolean hasBinding(Target target) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		return profile.hasBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
+	}
 
 	/**
 	 * Returns {@code true} if the mouse shortcut is bound to the given {@code target} (EYE or FRAME).
@@ -213,6 +241,15 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 	public boolean hasBinding(Target target, int mask) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		return profile.hasBinding(mask, MotionEvent.NOBUTTON);
+	}
+	
+	/**
+	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
+	 * given mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 */
+	public DOF2Action action(Target target) {
+		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		return (DOF2Action) profile.action(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
 	}
 
 	/**

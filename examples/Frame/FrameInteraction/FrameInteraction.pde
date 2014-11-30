@@ -17,6 +17,7 @@
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
+import remixlab.dandelion.core.Constants.*;
 
 Scene scene;
 InteractiveFrame iFrame;
@@ -33,6 +34,7 @@ public void setup() {
   iFrame.translate(new Vec(50, 50));
   agent  = new TrackpadAgent(scene, "pad");
   agent.addInPool(iFrame);
+  agent.setButtonBinding(Target.FRAME, RIGHT, DOF2Action.TRANSLATE);
   // Simply testing non sequential timers:
   scene.setNonSeqTimers(); // comment it to use sequential timers instead (default)
 }
