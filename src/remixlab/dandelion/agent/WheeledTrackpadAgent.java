@@ -65,19 +65,18 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 	@Override
 	public void setAsFirstPerson() {
 		resetAllProfiles();
-		eyeProfile().setBinding(DOF2Action.MOVE_FORWARD);
+		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.MOVE_FORWARD);
 		eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.MOVE_BACKWARD);
 		eyeProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
-		eyeWheelProfile().setBinding(MotionEvent.CTRL, MotionEvent.ALT, DOF1Action.ROTATE_Z);
+		eyeWheelProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), DOF1Action.ROTATE_Z);
 		if (scene.is3D()) {
-			eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.LOOK_AROUND);
-			eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), DOF2Action.DRIVE);
+			eyeProfile().setBinding(DOF2Action.LOOK_AROUND);
+			eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.DRIVE);
 		}
 		frameProfile().setBinding(DOF2Action.ROTATE);
 		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.SCALE);
 		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.TRANSLATE);
 		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
-
 		frameProfile()
 				.setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.SCREEN_TRANSLATE);
 		frameProfile().setBinding((MotionEvent.ALT | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.SCREEN_ROTATE);
@@ -106,14 +105,13 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 	@Override
 	public void setAsThirdPerson() {
 		resetAllProfiles();
-
-		frameProfile().setBinding(DOF2Action.MOVE_FORWARD);
+		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.MOVE_FORWARD);
 		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.MOVE_BACKWARD);
-		frameWheelProfile().setBinding(MotionEvent.CTRL, MotionEvent.ALT, DOF1Action.ROTATE_Z);
-		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
+		frameWheelProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), DOF1Action.ROTATE_Z);
+		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, null);
 		if (scene.is3D()) {
-			frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.LOOK_AROUND);
-			frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.DRIVE);
+			frameProfile().setBinding(DOF2Action.LOOK_AROUND);
+			frameProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.DRIVE);
 		}
 		setCommonBindings();
 	}
@@ -153,14 +151,15 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 		eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
 		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.TRANSLATE);
 		eyeProfile().setBinding(MotionEvent.ALT_GRAPH, MotionEvent.NOBUTTON, DOF2Action.SCREEN_TRANSLATE);
-		// eyeProfile().setBinding(MotionEvent.NOBUTTON, DOF2Action.SCREEN_ROTATE);
+		eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.SCREEN_ROTATE);
+		//eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.ZOOM_ON_REGION);
 		eyeProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
 
 		frameProfile().setBinding(DOF2Action.ROTATE);
 		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.SCALE);
 		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.TRANSLATE);
 		frameProfile().setBinding(MotionEvent.ALT_GRAPH, MotionEvent.NOBUTTON, DOF2Action.SCREEN_TRANSLATE);
-		// frameProfile().setBinding(MotionEvent.NOBUTTON, DOF2Action.SCREEN_ROTATE);
+		frameProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.SCREEN_ROTATE);
 		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
 		setCommonBindings();
 	}

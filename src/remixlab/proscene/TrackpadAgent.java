@@ -3,9 +3,12 @@ package remixlab.proscene;
 
 import processing.core.PApplet;
 import processing.event.MouseEvent;
+import remixlab.bias.core.Action;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
 import remixlab.dandelion.agent.*;
+import remixlab.dandelion.core.InteractiveEyeFrame;
+import remixlab.dandelion.core.InteractiveFrame;
 
 public class TrackpadAgent extends WheeledTrackpadAgent {
 	public TrackpadAgent(Scene scn, String n) {
@@ -49,6 +52,17 @@ public class TrackpadAgent extends WheeledTrackpadAgent {
 					e.getModifiers(), e.getButton());
 			handle(dof2Event);
 			lastEvent = dof2Event;
+			
+			if (inputGrabber() instanceof InteractiveFrame) {
+				//InteractiveFrame iFrame = (InteractiveFrame) inputGrabber();
+				Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
+					: frameProfile().handle((BogusEvent) lastEvent);
+				if (a == null) return;
+				if( a == DOF2Action.SCREEN_ROTATE )
+					scene.setRotateVisualHint(true);
+				else
+					scene.setRotateVisualHint(false);
+			}
 		}
 		if (e.getAction() == processing.event.MouseEvent.WHEEL) {
 			handle(new DOF1Event(e.getCount(), e.getModifiers(), MotionEvent.NOBUTTON));
