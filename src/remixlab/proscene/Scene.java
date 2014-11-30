@@ -366,7 +366,7 @@ public class Scene extends AbstractScene implements PConstants {
 		if (!inputHandler().isAgentRegistered(motionAgent())) {
 			inputHandler().registerAgent(motionAgent());
 			//TODO tessting
-			if(isTrackpadEnabled()) {				
+			if(isTrackpadAgentEnabled()) {				
 				parent.registerMethod("mouseEvent", trackpadAgent());
 			}
 			else {
@@ -398,7 +398,7 @@ public class Scene extends AbstractScene implements PConstants {
 	protected TrackpadAgent trackpadAgent;
 	
   //TODO think again a bit about the trackpad api :P
-	public void enableTrackpad() {
+	public void enableTrackpadAgent() {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			System.out.println("Nothing done! Trackpad is not available in Android mode");
 			return;
@@ -421,7 +421,7 @@ public class Scene extends AbstractScene implements PConstants {
 	  */
 	}
 	
-	public void disableTrackpad() {
+	public void disableTrackpadAgent() {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			System.out.println("Nothing done! Trackpad is not available in Android mode");
 			return;
@@ -444,22 +444,22 @@ public class Scene extends AbstractScene implements PConstants {
 		*/
 	}
 	
-	public boolean isTrackpadEnabled() {
+	public boolean isTrackpadAgentEnabled() {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			return false;
 		}
 		return defMotionAgent instanceof TrackpadAgent;
 	}
 	
-	public void toggleTrackpad() {
+	public void toggleTrackpadAgent() {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			System.out.println("Nothing done! Trackpad is not available in Android mode");
 			return;
 		}
-		if(isTrackpadEnabled())
-			disableTrackpad();
+		if(isTrackpadAgentEnabled())
+			disableTrackpadAgent();
 		else
-			enableTrackpad();
+			enableTrackpadAgent();
 	}
 	
 	//TODO how to customise the track pad
@@ -2566,11 +2566,13 @@ public class Scene extends AbstractScene implements PConstants {
 
 	@Override
 	protected void drawScreenRotateHint() {
+		if(! (motionAgent() instanceof WheeledPointingAgent))	return;
+		
+		//if (!(motionAgent() instanceof MouseAgent))	return;
+		
 		pg().pushStyle();
-		if (!(motionAgent() instanceof MouseAgent))
-			return;
-		float p1x = mouseAgent().lastEvent().x() - originCorner().x();
-		float p1y = mouseAgent().lastEvent().y() - originCorner().y();
+		float p1x = ((WheeledPointingAgent)motionAgent()).lastEvent().x() - originCorner().x();
+		float p1y = ((WheeledPointingAgent)motionAgent()).lastEvent().y() - originCorner().y();
 		Vec p2 = eye().projectedCoordinatesOf(anchor());
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
@@ -2586,9 +2588,8 @@ public class Scene extends AbstractScene implements PConstants {
 		if (!(motionAgent() instanceof MouseAgent))
 			return;
 		pg().pushStyle();
-		//TODO horrible cast is due to poor ZOOM_ON_REGION handling
-		float p1x = ((MouseAgent)mouseAgent()).pressEvent().x() - originCorner().x();
-		float p1y = ((MouseAgent)mouseAgent()).pressEvent().y() - originCorner().y();
+		float p1x = mouseAgent().pressEvent().x() - originCorner().x();
+		float p1y = mouseAgent().pressEvent().y() - originCorner().y();
 		float p2x = mouseAgent().lastEvent().x() - originCorner().x();
 		float p2y = mouseAgent().lastEvent().y() - originCorner().y();
 		beginScreenDrawing();
