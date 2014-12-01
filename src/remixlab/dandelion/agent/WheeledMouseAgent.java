@@ -23,7 +23,7 @@ import remixlab.dandelion.core.*;
  */
 public class WheeledMouseAgent extends WheeledPointingAgent {
 	boolean						bypassNullEvent, need4Spin, drive, rotateMode;
-	//DOF2Event					pressEvent;
+	// DOF2Event pressEvent;
 	float							dFriction;
 	InteractiveFrame	iFrame;
 
@@ -77,7 +77,7 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 					|| (drive) && scene.inputHandler().isAgentRegistered(this);
 			scene.setZoomVisualHint(dA == DandelionAction.ZOOM_ON_REGION && (inputGrabber() instanceof InteractiveEyeFrame)
 					&& scene.inputHandler().isAgentRegistered(this));
-			scene.setRotateVisualHint(dA == DandelionAction.SCREEN_ROTATE && (inputGrabber() instanceof InteractiveEyeFrame)
+			scene.setRotateVisualHint(dA == DandelionAction.SCREEN_ROTATE && (inputGrabber() instanceof InteractiveFrame)
 					&& scene.inputHandler().isAgentRegistered(this));
 			if (bypassNullEvent || scene.zoomVisualHint() || scene.rotateVisualHint()) {
 				if (bypassNullEvent) {
@@ -146,6 +146,51 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 	}
 
 	// HIGH-LEVEL
+
+	/**
+	 * Set mouse bindings as 'arcball':
+	 * <p>
+	 * 1. <b>InteractiveFrame bindings</b><br>
+	 * Left button -> ROTATE<br>
+	 * Center button -> SCALE<br>
+	 * Right button -> TRANSLATE<br>
+	 * Shift + Center button -> SCREEN_TRANSLATE<br>
+	 * Shift + Right button -> SCREEN_ROTATE<br>
+	 * <p>
+	 * 2. <b>InteractiveEyeFrame bindings</b><br>
+	 * Left button -> ROTATE<br>
+	 * Center button -> ZOOM<br>
+	 * Right button -> TRANSLATE<br>
+	 * Shift + Left button -> ZOOM_ON_REGION<br>
+	 * Shift + Center button -> SCREEN_TRANSLATE<br>
+	 * Shift + Right button -> SCREEN_ROTATE.
+	 * <p>
+	 * Also set the following (common) bindings are:
+	 * <p>
+	 * 2 left clicks -> ALIGN_FRAME<br>
+	 * 2right clicks -> CENTER_FRAME<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * 
+	 * @see #setAsFirstPerson()
+	 * @see #setAsThirdPerson()
+	 */
+	@Override
+	public void setAsArcball() {
+		resetAllProfiles();
+		eyeProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
+		eyeProfile().setBinding(buttonModifiersFix(center), center, scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
+		eyeProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
+		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, left), left, DOF2Action.ZOOM_ON_REGION);
+		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
+		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);
+		frameProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
+		frameProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.SCALE);
+		frameProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
+		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
+		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);
+		setCommonBindings();
+	}
 
 	/**
 	 * Set mouse bindings as 'first-person':
@@ -224,51 +269,6 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 			frameProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.LOOK_AROUND);
 			frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.DRIVE);
 		}
-		setCommonBindings();
-	}
-
-	/**
-	 * Set mouse bindings as 'arcball':
-	 * <p>
-	 * 1. <b>InteractiveFrame bindings</b><br>
-	 * Left button -> ROTATE<br>
-	 * Center button -> SCALE<br>
-	 * Right button -> TRANSLATE<br>
-	 * Shift + Center button -> SCREEN_TRANSLATE<br>
-	 * Shift + Right button -> SCREEN_ROTATE<br>
-	 * <p>
-	 * 2. <b>InteractiveEyeFrame bindings</b><br>
-	 * Left button -> ROTATE<br>
-	 * Center button -> ZOOM<br>
-	 * Right button -> TRANSLATE<br>
-	 * Shift + Left button -> ZOOM_ON_REGION<br>
-	 * Shift + Center button -> SCREEN_TRANSLATE<br>
-	 * Shift + Right button -> SCREEN_ROTATE.
-	 * <p>
-	 * Also set the following (common) bindings are:
-	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
-	 * 
-	 * @see #setAsFirstPerson()
-	 * @see #setAsThirdPerson()
-	 */
-	@Override
-	public void setAsArcball() {
-		resetAllProfiles();
-		eyeProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
-		eyeProfile().setBinding(buttonModifiersFix(center), center, scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
-		eyeProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
-		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, left), left, DOF2Action.ZOOM_ON_REGION);
-		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
-		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);
-		frameProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
-		frameProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.SCALE);
-		frameProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
-		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
-		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);
 		setCommonBindings();
 	}
 

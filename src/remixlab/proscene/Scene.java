@@ -2564,10 +2564,10 @@ public class Scene extends AbstractScene implements PConstants {
 		if (!(motionAgent() instanceof WheeledPointingAgent))
 			return;
 		pg().pushStyle();
-		//float p1x = mouseAgent().pressEvent().x() - originCorner().x();
-		//float p1y = mouseAgent().pressEvent().y() - originCorner().y();		
-		float p1x = ((WheeledPointingAgent) motionAgent()).pressEvent().x()- originCorner().x();
-		float p1y = ((WheeledPointingAgent) motionAgent()).pressEvent().y()- originCorner().y();		
+		// float p1x = mouseAgent().pressEvent().x() - originCorner().x();
+		// float p1y = mouseAgent().pressEvent().y() - originCorner().y();
+		float p1x = ((WheeledPointingAgent) motionAgent()).pressEvent().x() - originCorner().x();
+		float p1y = ((WheeledPointingAgent) motionAgent()).pressEvent().y() - originCorner().y();
 		float p2x = ((WheeledPointingAgent) motionAgent()).lastEvent().x() - originCorner().x();
 		float p2y = ((WheeledPointingAgent) motionAgent()).lastEvent().y() - originCorner().y();
 		beginScreenDrawing();

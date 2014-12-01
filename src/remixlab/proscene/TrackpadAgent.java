@@ -9,8 +9,9 @@ import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
 
 public class TrackpadAgent extends WheeledTrackpadAgent {
-	protected boolean	needHandle;
-	protected DOF2Event spEvent;
+	protected boolean		needHandle;
+	protected DOF2Event	spEvent;
+
 	public TrackpadAgent(Scene scn, String n) {
 		super(scn, n);
 		left = PApplet.LEFT;
@@ -50,41 +51,41 @@ public class TrackpadAgent extends WheeledTrackpadAgent {
 		if (e.getAction() == MouseEvent.MOVE || e.getAction() == MouseEvent.DRAG || e.getAction() == MouseEvent.RELEASE) {
 			DOF2Event dof2Event = new DOF2Event(lastEvent, e.getX() - scene.originCorner().x(), e.getY()
 					- scene.originCorner().y(),
-					e.getModifiers(), e.getButton());			
+					e.getModifiers(), e.getButton());
 			lastEvent = dof2Event;
 
-			///*
+			// /*
 			if (inputGrabber() instanceof InteractiveFrame) {
 				// InteractiveFrame iFrame = (InteractiveFrame) inputGrabber();
 				Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
 						: frameProfile().handle((BogusEvent) lastEvent);
 				if (a == null)
 					return;
-				
+
 				if (a == DOF2Action.SCREEN_ROTATE)
 					scene.setRotateVisualHint(true);
 				else
 					scene.setRotateVisualHint(false);
-				
+
 				if (a == DOF2Action.ZOOM_ON_REGION) {
 					scene.setZoomVisualHint(true);
 					spEvent = new DOF2Event(pressEvent, e.getX() - scene.originCorner().x(), e.getY()
-							- scene.originCorner().y(), e.getModifiers(), e.getButton());					
-					needHandle = true;										
+							- scene.originCorner().y(), e.getModifiers(), e.getButton());
+					needHandle = true;
 					return;
 				}
 				else {
 					scene.setZoomVisualHint(false);
 					pressEvent = lastEvent.get();
-					if(needHandle) {				
+					if (needHandle) {
 						enqueueEventTuple(new EventGrabberTuple(spEvent, DOF2Action.ZOOM_ON_REGION, inputGrabber()));
 						needHandle = false;
 						return;
 					}
 				}
 			}
-			//*/
-			handle(dof2Event);	
+			// */
+			handle(dof2Event);
 		}
 		if (e.getAction() == processing.event.MouseEvent.WHEEL) {
 			handle(new DOF1Event(e.getCount(), e.getModifiers(), MotionEvent.NOBUTTON));

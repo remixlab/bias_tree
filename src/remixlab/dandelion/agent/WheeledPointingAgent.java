@@ -41,6 +41,8 @@ public abstract class WheeledPointingAgent extends ActionWheeledBiMotionAgent<Mo
 				new MotionProfile<DOF2Action>(),
 				new ClickProfile<ClickAction>(),
 				new ClickProfile<ClickAction>(), scn, n);
+		pressEvent = new DOF2Event(0, 0);
+		lastEvent = new DOF2Event(0, 0);
 	}
 
 	@Override
@@ -71,8 +73,8 @@ public abstract class WheeledPointingAgent extends ActionWheeledBiMotionAgent<Mo
 	public void setYTranslationSensitivity(float s) {
 		sens[1] = s;
 	}
-	
-	//TODO decide next 2!
+
+	// TODO decide next 2!
 
 	/**
 	 * Return the last event processed by the agent.
@@ -80,11 +82,9 @@ public abstract class WheeledPointingAgent extends ActionWheeledBiMotionAgent<Mo
 	public DOF2Event lastEvent() {
 		return lastEvent;
 	}
-	
+
 	/**
 	 * Return the last press event processed by the agent.
-	 * 
-	 * @see #press(DOF2Event)
 	 */
 	public DOF2Event pressEvent() {
 		return pressEvent;
