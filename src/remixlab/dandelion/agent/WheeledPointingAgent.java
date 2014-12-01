@@ -18,7 +18,7 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 /**
- * An {@link remixlab.dandelion.agent.ActionWheeledBiMotionAgent} representing a Wheeled mouse and thus only holds 2
+ * An abstract {@link remixlab.dandelion.agent.ActionWheeledBiMotionAgent} representing a pointing device supporting 2
  * Degrees-Of-Freedom (e.g., two translations or two rotations), such as most mice.
  */
 public abstract class WheeledPointingAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Action>> {
@@ -74,17 +74,15 @@ public abstract class WheeledPointingAgent extends ActionWheeledBiMotionAgent<Mo
 		sens[1] = s;
 	}
 
-	// TODO decide next 2!
-
 	/**
-	 * Return the last event processed by the agent.
+	 * Return the last event processed by the agent. Internal use, needed by scene visual hints.
 	 */
 	public DOF2Event lastEvent() {
 		return lastEvent;
 	}
 
 	/**
-	 * Return the last press event processed by the agent.
+	 * Return the last press event processed by the agent. Internal use, needed by scene visual hints.
 	 */
 	public DOF2Event pressEvent() {
 		return pressEvent;
@@ -111,10 +109,19 @@ public abstract class WheeledPointingAgent extends ActionWheeledBiMotionAgent<Mo
 
 	// HIGH-LEVEL
 
+	/**
+	 * Set mouse bindings as 'arcball'.
+	 */
 	public abstract void setAsFirstPerson();
 
+	/**
+	 * Set mouse bindings as 'first-person'.
+	 */
 	public abstract void setAsThirdPerson();
 
+	/**
+	 * Set mouse bindings as 'third-person'.
+	 */
 	public abstract void setAsArcball();
 
 	// WRAPPERS

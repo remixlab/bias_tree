@@ -389,6 +389,14 @@ public class Scene extends AbstractScene implements PConstants {
 		return motionAgent();
 	}
 
+	/**
+	 * Enables trackpad mode, i.e., picking is done from mouse clicks and interactions from mouse moves. Trackpad mode is
+	 * disable by default.
+	 * 
+	 * @see #disableTrackpad()
+	 * @see #isTrackpadEnabled()
+	 * @see #toggleTrackpad()
+	 */
 	public void enableTrackpad() {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			System.out.println("Nothing done! Trackpad is not available in Android mode");
@@ -408,6 +416,14 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 	}
 
+	/**
+	 * Disables trackpad mode, i.e., picking is done from mouse moves and interactions from mouse press-drag-releases.
+	 * Trackpad mode is disable by default.
+	 * 
+	 * @see #enableTrackpad()
+	 * @see #isTrackpadEnabled()
+	 * @see #toggleTrackpad()
+	 */
 	public void disableTrackpad() {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			System.out.println("Nothing done! Trackpad is not available in Android mode");
@@ -427,6 +443,13 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 	}
 
+	/**
+	 * Returns true if trackpad is enabled and false otherwise.
+	 * 
+	 * @see #enableTrackpad()
+	 * @see #disableTrackpad()
+	 * @see #toggleTrackpad()
+	 */
 	public boolean isTrackpadEnabled() {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			return false;
@@ -434,6 +457,13 @@ public class Scene extends AbstractScene implements PConstants {
 		return defMotionAgent instanceof TrackpadAgent;
 	}
 
+	/**
+	 * Toggles the {@link #isTrackpadEnabled()} state.
+	 * 
+	 * @see #enableTrackpad()
+	 * @see #disableTrackpad()
+	 * @see #isTrackpadEnabled()
+	 */
 	public void toggleTrackpad() {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			System.out.println("Nothing done! Trackpad is not available in Android mode");
@@ -445,6 +475,10 @@ public class Scene extends AbstractScene implements PConstants {
 			enableTrackpad();
 	}
 
+	/**
+	 * Returns the trackpad agent which may be useful to configure its bindings. Only meaningful when
+	 * {@link #isTrackpadEnabled()}.
+	 */
 	public TrackpadAgent trackpadAgent() {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			throw new RuntimeException("Proscene trackpadAgent() is not available in Android mode");

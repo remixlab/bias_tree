@@ -15,8 +15,9 @@ import remixlab.bias.event.MotionEvent;
 import remixlab.dandelion.core.*;
 
 /**
- * An {@link remixlab.dandelion.agent.ActionWheeledBiMotionAgent} representing a Wheeled mouse and thus only holds 2
- * Degrees-Of-Freedom (e.g., two translations or two rotations), such as most mice.
+ * An {@link remixlab.dandelion.agent.WheeledPointingAgent} representing a trackpad. While this agent implements picking
+ * from a mouse click and performs interactions from mouse moves the {@link remixlab.dandelion.agent.WheeledMouseAgent}
+ * implements picking from a mouse move and performs interactions from mouse press-drag-releases.
  */
 public class WheeledTrackpadAgent extends WheeledPointingAgent {
 	/**
@@ -37,19 +38,19 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 	 * Set mouse bindings as 'arcball':
 	 * <p>
 	 * 1. <b>InteractiveFrame bindings</b><br>
-	 * Left button -> ROTATE<br>
-	 * Center button -> SCALE<br>
-	 * Right button -> TRANSLATE<br>
-	 * Shift + Center button -> SCREEN_TRANSLATE<br>
-	 * Shift + Right button -> SCREEN_ROTATE<br>
+	 * No-button -> ROTATE<br>
+	 * Shift + No-button -> SCALE<br>
+	 * Ctrl + No-button -> TRANSLATE<br>
+	 * Center button -> SCREEN_TRANSLATE<br>
+	 * Right button -> SCREEN_ROTATE<br>
 	 * <p>
 	 * 2. <b>InteractiveEyeFrame bindings</b><br>
-	 * Left button -> ROTATE<br>
-	 * Center button -> ZOOM<br>
-	 * Right button -> TRANSLATE<br>
-	 * Shift + Left button -> ZOOM_ON_REGION<br>
-	 * Shift + Center button -> SCREEN_TRANSLATE<br>
-	 * Shift + Right button -> SCREEN_ROTATE.
+	 * No-button -> ROTATE<br>
+	 * Shift + No-button -> ZOOM<br>
+	 * Ctrl + No-button -> TRANSLATE<br>
+	 * Ctrl + Shift + No-button -> ZOOM_ON_REGION<br>
+	 * Center button -> SCREEN_TRANSLATE<br>
+	 * Right button -> SCREEN_ROTATE.
 	 * <p>
 	 * Also set the following (common) bindings are:
 	 * <p>
@@ -57,6 +58,8 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 	 * 2right clicks -> CENTER_FRAME<br>
 	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * <p>
+	 * Note that Alt + No-button is bound to the null action.
 	 * 
 	 * @see #setAsFirstPerson()
 	 * @see #setAsThirdPerson()
@@ -85,19 +88,19 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 	 * Set mouse bindings as 'first-person':
 	 * <p>
 	 * 1. <b>InteractiveFrame bindings</b><br>
-	 * Left button -> ROTATE<br>
-	 * Center button -> SCALE<br>
-	 * Right button -> TRANSLATE<br>
-	 * Shift + Center button -> SCREEN_TRANSLATE<br>
-	 * Shift + Right button -> SCREEN_ROTATE<br>
+	 * No-button -> ROTATE<br>
+	 * Shift + No-button -> SCALE<br>
+	 * Ctrl + No-button -> TRANSLATE<br>
+	 * Center button -> SCREEN_TRANSLATE<br>
+	 * Right button -> SCREEN_ROTATE<br>
 	 * <p>
 	 * 2. <b>InteractiveEyeFrame bindings</b><br>
-	 * Left button -> MOVE_FORWARD<br>
-	 * Center button -> LOOK_AROUND<br>
-	 * Right button -> MOVE_BACKWARD<br>
-	 * Shift + Left button -> ROLL<br>
-	 * Shift + Center button -> DRIVE<br>
-	 * Ctrl + Wheel -> ROLL<br>
+	 * Ctrl + No-button -> MOVE_FORWARD<br>
+	 * No-button -> LOOK_AROUND<br>
+	 * Shift + No-button -> MOVE_BACKWARD<br>
+	 * Right button -> ROTATE_Z<br>
+	 * Ctrl + Shift + No-button -> DRIVE<br>
+	 * Ctrl + Shift + Wheel -> ROTATE_Z<br>
 	 * Shift + Wheel -> DRIVE<br>
 	 * <p>
 	 * Also set the following (common) bindings are:
@@ -106,6 +109,8 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 	 * 2right clicks -> CENTER_FRAME<br>
 	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * <p>
+	 * Note that Alt + No-button is bound to the null action.
 	 * 
 	 * @see #setAsArcball()
 	 * @see #setAsThirdPerson()
@@ -116,6 +121,7 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.MOVE_FORWARD);
 		eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.MOVE_BACKWARD);
 		eyeProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
+		setButtonBinding(Target.EYE, right, DOF2Action.ROTATE_Z);
 		eyeWheelProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), DOF1Action.ROTATE_Z);
 		if (scene.is3D()) {
 			eyeProfile().setBinding(DOF2Action.LOOK_AROUND);
@@ -133,11 +139,11 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 	/**
 	 * Set mouse bindings as third-person:
 	 * <p>
-	 * Left button -> MOVE_FORWARD<br>
-	 * Center button -> LOOK_AROUND<br>
-	 * Right button -> MOVE_BACKWARD<br>
-	 * Shift + Left button -> ROLL<br>
-	 * Shift + Center button -> DRIVE<br>
+	 * Ctrl + No-button -> MOVE_FORWARD<br>
+	 * No-button -> LOOK_AROUND<br>
+	 * Shift + No-button -> MOVE_BACKWARD<br>
+	 * Ctrl + Shift + Wheel -> ROTATE_Z<br>
+	 * Ctrl + Shift + No-button -> DRIVE<br>
 	 * <p>
 	 * Also set the following (common) bindings are:
 	 * <p>
@@ -145,6 +151,8 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 	 * 2right clicks -> CENTER_FRAME<br>
 	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * <p>
+	 * Note that Alt + No-button is bound to the null action.
 	 * 
 	 * @see #setAsArcball()
 	 * @see #setAsFirstPerson()
@@ -155,7 +163,7 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.MOVE_FORWARD);
 		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.MOVE_BACKWARD);
 		frameWheelProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), DOF1Action.ROTATE_Z);
-		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, null);
+		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
 		if (scene.is3D()) {
 			frameProfile().setBinding(DOF2Action.LOOK_AROUND);
 			frameProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.DRIVE);

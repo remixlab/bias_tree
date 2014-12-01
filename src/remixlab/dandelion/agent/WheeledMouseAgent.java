@@ -18,8 +18,10 @@ import remixlab.bias.event.MotionEvent;
 import remixlab.dandelion.core.*;
 
 /**
- * An {@link remixlab.dandelion.agent.ActionWheeledBiMotionAgent} representing a Wheeled mouse and thus only holds 2
- * Degrees-Of-Freedom (e.g., two translations or two rotations), such as most mice.
+ * An {@link remixlab.dandelion.agent.WheeledPointingAgent} representing a wheeled mouse. While this agent implements
+ * picking from a mouse move and performs interactions from press-drag-releases the
+ * {@link remixlab.dandelion.agent.WheeledTrackpadAgent} implements picking from a mouse click and performs interactions
+ * from mouse moves.
  */
 public class WheeledMouseAgent extends WheeledPointingAgent {
 	boolean						bypassNullEvent, need4Spin, drive, rotateMode;
@@ -206,7 +208,7 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 	 * Left button -> MOVE_FORWARD<br>
 	 * Center button -> LOOK_AROUND<br>
 	 * Right button -> MOVE_BACKWARD<br>
-	 * Shift + Left button -> ROLL<br>
+	 * Shift + Left button -> ROTATE_Z<br>
 	 * Shift + Center button -> DRIVE<br>
 	 * Ctrl + Wheel -> ROLL<br>
 	 * Shift + Wheel -> DRIVE<br>
@@ -241,7 +243,7 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 	}
 
 	/**
-	 * Set mouse bindings as third-person:
+	 * Set mouse bindings as 'third-person':
 	 * <p>
 	 * Left button -> MOVE_FORWARD<br>
 	 * Center button -> LOOK_AROUND<br>
