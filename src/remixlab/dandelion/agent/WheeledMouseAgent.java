@@ -23,7 +23,7 @@ import remixlab.dandelion.core.*;
  */
 public class WheeledMouseAgent extends WheeledPointingAgent {
 	boolean						bypassNullEvent, need4Spin, drive, rotateMode;
-	DOF2Event					pressEvent;
+	//DOF2Event					pressEvent;
 	float							dFriction;
 	InteractiveFrame	iFrame;
 
@@ -101,7 +101,8 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 		lastEvent = e;
 		if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
 			if (drive && inputGrabber() instanceof InteractiveFrame)
-				((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f * (lastEvent.y() - pressEvent.y()));
+				((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f
+						* (lastEvent.y() - pressEvent.y()));
 			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
 			Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
 					: frameProfile().handle((BogusEvent) lastEvent);
@@ -142,15 +143,6 @@ public class WheeledMouseAgent extends WheeledPointingAgent {
 		// restore speed after drive action terminates:
 		if (drive && inputGrabber() instanceof InteractiveFrame)
 			((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius());
-	}
-
-	/**
-	 * Return the last press event processed by the agent.
-	 * 
-	 * @see #press(DOF2Event)
-	 */
-	public DOF2Event pressEvent() {
-		return pressEvent;
 	}
 
 	// HIGH-LEVEL

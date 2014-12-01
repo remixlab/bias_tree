@@ -151,8 +151,9 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 		eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
 		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.TRANSLATE);
 		eyeProfile().setBinding(MotionEvent.ALT_GRAPH, MotionEvent.NOBUTTON, DOF2Action.SCREEN_TRANSLATE);
-		eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.SCREEN_ROTATE);
-		//eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.ZOOM_ON_REGION);
+		eyeProfile().setBinding((MotionEvent.SHIFT | MotionEvent.ALT), MotionEvent.NOBUTTON, DOF2Action.SCREEN_ROTATE);
+		eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.ZOOM_ON_REGION);
+		//eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.SCREEN_ROTATE);
 		eyeProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
 
 		frameProfile().setBinding(DOF2Action.ROTATE);
@@ -185,7 +186,7 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 	}
 
 	// WRAPPERS
-	
+
 	/**
 	 * Binds the mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME).
 	 */
@@ -209,7 +210,7 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		profile.setBinding(mask, MotionEvent.NOBUTTON, action);
 	}
-	
+
 	/**
 	 * Removes the mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
@@ -225,7 +226,7 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		profile.removeBinding(mask, MotionEvent.NOBUTTON);
 	}
-	
+
 	/**
 	 * Returns {@code true} if the mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
@@ -241,7 +242,7 @@ public class WheeledTrackpadAgent extends WheeledPointingAgent {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		return profile.hasBinding(mask, MotionEvent.NOBUTTON);
 	}
-	
+
 	/**
 	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
 	 * given mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.

@@ -22,6 +22,7 @@ import remixlab.dandelion.core.Constants.*;
  * Degrees-Of-Freedom (e.g., two translations or two rotations), such as most mice.
  */
 public abstract class WheeledPointingAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Action>> {
+	protected DOF2Event	pressEvent;
 	protected DOF2Event	lastEvent;
 	protected int				left	= 1, center = 2, right = 3;
 
@@ -70,12 +71,23 @@ public abstract class WheeledPointingAgent extends ActionWheeledBiMotionAgent<Mo
 	public void setYTranslationSensitivity(float s) {
 		sens[1] = s;
 	}
+	
+	//TODO decide next 2!
 
 	/**
 	 * Return the last event processed by the agent.
 	 */
 	public DOF2Event lastEvent() {
 		return lastEvent;
+	}
+	
+	/**
+	 * Return the last press event processed by the agent.
+	 * 
+	 * @see #press(DOF2Event)
+	 */
+	public DOF2Event pressEvent() {
+		return pressEvent;
 	}
 
 	/**
@@ -106,7 +118,7 @@ public abstract class WheeledPointingAgent extends ActionWheeledBiMotionAgent<Mo
 	public abstract void setAsArcball();
 
 	// WRAPPERS
-	
+
 	/**
 	 * Binds the mask-button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target}
 	 * (EYE or FRAME).
