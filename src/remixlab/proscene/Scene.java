@@ -487,16 +487,7 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
-	 * Returns the default mouse agent handling Processing mouse events. Simply returns a ProsceneMouse cast of the
-	 * {@link #motionAgent()}.
-	 * <p>
-	 * The use of {@link #motionAgent()} is preferable and encouraged since it's more general and platform independent,
-	 * i.e., it returns a "mouse agent" for the proscene desktop version or a "touch agent" for the android version.
-	 * <p>
-	 * If you plan to customize your mouse you can either use this method or one of the multiple high-level methods
-	 * provided (recommended and simpler way), such as {@code setMouseAsArcball}, {@code setMouseAsFirstPerson()},
-	 * {@code setMouseAsThirdPerson()}, {@code setMouseButtonBinding}, {@code setMouseClickBinding},
-	 * {@code setMouseWheelBinding}, etc. All those methods actually wrap the mouse agent to achieve their functionality.
+	 * Returns the default mouse agent handling Processing mouse events. If you plan to customize your mouse use this method.
 	 * 
 	 * @see #keyboardAgent()
 	 */
