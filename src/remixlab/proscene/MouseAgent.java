@@ -11,7 +11,7 @@
 package remixlab.proscene;
 
 import processing.core.PApplet;
-import remixlab.dandelion.agent.WheeledMouseAgent;
+import remixlab.dandelion.agent.*;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
 

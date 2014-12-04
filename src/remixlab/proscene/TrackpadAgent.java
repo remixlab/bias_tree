@@ -8,7 +8,7 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
 
-public class TrackpadAgent extends WheeledTrackpadAgent {
+public class TrackpadAgent extends WheeledMouseAgent {
 	protected boolean		needHandle;
 	protected DOF2Event	spEvent;
 
@@ -17,7 +17,7 @@ public class TrackpadAgent extends WheeledTrackpadAgent {
 		left = PApplet.LEFT;
 		center = PApplet.CENTER;
 		right = PApplet.RIGHT;
-		setAsArcball();
+		setAsArcball(true);
 		// registration requires a call to PApplet.registerMethod("mouseEvent", motionAgent());
 		// which is done in Scene.enableMotionAgent(), which also register the agent at the inputHandler
 		inputHandler().unregisterAgent(this);

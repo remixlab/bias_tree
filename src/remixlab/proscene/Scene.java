@@ -2563,11 +2563,11 @@ public class Scene extends AbstractScene implements PConstants {
 
 	@Override
 	protected void drawScreenRotateHint() {
-		if (!(motionAgent() instanceof WheeledPointingAgent))
+		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
 		pg().pushStyle();
-		float p1x = ((WheeledPointingAgent) motionAgent()).lastEvent().x() - originCorner().x();
-		float p1y = ((WheeledPointingAgent) motionAgent()).lastEvent().y() - originCorner().y();
+		float p1x = ((WheeledMouseAgent) motionAgent()).lastEvent().x() - originCorner().x();
+		float p1y = ((WheeledMouseAgent) motionAgent()).lastEvent().y() - originCorner().y();
 		Vec p2 = new Vec();
 		if (motionAgent().inputGrabber() instanceof InteractiveFrame) {
 			if (motionAgent().inputGrabber() instanceof InteractiveEyeFrame)
@@ -2586,15 +2586,15 @@ public class Scene extends AbstractScene implements PConstants {
 
 	@Override
 	protected void drawZoomWindowHint() {
-		if (!(motionAgent() instanceof WheeledPointingAgent))
+		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
 		pg().pushStyle();
 		// float p1x = mouseAgent().pressEvent().x() - originCorner().x();
 		// float p1y = mouseAgent().pressEvent().y() - originCorner().y();
-		float p1x = ((WheeledPointingAgent) motionAgent()).pressEvent().x() - originCorner().x();
-		float p1y = ((WheeledPointingAgent) motionAgent()).pressEvent().y() - originCorner().y();
-		float p2x = ((WheeledPointingAgent) motionAgent()).lastEvent().x() - originCorner().x();
-		float p2y = ((WheeledPointingAgent) motionAgent()).lastEvent().y() - originCorner().y();
+		float p1x = ((WheeledMouseAgent) motionAgent()).pressEvent().x() - originCorner().x();
+		float p1y = ((WheeledMouseAgent) motionAgent()).pressEvent().y() - originCorner().y();
+		float p2x = ((WheeledMouseAgent) motionAgent()).lastEvent().x() - originCorner().x();
+		float p2y = ((WheeledMouseAgent) motionAgent()).lastEvent().y() - originCorner().y();
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
 		pg().strokeWeight(2);
