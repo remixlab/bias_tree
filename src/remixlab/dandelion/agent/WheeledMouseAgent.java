@@ -168,11 +168,6 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 		handle(lastEvent);
 	}
 
-	// TODO: add a condition to handle like:
-	/*
-	 * public void handleDOF2Event(DOF2Event event) { if(condition) handle(event); } //
-	 */
-
 	/**
 	 * Begin interaction and call {@link #handle(BogusEvent)} on the given event. Keeps track of the {@link #pressEvent()}
 	 * .
