@@ -21,13 +21,22 @@ import remixlab.dandelion.core.Constants.*;
  * Degrees-Of-Freedom (e.g., two translations or two rotations), such as most mice.
  */
 public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF2Action>> {
-	protected DOF2Event	pressEvent;
-	protected DOF2Event	lastEvent;
-	protected int				left	= 1, center = 2, right = 3;
-	
-	boolean						bypassNullEvent, need4Spin, drive, rotateMode;
-	float							dFriction;
-	InteractiveFrame	iFrame;
+	public enum PickingMode {
+		MOVE, CLICK
+	};
+
+	protected PickingMode			pMode;
+	protected DOF2Event				pressEvent;
+	protected DOF2Event				lastEvent;
+	protected int							left	= 1, center = 2, right = 3;
+
+	boolean										bypassNullEvent, need4Spin, drive, rotateMode;
+	float											dFriction;
+	InteractiveFrame					iFrame;
+
+	protected boolean					needHandle;
+	/* protected */DOF2Event	spEvent;																				// TODO try replace it by lastEvent when
+																																						// done
 
 	/**
 	 * Constructs a PointingAgent. Nothing fancy.
@@ -46,6 +55,7 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 				new ClickProfile<ClickAction>(), scn, n);
 		pressEvent = new DOF2Event(0, 0);
 		lastEvent = new DOF2Event(0, 0);
+		setPickingMode(PickingMode.MOVE);
 	}
 
 	@Override
@@ -80,13 +90,14 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	/**
 	 * Return the last event processed by the agent. Internal use, needed by scene visual hints.
 	 */
-	public DOF2Event lastEvent() {
+	public DOF2Event lastDOF2Event() {
 		return lastEvent;
 	}
 
 	/**
 	 * Return the last press event processed by the agent. Internal use, needed by scene visual hints.
 	 */
+	// TODO visibility and name
 	public DOF2Event pressEvent() {
 		return pressEvent;
 	}
@@ -109,30 +120,73 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	public int buttonModifiersFix(int mask, int button) {
 		return mask;
 	}
-	
+
+	public void setPickingMode(PickingMode mode) {
+		pMode = mode;
+	}
+
+	public PickingMode pickingMode() {
+		return pMode;
+	}
+
 	// Events
-	
+
 	/**
 	 * Call {@link #updateTrackedGrabber(BogusEvent)} on the given event.
 	 */
-	public void move(DOF2Event e) {
+	protected void move(DOF2Event e) {
 		lastEvent = e;
-		updateTrackedGrabber(lastEvent);
+		if (pickingMode() == PickingMode.MOVE)
+			updateTrackedGrabber(lastEvent);
+
+		if (inputGrabber() instanceof InteractiveFrame) {
+			Action<?> a = motionProfile().handle(lastEvent);
+			if (a != null) {
+				if (a == DOF2Action.SCREEN_ROTATE)
+					scene.setRotateVisualHint(true);
+				else
+					scene.setRotateVisualHint(false);
+
+				if (a == DOF2Action.ZOOM_ON_REGION && (inputGrabber() instanceof InteractiveEyeFrame)) {
+					scene.setZoomVisualHint(true);
+					spEvent = e.get();
+					spEvent.setPreviousEvent(pressEvent);
+					needHandle = true;
+					return;
+				}
+				else {
+					scene.setZoomVisualHint(false);
+					pressEvent = e.get();
+					if (needHandle) {
+						enqueueEventTuple(new EventGrabberTuple(spEvent, DOF2Action.ZOOM_ON_REGION, inputGrabber()));
+						needHandle = false;
+						return;
+					}
+				}
+			}
+		}
+		handle(lastEvent);
 	}
+
+	// TODO: add a condition to handle like:
+	/*
+	 * public void handleDOF2Event(DOF2Event event) { if(condition) handle(event); } //
+	 */
 
 	/**
 	 * Begin interaction and call {@link #handle(BogusEvent)} on the given event. Keeps track of the {@link #pressEvent()}
 	 * .
 	 */
-	public void press(DOF2Event e) {
+	protected void press(DOF2Event e) {
 		lastEvent = e;
 		pressEvent = lastEvent.get();
 		if (inputGrabber() instanceof InteractiveFrame) {
 			if (need4Spin)
 				((InteractiveFrame) inputGrabber()).stopSpinning();
 			iFrame = (InteractiveFrame) inputGrabber();
-			Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
-					: frameProfile().handle((BogusEvent) lastEvent);
+			Action<?> a = motionProfile().handle(lastEvent);
+			// Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle(lastEvent) :
+			// frameProfile().handle(lastEvent);
 			if (a == null)
 				return;
 			DandelionAction dA = (DandelionAction) a.referenceAction();
@@ -170,7 +224,7 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	/**
 	 * Call {@link #handle(BogusEvent)} on the given event.
 	 */
-	public void drag(DOF2Event e) {
+	protected void drag(DOF2Event e) {
 		lastEvent = e;
 		if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
 			if (drive && inputGrabber() instanceof InteractiveFrame)
@@ -190,8 +244,8 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	/**
 	 * Ends interaction and calls {@link #updateTrackedGrabber(BogusEvent)} on the given event.
 	 */
-	public void release(DOF2Event e) {
-		DOF2Event prevEvent = lastEvent().get();
+	protected void release(DOF2Event e) {
+		DOF2Event prevEvent = lastDOF2Event().get();
 		lastEvent = e;
 		if (inputGrabber() instanceof InteractiveFrame)
 			// note that the following two lines fail on event when need4Spin
@@ -208,7 +262,8 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 		}
 		if (scene.rotateVisualHint())
 			scene.setRotateVisualHint(false);
-		updateTrackedGrabber(lastEvent);
+		if (pickingMode() == PickingMode.MOVE)
+			updateTrackedGrabber(lastEvent);
 		if (bypassNullEvent) {
 			iFrame.setDampingFriction(dFriction);
 			bypassNullEvent = !bypassNullEvent;
@@ -218,40 +273,20 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 			((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius());
 	}
 
-	// HIGH-LEVEL
-
-	public void setAsArcball() {
-		setAsArcball(false);
+	protected void wheel(DOF1Event wEvent) {
+		handle(wEvent);
 	}
 
+	protected void click(ClickEvent cEvent) {
+		if (pickingMode() == PickingMode.CLICK)
+			updateTrackedGrabber(cEvent);
+		handle(cEvent);
+	}
+
+	// HIGH-LEVEL
+
 	/**
-	 * Set mouse bindings as 'arcball'. If {@code trackpad} is true bindings are as follows:
-	 * <p>
-	 * 1. <b>InteractiveFrame bindings</b><br>
-	 * No-button -> ROTATE<br>
-	 * Shift + No-button -> SCALE<br>
-	 * Ctrl + No-button -> TRANSLATE<br>
-	 * Center button -> SCREEN_TRANSLATE<br>
-	 * Right button -> SCREEN_ROTATE<br>
-	 * <p>
-	 * 2. <b>InteractiveEyeFrame bindings</b><br>
-	 * No-button -> ROTATE<br>
-	 * Shift + No-button -> ZOOM<br>
-	 * Ctrl + No-button -> TRANSLATE<br>
-	 * Ctrl + Shift + No-button -> ZOOM_ON_REGION<br>
-	 * Center button -> SCREEN_TRANSLATE<br>
-	 * Right button -> SCREEN_ROTATE.
-	 * <p>
-	 * Also set the following (common) bindings are:
-	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
-	 * <p>
-	 * Note that Alt + No-button is bound to the null action.
-	 * <p>
-	 * If {@code trackpad} is false bindings are as follows:
+	 * Set mouse bindings as 'arcball'. Bindings are as follows:
 	 * <p>
 	 * 1. <b>InteractiveFrame bindings</b><br>
 	 * Left button -> ROTATE<br>
@@ -278,45 +313,24 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	 * @see #setAsFirstPerson()
 	 * @see #setAsThirdPerson()
 	 */
-	public void setAsArcball(boolean trackpad) {
+	public void setAsArcball() {
 		resetAllProfiles();
-		if(trackpad) {
-			eyeProfile().setBinding(DOF2Action.ROTATE);
-			eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
-			eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.TRANSLATE);
-			eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.ZOOM_ON_REGION);
-			setButtonBinding(Target.EYE, center, DOF2Action.SCREEN_TRANSLATE);
-			setButtonBinding(Target.EYE, right, DOF2Action.SCREEN_ROTATE);
-			eyeProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
-			frameProfile().setBinding(DOF2Action.ROTATE);
-			frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.SCALE);
-			frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.TRANSLATE);
-			setButtonBinding(Target.FRAME, center, DOF2Action.SCREEN_TRANSLATE);
-			setButtonBinding(Target.FRAME, right, DOF2Action.SCREEN_ROTATE);
-			frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
-		}
-		else {
-			eyeProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
-			eyeProfile().setBinding(buttonModifiersFix(center), center, scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
-			eyeProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
-			eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, left), left, DOF2Action.ZOOM_ON_REGION);
-			eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
-			eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);
-			frameProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
-			frameProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.SCALE);
-			frameProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
-			frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
-			frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);			
-		}
+		eyeProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
+		eyeProfile().setBinding(buttonModifiersFix(center), center, scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
+		eyeProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
+		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, left), left, DOF2Action.ZOOM_ON_REGION);
+		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
+		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);
+		frameProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
+		frameProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.SCALE);
+		frameProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
+		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
+		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);
 		setCommonBindings();
-	}
-	
-	public void setAsFirstPerson() {
-		setAsFirstPerson(false);
 	}
 
 	/**
-	 * Set mouse bindings as 'first-person'. If {@code trackpad} is true bindings are as follows:
+	 * Set mouse bindings as 'arcball'. Bindings are as follows:
 	 * <p>
 	 * 1. <b>InteractiveFrame bindings</b><br>
 	 * No-button -> ROTATE<br>
@@ -326,13 +340,12 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	 * Right button -> SCREEN_ROTATE<br>
 	 * <p>
 	 * 2. <b>InteractiveEyeFrame bindings</b><br>
-	 * Ctrl + No-button -> MOVE_FORWARD<br>
-	 * No-button -> LOOK_AROUND<br>
-	 * Shift + No-button -> MOVE_BACKWARD<br>
-	 * Right button -> ROTATE_Z<br>
-	 * Ctrl + Shift + No-button -> DRIVE<br>
-	 * Ctrl + Shift + Wheel -> ROTATE_Z<br>
-	 * Shift + Wheel -> DRIVE<br>
+	 * No-button -> ROTATE<br>
+	 * Shift + No-button -> ZOOM<br>
+	 * Ctrl + No-button -> TRANSLATE<br>
+	 * Ctrl + Shift + No-button -> ZOOM_ON_REGION<br>
+	 * Center button -> SCREEN_TRANSLATE<br>
+	 * Right button -> SCREEN_ROTATE.
 	 * <p>
 	 * Also set the following (common) bindings are:
 	 * <p>
@@ -342,8 +355,31 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * <p>
 	 * Note that Alt + No-button is bound to the null action.
-	 * <p>
-	 * If {@code trackpad} is false bindings are as follows:
+	 * 
+	 * @see #setAsFirstPerson()
+	 * @see #setAsThirdPerson()
+	 */
+	public void setAsArcballTrackpad() {
+		resetAllProfiles();
+		eyeProfile().setBinding(DOF2Action.ROTATE);
+		eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON,
+				scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
+		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.TRANSLATE);
+		eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.ZOOM_ON_REGION);
+		setButtonBinding(Target.EYE, center, DOF2Action.SCREEN_TRANSLATE);
+		setButtonBinding(Target.EYE, right, DOF2Action.SCREEN_ROTATE);
+		eyeProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
+		frameProfile().setBinding(DOF2Action.ROTATE);
+		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.SCALE);
+		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.TRANSLATE);
+		setButtonBinding(Target.FRAME, center, DOF2Action.SCREEN_TRANSLATE);
+		setButtonBinding(Target.FRAME, right, DOF2Action.SCREEN_ROTATE);
+		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
+		setCommonBindings();
+	}
+
+	/**
+	 * Set mouse bindings as 'first-person'. Bindings are as follows:
 	 * <p>
 	 * 1. <b>InteractiveFrame bindings</b><br>
 	 * Left button -> ROTATE<br>
@@ -371,56 +407,42 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	 * @see #setAsArcball()
 	 * @see #setAsThirdPerson()
 	 */
-	public void setAsFirstPerson(boolean trackpad) {
+	public void setAsFirstPerson() {
 		resetAllProfiles();
-		if(trackpad) {
-			eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.MOVE_FORWARD);
-			eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.MOVE_BACKWARD);
-			eyeProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
-			setButtonBinding(Target.EYE, right, DOF2Action.ROTATE_Z);
-			eyeWheelProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), DOF1Action.ROTATE_Z);
-			if (scene.is3D()) {
-				eyeProfile().setBinding(DOF2Action.LOOK_AROUND);
-				eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.DRIVE);
-			}
-			frameProfile().setBinding(DOF2Action.ROTATE);
-			frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.SCALE);
-			frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.TRANSLATE);
-			frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
-			setButtonBinding(Target.FRAME, center, DOF2Action.SCREEN_TRANSLATE);
-			setButtonBinding(Target.FRAME, right, DOF2Action.SCREEN_ROTATE);
+		eyeProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.MOVE_FORWARD);
+		eyeProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.MOVE_BACKWARD);
+		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, left), left, DOF2Action.ROTATE_Z);
+		eyeWheelProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF1Action.ROTATE_Z);
+		if (scene.is3D()) {
+			eyeProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.LOOK_AROUND);
+			eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.DRIVE);
 		}
-		else {
-			eyeProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.MOVE_FORWARD);
-			eyeProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.MOVE_BACKWARD);
-			eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, left), left, DOF2Action.ROTATE_Z);
-			eyeWheelProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF1Action.ROTATE_Z);
-			if (scene.is3D()) {
-				eyeProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.LOOK_AROUND);
-				eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.DRIVE);
-			}
-			frameProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
-			frameProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.SCALE);
-			frameProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
-			frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
-			frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);
-			
-		}
+		frameProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
+		frameProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.SCALE);
+		frameProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.TRANSLATE);
+		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.SCREEN_TRANSLATE);
+		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, right), right, DOF2Action.SCREEN_ROTATE);
 		setCommonBindings();
-	}
-	
-	public void setAsThirdPerson() {
-		setAsThirdPerson(false);
 	}
 
 	/**
-	 * Set mouse bindings as 'third-person'. If {@code trackpad} is true bindings are as follows:
+	 * Set mouse bindings as 'first-person'. Bindings are as follows:
 	 * <p>
+	 * 1. <b>InteractiveFrame bindings</b><br>
+	 * No-button -> ROTATE<br>
+	 * Shift + No-button -> SCALE<br>
+	 * Ctrl + No-button -> TRANSLATE<br>
+	 * Center button -> SCREEN_TRANSLATE<br>
+	 * Right button -> SCREEN_ROTATE<br>
+	 * <p>
+	 * 2. <b>InteractiveEyeFrame bindings</b><br>
 	 * Ctrl + No-button -> MOVE_FORWARD<br>
 	 * No-button -> LOOK_AROUND<br>
 	 * Shift + No-button -> MOVE_BACKWARD<br>
-	 * Ctrl + Shift + Wheel -> ROTATE_Z<br>
+	 * Right button -> ROTATE_Z<br>
 	 * Ctrl + Shift + No-button -> DRIVE<br>
+	 * Ctrl + Shift + Wheel -> ROTATE_Z<br>
+	 * Shift + Wheel -> DRIVE<br>
 	 * <p>
 	 * Also set the following (common) bindings are:
 	 * <p>
@@ -431,7 +453,38 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	 * <p>
 	 * Note that Alt + No-button is bound to the null action.
 	 * <p>
-	 * If {@code trackpad} is false bindings are as follows:
+	 * Also set the following (common) bindings are:
+	 * <p>
+	 * 2 left clicks -> ALIGN_FRAME<br>
+	 * 2right clicks -> CENTER_FRAME<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * 
+	 * @see #setAsArcball()
+	 * @see #setAsThirdPerson()
+	 */
+	public void setAsFirstPersonTrackpad() {
+		resetAllProfiles();
+		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.MOVE_FORWARD);
+		eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.MOVE_BACKWARD);
+		eyeProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
+		setButtonBinding(Target.EYE, right, DOF2Action.ROTATE_Z);
+		eyeWheelProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), DOF1Action.ROTATE_Z);
+		if (scene.is3D()) {
+			eyeProfile().setBinding(DOF2Action.LOOK_AROUND);
+			eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.DRIVE);
+		}
+		frameProfile().setBinding(DOF2Action.ROTATE);
+		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.SCALE);
+		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.TRANSLATE);
+		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
+		setButtonBinding(Target.FRAME, center, DOF2Action.SCREEN_TRANSLATE);
+		setButtonBinding(Target.FRAME, right, DOF2Action.SCREEN_ROTATE);
+		setCommonBindings();
+	}
+
+	/**
+	 * Set mouse bindings as 'third-person'. Bindings are as follows: *
 	 * <p>
 	 * Left button -> MOVE_FORWARD<br>
 	 * Center button -> LOOK_AROUND<br>
@@ -449,26 +502,55 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	 * @see #setAsArcball()
 	 * @see #setAsFirstPerson()
 	 */
-	public void setAsThirdPerson(boolean trackpad) {
+	public void setAsThirdPerson() {
 		resetAllProfiles();
-		if(trackpad) {
-			frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.MOVE_FORWARD);
-			frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.MOVE_BACKWARD);
-			frameWheelProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), DOF1Action.ROTATE_Z);
-			frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
-			if (scene.is3D()) {
-				frameProfile().setBinding(DOF2Action.LOOK_AROUND);
-				frameProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.DRIVE);
-			}
+		frameProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.MOVE_FORWARD);
+		frameProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.MOVE_BACKWARD);
+		frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, left), left, DOF2Action.ROTATE_Z);
+		if (scene.is3D()) {
+			frameProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.LOOK_AROUND);
+			frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.DRIVE);
 		}
-		else {
-			frameProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.MOVE_FORWARD);
-			frameProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.MOVE_BACKWARD);
-			frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, left), left, DOF2Action.ROTATE_Z);
-			if (scene.is3D()) {
-				frameProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.LOOK_AROUND);
-				frameProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.DRIVE);
-			}
+		setCommonBindings();
+	}
+
+	/**
+	 * Set mouse bindings as 'third-person'. Bindings are as follows:
+	 * <p>
+	 * Ctrl + No-button -> MOVE_FORWARD<br>
+	 * No-button -> LOOK_AROUND<br>
+	 * Shift + No-button -> MOVE_BACKWARD<br>
+	 * Ctrl + Shift + Wheel -> ROTATE_Z<br>
+	 * Ctrl + Shift + No-button -> DRIVE<br>
+	 * <p>
+	 * Also set the following (common) bindings are:
+	 * <p>
+	 * 2 left clicks -> ALIGN_FRAME<br>
+	 * 2right clicks -> CENTER_FRAME<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * <p>
+	 * Note that Alt + No-button is bound to the null action.
+	 * <p>
+	 * Also set the following (common) bindings are:
+	 * <p>
+	 * 2 left clicks -> ALIGN_FRAME<br>
+	 * 2right clicks -> CENTER_FRAME<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * 
+	 * @see #setAsArcball()
+	 * @see #setAsFirstPerson()
+	 */
+	public void setAsThirdPersonTrackpad() {
+		resetAllProfiles();
+		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOBUTTON, DOF2Action.MOVE_FORWARD);
+		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOBUTTON, DOF2Action.MOVE_BACKWARD);
+		frameWheelProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), DOF1Action.ROTATE_Z);
+		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOBUTTON, null);
+		if (scene.is3D()) {
+			frameProfile().setBinding(DOF2Action.LOOK_AROUND);
+			frameProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOBUTTON, DOF2Action.DRIVE);
 		}
 		setCommonBindings();
 	}
@@ -494,7 +576,7 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 	}
 
 	// WRAPPERS
-	
+
 	/**
 	 * Binds the mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME).
 	 */

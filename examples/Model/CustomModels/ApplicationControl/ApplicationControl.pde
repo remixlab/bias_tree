@@ -12,8 +12,10 @@ public class RectModel extends ModelObject {
   
   @Override
   public void performInteraction(DOF2Event event) {
-    edge += event.dx();
-    update();
+    if(ctrlScene.mouseAgent().currentDOF2EventType() != MouseEvent.MOVE) {
+      edge += event.dx();
+      update();
+    }
   }
   
   @Override
@@ -39,9 +41,11 @@ public class ModelEllipse extends ModelObject {
   
   @Override
   public void performInteraction(DOF2Event event) {
-    radiusX += event.dx();
-    radiusY += event.dy();
-    update();
+    if(ctrlScene.mouseAgent().currentDOF2EventType() != MouseEvent.MOVE) {
+      radiusX += event.dx();
+      radiusY += event.dy();
+      update();
+    }
   }
   
   @Override

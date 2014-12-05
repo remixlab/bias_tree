@@ -19,6 +19,8 @@ import remixlab.bias.event.*;
  * Proscene {@link remixlab.dandelion.agent.WheeledMouseAgent}.
  */
 public class MouseAgent extends WheeledMouseAgent {
+	protected int	dof2Type;
+
 	public MouseAgent(Scene scn, String n) {
 		super(scn, n);
 		left = PApplet.LEFT;
@@ -51,31 +53,39 @@ public class MouseAgent extends WheeledMouseAgent {
 		return mask;
 	}
 
+	public int currentDOF2EventType() {
+		return dof2Type;
+	}
+
 	/**
 	 * Processing mouseEvent method to be registered at the PApplet's instance.
 	 */
 	public void mouseEvent(processing.event.MouseEvent e) {
 		if (e.getAction() == processing.event.MouseEvent.MOVE) {
-			move(new DOF2Event(lastEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
+			dof2Type = processing.event.MouseEvent.MOVE;
+			move(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
 					e.getModifiers(), MotionEvent.NOBUTTON));
 		}
 		if (e.getAction() == processing.event.MouseEvent.PRESS) {
-			press(new DOF2Event(lastEvent, e.getX() - scene.originCorner().x(),
+			dof2Type = processing.event.MouseEvent.PRESS;
+			press(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(),
 					e.getY() - scene.originCorner().y(), e.getModifiers(), e.getButton()));
 		}
 		if (e.getAction() == processing.event.MouseEvent.DRAG) {
-			drag(new DOF2Event(lastEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
+			dof2Type = processing.event.MouseEvent.DRAG;
+			drag(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
 					e.getModifiers(), e.getButton()));
 		}
 		if (e.getAction() == processing.event.MouseEvent.RELEASE) {
-			release(new DOF2Event(lastEvent, e.getX() - scene.originCorner().x(), e.getY()
+			dof2Type = processing.event.MouseEvent.RELEASE;
+			release(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY()
 					- scene.originCorner().y(), e.getModifiers(), e.getButton()));
 		}
 		if (e.getAction() == processing.event.MouseEvent.WHEEL) {
-			handle(new DOF1Event(e.getCount(), e.getModifiers(), MotionEvent.NOBUTTON));
+			wheel(new DOF1Event(e.getCount(), e.getModifiers(), MotionEvent.NOBUTTON));
 		}
 		if (e.getAction() == processing.event.MouseEvent.CLICK) {
-			handle(new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
+			click(new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
 					e.getModifiers(), e.getButton(), e.getCount()));
 		}
 	}
