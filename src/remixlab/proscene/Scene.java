@@ -180,11 +180,15 @@ public class Scene extends AbstractScene implements PConstants {
 		upperLeftCorner = offscreen ? new Point(x, y) : new Point(0, 0);
 
 		// 6. Create agents and register P5 methods
-		defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
+			defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
+		} else {
+			defMotionAgent = new MouseAgent(this, "proscene_mouse");
+			defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
+			enableMotionAgent();
+		}
 		enableKeyboardAgent();
-		defMotionAgent = new MouseAgent(this, "proscene_mouse");
-		enableMotionAgent();
-
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
 
@@ -389,6 +393,14 @@ public class Scene extends AbstractScene implements PConstants {
 			throw new RuntimeException("Proscene mouseAgent() is not available in Android mode");
 		}
 		return (MouseAgent) defMotionAgent;
+	}
+	
+	//TODO doc me
+	public DroidTouchAgent droidTouchAgent() {
+		if (platform() != Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene droidTouchAgent() is not available in Desktop mode");
+		}
+		return (DroidTouchAgent) motionAgent();
 	}
 
 	// KEYBOARD
