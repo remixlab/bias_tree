@@ -1,5 +1,5 @@
 /**************************************************************************************
- * ProScene (version 2.1.0)
+ * ProScene (version 3.0.0)
  * Copyright (c) 2010-2014 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  * 

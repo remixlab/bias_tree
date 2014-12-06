@@ -170,36 +170,4 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 				result += entry.getKey().description() + " -> " + entry.getValue().description() + "\n";
 		return result;
 	}
-
-	// Deprecated
-
-	/**
-	 * Use hasBinding instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean isBindingInUse(K key) {
-		return map.containsKey(key);
-	}
-
-	/**
-	 * Use the action version with the same parameters instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public A binding(Shortcut key) {
-		return map.get(key);
-	}
-
-	/**
-	 * Use isActionBound instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean isActionMapped(A action) {
-		return map.containsValue(action);
-	}
 }

@@ -71,17 +71,6 @@ public class AnimatorObject implements Animator {
 	}
 
 	/**
-	 * Use {@link #animationStarted()} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	@Override
-	public boolean isAnimationStarted() {
-		return animationStarted();
-	}
-
-	/**
 	 * The animation loop period, in milliseconds. When {@link #animationStarted()}, this is the delay that takes place
 	 * between two consecutive iterations of the animation loop.
 	 * <p>

@@ -573,16 +573,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Same as bindMatrices()
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	protected void bind() {
-		bindMatrices();
-	}
-
-	/**
 	 * Wrapper for {@link remixlab.dandelion.core.MatrixHelper#pushModelView()}
 	 */
 	public void pushModelView() {
@@ -901,16 +891,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Same as setAxesVisualHint(boolean draw) which should be used instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public void setAxisVisualHint(boolean draw) {
-		setAxesVisualHint(draw);
-	}
-
-	/**
 	 * Sets the display of the axes according to {@code draw}
 	 */
 	public void setAxesVisualHint(boolean draw) {
@@ -1157,16 +1137,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Same as drawAxes() which should be used instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public void drawAxis() {
-		drawAxes();
-	}
-
-	/**
 	 * Convenience function that simply calls {@code drawAxis(100)}.
 	 */
 	public void drawAxes() {
@@ -1406,16 +1376,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * @see #drawCone(int, float, float, float, float)
 	 */
 	public abstract void drawCone(int detail, float x, float y, float r1, float r2, float h);
-
-	/**
-	 * Same as drawAxes(float length) which should be used instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public void drawAxis(float length) {
-		drawAxes(length);
-	}
 
 	/**
 	 * Draws axes of length {@code length} which origin correspond to the world coordinate system origin.

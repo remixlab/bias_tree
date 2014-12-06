@@ -532,55 +532,6 @@ public interface Constants {
 	}
 
 	/**
-	 * Wheel action sub-group. Use DOF1Action instead.
-	 * 
-	 * @deprecated Please refrain from using this type, it will be removed from future releases.
-	 */
-	@Deprecated
-	public enum WheelAction implements Action<DandelionAction> {
-		// DOF_1
-		SCALE(DandelionAction.SCALE),
-		ZOOM(DandelionAction.ZOOM),
-		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
-		TRANSLATE_X(DandelionAction.TRANSLATE_X),
-		TRANSLATE_Y(DandelionAction.TRANSLATE_Y),
-		TRANSLATE_Z(DandelionAction.TRANSLATE_Z),
-		ROTATE_X(DandelionAction.ROTATE_X),
-		ROTATE_Y(DandelionAction.ROTATE_Y),
-		ROTATE_Z(DandelionAction.ROTATE_Z),
-
-		CUSTOM(DandelionAction.CUSTOM_DOF1_ACTION);
-
-		@Override
-		public DandelionAction referenceAction() {
-			return act;
-		}
-
-		@Override
-		public String description() {
-			return this.referenceAction().description();
-		}
-
-		@Override
-		public int dofs() {
-			return act.dofs();
-		}
-
-		/**
-		 * Whether or not this action item is available in 2D. All actions are available in 3D.
-		 */
-		public boolean is2D() {
-			return act.is2D();
-		}
-
-		DandelionAction	act;
-
-		WheelAction(DandelionAction a) {
-			act = a;
-		}
-	}
-
-	/**
 	 * DOF2 action sub-group.
 	 */
 	public enum DOF2Action implements Action<DandelionAction> {

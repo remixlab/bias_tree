@@ -97,10 +97,10 @@ public void keyPressed() {
   if(key == 'q') {
     String info;
     info = "RIGHT mouse button + 2 clicks, ";
-    info += scene.hasMouseClickBinding(Target.EYE, Event.SHIFT, RIGHT, 2) ? "define an EYE binding\n" : "isn't a binding\n";
+    info += mouse.hasClickBinding(Target.EYE, Event.SHIFT, RIGHT, 2) ? "define an EYE binding\n" : "isn't a binding\n";
     info += "ROTATE_X action ";
-    info += scene.isMouseButtonActionBound(Target.FRAME, DOF2Action.ROTATE_X) ? "bound to the frame\n" : "not bound\n";
-    info += "CTRL + LEFT button -> " + scene.mouseButtonAction(Target.FRAME, Event.CTRL, LEFT) + " frame\n";
+    info += mouse.isButtonActionBound(Target.FRAME, DOF2Action.ROTATE_X) ? "bound to the frame\n" : "not bound\n";
+    info += "CTRL + LEFT button -> " + mouse.buttonAction(Target.FRAME, Event.CTRL, LEFT) + " frame\n";
     println(info);
   }
   if ( key == 'i')

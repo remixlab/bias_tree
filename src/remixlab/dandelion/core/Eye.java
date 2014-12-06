@@ -1356,16 +1356,6 @@ public abstract class Eye implements Copyable {
 	}
 
 	/**
-	 * Use {@link #anyInterpolationStarted()} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean anyInterpolationIsStarted() {
-		return anyInterpolationStarted();
-	}
-
-	/**
 	 * Stops all interpolations currently being performed associated with this Eye.
 	 */
 	public void stopAllInterpolations() {
@@ -1611,16 +1601,6 @@ public abstract class Eye implements Copyable {
 	 */
 	public float pixelToSceneRatio(Vec position) {
 		return 1 / sceneToPixelRatio(position);
-	}
-
-	/**
-	 * Same as sceneToPixelRatio(position) which should be used instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public float pixelSceneRatio(Vec position) {
-		return sceneToPixelRatio(position);
 	}
 
 	/**

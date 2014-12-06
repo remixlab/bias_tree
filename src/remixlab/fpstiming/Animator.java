@@ -65,14 +65,6 @@ public interface Animator {
 	boolean animationStarted();
 
 	/**
-	 * Use {@link #animationStarted()} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	boolean isAnimationStarted();
-
-	/**
 	 * Sets the timing handler.
 	 */
 	void setTimingHandler(TimingHandler h);

@@ -496,16 +496,6 @@ public class KeyFrameInterpolator implements Copyable {
 	}
 
 	/**
-	 * Use {@link #interpolationStarted()} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean interpolationIsStarted() {
-		return interpolationStarted();
-	}
-
-	/**
 	 * Calls {@link #startInterpolation()} or {@link #stopInterpolation()}, depending on {@link #interpolationStarted()} .
 	 */
 	public void toggleInterpolation() {
