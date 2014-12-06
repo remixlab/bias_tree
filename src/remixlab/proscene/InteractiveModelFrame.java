@@ -1,14 +1,17 @@
 /**************************************************************************************
  * ProScene (version 2.1.0)
  * Copyright (c) 2010-2014 National University of Colombia, https://github.com/remixlab
- * @author Sebastian Chaparro, url-PENDING
- * @author William Rodriguez, url-PENDING
  * @author Jean Pierre Charalambos, http://otrolado.info/
  * 
  * All rights reserved. Library that eases the creation of interactive scenes
  * in Processing, released under the terms of the GNU Public License v3.0
  * which is available at http://www.gnu.org/licenses/gpl.html
  **************************************************************************************/
+
+// Thanks to Sebastian Chaparro, url-PENDING and William Rodriguez, url-PENDING
+// for providing an initial picking example and searching the documentation for it:
+// http://n.clavaud.free.fr/processing/picking/pickcode.htm
+// http://content.gpwiki.org/index.php/OpenGL_Selection_Using_Unique_Color_IDs
 
 package remixlab.proscene;
 
