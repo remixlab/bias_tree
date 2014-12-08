@@ -30,6 +30,11 @@ public class ActionKeyboardAgent<K extends KeyboardProfile<?>> extends ActionAge
 		super(k, scn, n);
 	}
 
+	public ActionKeyboardAgent(K k, ActionAgent<?> parent, String n) {
+		this(k, parent.inputHandler(), n);
+		setParent(parent);
+	}
+
 	/**
 	 * @return The {@link remixlab.bias.agent.profile.KeyboardProfile}
 	 */

@@ -10,33 +10,19 @@
  */
 
 import remixlab.bias.core.*;
+import remixlab.bias.event.*;
 import remixlab.bias.agent.*;
 import remixlab.bias.agent.profile.*;
-import remixlab.bias.event.*;
 import remixlab.proscene.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
 
-public class MouseAgent extends ActionMotionAgent<MotionProfile<MotionAction>, ClickProfile<ClickAction>> {
-  DOF2Event event, prevEvent;
-  public MouseAgent(InputHandler scn, String n) {
+public class CustomMouseAgent extends ActionMotionAgent<MotionProfile<MotionAction>, ClickProfile<ClickAction>> {
+  public CustomMouseAgent(MouseAgent parent, String n) {
     super(new MotionProfile<MotionAction>(), 
-    new ClickProfile<ClickAction>(), scn, n);
+    new ClickProfile<ClickAction>(), parent, n);
     clickProfile().setBinding(LEFT, 1, ClickAction.CHANGE_COLOR);
     profile().setBinding(LEFT, MotionAction.CHANGE_SHAPE);
-  }
-
-  public void mouseEvent(processing.event.MouseEvent e) {
-    if ( e.getAction() == processing.event.MouseEvent.CLICK ) {
-      handle(new ClickEvent(e.getX() - oX, e.getY() - oY, e.getModifiers(), e.getButton(), e.getCount()));
-      return;
-    }
-    event = new DOF2Event(prevEvent, e.getX() - oX, e.getY() - oY, e.getModifiers(), e.getButton());
-    if ( e.getAction() == processing.event.MouseEvent.MOVE )
-      updateTrackedGrabber(event);
-    if ( e.getAction() == processing.event.MouseEvent.DRAG )
-      handle(event);
-    prevEvent = event.get();
   }
 }
 
@@ -100,25 +86,31 @@ public class Ellipse extends GrabberObject {
   }
 
   @Override
-  public boolean checkIfGrabsInput(BogusEvent event) {
-    if (event instanceof DOF2Event) {
-      float x = ((DOF2Event)event).x();
-      float y = ((DOF2Event)event).y();
-      return(pow((x - center.x), 2)/pow(radiusX, 2) + pow((y - center.y), 2)/pow(radiusY, 2) <= 1);
-    }      
-    return false;
+  public boolean checkIfGrabsInput(DOF2Event event) {
+    float x = event.x();
+    float y = event.y();
+    return(pow((x - center.x), 2)/pow(radiusX, 2) + pow((y - center.y), 2)/pow(radiusY, 2) <= 1);
   }
 
   @Override
-  public void performInteraction(BogusEvent event) {
-    if (((BogusEvent)event).action() != null) {
-      switch ((GlobalAction) ((BogusEvent)event).action().referenceAction()) {
+  public void performInteraction(DOF2Event event) {
+    if (event.action() != null) {
+      switch ((MotionAction) event.action()) {
+      case CHANGE_SHAPE:
+        radiusX += event.dx();
+        radiusY += event.dy();
+        break;
+      }
+    }
+  }
+  
+  @Override
+  public void performInteraction(ClickEvent event) {
+    if (event.action() != null) {
+      //switch ((GlobalAction) event.action().referenceAction()) {
+      switch ((ClickAction) event.action()) {      
       case CHANGE_COLOR:
         colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
-        break;
-      case CHANGE_SHAPE:
-        radiusX += ((DOF2Event)event).dx();
-        radiusY += ((DOF2Event)event).dy();
         break;
       }
     }
@@ -127,9 +119,7 @@ public class Ellipse extends GrabberObject {
 
 int w = 200;
 int h = 120;
-int oX = 640-w;
-int oY = 360-h;
-MouseAgent agent;
+CustomMouseAgent agent;
 Ellipse e;
 PGraphics canvas;
 Scene scene;
@@ -146,15 +136,13 @@ void setup() {
   scene.addGraphicsHandler(this, "drawing");
 
   ctrlCanvas = createGraphics(w, h);  
-  agent = new MouseAgent(scene.inputHandler(), "my_mouse");
-  scene.inputHandler().unregisterAgent(agent);
+  agent = new CustomMouseAgent(scene.mouseAgent(), "my_mouse");
 
   e = new Ellipse(ctrlCanvas, new PVector(w/2, h/2), 30);
   agent.addInPool(e);
 }
 
 void draw() {
-  handleMouse();
   canvas.beginDraw();
   scene.beginDraw();
   canvas.background(255);    
@@ -167,7 +155,7 @@ void draw() {
     ctrlCanvas.background(125, 125, 125, 125);    
     ctrlDrawing(ctrlCanvas);
     ctrlCanvas.endDraw();
-    image(ctrlCanvas, oX, oY);
+    image(ctrlCanvas, 0, 0);
   }
 }
 
@@ -187,27 +175,6 @@ void ctrlDrawing(PGraphics pg) {
   else
     e.draw();
   pg.popStyle();
-}
-
-void handleMouse() {
-  scene.enableMotionAgent();
-  disableCustomAgent();
-  if((oX < mouseX) && (oY < mouseY) && showAid) {
-    scene.disableMotionAgent();
-    enableCustomAgent();
-  }
-}
-
-void enableCustomAgent() {
-  if (!scene.inputHandler().isAgentRegistered(agent)) {
-    scene.inputHandler().registerAgent(agent);
-    registerMethod("mouseEvent", agent);
-  }
-}
-
-void disableCustomAgent(){
-  scene.inputHandler().unregisterAgent(agent);
-  unregisterMethod("mouseEvent", agent);
 }
 
 void keyPressed() {

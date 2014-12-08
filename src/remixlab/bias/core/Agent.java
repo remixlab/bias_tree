@@ -189,10 +189,11 @@ public class Agent {
 	 * 
 	 * @see #inputGrabber()
 	 */
-	public void handle(BogusEvent event) {
+	public boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
-			return;
+			return false;
 		enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+		return true;
 	}
 
 	/**
@@ -311,10 +312,11 @@ public class Agent {
 	/**
 	 * Internal use
 	 */
-	private void setTrackedGrabber(Grabber grabber) {
+	protected void setTrackedGrabber(Grabber grabber) {
 		if (grabber == null) {
 			trackedGrabber = null;
-		} else if (isInPool(grabber)) {
+			// TODO debug condition
+		} else /* if (isInPool(grabber)) */{
 			trackedGrabber = grabber;
 		}
 	}

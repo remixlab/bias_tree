@@ -394,8 +394,8 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		return (MouseAgent) defMotionAgent;
 	}
-	
-	//TODO doc me
+
+	// TODO doc me
 	public DroidTouchAgent droidTouchAgent() {
 		if (platform() != Platform.PROCESSING_ANDROID) {
 			throw new RuntimeException("Proscene droidTouchAgent() is not available in Desktop mode");

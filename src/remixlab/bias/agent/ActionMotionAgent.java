@@ -47,6 +47,11 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 		sens = new float[] { 1f, 1f, 1f, 1f, 1f, 1f };
 	}
 
+	public ActionMotionAgent(M p, C c, ActionAgent<?> parent, String n) {
+		this(p, c, parent.inputHandler(), n);
+		setParent(parent);
+	}
+
 	/**
 	 * Alias for {@link #profile()}.
 	 */
@@ -135,21 +140,44 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 	}
 
 	@Override
-	public void handle(BogusEvent event) {
+	public boolean handle(BogusEvent event) {
 		// overkill but feels safer ;)
 		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
-			return;
+			return false;
 		if (event instanceof ClickEvent)
+			// if (alienGrabber())
+			// enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+			// begin new
 			if (alienGrabber())
-				enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+				if (branches().isEmpty())
+					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+				else {
+					for (ActionAgent<?> branch : branches())
+						if (branch.handle(event))
+							return true;
+					return false;
+				}
+			// end
 			else
 				enqueueEventTuple(new EventGrabberTuple(event, clickProfile().handle(event), inputGrabber()));
 		else if (event instanceof MotionEvent) {
 			((MotionEvent) event).modulate(sens);
+			// if (alienGrabber())
+			// enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+			// begin new
 			if (alienGrabber())
-				enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+				if (branches().isEmpty())
+					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+				else {
+					for (ActionAgent<?> branch : branches())
+						if (branch.handle(event))
+							return true;
+					return false;
+				}
+			// end
 			else
 				enqueueEventTuple(new EventGrabberTuple(event, motionProfile().handle(event), inputGrabber()));
 		}
+		return true;
 	}
 }

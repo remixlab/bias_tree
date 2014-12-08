@@ -21,7 +21,6 @@ import remixlab.dandelion.core.Constants.*;
 
 Scene scene;
 InteractiveFrame iFrame;
-TrackpadAgent agent;
 
 //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
 String renderer = P3D;
@@ -32,9 +31,6 @@ public void setup() {
   iFrame = new InteractiveFrame(scene);
   iFrame.setGrabsInputThreshold(scene.radius()/4, true);
   iFrame.translate(new Vec(50, 50));
-  agent  = new TrackpadAgent(scene, "pad");
-  agent.addInPool(iFrame);
-  agent.setButtonBinding(Target.FRAME, RIGHT, DOF2Action.TRANSLATE);
   // Simply testing non sequential timers:
   scene.setNonSeqTimers(); // comment it to use sequential timers instead (default)
 }
@@ -69,24 +65,7 @@ public void draw() {
   popMatrix();
 }
 
-void switchAgents() {
-  if( scene.isMotionAgentEnabled() ) {
-    scene.disableMotionAgent();
-    scene.inputHandler().registerAgent(agent);
-    registerMethod("mouseEvent", agent);
-  }
-  else {
-    scene.inputHandler().unregisterAgent(agent);
-    unregisterMethod("mouseEvent", agent);
-    scene.enableMotionAgent();
-  }
-}
-
 public void keyPressed() {
-  if( key == ' ')
-    switchAgents();
-  if ( key == 'i') {
+  if ( key == 'i')
     scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
-    agent.setDefaultGrabber(agent.defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
-  }
 }

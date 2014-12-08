@@ -50,6 +50,11 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 		wheelProfile = w;
 	}
 
+	public ActionWheeledMotionAgent(W w, M p, C c, ActionAgent<?> parent, String n) {
+		this(w, p, c, parent.inputHandler(), n);
+		setParent(parent);
+	}
+
 	/**
 	 * @return the agents second {@link remixlab.bias.agent.profile.MotionProfile} instance.
 	 */
@@ -85,23 +90,46 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 	}
 
 	@Override
-	public void handle(BogusEvent event) {
+	public boolean handle(BogusEvent event) {
 		// overkill but feels safer ;)
 		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
-			return;
+			return false;
 		if (event instanceof ClickEvent)
+			// if (alienGrabber())
+			// enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+			// begin new
 			if (alienGrabber())
-				enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+				if (branches().isEmpty())
+					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+				else {
+					for (ActionAgent<?> branch : branches())
+						if (branch.handle(event))
+							return true;
+					return false;
+				}
+			// end
 			else
 				enqueueEventTuple(new EventGrabberTuple(event, clickProfile().handle(event), inputGrabber()));
 		else if (event instanceof MotionEvent) {
 			((MotionEvent) event).modulate(sens);
+			// if (alienGrabber())
+			// enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+			// begin new
 			if (alienGrabber())
-				enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+				if (branches().isEmpty())
+					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+				else {
+					for (ActionAgent<?> branch : branches())
+						if (branch.handle(event))
+							return true;
+					return false;
+				}
+			// end
 			else if (event instanceof DOF1Event)
 				enqueueEventTuple(new EventGrabberTuple(event, wheelProfile().handle(event), inputGrabber()));
 			else
 				enqueueEventTuple(new EventGrabberTuple(event, motionProfile().handle(event), inputGrabber()));
 		}
+		return true;
 	}
 }
