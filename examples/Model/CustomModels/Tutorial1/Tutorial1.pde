@@ -1,32 +1,10 @@
-/**
- * Application Control.
- * by Jean Pierre Charalambos.
- * 
- * This demo controls the shape and color of the scene torus using and a custom mouse agent.
- * 
- * Click and drag the ellipse with the left mouse to control the torus color and shape.
- * Press ' ' (the spacebar) to toggle the application canvas aid.
- * Press 'h' to display the key shortcuts and mouse bindings in the console.
- */
-
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.agent.*;
-import remixlab.bias.agent.profile.*;
 import remixlab.proscene.*;
-import remixlab.dandelion.geom.*;
-import remixlab.dandelion.core.*;
+import remixlab.dandelion.core.Constants.*;
 
-public class CustomMouseAgent extends ActionMotionAgent<MotionProfile<MotionAction>, ClickProfile<ClickAction>> {
-  public CustomMouseAgent(MouseAgent parent, String n) {
-    super(new MotionProfile<MotionAction>(), 
-    new ClickProfile<ClickAction>(), parent, n);
-    clickProfile().setBinding(LEFT, 1, ClickAction.CHANGE_COLOR);
-    profile().setBinding(LEFT, MotionAction.CHANGE_SHAPE);
-  }
-}
-
-public class ModelEllipse extends ModelObject {
+//same as ApplicationControl, but with an InteractiveModelFrame
+public class ModelEllipse extends InteractiveModelFrame {
   float radiusX = 30, radiusY = 30;
   color colour = color(255, 0, 0);
   public ModelEllipse(Scene scn) {
@@ -34,31 +12,21 @@ public class ModelEllipse extends ModelObject {
     update();
   }
   
+  //pure P5 should not override the following two:
+  // /**
   @Override
   public void performInteraction(DOF2Event event) {
-    if (event.action() != null) {
-      switch ((MotionAction) event.action()) {
-      case CHANGE_SHAPE:
-        radiusX += event.dx();
-        radiusY += event.dy();
-        update();
-        break;
-      }
-    }
+    radiusX += event.dx();
+    radiusY += event.dy();
+    update();
   }
   
   @Override
   public void performInteraction(ClickEvent event) {
-    if (event.action() != null) {
-      //switch ((GlobalAction) event.action().referenceAction()) {
-      switch ((ClickAction) event.action()) {
-      case CHANGE_COLOR:
-        colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
-        update();
-        break;
-      }
-    }
+    colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
+    update();
   }
+  //*/
   
   void update() {
     setShape(createShape(ELLIPSE, -radiusX, -radiusY, 2*radiusX, 2*radiusY));
@@ -72,7 +40,6 @@ int oX = 640-w;
 int oY = 360-h;
 PGraphics ctrlCanvas;
 Scene ctrlScene;
-CustomMouseAgent agent;
 public PShape eShape;
 ModelEllipse e;
 PGraphics canvas;
@@ -87,15 +54,17 @@ void setup() {
 
   ctrlCanvas = createGraphics(w, h, P2D);
   ctrlScene = new Scene(this, ctrlCanvas, oX, oY);
-  agent = new CustomMouseAgent(ctrlScene.mouseAgent(), "my_mouse");
   ctrlScene.setAxesVisualHint(false);
   ctrlScene.setGridVisualHint(false);
+  
   e = new ModelEllipse(ctrlScene);
-  //agent.addInPool(e);
+  ctrlScene.mouseAgent().setButtonBinding(Target.FRAME, LEFT, DOF2Action.CUSTOM);
+  ctrlScene.mouseAgent().setClickBinding(Target.FRAME, RIGHT, ClickAction.CUSTOM);
+  ctrlScene.mouseAgent().setClickBinding(Target.FRAME, LEFT, ClickAction.CUSTOM);
 }
 
 void draw() {
-  handleMouse();
+  handleMouse();//*/
   canvas.beginDraw();
   scene.beginDraw();
   canvas.background(255);
@@ -115,6 +84,18 @@ void draw() {
     image(ctrlCanvas, ctrlScene.originCorner().x(), ctrlScene.originCorner().y());
   }
 }
+
+//pure p5 should go like this:
+//Imagine with more modelObjects ;)
+/*
+void mouseDragged() {
+  if (ctrlScene.mouseAgent().trackedGrabber()==e) {
+    e.radiusX += mouseX -pmouseX;
+    e.radiusY += mouseY -pmouseY;
+    e.update();
+  }
+}
+//*/
 
 void handleMouse() {
   scene.enableMotionAgent();

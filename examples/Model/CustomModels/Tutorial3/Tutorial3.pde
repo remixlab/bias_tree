@@ -1,36 +1,33 @@
+/**
+ * Application Control.
+ * by Jean Pierre Charalambos.
+ * 
+ * This demo controls the shape and color of the scene torus using and a custom mouse agent.
+ * 
+ * Click and drag the ellipse with the left mouse to control the torus color and shape.
+ * Press ' ' (the spacebar) to toggle the application canvas aid.
+ * Press 'h' to display the key shortcuts and mouse bindings in the console.
+ */
+
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.bias.agent.*;
+import remixlab.bias.agent.profile.*;
 import remixlab.proscene.*;
-import remixlab.dandelion.core.Constants.*;
+import remixlab.dandelion.geom.*;
+import remixlab.dandelion.core.*;
 
-public class RectModel extends InteractiveModelFrame {
-  float edge = 30;
-  color colour = color(255, 0, 0);
-  public RectModel(Scene scn) {
-    super(scn);
-    update();
-  }
-  
-  @Override
-  public void performInteraction(DOF2Event event) {
-    edge += event.dx();
-    update();
-  }
-  
-  @Override
-  public void performInteraction(ClickEvent event) {
-    colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
-    update();
-  }
-  
-  void update() {
-    setShape(createShape(RECT, -edge/2, -edge/2, edge, edge));
-    shape().setFill(color(colour));
+public class CustomMouseAgent extends ActionMotionAgent<MotionProfile<MotionAction>, ClickProfile<ClickAction>> {
+  public CustomMouseAgent(MouseAgent parent, String n) {
+    super(new MotionProfile<MotionAction>(), 
+    new ClickProfile<ClickAction>(), parent, n);
+    clickProfile().setBinding(LEFT, 1, ClickAction.CHANGE_COLOR);
+    profile().setBinding(LEFT, MotionAction.CHANGE_SHAPE);
   }
 }
 
-//same as ApplicationControl, but with an InteractiveModelFrame
-public class ModelEllipse extends InteractiveModelFrame {
+//Final tutorial would make much more sense when having lots of actions
+public class ModelEllipse extends ModelObject {
   float radiusX = 30, radiusY = 30;
   color colour = color(255, 0, 0);
   public ModelEllipse(Scene scn) {
@@ -40,15 +37,28 @@ public class ModelEllipse extends InteractiveModelFrame {
   
   @Override
   public void performInteraction(DOF2Event event) {
-    radiusX += event.dx();
-    radiusY += event.dy();
-    update();
+    if (event.action() != null) {
+      switch ((MotionAction) event.action()) {
+      case CHANGE_SHAPE:
+        radiusX += event.dx();
+        radiusY += event.dy();
+        update();
+        break;
+      }
+    }
   }
   
   @Override
   public void performInteraction(ClickEvent event) {
-    colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
-    update();
+    if (event.action() != null) {
+      //switch ((GlobalAction) event.action().referenceAction()) {
+      switch ((ClickAction) event.action()) {
+      case CHANGE_COLOR:
+        colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
+        update();
+        break;
+      }
+    }
   }
   
   void update() {
@@ -63,9 +73,9 @@ int oX = 640-w;
 int oY = 360-h;
 PGraphics ctrlCanvas;
 Scene ctrlScene;
+CustomMouseAgent agent;
 public PShape eShape;
 ModelEllipse e;
-RectModel r;
 PGraphics canvas;
 Scene scene;
 boolean showAid = true;
@@ -78,15 +88,11 @@ void setup() {
 
   ctrlCanvas = createGraphics(w, h, P2D);
   ctrlScene = new Scene(this, ctrlCanvas, oX, oY);
+  agent = new CustomMouseAgent(ctrlScene.mouseAgent(), "my_mouse");
   ctrlScene.setAxesVisualHint(false);
   ctrlScene.setGridVisualHint(false);
-  
   e = new ModelEllipse(ctrlScene);
-  r = new RectModel(ctrlScene);
-  ctrlScene.removeModel(r);//re-add me when implementing me
-  
-  ctrlScene.mouseAgent().setButtonBinding(Target.FRAME, RIGHT, DOF2Action.CUSTOM);
-  ctrlScene.mouseAgent().setClickBinding(Target.FRAME, RIGHT, ClickAction.CUSTOM);
+  //agent.addInPool(e);
 }
 
 void draw() {

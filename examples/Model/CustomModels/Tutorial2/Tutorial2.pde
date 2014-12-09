@@ -1,30 +1,31 @@
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.proscene.*;
-import remixlab.dandelion.core.Constants.*;
 
-public class RectModel extends InteractiveModelFrame {
-  float edge = 30;
-  color colour = color(255, 0, 0);
-  public RectModel(Scene scn) {
-    super(scn);
-    update();
-  }
-  
-  void update() {
-    setShape(createShape(RECT, -edge/2, -edge/2, edge, edge));
-    shape().setFill(color(colour));
-  }
-}
-
-public class ModelEllipse extends InteractiveModelFrame {
+//same as iAppCtrl, but with a ModelObject
+public class ModelEllipse extends ModelObject {
   float radiusX = 30, radiusY = 30;
   color colour = color(255, 0, 0);
   public ModelEllipse(Scene scn) {
     super(scn);
     update();
   }
-
+  
+  @Override
+  public void performInteraction(DOF2Event event) {
+    if(ctrlScene.mouseAgent().currentDOF2EventType() != MouseEvent.MOVE) {
+      radiusX += event.dx();
+      radiusY += event.dy();
+      update();
+    }
+  }
+  
+  @Override
+  public void performInteraction(ClickEvent event) {
+    colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
+    update();
+  }
+  
   void update() {
     setShape(createShape(ELLIPSE, -radiusX, -radiusY, 2*radiusX, 2*radiusY));
     shape().setFill(color(colour));
@@ -39,7 +40,6 @@ PGraphics ctrlCanvas;
 Scene ctrlScene;
 public PShape eShape;
 ModelEllipse e;
-RectModel r;
 PGraphics canvas;
 Scene scene;
 boolean showAid = true;
@@ -55,33 +55,7 @@ void setup() {
   ctrlScene.setAxesVisualHint(false);
   ctrlScene.setGridVisualHint(false);
   e = new ModelEllipse(ctrlScene);
-  r = new RectModel(ctrlScene);
-  ctrlScene.removeModel(r);//re-add me when implementing me
-  ctrlScene.mouseAgent().setButtonBinding(Target.FRAME,LEFT,null);
-  ctrlScene.mouseAgent().setButtonBinding(Target.FRAME,RIGHT,null);
-}
-
-void mouseClicked() {
-  if (ctrlScene.mouseAgent().trackedGrabber()==e) {
-    e.colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
-    e.update();
-  }
-  if (ctrlScene.mouseAgent().trackedGrabber()==r) {
-    r.colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
-    r.update();
-  }
-}
-
-void mouseDragged() {
-  if (ctrlScene.mouseAgent().trackedGrabber()==e) {
-    e.radiusX += mouseX -pmouseX;
-    e.radiusY += mouseY -pmouseY;
-    e.update();
-  }
-  if (ctrlScene.mouseAgent().trackedGrabber()==r) {
-    r.edge += mouseX -pmouseX;
-    r.update();
-  }
+  ctrlScene.motionAgent().addInPool(e);
 }
 
 void draw() {
