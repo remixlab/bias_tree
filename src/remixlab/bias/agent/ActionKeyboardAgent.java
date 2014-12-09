@@ -32,7 +32,7 @@ public class ActionKeyboardAgent<K extends KeyboardProfile<?>> extends ActionAge
 
 	public ActionKeyboardAgent(K k, ActionAgent<?> parent, String n) {
 		this(k, parent.inputHandler(), n);
-		setParent(parent);
+		parent.addBranch(this);
 	}
 
 	/**

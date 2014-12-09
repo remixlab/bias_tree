@@ -151,11 +151,15 @@ void draw() {
   image(canvas, scene.originCorner().x(), scene.originCorner().y());
  
   if(showAid) {
+    scene.mouseAgent().addBranch(agent);
     ctrlCanvas.beginDraw();  
     ctrlCanvas.background(125, 125, 125, 125);    
     ctrlDrawing(ctrlCanvas);
     ctrlCanvas.endDraw();
     image(ctrlCanvas, 0, 0);
+  }
+  else {
+    scene.mouseAgent().removeBranch(agent);
   }
 }
 

@@ -19,6 +19,7 @@ import remixlab.bias.event.*;
  * Proscene {@link remixlab.dandelion.agent.WheeledMouseAgent}.
  */
 public class MouseAgent extends WheeledMouseAgent {
+	//TODO think shouldn't go
 	protected int	dof2Type;
 
 	public MouseAgent(Scene scn, String n) {

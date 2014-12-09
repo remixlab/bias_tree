@@ -94,7 +94,7 @@ public class Agent {
 	public void setTracking(boolean enable) {
 		agentTrckn = enable;
 		if (!isTracking())
-			setTrackedGrabber(null);
+			trackedGrabber = null;
 	}
 
 	/**
@@ -132,11 +132,12 @@ public class Agent {
 			if (g.checkIfGrabsInput(event))
 				return trackedGrabber();
 
-		setTrackedGrabber(null);
+		trackedGrabber = null;	
 		for (Grabber mg : pool()) {
 			// take whatever. Here the first one
-			if (mg.checkIfGrabsInput(event)) {
-				setTrackedGrabber(mg);
+			if (mg.checkIfGrabsInput(event)) {		
+				if (isInPool(mg))
+					trackedGrabber = mg;
 				return trackedGrabber();
 			}
 		}
@@ -307,17 +308,5 @@ public class Agent {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Internal use
-	 */
-	protected void setTrackedGrabber(Grabber grabber) {
-		if (grabber == null) {
-			trackedGrabber = null;
-			// TODO debug condition
-		} else /* if (isInPool(grabber)) */{
-			trackedGrabber = grabber;
-		}
 	}
 }

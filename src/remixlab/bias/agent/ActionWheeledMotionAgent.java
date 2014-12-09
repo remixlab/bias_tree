@@ -52,7 +52,7 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 
 	public ActionWheeledMotionAgent(W w, M p, C c, ActionAgent<?> parent, String n) {
 		this(w, p, c, parent.inputHandler(), n);
-		setParent(parent);
+		parent.addBranch(this);
 	}
 
 	/**

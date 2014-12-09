@@ -63,7 +63,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 
 	public ActionAgent(P p, ActionAgent<?> parent, String n) {
 		this(p, parent.inputHandler(), n);
-		setParent(parent);
+		parent.addBranch(this);
 	}
 
 	/**
@@ -93,28 +93,18 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	}
 
 	public void addBranch(ActionAgent<?> a) {
-		if (!brnchs.contains(a))
+		if (!brnchs.contains(a)) {
 			this.brnchs.add(a);
+			a.parentAgent = this;
+		}
 	}
 
 	public void removeBranch(ActionAgent<?> a) {
-		if (brnchs.contains(a))
-			brnchs.remove(a);
-	}
-
-	public void setParent(ActionAgent<?> a) {
-		if (parentAgent() == a)
-			return;
-		if (parentAgent() != null)
-			unsetParent();
-		parentAgent = a;
-		parentAgent.addBranch(this);
-	}
-
-	public void unsetParent() {
-		if (parentAgent() != null) {
-			parentAgent().removeBranch(this);
-			parentAgent = null;
+		if (brnchs.contains(a)) {
+			if( trackedGrabber() == a.trackedGrabber() )
+				trackedGrabber = null;
+			this.brnchs.remove(a);
+			a.parentAgent = null;
 		}
 	}
 
@@ -144,13 +134,17 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	@Override
 	public Grabber updateTrackedGrabber(BogusEvent event) {
 		Grabber g = super.updateTrackedGrabber(event);
+		//TODO check condition
 		if (g != null)
-			return g;
+			if(!this.alienGrabber())
+				return g;
+			else if(branches().isEmpty())
+				return g;
 		if (!branches().isEmpty())
-			for (ActionAgent<?> branch : branches()) {
+			for (ActionAgent<?> branch : branches()) {				
 				g = branch.updateTrackedGrabber(event);
 				if (g != null) {
-					setTrackedGrabber(g);// the alien grabber!
+					trackedGrabber = g;// the alien grabber!					
 					return g;
 				}
 			}

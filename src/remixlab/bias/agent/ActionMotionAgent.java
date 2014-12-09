@@ -49,7 +49,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 
 	public ActionMotionAgent(M p, C c, ActionAgent<?> parent, String n) {
 		this(p, c, parent.inputHandler(), n);
-		setParent(parent);
+		parent.addBranch(this);
 	}
 
 	/**
