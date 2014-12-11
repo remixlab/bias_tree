@@ -10,6 +10,9 @@
 
 package remixlab.bias.core;
 
+//TODO deal with me
+import remixlab.proscene.ActionModel;
+
 /**
  * [{@link remixlab.bias.core.BogusEvent},{@link remixlab.bias.core.Grabber}] tuples which encapsulate message passing
  * from {@link remixlab.bias.core.BogusEvent} to {@link remixlab.bias.core.Grabber} to perform actions.
@@ -42,6 +45,9 @@ public class EventGrabberTuple {
 	public EventGrabberTuple(BogusEvent e, Action<?> a, Grabber g) {
 		this(e, g);
 		event.setAction(a);
+		//TODO test
+		if( g instanceof ActionGrabber ) if(a != null) ((ActionGrabber)g).setReferenceAction(a);
+		if( g instanceof ActionModel ) if(a != null) ((ActionModel)g).setReferenceAction(a);
 	}
 
 	/**
