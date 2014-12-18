@@ -13,6 +13,8 @@ package remixlab.bias.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import remixlab.bias.grabber.*;
+
 /**
  * An Agent is a high-level {@link remixlab.bias.core.BogusEvent} parser, which holds a {@link #pool()} of grabbers:
  * application objects implementing (user-defined) actions. The agent also holds an {@link #inputGrabber()} which is the
@@ -41,6 +43,9 @@ public class Agent {
 	protected Grabber				trackedGrabber;
 	protected Grabber				defaultGrabber;
 	protected boolean				agentTrckn;
+	
+	protected Agent				parentAgent;
+	protected List<Agent>	brnchs;
 
 	/**
 	 * Constructs an Agent with the given name and registers is at the given inputHandler.
@@ -49,8 +54,59 @@ public class Agent {
 		handler = inputHandler;
 		nm = name;
 		grabbers = new ArrayList<Grabber>();
+		brnchs = new ArrayList<Agent>();
 		setTracking(true);
 		handler.registerAgent(this);
+	}
+	
+	public Agent(Agent parent, String n) {
+		this(parent.inputHandler(), n);
+		parent.addBranch(this);
+	}
+	
+  // Alien grabber and action-agent branches
+	
+	/**
+	 * Tells whether or not the {@link #inputGrabber()} is an object implementing the user-defined
+	 * {@link remixlab.bias.core.Action} group the third party application is meant to support. Hence, third-parties
+	 * should override this method defining that condition.
+	 * <p>
+	 * Returns {@code false} by default.
+	 */
+	protected boolean alienGrabber() {
+		//TODO pending
+		//return isInPool(inputGrabber());
+		return false;
+	}
+	
+	/*
+	protected boolean alienGrabber(Grabber g) {
+		
+	}
+	*/
+
+	public Agent parentAgent() {
+		return parentAgent;
+	}
+
+	public List<Agent> branches() {
+		return brnchs;
+	}
+
+	public void addBranch(Agent a) {
+		if (!brnchs.contains(a)) {
+			this.brnchs.add(a);
+			a.parentAgent = this;
+		}
+	}
+
+	public void removeBranch(Agent a) {
+		if (brnchs.contains(a)) {
+			if( trackedGrabber() == a.trackedGrabber() )
+				trackedGrabber = null;
+			this.brnchs.remove(a);
+			a.parentAgent = null;
+		}
 	}
 
 	/**
@@ -136,13 +192,36 @@ public class Agent {
 		for (Grabber mg : pool()) {
 			// take whatever. Here the first one
 			if (mg.checkIfGrabsInput(event)) {		
-				if (isInPool(mg))
+				trackedGrabber = mg;
+				return trackedGrabber();
+			}
+		}
+		return trackedGrabber();
+	}
+	/*
+	public Grabber updateTrackedGrabber(BogusEvent event) {
+		if (event == null || !inputHandler().isAgentRegistered(this) || !isTracking())
+			return trackedGrabber();
+
+		Grabber g = trackedGrabber();
+
+		// We first check if tracked grabber remains the same
+		if (g != null)
+			if (g.checkIfGrabsInput(event))
+				return trackedGrabber();
+
+		trackedGrabber = null;	
+		for (Grabber mg : pool()) {
+			// take whatever. Here the first one
+			if (mg.checkIfGrabsInput(event)) {		
+				//if (isInPool(mg))
 					trackedGrabber = mg;
 				return trackedGrabber();
 			}
 		}
 		return trackedGrabber();
 	}
+	*/
 
 	/**
 	 * Convenience function that simply calls {@code enqueueEventTuple(eventTuple, true)}.
@@ -304,8 +383,10 @@ public class Agent {
 		if (grabber == null)
 			return false;
 		if (!isInPool(grabber)) {
-			pool().add(grabber);
-			return true;
+			if( ! (grabber instanceof ActionGrabber) ) {
+				pool().add(grabber);
+				return true;
+			}
 		}
 		return false;
 	}

@@ -50,7 +50,7 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 		wheelProfile = w;
 	}
 
-	public ActionWheeledMotionAgent(W w, M p, C c, ActionAgent<?> parent, String n) {
+	public ActionWheeledMotionAgent(W w, M p, C c, ActionMotionAgent<?,?> parent, String n) {
 		this(w, p, c, parent.inputHandler(), n);
 		parent.addBranch(this);
 	}
@@ -102,7 +102,7 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 				if (branches().isEmpty())
 					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
 				else {
-					for (ActionAgent<?> branch : branches())
+					for (Agent branch : branches())
 						if (branch.handle(event))
 							return true;
 					return false;
@@ -119,7 +119,7 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 				if (branches().isEmpty())
 					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
 				else {
-					for (ActionAgent<?> branch : branches())
+					for (Agent branch : branches())
 						if (branch.handle(event))
 							return true;
 					return false;

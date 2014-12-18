@@ -1,5 +1,9 @@
-package remixlab.bias.core;
+package remixlab.bias.grabber;
 
+import remixlab.bias.core.Action;
+import remixlab.bias.core.Agent;
+import remixlab.bias.core.BogusEvent;
+import remixlab.bias.core.InputHandler;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.AbstractScene;
 

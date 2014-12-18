@@ -47,7 +47,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 		sens = new float[] { 1f, 1f, 1f, 1f, 1f, 1f };
 	}
 
-	public ActionMotionAgent(M p, C c, ActionAgent<?> parent, String n) {
+	public ActionMotionAgent(M p, C c, ActionMotionAgent<?,?> parent, String n) {
 		this(p, c, parent.inputHandler(), n);
 		parent.addBranch(this);
 	}
@@ -152,7 +152,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 				if (branches().isEmpty())
 					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
 				else {
-					for (ActionAgent<?> branch : branches())
+					for (Agent branch : branches())
 						if (branch.handle(event))
 							return true;
 					return false;
@@ -169,7 +169,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 				if (branches().isEmpty())
 					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
 				else {
-					for (ActionAgent<?> branch : branches())
+					for (Agent branch : branches())
 						if (branch.handle(event))
 							return true;
 					return false;

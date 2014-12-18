@@ -10,6 +10,7 @@
 
 package remixlab.bias.core;
 
+import remixlab.bias.grabber.ActionGrabber;
 //TODO deal with me
 import remixlab.proscene.ActionModel;
 

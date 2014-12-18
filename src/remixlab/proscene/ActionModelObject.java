@@ -4,7 +4,6 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PShape;
 import remixlab.bias.core.Action;
-import remixlab.bias.core.ActionGrabber;
 import remixlab.bias.core.Agent;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.ClickEvent;
@@ -13,6 +12,7 @@ import remixlab.bias.event.DOF2Event;
 import remixlab.bias.event.DOF3Event;
 import remixlab.bias.event.DOF6Event;
 import remixlab.bias.event.KeyboardEvent;
+import remixlab.bias.grabber.ActionGrabber;
 import remixlab.dandelion.core.AbstractScene;
 
 

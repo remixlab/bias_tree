@@ -10,11 +10,9 @@
 
 package remixlab.bias.agent;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import remixlab.bias.agent.profile.Profile;
 import remixlab.bias.core.*;
+import remixlab.bias.grabber.ActionGrabber;
 
 /**
  * An ActionAgent is just an {@link remixlab.bias.core.Agent} holding some {@link remixlab.bias.agent.profile.Profile}
@@ -44,8 +42,6 @@ import remixlab.bias.core.*;
  */
 public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	protected P											profile;
-	protected ActionAgent<?>				parentAgent;
-	protected List<ActionAgent<?>>	brnchs;
 
 	/**
 	 * @param p
@@ -58,7 +54,6 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	public ActionAgent(P p, InputHandler tHandler, String n) {
 		super(tHandler, n);
 		profile = p;
-		brnchs = new ArrayList<ActionAgent<?>>();
 	}
 
 	public ActionAgent(P p, ActionAgent<?> parent, String n) {
@@ -82,43 +77,6 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		profile = p;
 	}
 
-	// Alien grabber and action-agent branches
-
-	public ActionAgent<?> parentAgent() {
-		return parentAgent;
-	}
-
-	public List<ActionAgent<?>> branches() {
-		return brnchs;
-	}
-
-	public void addBranch(ActionAgent<?> a) {
-		if (!brnchs.contains(a)) {
-			this.brnchs.add(a);
-			a.parentAgent = this;
-		}
-	}
-
-	public void removeBranch(ActionAgent<?> a) {
-		if (brnchs.contains(a)) {
-			if( trackedGrabber() == a.trackedGrabber() )
-				trackedGrabber = null;
-			this.brnchs.remove(a);
-			a.parentAgent = null;
-		}
-	}
-
-	/**
-	 * Tells whether or not the {@link #inputGrabber()} is an object implementing the user-defined
-	 * {@link remixlab.bias.core.Action} group the third party application is meant to support. Hence, third-parties
-	 * should override this method defining that condition.
-	 * <p>
-	 * Returns {@code false} by default.
-	 */
-	protected boolean alienGrabber() {
-		return false;
-	}
-
 	@Override
 	public String info() {
 		String description = new String();
@@ -130,7 +88,22 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		}
 		return description;
 	}
+	
+	@Override
+	public boolean addInPool(Grabber grabber) {
+		if (grabber == null)
+			return false;
+		if (!isInPool(grabber)) {
+			//TODO improve
+			//if( (grabber instanceof ActionGrabber<?>) ) {				
+				pool().add(grabber);
+				return true;
+			//}
+		}
+		return false;
+	}
 
+	///*
 	@Override
 	public Grabber updateTrackedGrabber(BogusEvent event) {
 		Grabber g = super.updateTrackedGrabber(event);
@@ -141,7 +114,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 			else if(branches().isEmpty())
 				return g;
 		if (!branches().isEmpty())
-			for (ActionAgent<?> branch : branches()) {				
+			for (Agent branch : branches()) {				
 				g = branch.updateTrackedGrabber(event);
 				if (g != null) {
 					trackedGrabber = g;// the alien grabber!					
@@ -150,6 +123,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 			}
 		return g;
 	}
+	//*/
 
 	/**
 	 * Overriding of the {@link remixlab.bias.core.Agent} main method. The {@link #profile()} is used to parse the event
@@ -173,7 +147,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 			if (branches().isEmpty())
 				enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
 			else {
-				for (ActionAgent<?> branch : branches())
+				for (Agent branch : branches())
 					if (branch.handle(event))
 						return true;
 				return false;
