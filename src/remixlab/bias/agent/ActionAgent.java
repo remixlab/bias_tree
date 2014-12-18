@@ -94,11 +94,10 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		if (grabber == null)
 			return false;
 		if (!isInPool(grabber)) {
-			//TODO improve
-			//if( (grabber instanceof ActionGrabber<?>) ) {				
+			if( (grabber instanceof ActionGrabber<?>) ) {				
 				pool().add(grabber);
 				return true;
-			//}
+			}
 		}
 		return false;
 	}

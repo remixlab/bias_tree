@@ -16,15 +16,7 @@ import remixlab.bias.grabber.ActionGrabber;
 import remixlab.dandelion.core.AbstractScene;
 
 
-public abstract class ActionModelObject<E extends Enum<E>> implements 
-/*
-Model
-// */
-// /*
-ActionModel<E>
-// */
-{
-	
+public abstract class ActionModelObject<E extends Enum<E>> implements ActionModel<E> {	
 	E globalAction;	
 	protected Scene		scene;
 	protected int			id;
@@ -43,10 +35,12 @@ ActionModel<E>
 		id = ++Scene.modelCount;
 	}
 	
+	@Override
 	public E referenceAction() {
 		return globalAction;
 	}
 	
+	@Override
 	public void setReferenceAction(Action<E> a) {
 		globalAction = a.referenceAction();
 	}
