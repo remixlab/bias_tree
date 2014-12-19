@@ -11,8 +11,6 @@
 package remixlab.bias.core;
 
 import remixlab.bias.grabber.ActionGrabber;
-//TODO deal with me
-import remixlab.proscene.ActionModel;
 
 /**
  * [{@link remixlab.bias.core.BogusEvent},{@link remixlab.bias.core.Grabber}] tuples which encapsulate message passing
@@ -48,8 +46,15 @@ public class EventGrabberTuple {
 		event.setAction(a);
 		//TODO test
 		if( g instanceof ActionGrabber ) if(a != null) ((ActionGrabber)g).setReferenceAction(a);
-		if( g instanceof ActionModel ) if(a != null) ((ActionModel)g).setReferenceAction(a);
+		//if( g instanceof ActionModel ) if(a != null) ((ActionModel)g).setReferenceAction(a);
 	}
+	
+	/*
+	public EventGrabberTuple(BogusEvent e, Action<?> a, ActionGrabber<?> g) {
+		this(e, g);
+		if(a != null) g.setReferenceAction(a);
+	}
+	//*/
 
 	/**
 	 * Calls {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}.

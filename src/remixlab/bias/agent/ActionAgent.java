@@ -142,17 +142,67 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		// overkill but feels safer ;)
 		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
 			return false;
+		return validateGrabberTupple(event, inputGrabber());
+	}
+	
+	/*
+	// TODO old. remove me.
+	@Override
+	protected boolean validateGrabberTupple(BogusEvent e, Grabber g) {
 		if (alienGrabber())
 			if (branches().isEmpty())
-				enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+				enqueueEventTuple(new EventGrabberTuple(e, inputGrabber()), false);
 			else {
 				for (Agent branch : branches())
-					if (branch.handle(event))
+					if (branch.handle(e))
 						return true;
 				return false;
 			}
 		else
-			enqueueEventTuple(new EventGrabberTuple(event, profile().handle(event), inputGrabber()));
+			enqueueEventTuple(new EventGrabberTuple(e, profile().handle(e), inputGrabber()));
 		return true;
 	}
+  //*/
+	
+	// /*
+	//new
+	@Override
+	protected boolean validateGrabberTupple(BogusEvent e, Grabber g) {
+		if (alienGrabber()) {
+			//TODO remove this case
+			if (branches().isEmpty()) {
+				enqueueEventTuple(new EventGrabberTuple(e, g), false);
+				return true;
+			}
+			else {
+				for (Agent branch : branches())
+					if (branch.handle(e))
+						return true;
+				return false;
+			}
+		}
+		else {
+			if( (g instanceof ActionGrabber) ) {
+				Action<?> grabberAction = profile().handle(e);				
+				if( grabberAction == null )	return false;
+				if ( ((ActionGrabber<?>)g).referenceAction().getClass() == grabberAction.referenceAction().getClass() ) {
+					enqueueEventTuple(new EventGrabberTuple(e, grabberAction, g));
+					return true;
+				}
+				else {
+				  //re-accommodate really sucks
+					//TODO debug: may simply throw an exception
+					System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name());
+					return false;
+				}
+			}
+			else {
+			//re-accommodate really sucks
+				//TODO debug: may simply throw an exception
+				System.out.println("Grabber cannot be HANDLE in this agent: " + this.name());
+				return false;
+			}
+		}
+	}
+	// */
 }

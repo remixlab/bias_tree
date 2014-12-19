@@ -12,8 +12,8 @@ public class ModelEllipse extends ModelObject {
   }
   
   @Override
-  public void performInteraction(DOF2Event event) {
-    if(ctrlScene.mouseAgent().currentDOF2EventType() != MouseEvent.MOVE) {
+  public void performInteraction(DOF2Event event) {    
+    if(!mouseMove) {
       radiusX += event.dx();
       radiusY += event.dy();
       update();
@@ -43,6 +43,7 @@ ModelEllipse e;
 PGraphics canvas;
 Scene scene;
 boolean showAid = true;
+boolean mouseMove = true;
 
 void setup() {
   size(640, 360, P2D);
@@ -78,6 +79,14 @@ void draw() {
     ctrlCanvas.endDraw();
     image(ctrlCanvas, ctrlScene.originCorner().x(), ctrlScene.originCorner().y());
   }
+}
+
+void mouseMoved() {
+  mouseMove = true;
+}
+
+void mouseDragged() {
+  mouseMove = false;
 }
 
 void handleMouse() {

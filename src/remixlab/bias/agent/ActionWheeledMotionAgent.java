@@ -13,6 +13,7 @@ package remixlab.bias.agent;
 import remixlab.bias.agent.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.bias.grabber.ActionGrabber;
 
 /**
  * A {@link remixlab.bias.agent.ActionMotionAgent} with an extra {@link remixlab.bias.agent.profile.MotionProfile}
@@ -94,6 +95,13 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 		// overkill but feels safer ;)
 		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
 			return false;
+		return validateGrabberTupple(event, inputGrabber());
+	}
+	
+	/*
+	// TODO old. remove me.
+	@Override
+	protected boolean validateGrabberTupple(BogusEvent event, Grabber g) {
 		if (event instanceof ClickEvent)
 			// if (alienGrabber())
 			// enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
@@ -132,4 +140,126 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 		}
 		return true;
 	}
+	// */
+	
+	// /*
+	//new
+	@Override
+	protected boolean validateGrabberTupple(BogusEvent event, Grabber g) {
+		if (event instanceof ClickEvent) {
+			// if (alienGrabber())
+			// enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+			// begin new
+			if (alienGrabber())
+			  //TODO remove this case
+				if (branches().isEmpty()) {
+					enqueueEventTuple(new EventGrabberTuple(event, g), false);
+					return true;
+				}
+				else {
+					for (Agent branch : branches())
+						if (branch.handle(event))
+							return true;
+					return false;
+				}
+			// end
+			else {
+				if( (g instanceof ActionGrabber) ) {
+					Action<?> grabberAction = clickProfile().handle(event);
+					if( grabberAction == null )	return false;
+					if ( ((ActionGrabber<?>)g).referenceAction().getClass() == grabberAction.referenceAction().getClass() ) {
+						enqueueEventTuple(new EventGrabberTuple(event, grabberAction, g));
+						return true;
+					}
+					else {
+					  //re-accommodate really sucks
+						//TODO debug: may simply throw an exception
+						System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name());
+						return false;
+					}
+				}
+				else {
+				//re-accommodate really sucks
+					//TODO debug: may simply throw an exception
+					System.out.println("Grabber cannot be HANDLE in this agent: " + this.name());
+					return false;
+				}
+			}
+		}
+		else if (event instanceof MotionEvent) {
+			((MotionEvent) event).modulate(sens);
+			// if (alienGrabber())
+			// enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+			// begin new
+			if (alienGrabber())
+			  //TODO remove this case
+				if (branches().isEmpty()) {
+					enqueueEventTuple(new EventGrabberTuple(event, g), false);
+					return true;
+				}
+				else {
+					for (Agent branch : branches())
+						if (branch.handle(event))
+							return true;
+					return false;
+				}
+			// end
+			else if (event instanceof DOF1Event) {				
+				if( (g instanceof ActionGrabber) ) {			
+					Action<?> grabberAction = wheelProfile().handle(event);
+					if( grabberAction == null )	return false;
+					
+					//TODO problem found here!
+					((ActionGrabber)g).setReferenceAction(grabberAction);
+					if ( ((ActionGrabber<?>)g).referenceAction() == null) return false;
+					//end
+					
+					if ( ((ActionGrabber<?>)g).referenceAction().getClass() == grabberAction.referenceAction().getClass() ) {
+						System.out.println("wheeled arrived here1!"); //TODO debug
+						enqueueEventTuple(new EventGrabberTuple(event, grabberAction, g));
+						System.out.println("wheeled arrived here2!"); //TODO debug
+						return true;
+					}
+					else {
+					  //re-accommodate really sucks
+						//TODO debug: may simply throw an exception
+						System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name());
+						return false;
+					}
+				}
+				else {
+				//re-accommodate really sucks
+					//TODO debug: may simply throw an exception
+					System.out.println(g.getClass().getName() + " Grabber cannot be HANDLE in this agent: " + this.name());
+					return false;
+				}
+				//enqueueEventTuple(new EventGrabberTuple(event, wheelProfile().handle(event), g));
+			}
+			else {
+				if( (g instanceof ActionGrabber) ) {			
+					Action<?> grabberAction = motionProfile().handle(event);
+					if( grabberAction == null )	return false;
+					if ( ((ActionGrabber<?>)g).referenceAction().getClass() == grabberAction.referenceAction().getClass() ) {						
+						enqueueEventTuple(new EventGrabberTuple(event, grabberAction, g));
+						return true;
+					}
+					else {
+					  //re-accommodate really sucks
+						//TODO debug: may simply throw an exception
+						System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name());
+						return false;
+					}
+				}
+				else {
+				//re-accommodate really sucks
+					//TODO debug: may simply throw an exception
+					System.out.println(g.getClass().getName() + " Grabber cannot be HANDLE in this agent: " + this.name());
+					return false;
+				}
+				//enqueueEventTuple(new EventGrabberTuple(event, motionProfile().handle(event), g));
+			}
+		}
+		return true;
+	}
+	// */
 }

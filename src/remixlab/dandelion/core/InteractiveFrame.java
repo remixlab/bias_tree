@@ -10,8 +10,10 @@
 
 package remixlab.dandelion.core;
 
+import remixlab.dandelion.core.Constants.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.bias.grabber.ActionGrabber;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
@@ -35,7 +37,9 @@ import remixlab.util.*;
  * <b>Note:</b> Once created, the InteractiveFrame is automatically added to the scene
  * {@link remixlab.bias.core.InputHandler#agents()} pool.
  */
-public class InteractiveFrame extends Frame implements Grabber, Copyable, Constants {
+//TODO test
+public class InteractiveFrame extends Frame implements ActionGrabber<DandelionAction>, Copyable, Constants {
+//public class InteractiveFrame extends Frame implements Grabber, Copyable, Constants {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -160,6 +164,21 @@ public class InteractiveFrame extends Frame implements Grabber, Copyable, Consta
 		};
 		scene.registerTimingTask(flyTimerTask);
 	}
+	
+	///*
+	//TODO testing
+	DandelionAction action;
+	
+	@Override
+	public DandelionAction referenceAction() {
+		return action;
+	}
+	
+	@Override
+	public void setReferenceAction(Action<DandelionAction> a) {
+		action = a.referenceAction();
+	}
+	//*/
 
 	/**
 	 * Same as {@code this(scn)} and then calls {@link #setReferenceFrame(Frame)} on {@code referenceFrame}.

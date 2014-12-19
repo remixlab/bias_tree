@@ -272,8 +272,22 @@ public class Agent {
 	public boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
 			return false;
-		enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
-		return true;
+		return validateGrabberTupple(event, inputGrabber());
+		//enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+		//return true;
+	}
+	
+	protected boolean validateGrabberTupple(BogusEvent e, Grabber g) {
+		if( ! (g instanceof ActionGrabber) ) {
+			enqueueEventTuple(new EventGrabberTuple(e, g), false);
+			return true;
+		}
+		else {
+			//re-accommodate really sucks
+			//TODO debug: may simply throw an exception
+			System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name());
+			return false;
+		}
 	}
 
 	/**
@@ -383,10 +397,14 @@ public class Agent {
 		if (grabber == null)
 			return false;
 		if (!isInPool(grabber)) {
-			if( ! (grabber instanceof ActionGrabber) ) {
+			if( ! (grabber instanceof ActionGrabber) ) {				
 				pool().add(grabber);
 				return true;
 			}
+			else {
+			  //TODO debug
+				System.out.println("ActionGrabber cannot be ADDED in this agent: " + this.name());
+			}			
 		}
 		return false;
 	}

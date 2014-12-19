@@ -19,9 +19,6 @@ import remixlab.bias.event.*;
  * Proscene {@link remixlab.dandelion.agent.WheeledMouseAgent}.
  */
 public class MouseAgent extends WheeledMouseAgent {
-	//TODO think shouldn't go
-	protected int	dof2Type;
-
 	public MouseAgent(Scene scn, String n) {
 		super(scn, n);
 		left = PApplet.LEFT;
@@ -54,31 +51,23 @@ public class MouseAgent extends WheeledMouseAgent {
 		return mask;
 	}
 
-	public int currentDOF2EventType() {
-		return dof2Type;
-	}
-
 	/**
 	 * Processing mouseEvent method to be registered at the PApplet's instance.
 	 */
 	public void mouseEvent(processing.event.MouseEvent e) {
-		if (e.getAction() == processing.event.MouseEvent.MOVE) {
-			dof2Type = processing.event.MouseEvent.MOVE;
+		if (e.getAction() == processing.event.MouseEvent.MOVE) {			
 			move(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
 					e.getModifiers(), MotionEvent.NOBUTTON));
 		}
-		if (e.getAction() == processing.event.MouseEvent.PRESS) {
-			dof2Type = processing.event.MouseEvent.PRESS;
+		if (e.getAction() == processing.event.MouseEvent.PRESS) {			
 			press(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(),
 					e.getY() - scene.originCorner().y(), e.getModifiers(), e.getButton()));
 		}
-		if (e.getAction() == processing.event.MouseEvent.DRAG) {
-			dof2Type = processing.event.MouseEvent.DRAG;
+		if (e.getAction() == processing.event.MouseEvent.DRAG) {			
 			drag(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
 					e.getModifiers(), e.getButton()));
 		}
-		if (e.getAction() == processing.event.MouseEvent.RELEASE) {
-			dof2Type = processing.event.MouseEvent.RELEASE;
+		if (e.getAction() == processing.event.MouseEvent.RELEASE) {			
 			release(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY()
 					- scene.originCorner().y(), e.getModifiers(), e.getButton()));
 		}
