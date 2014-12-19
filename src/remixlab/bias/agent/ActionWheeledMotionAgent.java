@@ -153,7 +153,7 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 			if (alienGrabber())
 			  //TODO remove this case
 				if (branches().isEmpty()) {
-					enqueueEventTuple(new EventGrabberTuple(event, g), false);
+					enqueueEventTuple(new EventGrabberTuple(event, g));
 					return true;
 				}
 				else {
@@ -175,7 +175,7 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 			if (alienGrabber())
 			  //TODO remove this case
 				if (branches().isEmpty()) {
-					enqueueEventTuple(new EventGrabberTuple(event, g), false);
+					enqueueEventTuple(new EventGrabberTuple(event, g));
 					return true;
 				}
 				else {

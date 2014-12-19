@@ -196,7 +196,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 			if (alienGrabber()) {
 			  //TODO remove this case
 				if (branches().isEmpty()) {
-					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
 					return true;
 				}
 				else {
@@ -215,7 +215,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 			if (alienGrabber()) {
 			  //TODO remove this case
 				if (branches().isEmpty()) {
-					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
 				}
 				else {
 					for (Agent branch : branches())

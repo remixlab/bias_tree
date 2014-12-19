@@ -228,9 +228,11 @@ public class Agent {
 	 * 
 	 * @see #enqueueEventTuple(EventGrabberTuple, boolean)
 	 */
+	/*
 	public void enqueueEventTuple(EventGrabberTuple eventTuple) {
 		enqueueEventTuple(eventTuple, true);
 	}
+	*/
 
 	/**
 	 * Calls {@link remixlab.bias.core.InputHandler#enqueueEventTuple(EventGrabberTuple)} to enqueue the
@@ -241,7 +243,7 @@ public class Agent {
 	 * 
 	 * @see #handle(BogusEvent)
 	 */
-	public void enqueueEventTuple(EventGrabberTuple eventTuple, boolean checkNullAction) {
+	public void enqueueEventTuple(EventGrabberTuple eventTuple) {
 		if (eventTuple != null && handler.isAgentRegistered(this))
 			//TODO test
 			//if ((checkNullAction && eventTuple.action() != null) || (!checkNullAction))
@@ -280,7 +282,7 @@ public class Agent {
 	
 	protected boolean validateGrabberTupple(BogusEvent e, Grabber g) {
 		if( ! (g instanceof ActionGrabber) ) {
-			enqueueEventTuple(new EventGrabberTuple(e, g), false);
+			enqueueEventTuple(new EventGrabberTuple(e, g));
 			return true;
 		}
 		else {

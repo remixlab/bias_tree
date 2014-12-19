@@ -171,7 +171,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		if (alienGrabber()) {
 			//TODO remove this case
 			if (branches().isEmpty()) {
-				enqueueEventTuple(new EventGrabberTuple(e, g), false);
+				enqueueEventTuple(new EventGrabberTuple(e, g));
 				return true;
 			}
 			else {
@@ -192,7 +192,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		if( (g instanceof ActionGrabber) ) {
 			Action<?> grabberAction = p.handle(e);
 			if( grabberAction == null )	return false;
-			
+						
 		  //TODO problem found here!
 			((ActionGrabber)g).setReferenceAction(grabberAction);
 			
