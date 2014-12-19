@@ -142,12 +142,27 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		// overkill but feels safer ;)
 		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
 			return false;
-		return validateGrabberTupple(event, inputGrabber());
+		if (alienGrabber()) {
+			//TODO remove this case
+			if (branches().isEmpty()) {
+				inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
+				return true;
+			}
+			else {
+				for (Agent branch : branches())
+					if (branch.handle(event))
+						return true;
+				return false;
+			}
+		}
+		else {
+			return validateGrabberTuple(event, inputGrabber(), profile());
+		}
+		//return validateGrabberTupple(event, inputGrabber());
 	}
 	
 	/*
 	// TODO old. remove me.
-	@Override
 	protected boolean validateGrabberTupple(BogusEvent e, Grabber g) {
 		if (alienGrabber())
 			if (branches().isEmpty())
@@ -164,9 +179,8 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	}
   //*/
 	
-	// /*
+	/*
 	//new
-	@Override
 	protected boolean validateGrabberTupple(BogusEvent e, Grabber g) {
 		if (alienGrabber()) {
 			//TODO remove this case
@@ -188,7 +202,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	// */
 	
 	//TODO pending
-	protected boolean proc(BogusEvent e, Grabber g, Profile<?,?> p) {
+	protected boolean validateGrabberTuple(BogusEvent e, Grabber g, Profile<?,?> p) {
 		if( (g instanceof ActionGrabber) ) {
 			Action<?> grabberAction = p.handle(e);
 			if( grabberAction == null )	return false;
@@ -201,7 +215,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 			
 			if ( ((ActionGrabber<?>)g).referenceAction().getClass() == grabberAction.referenceAction().getClass() ) {
 				//ActionEventGrabberTuple<?> tuple = new ActionEventGrabberTuple(e, grabberAction, (ActionGrabber<?>)g);
-				enqueueEventTuple(new EventGrabberTuple(e, grabberAction, g));
+				inputHandler().enqueueEventTuple(new EventGrabberTuple(e, grabberAction, g));
 				return true;
 			}
 			else {

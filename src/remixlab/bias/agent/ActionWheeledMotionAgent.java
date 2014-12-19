@@ -95,7 +95,56 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 		// overkill but feels safer ;)
 		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
 			return false;
-		return validateGrabberTupple(event, inputGrabber());
+		//return validateGrabberTupple(event, inputGrabber());
+		if (event instanceof ClickEvent) {
+			// if (alienGrabber())
+			// enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+			// begin new
+			if (alienGrabber())
+			  //TODO remove this case
+				if (branches().isEmpty()) {
+					inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
+					return true;
+				}
+				else {
+					for (Agent branch : branches())
+						if (branch.handle(event))
+							return true;
+					return false;
+				}
+			// end
+			else {
+				return validateGrabberTuple(event, inputGrabber(), clickProfile());
+			}
+		}
+		else if (event instanceof MotionEvent) {
+			((MotionEvent) event).modulate(sens);
+			// if (alienGrabber())
+			// enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+			// begin new
+			if (alienGrabber())
+			  //TODO remove this case
+				if (branches().isEmpty()) {
+					inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
+					return true;
+				}
+				else {
+					for (Agent branch : branches())
+						if (branch.handle(event))
+							return true;
+					return false;
+				}
+			// end
+			else if (event instanceof DOF1Event) {
+				return validateGrabberTuple(event, inputGrabber(), wheelProfile());
+				//enqueueEventTuple(new EventGrabberTuple(event, wheelProfile().handle(event), g));
+			}
+			else {
+				return validateGrabberTuple(event, inputGrabber(), motionProfile());
+				//enqueueEventTuple(new EventGrabberTuple(event, motionProfile().handle(event), g));
+			}
+		}
+		return true;
 	}
 	
 	/*
@@ -142,9 +191,8 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 	}
 	// */
 	
-	// /*
+  /*
 	//new
-	@Override
 	protected boolean validateGrabberTupple(BogusEvent event, Grabber g) {
 		if (event instanceof ClickEvent) {
 			// if (alienGrabber())

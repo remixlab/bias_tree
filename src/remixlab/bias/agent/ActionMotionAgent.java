@@ -144,7 +144,45 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 		// overkill but feels safer ;)
 		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
 			return false;
-		return validateGrabberTupple(event, inputGrabber());
+		//return validateGrabberTupple(event, inputGrabber());
+		if (event instanceof ClickEvent)
+			if (alienGrabber()) {
+			  //TODO remove this case
+				if (branches().isEmpty()) {
+					inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
+					return true;
+				}
+				else {
+					for (Agent branch : branches())
+						if (branch.handle(event))
+							return true;
+					return false;
+				}
+			}
+			else {
+				return validateGrabberTuple(event, inputGrabber(), clickProfile());
+				//enqueueEventTuple(new EventGrabberTuple(event, clickProfile().handle(event), inputGrabber()));
+			}
+		else if (event instanceof MotionEvent) {
+			((MotionEvent) event).modulate(sens);
+			if (alienGrabber()) {
+			  //TODO remove this case
+				if (branches().isEmpty()) {
+					inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
+				}
+				else {
+					for (Agent branch : branches())
+						if (branch.handle(event))
+							return true;
+					return false;
+				}
+			}
+			else {
+				return validateGrabberTuple(event, inputGrabber(), motionProfile());
+				//enqueueEventTuple(new EventGrabberTuple(event, motionProfile().handle(event), inputGrabber()));
+			}
+		}
+		return true;
 	}
 	
 	/*
@@ -190,13 +228,12 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 	// */
 	
 	// /*
-	@Override
 	protected boolean validateGrabberTupple(BogusEvent event, Grabber g) {
 		if (event instanceof ClickEvent)
 			if (alienGrabber()) {
 			  //TODO remove this case
 				if (branches().isEmpty()) {
-					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
+					inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
 					return true;
 				}
 				else {
@@ -207,7 +244,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 				}
 			}
 			else {
-				return proc(event, g, clickProfile());
+				return validateGrabberTuple(event, g, clickProfile());
 				//enqueueEventTuple(new EventGrabberTuple(event, clickProfile().handle(event), inputGrabber()));
 			}
 		else if (event instanceof MotionEvent) {
@@ -215,7 +252,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 			if (alienGrabber()) {
 			  //TODO remove this case
 				if (branches().isEmpty()) {
-					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
+					inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
 				}
 				else {
 					for (Agent branch : branches())
@@ -225,7 +262,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 				}
 			}
 			else {
-				return proc(event, g, motionProfile());
+				return validateGrabberTuple(event, g, motionProfile());
 				//enqueueEventTuple(new EventGrabberTuple(event, motionProfile().handle(event), inputGrabber()));
 			}
 		}

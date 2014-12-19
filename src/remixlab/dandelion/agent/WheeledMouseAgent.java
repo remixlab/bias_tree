@@ -158,7 +158,7 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 					scene.setZoomVisualHint(false);
 					pressEvent = e.get();
 					if (needHandle) {
-						enqueueEventTuple(new EventGrabberTuple(spEvent, DOF2Action.ZOOM_ON_REGION, inputGrabber()));
+						inputHandler().enqueueEventTuple(new EventGrabberTuple(spEvent, DOF2Action.ZOOM_ON_REGION, inputGrabber()));
 						needHandle = false;
 						return;
 					}
@@ -252,7 +252,7 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 			// but the problem is that depending on the order the button and the modifiers are released,
 			// different actions maybe triggered, so we go for sure ;) :
 			lastEvent.setPreviousEvent(pressEvent);
-			enqueueEventTuple(new EventGrabberTuple(lastEvent, DOF2Action.ZOOM_ON_REGION, inputGrabber()));
+			inputHandler().enqueueEventTuple(new EventGrabberTuple(lastEvent, DOF2Action.ZOOM_ON_REGION, inputGrabber()));
 			scene.setZoomVisualHint(false);
 		}
 		if (scene.rotateVisualHint())

@@ -243,12 +243,14 @@ public class Agent {
 	 * 
 	 * @see #handle(BogusEvent)
 	 */
+	/*
 	public void enqueueEventTuple(EventGrabberTuple eventTuple) {
 		if (eventTuple != null && handler.isAgentRegistered(this))
 			//TODO test
 			//if ((checkNullAction && eventTuple.action() != null) || (!checkNullAction))
 				inputHandler().enqueueEventTuple(eventTuple);
 	}
+	*/
 
 	/**
 	 * Returns a detailed description of this Agent as a String.
@@ -275,14 +277,8 @@ public class Agent {
 	public boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
 			return false;
-		return validateGrabberTupple(event, inputGrabber());
-		//enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
-		//return true;
-	}
-	
-	protected boolean validateGrabberTupple(BogusEvent e, Grabber g) {
-		if( ! (g instanceof ActionGrabber) ) {
-			enqueueEventTuple(new EventGrabberTuple(e, g));
+		if( ! (inputGrabber() instanceof ActionGrabber) ) {
+			inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
 			return true;
 		}
 		else {
@@ -291,6 +287,9 @@ public class Agent {
 			System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name());
 			return false;
 		}
+		//return validateGrabberTupple(event, inputGrabber());
+		//enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+		//return true;
 	}
 
 	/**
