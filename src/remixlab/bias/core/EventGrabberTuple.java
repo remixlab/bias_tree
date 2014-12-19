@@ -32,15 +32,8 @@ public class EventGrabberTuple {
 		event = e;
 		grabber = g;
 	}
-
-	/**
-	 * @param e
-	 *          {@link remixlab.bias.core.BogusEvent}
-	 * @param a
-	 *          {@link remixlab.bias.core.Action}
-	 * @param g
-	 *          {@link remixlab.bias.core.Grabber}
-	 */
+	
+	//TODO trail here:
 	public EventGrabberTuple(BogusEvent e, Action<?> a, Grabber g) {
 		this(e, g);
 		event.setAction(a);
@@ -48,13 +41,6 @@ public class EventGrabberTuple {
 		if( g instanceof ActionGrabber ) if(a != null) ((ActionGrabber)g).setReferenceAction(a);
 		//if( g instanceof ActionModel ) if(a != null) ((ActionModel)g).setReferenceAction(a);
 	}
-	
-	/*
-	public EventGrabberTuple(BogusEvent e, Action<?> a, ActionGrabber<?> g) {
-		this(e, g);
-		if(a != null) g.setReferenceAction(a);
-	}
-	//*/
 
 	/**
 	 * Calls {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}.
@@ -81,12 +67,5 @@ public class EventGrabberTuple {
 	 */
 	public Grabber grabber() {
 		return grabber;
-	}
-
-	/**
-	 * Returns the events action.
-	 */
-	public Action<?> action() {
-		return event.action();
 	}
 }

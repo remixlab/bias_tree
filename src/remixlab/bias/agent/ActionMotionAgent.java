@@ -144,6 +144,13 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 		// overkill but feels safer ;)
 		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
 			return false;
+		return validateGrabberTupple(event, inputGrabber());
+	}
+	
+	/*
+	// TODO old. remove me.
+	@Override
+	protected boolean validateGrabberTupple(BogusEvent event, Grabber g) {
 		if (event instanceof ClickEvent)
 			// if (alienGrabber())
 			// enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
@@ -180,4 +187,49 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 		}
 		return true;
 	}
+	// */
+	
+	// /*
+	@Override
+	protected boolean validateGrabberTupple(BogusEvent event, Grabber g) {
+		if (event instanceof ClickEvent)
+			if (alienGrabber()) {
+			  //TODO remove this case
+				if (branches().isEmpty()) {
+					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+					return true;
+				}
+				else {
+					for (Agent branch : branches())
+						if (branch.handle(event))
+							return true;
+					return false;
+				}
+			}
+			else {
+				return proc(event, g, clickProfile());
+				//enqueueEventTuple(new EventGrabberTuple(event, clickProfile().handle(event), inputGrabber()));
+			}
+		else if (event instanceof MotionEvent) {
+			((MotionEvent) event).modulate(sens);
+			if (alienGrabber()) {
+			  //TODO remove this case
+				if (branches().isEmpty()) {
+					enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
+				}
+				else {
+					for (Agent branch : branches())
+						if (branch.handle(event))
+							return true;
+					return false;
+				}
+			}
+			else {
+				return proc(event, g, motionProfile());
+				//enqueueEventTuple(new EventGrabberTuple(event, motionProfile().handle(event), inputGrabber()));
+			}
+		}
+		return true;
+	}
+	// */
 }

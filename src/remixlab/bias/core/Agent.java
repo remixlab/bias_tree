@@ -243,7 +243,8 @@ public class Agent {
 	 */
 	public void enqueueEventTuple(EventGrabberTuple eventTuple, boolean checkNullAction) {
 		if (eventTuple != null && handler.isAgentRegistered(this))
-			if ((checkNullAction && eventTuple.action() != null) || (!checkNullAction))
+			//TODO test
+			//if ((checkNullAction && eventTuple.action() != null) || (!checkNullAction))
 				inputHandler().enqueueEventTuple(eventTuple);
 	}
 

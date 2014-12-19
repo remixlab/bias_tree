@@ -12,7 +12,7 @@ package remixlab.bias.agent;
 
 import remixlab.bias.agent.profile.Profile;
 import remixlab.bias.core.*;
-import remixlab.bias.grabber.ActionGrabber;
+import remixlab.bias.grabber.*;
 
 /**
  * An ActionAgent is just an {@link remixlab.bias.core.Agent} holding some {@link remixlab.bias.agent.profile.Profile}
@@ -182,27 +182,40 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 			}
 		}
 		else {
-			if( (g instanceof ActionGrabber) ) {
-				Action<?> grabberAction = profile().handle(e);				
-				if( grabberAction == null )	return false;
-				if ( ((ActionGrabber<?>)g).referenceAction().getClass() == grabberAction.referenceAction().getClass() ) {
-					enqueueEventTuple(new EventGrabberTuple(e, grabberAction, g));
-					return true;
-				}
-				else {
-				  //re-accommodate really sucks
-					//TODO debug: may simply throw an exception
-					System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name());
-					return false;
-				}
-			}
-			else {
-			//re-accommodate really sucks
-				//TODO debug: may simply throw an exception
-				System.out.println("Grabber cannot be HANDLE in this agent: " + this.name());
-				return false;
-			}
+			return proc(e, g, profile());
 		}
 	}
 	// */
+	
+	//TODO pending
+	protected boolean proc(BogusEvent e, Grabber g, Profile<?,?> p) {
+		if( (g instanceof ActionGrabber) ) {
+			Action<?> grabberAction = p.handle(e);
+			if( grabberAction == null )	return false;
+			
+		  //TODO problem found here!
+			((ActionGrabber)g).setReferenceAction(grabberAction);
+			
+			if ( ((ActionGrabber<?>)g).referenceAction() == null) return false;
+			//end
+			
+			if ( ((ActionGrabber<?>)g).referenceAction().getClass() == grabberAction.referenceAction().getClass() ) {
+				//ActionEventGrabberTuple<?> tuple = new ActionEventGrabberTuple(e, grabberAction, (ActionGrabber<?>)g);
+				enqueueEventTuple(new EventGrabberTuple(e, grabberAction, g));
+				return true;
+			}
+			else {
+			  //re-accommodate really sucks
+				//TODO debug: may simply throw an exception
+				System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name());
+				return false;
+			}
+		}
+		else {
+		  //re-accommodate really sucks
+			//TODO debug: may simply throw an exception
+			System.out.println("Grabber cannot be HANDLE in this agent: " + this.name());
+			return false;
+		}
+	}
 }
