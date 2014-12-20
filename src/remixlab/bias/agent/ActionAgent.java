@@ -142,6 +142,8 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		// overkill but feels safer ;)
 		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
 			return false;
+		//TODO testing
+		//System.out.println("Invoking alienGrabber()");
 		if (alienGrabber()) {
 			//TODO remove this case
 			if (branches().isEmpty()) {

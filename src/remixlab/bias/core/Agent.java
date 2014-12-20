@@ -74,6 +74,7 @@ public class Agent {
 	 * Returns {@code false} by default.
 	 */
 	protected boolean alienGrabber() {
+		//System.out.println("alienGrabber() invoked");
 		//TODO pending
 		//return isInPool(inputGrabber());
 		return false;
@@ -346,6 +347,8 @@ public class Agent {
 	 * to insert it * back.
 	 */
 	public boolean isInPool(Grabber grabber) {
+		if(grabber == null)
+			return false;
 		return pool().contains(grabber);
 	}
 
@@ -385,7 +388,10 @@ public class Agent {
 	 * {@link #inputGrabber()}
 	 */
 	public void setDefaultGrabber(Grabber grabber) {
-		defaultGrabber = grabber;
+		if( this.isInPool(grabber) )
+			defaultGrabber = grabber;
+		else
+			System.out.println(grabber.getClass().getName() + " should first be added to the " + name() + "'s pool. Use addInPool().");
 	}
 
 	/**
