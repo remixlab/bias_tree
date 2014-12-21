@@ -96,7 +96,7 @@ public class Agent {
 
 	public void addBranch(Agent a) {
 		if (!brnchs.contains(a)) {
-			this.brnchs.add(a);
+			this.brnchs.add(0, a);
 			a.parentAgent = this;
 		}
 	}
