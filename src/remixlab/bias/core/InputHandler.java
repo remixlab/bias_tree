@@ -91,11 +91,7 @@ public class InputHandler {
 	 * @see #agentsArray()
 	 */
 	public List<Agent> agents() {
-		List<Agent> list = new ArrayList<Agent>();
-		for (Agent agent : agents.values())
-			list.add(agent);
-
-		return list;
+		return new ArrayList<Agent>(agents.values());
 	}
 
 	/**
