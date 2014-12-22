@@ -13,6 +13,7 @@ package remixlab.bias.agent;
 import remixlab.bias.agent.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.bias.grabber.ActionGrabber;
 
 /**
  * A {@link remixlab.bias.agent.ActionMotionAgent} with an extra {@link remixlab.bias.agent.profile.MotionProfile}
@@ -113,7 +114,14 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 				}
 			// end
 			else {
-				return validateGrabberTuple(event, inputGrabber(), clickProfile());
+				if(inputGrabber() instanceof ActionGrabber<?>)
+				  return validateGrabberTuple(event, (ActionGrabber<?>)inputGrabber(), clickProfile());
+				else {
+				  //re-accommodate really sucks
+					//TODO debug: may simply throw an exception
+					System.out.println("Grabber cannot be HANDLE in this agent: " + this.name());
+					return false;
+				}				
 			}
 		}
 		else if (event instanceof MotionEvent) {
@@ -135,11 +143,25 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 				}
 			// end
 			else if (event instanceof DOF1Event) {
-				return validateGrabberTuple(event, inputGrabber(), wheelProfile());
+				if(inputGrabber() instanceof ActionGrabber<?>)
+				  return validateGrabberTuple(event, (ActionGrabber<?>)inputGrabber(), wheelProfile());
+				else {
+				  //re-accommodate really sucks
+					//TODO debug: may simply throw an exception
+					System.out.println("Grabber cannot be HANDLE in this agent: " + this.name());
+					return false;
+				}				
 				//enqueueEventTuple(new EventGrabberTuple(event, wheelProfile().handle(event), g));
 			}
 			else {
-				return validateGrabberTuple(event, inputGrabber(), motionProfile());
+				if(inputGrabber() instanceof ActionGrabber<?>)
+				  return validateGrabberTuple(event, (ActionGrabber<?>)inputGrabber(), motionProfile());
+				else {
+				  //re-accommodate really sucks
+					//TODO debug: may simply throw an exception
+					System.out.println("Grabber cannot be HANDLE in this agent: " + this.name());
+					return false;
+				}
 				//enqueueEventTuple(new EventGrabberTuple(event, motionProfile().handle(event), g));
 			}
 		}

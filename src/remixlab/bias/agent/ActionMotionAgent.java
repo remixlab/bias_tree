@@ -13,6 +13,7 @@ package remixlab.bias.agent;
 import remixlab.bias.agent.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.bias.grabber.*;
 
 /**
  * An {@link remixlab.bias.agent.ActionAgent} with an extra {@link remixlab.bias.agent.profile.ClickProfile} defining
@@ -160,7 +161,14 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 				}
 			}
 			else {
-				return validateGrabberTuple(event, inputGrabber(), clickProfile());
+				if(inputGrabber() instanceof ActionGrabber<?>)
+				  return validateGrabberTuple(event, (ActionGrabber<?>)inputGrabber(), clickProfile());
+				else {
+				  //re-accommodate really sucks
+					//TODO debug: may simply throw an exception
+					System.out.println("Grabber cannot be HANDLE in this agent: " + this.name());
+					return false;
+				}
 				//enqueueEventTuple(new EventGrabberTuple(event, clickProfile().handle(event), inputGrabber()));
 			}
 		else if (event instanceof MotionEvent) {
@@ -178,7 +186,14 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 				}
 			}
 			else {
-				return validateGrabberTuple(event, inputGrabber(), motionProfile());
+				if(inputGrabber() instanceof ActionGrabber<?>)
+				  return validateGrabberTuple(event, (ActionGrabber<?>)inputGrabber(), motionProfile());
+				else {
+				  //re-accommodate really sucks
+					//TODO debug: may simply throw an exception
+					System.out.println("Grabber cannot be HANDLE in this agent: " + this.name());
+					return false;
+				}
 				//enqueueEventTuple(new EventGrabberTuple(event, motionProfile().handle(event), inputGrabber()));
 			}
 		}
@@ -227,7 +242,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 	}
 	// */
 	
-	// /*
+	/*
 	protected boolean validateGrabberTupple(BogusEvent event, Grabber g) {
 		if (event instanceof ClickEvent)
 			if (alienGrabber()) {

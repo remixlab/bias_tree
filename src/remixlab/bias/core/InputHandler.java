@@ -163,6 +163,7 @@ public class InputHandler {
 	 * @see #handle()
 	 */
 	public boolean enqueueEventTuple(EventGrabberTuple eventTuple) {
+		//TODO check tuple consistency here once it's done in the ActionAgent before
 		if (!eventTupleQueue.contains(eventTuple))
 			if (!eventTuple.event().isNull()) {
 				eventTupleQueue.add(eventTuple);

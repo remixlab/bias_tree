@@ -35,16 +35,13 @@ public class EventGrabberTuple {
 	
 	//TODO test this after implementing the actions
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public EventGrabberTuple(BogusEvent e, Action<?> a, Grabber g) {
+	public EventGrabberTuple(BogusEvent e, Action<?> a, ActionGrabber g) {
 		this(e, g);
-	  //TODO discard
-		event.setAction(a);		
-		if( g instanceof ActionGrabber<?> )
-			if(a != null) {
-				((ActionGrabber)g).setReferenceAction(a);
-				if( ((ActionGrabber<?>)g).referenceAction().getClass() != a.referenceAction().getClass() )
-					((ActionGrabber)g).setReferenceAction(null);
-			}
+		if(a != null) {
+			g.setReferenceAction(a);
+			if( g.referenceAction().getClass() != a.referenceAction().getClass() )
+				g.setReferenceAction(null);
+		}
 	}
 
 	/**

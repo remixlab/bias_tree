@@ -10,6 +10,10 @@
 
 package remixlab.dandelion.core;
 
+import remixlab.dandelion.core.Constants.*;
+import remixlab.bias.core.*;
+import remixlab.bias.event.*;
+import remixlab.bias.grabber.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
@@ -42,7 +46,7 @@ import remixlab.util.*;
  * {@link remixlab.dandelion.core.AbstractScene#inputHandler()} {@link remixlab.bias.core.InputHandler#agents()} pool
  * upon creation.
  */
-public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
+public class InteractiveEyeFrame extends Frame implements ActionGrabber<EyeAction>, Copyable, Constants {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -125,6 +129,91 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 	public Eye eye() {
 		return eye;
 	}
+	
+  //grabber implementation
+	
+	protected EyeAction globalAction;
+	
+	@Override
+	public EyeAction referenceAction() {
+		return globalAction;
+	}
+	
+	@Override
+	public void setReferenceAction(Action<EyeAction> a) {
+		globalAction = a.referenceAction();
+	}
+	
+	@Override
+	public boolean grabsInput(Agent agent) {
+		return agent.inputGrabber() == this;
+	}
+	
+	@Override
+	public boolean checkIfGrabsInput(BogusEvent event) {
+		if (event instanceof ClickEvent)
+			return checkIfGrabsInput((ClickEvent) event);
+		if (event instanceof DOF1Event)
+			return checkIfGrabsInput((DOF1Event) event);
+		if (event instanceof DOF2Event)
+			return checkIfGrabsInput((DOF2Event) event);
+		if (event instanceof DOF3Event)
+			return checkIfGrabsInput((DOF3Event) event);
+		if (event instanceof DOF6Event)
+			return checkIfGrabsInput((DOF6Event) event);
+		return false;
+	}
+	
+	//TODO improve?
+	public boolean checkIfGrabsInput(ClickEvent event) {
+		return true;
+	}
+
+	public boolean checkIfGrabsInput(DOF2Event event) {
+		return true;
+	}
+
+	public boolean checkIfGrabsInput(DOF3Event event) {
+		return true;
+	}
+
+	public boolean checkIfGrabsInput(DOF6Event event) {
+		return true;
+	}
+	
+	@Override
+	public void performInteraction(BogusEvent event) {		
+		if (event instanceof ClickEvent)
+			performInteraction((ClickEvent) event);
+		if (event instanceof DOF1Event)
+			performInteraction((DOF1Event) event);
+		if (event instanceof DOF2Event)
+			performInteraction((DOF2Event) event);
+		if (event instanceof DOF3Event)
+			performInteraction((DOF3Event) event);
+		if (event instanceof DOF6Event)
+			performInteraction((DOF6Event) event);
+	}
+
+	public void performInteraction(ClickEvent event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
+	}
+
+	public void performInteraction(DOF1Event event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
+	}
+
+	public void performInteraction(DOF2Event event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
+	}
+
+	public void performInteraction(DOF3Event event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
+	}
+
+	public void performInteraction(DOF6Event event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
+	}
 
 	// 2. Local timer
 
@@ -187,307 +276,6 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 	}
 
 	@Override
-	protected void execAction2D(DandelionAction a) {
-		if (a == null)
-			return;
-		Window window = (Window) eye;
-		Vec trans;
-		float deltaX, deltaY;
-		Rotation rot;
-		switch (a) {
-		// better handled these by default (see below)
-		// case CUSTOM: case ROLL: super.execAction2D(a); break;
-		case ROTATE:
-		case SCREEN_ROTATE:
-			rot = computeRot(window.projectedCoordinatesOf(anchor()));
-			if (e2.isRelative()) {
-				setSpinningRotation(rot);
-				if (Util.nonZero(dampingFriction()))
-					startSpinning(e2);
-				else
-					spin();
-			} else
-				// absolute needs testing
-				rotate(rot);
-			break;
-		case MOVE_FORWARD:
-			rotate(computeRot(scene.window().projectedCoordinatesOf(position())));
-			flyDisp.set(-flySpeed(), 0.0f, 0.0f);
-			translate(flyDisp);
-			setTossingDirection(flyDisp);
-			startTossing(e2);
-			break;
-		case MOVE_BACKWARD:
-			rotate(computeRot(scene.window().projectedCoordinatesOf(position())));
-			flyDisp.set(flySpeed(), 0.0f, 0.0f);
-			translate(flyDisp);
-			setTossingDirection(flyDisp);
-			startTossing(e2);
-			break;
-		case SCREEN_TRANSLATE:
-			trans = new Vec();
-			int dir = originalDirection(e2);
-			deltaX = (e2.isRelative()) ? e2.dx() : e2.x();
-			if (e2.isRelative())
-				deltaY = scene.isRightHanded() ? e2.dy() : -e2.dy();
-			else
-				deltaY = scene.isRightHanded() ? e2.y() : -e2.y();
-			if (dir == 1)
-				trans.set(-deltaX, 0.0f, 0.0f);
-			else if (dir == -1)
-				trans.set(0.0f, deltaY, 0.0f);
-
-			float[] wh = window.getBoundaryWidthHeight();
-			trans.vec[0] *= 2.0f * wh[0] / window.screenWidth();
-			trans.vec[1] *= 2.0f * wh[1] / window.screenHeight();
-			translate(inverseTransformOf(Vec.multiply(trans, translationSensitivity())));
-			// not the same as (because invTransfOf takes into account scaling):
-			// translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
-			break;
-		case TRANSLATE:
-			deltaX = (e2.isRelative()) ? e2.dx() : e2.x();
-			if (e2.isRelative())
-				deltaY = scene.isRightHanded() ? -e2.dy() : e2.dy();
-			else
-				deltaY = scene.isRightHanded() ? -e2.y() : e2.y();
-			translateFromEye(new Vec(-deltaX, -deltaY, 0.0f));
-			break;
-		case SCALE:
-			float delta = delta1();
-			float s = 1 + Math.abs(delta) / (float) -scene.height();
-			scale(delta >= 0 ? s : 1 / s);
-			break;
-		case ZOOM_ON_REGION:
-			if (e2.isAbsolute()) {
-				AbstractScene.showEventVariationWarning(a);
-				break;
-			}
-			int w = (int) Math.abs(e2.dx());
-			int tlX = (int) e2.prevX() < (int) e2.x() ? (int) e2.prevX() : (int) e2.x();
-			int h = (int) Math.abs(e2.dy());
-			int tlY = (int) e2.prevY() < (int) e2.y() ? (int) e2.prevY() : (int) e2.y();
-			// viewWindow.fitScreenRegion( new Rectangle (tlX, tlY, w, h) );
-			window.interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
-			break;
-		case CENTER_FRAME:
-			window.centerScene();
-			break;
-		case ALIGN_FRAME:
-			window.frame().alignWithFrame(null, true);
-			break;
-		case ZOOM_ON_PIXEL:
-			window.interpolateToZoomOnPixel(new Point(cEvent.x(), cEvent.y()));
-			pupVec = window.unprojectedCoordinatesOf(new Vec(cEvent.x(), cEvent.y(), 0.5f));
-			pupFlag = true;
-			timerFx.runOnce(1000);
-			break;
-		case ANCHOR_FROM_PIXEL:
-			if (window.setAnchorFromPixel(new Point(cEvent.x(), cEvent.y()))) {
-				anchorFlag = true;
-				timerFx.runOnce(1000);
-			}
-			break;
-		default:
-			super.execAction2D(a);
-			break;
-		}
-	}
-
-	@Override
-	protected void execAction3D(DandelionAction a) {
-		if (a == null)
-			return;
-		Camera camera = (Camera) eye;
-		Vec trans, pup;
-		Quat q = new Quat();
-		float delta;
-		float wheelSensitivityCoef = 8E-4f;
-		switch (a) {
-		// better handled these by default (see below)
-		// case CUSTOM: case DRIVE: case LOOK_AROUND: case MOVE_BACKWARD: case MOVE_FORWARD: case ROLL:
-		// super.execAction3D(a); break;
-		case ROTATE:
-			if (e2.isAbsolute()) {
-				AbstractScene.showEventVariationWarning(a);
-				break;
-			}
-			trans = camera.projectedCoordinatesOf(anchor());
-			setSpinningRotation(deformedBallQuaternion(e2, trans.vec[0], trans.vec[1], camera));
-			if (Util.nonZero(dampingFriction()))
-				startSpinning(e2);
-			else
-				spin();
-			break;
-		case ROTATE_CAD:
-			if (e2.isAbsolute()) {
-				AbstractScene.showEventVariationWarning(a);
-				break;
-			}
-			// Multiply by 2.0 to get on average about the same speed as with the deformed ball
-			float dx = -2.0f * rotationSensitivity() * e2.dx() / scene.camera().screenWidth();
-			float dy = 2.0f * rotationSensitivity() * e2.dy() / scene.camera().screenHeight();
-			if (cadRotationIsReversed)
-				dx = -dx;
-			if (scene.isRightHanded())
-				dy = -dy;
-			Vec verticalAxis = transformOf(sceneUpVector());
-			setSpinningRotation(Quat.multiply(new Quat(verticalAxis, dx), new Quat(new Vec(1.0f, 0.0f, 0.0f), dy)));
-			if (Util.nonZero(dampingFriction()))
-				startSpinning(e2);
-			else
-				spin();
-			break;
-		case HINGE: // aka google earth navigation
-			// 1. Relate the eye reference frame:
-			Vec pos = position();
-			Quat o = (Quat) orientation();
-			Frame oldRef = referenceFrame();
-			Frame rFrame = new Frame(scene);
-			rFrame.setPosition(anchor());
-			rFrame.setZAxis(Vec.subtract(pos, anchor()));
-			rFrame.setXAxis(xAxis());
-			setReferenceFrame(rFrame);
-			setPosition(pos);
-			setOrientation(o);
-			// 2. Translate the refFrame along its Z-axis:
-			float deltaZ = e6.isRelative() ? e6.dz() : e6.z();
-			trans = new Vec(0, scene.isRightHanded() ? -deltaZ : deltaZ, 0);
-			scale2Fit(trans);
-			float pmag = trans.magnitude();
-			translate(0, 0, (deltaZ > 0) ? pmag : -pmag);
-			// 3. Rotate the refFrame around its X-axis -> translate forward-backward the frame on the sphere surface
-			float deltaY = e6.isRelative() ? e6.dy() : e6.y();
-			rFrame.rotate(new Quat(new Vec(1, 0, 0), scene.isRightHanded() ? deltaY : -deltaY));
-			// 4. Rotate the refFrame around its Y-axis -> translate left-right the frame on the sphere surface
-			float deltaX = e6.isRelative() ? e6.dx() : e6.x();
-			rFrame.rotate(new Quat(new Vec(0, 1, 0), deltaX));
-			// 5. Rotate the refFrame around its Z-axis -> look around
-			float rZ = e6.isRelative() ? e6.drz() : e6.rz();
-			rFrame.rotate(new Quat(new Vec(0, 0, 1), scene.isRightHanded() ? -rZ : rZ));
-			// 6. Rotate the frame around x-axis -> move head up and down :P
-			float rX = e6.isRelative() ? e6.drx() : e6.rx();
-			q.fromAxisAngle(new Vec(1, 0, 0), scene.isRightHanded() ? rX : -rX);
-			rotate(q);
-			// 7. Unrelate the frame and restore state:
-			pos = position();
-			o = (Quat) orientation();
-			setReferenceFrame(oldRef);
-			setPosition(pos);
-			setOrientation(o);
-			break;
-		case SCREEN_ROTATE:
-			if (e2.isAbsolute()) {
-				AbstractScene.showEventVariationWarning(a);
-				break;
-			}
-			trans = camera.projectedCoordinatesOf(anchor());
-			float angle = (float) Math.atan2(e2.y() - trans.vec[1], e2.x() - trans.vec[0])
-					- (float) Math.atan2(e2.prevY() - trans.vec[1], e2.prevX() - trans.vec[0]);
-			if (scene.isLeftHanded())
-				angle = -angle;
-			Rotation rot = new Quat(new Vec(0.0f, 0.0f, 1.0f), angle);
-			setSpinningRotation(rot);
-			if (Util.nonZero(dampingFriction()))
-				startSpinning(e2);
-			else
-				spin();
-			updateSceneUpVector();
-			break;
-		case SCREEN_TRANSLATE:
-			trans = new Vec();
-			int dir = originalDirection(e2);
-			if (dir == 1)
-				if (e2.isAbsolute())
-					trans.set(-e2.x(), 0.0f, 0.0f);
-				else
-					trans.set(-e2.dx(), 0.0f, 0.0f);
-			else if (dir == -1)
-				if (e2.isAbsolute())
-					trans.set(0.0f, scene.isRightHanded() ? e2.y() : -e2.y(), 0.0f);
-				else
-					trans.set(0.0f, scene.isRightHanded() ? e2.dy() : -e2.dy(), 0.0f);
-			scale2Fit(trans);
-			trans = Vec.multiply(trans, translationSensitivity());
-			translate(orientation().rotate(trans));
-			break;
-		case TRANSLATE:
-			if (e2.isRelative())
-				trans = new Vec(-e2.dx(), scene.isRightHanded() ? e2.dy() : -e2.dy(), 0.0f);
-			else
-				trans = new Vec(-e2.x(), scene.isRightHanded() ? e2.y() : -e2.y(), 0.0f);
-			scale2Fit(trans);
-			translate(orientation().rotate(Vec.multiply(trans, translationSensitivity())));
-			break;
-		case SCALE:
-			delta = delta1();
-			float s = 1 + Math.abs(delta) / (float) -scene.height();
-			scale(delta >= 0 ? s : 1 / s);
-			break;
-		case ZOOM:
-			float coef = Math.max(Math.abs((coordinatesOf(camera.anchor())).vec[2] * magnitude()),
-					0.2f * camera.sceneRadius());
-			if (e1.action() != null) // its a wheel wheel :P
-				delta = coef * e1.x() * -wheelSensitivity() * wheelSensitivityCoef;
-			// TODO should absolute be divided by camera.screenHeight()?
-			else if (e1.isAbsolute())
-				delta = -coef * e1.x() / camera.screenHeight();
-			else
-				delta = -coef * e1.dx() / camera.screenHeight();
-			trans = new Vec(0.0f, 0.0f, delta);
-			translate(orientation().rotate(trans));
-			break;
-		case ZOOM_ON_ANCHOR:
-			if (e1.action() != null) // its a wheel wheel :P
-				delta = e1.x() * -wheelSensitivity() * wheelSensitivityCoef;
-			// TODO should absolute be divided by camera.screenHeight()?
-			else if (e1.isAbsolute())
-				delta = -e1.x() / camera.screenHeight();
-			else
-				delta = -e1.dx() / camera.screenHeight();
-			trans = Vec.subtract(position(), scene.camera().anchor());
-			if (trans.magnitude() > 0.02f * scene.radius() || delta > 0.0f)
-				translate(Vec.multiply(trans, delta));
-			break;
-		case ZOOM_ON_REGION:
-			if (e2.isAbsolute()) {
-				AbstractScene.showEventVariationWarning(a);
-				break;
-			}
-			int w = (int) Math.abs(e2.dx());
-			int tlX = (int) e2.prevX() < (int) e2.x() ? (int) e2.prevX() : (int) e2.x();
-			int h = (int) Math.abs(e2.dy());
-			int tlY = (int) e2.prevY() < (int) e2.y() ? (int) e2.prevY() : (int) e2.y();
-			// camera.fitScreenRegion( new Rectangle (tlX, tlY, w, h) );
-			camera.interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
-			break;
-		case CENTER_FRAME:
-			camera.centerScene();
-			break;
-		case ALIGN_FRAME:
-			camera.frame().alignWithFrame(null, true);
-			break;
-		case ZOOM_ON_PIXEL:
-			pup = camera.pointUnderPixel(new Point(cEvent.x(), cEvent.y()));
-			if (pup != null) {
-				camera.interpolateToZoomOnTarget(pup);
-				pupVec = pup;
-				pupFlag = true;
-				timerFx.runOnce(1000);
-			}
-			break;
-		case ANCHOR_FROM_PIXEL:
-			if (camera.setAnchorFromPixel(new Point(cEvent.x(), cEvent.y()))) {
-				anchorFlag = true;
-				timerFx.runOnce(1000);
-			}
-			break;
-		default:
-			super.execAction3D(a);
-			break;
-		}
-	}
-
-	@Override
 	protected void scale2Fit(Vec trans) {
 		// Scale to fit the screen mouse displacement
 		switch (scene.camera().type()) {
@@ -505,7 +293,7 @@ public class InteractiveEyeFrame extends InteractiveFrame implements Copyable {
 	}
 
 	@Override
-	protected Rot computeRot(Vec trans) {
+	protected Rot computeRot(DOF2Event e2, Vec trans) {
 		Rot rot;
 		if (e2.isRelative()) {
 			Point prevPos = new Point(e2.prevX(), e2.prevY());

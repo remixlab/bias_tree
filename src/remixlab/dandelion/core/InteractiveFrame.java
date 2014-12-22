@@ -37,9 +37,7 @@ import remixlab.util.*;
  * <b>Note:</b> Once created, the InteractiveFrame is automatically added to the scene
  * {@link remixlab.bias.core.InputHandler#agents()} pool.
  */
-//TODO test
-public class InteractiveFrame extends Frame implements ActionGrabber<DandelionAction>, Copyable, Constants {
-//public class InteractiveFrame extends Frame implements Grabber, Copyable, Constants {
+public class InteractiveFrame extends Frame implements ActionGrabber<FrameAction>, Copyable, Constants {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -165,21 +163,6 @@ public class InteractiveFrame extends Frame implements ActionGrabber<DandelionAc
 		scene.registerTimingTask(flyTimerTask);
 	}
 	
-	///*
-	//TODO testing
-	DandelionAction action;
-	
-	@Override
-	public DandelionAction referenceAction() {
-		return action;
-	}
-	
-	@Override
-	public void setReferenceAction(Action<DandelionAction> a) {
-		action = a.referenceAction();
-	}
-	//*/
-
 	/**
 	 * Same as {@code this(scn)} and then calls {@link #setReferenceFrame(Frame)} on {@code referenceFrame}.
 	 */
@@ -276,6 +259,92 @@ public class InteractiveFrame extends Frame implements ActionGrabber<DandelionAc
 		};
 		scene.registerTimingTask(flyTimerTask);
 	}
+	
+  //grabber implementation
+	
+	protected FrameAction globalAction;
+	
+	@Override
+	public FrameAction referenceAction() {
+		return globalAction;
+	}
+	
+	@Override
+	public void setReferenceAction(Action<FrameAction> a) {
+		globalAction = a.referenceAction();
+	}
+	
+	@Override
+	public boolean grabsInput(Agent agent) {
+		return agent.inputGrabber() == this;
+	}
+	
+	@Override
+	public boolean checkIfGrabsInput(BogusEvent event) {
+		if (event instanceof ClickEvent)
+			return checkIfGrabsInput((ClickEvent) event);
+		if (event instanceof DOF1Event)
+			return checkIfGrabsInput((DOF1Event) event);
+		if (event instanceof DOF2Event)
+			return checkIfGrabsInput((DOF2Event) event);
+		if (event instanceof DOF3Event)
+			return checkIfGrabsInput((DOF3Event) event);
+		if (event instanceof DOF6Event)
+			return checkIfGrabsInput((DOF6Event) event);
+		return false;
+	}
+	
+	public boolean checkIfGrabsInput(ClickEvent event) {
+		return checkIfGrabsInput(new DOF2Event(event.x(), event.y()));
+	}
+
+	public boolean checkIfGrabsInput(DOF2Event event) {
+		Vec proj = scene.eye().projectedCoordinatesOf(position());
+		float halfThreshold = grabsInputThreshold() / 2;
+		return ((Math.abs(event.x() - proj.vec[0]) < halfThreshold) && (Math.abs(event.y() - proj.vec[1]) < halfThreshold));
+	}
+
+	public boolean checkIfGrabsInput(DOF3Event event) {
+		return checkIfGrabsInput(event.dof2Event());
+	}
+
+	public boolean checkIfGrabsInput(DOF6Event event) {
+		return checkIfGrabsInput(event.dof3Event().dof2Event());
+	}
+	
+	@Override
+	public void performInteraction(BogusEvent event) {		
+		if (event instanceof ClickEvent)
+			performInteraction((ClickEvent) event);
+		if (event instanceof DOF1Event)
+			performInteraction((DOF1Event) event);
+		if (event instanceof DOF2Event)
+			performInteraction((DOF2Event) event);
+		if (event instanceof DOF3Event)
+			performInteraction((DOF3Event) event);
+		if (event instanceof DOF6Event)
+			performInteraction((DOF6Event) event);
+	}
+
+	public void performInteraction(ClickEvent event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
+	}
+
+	public void performInteraction(DOF1Event event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
+	}
+
+	public void performInteraction(DOF2Event event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
+	}
+
+	public void performInteraction(DOF3Event event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
+	}
+
+	public void performInteraction(DOF6Event event) {
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
+	}
 
 	/**
 	 * Returns {@code true} if the InteractiveFrame forms part of an Eye path and {@code false} otherwise.
@@ -340,43 +409,6 @@ public class InteractiveFrame extends Frame implements ActionGrabber<DandelionAc
 			adpThreshold = adaptive;
 			grabsInputThreshold = threshold;
 		}
-	}
-
-	/**
-	 * Default implementation of the Grabber main method which uses the {@link #grabsInputThreshold()}.
-	 * 
-	 * @see #setGrabsInputThreshold(float, boolean)
-	 */
-	@Override
-	public boolean checkIfGrabsInput(BogusEvent event) {
-		DOF2Event event2 = null;
-
-		if (((event instanceof KeyboardEvent)) || (event instanceof DOF1Event))
-			throw new RuntimeException("Grabbing an interactive frame is not possible with a "
-					+ ((event instanceof KeyboardEvent) ? "Keyboard" : "DOF1") + "Event");
-
-		if (event instanceof DOF2Event)
-			event2 = ((DOF2Event) event).get();
-		else if (event instanceof DOF3Event)
-			event2 = ((DOF3Event) event).dof2Event();
-		else if (event instanceof DOF6Event)
-			event2 = ((DOF6Event) event).dof3Event().dof2Event();
-		else if (event instanceof ClickEvent)
-			event2 = new DOF2Event(((ClickEvent) event).x(), ((ClickEvent) event).y());
-
-		Vec proj = scene.eye().projectedCoordinatesOf(position());
-		float halfThreshold = grabsInputThreshold() / 2;
-		return ((Math.abs(event2.x() - proj.vec[0]) < halfThreshold) && (Math.abs(event2.y() - proj.vec[1]) < halfThreshold));
-	}
-
-	/**
-	 * Returns {@code true} when this frame grabs the Scene's {@code agent}.
-	 * 
-	 * @see #checkIfGrabsInput(BogusEvent)
-	 */
-	@Override
-	public boolean grabsInput(Agent agent) {
-		return agent.inputGrabber() == this;
 	}
 
 	/**
@@ -586,7 +618,7 @@ public class InteractiveFrame extends Frame implements ActionGrabber<DandelionAc
 	 * Returns {@code true} when the InteractiveFrame is being manipulated with an agent.
 	 */
 	public boolean isInInteraction() {
-		return currentAction != null;
+		return globalAction != null;
 	}
 
 	/**
@@ -865,451 +897,7 @@ public class InteractiveFrame extends Frame implements ActionGrabber<DandelionAc
 		q.setZ(trans.z());
 		rotate(q);
 	}
-
-	@Override
-	public void performInteraction(BogusEvent e) {
-		// TODO following line prevents spinning when frameRate is low (as P5 default)
-		// if( isSpinning() && Util.nonZero(dampingFriction()) ) stopSpinning();
-		stopTossing();
-		if (e == null)
-			return;
-		// same as no action
-		if (e.action() == null)
-			return;
-		if (e instanceof KeyboardEvent) {
-			if (e.action() == KeyboardAction.CUSTOM) {
-				kEvent = (KeyboardEvent) e;
-				if (scene.is2D())
-					execAction2D((DandelionAction) e.action().referenceAction());
-				else
-					execAction3D((DandelionAction) e.action().referenceAction());
-			}
-			else
-				scene.performInteraction(e);
-			return;
-		}
-		// new
-		if (e instanceof ClickEvent) {
-			cEvent = (ClickEvent) e;
-			if (cEvent.action() == ClickAction.CENTER_FRAME ||
-					cEvent.action() == ClickAction.ALIGN_FRAME ||
-					cEvent.action() == ClickAction.ZOOM_ON_PIXEL ||
-					cEvent.action() == ClickAction.ANCHOR_FROM_PIXEL ||
-					cEvent.action() == ClickAction.CUSTOM) {
-				if (scene.is2D())
-					if (((DandelionAction) cEvent.action().referenceAction()).is2D())
-						execAction2D(((DandelionAction) e.action().referenceAction()));
-					else
-						AbstractScene.showDepthWarning((DandelionAction) cEvent.action().referenceAction());
-				else if (scene.is3D())
-					execAction3D(((DandelionAction) e.action().referenceAction()));
-			}
-			else
-				scene.performInteraction(e);
-			return;
-		}
-		// end
-		// then it's a MotionEvent
-		MotionEvent motionEvent;
-		if (e instanceof MotionEvent)
-			motionEvent = (MotionEvent) e;
-		else
-			return;
-		if (scene.is2D())
-			if ((((DandelionAction) motionEvent.action().referenceAction()).is2D()))
-				execAction2D(reduceEvent(motionEvent));
-			else
-				AbstractScene.showDepthWarning((DandelionAction) motionEvent.action().referenceAction());
-		else if (scene.is3D())
-			execAction3D(reduceEvent(motionEvent));
-	}
-
-	// MotionEvent currentEvent;
-	KeyboardEvent		kEvent;
-	ClickEvent			cEvent;
-	DOF1Event				e1;
-	DOF2Event				e2;
-	DOF3Event				e3;
-	DOF6Event				e6;
-	DandelionAction	currentAction;
-
-	/**
-	 * Internal use. Utility routine for reducing the bogus motion event into a dandelion action.
-	 */
-	protected DandelionAction reduceEvent(MotionEvent e) {
-		currentAction = (DandelionAction) ((BogusEvent) e).action().referenceAction();
-		if (currentAction == null)
-			return null;
-
-		int dofs = currentAction.dofs();
-		boolean fromY = currentAction == DandelionAction.ROTATE_X || currentAction == DandelionAction.TRANSLATE_Y
-				|| currentAction == DandelionAction.TRANSLATE_Z || currentAction == DandelionAction.SCALE
-				|| currentAction == DandelionAction.ZOOM;
-
-		switch (dofs) {
-		case 1:
-			if (e instanceof DOF1Event)
-				e1 = (DOF1Event) e.get();
-			else if (e instanceof DOF2Event)
-				e1 = fromY ? ((DOF2Event) e).dof1Event(false) : ((DOF2Event) e).dof1Event();
-			else if (e instanceof DOF3Event)
-				e1 = fromY ? ((DOF3Event) e).dof2Event().dof1Event(false) : ((DOF3Event) e).dof2Event().dof1Event();
-			else if (e instanceof DOF6Event)
-				e1 = fromY ? ((DOF6Event) e).dof3Event().dof2Event().dof1Event(false) : ((DOF6Event) e).dof3Event().dof2Event()
-						.dof1Event();
-			break;
-		case 2:
-			if (e instanceof DOF2Event)
-				e2 = ((DOF2Event) e).get();
-			else if (e instanceof DOF3Event)
-				e2 = ((DOF3Event) e).dof2Event();
-			else if (e instanceof DOF6Event)
-				e2 = ((DOF6Event) e).dof3Event().dof2Event();
-			break;
-		case 3:
-			if (e instanceof DOF3Event)
-				e3 = ((DOF3Event) e).get();
-			else if (e instanceof DOF6Event)
-				e3 = ((DOF6Event) e).dof3Event();
-			if (scene.is2D())
-				e2 = e3.dof2Event();
-			break;
-		case 6:
-			if (e instanceof DOF6Event)
-				e6 = ((DOF6Event) e).get();
-			break;
-		default:
-			break;
-		}
-		return currentAction;
-	}
-
-	public void performInteraction(KeyboardEvent event) {
-		AbstractScene
-				.showMissingImplementationWarning("performInteraction(KeyboardEvent event)", this.getClass().getName());
-	}
-
-	public void performInteraction(ClickEvent event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
-	}
-
-	public void performInteraction(DOF1Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
-	}
-
-	public void performInteraction(DOF2Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
-	}
-
-	public void performInteraction(DOF3Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
-	}
-
-	public void performInteraction(DOF6Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
-	}
-
-	/**
-	 * Internal use. Main driver implementing all 2D dandelion motion actions.
-	 */
-	protected void execAction2D(DandelionAction a) {
-		if (a == null)
-			return;
-		Vec trans;
-		float deltaX, deltaY, delta;
-		Rotation rot;
-		switch (a) {
-		case CUSTOM_KEYBOARD_ACTION:
-			performInteraction(kEvent);
-			break;
-		case CUSTOM_CLICK_ACTION:
-			performInteraction(cEvent);
-			break;
-		case CUSTOM_DOF1_ACTION:
-			performInteraction(e1);
-			break;
-		case CUSTOM_DOF2_ACTION:
-			performInteraction(e2);
-			break;
-		case CUSTOM_DOF3_ACTION:
-			performInteraction(e3);
-			break;
-		case CUSTOM_DOF6_ACTION:
-			performInteraction(e6);
-			break;
-		case TRANSLATE_X:
-			translateFromEye(new Vec(delta1(), 0), (e1.action() != null) ? 1 : translationSensitivity());
-			break;
-		case TRANSLATE_Y:
-			translateFromEye(new Vec(0, scene.isRightHanded() ? -delta1() : delta1()), (e1.action() != null) ? 1
-					: translationSensitivity());
-			break;
-		case ROTATE_Z:
-			rot = new Rot(scene.isRightHanded() ? computeAngle() : -computeAngle());
-			rotate(rot);
-			setSpinningRotation(rot);
-			break;
-		case ROTATE:
-		case SCREEN_ROTATE:
-			rot = computeRot(scene.window().projectedCoordinatesOf(position()));
-			if (e2.isRelative()) {
-				setSpinningRotation(rot);
-				if (Util.nonZero(dampingFriction()))
-					startSpinning(e2);
-				else
-					spin();
-			} else
-				// absolute needs testing
-				rotate(rot);
-			break;
-		case MOVE_FORWARD:
-			rotate(computeRot(scene.window().projectedCoordinatesOf(position())));
-			flyDisp.set(flySpeed(), 0.0f, 0.0f);
-			trans = localInverseTransformOf(flyDisp);
-			setTossingDirection(trans);
-			startTossing(e2);
-			break;
-		case MOVE_BACKWARD:
-			rotate(computeRot(scene.window().projectedCoordinatesOf(position())));
-			flyDisp.set(-flySpeed(), 0.0f, 0.0f);
-			trans = localInverseTransformOf(flyDisp);
-			translate(trans);
-			setTossingDirection(trans);
-			startTossing(e2);
-			break;
-		case SCREEN_TRANSLATE:
-			deltaX = (e2.isRelative()) ? e2.dx() : e2.x();
-			if (e2.isRelative())
-				deltaY = scene.isRightHanded() ? e2.dy() : -e2.dy();
-			else
-				deltaY = scene.isRightHanded() ? e2.y() : -e2.y();
-			int dir = originalDirection(e2);
-			if (dir == 1)
-				translateFromEye(new Vec(deltaX, 0.0f, 0.0f));
-			else if (dir == -1)
-				translateFromEye(new Vec(0.0f, -deltaY, 0.0f));
-			break;
-		case TRANSLATE:
-			deltaX = (e2.isRelative()) ? e2.dx() : e2.x();
-			if (e2.isRelative())
-				deltaY = scene.isRightHanded() ? e2.dy() : -e2.dy();
-			else
-				deltaY = scene.isRightHanded() ? e2.y() : -e2.y();
-			translateFromEye(new Vec(deltaX, -deltaY, 0.0f));
-			break;
-		case SCALE:
-			delta = delta1();
-			float s = 1 + Math.abs(delta) / (float) scene.height();
-			scale(delta >= 0 ? s : 1 / s);
-			break;
-		case CENTER_FRAME:
-			projectOnLine(scene.window().position(), scene.window().viewDirection());
-			break;
-		case ALIGN_FRAME:
-			alignWithFrame(scene.window().frame());
-			break;
-		default:
-			AbstractScene.showOnlyEyeWarning(a);
-			break;
-		}
-	}
-
-	/**
-	 * Internal use. Main driver implementing all 3D dandelion motion actions.
-	 */
-	protected void execAction3D(DandelionAction a) {
-		if (a == null)
-			return;
-		Quat rot;
-		Vec trans;
-		float delta;
-		float angle;
-		switch (a) {
-		case CUSTOM_KEYBOARD_ACTION:
-			performInteraction(kEvent);
-			break;
-		case CUSTOM_CLICK_ACTION:
-			performInteraction(cEvent);
-			break;
-		case CUSTOM_DOF1_ACTION:
-			performInteraction(e1);
-			break;
-		case CUSTOM_DOF2_ACTION:
-			performInteraction(e2);
-			break;
-		case CUSTOM_DOF3_ACTION:
-			performInteraction(e3);
-			break;
-		case CUSTOM_DOF6_ACTION:
-			performInteraction(e6);
-			break;
-		case TRANSLATE_X:
-			trans = new Vec(delta1(), 0.0f, 0.0f);
-			scale2Fit(trans);
-			translateFromEye(trans, (e1.action() != null) ? 1 : translationSensitivity());
-			break;
-		case TRANSLATE_Y:
-			trans = new Vec(0.0f, scene.isRightHanded() ? -delta1() : delta1(), 0.0f);
-			scale2Fit(trans);
-			translateFromEye(trans, (e1.action() != null) ? 1 : translationSensitivity());
-			break;
-		case TRANSLATE_Z:
-			trans = new Vec(0.0f, 0.0f, delta1());
-			scale2Fit(trans);
-			translateFromEye(trans, (e1.action() != null) ? 1 : translationSensitivity());
-			break;
-		case ROTATE_X:
-			rotateAroundEyeAxes(computeAngle(), 0, 0);
-			break;
-		case ROTATE_Y:
-			rotateAroundEyeAxes(0, -computeAngle(), 0);
-			break;
-		case ROTATE_Z:
-			rotateAroundEyeAxes(0, 0, -computeAngle());
-			break;
-		case DRIVE:
-			rotate(turnQuaternion(e2.dof1Event(), scene.camera()));
-			flyDisp.set(0.0f, 0.0f, flySpeed());
-			trans = rotation().rotate(flyDisp);
-			setTossingDirection(trans);
-			startTossing(e2);
-			break;
-		case LOOK_AROUND:
-			rotate(rollPitchQuaternion(e2, scene.camera()));
-			break;
-		case MOVE_BACKWARD:
-			rotate(rollPitchQuaternion(e2, scene.camera()));
-			flyDisp.set(0.0f, 0.0f, flySpeed());
-			trans = rotation().rotate(flyDisp);
-			setTossingDirection(trans);
-			startTossing(e2);
-			break;
-		case MOVE_FORWARD:
-			rotate(rollPitchQuaternion(e2, scene.camera()));
-			flyDisp.set(0.0f, 0.0f, -flySpeed());
-			trans = rotation().rotate(flyDisp);
-			setTossingDirection(trans);
-			startTossing(e2);
-			break;
-		case ROTATE:
-			if (e2.isAbsolute()) {
-				AbstractScene.showEventVariationWarning(a);
-				break;
-			}
-			trans = scene.camera().projectedCoordinatesOf(position());
-			rot = deformedBallQuaternion(e2, trans.x(), trans.y(), scene.camera());
-			trans = rot.axis();
-			trans = scene.camera().frame().orientation().rotate(trans);
-			trans = transformOf(trans);
-			rot = new Quat(trans, -rot.angle());
-			setSpinningRotation(rot);
-			if (Util.nonZero(dampingFriction()))
-				startSpinning(e2);
-			else
-				spin();
-			break;
-		case ROTATE_XYZ:
-			// trans = scene.camera().projectedCoordinatesOf(position());
-			if (e3.isAbsolute())
-				rotateAroundEyeAxes(e3.x(), -e3.y(), -e3.z());
-			else
-				rotateAroundEyeAxes(e3.dx(), -e3.dy(), -e3.dz());
-			break;
-		case SCREEN_ROTATE:
-			if (e2.isAbsolute()) {
-				AbstractScene.showEventVariationWarning(a);
-				break;
-			}
-			trans = scene.camera().projectedCoordinatesOf(position());
-			float prev_angle = (float) Math.atan2(e2.prevY() - trans.vec[1], e2.prevX() - trans.vec[0]);
-			angle = (float) Math.atan2(e2.y() - trans.vec[1], e2.x() - trans.vec[0]);
-			Vec axis = transformOf(scene.camera().frame().orientation().rotate(new Vec(0.0f, 0.0f, -1.0f)));
-			if (scene.isRightHanded())
-				rot = new Quat(axis, angle - prev_angle);
-			else
-				rot = new Quat(axis, prev_angle - angle);
-			setSpinningRotation(rot);
-			if (Util.nonZero(dampingFriction()))
-				startSpinning(e2);
-			else
-				spin();
-			break;
-		case SCREEN_TRANSLATE:
-			int dir = originalDirection(e2);
-			trans = new Vec();
-			if (dir == 1)
-				if (e2.isAbsolute())
-					trans.set(e2.x(), 0.0f, 0.0f);
-				else
-					trans.set(e2.dx(), 0.0f, 0.0f);
-			else if (dir == -1)
-				if (e2.isAbsolute())
-					trans.set(0.0f, scene.isRightHanded() ? -e2.y() : e2.y(), 0.0f);
-				else
-					trans.set(0.0f, scene.isRightHanded() ? -e2.dy() : e2.dy(), 0.0f);
-			scale2Fit(trans);
-			translateFromEye(trans);
-			break;
-		case TRANSLATE:
-			if (e2.isRelative())
-				trans = new Vec(e2.dx(), scene.isRightHanded() ? -e2.dy() : e2.dy(), 0.0f);
-			else
-				trans = new Vec(e2.x(), scene.isRightHanded() ? -e2.y() : e2.y(), 0.0f);
-			scale2Fit(trans);
-			translateFromEye(trans);
-			break;
-		case TRANSLATE_XYZ:
-			if (e3.isRelative())
-				trans = new Vec(e3.dx(), scene.isRightHanded() ? -e3.dy() : e3.dy(), e3.dz());
-			else
-				trans = new Vec(e3.x(), scene.isRightHanded() ? -e3.y() : e3.y(), e3.z());
-			scale2Fit(trans);
-			translateFromEye(trans);
-			break;
-		case TRANSLATE_XYZ_ROTATE_XYZ:
-			// A. Translate the iFrame
-			if (e6.isRelative())
-				trans = new Vec(e6.dx(), scene.isRightHanded() ? -e6.dy() : e6.dy(), e6.dz());
-			else
-				trans = new Vec(e6.x(), scene.isRightHanded() ? -e6.y() : e6.y(), e6.z());
-			scale2Fit(trans);
-			translateFromEye(trans);
-			// B. Rotate the iFrame
-			if (e6.isAbsolute())
-				rotateAroundEyeAxes(e6.roll(), -e6.pitch(), -e6.yaw());
-			else
-				rotateAroundEyeAxes(e6.drx(), -e6.dry(), -e6.drz());
-			break;
-		case SCALE:
-			delta = delta1();
-			float s = 1 + Math.abs(delta) / (float) scene.height();
-			scale(delta >= 0 ? s : 1 / s);
-			break;
-		case ZOOM:
-			// its a wheel wheel :P
-			if (e1.action() != null) {
-				delta = e1.x() * wheelSensitivity();
-				translateFromEye(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
-						/ scene.camera().screenHeight()), 1);
-			}
-			else {
-				delta = e1.isAbsolute() ? e1.x() : e1.dx();
-				translateFromEye(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
-						/ scene.camera().screenHeight()));
-			}
-			break;
-		case CENTER_FRAME:
-			projectOnLine(scene.camera().position(), scene.camera().viewDirection());
-			break;
-		case ALIGN_FRAME:
-			alignWithFrame(scene.camera().frame());
-			break;
-		default:
-			AbstractScene.showOnlyEyeWarning(a);
-			break;
-		}
-	}
-
+	
 	// micro-actions procedures
 
 	protected void scale2Fit(Vec trans) {
@@ -1329,9 +917,9 @@ public class InteractiveFrame extends Frame implements ActionGrabber<DandelionAc
 		}
 	}
 
-	protected float delta1() {
+	protected float delta1(DOF1Event e1, boolean wheel) {
 		float delta;
-		if (e1.action() != null) // its a wheel wheel :P
+		if (wheel) // its a wheel wheel :P
 			delta = e1.x() * wheelSensitivity();
 		else if (e1.isAbsolute())
 			delta = e1.x();
@@ -1340,7 +928,7 @@ public class InteractiveFrame extends Frame implements ActionGrabber<DandelionAc
 		return delta;
 	}
 
-	protected Rot computeRot(Vec trans) {
+	protected Rot computeRot(DOF2Event e2, Vec trans) {
 		Rot rot;
 		if (e2.isRelative()) {
 			Point prevPos = new Point(e2.prevX(), e2.prevY());
@@ -1355,9 +943,9 @@ public class InteractiveFrame extends Frame implements ActionGrabber<DandelionAc
 		return rot;
 	}
 
-	protected float computeAngle() {
+	protected float computeAngle(DOF1Event e1, boolean wheel) {
 		float angle;
-		if (e1.action() != null) // its a wheel wheel :P
+		if (wheel) // its a wheel wheel :P
 			angle = (float) Math.PI * e1.x() * wheelSensitivity() / scene.eye().screenWidth();
 		else if (e1.isAbsolute())
 			angle = (float) Math.PI * e1.x() / scene.eye().screenWidth();

@@ -14,7 +14,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import remixlab.bias.core.*;
+import remixlab.dandelion.core.Constants.*;
 import remixlab.bias.event.*;
+import remixlab.bias.grabber.ActionGrabber;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.constraint.*;
 import remixlab.dandelion.geom.*;
@@ -40,7 +42,7 @@ import remixlab.fpstiming.*;
  * {@link remixlab.dandelion.core.MatrixStackHelper} or through a third party matrix stack (like it's done with
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>
  */
-public abstract class AbstractScene extends AnimatorObject implements Constants, Grabber {
+public abstract class AbstractScene extends AnimatorObject implements ActionGrabber<SceneAction>, Constants {
 	protected boolean												dottedGrid;
 
 	// O B J E C T S
@@ -130,6 +132,151 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		setRightHanded();
 		setVisualHints(AXES | GRID);
 		upperLeftCorner = new Point(0, 0);
+	}
+
+	// grabber implementation
+
+	protected SceneAction	globalAction;
+
+	@Override
+	public SceneAction referenceAction() {
+		return globalAction;
+	}
+
+	@Override
+	public void setReferenceAction(Action<SceneAction> a) {
+		globalAction = a.referenceAction();
+	}
+
+	@Override
+	public boolean grabsInput(Agent agent) {
+		return agent.inputGrabber() == this;
+	}
+
+	@Override
+	public void performInteraction(BogusEvent event) {
+		if (event instanceof KeyboardEvent)
+			performInteraction((KeyboardEvent) event);
+	}
+
+	public void performInteraction(KeyboardEvent event) {
+		Vec trans;
+		switch (referenceAction()) {
+		case ADD_KEYFRAME_TO_PATH_1:
+			eye().addKeyFrameToPath(1);
+			break;
+		case ADD_KEYFRAME_TO_PATH_2:
+			eye().addKeyFrameToPath(2);
+			break;
+		case ADD_KEYFRAME_TO_PATH_3:
+			eye().addKeyFrameToPath(3);
+			break;
+		case CUSTOM_KEYBOARD_ACTION:
+			break;
+		case DECREASE_FLY_SPEED:
+			eye().setFlySpeed(eye().flySpeed() / 1.2f);
+			break;
+		case DECREASE_ROTATION_SENSITIVITY:
+			eye().setRotationSensitivity(eye().rotationSensitivity() / 1.2f);
+			break;
+		case DELETE_PATH_1:
+			eye().deletePath(1);
+			break;
+		case DELETE_PATH_2:
+			eye().deletePath(2);
+			break;
+		case DELETE_PATH_3:
+			eye().deletePath(3);
+			break;
+		case DISPLAY_INFO:
+			displayInfo();
+			break;
+		case INCREASE_FLY_SPEED:
+			eye().setFlySpeed(eye().flySpeed() * 1.2f);
+			break;
+		case INCREASE_ROTATION_SENSITIVITY:
+			eye().setRotationSensitivity(eye().rotationSensitivity() * 1.2f);
+			break;
+		case INTERPOLATE_TO_FIT:
+			eye().interpolateToFitScene();
+			break;
+		case MOVE_DOWN:
+			trans = eye().frame()
+					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? -10.0f : 10.0f * eye().flySpeed(), 0.0f));
+			if (this.is3D())
+				trans.divide(camera().frame().magnitude());
+			eye().frame().translate(trans);
+			break;
+		case MOVE_LEFT:
+			trans = new Vec(-10.0f * eye().flySpeed(), 0.0f, 0.0f);
+			if (this.is3D())
+				trans.divide(camera().frame().magnitude());
+			eye().frame().translate(eye().frame().inverseTransformOf(trans));
+			break;
+		case MOVE_RIGHT:
+			trans = new Vec(10.0f * eye().flySpeed(), 0.0f, 0.0f);
+			if (this.is3D())
+				trans.divide(camera().frame().magnitude());
+			eye().frame().translate(eye().frame().inverseTransformOf(trans));
+			break;
+		case MOVE_UP:
+			trans = eye().frame()
+					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? 10.0f : -10.0f * eye().flySpeed(), 0.0f));
+			if (this.is3D())
+				trans.divide(camera().frame().magnitude());
+			eye().frame().translate(trans);
+			break;
+		case PLAY_PATH_1:
+			eye().playPath(1);
+			break;
+		case PLAY_PATH_2:
+			eye().playPath(2);
+			break;
+		case PLAY_PATH_3:
+			eye().playPath(3);
+			break;
+		case RESET_ANCHOR:
+			eye().setAnchor(new Vec(0, 0, 0));
+			// looks horrible, but works ;)
+			eye().frame().anchorFlag = true;
+			eye().frame().timerFx.runOnce(1000);
+			break;
+		case SHOW_ALL:
+			showAll();
+			break;
+		case TOGGLE_ANIMATION:
+			toggleAnimation();
+			break;
+		case TOGGLE_AXES_VISUAL_HINT:
+			toggleAxesVisualHint();
+			break;
+		case TOGGLE_CAMERA_TYPE:
+			toggleCameraType();
+			break;
+		case TOGGLE_GRID_VISUAL_HINT:
+			toggleGridVisualHint();
+			break;
+		case TOGGLE_PATHS_VISUAL_HINT:
+			togglePathsVisualHint();
+			break;
+		case TOGGLE_PICKING_VISUAL_HINT:
+			togglePickingVisualhint();
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public boolean checkIfGrabsInput(BogusEvent event) {
+		if (event instanceof KeyboardEvent)
+			return checkIfGrabsInput((KeyboardEvent) event);
+		return false;
+	}
+
+	public boolean checkIfGrabsInput(KeyboardEvent event) {
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
+		return false;
 	}
 
 	/**
@@ -327,24 +474,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Implementation of the {@link remixlab.bias.core.Grabber#grabsInput(Agent)} method. Internal use. You should not use
-	 * this.
-	 */
-	@Override
-	public boolean grabsInput(Agent agent) {
-		return agent.inputGrabber() == this;
-	}
-
-	/**
-	 * Implementation of the {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} method. Internal use. You
-	 * should not use this.
-	 */
-	@Override
-	public boolean checkIfGrabsInput(BogusEvent event) {
-		return (event instanceof KeyboardEvent || event instanceof ClickEvent);
-	}
-
-	/**
 	 * Convenience function that simply returns {@code inputHandler().info()}.
 	 * 
 	 * @see #displayInfo(boolean)
@@ -371,143 +500,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public void displayInfo(boolean onConsole) {
 		if (onConsole)
 			System.out.println(info());
-		else
-			AbstractScene.showMissingImplementationWarning("displayInfo", getClass().getName());
-	}
-
-	/**
-	 * Implementation of the {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)} method. Internal use. You
-	 * should not use this.
-	 */
-	@Override
-	public void performInteraction(BogusEvent event) {
-		if (!(event instanceof ClickEvent) && !(event instanceof KeyboardEvent))
-			return;
-
-		Action<DandelionAction> a = null;
-
-		if (event instanceof ClickEvent)
-			a = (ClickAction) ((ClickEvent) event).action();
-		if (event instanceof KeyboardEvent)
-			a = (KeyboardAction) ((KeyboardEvent) event).action();
-		if (a == null)
-			return;
-		DandelionAction id = a.referenceAction();
-
-		if (!id.is2D() && this.is2D())
-			return;
-
-		execAction(id);
-	}
-
-	/**
-	 * Internal method implementing the dandelion action. Called by {@link #performInteraction(BogusEvent)}.
-	 */
-	protected void execAction(DandelionAction id) {
-		Vec trans;
-		switch (id) {
-		case ADD_KEYFRAME_TO_PATH_1:
-			eye().addKeyFrameToPath(1);
-			break;
-		case DELETE_PATH_1:
-			eye().deletePath(1);
-			break;
-		case PLAY_PATH_1:
-			eye().playPath(1);
-			break;
-		case ADD_KEYFRAME_TO_PATH_2:
-			eye().addKeyFrameToPath(2);
-			break;
-		case DELETE_PATH_2:
-			eye().deletePath(2);
-			break;
-		case PLAY_PATH_2:
-			eye().playPath(2);
-			break;
-		case ADD_KEYFRAME_TO_PATH_3:
-			eye().addKeyFrameToPath(3);
-			break;
-		case DELETE_PATH_3:
-			eye().deletePath(3);
-			break;
-		case PLAY_PATH_3:
-			eye().playPath(3);
-			break;
-		case TOGGLE_AXES_VISUAL_HINT:
-			toggleAxesVisualHint();
-			break;
-		case TOGGLE_GRID_VISUAL_HINT:
-			toggleGridVisualHint();
-			break;
-		case TOGGLE_CAMERA_TYPE:
-			toggleCameraType();
-			break;
-		case TOGGLE_ANIMATION:
-			toggleAnimation();
-			break;
-		case DISPLAY_INFO:
-			displayInfo();
-			break;
-		case TOGGLE_PATHS_VISUAL_HINT:
-			togglePathsVisualHint();
-			break;
-		case TOGGLE_PICKING_VISUAL_HINT:
-			togglePickingVisualhint();
-			break;
-		case SHOW_ALL:
-			showAll();
-			break;
-		case MOVE_LEFT:
-			trans = new Vec(-10.0f * eye().flySpeed(), 0.0f, 0.0f);
-			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
-			eye().frame().translate(eye().frame().inverseTransformOf(trans));
-			break;
-		case MOVE_RIGHT:
-			trans = new Vec(10.0f * eye().flySpeed(), 0.0f, 0.0f);
-			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
-			eye().frame().translate(eye().frame().inverseTransformOf(trans));
-			break;
-		case MOVE_UP:
-			trans = eye().frame()
-					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? 10.0f : -10.0f * eye().flySpeed(), 0.0f));
-			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
-			eye().frame().translate(trans);
-			break;
-		case MOVE_DOWN:
-			trans = eye().frame()
-					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? -10.0f : 10.0f * eye().flySpeed(), 0.0f));
-			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
-			eye().frame().translate(trans);
-			break;
-		case INCREASE_ROTATION_SENSITIVITY:
-			eye().setRotationSensitivity(eye().rotationSensitivity() * 1.2f);
-			break;
-		case DECREASE_ROTATION_SENSITIVITY:
-			eye().setRotationSensitivity(eye().rotationSensitivity() / 1.2f);
-			break;
-		case INCREASE_FLY_SPEED:
-			eye().setFlySpeed(eye().flySpeed() * 1.2f);
-			break;
-		case DECREASE_FLY_SPEED:
-			eye().setFlySpeed(eye().flySpeed() / 1.2f);
-			break;
-		case INTERPOLATE_TO_FIT:
-			eye().interpolateToFitScene();
-			break;
-		case RESET_ANCHOR:
-			eye().setAnchor(new Vec(0, 0, 0));
-			// looks horrible, but works ;)
-			eye().frame().anchorFlag = true;
-			eye().frame().timerFx.runOnce(1000);
-			break;
-		default:
-			System.out.println(id + " Action cannot be handled here!");
-			break;
-		}
+		// else
+		// TODO re-add
+		// AbstractScene.showMissingImplementationWarning("displayInfo", getClass().getName());
 	}
 
 	// 1. Scene overloaded
@@ -2070,9 +2065,10 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * @param action
 	 *          the action name (no parentheses)
 	 */
-	static public void showDepthWarning(DandelionAction action) {
-		showWarning(action.name() + " is not available in 2D.");
-	}
+	/*
+	 * static public void showDepthWarning(DandelionAction action) { showWarning(action.name() +
+	 * " is not available in 2D."); }
+	 */
 
 	/**
 	 * Display a warning that the specified method lacks implementation.
@@ -2084,23 +2080,26 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Display a warning that the specified Action lacks implementation.
 	 */
-	static public void showMissingImplementationWarning(DandelionAction action, String theclass) {
-		showWarning(action.name() + " should be implemented by your " + theclass + " derived class.");
-	}
+	/*
+	 * static public void showMissingImplementationWarning(DandelionAction action, String theclass) {
+	 * showWarning(action.name() + " should be implemented by your " + theclass + " derived class."); }
+	 */
 
 	/**
 	 * Display a warning that the specified Action can only be implemented from a relative bogus event.
 	 */
-	static public void showEventVariationWarning(DandelionAction action) {
-		showWarning(action.name() + " can only be performed using a relative event.");
-	}
+	/*
+	 * static public void showEventVariationWarning(DandelionAction action) { showWarning(action.name() +
+	 * " can only be performed using a relative event."); }
+	 */
 
 	/**
 	 * Display a warning that the specified Action is only available for the Eye frame.
 	 */
-	static public void showOnlyEyeWarning(DandelionAction action) {
-		showWarning(action.name() + " can only be performed by the eye (frame).");
-	}
+	/*
+	 * static public void showOnlyEyeWarning(DandelionAction action) { showWarning(action.name() +
+	 * " can only be performed by the eye (frame)."); }
+	 */
 
 	/**
 	 * Display a warning that the specified method is not available under the specified platform.
