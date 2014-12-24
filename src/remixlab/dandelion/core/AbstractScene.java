@@ -172,6 +172,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 			eye().addKeyFrameToPath(3);
 			break;
 		case CUSTOM_KEYBOARD_ACTION:
+			performCustomAction(event);
 			break;
 		case DECREASE_FLY_SPEED:
 			eye().setFlySpeed(eye().flySpeed() / 1.2f);
@@ -265,6 +266,10 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 		default:
 			break;
 		}
+	}
+	
+	public void performCustomAction(KeyboardEvent event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass().getName());
 	}
 
 	@Override

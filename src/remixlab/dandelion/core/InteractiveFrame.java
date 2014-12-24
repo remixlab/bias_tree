@@ -312,8 +312,23 @@ public class InteractiveFrame extends Frame implements ActionGrabber<FrameAction
 		return checkIfGrabsInput(event.dof3Event().dof2Event());
 	}
 	
+	//TODO test me
+	protected Enum<?> action(BogusEvent event) {
+		if (event instanceof ClickEvent)
+			return FrameClickAction.valueOf(referenceAction().toString());
+		if (event instanceof DOF1Event)
+			return FrameDOF1Action.valueOf(referenceAction().toString());
+		if (event instanceof DOF2Event)
+			return FrameDOF2Action.valueOf(referenceAction().toString());
+		if (event instanceof DOF3Event)
+			return FrameDOF3Action.valueOf(referenceAction().toString());
+		//if (event instanceof DOF6Event)
+		else
+			return FrameDOF6Action.valueOf(referenceAction().toString());
+	}
+	
 	@Override
-	public void performInteraction(BogusEvent event) {		
+	public void performInteraction(BogusEvent event) {
 		if (event instanceof ClickEvent)
 			performInteraction((ClickEvent) event);
 		if (event instanceof DOF1Event)
@@ -327,23 +342,421 @@ public class InteractiveFrame extends Frame implements ActionGrabber<FrameAction
 	}
 
 	public void performInteraction(ClickEvent event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
+		//switch(referenceAction()) {
+		switch(FrameClickAction.valueOf(referenceAction().toString())) {
+		//switch(action(event)) {//not working
+		case CENTER_FRAME:
+			projectOnLine(scene.eye().position(), scene.eye().viewDirection());
+			break;
+		case ALIGN_FRAME:
+			alignWithFrame(scene.eye().frame());
+			break;
+		case CUSTOM_CLICK_ACTION:
+			performCustomAction(event);
+			break;
+			/*
+		default:
+			break;
+			*/
+		}
 	}
 
 	public void performInteraction(DOF1Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
+		if(scene.is2D())
+			execAction2D(event, true);
+		else
+			execAction3D(event, true);
 	}
 
 	public void performInteraction(DOF2Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
+		if(scene.is2D())
+			execAction2D(event);
+		else
+			execAction3D(event);
 	}
 
 	public void performInteraction(DOF3Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
+		if(scene.is2D())
+			execAction2D(event);
+		else
+			execAction3D(event);
 	}
 
 	public void performInteraction(DOF6Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
+		if(scene.is2D())
+			execAction2D(event);
+		else
+			execAction3D(event);
+	}
+	
+	// 2D
+	
+	/*
+	protected void execAction2D(ClickEvent event) {
+		
+	}
+	*/
+	
+	protected void execAction2D(DOF1Event event) {
+		execAction2D(event, false);
+	}
+
+	protected void execAction2D(DOF1Event event, boolean wheel) {
+		switch(FrameDOF1Action.valueOf(referenceAction().toString())) {
+		case CUSTOM_DOF1_ACTION:
+			performCustomAction(event);
+			break;
+		case ROTATE_Z:
+			rot = new Rot(scene.isRightHanded() ? computeAngle(event, wheel) : -computeAngle(event, wheel));
+			rotate(rot);
+			setSpinningRotation(rot);
+			break;
+		case SCALE:
+			float delta = delta1(event, wheel);
+			float s = 1 + Math.abs(delta) / (float) scene.height();
+			scale(delta >= 0 ? s : 1 / s);
+			break;
+		case TRANSLATE_X:
+			translateFromEye(new Vec(delta1(event, wheel), 0), wheel ? 1 : translationSensitivity());
+			break;
+		case TRANSLATE_Y:
+			translateFromEye(new Vec(0, scene.isRightHanded() ? -delta1(event, wheel) : delta1(event, wheel)), wheel ? 1
+					: translationSensitivity());
+			break;
+		default:
+			//TODO
+			//AbstractScene.showOnlyEyeWarning(a);
+			break;
+		}
+	}
+
+	protected void execAction2D(DOF2Event event) {
+		Vec trans;
+		float deltaX, deltaY;
+		switch(FrameDOF2Action.valueOf(referenceAction().toString())) {
+		case CUSTOM_DOF2_ACTION:
+			performCustomAction(event);
+			break;
+		case MOVE_BACKWARD:
+			rotate(computeRot(event, scene.window().projectedCoordinatesOf(position())));
+			flyDisp.set(-flySpeed(), 0.0f, 0.0f);
+			trans = localInverseTransformOf(flyDisp);
+			translate(trans);
+			setTossingDirection(trans);
+			startTossing(event);
+			break;
+		case MOVE_FORWARD:
+			rotate(computeRot(event, scene.window().projectedCoordinatesOf(position())));
+			flyDisp.set(flySpeed(), 0.0f, 0.0f);
+			trans = localInverseTransformOf(flyDisp);
+			setTossingDirection(trans);
+			startTossing(event);
+			break;
+		case ROTATE:
+		case SCREEN_ROTATE:
+			rot = computeRot(event, scene.window().projectedCoordinatesOf(position()));
+			if (event.isRelative()) {
+				setSpinningRotation(rot);
+				if (Util.nonZero(dampingFriction()))
+					startSpinning(event);
+				else
+					spin();
+			} else
+				// absolute needs testing
+				rotate(rot);
+			break;
+		case SCREEN_TRANSLATE:
+			deltaX = (event.isRelative()) ? event.dx() : event.x();
+			if (event.isRelative())
+				deltaY = scene.isRightHanded() ? event.dy() : -event.dy();
+			else
+				deltaY = scene.isRightHanded() ? event.y() : -event.y();
+			int dir = originalDirection(event);
+			if (dir == 1)
+				translateFromEye(new Vec(deltaX, 0.0f, 0.0f));
+			else if (dir == -1)
+				translateFromEye(new Vec(0.0f, -deltaY, 0.0f));
+			break;
+		case TRANSLATE:
+			deltaX = (event.isRelative()) ? event.dx() : event.x();
+			if (event.isRelative())
+				deltaY = scene.isRightHanded() ? event.dy() : -event.dy();
+			else
+				deltaY = scene.isRightHanded() ? event.y() : -event.y();
+			translateFromEye(new Vec(deltaX, -deltaY, 0.0f));
+			break;	
+		case ROTATE_Z:
+		case TRANSLATE_X:
+			execAction2D(event.dof1Event(true));
+			break;
+		case SCALE:
+		case TRANSLATE_Y:
+			execAction2D(event.dof1Event(false));
+			break;
+		default:
+		  //TODO
+			//AbstractScene.showOnlyEyeWarning(a);
+			break;
+		}
+	}
+
+	protected void execAction2D(DOF3Event event) {
+		if( FrameDOF3Action.valueOf(referenceAction().toString()) ==  FrameDOF3Action.CUSTOM_DOF3_ACTION )
+			performCustomAction(event);
+		else
+			execAction2D(event.dof2Event());
+	}
+
+	protected void execAction2D(DOF6Event event) {
+		if( FrameDOF6Action.valueOf(referenceAction().toString()) ==  FrameDOF6Action.CUSTOM_DOF6_ACTION )
+			performCustomAction(event);
+		else
+			execAction2D(event.dof3Event());
+	}
+	
+	// 3D
+	
+	/*
+  protected void execAction3D(ClickEvent event) {
+	}
+	*/
+	
+	protected void execAction3D(DOF1Event event) {
+		execAction3D(event, false);
+	}
+
+	protected void execAction3D(DOF1Event event, boolean wheel) {
+		Vec trans;
+		float delta;
+		switch(FrameDOF1Action.valueOf(referenceAction().toString())) {
+		case CUSTOM_DOF1_ACTION:
+			performCustomAction(event);
+			break;
+		case ROTATE_X:
+			if(scene.is3D())
+				rotateAroundEyeAxes(computeAngle(event, wheel), 0, 0);
+			break;
+		case ROTATE_Y:
+			if(scene.is3D())
+				rotateAroundEyeAxes(0, -computeAngle(event, wheel), 0);
+			break;
+		case ROTATE_Z:
+			if(scene.is3D())
+				rotateAroundEyeAxes(0, 0, -computeAngle(event, wheel));
+			break;
+		case SCALE:
+			delta = delta1(event, wheel);
+			float s = 1 + Math.abs(delta) / (float) scene.height();
+			scale(delta >= 0 ? s : 1 / s);
+			break;
+		case TRANSLATE_X:
+			trans = new Vec(delta1(event, wheel), 0.0f, 0.0f);
+			scale2Fit(trans);
+			translateFromEye(trans, wheel ? 1 : translationSensitivity());
+			break;
+		case TRANSLATE_Y:
+			trans = new Vec(0.0f, scene.isRightHanded() ? -delta1(event, wheel) : delta1(event, wheel), 0.0f);
+			scale2Fit(trans);
+			translateFromEye(trans, wheel ? 1 : translationSensitivity());
+			break;
+		case TRANSLATE_Z:
+			trans = new Vec(0.0f, 0.0f, delta1(event, wheel));
+			scale2Fit(trans);
+			translateFromEye(trans, wheel ? 1 : translationSensitivity());
+			break;
+		case ZOOM:
+			if (wheel) {
+				delta = event.x() * wheelSensitivity();
+				translateFromEye(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
+						/ scene.camera().screenHeight()), 1);
+			}
+			else {
+				delta = event.isAbsolute() ? event.x() : event.dx();
+				translateFromEye(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
+						/ scene.camera().screenHeight()));
+			}
+			/*
+		default:
+			break;
+			*/
+		}
+	}
+
+	protected void execAction3D(DOF2Event event) {
+		Quat rot;
+		Vec trans;
+		float angle;
+		switch(FrameDOF2Action.valueOf(referenceAction().toString())) {
+		case CUSTOM_DOF2_ACTION:
+			performCustomAction(event);
+			break;
+		case DRIVE:
+			rotate(turnQuaternion(event.dof1Event(), scene.camera()));
+			flyDisp.set(0.0f, 0.0f, flySpeed());
+			trans = rotation().rotate(flyDisp);
+			setTossingDirection(trans);
+			startTossing(event);
+			break;
+		case LOOK_AROUND:
+			rotate(rollPitchQuaternion(event, scene.camera()));
+			break;
+		case MOVE_BACKWARD:
+			rotate(rollPitchQuaternion(event, scene.camera()));
+			flyDisp.set(0.0f, 0.0f, flySpeed());
+			trans = rotation().rotate(flyDisp);
+			setTossingDirection(trans);
+			startTossing(event);
+			break;
+		case MOVE_FORWARD:
+			rotate(rollPitchQuaternion(event, scene.camera()));
+			flyDisp.set(0.0f, 0.0f, -flySpeed());
+			trans = rotation().rotate(flyDisp);
+			setTossingDirection(trans);
+			startTossing(event);
+			break;
+		case ROTATE:
+			if (event.isAbsolute()) {
+				//TODO restore
+				//AbstractScene.showEventVariationWarning(a);
+				break;
+			}
+			trans = scene.camera().projectedCoordinatesOf(position());
+			rot = deformedBallQuaternion(event, trans.x(), trans.y(), scene.camera());
+			trans = rot.axis();
+			trans = scene.camera().frame().orientation().rotate(trans);
+			trans = transformOf(trans);
+			rot = new Quat(trans, -rot.angle());
+			setSpinningRotation(rot);
+			if (Util.nonZero(dampingFriction()))
+				startSpinning(event);
+			else
+				spin();
+			break;
+		case SCREEN_ROTATE:
+			if (event.isAbsolute()) {
+				//TODO
+				//AbstractScene.showEventVariationWarning(a);
+				break;
+			}
+			trans = scene.camera().projectedCoordinatesOf(position());
+			float prev_angle = (float) Math.atan2(event.prevY() - trans.vec[1], event.prevX() - trans.vec[0]);
+			angle = (float) Math.atan2(event.y() - trans.vec[1], event.x() - trans.vec[0]);
+			Vec axis = transformOf(scene.camera().frame().orientation().rotate(new Vec(0.0f, 0.0f, -1.0f)));
+			if (scene.isRightHanded())
+				rot = new Quat(axis, angle - prev_angle);
+			else
+				rot = new Quat(axis, prev_angle - angle);
+			setSpinningRotation(rot);
+			if (Util.nonZero(dampingFriction()))
+				startSpinning(event);
+			else
+				spin();
+			break;
+		case SCREEN_TRANSLATE:
+			int dir = originalDirection(event);
+			trans = new Vec();
+			if (dir == 1)
+				if (event.isAbsolute())
+					trans.set(event.x(), 0.0f, 0.0f);
+				else
+					trans.set(event.dx(), 0.0f, 0.0f);
+			else if (dir == -1)
+				if (event.isAbsolute())
+					trans.set(0.0f, scene.isRightHanded() ? -event.y() : event.y(), 0.0f);
+				else
+					trans.set(0.0f, scene.isRightHanded() ? -event.dy() : event.dy(), 0.0f);
+			scale2Fit(trans);
+			translateFromEye(trans);
+			break;
+		case TRANSLATE:
+			if (event.isRelative())
+				trans = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), 0.0f);
+			else
+				trans = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), 0.0f);
+			scale2Fit(trans);
+			translateFromEye(trans);
+			break;		
+		case ROTATE_Y:
+		case ROTATE_Z:
+		case TRANSLATE_X:
+			execAction3D(event.dof1Event(true), false);
+			break;
+		default:
+			execAction3D(event.dof1Event(false), false);
+			break;	
+		}
+	}
+
+	protected void execAction3D(DOF3Event event) {
+		switch(FrameDOF3Action.valueOf(referenceAction().toString())) {
+		case CUSTOM_DOF3_ACTION:
+			performCustomAction(event);
+			break;
+		case ROTATE_XYZ:
+			if (event.isAbsolute())
+				rotateAroundEyeAxes(event.x(), -event.y(), -event.z());
+			else
+				rotateAroundEyeAxes(event.dx(), -event.dy(), -event.dz());
+			break;
+		case TRANSLATE_XYZ:
+			if (event.isRelative())
+				trans = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), event.dz());
+			else
+				trans = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), event.z());
+			scale2Fit(trans);
+			translateFromEye(trans);
+			break;
+		default:
+			execAction3D(event.dof2Event());
+			break;
+		}
+	}
+
+	protected void execAction3D(DOF6Event event) {
+		switch(FrameDOF6Action.valueOf(referenceAction().toString())) {
+		case CUSTOM_DOF6_ACTION:
+			performCustomAction(event);
+			break;
+		case TRANSLATE_XYZ_ROTATE_XYZ:
+		  // A. Translate the iFrame
+			if (event.isRelative())
+				trans = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), event.dz());
+			else
+				trans = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), event.z());
+			scale2Fit(trans);
+			translateFromEye(trans);
+			// B. Rotate the iFrame
+			if (event.isAbsolute())
+				rotateAroundEyeAxes(event.roll(), -event.pitch(), -event.yaw());
+			else
+				rotateAroundEyeAxes(event.drx(), -event.dry(), -event.drz());
+			break;
+		default:
+			execAction3D(event.dof3Event());
+			break;
+		}
+	}
+		
+  // Custom
+	
+	public void performCustomAction(ClickEvent event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(ClickEvent event)", this.getClass().getName());
+	}
+	
+	public void performCustomAction(DOF1Event event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF1Event event)", this.getClass().getName());
+	}
+
+	public void performCustomAction(DOF2Event event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF2Event event)", this.getClass().getName());
+	}
+
+	public void performCustomAction(DOF3Event event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF3Event event)", this.getClass().getName());
+	}
+
+	public void performCustomAction(DOF6Event event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF6Event event)", this.getClass().getName());
 	}
 
 	/**

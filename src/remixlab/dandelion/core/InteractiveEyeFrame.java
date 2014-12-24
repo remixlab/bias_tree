@@ -195,24 +195,98 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<EyeActio
 			performInteraction((DOF6Event) event);
 	}
 
-	public void performInteraction(ClickEvent event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
-	}
-
 	public void performInteraction(DOF1Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
+		if(scene.is2D())
+			execAction2D(event);
+		else
+			execAction3D(event);
 	}
 
 	public void performInteraction(DOF2Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
+		if(scene.is2D())
+			execAction2D(event);
+		else
+			execAction3D(event);
 	}
 
 	public void performInteraction(DOF3Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
+		if(scene.is2D())
+			execAction2D(event);
+		else
+			execAction3D(event);
 	}
 
 	public void performInteraction(DOF6Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
+		if(scene.is2D())
+			execAction2D(event);
+		else
+			execAction3D(event);
+	}
+	
+	// 2D
+	
+	protected void execAction2D(ClickEvent event) {
+		
+	}
+
+	protected void execAction2D(DOF1Event event) {
+		
+	}
+
+	protected void execAction2D(DOF2Event event) {
+		
+	}
+
+	protected void execAction2D(DOF3Event event) {
+		
+	}
+
+	protected void execAction2D(DOF6Event event) {
+		
+	}
+	
+	// 3D
+	
+  protected void execAction3D(ClickEvent event) {
+		
+	}
+
+	protected void execAction3D(DOF1Event event) {
+		
+	}
+
+	protected void execAction3D(DOF2Event event) {
+		
+	}
+
+	protected void execAction3D(DOF3Event event) {
+		
+	}
+
+	protected void execAction3D(DOF6Event event) {
+		
+	}
+	
+	// Custom
+	
+	public void performCustomAction(ClickEvent event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(ClickEvent event)", this.getClass().getName());
+	}
+	
+	public void performCustomAction(DOF1Event event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF1Event event)", this.getClass().getName());
+	}
+
+	public void performCustomAction(DOF2Event event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF2Event event)", this.getClass().getName());
+	}
+
+	public void performCustomAction(DOF3Event event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF3Event event)", this.getClass().getName());
+	}
+
+	public void performCustomAction(DOF6Event event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF6Event event)", this.getClass().getName());
 	}
 
 	// 2. Local timer

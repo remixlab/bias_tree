@@ -12,6 +12,8 @@ package remixlab.dandelion.core;
 
 import remixlab.bias.core.Action;
 
+//TODO left out only a single CUSTOM action if dofs() are discarded
+//TODO fix docs
 public interface Constants {
 	public enum EyeAction {
 		/**
@@ -231,10 +233,6 @@ public interface Constants {
 		 */
 		ZOOM("Zoom eye", false, 1),
 		/**
-		 * Zoom eye on anchor
-		 */
-		ZOOM_ON_ANCHOR("Zoom eye on anchor", false, 1),
-		/**
 		 * Translate along screen X axis
 		 */
 		TRANSLATE_X("Translate along screen X axis", true, 1),
@@ -292,10 +290,6 @@ public interface Constants {
 		 * Screen translate frame (eye or interactive frame)
 		 */
 		SCREEN_TRANSLATE("Screen translate frame (eye or interactive frame)", true, 2),
-		/**
-		 * Zoom on region (eye or interactive frame)
-		 */
-		ZOOM_ON_REGION("Zoom on region (eye or interactive frame)", true, 2),
 		/**
 		 * Translate frame (camera or interactive frame) from dx, dy, dz simultaneously
 		 */
@@ -575,7 +569,7 @@ public interface Constants {
 		ZOOM_ON_PIXEL(EyeAction.ZOOM_ON_PIXEL),
 		ANCHOR_FROM_PIXEL(EyeAction.ANCHOR_FROM_PIXEL),
 
-		CUSTOM(EyeAction.CUSTOM_CLICK_ACTION);
+		CUSTOM_CLICK_ACTION(EyeAction.CUSTOM_CLICK_ACTION);
 
 		@Override
 		public EyeAction referenceAction() {
@@ -621,7 +615,7 @@ public interface Constants {
 		ROTATE_Y(EyeAction.ROTATE_Y),
 		ROTATE_Z(EyeAction.ROTATE_Z),
 
-		CUSTOM(EyeAction.CUSTOM_DOF1_ACTION);
+		CUSTOM_DOF1_ACTION(EyeAction.CUSTOM_DOF1_ACTION);
 
 		@Override
 		public EyeAction referenceAction() {
@@ -679,7 +673,7 @@ public interface Constants {
 		SCREEN_TRANSLATE(EyeAction.SCREEN_TRANSLATE),
 		ZOOM_ON_REGION(EyeAction.ZOOM_ON_REGION),
 
-		CUSTOM(EyeAction.CUSTOM_DOF2_ACTION);
+		CUSTOM_DOF2_ACTION(EyeAction.CUSTOM_DOF2_ACTION);
 
 		@Override
 		public EyeAction referenceAction() {
@@ -741,7 +735,7 @@ public interface Constants {
 		TRANSLATE_XYZ(EyeAction.TRANSLATE_XYZ),
 		ROTATE_XYZ(EyeAction.ROTATE_XYZ),
 
-		CUSTOM(EyeAction.CUSTOM_DOF3_ACTION);
+		CUSTOM_DOF3_ACTION(EyeAction.CUSTOM_DOF3_ACTION);
 
 		@Override
 		public EyeAction referenceAction() {
@@ -809,7 +803,7 @@ public interface Constants {
 		// DOF_6
 		TRANSLATE_XYZ_ROTATE_XYZ(EyeAction.TRANSLATE_XYZ_ROTATE_XYZ),
 
-		CUSTOM(EyeAction.CUSTOM_DOF6_ACTION);
+		CUSTOM_DOF6_ACTION(EyeAction.CUSTOM_DOF6_ACTION);
 
 		@Override
 		public EyeAction referenceAction() {
@@ -849,7 +843,7 @@ public interface Constants {
 		CENTER_FRAME(FrameAction.CENTER_FRAME),
 		ALIGN_FRAME(FrameAction.ALIGN_FRAME),
 
-		CUSTOM(FrameAction.CUSTOM_CLICK_ACTION);
+		CUSTOM_CLICK_ACTION(FrameAction.CUSTOM_CLICK_ACTION);
 
 		@Override
 		public FrameAction referenceAction() {
@@ -887,7 +881,6 @@ public interface Constants {
 		// DOF_1
 		SCALE(FrameAction.SCALE),
 		ZOOM(FrameAction.ZOOM),
-		ZOOM_ON_ANCHOR(FrameAction.ZOOM_ON_ANCHOR),
 		TRANSLATE_X(FrameAction.TRANSLATE_X),
 		TRANSLATE_Y(FrameAction.TRANSLATE_Y),
 		TRANSLATE_Z(FrameAction.TRANSLATE_Z),
@@ -895,7 +888,7 @@ public interface Constants {
 		ROTATE_Y(FrameAction.ROTATE_Y),
 		ROTATE_Z(FrameAction.ROTATE_Z),
 
-		CUSTOM(FrameAction.CUSTOM_DOF1_ACTION);
+		CUSTOM_DOF1_ACTION(FrameAction.CUSTOM_DOF1_ACTION);
 
 		@Override
 		public FrameAction referenceAction() {
@@ -932,8 +925,7 @@ public interface Constants {
 	public enum FrameDOF2Action implements Action<FrameAction> {
 		// DOF_1
 		SCALE(FrameAction.SCALE),
-		ZOOM(FrameAction.ZOOM),
-		ZOOM_ON_ANCHOR(FrameAction.ZOOM_ON_ANCHOR),
+		ZOOM(FrameAction.ZOOM),		
 		TRANSLATE_X(FrameAction.TRANSLATE_X),
 		TRANSLATE_Y(FrameAction.TRANSLATE_Y),
 		TRANSLATE_Z(FrameAction.TRANSLATE_Z),
@@ -950,9 +942,8 @@ public interface Constants {
 		LOOK_AROUND(FrameAction.LOOK_AROUND),
 		SCREEN_ROTATE(FrameAction.SCREEN_ROTATE),
 		SCREEN_TRANSLATE(FrameAction.SCREEN_TRANSLATE),
-		ZOOM_ON_REGION(FrameAction.ZOOM_ON_REGION),
 
-		CUSTOM(FrameAction.CUSTOM_DOF2_ACTION);
+		CUSTOM_DOF2_ACTION(FrameAction.CUSTOM_DOF2_ACTION);
 
 		@Override
 		public FrameAction referenceAction() {
@@ -989,8 +980,7 @@ public interface Constants {
 	public enum FrameDOF3Action implements Action<FrameAction> {
 		// DOF_1
 		SCALE(FrameAction.SCALE),
-		ZOOM(FrameAction.ZOOM),
-		ZOOM_ON_ANCHOR(FrameAction.ZOOM_ON_ANCHOR),
+		ZOOM(FrameAction.ZOOM),		
 		TRANSLATE_X(FrameAction.TRANSLATE_X),
 		TRANSLATE_Y(FrameAction.TRANSLATE_Y),
 		TRANSLATE_Z(FrameAction.TRANSLATE_Z),
@@ -1007,13 +997,12 @@ public interface Constants {
 		LOOK_AROUND(FrameAction.LOOK_AROUND),
 		SCREEN_ROTATE(FrameAction.SCREEN_ROTATE),
 		SCREEN_TRANSLATE(FrameAction.SCREEN_TRANSLATE),
-		ZOOM_ON_REGION(FrameAction.ZOOM_ON_REGION),
 
 		// DOF_3
 		TRANSLATE_XYZ(FrameAction.TRANSLATE_XYZ),
 		ROTATE_XYZ(FrameAction.ROTATE_XYZ),
 
-		CUSTOM(FrameAction.CUSTOM_DOF3_ACTION);
+		CUSTOM_DOF3_ACTION(FrameAction.CUSTOM_DOF3_ACTION);
 
 		@Override
 		public FrameAction referenceAction() {
@@ -1050,8 +1039,7 @@ public interface Constants {
 	public enum FrameDOF6Action implements Action<FrameAction> {
 		// DOF_1
 		SCALE(FrameAction.SCALE),
-		ZOOM(FrameAction.ZOOM),
-		ZOOM_ON_ANCHOR(FrameAction.ZOOM_ON_ANCHOR),
+		ZOOM(FrameAction.ZOOM),		
 		TRANSLATE_X(FrameAction.TRANSLATE_X),
 		TRANSLATE_Y(FrameAction.TRANSLATE_Y),
 		TRANSLATE_Z(FrameAction.TRANSLATE_Z),
@@ -1068,7 +1056,6 @@ public interface Constants {
 		LOOK_AROUND(FrameAction.LOOK_AROUND),
 		SCREEN_ROTATE(FrameAction.SCREEN_ROTATE),
 		SCREEN_TRANSLATE(FrameAction.SCREEN_TRANSLATE),
-		ZOOM_ON_REGION(FrameAction.ZOOM_ON_REGION),
 
 		// DOF_3
 		TRANSLATE_XYZ(FrameAction.TRANSLATE_XYZ),
@@ -1077,7 +1064,7 @@ public interface Constants {
 		// DOF_6
 		TRANSLATE_XYZ_ROTATE_XYZ(FrameAction.TRANSLATE_XYZ_ROTATE_XYZ),
 
-		CUSTOM(FrameAction.CUSTOM_DOF6_ACTION);
+		CUSTOM_DOF6_ACTION(FrameAction.CUSTOM_DOF6_ACTION);
 
 		@Override
 		public FrameAction referenceAction() {
@@ -1148,7 +1135,7 @@ public interface Constants {
 		INCREASE_FLY_SPEED(SceneAction.INCREASE_FLY_SPEED),
 		DECREASE_FLY_SPEED(SceneAction.DECREASE_FLY_SPEED),
 
-		CUSTOM(SceneAction.CUSTOM_KEYBOARD_ACTION);
+		CUSTOM_KEYBOARD_ACTION(SceneAction.CUSTOM_KEYBOARD_ACTION);
 
 		@Override
 		public SceneAction referenceAction() {

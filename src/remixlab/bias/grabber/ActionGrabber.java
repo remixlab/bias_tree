@@ -7,4 +7,6 @@ public interface ActionGrabber<E extends Enum<E>>  extends Grabber {
 	E referenceAction();
 	void setReferenceAction(Action<E> a);
 	//void setReferenceAction(Action<?> a);
+	//TODO test this instead of setReferenceAction
+	//Action<E> action();
 }
