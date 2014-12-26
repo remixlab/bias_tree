@@ -6,8 +6,8 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.AbstractScene;
 
 
-public abstract class ActionModelObject<E extends Enum<E>> implements ActionModel<E> {	
-	E globalAction;	
+public abstract class ActionModelObject<E extends Enum<E>> implements ActionModel<E> {
+	Action<E> action;
 	protected Scene		scene;
 	protected int			id;
 	protected PShape	pshape;
@@ -25,14 +25,18 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 		id = ++Scene.modelCount;
 	}
 	
-	@Override
 	public E referenceAction() {
-		return globalAction;
+		return action!=null ? action.referenceAction() : null;
 	}
 	
 	@Override
-	public void setReferenceAction(Action<E> a) {
-		globalAction = a.referenceAction();
+	public void setAction(Action<E> a) {
+		action = a;
+	}
+	
+	@Override
+	public Action<E> action() {
+		return action;
 	}
 
 	public void setShape(PShape ps) {

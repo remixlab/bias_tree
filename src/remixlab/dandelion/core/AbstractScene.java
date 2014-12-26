@@ -136,16 +136,20 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 
 	// grabber implementation
 
-	protected SceneAction	globalAction;
+	protected Action<SceneAction> action;
 
-	@Override
 	public SceneAction referenceAction() {
-		return globalAction;
+		return action.referenceAction();
 	}
 
 	@Override
-	public void setReferenceAction(Action<SceneAction> a) {
-		globalAction = a.referenceAction();
+	public void setAction(Action<SceneAction> a) {
+		action = a;
+	}
+	
+	@Override
+	public Action<SceneAction> action() {
+		return action;
 	}
 
 	@Override

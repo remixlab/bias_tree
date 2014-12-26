@@ -12,7 +12,7 @@ public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGr
   , Grabber
   //*/
   {
-	E globalAction;
+	Action<E> action;
 	
 	/**
 	 * Empty constructor.
@@ -39,14 +39,18 @@ public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGr
 			agent.addInPool(this);
 	}
 	
-	@Override
 	public E referenceAction() {
-		return globalAction;
+		return action!=null ? action.referenceAction() : null;
 	}
 	
 	@Override
-	public void setReferenceAction(Action<E> a) {
-		globalAction = a.referenceAction();
+	public Action<E> action() {
+		return action;
+	}
+	
+	@Override
+	public void setAction(Action<E> a) {
+		action = a;
 	}
 	
 	@Override

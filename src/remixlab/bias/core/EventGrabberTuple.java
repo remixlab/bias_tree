@@ -35,13 +35,34 @@ public class EventGrabberTuple {
 	
 	//TODO test this after implementing the actions
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public EventGrabberTuple(BogusEvent e, Action<?> a, ActionGrabber g) {
+	public EventGrabberTuple(BogusEvent e, Action a, ActionGrabber g) {
 		this(e, g);
-		if(a != null) {
-			g.setReferenceAction(a);
-			if( g.referenceAction().getClass() != a.referenceAction().getClass() )
-				g.setReferenceAction(null);
+		if(a == null) {
+			g.setAction(null);
+			return;
 		}
+		
+		//TODO: critical condition in the new approach needs testing
+		if( g.action() != null ) {
+			if( g.action().referenceAction().getClass() == a.referenceAction().getClass() )
+				g.setAction(a);
+			else {
+				System.out.println("Warning: " + a + " was requested to be added to an event tuple but null was added!");
+				g.setAction(null);
+			}
+		}
+		else
+			g.setAction(a);
+		
+		// prev condition was:
+		
+		/*
+		if(a != null) {
+			g.setAction(a);
+			if( ((ActionGrabber<?>)g).action().referenceAction().getClass() != a.referenceAction().getClass() )
+				g.setAction(null);
+		}
+		//*/
 	}
 
 	/**

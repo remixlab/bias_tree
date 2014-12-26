@@ -214,29 +214,12 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	protected boolean validateGrabberTuple(BogusEvent e, ActionGrabber<?> g, Profile<?,?> p) {
 		Action<?> grabberAction = p.handle(e);
 		if( grabberAction == null )	return false;
-		EventGrabberTuple tuple = new EventGrabberTuple(e, grabberAction, g);
-		if( ((ActionGrabber<?>)tuple.grabber()).referenceAction() != null ) {
-			inputHandler().enqueueEventTuple(new EventGrabberTuple(e, grabberAction, g));
-		  return true;
-		}
-	  //TODO problem found here!
-		//((ActionGrabber)g).setReferenceAction(grabberAction);
-		
-		//if ( ((ActionGrabber<?>)g).referenceAction() == null) return false;
-		//end
-		
-		/*
-		if ( ((ActionGrabber<?>)g).referenceAction().getClass() == grabberAction.referenceAction().getClass() ) {
-			//ActionEventGrabberTuple<?> tuple = new ActionEventGrabberTuple(e, grabberAction, (ActionGrabber<?>)g);
-			inputHandler().enqueueEventTuple(new EventGrabberTuple(e, grabberAction, g));
-			return true;
-		}
-		*/
-		else {
+		boolean result = inputHandler().enqueueEventTuple(new EventGrabberTuple(e, grabberAction, g));
+		if(!result) {
 		  //re-accommodate really sucks
 			//TODO debug: may simply throw an exception
-			System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name());
-			return false;
+			System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name());			
 		}
+		return result;
 	}
 }

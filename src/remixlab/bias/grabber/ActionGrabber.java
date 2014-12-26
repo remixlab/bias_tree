@@ -4,9 +4,11 @@ import remixlab.bias.core.Action;
 import remixlab.bias.core.Grabber;
 
 public interface ActionGrabber<E extends Enum<E>>  extends Grabber {
-	E referenceAction();
-	void setReferenceAction(Action<E> a);
+	//E referenceAction();
+	//void setReferenceAction(Action<E> a);
 	//void setReferenceAction(Action<?> a);
-	//TODO test this instead of setReferenceAction
-	//Action<E> action();
+	
+	// option 2... testing
+	public void setAction(Action<E> action);
+	public Action<E> action();
 }

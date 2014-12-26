@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import remixlab.bias.grabber.*;
+
 /**
  * The InputHandler object is the high level package handler which holds a collection of {@link #agents()}, and an event
  * dispatcher queue of {@link remixlab.bias.core.EventGrabberTuple}s ({@link #eventTupleQueue()}). Such tuple represents
@@ -163,11 +165,19 @@ public class InputHandler {
 	 * @see #handle()
 	 */
 	public boolean enqueueEventTuple(EventGrabberTuple eventTuple) {
-		//TODO check tuple consistency here once it's done in the ActionAgent before
+		//TODO needs testing
 		if (!eventTupleQueue.contains(eventTuple))
 			if (!eventTuple.event().isNull()) {
-				eventTupleQueue.add(eventTuple);
-				return true;
+				if( eventTuple.grabber() instanceof ActionGrabber<?> ) {
+					if(((ActionGrabber<?>)eventTuple.grabber()).action() != null) {
+						eventTupleQueue.add(eventTuple);
+						return true;
+					}					
+				}
+				else {
+					eventTupleQueue.add(eventTuple);
+					return true;
+				}
 			}
 		return false;
 	}
