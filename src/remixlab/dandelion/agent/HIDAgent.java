@@ -1,103 +1,136 @@
-/*********************************************************************************
- * dandelion_tree
- * Copyright (c) 2014 National University of Colombia, https://github.com/remixlab
- * @author Jean Pierre Charalambos, http://otrolado.info/
- *
- * All rights reserved. Library that eases the creation of interactive
- * scenes, released under the terms of the GNU Public License v3.0
- * which is available at http://www.gnu.org/licenses/gpl.html
- *********************************************************************************/
-
 package remixlab.dandelion.agent;
 
-import remixlab.bias.agent.profile.ClickProfile;
-import remixlab.bias.agent.profile.MotionProfile;
-import remixlab.bias.event.DOF6Event;
-import remixlab.bias.event.MotionEvent;
+import remixlab.bias.agent.*;
+import remixlab.bias.agent.profile.*;
+import remixlab.bias.core.*;
+import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-/**
- * An {@link remixlab.dandelion.agent.ActionWheeledBiMotionAgent} representing a Human Interface Device with 6
- * Degrees-Of-Freedom (three translations and three rotations), such as the Space Navigator or any MultiTouch device.
- */
-public class HIDAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF6Action>> {
-	/**
-	 * Constructs an HIDAgent with the following bindings:
-	 * <p>
-	 * {@code eyeProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);}<br>
-	 * {@code frameProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ)}<br>
-	 * 
-	 * @param scn
-	 *          AbstractScene
-	 * @param n
-	 *          name
-	 */
+///*
+public class HIDAgent extends WheeledMotionAgent<EyeDOF6Action, FrameDOF6Action> {
 	public HIDAgent(AbstractScene scn, String n) {
-		super(new MotionProfile<DOF1Action>(),
-				new MotionProfile<DOF1Action>(),
-				new MotionProfile<DOF6Action>(),
-				new MotionProfile<DOF6Action>(),
-				new ClickProfile<ClickAction>(),
-				new ClickProfile<ClickAction>(), scn, n);
-		eyeProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
-		frameProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+		super(scn, n);
 	}
-
+	
 	@Override
 	public DOF6Event feed() {
 		return null;
 	}
-
-	@Override
-	public MotionProfile<DOF6Action> eyeProfile() {
-		return camProfile;
-	}
-
-	@Override
-	public MotionProfile<DOF6Action> frameProfile() {
-		return profile;
-	}
-
-	/**
-	 * Sets the translation sensitivity along X.
-	 */
-	public void setXTranslationSensitivity(float s) {
-		sens[0] = s;
-	}
-
-	/**
-	 * Sets the translation sensitivity along Y.
-	 */
-	public void setYTranslationSensitivity(float s) {
-		sens[1] = s;
-	}
-
-	/**
-	 * Sets the translation sensitivity along Z.
-	 */
+	
 	public void setZTranslationSensitivity(float s) {
-		sens[2] = s;
+		eyeAgent.sensitivities()[2] = s;
+		frameAgent.sensitivities()[2] = s;
 	}
 
-	/**
-	 * Sets the rotation sensitivity along X.
-	 */
 	public void setXRotationSensitivity(float s) {
-		sens[3] = s;
+		eyeAgent.sensitivities()[3] = s;
+		frameAgent.sensitivities()[3] = s;
 	}
 
-	/**
-	 * Sets the rotation sensitivity along Y.
-	 */
 	public void setYRotationSensitivity(float s) {
-		sens[4] = s;
+		eyeAgent.sensitivities()[4] = s;
+		frameAgent.sensitivities()[4] = s;
 	}
 
-	/**
-	 * Sets the rotation sensitivity along Z.
-	 */
 	public void setZRotationSensitivity(float s) {
-		sens[5] = s;
+		eyeAgent.sensitivities()[5] = s;
+		frameAgent.sensitivities()[5] = s;
 	}
 }
+//*/
+
+/*
+public class HIDAgent extends Agent {
+	class FrameAgent extends ActionWheeledMotionAgent<MotionProfile<FrameDOF1Action>, MotionProfile<FrameDOF6Action>, ClickProfile<FrameClickAction>> {
+		public FrameAgent(Agent parent, String n) {
+			super(new MotionProfile<FrameDOF1Action>(),
+					new MotionProfile<FrameDOF6Action>(),
+					new ClickProfile<FrameClickAction>(), parent, n);
+		}
+
+		@Override
+		public DOF6Event feed() {
+			return null;
+		}
+
+		public void setXTranslationSensitivity(float s) {
+			sens[0] = s;
+		}
+
+		public void setYTranslationSensitivity(float s) {
+			sens[1] = s;
+		}
+		
+		public void setZTranslationSensitivity(float s) {
+			sens[2] = s;
+		}
+
+		public void setXRotationSensitivity(float s) {
+			sens[3] = s;
+		}
+
+		public void setYRotationSensitivity(float s) {
+			sens[4] = s;
+		}
+
+		public void setZRotationSensitivity(float s) {
+			sens[5] = s;
+		}
+	}
+	
+	class EyeAgent extends ActionWheeledMotionAgent<MotionProfile<EyeDOF1Action>, MotionProfile<EyeDOF6Action>, ClickProfile<EyeClickAction>> {
+		public EyeAgent(Agent parent, String n) {
+			super(new MotionProfile<EyeDOF1Action>(),
+					new MotionProfile<EyeDOF6Action>(),
+					new ClickProfile<EyeClickAction>(), parent, n);
+		}
+
+		@Override
+		public DOF6Event feed() {
+			return null;
+		}
+
+		public void setXTranslationSensitivity(float s) {
+			sens[0] = s;
+		}
+
+		public void setYTranslationSensitivity(float s) {
+			sens[1] = s;
+		}
+		
+		public void setZTranslationSensitivity(float s) {
+			sens[2] = s;
+		}
+
+		public void setXRotationSensitivity(float s) {
+			sens[3] = s;
+		}
+
+		public void setYRotationSensitivity(float s) {
+			sens[4] = s;
+		}
+
+		public void setZRotationSensitivity(float s) {
+			sens[5] = s;
+		}
+	}
+	
+	protected AbstractScene	scene;
+	FrameAgent frameAgent;
+	EyeAgent eyeAgent;
+
+	public HIDAgent(AbstractScene scn, String n) {
+		super(scn.inputHandler(), n);
+		scene = scn;
+		eyeAgent = new EyeAgent(this, "eye_hidagent_agent");
+		eyeAgent.setDefaultGrabber(scene.eye().frame());
+		frameAgent = new FrameAgent(this, "frame_hidagent_agent");
+	}
+	
+	@Override
+	public DOF6Event feed() {
+		return null;
+	}
+}
+//*/

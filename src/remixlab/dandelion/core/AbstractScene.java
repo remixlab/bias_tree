@@ -77,7 +77,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	// FRAME SYNC requires this:
 	protected final long										deltaCount;
 
-	protected ActionWheeledBiMotionAgent<?>	defMotionAgent;
+	protected Agent	                        defMotionAgent;
 	protected KeyboardAgent									defKeyboardAgent;
 
 	/**
@@ -362,7 +362,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * 
 	 * @see #keyboardAgent()
 	 */
-	public ActionWheeledBiMotionAgent<?> motionAgent() {
+	public Agent motionAgent() {
 		return defMotionAgent;
 	}
 
@@ -397,9 +397,9 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * @see #enableMotionAgent()
 	 * @see #enableKeyboardAgent()
 	 */
-	public ActionWheeledBiMotionAgent<?> disableMotionAgent() {
+	public Agent disableMotionAgent() {
 		if (inputHandler().isAgentRegistered(motionAgent())) {
-			return (ActionWheeledBiMotionAgent<?>) inputHandler().unregisterAgent(motionAgent());
+			return inputHandler().unregisterAgent(motionAgent());
 		}
 		return motionAgent();
 	}

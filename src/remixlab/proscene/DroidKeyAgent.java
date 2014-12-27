@@ -13,12 +13,12 @@ package remixlab.proscene;
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 import remixlab.bias.event.KeyboardEvent;
-import remixlab.dandelion.agent.KeyboardAgent;
+import remixlab.dandelion.agent.SceneKeyboardAgent;
 
 /**
  * Proscene {@link remixlab.dandelion.agent.KeyboardAgent}.
  */
-public class DroidKeyAgent extends KeyboardAgent {
+public class DroidKeyAgent extends SceneKeyboardAgent {
 	Scene	scene;
 
 	public DroidKeyAgent(Scene scn, String n) {

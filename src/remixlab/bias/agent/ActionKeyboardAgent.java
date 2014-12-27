@@ -11,7 +11,7 @@
 package remixlab.bias.agent;
 
 import remixlab.bias.agent.profile.KeyboardProfile;
-import remixlab.bias.core.InputHandler;
+import remixlab.bias.core.*;
 
 /**
  * This class is provided purely for symmetry and style reasons against the events and shortcuts API. Only needed if you
@@ -30,7 +30,7 @@ public class ActionKeyboardAgent<K extends KeyboardProfile<?>> extends ActionAge
 		super(k, scn, n);
 	}
 
-	public ActionKeyboardAgent(K k, ActionKeyboardAgent<?> parent, String n) {
+	public ActionKeyboardAgent(K k, Agent parent, String n) {
 		this(k, parent.inputHandler(), n);
 		parent.addBranch(this);
 	}

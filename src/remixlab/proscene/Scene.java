@@ -181,8 +181,9 @@ public class Scene extends AbstractScene implements PConstants {
 
 		// 6. Create agents and register P5 methods
 		if (platform() == Platform.PROCESSING_ANDROID) {
-			defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
-			defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
+			// TODO re-add 
+			//defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
+			//defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
 		} else {
 			defMotionAgent = new MouseAgent(this, "proscene_mouse");
 			defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
@@ -374,10 +375,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #enableKeyboardAgent()
 	 */
 	@Override
-	public ActionWheeledBiMotionAgent<?> disableMotionAgent() {
+	public Agent disableMotionAgent() {
 		if (isMotionAgentEnabled()) {
 			parent.unregisterMethod("mouseEvent", motionAgent());
-			return (ActionWheeledBiMotionAgent<?>) inputHandler().unregisterAgent(motionAgent());
+			return inputHandler().unregisterAgent(motionAgent());
 		}
 		return motionAgent();
 	}
@@ -395,13 +396,15 @@ public class Scene extends AbstractScene implements PConstants {
 		return (MouseAgent) defMotionAgent;
 	}
 
-	// TODO doc me
+	// TODO doc me and re-add me
+	/*
 	public DroidTouchAgent droidTouchAgent() {
 		if (platform() != Platform.PROCESSING_ANDROID) {
 			throw new RuntimeException("Proscene droidTouchAgent() is not available in Desktop mode");
 		}
 		return (DroidTouchAgent) motionAgent();
 	}
+	*/
 
 	// KEYBOARD
 
@@ -533,10 +536,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #disableMotionAgent()
 	 */
 	@Override
-	public KeyboardAgent disableKeyboardAgent() {
+	public SceneKeyboardAgent disableKeyboardAgent() {
 		if (inputHandler().isAgentRegistered(keyboardAgent())) {
 			parent.unregisterMethod("keyEvent", keyboardAgent());
-			return (KeyboardAgent) inputHandler().unregisterAgent(keyboardAgent());
+			return (SceneKeyboardAgent) inputHandler().unregisterAgent(keyboardAgent());
 		}
 		return keyboardAgent();
 	}

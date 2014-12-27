@@ -75,9 +75,9 @@ public class Agent {
 	 */
 	protected boolean alienGrabber() {
 		//System.out.println("alienGrabber() invoked");
-		//TODO pending
-		//return isInPool(inputGrabber());
-		return false;
+		//TODO testing
+		return isInPool(inputGrabber());
+		//return false;//prev worked
 	}
 	
 	/*

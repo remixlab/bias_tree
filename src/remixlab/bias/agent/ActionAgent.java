@@ -56,7 +56,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		profile = p;
 	}
 
-	public ActionAgent(P p, ActionAgent<?> parent, String n) {
+	public ActionAgent(P p, Agent parent, String n) {
 		this(p, parent.inputHandler(), n);
 		parent.addBranch(this);
 	}
