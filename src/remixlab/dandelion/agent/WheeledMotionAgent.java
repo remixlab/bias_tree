@@ -112,6 +112,11 @@ public class WheeledMotionAgent<A extends Action<?>> extends Agent {
 	}
 	
 	@Override
+	protected boolean isInputGrabberAlien() {
+		return !super.isInPool(inputGrabber());
+	}
+	
+	@Override
 	public List<Grabber> pool() {
 		List<Grabber> list = new ArrayList<Grabber>();
 		list.addAll(super.pool());

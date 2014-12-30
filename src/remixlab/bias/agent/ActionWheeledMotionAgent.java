@@ -114,7 +114,7 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 			// if (alienGrabber())
 			// enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
 			// begin new
-			if (alienGrabber())
+			if (isInputGrabberAlien())
 			  //TODO remove this case
 				if (branches().isEmpty()) {
 					inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
@@ -143,7 +143,7 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 			// if (alienGrabber())
 			// enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
 			// begin new
-			if (alienGrabber())
+			if (isInputGrabberAlien())
 			  //TODO remove this case
 				if (branches().isEmpty()) {
 					inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));

@@ -73,19 +73,12 @@ public class Agent {
 	 * <p>
 	 * Returns {@code false} by default.
 	 */
-	public boolean alienGrabber() {
+	protected boolean isInputGrabberAlien() {
 		//System.out.println("alienGrabber() invoked");
 		//TODO testing
-		//return isInPool(inputGrabber());
-		return false;//prev worked
+		return isInPool(inputGrabber());
+		//return false;//prev worked
 	}
-	
-	//TODO implement
-	/*
-	public boolean isAlienGrabber(Grabber g) {
-		return isInPool(g);
-	}
-	*/
 
 	public Agent parentAgent() {
 		return parentAgent;

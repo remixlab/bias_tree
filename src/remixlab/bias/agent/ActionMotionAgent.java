@@ -167,7 +167,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 			return false;
 		//return validateGrabberTupple(event, inputGrabber());
 		if (event instanceof ClickEvent)
-			if (alienGrabber()) {
+			if (isInputGrabberAlien()) {
 			  //TODO remove this case
 				if (branches().isEmpty()) {
 					inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
@@ -193,7 +193,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 			}
 		else if (event instanceof MotionEvent) {
 			((MotionEvent) event).modulate(sens);
-			if (alienGrabber()) {
+			if (isInputGrabberAlien()) {
 			  //TODO remove this case
 				if (branches().isEmpty()) {
 					inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
