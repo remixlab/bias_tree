@@ -11,7 +11,6 @@
 package remixlab.dandelion.agent;
 
 import remixlab.bias.agent.profile.*;
-import remixlab.bias.core.Action;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.core.EventGrabberTuple;
 import remixlab.bias.event.DOF2Event;
