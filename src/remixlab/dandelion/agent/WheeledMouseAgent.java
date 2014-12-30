@@ -97,7 +97,7 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 			if (need4Spin)
 				((InteractiveFrame) inputGrabber()).stopSpinning();
 			iFrame = (InteractiveFrame) inputGrabber();
-			Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) event)
+			DOF2Action a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) event)
 					: frameProfile().handle((BogusEvent) event);
 			if (a == null)
 				return;
@@ -144,7 +144,7 @@ public class WheeledMouseAgent extends ActionWheeledBiMotionAgent<MotionProfile<
 			if (drive && inputGrabber() instanceof InteractiveFrame)
 				((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f * (event.y() - pressEvent.y()));
 			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-			Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) event)
+			DOF2Action a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) event)
 					: frameProfile().handle((BogusEvent) event);
 			if (a == null)
 				return;

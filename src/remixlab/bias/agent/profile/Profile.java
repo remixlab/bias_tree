@@ -88,7 +88,8 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	 *          {@link remixlab.bias.core.BogusEvent} i.e., Action event to be parsed by this profile.
 	 * @return The user-defined action. May be null if no actions was found.
 	 */
-	public Action<?> handle(BogusEvent event) {
+	public A handle(BogusEvent event) {
+	//public Action<?> handle(BogusEvent event) { //previous line
 		if (event != null)
 			return action(event.shortcut());
 		return null;
