@@ -222,4 +222,20 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		}
 		return result;
 	}
+	
+	/**
+	 * Convenience function that simply calls {@code resetProfile()}.
+	 * 
+	 * @see #resetProfile()
+	 */
+	public void resetAllProfiles() {
+		resetProfile();
+	}
+	
+	/**
+	 * Convenience function that simply calls {@code profile.removeAllBindings()}.
+	 */
+	public void resetProfile() {
+		profile.removeAllBindings();
+	}
 }

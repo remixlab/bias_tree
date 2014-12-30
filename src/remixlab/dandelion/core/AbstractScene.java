@@ -77,7 +77,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	// FRAME SYNC requires this:
 	protected final long										deltaCount;
 
-	protected Agent	                        defMotionAgent;
+	protected WheeledMotionAgent<?>         defMotionAgent;
 	protected KeyboardAgent									defKeyboardAgent;
 
 	/**
@@ -362,7 +362,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * 
 	 * @see #keyboardAgent()
 	 */
-	public Agent motionAgent() {
+	public WheeledMotionAgent<?> motionAgent() {
 		return defMotionAgent;
 	}
 
@@ -471,16 +471,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 */
 	public InputHandler inputHandler() {
 		return iHandler;
-	}
-
-	/**
-	 * Same as {@code return inputHandler().grabsAnyAgentInput(grabber)}.
-	 * 
-	 * @see remixlab.bias.core.InputHandler#grabsAnyAgentInput(Grabber)
-	 */
-	public boolean grabsAnyAgentInput(Grabber grabber) {
-		return inputHandler().grabsAnyAgentInput(grabber);
-	}
+	}  
 
 	/**
 	 * Convenience function that simply returns {@code inputHandler().info()}.
@@ -509,9 +500,8 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	public void displayInfo(boolean onConsole) {
 		if (onConsole)
 			System.out.println(info());
-		// else
-		// TODO re-add
-		// AbstractScene.showMissingImplementationWarning("displayInfo", getClass().getName());
+		else
+			AbstractScene.showMissingImplementationWarning("displayInfo", getClass().getName());
 	}
 
 	// 1. Scene overloaded
@@ -1103,13 +1093,13 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * Hides all the keyframe eye paths.
 	 * 
 	 * @see #drawEyePaths()
-	 * @see remixlab.dandelion.core.KeyFrameInterpolator#removeFramesFromAllAgentPools()
+	 * @see remixlab.dandelion.core.KeyFrameInterpolator#removePathFromMotionAgent()
 	 */
 	public void hideEyePaths() {
 		Iterator<Integer> itrtr = eye.kfi.keySet().iterator();
 		while (itrtr.hasNext()) {
 			Integer key = itrtr.next();
-			eye.keyFrameInterpolatorMap().get(key).removeFramesFromAllAgentPools();
+			eye.keyFrameInterpolatorMap().get(key).removePathFromMotionAgent();
 		}
 	}
 
@@ -1605,11 +1595,10 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 		vp.setScreenWidthAndHeight(width(), height());
 
 		eye = vp;
-
-		for (Agent agent : inputHandler().agents()) {
-			if (agent instanceof ActionWheeledBiMotionAgent)
-				agent.setDefaultGrabber(eye.frame());
-		}
+		
+		motionAgent().eyeBranch().clearPool();
+		motionAgent().eyeBranch().addInPool(eye.frame());
+		motionAgent().eyeBranch().setDefaultGrabber(eye.frame());		
 
 		showAll();
 	}
@@ -2074,10 +2063,9 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * @param action
 	 *          the action name (no parentheses)
 	 */
-	/*
-	 * static public void showDepthWarning(DandelionAction action) { showWarning(action.name() +
-	 * " is not available in 2D."); }
-	 */
+	 static public void showDepthWarning(MotionAction action) {
+		 showWarning(action.name() + " is not available in 2D.");
+	 }
 
 	/**
 	 * Display a warning that the specified method lacks implementation.
@@ -2089,26 +2077,23 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	/**
 	 * Display a warning that the specified Action lacks implementation.
 	 */
-	/*
-	 * static public void showMissingImplementationWarning(DandelionAction action, String theclass) {
-	 * showWarning(action.name() + " should be implemented by your " + theclass + " derived class."); }
-	 */
+	 static public void showMissingImplementationWarning(MotionAction action, String theclass) {
+		 showWarning(action.name() + " should be implemented by your " + theclass + " derived class.");
+	 }
 
 	/**
 	 * Display a warning that the specified Action can only be implemented from a relative bogus event.
 	 */
-	/*
-	 * static public void showEventVariationWarning(DandelionAction action) { showWarning(action.name() +
-	 * " can only be performed using a relative event."); }
-	 */
+	 static public void showEventVariationWarning(MotionAction action) {
+		 showWarning(action.name() + " can only be performed using a relative event.");
+	 }
 
 	/**
 	 * Display a warning that the specified Action is only available for the Eye frame.
 	 */
-	/*
-	 * static public void showOnlyEyeWarning(DandelionAction action) { showWarning(action.name() +
-	 * " can only be performed by the eye (frame)."); }
-	 */
+	 static public void showOnlyEyeWarning(MotionAction action) {
+		 showWarning(action.name() + " can only be performed by the eye (frame).");
+	 }
 
 	/**
 	 * Display a warning that the specified method is not available under the specified platform.

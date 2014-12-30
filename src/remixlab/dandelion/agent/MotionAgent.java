@@ -7,21 +7,21 @@ import remixlab.dandelion.core.AbstractScene;
 import remixlab.dandelion.core.Constants.*;
 
 //TODO probably not really needed
-public class MotionAgent<A extends Action<?>, B extends Action<?>> extends Agent {
+public class MotionAgent<A extends Action<?>> extends Agent {
 	protected AbstractScene scene;
-	protected ActionMotionAgent<MotionProfile<A>, ClickProfile<EyeClickAction>> eyeAgent;
-	protected ActionMotionAgent<MotionProfile<B>, ClickProfile<FrameClickAction>> frameAgent;
+	protected ActionMotionAgent<MotionProfile<A>, ClickProfile<ClickAction>> eyeAgent;
+	protected ActionMotionAgent<MotionProfile<A>, ClickProfile<ClickAction>> frameAgent;
 	
 	public MotionAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		eyeAgent = new ActionWheeledMotionAgent<MotionProfile<EyeDOF1Action>, MotionProfile<A>, ClickProfile<EyeClickAction>>(new MotionProfile<EyeDOF1Action>(),
+		eyeAgent = new ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(new MotionProfile<DOF1Action>(),
 				new MotionProfile<A>(),
-				new ClickProfile<EyeClickAction>(), this, (n + "_eye_mouse_agent"));
+				new ClickProfile<ClickAction>(), this, (n + "_eye_mouse_agent"));
 		eyeAgent.setDefaultGrabber(scene.eye().frame());
-		frameAgent = new ActionWheeledMotionAgent<MotionProfile<FrameDOF1Action>, MotionProfile<B>, ClickProfile<FrameClickAction>>(new MotionProfile<FrameDOF1Action>(),
-				new MotionProfile<B>(),
-				new ClickProfile<FrameClickAction>(), this, (n + "_frame_mouse_agent"));
+		frameAgent = new ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(new MotionProfile<DOF1Action>(),
+				new MotionProfile<A>(),
+				new ClickProfile<ClickAction>(), this, (n + "_frame_mouse_agent"));
 	}
 	
 	public void setXTranslationSensitivity(float s) {
@@ -34,11 +34,11 @@ public class MotionAgent<A extends Action<?>, B extends Action<?>> extends Agent
 		frameAgent.sensitivities()[1] = s;
 	}
 	
-	public ActionMotionAgent<MotionProfile<A>, ClickProfile<EyeClickAction>> eyeAgent() {
+	public ActionMotionAgent<MotionProfile<A>, ClickProfile<ClickAction>> eyeAgent() {
 		return eyeAgent;
 	}
 	
-	public ActionMotionAgent<MotionProfile<B>, ClickProfile<FrameClickAction>> frameAgent() {
+	public ActionMotionAgent<MotionProfile<A>, ClickProfile<ClickAction>> frameAgent() {
 		return frameAgent;
 	}
 }

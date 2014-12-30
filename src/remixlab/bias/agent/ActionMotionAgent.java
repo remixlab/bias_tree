@@ -80,6 +80,26 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 	public void setClickProfile(C profile) {
 		clickProfile = profile;
 	}
+	
+	/**
+	 * Convenience function that simply calls {@code clickProfile.removeAllBindings()}. 
+	 */
+	public void resetClickProfile() {
+		clickProfile.removeAllBindings();
+	}
+	
+	@Override
+	public void resetAllProfiles() {
+		resetProfile();
+		resetClickProfile();
+	}
+	
+	/**
+	 * Alias for {@link #resetProfile()}
+	 */
+	public void resetMotionProfile() {
+		resetProfile();
+	}
 
 	/**
 	 * Set dof1 sensitivity value which is needed by {@link remixlab.bias.event.MotionEvent#modulate(float[])}.

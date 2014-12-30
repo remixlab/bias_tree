@@ -266,5 +266,7 @@ void keyPressed() {
       setDefaults( scene.eye().frame() );
   }
   if ( key == 'i')
+    //TODO go like this:
+    //scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == null ? interactiveFrame : null);
     scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == interactiveFrame ? scene.eye().frame() : interactiveFrame);
 }

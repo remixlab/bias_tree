@@ -36,7 +36,7 @@ import remixlab.util.*;
  * <b>Note:</b> Once created, the InteractiveFrame is automatically added to the scene
  * {@link remixlab.bias.core.InputHandler#agents()} pool.
  */
-public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrabber<FrameAction>, Copyable, Constants {		
+public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrabber<MotionAction>, Copyable, Constants {		
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -93,7 +93,9 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	public InteractiveFrame(AbstractScene scn) {
 		super(scn);
 
-		scene.inputHandler().addInAllAgentPools(this);
+		//TODO pending according to final iFrame hierarchy
+		//if( !(this instanceof InteractiveEyeFrame) )
+			scene.motionAgent().addInPool(this);
 		isInCamPath = false;
 
 		setGrabsInputThreshold(20);
@@ -118,10 +120,8 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
 
-		for (Agent element : this.scene.inputHandler().agents()) {
-			if (this.scene.inputHandler().isInAgentPool(otherFrame, element))
-				this.scene.inputHandler().addInAgentPool(this, element);
-		}		
+		if( scene.motionAgent().frameBranch().isInPool(otherFrame) )
+			scene.motionAgent().frameBranch().addInPool(this);
 		
 		this.setAction(otherFrame.action());
 
@@ -149,7 +149,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	 */
 	protected InteractiveFrame(AbstractScene scn, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame.translation().get(), iFrame.rotation().get(), iFrame.scaling());
-
+		
 		isInCamPath = true;
 		setGrabsInputThreshold(20);
 		// TODO future versions should go (except for iFrames in eyePath?):
@@ -162,19 +162,19 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	
 	//TODO testing instantiation
 	// see here http://stackoverflow.com/questions/23056324/why-does-java-allow-null-value-to-be-assigned-to-an-enum
-	protected Action<FrameAction> action = FrameDOF1Action.CUSTOM_DOF1_ACTION;
+	protected Action<MotionAction> action = DOF1Action.CUSTOM_DOF1_ACTION;
 	
-	public FrameAction referenceAction() {
+	public MotionAction referenceAction() {
 		return action!=null ? action.referenceAction() : null;
 	}
 	
 	@Override
-	public void setAction(Action<FrameAction> a) {
+	public void setAction(Action<MotionAction> a) {
 		action = a;
 	}
 	
 	@Override
-	public Action<FrameAction> action() {
+	public Action<MotionAction> action() {
 		return action;
 	}
 	
@@ -233,7 +233,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	public void performInteraction(ClickEvent event) {
 		//switch(referenceAction()) {
 		//switch(FrameClickAction.valueOf(referenceAction().toString())) {
-		switch((FrameClickAction) action()) {
+		switch((ClickAction) action()) {
 		//switch(action(event)) {//not working
 		case CENTER_FRAME:
 			projectOnLine(scene.eye().position(), scene.eye().viewDirection());
@@ -243,11 +243,11 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 			break;
 		case CUSTOM_CLICK_ACTION:
 			performCustomAction(event);
+			break;	
+		case ANCHOR_FROM_PIXEL:
+		case ZOOM_ON_PIXEL:
+			AbstractScene.showOnlyEyeWarning(referenceAction());
 			break;
-			/*
-		default:
-			break;
-			*/
 		}
 	}
 
@@ -292,7 +292,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	protected void execAction2D(DOF1Event event, boolean wheel) {
-		switch((FrameDOF1Action) action()) {
+		switch((DOF1Action) action()) {
 		case CUSTOM_DOF1_ACTION:
 			performCustomAction(event);
 			break;
@@ -313,9 +313,14 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 			translateFromEye(new Vec(0, scene.isRightHanded() ? -delta1(event, wheel) : delta1(event, wheel)), wheel ? 1
 					: translationSensitivity());
 			break;
-		default:
-			//TODO
-			//AbstractScene.showOnlyEyeWarning(a);
+		case ROTATE_X:
+		case ROTATE_Y:
+		case TRANSLATE_Z:
+			AbstractScene.showDepthWarning(referenceAction());
+			break;
+		case ZOOM:
+		case ZOOM_ON_ANCHOR:
+			AbstractScene.showOnlyEyeWarning(referenceAction());
 			break;
 		}
 	}
@@ -323,7 +328,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	protected void execAction2D(DOF2Event event) {
 		Vec trans;
 		float deltaX, deltaY;
-		switch((FrameDOF2Action) action()) {
+		switch((DOF2Action) action()) {
 		case CUSTOM_DOF2_ACTION:
 			performCustomAction(event);
 			break;
@@ -382,23 +387,29 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		case SCALE:
 		case TRANSLATE_Y:
 			execAction2D(event.dof1Event(false));
+			break;		
+		case ZOOM:
+		case ZOOM_ON_ANCHOR:
+		case ROTATE_CAD:
+		case ZOOM_ON_REGION:
+			AbstractScene.showOnlyEyeWarning(referenceAction());
 			break;
+		//ROTATE_X: ROTATE_Y: TRANSLATE_Z: DRIVE: LOOK_AROUND:
 		default:
-		  //TODO
-			//AbstractScene.showOnlyEyeWarning(a);
+			AbstractScene.showDepthWarning(referenceAction());
 			break;
 		}
 	}
 
 	protected void execAction2D(DOF3Event event) {
-		if( (FrameDOF3Action) action() ==  FrameDOF3Action.CUSTOM_DOF3_ACTION )
+		if( (DOF3Action) action() ==  DOF3Action.CUSTOM_DOF3_ACTION )
 			performCustomAction(event);
 		else
 			execAction2D(event.dof2Event());
 	}
 
 	protected void execAction2D(DOF6Event event) {
-		if( (FrameDOF6Action) action() ==  FrameDOF6Action.CUSTOM_DOF6_ACTION )
+		if( (DOF6Action) action() ==  DOF6Action.CUSTOM_DOF6_ACTION )
 			performCustomAction(event);
 		else
 			execAction2D(event.dof3Event());
@@ -418,7 +429,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	protected void execAction3D(DOF1Event event, boolean wheel) {
 		Vec trans;
 		float delta;
-		switch((FrameDOF1Action) action()) {
+		switch((DOF1Action) action()) {
 		case CUSTOM_DOF1_ACTION:
 			performCustomAction(event);
 			break;
@@ -465,6 +476,9 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 				translateFromEye(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
 						/ scene.camera().screenHeight()));
 			}
+		case ZOOM_ON_ANCHOR:
+			AbstractScene.showOnlyEyeWarning(referenceAction());
+			break;
 		}
 	}
 
@@ -472,7 +486,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		Quat rot;
 		Vec trans;
 		float angle;
-		switch((FrameDOF2Action) action()) {
+		switch((DOF2Action) action()) {
 		case CUSTOM_DOF2_ACTION:
 			performCustomAction(event);
 			break;
@@ -567,6 +581,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		case TRANSLATE_X:
 			execAction3D(event.dof1Event(true), false);
 			break;
+		// ROTATE_CAD: ROTATE_X: SCALE: TRANSLATE_Y: TRANSLATE_Z: ZOOM: ZOOM_ON_ANCHOR: ZOOM_ON_REGION:
 		default:
 			execAction3D(event.dof1Event(false), false);
 			break;	
@@ -574,7 +589,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	protected void execAction3D(DOF3Event event) {
-		switch((FrameDOF3Action) action()) {
+		switch((DOF3Action) action()) {
 		case CUSTOM_DOF3_ACTION:
 			performCustomAction(event);
 			break;
@@ -593,6 +608,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 			scale2Fit(trns);
 			translateFromEye(trns);
 			break;
+    // ROTATE_CAD: ROTATE_X: SCALE: TRANSLATE_Y: TRANSLATE_Z: ZOOM: ZOOM_ON_ANCHOR: ZOOM_ON_REGION:
 		default:
 			execAction3D(event.dof2Event());
 			break;
@@ -600,7 +616,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	protected void execAction3D(DOF6Event event) {
-		switch((FrameDOF6Action) action()) {
+		switch((DOF6Action) action()) {
 		case CUSTOM_DOF6_ACTION:
 			performCustomAction(event);
 			break;

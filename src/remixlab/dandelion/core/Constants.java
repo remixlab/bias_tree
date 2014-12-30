@@ -15,7 +15,14 @@ import remixlab.bias.core.Action;
 //TODO left out only a single CUSTOM action if dofs() are discarded
 //TODO fix docs
 public interface Constants {
-	public enum EyeAction {
+	/**
+	 * Which object is performing the motion action.
+	 */
+	public enum Target {
+		EYE, FRAME
+	}
+	
+	public enum MotionAction {
 		/**
 		 * Center frame
 		 */
@@ -166,195 +173,25 @@ public interface Constants {
 		boolean	twoD;
 		int			dofs;
 
-		EyeAction(String description, boolean td, int ds) {
+		MotionAction(String description, boolean td, int ds) {
 			this.description = description;
 			this.twoD = td;
 			this.dofs = ds;
 		}
 
-		EyeAction(String description, int ds) {
+		MotionAction(String description, int ds) {
 			this.description = description;
 			this.twoD = true;
 			this.dofs = ds;
 		}
 
-		EyeAction(String description, boolean td) {
+		MotionAction(String description, boolean td) {
 			this.description = description;
 			this.twoD = td;
 			this.dofs = 2;
 		}
 
-		EyeAction(String description) {
-			this.description = description;
-			this.twoD = true;
-			this.dofs = 0;
-		}
-
-		/**
-		 * Returns a description of the action item.
-		 */
-		public String description() {
-			return description;
-		}
-
-		/**
-		 * Whether or not this action item is available in 2D. All actions are available in 3D.
-		 */
-		public boolean is2D() {
-			return twoD;
-		}
-
-		/**
-		 * Returns the degrees-of-freedom needed to perform the action item.
-		 */
-		public int dofs() {
-			return dofs;
-		}
-	}
-
-	public enum FrameAction {
-		/**
-		 * Center frame
-		 */
-		CENTER_FRAME("Center frame", true, 0),
-		/**
-		 * Align frame with world
-		 */
-		ALIGN_FRAME("Align frame with world", true, 0),
-
-		// Wheel
-
-		/**
-		 * custom Scale frame
-		 */
-		SCALE("Scale frame", true, 1),
-		/**
-		 * Zoom eye
-		 */
-		ZOOM("Zoom eye", false, 1),
-		/**
-		 * Translate along screen X axis
-		 */
-		TRANSLATE_X("Translate along screen X axis", true, 1),
-		/**
-		 * Translate along screen Y axis
-		 */
-		TRANSLATE_Y("Translate along screen Y axis", true, 1),
-		/**
-		 * Translate along screen Z axis
-		 */
-		TRANSLATE_Z("Translate along screen Z axis", false, 1),
-		/**
-		 * Rotate frame around screen x axis (eye or interactive frame)
-		 */
-		ROTATE_X("Rotate frame around screen x axis (eye or interactive frame)", false, 1),
-		/**
-		 * Rotate frame around screen y axis (eye or interactive frame)
-		 */
-		ROTATE_Y("Rotate frame around screen y axis (eye or interactive frame)", false, 1),
-		/**
-		 * Rotate frame around screen z axis (eye or interactive frame)
-		 */
-		ROTATE_Z("Rotate frame around screen z axis (eye or interactive frame)", true, 1),
-		/**
-		 * Drive (camera or interactive frame)
-		 */
-		DRIVE("Drive (camera or interactive frame)", false, 2),
-
-		// 2 DOFs ACTIONs
-		/**
-		 * Frame (eye or interactive frame) arcball rotate
-		 */
-		ROTATE("Frame (eye or interactive frame) arcball rotate", true, 2),
-		/**
-		 * Translate frame (eye or interactive frame)
-		 */
-		TRANSLATE("Translate frame (eye or interactive frame)", true, 2),
-		/**
-		 * Move forward frame (camera or interactive frame)
-		 */
-		MOVE_FORWARD("Move forward frame (camera or interactive frame)", true, 2),
-		/**
-		 * Move backward frame (camera or interactive frame)
-		 */
-		MOVE_BACKWARD("Move backward frame (camera or interactive frame)", true, 2),
-		/**
-		 * Look around with frame (camera or interactive frame)
-		 */
-		LOOK_AROUND("Look around with frame (camera or interactive frame)", false, 2),
-		/**
-		 * Screen rotate (eye or interactive frame)
-		 */
-		SCREEN_ROTATE("Screen rotate (eye or interactive frame)", true, 2),
-		/**
-		 * Screen translate frame (eye or interactive frame)
-		 */
-		SCREEN_TRANSLATE("Screen translate frame (eye or interactive frame)", true, 2),
-		/**
-		 * Translate frame (camera or interactive frame) from dx, dy, dz simultaneously
-		 */
-		TRANSLATE_XYZ("Translate frame (camera or interactive frame) from dx, dy, dz simultaneously", false, 3),
-		/**
-		 * Rotate frame (camera or interactive frame) from Euler angles
-		 */
-		ROTATE_XYZ("Rotate frame (camera or interactive frame) from Euler angles", false, 3),
-		/**
-		 * Translate frame (camera or interactive frame) from dx, dy, dz and rotate it from Euler angles simultaneously
-		 */
-		TRANSLATE_XYZ_ROTATE_XYZ(
-				"Translate frame (camera or interactive frame) from dx, dy, dz and rotate it from Euler angles simultaneously",
-				false, 6),
-
-		// CUSTOM ACTIONs
-
-		/**
-		 * User defined action
-		 */
-		CUSTOM_CLICK_ACTION("User defined action", 0),
-
-		/**
-		 * User defined dof1-action
-		 */
-		CUSTOM_DOF1_ACTION("User defined dof1-action", 1),
-
-		/**
-		 * User defined dof2-action
-		 */
-		CUSTOM_DOF2_ACTION("User defined dof2-action", 2),
-
-		/**
-		 * User defined dof3-action
-		 */
-		CUSTOM_DOF3_ACTION("User defined dof3-action", 3),
-
-		/**
-		 * User defined dof6-action
-		 */
-		CUSTOM_DOF6_ACTION("User defined dof6-action", 6);
-
-		String	description;
-		boolean	twoD;
-		int			dofs;
-
-		FrameAction(String description, boolean td, int ds) {
-			this.description = description;
-			this.twoD = td;
-			this.dofs = ds;
-		}
-
-		FrameAction(String description, int ds) {
-			this.description = description;
-			this.twoD = true;
-			this.dofs = ds;
-		}
-
-		FrameAction(String description, boolean td) {
-			this.description = description;
-			this.twoD = td;
-			this.dofs = 2;
-		}
-
-		FrameAction(String description) {
+		MotionAction(String description) {
 			this.description = description;
 			this.twoD = true;
 			this.dofs = 0;
@@ -561,18 +398,18 @@ public interface Constants {
 	/**
 	 * Click action sub-group.
 	 */
-	public enum EyeClickAction implements Action<EyeAction> {
-		CENTER_FRAME(EyeAction.CENTER_FRAME),
-		ALIGN_FRAME(EyeAction.ALIGN_FRAME),
+	public enum ClickAction implements Action<MotionAction> {
+		CENTER_FRAME(MotionAction.CENTER_FRAME),
+		ALIGN_FRAME(MotionAction.ALIGN_FRAME),
 
 		// Click actions require cursor pos:
-		ZOOM_ON_PIXEL(EyeAction.ZOOM_ON_PIXEL),
-		ANCHOR_FROM_PIXEL(EyeAction.ANCHOR_FROM_PIXEL),
+		ZOOM_ON_PIXEL(MotionAction.ZOOM_ON_PIXEL),
+		ANCHOR_FROM_PIXEL(MotionAction.ANCHOR_FROM_PIXEL),
 
-		CUSTOM_CLICK_ACTION(EyeAction.CUSTOM_CLICK_ACTION);
+		CUSTOM_CLICK_ACTION(MotionAction.CUSTOM_CLICK_ACTION);
 
 		@Override
-		public EyeAction referenceAction() {
+		public MotionAction referenceAction() {
 			return act;
 		}
 
@@ -593,9 +430,9 @@ public interface Constants {
 			return act.is2D();
 		}
 
-		EyeAction	act;
+		MotionAction	act;
 
-		EyeClickAction(EyeAction a) {
+		ClickAction(MotionAction a) {
 			act = a;
 		}
 	}
@@ -603,22 +440,22 @@ public interface Constants {
 	/**
 	 * DOF1 action sub-group.
 	 */
-	public enum EyeDOF1Action implements Action<EyeAction> {
+	public enum DOF1Action implements Action<MotionAction> {
 		// DOF_1
-		SCALE(EyeAction.SCALE),
-		ZOOM(EyeAction.ZOOM),
-		ZOOM_ON_ANCHOR(EyeAction.ZOOM_ON_ANCHOR),
-		TRANSLATE_X(EyeAction.TRANSLATE_X),
-		TRANSLATE_Y(EyeAction.TRANSLATE_Y),
-		TRANSLATE_Z(EyeAction.TRANSLATE_Z),
-		ROTATE_X(EyeAction.ROTATE_X),
-		ROTATE_Y(EyeAction.ROTATE_Y),
-		ROTATE_Z(EyeAction.ROTATE_Z),
+		SCALE(MotionAction.SCALE),
+		ZOOM(MotionAction.ZOOM),
+		ZOOM_ON_ANCHOR(MotionAction.ZOOM_ON_ANCHOR),
+		TRANSLATE_X(MotionAction.TRANSLATE_X),
+		TRANSLATE_Y(MotionAction.TRANSLATE_Y),
+		TRANSLATE_Z(MotionAction.TRANSLATE_Z),
+		ROTATE_X(MotionAction.ROTATE_X),
+		ROTATE_Y(MotionAction.ROTATE_Y),
+		ROTATE_Z(MotionAction.ROTATE_Z),
 
-		CUSTOM_DOF1_ACTION(EyeAction.CUSTOM_DOF1_ACTION);
+		CUSTOM_DOF1_ACTION(MotionAction.CUSTOM_DOF1_ACTION);
 
 		@Override
-		public EyeAction referenceAction() {
+		public MotionAction referenceAction() {
 			return act;
 		}
 
@@ -639,9 +476,9 @@ public interface Constants {
 			return act.is2D();
 		}
 
-		EyeAction	act;
+		MotionAction	act;
 
-		EyeDOF1Action(EyeAction a) {
+		DOF1Action(MotionAction a) {
 			act = a;
 		}
 	}
@@ -649,34 +486,34 @@ public interface Constants {
 	/**
 	 * DOF2 action sub-group.
 	 */
-	public enum EyeDOF2Action implements Action<EyeAction> {
+	public enum DOF2Action implements Action<MotionAction> {
 		// DOF_1
-		SCALE(EyeAction.SCALE),
-		ZOOM(EyeAction.ZOOM),
-		ZOOM_ON_ANCHOR(EyeAction.ZOOM_ON_ANCHOR),
-		TRANSLATE_X(EyeAction.TRANSLATE_X),
-		TRANSLATE_Y(EyeAction.TRANSLATE_Y),
-		TRANSLATE_Z(EyeAction.TRANSLATE_Z),
-		ROTATE_X(EyeAction.ROTATE_X),
-		ROTATE_Y(EyeAction.ROTATE_Y),
-		ROTATE_Z(EyeAction.ROTATE_Z),
+		SCALE(MotionAction.SCALE),
+		ZOOM(MotionAction.ZOOM),
+		ZOOM_ON_ANCHOR(MotionAction.ZOOM_ON_ANCHOR),
+		TRANSLATE_X(MotionAction.TRANSLATE_X),
+		TRANSLATE_Y(MotionAction.TRANSLATE_Y),
+		TRANSLATE_Z(MotionAction.TRANSLATE_Z),
+		ROTATE_X(MotionAction.ROTATE_X),
+		ROTATE_Y(MotionAction.ROTATE_Y),
+		ROTATE_Z(MotionAction.ROTATE_Z),
 
 		// DOF_2
-		DRIVE(EyeAction.DRIVE),
-		ROTATE(EyeAction.ROTATE),
-		ROTATE_CAD(EyeAction.ROTATE_CAD),
-		TRANSLATE(EyeAction.TRANSLATE),
-		MOVE_FORWARD(EyeAction.MOVE_FORWARD),
-		MOVE_BACKWARD(EyeAction.MOVE_BACKWARD),
-		LOOK_AROUND(EyeAction.LOOK_AROUND),
-		SCREEN_ROTATE(EyeAction.SCREEN_ROTATE),
-		SCREEN_TRANSLATE(EyeAction.SCREEN_TRANSLATE),
-		ZOOM_ON_REGION(EyeAction.ZOOM_ON_REGION),
+		DRIVE(MotionAction.DRIVE),
+		ROTATE(MotionAction.ROTATE),
+		ROTATE_CAD(MotionAction.ROTATE_CAD),
+		TRANSLATE(MotionAction.TRANSLATE),
+		MOVE_FORWARD(MotionAction.MOVE_FORWARD),
+		MOVE_BACKWARD(MotionAction.MOVE_BACKWARD),
+		LOOK_AROUND(MotionAction.LOOK_AROUND),
+		SCREEN_ROTATE(MotionAction.SCREEN_ROTATE),
+		SCREEN_TRANSLATE(MotionAction.SCREEN_TRANSLATE),
+		ZOOM_ON_REGION(MotionAction.ZOOM_ON_REGION),
 
-		CUSTOM_DOF2_ACTION(EyeAction.CUSTOM_DOF2_ACTION);
+		CUSTOM_DOF2_ACTION(MotionAction.CUSTOM_DOF2_ACTION);
 
 		@Override
-		public EyeAction referenceAction() {
+		public MotionAction referenceAction() {
 			return act;
 		}
 
@@ -697,9 +534,9 @@ public interface Constants {
 			return act.is2D();
 		}
 
-		EyeAction	act;
+		MotionAction	act;
 
-		EyeDOF2Action(EyeAction a) {
+		DOF2Action(MotionAction a) {
 			act = a;
 		}
 	}
@@ -707,38 +544,38 @@ public interface Constants {
 	/**
 	 * DOF3 action sub-group.
 	 */
-	public enum EyeDOF3Action implements Action<EyeAction> {
+	public enum DOF3Action implements Action<MotionAction> {
 		// DOF_1
-		SCALE(EyeAction.SCALE),
-		ZOOM(EyeAction.ZOOM),
-		ZOOM_ON_ANCHOR(EyeAction.ZOOM_ON_ANCHOR),
-		TRANSLATE_X(EyeAction.TRANSLATE_X),
-		TRANSLATE_Y(EyeAction.TRANSLATE_Y),
-		TRANSLATE_Z(EyeAction.TRANSLATE_Z),
-		ROTATE_X(EyeAction.ROTATE_X),
-		ROTATE_Y(EyeAction.ROTATE_Y),
-		ROTATE_Z(EyeAction.ROTATE_Z),
+		SCALE(MotionAction.SCALE),
+		ZOOM(MotionAction.ZOOM),
+		ZOOM_ON_ANCHOR(MotionAction.ZOOM_ON_ANCHOR),
+		TRANSLATE_X(MotionAction.TRANSLATE_X),
+		TRANSLATE_Y(MotionAction.TRANSLATE_Y),
+		TRANSLATE_Z(MotionAction.TRANSLATE_Z),
+		ROTATE_X(MotionAction.ROTATE_X),
+		ROTATE_Y(MotionAction.ROTATE_Y),
+		ROTATE_Z(MotionAction.ROTATE_Z),
 
 		// DOF_2
-		DRIVE(EyeAction.DRIVE),
-		ROTATE(EyeAction.ROTATE),
-		ROTATE_CAD(EyeAction.ROTATE_CAD),
-		TRANSLATE(EyeAction.TRANSLATE),
-		MOVE_FORWARD(EyeAction.MOVE_FORWARD),
-		MOVE_BACKWARD(EyeAction.MOVE_BACKWARD),
-		LOOK_AROUND(EyeAction.LOOK_AROUND),
-		SCREEN_ROTATE(EyeAction.SCREEN_ROTATE),
-		SCREEN_TRANSLATE(EyeAction.SCREEN_TRANSLATE),
-		ZOOM_ON_REGION(EyeAction.ZOOM_ON_REGION),
+		DRIVE(MotionAction.DRIVE),
+		ROTATE(MotionAction.ROTATE),
+		ROTATE_CAD(MotionAction.ROTATE_CAD),
+		TRANSLATE(MotionAction.TRANSLATE),
+		MOVE_FORWARD(MotionAction.MOVE_FORWARD),
+		MOVE_BACKWARD(MotionAction.MOVE_BACKWARD),
+		LOOK_AROUND(MotionAction.LOOK_AROUND),
+		SCREEN_ROTATE(MotionAction.SCREEN_ROTATE),
+		SCREEN_TRANSLATE(MotionAction.SCREEN_TRANSLATE),
+		ZOOM_ON_REGION(MotionAction.ZOOM_ON_REGION),
 
 		// DOF_3
-		TRANSLATE_XYZ(EyeAction.TRANSLATE_XYZ),
-		ROTATE_XYZ(EyeAction.ROTATE_XYZ),
+		TRANSLATE_XYZ(MotionAction.TRANSLATE_XYZ),
+		ROTATE_XYZ(MotionAction.ROTATE_XYZ),
 
-		CUSTOM_DOF3_ACTION(EyeAction.CUSTOM_DOF3_ACTION);
+		CUSTOM_DOF3_ACTION(MotionAction.CUSTOM_DOF3_ACTION);
 
 		@Override
-		public EyeAction referenceAction() {
+		public MotionAction referenceAction() {
 			return act;
 		}
 
@@ -759,9 +596,9 @@ public interface Constants {
 			return act.is2D();
 		}
 
-		EyeAction	act;
+		MotionAction	act;
 
-		EyeDOF3Action(EyeAction a) {
+		DOF3Action(MotionAction a) {
 			act = a;
 		}
 	}
@@ -769,44 +606,44 @@ public interface Constants {
 	/**
 	 * DOF6 action sub-group.
 	 */
-	public enum EyeDOF6Action implements Action<EyeAction> {
+	public enum DOF6Action implements Action<MotionAction> {
 		// DOF_1
-		SCALE(EyeAction.SCALE),
-		ZOOM(EyeAction.ZOOM),
-		ZOOM_ON_ANCHOR(EyeAction.ZOOM_ON_ANCHOR),
-		TRANSLATE_X(EyeAction.TRANSLATE_X),
-		TRANSLATE_Y(EyeAction.TRANSLATE_Y),
-		TRANSLATE_Z(EyeAction.TRANSLATE_Z),
-		ROTATE_X(EyeAction.ROTATE_X),
-		ROTATE_Y(EyeAction.ROTATE_Y),
-		ROTATE_Z(EyeAction.ROTATE_Z),
+		SCALE(MotionAction.SCALE),
+		ZOOM(MotionAction.ZOOM),
+		ZOOM_ON_ANCHOR(MotionAction.ZOOM_ON_ANCHOR),
+		TRANSLATE_X(MotionAction.TRANSLATE_X),
+		TRANSLATE_Y(MotionAction.TRANSLATE_Y),
+		TRANSLATE_Z(MotionAction.TRANSLATE_Z),
+		ROTATE_X(MotionAction.ROTATE_X),
+		ROTATE_Y(MotionAction.ROTATE_Y),
+		ROTATE_Z(MotionAction.ROTATE_Z),
 
 		// DOF_2
-		ROTATE(EyeAction.ROTATE),
-		DRIVE(EyeAction.DRIVE),
-		ROTATE_CAD(EyeAction.ROTATE_CAD),
-		TRANSLATE(EyeAction.TRANSLATE),
-		MOVE_FORWARD(EyeAction.MOVE_FORWARD),
-		MOVE_BACKWARD(EyeAction.MOVE_BACKWARD),
-		LOOK_AROUND(EyeAction.LOOK_AROUND),
-		SCREEN_ROTATE(EyeAction.SCREEN_ROTATE),
-		SCREEN_TRANSLATE(EyeAction.SCREEN_TRANSLATE),
-		ZOOM_ON_REGION(EyeAction.ZOOM_ON_REGION),
+		ROTATE(MotionAction.ROTATE),
+		DRIVE(MotionAction.DRIVE),
+		ROTATE_CAD(MotionAction.ROTATE_CAD),
+		TRANSLATE(MotionAction.TRANSLATE),
+		MOVE_FORWARD(MotionAction.MOVE_FORWARD),
+		MOVE_BACKWARD(MotionAction.MOVE_BACKWARD),
+		LOOK_AROUND(MotionAction.LOOK_AROUND),
+		SCREEN_ROTATE(MotionAction.SCREEN_ROTATE),
+		SCREEN_TRANSLATE(MotionAction.SCREEN_TRANSLATE),
+		ZOOM_ON_REGION(MotionAction.ZOOM_ON_REGION),
 
 		// DOF_3
-		TRANSLATE_XYZ(EyeAction.TRANSLATE_XYZ),
-		ROTATE_XYZ(EyeAction.ROTATE_XYZ),
+		TRANSLATE_XYZ(MotionAction.TRANSLATE_XYZ),
+		ROTATE_XYZ(MotionAction.ROTATE_XYZ),
 
 		// DOF_4
-		HINGE(EyeAction.HINGE),
+		HINGE(MotionAction.HINGE),
 
 		// DOF_6
-		TRANSLATE_XYZ_ROTATE_XYZ(EyeAction.TRANSLATE_XYZ_ROTATE_XYZ),
+		TRANSLATE_XYZ_ROTATE_XYZ(MotionAction.TRANSLATE_XYZ_ROTATE_XYZ),
 
-		CUSTOM_DOF6_ACTION(EyeAction.CUSTOM_DOF6_ACTION);
+		CUSTOM_DOF6_ACTION(MotionAction.CUSTOM_DOF6_ACTION);
 
 		@Override
-		public EyeAction referenceAction() {
+		public MotionAction referenceAction() {
 			return act;
 		}
 
@@ -827,270 +664,9 @@ public interface Constants {
 			return act.is2D();
 		}
 
-		EyeAction	act;
+		MotionAction	act;
 
-		EyeDOF6Action(EyeAction a) {
-			act = a;
-		}
-	}
-
-	// Frame
-
-	/**
-	 * Click action sub-group.
-	 */
-	public enum FrameClickAction implements Action<FrameAction> {
-		CENTER_FRAME(FrameAction.CENTER_FRAME),
-		ALIGN_FRAME(FrameAction.ALIGN_FRAME),
-
-		CUSTOM_CLICK_ACTION(FrameAction.CUSTOM_CLICK_ACTION);
-
-		@Override
-		public FrameAction referenceAction() {
-			return act;
-		}
-
-		@Override
-		public String description() {
-			return this.referenceAction().description();
-		}
-
-		@Override
-		public int dofs() {
-			return act.dofs();
-		}
-
-		/**
-		 * Whether or not this action item is available in 2D. All actions are available in 3D.
-		 */
-		public boolean is2D() {
-			return act.is2D();
-		}
-
-		FrameAction	act;
-
-		FrameClickAction(FrameAction a) {
-			act = a;
-		}
-	}
-
-	/**
-	 * DOF1 action sub-group.
-	 */
-	public enum FrameDOF1Action implements Action<FrameAction> {
-		// DOF_1
-		SCALE(FrameAction.SCALE),
-		ZOOM(FrameAction.ZOOM),
-		TRANSLATE_X(FrameAction.TRANSLATE_X),
-		TRANSLATE_Y(FrameAction.TRANSLATE_Y),
-		TRANSLATE_Z(FrameAction.TRANSLATE_Z),
-		ROTATE_X(FrameAction.ROTATE_X),
-		ROTATE_Y(FrameAction.ROTATE_Y),
-		ROTATE_Z(FrameAction.ROTATE_Z),
-
-		CUSTOM_DOF1_ACTION(FrameAction.CUSTOM_DOF1_ACTION);
-
-		@Override
-		public FrameAction referenceAction() {
-			return act;
-		}
-
-		@Override
-		public String description() {
-			return this.referenceAction().description();
-		}
-
-		@Override
-		public int dofs() {
-			return act.dofs();
-		}
-
-		/**
-		 * Whether or not this action item is available in 2D. All actions are available in 3D.
-		 */
-		public boolean is2D() {
-			return act.is2D();
-		}
-
-		FrameAction	act;
-
-		FrameDOF1Action(FrameAction a) {
-			act = a;
-		}
-	}
-
-	/**
-	 * DOF2 action sub-group.
-	 */
-	public enum FrameDOF2Action implements Action<FrameAction> {
-		// DOF_1
-		SCALE(FrameAction.SCALE),
-		ZOOM(FrameAction.ZOOM),		
-		TRANSLATE_X(FrameAction.TRANSLATE_X),
-		TRANSLATE_Y(FrameAction.TRANSLATE_Y),
-		TRANSLATE_Z(FrameAction.TRANSLATE_Z),
-		ROTATE_X(FrameAction.ROTATE_X),
-		ROTATE_Y(FrameAction.ROTATE_Y),
-		ROTATE_Z(FrameAction.ROTATE_Z),
-
-		// DOF_2
-		DRIVE(FrameAction.DRIVE),
-		ROTATE(FrameAction.ROTATE),
-		TRANSLATE(FrameAction.TRANSLATE),
-		MOVE_FORWARD(FrameAction.MOVE_FORWARD),
-		MOVE_BACKWARD(FrameAction.MOVE_BACKWARD),
-		LOOK_AROUND(FrameAction.LOOK_AROUND),
-		SCREEN_ROTATE(FrameAction.SCREEN_ROTATE),
-		SCREEN_TRANSLATE(FrameAction.SCREEN_TRANSLATE),
-
-		CUSTOM_DOF2_ACTION(FrameAction.CUSTOM_DOF2_ACTION);
-
-		@Override
-		public FrameAction referenceAction() {
-			return act;
-		}
-
-		@Override
-		public String description() {
-			return this.referenceAction().description();
-		}
-
-		@Override
-		public int dofs() {
-			return act.dofs();
-		}
-
-		/**
-		 * Whether or not this action item is available in 2D. All actions are available in 3D.
-		 */
-		public boolean is2D() {
-			return act.is2D();
-		}
-
-		FrameAction	act;
-
-		FrameDOF2Action(FrameAction a) {
-			act = a;
-		}
-	}
-
-	/**
-	 * DOF3 action sub-group.
-	 */
-	public enum FrameDOF3Action implements Action<FrameAction> {
-		// DOF_1
-		SCALE(FrameAction.SCALE),
-		ZOOM(FrameAction.ZOOM),		
-		TRANSLATE_X(FrameAction.TRANSLATE_X),
-		TRANSLATE_Y(FrameAction.TRANSLATE_Y),
-		TRANSLATE_Z(FrameAction.TRANSLATE_Z),
-		ROTATE_X(FrameAction.ROTATE_X),
-		ROTATE_Y(FrameAction.ROTATE_Y),
-		ROTATE_Z(FrameAction.ROTATE_Z),
-
-		// DOF_2
-		DRIVE(FrameAction.DRIVE),
-		ROTATE(FrameAction.ROTATE),
-		TRANSLATE(FrameAction.TRANSLATE),
-		MOVE_FORWARD(FrameAction.MOVE_FORWARD),
-		MOVE_BACKWARD(FrameAction.MOVE_BACKWARD),
-		LOOK_AROUND(FrameAction.LOOK_AROUND),
-		SCREEN_ROTATE(FrameAction.SCREEN_ROTATE),
-		SCREEN_TRANSLATE(FrameAction.SCREEN_TRANSLATE),
-
-		// DOF_3
-		TRANSLATE_XYZ(FrameAction.TRANSLATE_XYZ),
-		ROTATE_XYZ(FrameAction.ROTATE_XYZ),
-
-		CUSTOM_DOF3_ACTION(FrameAction.CUSTOM_DOF3_ACTION);
-
-		@Override
-		public FrameAction referenceAction() {
-			return act;
-		}
-
-		@Override
-		public String description() {
-			return this.referenceAction().description();
-		}
-
-		@Override
-		public int dofs() {
-			return act.dofs();
-		}
-
-		/**
-		 * Whether or not this action item is available in 2D. All actions are available in 3D.
-		 */
-		public boolean is2D() {
-			return act.is2D();
-		}
-
-		FrameAction	act;
-
-		FrameDOF3Action(FrameAction a) {
-			act = a;
-		}
-	}
-
-	/**
-	 * DOF6 action sub-group.
-	 */
-	public enum FrameDOF6Action implements Action<FrameAction> {
-		// DOF_1
-		SCALE(FrameAction.SCALE),
-		ZOOM(FrameAction.ZOOM),		
-		TRANSLATE_X(FrameAction.TRANSLATE_X),
-		TRANSLATE_Y(FrameAction.TRANSLATE_Y),
-		TRANSLATE_Z(FrameAction.TRANSLATE_Z),
-		ROTATE_X(FrameAction.ROTATE_X),
-		ROTATE_Y(FrameAction.ROTATE_Y),
-		ROTATE_Z(FrameAction.ROTATE_Z),
-
-		// DOF_2
-		ROTATE(FrameAction.ROTATE),
-		DRIVE(FrameAction.DRIVE),
-		TRANSLATE(FrameAction.TRANSLATE),
-		MOVE_FORWARD(FrameAction.MOVE_FORWARD),
-		MOVE_BACKWARD(FrameAction.MOVE_BACKWARD),
-		LOOK_AROUND(FrameAction.LOOK_AROUND),
-		SCREEN_ROTATE(FrameAction.SCREEN_ROTATE),
-		SCREEN_TRANSLATE(FrameAction.SCREEN_TRANSLATE),
-
-		// DOF_3
-		TRANSLATE_XYZ(FrameAction.TRANSLATE_XYZ),
-		ROTATE_XYZ(FrameAction.ROTATE_XYZ),
-
-		// DOF_6
-		TRANSLATE_XYZ_ROTATE_XYZ(FrameAction.TRANSLATE_XYZ_ROTATE_XYZ),
-
-		CUSTOM_DOF6_ACTION(FrameAction.CUSTOM_DOF6_ACTION);
-
-		@Override
-		public FrameAction referenceAction() {
-			return act;
-		}
-
-		@Override
-		public String description() {
-			return this.referenceAction().description();
-		}
-
-		@Override
-		public int dofs() {
-			return act.dofs();
-		}
-
-		/**
-		 * Whether or not this action item is available in 2D. All actions are available in 3D.
-		 */
-		public boolean is2D() {
-			return act.is2D();
-		}
-
-		FrameAction	act;
-
-		FrameDOF6Action(FrameAction a) {
+		DOF6Action(MotionAction a) {
 			act = a;
 		}
 	}

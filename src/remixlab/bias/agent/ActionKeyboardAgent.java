@@ -48,4 +48,11 @@ public class ActionKeyboardAgent<K extends KeyboardProfile<?>> extends ActionAge
 	public void setKeyboardProfile(K kprofile) {
 		setProfile(profile);
 	}
+	
+	/**
+	 * Convenience function that simply calls {@code clickProfile.removeAllBindings()}. 
+	 */
+	public void resetKeyboardProfile() {
+		profile.removeAllBindings();
+	}
 }

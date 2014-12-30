@@ -46,7 +46,7 @@ import remixlab.util.*;
  * {@link remixlab.dandelion.core.AbstractScene#inputHandler()} {@link remixlab.bias.core.InputHandler#agents()} pool
  * upon creation.
  */
-public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionGrabber<EyeAction>, Copyable, Constants {
+public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionGrabber<MotionAction>, Copyable, Constants {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -101,8 +101,6 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
 		
 		// old from here
-		
-		scene.inputHandler().removeFromAllAgentPools(this);
 		anchorPnt = new Vec(0.0f, 0.0f, 0.0f);
 
 		timerFx = new TimingTask() {
@@ -120,11 +118,14 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 		this.scnUpVec.set(otherFrame.sceneUpVector());
 		this.flyDisp.set(otherFrame.flyDisp.get());
 		
+		//TODO don't think so: frame is added to the pool when setting the eye
+		//if( scene.motionAgent().eyeBranch().isInPool(otherFrame) )
+			//scene.motionAgent().eyeBranch().addInPool(this);
+		
 	  // old from here
 		
 		this.anchorPnt = new Vec();
 		this.anchorPnt.set(otherFrame.anchorPnt);
-		this.scene.inputHandler().removeFromAllAgentPools(this);
 		this.timerFx = new TimingTask() {
 			public void execute() {
 				unSetTimerFlag();
@@ -144,19 +145,19 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	
   //grabber implementation
 	
-	protected Action<EyeAction> action;
+	protected Action<MotionAction> action;
 	
-	public EyeAction referenceAction() {
+	public MotionAction referenceAction() {
 		return action!=null ? action.referenceAction() : null;
 	}
 	
 	@Override
-	public void setAction(Action<EyeAction> a) {
+	public void setAction(Action<MotionAction> a) {
 		action = a;
 	}
 	
 	@Override
-	public Action<EyeAction> action() {
+	public Action<MotionAction> action() {
 		return action;
 	}
 	
@@ -212,7 +213,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	}
 	
 	public void performInteraction(ClickEvent event) {
-		switch((EyeClickAction) action()) {
+		switch((ClickAction) action()) {
 		case CUSTOM_CLICK_ACTION:
 			performCustomAction(event);
 			break;
@@ -283,7 +284,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	}
 
 	protected void execAction2D(DOF1Event event, boolean wheel) {
-		switch((EyeDOF1Action) action()) {
+		switch((DOF1Action) action()) {
 		case CUSTOM_DOF1_ACTION:
 			performCustomAction(event);
 			break;
@@ -314,7 +315,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	protected void execAction2D(DOF2Event event) {
 		float deltaX, deltaY;
 		Rotation rot;
-		switch((EyeDOF2Action) action()) {
+		switch((DOF2Action) action()) {
 		case CUSTOM_DOF2_ACTION:
 			performCustomAction(event);
 			break;
@@ -384,14 +385,14 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	}
 	
 	protected void execAction2D(DOF3Event event) {
-		if( (EyeDOF3Action) action() ==  EyeDOF3Action.CUSTOM_DOF3_ACTION )
+		if( (DOF3Action) action() ==  DOF3Action.CUSTOM_DOF3_ACTION )
 			performCustomAction(event);
 		else
 			execAction2D(event.dof2Event());
 	}
 
 	protected void execAction2D(DOF6Event event) {
-		if( (EyeDOF6Action) action() ==  EyeDOF6Action.CUSTOM_DOF6_ACTION )
+		if( (DOF6Action) action() ==  DOF6Action.CUSTOM_DOF6_ACTION )
 			performCustomAction(event);
 		else
 			execAction2D(event.dof3Event());
@@ -406,7 +407,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	protected void execAction3D(DOF1Event event, boolean wheel) {
 		float wheelSensitivityCoef = 8E-4f;
 		Vec trns;
-		switch((EyeDOF1Action) action()) {
+		switch((DOF1Action) action()) {
 		case CUSTOM_DOF1_ACTION:
 			performCustomAction(event);
 			break;
@@ -469,7 +470,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 
 	protected void execAction3D(DOF2Event event) {
 		Vec trns = new Vec();
-		switch((EyeDOF2Action) action()) {
+		switch((DOF2Action) action()) {
 		case CUSTOM_DOF2_ACTION:
 			performCustomAction(event);
 			break;
@@ -599,7 +600,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	}
 
 	protected void execAction3D(DOF3Event event) {
-		switch((EyeDOF3Action) action()) {
+		switch((DOF3Action) action()) {
 		case CUSTOM_DOF3_ACTION:
 			performCustomAction(event);
 			break;		
@@ -626,7 +627,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 
 	protected void execAction3D(DOF6Event event) {
 		Vec trns = new Vec();
-		switch((EyeDOF6Action) action()) {
+		switch((DOF6Action) action()) {
 		case CUSTOM_DOF6_ACTION:
 			performCustomAction(event);
 			break;		

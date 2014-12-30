@@ -487,7 +487,7 @@ public abstract class Eye implements Copyable {
 		}
 		scnRadius = radius;
 		setFlySpeed(0.01f * sceneRadius());
-		for (Grabber mg : scene.inputHandler().globalGrabberList()) {
+		for (Grabber mg : scene.motionAgent().frameBranch().pool()) {
 			if (mg instanceof InteractiveFrame)
 				if (!((InteractiveFrame) mg).isInEyePath())
 					((InteractiveFrame) mg).setFlySpeed(0.01f * sceneRadius());

@@ -31,7 +31,9 @@ public class Box {
     pushMatrix();
     iFrame.applyWorldTransformation();    
     noStroke();
-    if (scene.grabsAnyAgentInput(iFrame))
+    //if (scene.grabsAnyAgentInput(iFrame))
+    //TODO should go like this:
+    if(iFrame.grabsInput(scene.motionAgent())
       fill(255, 0, 0);
     else
       fill(getColor());

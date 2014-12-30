@@ -73,16 +73,17 @@ public class Agent {
 	 * <p>
 	 * Returns {@code false} by default.
 	 */
-	protected boolean alienGrabber() {
+	public boolean alienGrabber() {
 		//System.out.println("alienGrabber() invoked");
 		//TODO testing
-		return isInPool(inputGrabber());
-		//return false;//prev worked
+		//return isInPool(inputGrabber());
+		return false;//prev worked
 	}
 	
+	//TODO implement
 	/*
-	protected boolean alienGrabber(Grabber g) {
-		
+	public boolean isAlienGrabber(Grabber g) {
+		return isInPool(g);
 	}
 	*/
 
@@ -319,6 +320,29 @@ public class Agent {
 	public List<Grabber> pool() {
 		return grabbers;
 	}
+	
+	/**
+	 * Adds the grabber in the {@link #pool()}.
+	 * <p>
+	 * Use {@link #removeFromPool(Grabber)} to remove the grabber from the pool, so that it is no longer tested with
+	 * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} by the handler, and hence can no longer grab the
+	 * agent focus. Use {@link #isInPool(Grabber)} to know the current state of the grabber.
+	 */
+	public boolean addInPool(Grabber grabber) {
+		if (grabber == null)
+			return false;
+		if (!isInPool(grabber)) {
+			if( ! (grabber instanceof ActionGrabber) ) {				
+				pool().add(grabber);
+				return true;
+			}
+			else {
+			  //TODO debug
+				System.out.println("ActionGrabber cannot be ADDED in this agent: " + this.name());
+			}			
+		}
+		return false;
+	}
 
 	/**
 	 * Removes the grabber from the {@link #pool()}.
@@ -370,6 +394,10 @@ public class Agent {
 		else
 			return defaultGrabber();
 	}
+	
+	public boolean isInputGrabber(Grabber g) {
+		return g.grabsInput(this);
+	}
 
 	/**
 	 * Default {@link #inputGrabber()} returned when {@link #trackedGrabber()} is null and set with
@@ -388,32 +416,22 @@ public class Agent {
 	 * {@link #inputGrabber()}
 	 */
 	public void setDefaultGrabber(Grabber grabber) {
+		if( grabber == null ) {
+			defaultGrabber = null;
+			return;
+		}
 		if( this.isInPool(grabber) )
 			defaultGrabber = grabber;
 		else
 			System.out.println(grabber.getClass().getName() + " should first be added to the " + name() + "'s pool. Use addInPool().");
 	}
-
+	
 	/**
-	 * Adds the grabber in the {@link #pool()}.
-	 * <p>
-	 * Use {@link #removeFromPool(Grabber)} to remove the grabber from the pool, so that it is no longer tested with
-	 * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} by the handler, and hence can no longer grab the
-	 * agent focus. Use {@link #isInPool(Grabber)} to know the current state of the grabber.
+	 * Resets the {@link #defaultGrabber()}. Convinience function that simply calls: {@code setDefaultGrabber(null)}.
+	 * 
+	 * @see #setDefaultGrabber(Grabber)
 	 */
-	public boolean addInPool(Grabber grabber) {
-		if (grabber == null)
-			return false;
-		if (!isInPool(grabber)) {
-			if( ! (grabber instanceof ActionGrabber) ) {				
-				pool().add(grabber);
-				return true;
-			}
-			else {
-			  //TODO debug
-				System.out.println("ActionGrabber cannot be ADDED in this agent: " + this.name());
-			}			
-		}
-		return false;
+	public void resetDefaultGrabber() {
+		setDefaultGrabber(null);
 	}
 }

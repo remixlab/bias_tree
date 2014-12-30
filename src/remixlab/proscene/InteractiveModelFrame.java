@@ -66,11 +66,13 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		id = ++Scene.modelCount;
 	}
 
+	/*
 	protected InteractiveModelFrame(Scene scn, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame);
 		((Scene) scene).addModel(this);
 		id = ++Scene.modelCount;
 	}
+	*/
 
 	public InteractiveModelFrame(Scene scn, PShape ps) {
 		super(scn);
@@ -87,12 +89,14 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	}
 
 	// TODO: is needed?
+	/*
 	protected InteractiveModelFrame(Scene scn, PShape ps, InteractiveEyeFrame iFrame) {
 		super(scn, iFrame);
 		((Scene) scene).addModel(this);
 		id = ++Scene.modelCount;
 		pshape = ps;
 	}
+	*/
 
 	// TODO fix when implementation is complete
 	protected InteractiveModelFrame(InteractiveModelFrame otherFrame) {

@@ -69,6 +69,20 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 	public void setWheelProfile(W profile) {
 		wheelProfile = profile;
 	}
+	
+	/**
+	 * Convenience function that simply calls {@code clickProfile.removeAllBindings()}. 
+	 */
+	public void resetWheelProfile() {
+		wheelProfile.removeAllBindings();
+	}
+	
+	@Override
+	public void resetAllProfiles() {
+		resetProfile();
+		resetClickProfile();
+		resetWheelProfile();
+	}
 
 	@Override
 	public String info() {

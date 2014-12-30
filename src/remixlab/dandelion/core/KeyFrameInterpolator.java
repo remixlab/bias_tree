@@ -333,7 +333,7 @@ public class KeyFrameInterpolator implements Copyable {
 			KeyFrame kf = (KeyFrame) element.get();
 			this.keyFrameList.add(kf);
 			if (kf.frame() instanceof InteractiveFrame)
-				this.scene.inputHandler().removeFromAllAgentPools((InteractiveFrame) kf.frame());
+				scene.motionAgent().frameBranch().removeFromPool((InteractiveFrame) kf.frame());
 		}
 
 		this.currentFrame0 = keyFrameList.listIterator(otherKFI.currentFrame0.nextIndex());
@@ -676,19 +676,19 @@ public class KeyFrameInterpolator implements Copyable {
 			stopInterpolation();
 		KeyFrame kf = keyFrameList.remove(index);
 		if (kf.frm instanceof InteractiveFrame)
-			scene.inputHandler().removeFromAllAgentPools((InteractiveFrame) kf.frm);
+			scene.motionAgent().frameBranch().removeFromPool((InteractiveFrame) kf.frm);
 		setInterpolationTime(firstTime());
 	}
 
 	/**
-	 * Removes all keyFrames from the path. Calls {@link #removeFramesFromAllAgentPools()}. The
+	 * Removes all keyFrames from the path. Calls {@link #removePathFromMotionAgent()}. The
 	 * {@link #numberOfKeyFrames()} is set to 0.
 	 * 
-	 * @see #removeFramesFromAllAgentPools()
+	 * @see #removePathFromMotionAgent()
 	 */
 	public void deletePath() {
 		stopInterpolation();
-		removeFramesFromAllAgentPools();
+		removePathFromMotionAgent();
 		keyFrameList.clear();
 		pathIsValid = false;
 		valuesAreValid = false;
@@ -699,24 +699,24 @@ public class KeyFrameInterpolator implements Copyable {
 	 * Removes all the Frames from all the pools of the agents registered at the
 	 * {@link remixlab.dandelion.core.AbstractScene#inputHandler()}.
 	 * 
-	 * @see #addFramesToAllAgentPools()
+	 * @see #addPathToMotionAgent()
 	 */
-	public void removeFramesFromAllAgentPools() {
+	public void removePathFromMotionAgent() {
 		for (int i = 0; i < keyFrameList.size(); ++i)
 			if (keyFrameList.get(i).frame() instanceof InteractiveFrame)
-				scene.inputHandler().removeFromAllAgentPools((InteractiveFrame) keyFrameList.get(i).frame());
+				scene.motionAgent().frameBranch().removeFromPool((InteractiveFrame) keyFrameList.get(i).frame());
 	}
 
 	/**
 	 * Re-adds all the Frames to all the pools of the agents registered at the
 	 * {@link remixlab.dandelion.core.AbstractScene#inputHandler()}.
 	 * 
-	 * @see #removeFramesFromAllAgentPools()
+	 * @see #removePathFromMotionAgent()
 	 */
-	public void addFramesToAllAgentPools() {
+	public void addPathToMotionAgent() {
 		for (int i = 0; i < keyFrameList.size(); ++i)
 			if (keyFrameList.get(i).frame() instanceof InteractiveFrame)
-				scene.inputHandler().addInAllAgentPools((InteractiveFrame) keyFrameList.get(i).frame());
+				scene.motionAgent().frameBranch().addInPool((InteractiveFrame) keyFrameList.get(i).frame());
 	}
 
 	protected void updateModifiedFrameValues() {

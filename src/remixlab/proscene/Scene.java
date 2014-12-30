@@ -158,6 +158,8 @@ public class Scene extends AbstractScene implements PConstants {
 		// 1. P5 objects
 		parent = p;
 		pgraphics = pg;
+		offscreen = pg != p.g;
+		upperLeftCorner = offscreen ? new Point(x, y) : new Point(0, 0);
 
 		// 2. Matrix helper
 		setMatrixHelper(matrixHelper(pg));
@@ -167,19 +169,8 @@ public class Scene extends AbstractScene implements PConstants {
 		pickingBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width,
 				pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height,
 				JAVA2D);
-
-		// 4. Eye
-		setLeftHanded();
-		width = pg.width;
-		height = pg.height;
-		eye = is3D() ? new Camera(this) : new Window(this);
-		setEye(eye());// calls showAll();
-
-		// 5. Off-screen?
-		offscreen = pg != p.g;
-		upperLeftCorner = offscreen ? new Point(x, y) : new Point(0, 0);
-
-		// 6. Create agents and register P5 methods
+		
+	  // 4. (TODO prev 6.) Create agents and register P5 methods
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			// TODO re-add 
 			//defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
@@ -197,7 +188,14 @@ public class Scene extends AbstractScene implements PConstants {
 		if (platform() == Platform.PROCESSING_DESKTOP)
 			pApplet().registerMethod("post", this);// -> handle picking buffer
 
-		// Misc stuff:
+		// 5. (TODO prev 4.) Eye
+		setLeftHanded();
+		width = pg.width;
+		height = pg.height;
+		eye = is3D() ? new Camera(this) : new Window(this);
+		setEye(eye());// calls showAll();		
+
+		// 6. Misc stuff:
 		setDottedGrid(!(platform() == Platform.PROCESSING_ANDROID || is2D()));
 		if (platform() == Platform.PROCESSING_DESKTOP || platform() == Platform.PROCESSING_ANDROID)
 			this.setNonSeqTimers();
@@ -536,10 +534,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #disableMotionAgent()
 	 */
 	@Override
-	public SceneKeyboardAgent disableKeyboardAgent() {
+	public KeyboardAgent disableKeyboardAgent() {
 		if (inputHandler().isAgentRegistered(keyboardAgent())) {
 			parent.unregisterMethod("keyEvent", keyboardAgent());
-			return (SceneKeyboardAgent) inputHandler().unregisterAgent(keyboardAgent());
+			return (KeyboardAgent) inputHandler().unregisterAgent(keyboardAgent());
 		}
 		return keyboardAgent();
 	}
@@ -993,7 +991,10 @@ public class Scene extends AbstractScene implements PConstants {
 		if (models().size() == 0)
 			pickingBuffer().loadPixels();
 		boolean result = models().add(model);
-		inputHandler().addInAllAgentPools(model);
+		if( model instanceof ModelObject ) {
+			motionAgent().addInPool(model);
+			keyboardAgent().addInPool(model);
+		}
 		return result;
 	}
 
@@ -1586,7 +1587,7 @@ public class Scene extends AbstractScene implements PConstants {
 						popModelView();
 					}
 			}
-			kfi.addFramesToAllAgentPools();
+			kfi.addPathToMotionAgent();
 			pg().strokeWeight(pg().strokeWeight / 2f);
 			drawPickingTargets(true);
 		}
@@ -1755,13 +1756,13 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void drawPickingTargets(boolean keyFrame) {
 		pg().pushStyle();
-		for (Grabber mg : inputHandler().globalGrabberList()) {
+		for (Grabber mg : motionAgent().frameBranch().pool()) {
 			if (mg instanceof InteractiveFrame) {
 				InteractiveFrame iF = (InteractiveFrame) mg;// downcast needed
 				// frames
 				if (!(iF.isInEyePath() ^ keyFrame)) {
 					Vec center = projectedCoordinatesOf(iF.position());
-					if (grabsAnyAgentInput(mg)) {
+					if (mg.grabsInput(motionAgent().frameBranch())) {
 						pg().pushStyle();
 						pg().strokeWeight(2 * pg().strokeWeight);
 						pg().colorMode(HSB, 255);
