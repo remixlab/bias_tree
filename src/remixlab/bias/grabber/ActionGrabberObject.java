@@ -3,6 +3,7 @@ package remixlab.bias.grabber;
 import remixlab.bias.core.Action;
 import remixlab.bias.core.Agent;
 import remixlab.bias.core.BogusEvent;
+import remixlab.bias.core.InputAgent;
 import remixlab.bias.core.InputHandler;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.AbstractScene;
@@ -54,7 +55,7 @@ public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGr
 	}
 	
 	@Override
-	public boolean grabsInput(Agent agent) {
+	public boolean grabsInput(InputAgent agent) {
 		return agent.inputGrabber() == this;
 	}
 

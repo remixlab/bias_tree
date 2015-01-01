@@ -153,7 +153,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	}
 
 	@Override
-	public boolean grabsInput(Agent agent) {
+	public boolean grabsInput(InputAgent agent) {
 		return agent.inputGrabber() == this;
 	}
 

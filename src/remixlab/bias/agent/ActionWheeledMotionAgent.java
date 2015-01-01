@@ -13,7 +13,6 @@ package remixlab.bias.agent;
 import remixlab.bias.agent.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.grabber.ActionGrabber;
 
 /**
  * A {@link remixlab.bias.agent.ActionMotionAgent} with an extra {@link remixlab.bias.agent.profile.MotionProfile}
@@ -46,14 +45,16 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 	 * @param n
 	 *          Agent name
 	 */
+	/*
 	public ActionWheeledMotionAgent(W w, M p, C c, InputHandler tHandler, String n) {
 		super(p, c, tHandler, n);
 		wheelProfile = w;
 	}
+	*/
 
-	public ActionWheeledMotionAgent(W w, M p, C c, Agent parent, String n) {
-		this(w, p, c, parent.inputHandler(), n);
-		parent.addBranch(this);
+	public ActionWheeledMotionAgent(W w, M p, C c, InputAgent parent, String n) {
+		super(p, c, parent, n);
+		wheelProfile = w;
 	}
 
 	/**
@@ -103,7 +104,20 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 		}
 		return description;
 	}
+	
+	@Override
+	public Action<?> handle(BogusEvent event) {
+		if (event instanceof MotionEvent) {
+			if(event instanceof DOF1Event)
+				return wheelProfile.handle(event);
+			return profile().handle(event);
+		}
+		if (event instanceof ClickEvent)
+			return clickProfile.handle(event);
+		return null;
+	}
 
+	/*
 	@Override
 	public boolean handle(BogusEvent event) {
 		// overkill but feels safer ;)
@@ -181,6 +195,7 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 		}
 		return true;
 	}
+	*/
 	
 	/*
 	// TODO old. remove me.

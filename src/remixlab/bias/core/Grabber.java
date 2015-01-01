@@ -38,5 +38,5 @@ public interface Grabber {
 	 * Check if this object is the {@link remixlab.bias.core.Agent#inputGrabber()}. Returns {@code true} if this object
 	 * grabs the agent and {@code false} otherwise.
 	 */
-	boolean grabsInput(Agent agent);
+	boolean grabsInput(InputAgent agent);
 }

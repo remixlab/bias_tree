@@ -29,10 +29,10 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	}
 	
 	protected ActionGrabber<MotionAction> actionGrabber() {
-		if( inputGrabber() instanceof InteractiveFrame && !(inputGrabber() instanceof InteractiveEyeFrame) )
+		if(inputGrabber() instanceof InteractiveEyeFrame)
+			return (InteractiveFrame) inputGrabber();
+		if( inputGrabber() instanceof InteractiveFrame )
 			return (InteractiveFrame)inputGrabber();
-		if( inputGrabber() instanceof InteractiveEyeFrame )
-			return (InteractiveEyeFrame)inputGrabber();
 		return null;
 	}
 	
@@ -53,17 +53,6 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 		return pressEvent;
 	}
 	
-	/*
-	@Override
-	public MotionProfile<DOF2Action> motionProfile() {
-		if (inputGrabber() instanceof InteractiveEyeFrame)
-			return eyeAgent.profile();
-		if (inputGrabber() instanceof InteractiveFrame)
-			return frameAgent().profile();
-		return null;
-	}
-	*/
-	
 	/**
 	 * Call {@link #updateTrackedGrabber(BogusEvent)} on the given event.
 	 */
@@ -72,7 +61,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 		if (pickingMode() == PickingMode.MOVE)
 			updateTrackedGrabber(lastEvent);
 
-		if (inputGrabber() instanceof InteractiveFrame) {
+		if (inputGrabber() instanceof InteractiveFrame || inputGrabber() instanceof InteractiveEyeFrame ) {
 			//Action<?> a = motionProfile().handle(lastEvent);
 			//TODO test in stable before going on 
 			DOF2Action a = motionProfile().handle(lastEvent);
@@ -93,7 +82,9 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 					scene.setZoomVisualHint(false);
 					pressEvent = e.get();
 					if (needHandle) {
-						inputHandler().enqueueEventTuple(new EventGrabberTuple(spEvent, DOF2Action.ZOOM_ON_REGION, actionGrabber()));
+						//TODO new
+						actionGrabber().setAction(DOF2Action.ZOOM_ON_REGION);
+						inputHandler().enqueueEventTuple(new EventGrabberTuple(spEvent, actionGrabber()));
 						needHandle = false;
 						return;
 					}
@@ -110,7 +101,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	protected void press(DOF2Event e) {
 		lastEvent = e;
 		pressEvent = lastEvent.get();
-		if (inputGrabber() instanceof InteractiveFrame) {
+		if (inputGrabber() instanceof InteractiveFrame || inputGrabber() instanceof InteractiveEyeFrame) {
 			if (need4Spin)
 				((InteractiveFrame) inputGrabber()).stopSpinning();
 			iFrame = (InteractiveFrame) inputGrabber();
@@ -136,7 +127,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 					|| (drive) && scene.inputHandler().isAgentRegistered(this);
 			scene.setZoomVisualHint(dA == MotionAction.ZOOM_ON_REGION && (inputGrabber() instanceof InteractiveEyeFrame)
 					&& scene.inputHandler().isAgentRegistered(this));
-			scene.setRotateVisualHint(dA == MotionAction.SCREEN_ROTATE && (inputGrabber() instanceof InteractiveFrame)
+			scene.setRotateVisualHint(dA == MotionAction.SCREEN_ROTATE && (inputGrabber() instanceof InteractiveFrame || inputGrabber() instanceof InteractiveEyeFrame)
 					&& scene.inputHandler().isAgentRegistered(this));
 			if (bypassNullEvent || scene.zoomVisualHint() || scene.rotateVisualHint()) {
 				if (bypassNullEvent) {
@@ -144,7 +135,9 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 					((InteractiveFrame) inputGrabber()).updateSceneUpVector();
 					dFriction = ((InteractiveFrame) inputGrabber()).dampingFriction();
 					((InteractiveFrame) inputGrabber()).setDampingFriction(0);
-					handler.eventTupleQueue().add(new EventGrabberTuple(lastEvent, a, actionGrabber()));
+					//TODO new
+					actionGrabber().setAction(a);
+					handler.eventTupleQueue().add(new EventGrabberTuple(lastEvent, actionGrabber()));
 				}
 			}
 			else
@@ -159,7 +152,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	protected void drag(DOF2Event e) {
 		lastEvent = e;
 		if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
-			if (drive && inputGrabber() instanceof InteractiveFrame)
+			if (drive && (inputGrabber() instanceof InteractiveFrame || inputGrabber() instanceof InteractiveEyeFrame))
 				((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f
 						* (lastEvent.y() - pressEvent.y()));
 			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
@@ -182,7 +175,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	protected void release(DOF2Event e) {
 		DOF2Event prevEvent = lastDOF2Event().get();
 		lastEvent = e;
-		if (inputGrabber() instanceof InteractiveFrame)
+		if (inputGrabber() instanceof InteractiveFrame || inputGrabber() instanceof InteractiveEyeFrame)
 			// note that the following two lines fail on event when need4Spin
 			if (need4Spin && (prevEvent.speed() >= ((InteractiveFrame) inputGrabber()).spinningSensitivity()))
 				((InteractiveFrame) inputGrabber()).startSpinning(prevEvent);
@@ -192,7 +185,9 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 			// but the problem is that depending on the order the button and the modifiers are released,
 			// different actions maybe triggered, so we go for sure ;) :
 			lastEvent.setPreviousEvent(pressEvent);
-			inputHandler().enqueueEventTuple(new EventGrabberTuple(lastEvent, DOF2Action.ZOOM_ON_REGION, actionGrabber()));
+			//TODO check
+			actionGrabber().setAction(DOF2Action.ZOOM_ON_REGION);//new			
+			inputHandler().enqueueEventTuple(new EventGrabberTuple(lastEvent, actionGrabber()));
 			scene.setZoomVisualHint(false);
 		}
 		if (scene.rotateVisualHint())
@@ -204,7 +199,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 			bypassNullEvent = !bypassNullEvent;
 		}
 		// restore speed after drive action terminates:
-		if (drive && inputGrabber() instanceof InteractiveFrame)
+		if (drive && (inputGrabber() instanceof InteractiveFrame || inputGrabber() instanceof InteractiveEyeFrame))
 			((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius());
 	}
 

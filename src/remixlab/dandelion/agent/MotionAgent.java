@@ -7,7 +7,7 @@ import remixlab.dandelion.core.AbstractScene;
 import remixlab.dandelion.core.Constants.*;
 
 //TODO probably not really needed
-public class MotionAgent<A extends Action<?>> extends Agent {
+public class MotionAgent<A extends Action<?>> extends InputAgent {
 	protected AbstractScene scene;
 	protected ActionMotionAgent<MotionProfile<A>, ClickProfile<ClickAction>> eyeAgent;
 	protected ActionMotionAgent<MotionProfile<A>, ClickProfile<ClickAction>> frameAgent;

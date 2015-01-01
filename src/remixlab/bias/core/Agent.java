@@ -36,72 +36,20 @@ import remixlab.bias.grabber.*;
  * This class is the base class of both, generic and non-generic agents. Generic agents are found at the
  * remixlab.bias.agent package.
  */
-public class Agent {
-	protected InputHandler	handler;
+public abstract class Agent {
 	protected String				nm;
 	protected List<Grabber>	grabbers;
 	protected Grabber				trackedGrabber;
 	protected Grabber				defaultGrabber;
 	protected boolean				agentTrckn;
-	
-	protected Agent				parentAgent;
-	protected List<Agent>	brnchs;
 
 	/**
 	 * Constructs an Agent with the given name and registers is at the given inputHandler.
 	 */
-	public Agent(InputHandler inputHandler, String name) {
-		handler = inputHandler;
+	public Agent(String name) {
 		nm = name;
 		grabbers = new ArrayList<Grabber>();
-		brnchs = new ArrayList<Agent>();
 		setTracking(true);
-		handler.registerAgent(this);
-	}
-	
-	public Agent(Agent parent, String n) {
-		this(parent.inputHandler(), n);
-		parent.addBranch(this);
-	}
-	
-  // Alien grabber and action-agent branches
-	
-	/**
-	 * Tells whether or not the {@link #inputGrabber()} is an object implementing the user-defined
-	 * {@link remixlab.bias.core.Action} group the third party application is meant to support. Hence, third-parties
-	 * should override this method defining that condition.
-	 * <p>
-	 * Returns {@code false} by default.
-	 */
-	protected boolean isInputGrabberAlien() {
-		//System.out.println("alienGrabber() invoked");
-		//TODO testing
-		return isInPool(inputGrabber());
-		//return false;//prev worked
-	}
-
-	public Agent parentAgent() {
-		return parentAgent;
-	}
-
-	public List<Agent> branches() {
-		return brnchs;
-	}
-
-	public void addBranch(Agent a) {
-		if (!brnchs.contains(a)) {
-			this.brnchs.add(0, a);
-			a.parentAgent = this;
-		}
-	}
-
-	public void removeBranch(Agent a) {
-		if (brnchs.contains(a)) {
-			if( trackedGrabber() == a.trackedGrabber() )
-				trackedGrabber = null;
-			this.brnchs.remove(a);
-			a.parentAgent = null;
-		}
 	}
 
 	/**
@@ -173,7 +121,7 @@ public class Agent {
 	 * @see #isTracking()
 	 */
 	public Grabber updateTrackedGrabber(BogusEvent event) {
-		if (event == null || !inputHandler().isAgentRegistered(this) || !isTracking())
+		if (event == null || !isTracking())
 			return trackedGrabber();
 
 		Grabber g = trackedGrabber();
@@ -183,7 +131,7 @@ public class Agent {
 			if (g.checkIfGrabsInput(event))
 				return trackedGrabber();
 
-		trackedGrabber = null;	
+		trackedGrabber = null;
 		for (Grabber mg : pool()) {
 			// take whatever. Here the first one
 			if (mg.checkIfGrabsInput(event)) {		
@@ -269,41 +217,7 @@ public class Agent {
 	 * 
 	 * @see #inputGrabber()
 	 */
-	public boolean handle(BogusEvent event) {
-		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
-			return false;
-		if( ! (inputGrabber() instanceof ActionGrabber) ) {
-			inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
-			return true;
-		}
-		else {
-			//re-accommodate really sucks
-			//TODO debug: may simply throw an exception
-			System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name());
-			return false;
-		}
-		//return validateGrabberTupple(event, inputGrabber());
-		//enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
-		//return true;
-	}
-
-	/**
-	 * Callback (user-space) event reduction routine. Obtains data from the outside world and returns a BogusEvent i.e.,
-	 * reduces external data into a BogusEvent. Automatically call by the main event loop (
-	 * {@link remixlab.bias.core.InputHandler#handle()}). See ProScene's Space-Navigator example.
-	 * 
-	 * @see remixlab.bias.core.InputHandler#handle()
-	 */
-	public BogusEvent feed() {
-		return null;
-	}
-
-	/**
-	 * Returns the {@link remixlab.bias.core.InputHandler} this agent is registered to.
-	 */
-	public InputHandler inputHandler() {
-		return handler;
-	}
+	//public abstract boolean handle(BogusEvent event);
 
 	/**
 	 * Returns a list containing references to all the active grabbers.
@@ -374,22 +288,6 @@ public class Agent {
 	 */
 	public Grabber trackedGrabber() {
 		return trackedGrabber;
-	}
-
-	/**
-	 * If {@link #trackedGrabber()} is non null, returns it. Otherwise returns the {@link #defaultGrabber()}.
-	 * 
-	 * @see #trackedGrabber()
-	 */
-	public Grabber inputGrabber() {
-		if (trackedGrabber() != null)
-			return trackedGrabber();
-		else
-			return defaultGrabber();
-	}
-	
-	public boolean isInputGrabber(Grabber g) {
-		return g.grabsInput(this);
 	}
 
 	/**

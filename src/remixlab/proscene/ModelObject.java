@@ -107,7 +107,7 @@ public abstract class ModelObject implements Model {
 	}
 
 	@Override
-	public boolean grabsInput(Agent agent) {
+	public boolean grabsInput(InputAgent agent) {
 		return agent.inputGrabber() == this;
 	}
 

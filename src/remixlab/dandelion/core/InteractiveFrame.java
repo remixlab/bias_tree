@@ -179,7 +179,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 	
 	@Override
-	public boolean grabsInput(Agent agent) {
+	public boolean grabsInput(InputAgent agent) {
 		return agent.inputGrabber() == this;
 	}
 	

@@ -1,17 +1,14 @@
 package remixlab.dandelion.agent;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import remixlab.bias.agent.*;
 import remixlab.bias.agent.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.grabber.ActionGrabber;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-public class WheeledMotionAgent<A extends Action<?>> extends Agent {
+public class WheeledMotionAgent<A extends Action<?>> extends InputAgent {
 	protected AbstractScene scene;
 	protected ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch;
 	protected ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch;
@@ -50,78 +47,22 @@ public class WheeledMotionAgent<A extends Action<?>> extends Agent {
 	
 	public ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch() {
 		return frameBranch;
+	}	
+	
+	public boolean addInPool(InteractiveFrame grabber) {
+		return frameBranch.addInPool(grabber);
 	}
 	
-	@Override
-	public Grabber defaultGrabber() {
-		Grabber result = super.defaultGrabber();
-		if(result == null)
-			result = frameBranch.defaultGrabber();
-		return result;
+	public boolean removeFromPool(InteractiveFrame grabber) {
+		return frameBranch.removeFromPool(grabber);
 	}
 	
-	@Override
-	public void setDefaultGrabber(Grabber grabber) {
-		if( grabber instanceof InteractiveFrame ) {
-			if( !(grabber instanceof InteractiveEyeFrame) )
-				frameBranch.setDefaultGrabber(grabber);
-		}
-		else {
-			if( !(grabber instanceof ActionGrabber) )
-				super.setDefaultGrabber(grabber);
-		}
+	public boolean isInPool(InteractiveFrame grabber) {
+		return frameBranch.isInPool(grabber);
 	}
 	
-	@Override
-	public boolean addInPool(Grabber grabber) {
-		if( grabber instanceof InteractiveFrame ) {
-			if( !(grabber instanceof InteractiveEyeFrame) )
-				return frameBranch.addInPool(grabber);
-		}
-		else {
-			if( !(grabber instanceof ActionGrabber) )
-				return super.addInPool(grabber);
-		}
-		return false;
-	}
-	
-	@Override
-	public boolean removeFromPool(Grabber grabber) {
-		if( grabber instanceof InteractiveFrame ) {
-			if( !(grabber instanceof InteractiveEyeFrame) )
-				return frameBranch.removeFromPool(grabber);
-		}
-		else {
-			if( !(grabber instanceof ActionGrabber) )
-				return super.removeFromPool(grabber);
-		}
-		return false;
-	}
-	
-	@Override
-	public boolean isInPool(Grabber grabber) {
-		if( grabber instanceof InteractiveFrame ) {
-			if( !(grabber instanceof InteractiveEyeFrame) )
-				return frameBranch.isInPool(grabber);
-		}
-		else { 
-      if( !(grabber instanceof ActionGrabber) )
-      	return super.isInPool(grabber);
-		}
-		return false;
-	}
-	
-	@Override
-	protected boolean isInputGrabberAlien() {
-		return !super.isInPool(inputGrabber());
-	}
-	
-	@Override
-	public List<Grabber> pool() {
-		List<Grabber> list = new ArrayList<Grabber>();
-		list.addAll(super.pool());
-		list.addAll(frameBranch.pool());
-		return grabbers;
+	public boolean isInPool(InteractiveEyeFrame grabber) {
+		return eyeBranch.isInPool(grabber);
 	}
 	
 	@Override
@@ -159,6 +100,7 @@ public class WheeledMotionAgent<A extends Action<?>> extends Agent {
 			return frameBranch().wheelProfile();
 		return null;
 	}
+	
 	
   //TODO test all protected down here in stable before going on
 	

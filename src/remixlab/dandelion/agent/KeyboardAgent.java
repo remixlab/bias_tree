@@ -8,7 +8,7 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.KeyboardAction;
 
-public class KeyboardAgent extends Agent {
+public class KeyboardAgent extends InputAgent {
 	protected AbstractScene	scene;
 	protected ActionKeyboardAgent<KeyboardProfile<KeyboardAction>> keyBranch;
 

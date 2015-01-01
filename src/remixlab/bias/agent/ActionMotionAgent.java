@@ -13,7 +13,6 @@ package remixlab.bias.agent;
 import remixlab.bias.agent.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.grabber.*;
 
 /**
  * An {@link remixlab.bias.agent.ActionAgent} with an extra {@link remixlab.bias.agent.profile.ClickProfile} defining
@@ -42,15 +41,18 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 	 * @param n
 	 *          Agent name
 	 */
+	/*
 	public ActionMotionAgent(M p, C c, InputHandler tHandler, String n) {
 		super(p, tHandler, n);
 		clickProfile = c;
 		sens = new float[] { 1f, 1f, 1f, 1f, 1f, 1f };
 	}
+	*/
 
-	public ActionMotionAgent(M p, C c, Agent parent, String n) {
-		this(p, c, parent.inputHandler(), n);
-		parent.addBranch(this);
+	public ActionMotionAgent(M p, C c, InputAgent pnt, String n) {
+		super(p, pnt, n);
+		clickProfile = c;
+		sens = new float[] { 1f, 1f, 1f, 1f, 1f, 1f };
 	}
 
 	/**
@@ -159,7 +161,17 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 		}
 		return description;
 	}
+	
+	@Override
+	public Action<?> handle(BogusEvent event) {
+		if (event instanceof MotionEvent)
+			return profile().handle(event);
+		if (event instanceof ClickEvent)
+			return clickProfile.handle(event);
+		return null;
+	}
 
+	/*
 	@Override
 	public boolean handle(BogusEvent event) {
 		// overkill but feels safer ;)
@@ -219,6 +231,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 		}
 		return true;
 	}
+	*/
 	
 	/*
 	// TODO old. remove me.

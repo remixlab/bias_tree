@@ -1762,7 +1762,7 @@ public class Scene extends AbstractScene implements PConstants {
 				// frames
 				if (!(iF.isInEyePath() ^ keyFrame)) {
 					Vec center = projectedCoordinatesOf(iF.position());
-					if (mg.grabsInput(motionAgent().frameBranch())) {
+					if (mg.grabsInput(motionAgent())) {
 						pg().pushStyle();
 						pg().strokeWeight(2 * pg().strokeWeight);
 						pg().colorMode(HSB, 255);
@@ -1907,7 +1907,7 @@ public class Scene extends AbstractScene implements PConstants {
 		float p1x = mouseAgent().lastDOF2Event().x() - originCorner().x();
 		float p1y = mouseAgent().lastDOF2Event().y() - originCorner().y();
 		Vec p2 = new Vec();
-		if (motionAgent().inputGrabber() instanceof InteractiveFrame) {
+		if (motionAgent().inputGrabber() instanceof InteractiveFrame || motionAgent().inputGrabber() instanceof InteractiveEyeFrame) {
 			if (motionAgent().inputGrabber() instanceof InteractiveEyeFrame)
 				p2 = eye().projectedCoordinatesOf(anchor());
 			else

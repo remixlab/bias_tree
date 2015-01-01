@@ -30,12 +30,12 @@ import remixlab.bias.grabber.*;
  */
 public class InputHandler {
 	// D E V I C E S & E V E N T S
-	protected HashMap<String, Agent>				agents;
+	protected HashMap<String, InputAgent>				agents;
 	protected LinkedList<EventGrabberTuple>	eventTupleQueue;
 
 	public InputHandler() {
 		// agents
-		agents = new HashMap<String, Agent>();
+		agents = new HashMap<String, InputAgent>();
 		// events
 		eventTupleQueue = new LinkedList<EventGrabberTuple>();
 	}
@@ -48,13 +48,13 @@ public class InputHandler {
 	 * <p>
 	 * 1. {@link remixlab.bias.core.EventGrabberTuple} producer loop which for each registered agent calls:
 	 * {@link remixlab.bias.core.Agent#handle(BogusEvent)}. Note that the bogus event is obtained from the agents callback
-	 * {@link remixlab.bias.core.Agent#feed()} method.<br>
+	 * {@link remixlab.bias.core.ActionAgent#feed()} method.<br>
 	 * 2. User-defined action consumer loop: which for each {@link remixlab.bias.core.EventGrabberTuple} calls
 	 * {@link remixlab.bias.core.EventGrabberTuple#perform()}.<br>
 	 */
 	public void handle() {
 		// 1. Agents
-		for (Agent agent : agents.values())
+		for (InputAgent agent : agents.values())
 			agent.handle(agent.feed());
 
 		// 2. Low level events
@@ -83,8 +83,8 @@ public class InputHandler {
 	 * 
 	 * @see #agents()
 	 */
-	public Agent[] agentsArray() {
-		return agents.values().toArray(new Agent[0]);
+	public InputAgent[] agentsArray() {
+		return agents.values().toArray(new InputAgent[0]);
 	}
 
 	/**
@@ -92,19 +92,19 @@ public class InputHandler {
 	 * 
 	 * @see #agentsArray()
 	 */
-	public List<Agent> agents() {
-		return new ArrayList<Agent>(agents.values());
+	public List<InputAgent> agents() {
+		return new ArrayList<InputAgent>(agents.values());
 	}
 
 	/**
 	 * Registers the given agent.
 	 */
-	public void registerAgent(Agent agent) {
+	public void registerAgent(InputAgent agent) {
 		if (!isAgentRegistered(agent))
 			agents.put(agent.name(), agent);
 		else {
 			System.out.println("Nothing done. An agent with the same name is already registered. Current agent names are:");
-			for (Agent ag : agents.values())
+			for (InputAgent ag : agents.values())
 				System.out.println(ag.name());
 		}
 	}
@@ -112,7 +112,7 @@ public class InputHandler {
 	/**
 	 * Returns true if the given agent is registered.
 	 */
-	public boolean isAgentRegistered(Agent agent) {
+	public boolean isAgentRegistered(InputAgent agent) {
 		return agents.containsKey(agent.name());
 	}
 
@@ -124,23 +124,23 @@ public class InputHandler {
 	}
 
 	/**
-	 * Returns the agent by its name. The agent mus be {@link #isAgentRegistered(Agent)}.
+	 * Returns the agent by its name. The agent mus be {@link #isAgentRegistered(InputAgent)}.
 	 */
-	public Agent agent(String name) {
+	public InputAgent agent(String name) {
 		return agents.get(name);
 	}
 
 	/**
 	 * Unregisters the given agent and returns it.
 	 */
-	public Agent unregisterAgent(Agent agent) {
+	public InputAgent unregisterAgent(InputAgent agent) {
 		return agents.remove(agent.name());
 	}
 
 	/**
 	 * Unregisters the given agent by its name and returns it.
 	 */
-	public Agent unregisterAgent(String name) {
+	public InputAgent unregisterAgent(String name) {
 		return agents.remove(name);
 	}
 

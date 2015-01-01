@@ -41,24 +41,18 @@ import remixlab.bias.grabber.*;
  *          {@link remixlab.bias.agent.profile.Profile} to parameterize the Agent with.
  */
 public class ActionAgent<P extends Profile<?, ?>> extends Agent {
-	protected P											profile;
+	protected P											     profile;
+  protected InputAgent parent;
 
-	/**
-	 * @param p
-	 *          {@link remixlab.bias.agent.profile.Profile}
-	 * @param tHandler
-	 *          {@link remixlab.bias.core.InputHandler} to register this Agent to
-	 * @param n
-	 *          Agent name
-	 */
-	public ActionAgent(P p, InputHandler tHandler, String n) {
-		super(tHandler, n);
+	public ActionAgent(P p, InputAgent pnt, String n) {
+		super(n);
 		profile = p;
-	}
-
-	public ActionAgent(P p, Agent parent, String n) {
-		this(p, parent.inputHandler(), n);
+		parent = pnt;
 		parent.addBranch(this);
+	}
+	
+	public InputAgent parentAgent() {
+		return parent;
 	}
 
 	/**
@@ -102,28 +96,6 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		return false;
 	}
 
-	///*
-	@Override
-	public Grabber updateTrackedGrabber(BogusEvent event) {
-		Grabber g = super.updateTrackedGrabber(event);
-		//TODO check condition
-		if (g != null)
-			if(!this.isInputGrabberAlien())
-				return g;
-			else if(branches().isEmpty())
-				return g;
-		if (!branches().isEmpty())
-			for (Agent branch : branches()) {				
-				g = branch.updateTrackedGrabber(event);
-				if (g != null) {
-					trackedGrabber = g;// the alien grabber!					
-					return g;
-				}
-			}
-		return g;
-	}
-	//*/
-
 	/**
 	 * Overriding of the {@link remixlab.bias.core.Agent} main method. The {@link #profile()} is used to parse the event
 	 * into an user-defined action which is then enqueued as an event-grabber tuple (
@@ -137,38 +109,27 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	 * BogusEvents defined by the third-party, i.e., bogus events different than those declared in the
 	 * {@code remixlab.bias.event} package.
 	 */
+	/*
 	@Override
 	public boolean handle(BogusEvent event) {
 		// overkill but feels safer ;)
-		if (event == null || !handler.isAgentRegistered(this) || inputGrabber() == null)
+		if (event == null inputGrabber() == null)
 			return false;
-		//TODO testing
-		//System.out.println("Invoking alienGrabber()");
-		if (isInputGrabberAlien()) {
-			//TODO remove this case
-			if (branches().isEmpty()) {
-				inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
-				return true;
-			}
-			else {
-				for (Agent branch : branches())
-					if (branch.handle(event))
-						return true;
-				return false;
-			}
-		}
-		else {
-			if(inputGrabber() instanceof ActionGrabber<?>)
-			  return validateGrabberTuple(event, (ActionGrabber<?>)inputGrabber(), profile());
-			else {
-			  //re-accommodate really sucks
-				//TODO debug: may simply throw an exception
-				System.out.println("Grabber cannot be HANDLE in this agent: " + this.name());
-				return false;
-			}
-		}
-		//return validateGrabberTupple(event, inputGrabber());
+		inputHandler().enqueueEventTuple(new EventGrabberTuple(event, profile().handle(event), inputGrabber()));
 	}
+	*/
+	
+	public Action<?> handle(BogusEvent event) {
+		return profile().handle(event);
+	}
+	
+	/*
+	public EventGrabberTuple tuple(BogusEvent event) {
+		if (event == null)
+			return null;
+		return new EventGrabberTuple(event, profile().handle(event), inputGrabber());
+	}
+	*/
 	
 	/*
 	// TODO old. remove me.
@@ -211,6 +172,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	// */
 	
 	//TODO pending
+	/*
 	protected boolean validateGrabberTuple(BogusEvent e, ActionGrabber<?> g, Profile<?,?> p) {
 		Action<?> grabberAction = p.handle(e);
 		if( grabberAction == null )	return false;
@@ -222,6 +184,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		}
 		return result;
 	}
+	*/
 	
 	/**
 	 * Convenience function that simply calls {@code resetProfile()}.

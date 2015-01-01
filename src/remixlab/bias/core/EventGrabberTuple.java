@@ -33,6 +33,7 @@ public class EventGrabberTuple {
 		grabber = g;
 	}
 	
+	/*
 	//TODO test this after implementing the actions
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public EventGrabberTuple(BogusEvent e, Action a, ActionGrabber g) {
@@ -53,17 +54,8 @@ public class EventGrabberTuple {
 		}
 		else
 			g.setAction(a);
-		
-		// prev condition was:
-		
-		/*
-		if(a != null) {
-			g.setAction(a);
-			if( ((ActionGrabber<?>)g).action().referenceAction().getClass() != a.referenceAction().getClass() )
-				g.setAction(null);
-		}
-		//*/
 	}
+	//*/
 
 	/**
 	 * Calls {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}.
