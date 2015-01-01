@@ -231,10 +231,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	public void performInteraction(ClickEvent event) {
-		//switch(referenceAction()) {
-		//switch(FrameClickAction.valueOf(referenceAction().toString())) {
-		switch((ClickAction) action()) {
-		//switch(action(event)) {//not working
+		switch(referenceAction()) {
 		case CENTER_FRAME:
 			projectOnLine(scene.eye().position(), scene.eye().viewDirection());
 			break;
@@ -247,6 +244,8 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		case ANCHOR_FROM_PIXEL:
 		case ZOOM_ON_PIXEL:
 			AbstractScene.showOnlyEyeWarning(referenceAction());
+			break;
+		default:
 			break;
 		}
 	}
@@ -292,7 +291,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	protected void execAction2D(DOF1Event event, boolean wheel) {
-		switch((DOF1Action) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_DOF1_ACTION:
 			performCustomAction(event);
 			break;
@@ -322,13 +321,15 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		case ZOOM_ON_ANCHOR:
 			AbstractScene.showOnlyEyeWarning(referenceAction());
 			break;
+		default:
+			break;
 		}
 	}
 
 	protected void execAction2D(DOF2Event event) {
 		Vec trans;
 		float deltaX, deltaY;
-		switch((DOF2Action) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_DOF2_ACTION:
 			performCustomAction(event);
 			break;
@@ -429,7 +430,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	protected void execAction3D(DOF1Event event, boolean wheel) {
 		Vec trans;
 		float delta;
-		switch((DOF1Action) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_DOF1_ACTION:
 			performCustomAction(event);
 			break;
@@ -479,6 +480,8 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		case ZOOM_ON_ANCHOR:
 			AbstractScene.showOnlyEyeWarning(referenceAction());
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -486,7 +489,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		Quat rot;
 		Vec trans;
 		float angle;
-		switch((DOF2Action) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_DOF2_ACTION:
 			performCustomAction(event);
 			break;
@@ -589,7 +592,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	protected void execAction3D(DOF3Event event) {
-		switch((DOF3Action) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_DOF3_ACTION:
 			performCustomAction(event);
 			break;
@@ -616,7 +619,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	protected void execAction3D(DOF6Event event) {
-		switch((DOF6Action) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_DOF6_ACTION:
 			performCustomAction(event);
 			break;

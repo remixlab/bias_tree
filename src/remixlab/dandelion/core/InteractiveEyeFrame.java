@@ -213,7 +213,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	}
 	
 	public void performInteraction(ClickEvent event) {
-		switch((ClickAction) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_CLICK_ACTION:
 			performCustomAction(event);
 			break;
@@ -245,6 +245,8 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 					timerFx.runOnce(1000);
 				}
 			}
+			break;
+		default:
 			break;		
 		}		
 	}
@@ -284,7 +286,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	}
 
 	protected void execAction2D(DOF1Event event, boolean wheel) {
-		switch((DOF1Action) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_DOF1_ACTION:
 			performCustomAction(event);
 			break;
@@ -315,7 +317,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	protected void execAction2D(DOF2Event event) {
 		float deltaX, deltaY;
 		Rotation rot;
-		switch((DOF2Action) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_DOF2_ACTION:
 			performCustomAction(event);
 			break;
@@ -385,14 +387,14 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	}
 	
 	protected void execAction2D(DOF3Event event) {
-		if( (DOF3Action) action() ==  DOF3Action.CUSTOM_DOF3_ACTION )
+		if( referenceAction() ==  MotionAction.CUSTOM_DOF3_ACTION )
 			performCustomAction(event);
 		else
 			execAction2D(event.dof2Event());
 	}
 
 	protected void execAction2D(DOF6Event event) {
-		if( (DOF6Action) action() ==  DOF6Action.CUSTOM_DOF6_ACTION )
+		if( referenceAction() ==  MotionAction.CUSTOM_DOF6_ACTION )
 			performCustomAction(event);
 		else
 			execAction2D(event.dof3Event());
@@ -407,7 +409,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	protected void execAction3D(DOF1Event event, boolean wheel) {
 		float wheelSensitivityCoef = 8E-4f;
 		Vec trns;
-		switch((DOF1Action) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_DOF1_ACTION:
 			performCustomAction(event);
 			break;
@@ -464,13 +466,15 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			trns = Vec.subtract(position(), scene.camera().anchor());
 			if (trns.magnitude() > 0.02f * scene.radius() || delta > 0.0f)
 				translate(Vec.multiply(trns, delta));
-			break;		
+			break;
+		default:
+			break;
 		}
 	}
 
 	protected void execAction3D(DOF2Event event) {
 		Vec trns = new Vec();
-		switch((DOF2Action) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_DOF2_ACTION:
 			performCustomAction(event);
 			break;
@@ -600,7 +604,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	}
 
 	protected void execAction3D(DOF3Event event) {
-		switch((DOF3Action) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_DOF3_ACTION:
 			performCustomAction(event);
 			break;		
@@ -627,7 +631,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 
 	protected void execAction3D(DOF6Event event) {
 		Vec trns = new Vec();
-		switch((DOF6Action) action()) {
+		switch(referenceAction()) {
 		case CUSTOM_DOF6_ACTION:
 			performCustomAction(event);
 			break;		
