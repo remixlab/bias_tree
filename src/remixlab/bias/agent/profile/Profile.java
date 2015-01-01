@@ -89,7 +89,7 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	 * @return The user-defined action. May be null if no actions was found.
 	 */
 	public A handle(BogusEvent event) {
-	//public Action<?> handle(BogusEvent event) { //previous line
+		// public Action<?> handle(BogusEvent event) { //previous line
 		if (event != null)
 			return action(event.shortcut());
 		return null;
