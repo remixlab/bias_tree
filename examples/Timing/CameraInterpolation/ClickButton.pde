@@ -11,13 +11,12 @@ public class ClickButton extends Button2D {
   }
 
   @Override
-  public void performInteraction(BogusEvent event) {
-    if (event instanceof ClickEvent)
-      if (((ClickEvent) event).clickCount() == 1)
-        if (path == 0)
-          scene.togglePathsVisualHint();
-        else
-          scene.eye().playPath(path);
+  public void performInteraction(ClickEvent event) {
+    if (event.clickCount() == 1)
+      if (path == 0)
+        scene.togglePathsVisualHint();
+      else
+        scene.eye().playPath(path);
   }
 
   public void display() {

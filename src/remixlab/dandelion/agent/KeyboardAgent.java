@@ -9,20 +9,21 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.KeyboardAction;
 
 public class KeyboardAgent extends InputAgent {
-	protected AbstractScene	scene;
-	protected ActionKeyboardAgent<KeyboardProfile<KeyboardAction>> keyBranch;
+	protected AbstractScene																					scene;
+	protected ActionKeyboardAgent<KeyboardProfile<KeyboardAction>>	keyBranch;
 
 	public KeyboardAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		keyBranch = new ActionKeyboardAgent<KeyboardProfile<KeyboardAction>>(new KeyboardProfile<KeyboardAction>(), this, "scene_keyboard_agent");
+		keyBranch = new ActionKeyboardAgent<KeyboardProfile<KeyboardAction>>(new KeyboardProfile<KeyboardAction>(), this,
+				"scene_keyboard_agent");
 		sceneBranch().disableTracking();
-	  // new, mimics eye -> motionAgent -> scene -> keyAgent
+		// new, mimics eye -> motionAgent -> scene -> keyAgent
 		sceneBranch().addInPool(scene);
 		sceneBranch().setDefaultGrabber(scene);
 		setDefaultShortcuts();
 	}
-	
+
 	public ActionKeyboardAgent<KeyboardProfile<KeyboardAction>> sceneBranch() {
 		return keyBranch;
 	}
@@ -31,23 +32,23 @@ public class KeyboardAgent extends InputAgent {
 	public KeyboardEvent feed() {
 		return null;
 	}
-	
+
 	// -->
-	
+
 	@Override
 	public void disableTracking() {
 		super.disableTracking();
 		sceneBranch().disableTracking();
 	}
-	
+
 	@Override
 	public void enableTracking() {
 		super.enableTracking();
 		sceneBranch().enableTracking();
 	}
-	
+
 	// <--
-	
+
 	protected KeyboardProfile<KeyboardAction> keyboardProfile() {
 		return sceneBranch().keyboardProfile();
 	}
@@ -149,8 +150,8 @@ public class KeyboardAgent extends InputAgent {
 	}
 
 	/**
-	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no
-	 * action is bound to the given shortcut.
+	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
+	 * is bound to the given shortcut.
 	 */
 	public KeyboardAction action(Character key) {
 		return (KeyboardAction) keyboardProfile().action(key);

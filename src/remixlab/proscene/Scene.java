@@ -169,12 +169,12 @@ public class Scene extends AbstractScene implements PConstants {
 		pickingBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width,
 				pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height,
 				JAVA2D);
-		
-	  // 4. (TODO prev 6.) Create agents and register P5 methods
+
+		// 4. (TODO prev 6.) Create agents and register P5 methods
 		if (platform() == Platform.PROCESSING_ANDROID) {
-			// TODO re-add 
-			//defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
-			//defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
+			// TODO re-add
+			// defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
+			// defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
 		} else {
 			defMotionAgent = new MouseAgent(this, "proscene_mouse");
 			defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
@@ -193,7 +193,7 @@ public class Scene extends AbstractScene implements PConstants {
 		width = pg.width;
 		height = pg.height;
 		eye = is3D() ? new Camera(this) : new Window(this);
-		setEye(eye());// calls showAll();		
+		setEye(eye());// calls showAll();
 
 		// 6. Misc stuff:
 		setDottedGrid(!(platform() == Platform.PROCESSING_ANDROID || is2D()));
@@ -396,13 +396,10 @@ public class Scene extends AbstractScene implements PConstants {
 
 	// TODO doc me and re-add me
 	/*
-	public DroidTouchAgent droidTouchAgent() {
-		if (platform() != Platform.PROCESSING_ANDROID) {
-			throw new RuntimeException("Proscene droidTouchAgent() is not available in Desktop mode");
-		}
-		return (DroidTouchAgent) motionAgent();
-	}
-	*/
+	 * public DroidTouchAgent droidTouchAgent() { if (platform() != Platform.PROCESSING_ANDROID) { throw new
+	 * RuntimeException("Proscene droidTouchAgent() is not available in Desktop mode"); } return (DroidTouchAgent)
+	 * motionAgent(); }
+	 */
 
 	// KEYBOARD
 
@@ -991,7 +988,7 @@ public class Scene extends AbstractScene implements PConstants {
 		if (models().size() == 0)
 			pickingBuffer().loadPixels();
 		boolean result = models().add(model);
-		if( model instanceof ModelObject ) {
+		if (model instanceof ModelObject) {
 			motionAgent().addInPool(model);
 			keyboardAgent().addInPool(model);
 		}
@@ -1907,7 +1904,8 @@ public class Scene extends AbstractScene implements PConstants {
 		float p1x = mouseAgent().lastDOF2Event().x() - originCorner().x();
 		float p1y = mouseAgent().lastDOF2Event().y() - originCorner().y();
 		Vec p2 = new Vec();
-		if (motionAgent().inputGrabber() instanceof InteractiveFrame || motionAgent().inputGrabber() instanceof InteractiveEyeFrame) {
+		if (motionAgent().inputGrabber() instanceof InteractiveFrame
+				|| motionAgent().inputGrabber() instanceof InteractiveEyeFrame) {
 			if (motionAgent().inputGrabber() instanceof InteractiveEyeFrame)
 				p2 = eye().projectedCoordinatesOf(anchor());
 			else

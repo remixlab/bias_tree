@@ -1,17 +1,20 @@
+
 package remixlab.proscene;
 
+import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.AbstractScene;
+import remixlab.dandelion.core.Constants.KeyboardAction;
 
 public class KeyAgent extends KeyboardAgent {
 	public KeyAgent(AbstractScene scn, String n) {
 		super(scn, n);
-	  // registration requires a call to PApplet.registerMethod("keyEvent", keyboardAgent());
+		// registration requires a call to PApplet.registerMethod("keyEvent", keyboardAgent());
 		// which is done in Scene.enableKeyboardAgent(), which also register the agent at the inputHandler
 		inputHandler().unregisterAgent(this);
 	}
-	
+
 	/**
 	 * Processing keyEvent method to be registered at the PApplet's instance.
 	 */
@@ -25,7 +28,7 @@ public class KeyAgent extends KeyboardAgent {
 			handle(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
 		}
 	}
-	
+
 	/**
 	 * Calls {@link remixlab.dandelion.agent.KeyboardAgent#setDefaultShortcuts()} and then adds the following:
 	 * <p>
@@ -47,7 +50,6 @@ public class KeyAgent extends KeyboardAgent {
 	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultShortcuts()
 	 * @see remixlab.dandelion.agent.KeyboardAgent#setKeyCodeToPlayPath(int, int)
 	 */
-	/*
 	@Override
 	public void setDefaultShortcuts() {
 		// VK values here: http://docs.oracle.com/javase/7/docs/api/constant-values.html
@@ -74,5 +76,4 @@ public class KeyAgent extends KeyboardAgent {
 		keyboardProfile().setBinding(BogusEvent.ALT, 51, KeyboardAction.DELETE_PATH_3);
 		setKeyCodeToPlayPath(51, 3);
 	}
-	*/
 }

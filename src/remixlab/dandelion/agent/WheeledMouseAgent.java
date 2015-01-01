@@ -1,3 +1,4 @@
+
 package remixlab.dandelion.agent;
 
 import remixlab.bias.agent.profile.*;
@@ -19,27 +20,27 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	InteractiveEyeFrame				eyeFrame;
 
 	protected boolean					needHandle;
-	/* protected */DOF2Event	spEvent;				
-	
+	/* protected */DOF2Event	spEvent;
+
 	public WheeledMouseAgent(AbstractScene scn, String n) {
 		super(scn, n);
-	}	
-	
+	}
+
 	@Override
 	public DOF2Event feed() {
 		return null;
 	}
-	
+
 	protected ActionGrabber<MotionAction> actionGrabber() {
-		if(inputGrabber() instanceof InteractiveEyeFrame)
+		if (inputGrabber() instanceof InteractiveEyeFrame)
 			return (InteractiveEyeFrame) inputGrabber();
-		if( inputGrabber() instanceof InteractiveFrame )
-			return (InteractiveFrame)inputGrabber();
+		if (inputGrabber() instanceof InteractiveFrame)
+			return (InteractiveFrame) inputGrabber();
 		return null;
 	}
-	
+
 	// low-level
-	
+
 	/**
 	 * Return the last event processed by the agent. Internal use, needed by scene visual hints.
 	 */
@@ -54,7 +55,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	public DOF2Event pressEvent() {
 		return pressEvent;
 	}
-	
+
 	/**
 	 * Call {@link #updateTrackedGrabber(BogusEvent)} on the given event.
 	 */
@@ -69,14 +70,14 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 		else if (inputGrabber() instanceof InteractiveFrame) {
 			moveFrame(lastEvent);
 		}
-		
+
 		handle(lastEvent);
 	}
-	
+
 	protected void moveFrame(DOF2Event e) {
-		if (inputGrabber() instanceof InteractiveFrame ) {
-			//Action<?> a = motionProfile().handle(lastEvent);
-			//TODO test in stable before going on 
+		if (inputGrabber() instanceof InteractiveFrame) {
+			// Action<?> a = motionProfile().handle(lastEvent);
+			// TODO test in stable before going on
 			DOF2Action a = motionProfile().handle(lastEvent);
 			if (a != null) {
 				if (a == DOF2Action.ZOOM_ON_REGION)
@@ -85,15 +86,15 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 					scene.setRotateVisualHint(true);
 				else
 					scene.setRotateVisualHint(false);
-				scene.setZoomVisualHint(false);				
+				scene.setZoomVisualHint(false);
 			}
 		}
 	}
-	
-  protected void moveEye(DOF2Event e) {
-  	if (inputGrabber() instanceof InteractiveFrame || inputGrabber() instanceof InteractiveEyeFrame ) {
-			//Action<?> a = motionProfile().handle(lastEvent);
-			//TODO test in stable before going on 
+
+	protected void moveEye(DOF2Event e) {
+		if (inputGrabber() instanceof InteractiveFrame || inputGrabber() instanceof InteractiveEyeFrame) {
+			// Action<?> a = motionProfile().handle(lastEvent);
+			// TODO test in stable before going on
 			DOF2Action a = motionProfile().handle(lastEvent);
 			if (a != null) {
 				if (a == DOF2Action.SCREEN_ROTATE)
@@ -112,7 +113,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 					scene.setZoomVisualHint(false);
 					pressEvent = e.get();
 					if (needHandle) {
-						//TODO new
+						// TODO new
 						actionGrabber().setAction(DOF2Action.ZOOM_ON_REGION);
 						inputHandler().enqueueEventTuple(new EventGrabberTuple(spEvent, actionGrabber()));
 						needHandle = false;
@@ -141,15 +142,15 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 			return;
 		}
 		else
-			handle(lastEvent);	
+			handle(lastEvent);
 	}
-	
+
 	protected void pressFrame(DOF2Event e) {
 		if (need4Spin)
 			((InteractiveFrame) inputGrabber()).stopSpinning();
 		iFrame = (InteractiveFrame) inputGrabber();
-		//Action<?> a = motionProfile().handle(lastEvent);
-	  //TODO test in stable before going on 
+		// Action<?> a = motionProfile().handle(lastEvent);
+		// TODO test in stable before going on
 		DOF2Action a = motionProfile().handle(lastEvent);
 		// Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle(lastEvent) :
 		// frameProfile().handle(lastEvent);
@@ -176,7 +177,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 				((InteractiveFrame) inputGrabber()).updateSceneUpVector();
 				dFriction = ((InteractiveFrame) inputGrabber()).dampingFriction();
 				((InteractiveFrame) inputGrabber()).setDampingFriction(0);
-				//TODO new
+				// TODO new
 				actionGrabber().setAction(a);
 				handler.eventTupleQueue().add(new EventGrabberTuple(lastEvent, actionGrabber()));
 			}
@@ -184,13 +185,13 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 		else
 			handle(lastEvent);
 	}
-	
-  protected void pressEye(DOF2Event e) {
-  	if (need4Spin)
+
+	protected void pressEye(DOF2Event e) {
+		if (need4Spin)
 			((InteractiveEyeFrame) inputGrabber()).stopSpinning();
 		eyeFrame = (InteractiveEyeFrame) inputGrabber();
-		//Action<?> a = motionProfile().handle(lastEvent);
-	  //TODO test in stable before going on 
+		// Action<?> a = motionProfile().handle(lastEvent);
+		// TODO test in stable before going on
 		DOF2Action a = motionProfile().handle(lastEvent);
 		// Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle(lastEvent) :
 		// frameProfile().handle(lastEvent);
@@ -217,7 +218,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 				((InteractiveEyeFrame) inputGrabber()).updateSceneUpVector();
 				dFriction = ((InteractiveEyeFrame) inputGrabber()).dampingFriction();
 				((InteractiveEyeFrame) inputGrabber()).setDampingFriction(0);
-				//TODO new
+				// TODO new
 				actionGrabber().setAction(a);
 				handler.eventTupleQueue().add(new EventGrabberTuple(lastEvent, actionGrabber()));
 			}
@@ -243,17 +244,17 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 		// else
 		// handle(lastEvent);
 	}
-	
+
 	protected void dragFrame(DOF2Event e) {
 		if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
 			if (drive)
 				((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f
 						* (lastEvent.y() - pressEvent.y()));
 			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-			//Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
-					//: frameProfile().handle((BogusEvent) lastEvent);
-		  //TODO test in stable before going on
-		  DOF2Action a = frameProfile().handle((BogusEvent) lastEvent);
+			// Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
+			// : frameProfile().handle((BogusEvent) lastEvent);
+			// TODO test in stable before going on
+			DOF2Action a = frameProfile().handle((BogusEvent) lastEvent);
 			if (a == null)
 				return;
 			MotionAction dA = (MotionAction) a.referenceAction();
@@ -261,17 +262,17 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 				handle(lastEvent);
 		}
 	}
-	
-  protected void dragEye(DOF2Event e) {
-  	if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
+
+	protected void dragEye(DOF2Event e) {
+		if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
 			if (drive)
 				((InteractiveEyeFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f
 						* (lastEvent.y() - pressEvent.y()));
 			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-			//Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
-					//: frameProfile().handle((BogusEvent) lastEvent);
-		  //TODO test in stable before going on
-		  DOF2Action a = eyeProfile().handle((BogusEvent) lastEvent);
+			// Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
+			// : frameProfile().handle((BogusEvent) lastEvent);
+			// TODO test in stable before going on
+			DOF2Action a = eyeProfile().handle((BogusEvent) lastEvent);
 			if (a == null)
 				return;
 			MotionAction dA = (MotionAction) a.referenceAction();
@@ -298,19 +299,19 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 		// else
 		// updateTrackedGrabber(lastEvent);
 	}
-	
+
 	protected void releaseFrame(DOF2Event e) {
 		// note that the following two lines fail on event when need4Spin
 		if (need4Spin && (prevEvent.speed() >= ((InteractiveFrame) inputGrabber()).spinningSensitivity()))
-				((InteractiveFrame) inputGrabber()).startSpinning(prevEvent);
+			((InteractiveFrame) inputGrabber()).startSpinning(prevEvent);
 		if (scene.zoomVisualHint()) {
 			// at first glance this should work
 			// handle(event);
 			// but the problem is that depending on the order the button and the modifiers are released,
 			// different actions maybe triggered, so we go for sure ;) :
 			lastEvent.setPreviousEvent(pressEvent);
-			//TODO check
-			actionGrabber().setAction(DOF2Action.ZOOM_ON_REGION);//new			
+			// TODO check
+			actionGrabber().setAction(DOF2Action.ZOOM_ON_REGION);// new
 			inputHandler().enqueueEventTuple(new EventGrabberTuple(lastEvent, actionGrabber()));
 			scene.setZoomVisualHint(false);
 		}
@@ -326,19 +327,19 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 		if (drive)
 			((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius());
 	}
-	
-  protected void releaseEye(DOF2Event e) {
-  	// note that the following two lines fail on event when need4Spin
+
+	protected void releaseEye(DOF2Event e) {
+		// note that the following two lines fail on event when need4Spin
 		if (need4Spin && (prevEvent.speed() >= ((InteractiveEyeFrame) inputGrabber()).spinningSensitivity()))
-				((InteractiveEyeFrame) inputGrabber()).startSpinning(prevEvent);
+			((InteractiveEyeFrame) inputGrabber()).startSpinning(prevEvent);
 		if (scene.zoomVisualHint()) {
 			// at first glance this should work
 			// handle(event);
 			// but the problem is that depending on the order the button and the modifiers are released,
 			// different actions maybe triggered, so we go for sure ;) :
 			lastEvent.setPreviousEvent(pressEvent);
-			//TODO check
-			actionGrabber().setAction(DOF2Action.ZOOM_ON_REGION);//new			
+			// TODO check
+			actionGrabber().setAction(DOF2Action.ZOOM_ON_REGION);// new
 			inputHandler().enqueueEventTuple(new EventGrabberTuple(lastEvent, actionGrabber()));
 			scene.setZoomVisualHint(false);
 		}
@@ -364,9 +365,9 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 			updateTrackedGrabber(cEvent);
 		handle(cEvent);
 	}
-	
+
 	// high-level API
-	
+
 	/**
 	 * Set mouse bindings as 'arcball'. Bindings are as follows:
 	 * <p>

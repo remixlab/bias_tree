@@ -21,7 +21,7 @@ public interface Constants {
 	public enum Target {
 		EYE, FRAME
 	}
-	
+
 	public enum MotionAction {
 		/**
 		 * Center frame

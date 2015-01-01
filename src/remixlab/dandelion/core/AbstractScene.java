@@ -43,54 +43,54 @@ import remixlab.fpstiming.*;
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>
  */
 public abstract class AbstractScene extends AnimatorObject implements ActionGrabber<SceneAction>, Constants {
-	protected boolean												dottedGrid;
+	protected boolean								dottedGrid;
 
 	// O B J E C T S
-	protected MatrixHelper									matrixHelper;
-	protected Eye														eye;
-	protected Trackable											trck;
+	protected MatrixHelper					matrixHelper;
+	protected Eye										eye;
+	protected Trackable							trck;
 
 	// E X C E P T I O N H A N D L I N G
-	protected int														startCoordCalls;
+	protected int										startCoordCalls;
 
 	// NUMBER OF FRAMES SINCE THE FIRST SCENE WAS INSTANTIATED
-	static public long											frameCount;
+	static public long							frameCount;
 
 	// InputHandler
-	protected InputHandler									iHandler;
+	protected InputHandler					iHandler;
 
 	// D I S P L A Y F L A G S
-	protected int														visualHintMask;
+	protected int										visualHintMask;
 
 	// LEFT vs RIGHT_HAND
-	protected boolean												rightHanded;
+	protected boolean								rightHanded;
 
 	// S I Z E
-	protected int														width, height;
+	protected int										width, height;
 
 	// offscreen
 	// TODO should be protected
-	public Point														upperLeftCorner;
-	protected boolean												offscreen;
-	protected long													lastEqUpdate;
+	public Point										upperLeftCorner;
+	protected boolean								offscreen;
+	protected long									lastEqUpdate;
 
 	// FRAME SYNC requires this:
-	protected final long										deltaCount;
+	protected final long						deltaCount;
 
-	protected WheeledMotionAgent<?>         defMotionAgent;
-	protected KeyboardAgent									defKeyboardAgent;
+	protected WheeledMotionAgent<?>	defMotionAgent;
+	protected KeyboardAgent					defKeyboardAgent;
 
 	/**
 	 * Visual hints as "the last shall be first"
 	 */
-	public final static int									AXES		= 1 << 0;
-	public final static int									GRID		= 1 << 1;
-	public final static int									PICKING	= 1 << 2;
-	public final static int									PATHS		= 1 << 3;
-	public final static int									ZOOM		= 1 << 4; // prosceneMouse.zoomOnRegion
-	public final static int									ROTATE	= 1 << 5; // prosceneMouse.screenRotate
+	public final static int					AXES		= 1 << 0;
+	public final static int					GRID		= 1 << 1;
+	public final static int					PICKING	= 1 << 2;
+	public final static int					PATHS		= 1 << 3;
+	public final static int					ZOOM		= 1 << 4; // prosceneMouse.zoomOnRegion
+	public final static int					ROTATE	= 1 << 5; // prosceneMouse.screenRotate
 
-	protected Platform											platform;
+	protected Platform							platform;
 
 	public enum Platform {
 		PROCESSING_DESKTOP, PROCESSING_ANDROID, PROCESSING_JS
@@ -136,7 +136,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 
 	// grabber implementation
 
-	protected Action<SceneAction> action;
+	protected Action<SceneAction>	action;
 
 	public SceneAction referenceAction() {
 		return action.referenceAction();
@@ -146,7 +146,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	public void setAction(Action<SceneAction> a) {
 		action = a;
 	}
-	
+
 	@Override
 	public Action<SceneAction> action() {
 		return action;
@@ -271,9 +271,10 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 			break;
 		}
 	}
-	
+
 	public void performCustomAction(KeyboardEvent event) {
-		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass()
+				.getName());
 	}
 
 	@Override
@@ -471,7 +472,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 */
 	public InputHandler inputHandler() {
 		return iHandler;
-	}  
+	}
 
 	/**
 	 * Convenience function that simply returns {@code inputHandler().info()}.
@@ -1549,8 +1550,8 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 		eyeFrameCopy.setMagnitude(avatar().eyeFrame().scaling());
 		eye().interpolateTo(eyeFrameCopy);
 
-		if (avatar() instanceof Grabber)
-			motionAgent().setDefaultGrabber((Grabber) avatar());
+		if ((avatar() instanceof InteractiveFrame) && !(avatar() instanceof InteractiveEyeFrame))
+			motionAgent().setDefaultGrabber((InteractiveFrame) avatar());
 		motionAgent().disableTracking();
 	}
 
@@ -1562,7 +1563,6 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	public void unsetAvatar() {
 		motionAgent().setDefaultGrabber(eye().frame());
 		motionAgent().enableTracking();
-
 		trck = null;
 	}
 
@@ -1595,10 +1595,10 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 		vp.setScreenWidthAndHeight(width(), height());
 
 		eye = vp;
-		
+
 		motionAgent().eyeBranch().clearPool();
 		motionAgent().eyeBranch().addInPool(eye.frame());
-		motionAgent().eyeBranch().setDefaultGrabber(eye.frame());		
+		motionAgent().eyeBranch().setDefaultGrabber(eye.frame());
 
 		showAll();
 	}
@@ -2063,9 +2063,9 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * @param action
 	 *          the action name (no parentheses)
 	 */
-	 static public void showDepthWarning(MotionAction action) {
-		 showWarning(action.name() + " is not available in 2D.");
-	 }
+	static public void showDepthWarning(MotionAction action) {
+		showWarning(action.name() + " is not available in 2D.");
+	}
 
 	/**
 	 * Display a warning that the specified method lacks implementation.
@@ -2077,23 +2077,23 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	/**
 	 * Display a warning that the specified Action lacks implementation.
 	 */
-	 static public void showMissingImplementationWarning(MotionAction action, String theclass) {
-		 showWarning(action.name() + " should be implemented by your " + theclass + " derived class.");
-	 }
+	static public void showMissingImplementationWarning(MotionAction action, String theclass) {
+		showWarning(action.name() + " should be implemented by your " + theclass + " derived class.");
+	}
 
 	/**
 	 * Display a warning that the specified Action can only be implemented from a relative bogus event.
 	 */
-	 static public void showEventVariationWarning(MotionAction action) {
-		 showWarning(action.name() + " can only be performed using a relative event.");
-	 }
+	static public void showEventVariationWarning(MotionAction action) {
+		showWarning(action.name() + " can only be performed using a relative event.");
+	}
 
 	/**
 	 * Display a warning that the specified Action is only available for the Eye frame.
 	 */
-	 static public void showOnlyEyeWarning(MotionAction action) {
-		 showWarning(action.name() + " can only be performed by the eye (frame).");
-	 }
+	static public void showOnlyEyeWarning(MotionAction action) {
+		showWarning(action.name() + " can only be performed by the eye (frame).");
+	}
 
 	/**
 	 * Display a warning that the specified method is not available under the specified platform.

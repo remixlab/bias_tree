@@ -55,19 +55,19 @@ public class MouseAgent extends WheeledMouseAgent {
 	 * Processing mouseEvent method to be registered at the PApplet's instance.
 	 */
 	public void mouseEvent(processing.event.MouseEvent e) {
-		if (e.getAction() == processing.event.MouseEvent.MOVE) {			
+		if (e.getAction() == processing.event.MouseEvent.MOVE) {
 			move(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
 					e.getModifiers(), MotionEvent.NOBUTTON));
 		}
-		if (e.getAction() == processing.event.MouseEvent.PRESS) {			
+		if (e.getAction() == processing.event.MouseEvent.PRESS) {
 			press(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(),
 					e.getY() - scene.originCorner().y(), e.getModifiers(), e.getButton()));
 		}
-		if (e.getAction() == processing.event.MouseEvent.DRAG) {			
+		if (e.getAction() == processing.event.MouseEvent.DRAG) {
 			drag(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
 					e.getModifiers(), e.getButton()));
 		}
-		if (e.getAction() == processing.event.MouseEvent.RELEASE) {			
+		if (e.getAction() == processing.event.MouseEvent.RELEASE) {
 			release(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY()
 					- scene.originCorner().y(), e.getModifiers(), e.getButton()));
 		}

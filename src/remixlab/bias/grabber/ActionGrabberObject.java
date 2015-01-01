@@ -1,3 +1,4 @@
+
 package remixlab.bias.grabber;
 
 import remixlab.bias.core.Action;
@@ -9,12 +10,12 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.AbstractScene;
 
 public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGrabber<E>
-  /*
-  , Grabber
-  //*/
-  {
-	Action<E> action;
-	
+/*
+ * , Grabber //
+ */
+{
+	Action<E>	action;
+
 	/**
 	 * Empty constructor.
 	 */
@@ -39,21 +40,21 @@ public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGr
 		for (Agent agent : inputHandler.agents())
 			agent.addInPool(this);
 	}
-	
+
 	public E referenceAction() {
-		return action!=null ? action.referenceAction() : null;
+		return action != null ? action.referenceAction() : null;
 	}
-	
+
 	@Override
 	public Action<E> action() {
 		return action;
 	}
-	
+
 	@Override
 	public void setAction(Action<E> a) {
 		action = a;
 	}
-	
+
 	@Override
 	public boolean grabsInput(InputAgent agent) {
 		return agent.inputGrabber() == this;

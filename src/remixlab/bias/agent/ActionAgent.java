@@ -41,8 +41,8 @@ import remixlab.bias.grabber.*;
  *          {@link remixlab.bias.agent.profile.Profile} to parameterize the Agent with.
  */
 public class ActionAgent<P extends Profile<?, ?>> extends Agent {
-	protected P											     profile;
-  protected InputAgent parent;
+	protected P						profile;
+	protected InputAgent	parent;
 
 	public ActionAgent(P p, InputAgent pnt, String n) {
 		super(n);
@@ -50,7 +50,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		parent = pnt;
 		parent.addBranch(this);
 	}
-	
+
 	public InputAgent parentAgent() {
 		return parent;
 	}
@@ -71,7 +71,6 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		profile = p;
 	}
 
-	@Override
 	public String info() {
 		String description = new String();
 		description += name();
@@ -82,13 +81,13 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 		}
 		return description;
 	}
-	
+
 	@Override
 	public boolean addInPool(Grabber grabber) {
 		if (grabber == null)
 			return false;
 		if (!isInPool(grabber)) {
-			if( (grabber instanceof ActionGrabber<?>) ) {				
+			if ((grabber instanceof ActionGrabber<?>)) {
 				pool().add(grabber);
 				return true;
 			}
@@ -110,82 +109,42 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	 * {@code remixlab.bias.event} package.
 	 */
 	/*
-	@Override
-	public boolean handle(BogusEvent event) {
-		// overkill but feels safer ;)
-		if (event == null inputGrabber() == null)
-			return false;
-		inputHandler().enqueueEventTuple(new EventGrabberTuple(event, profile().handle(event), inputGrabber()));
-	}
-	*/
-	
+	 * @Override public boolean handle(BogusEvent event) { // overkill but feels safer ;) if (event == null inputGrabber()
+	 * == null) return false; inputHandler().enqueueEventTuple(new EventGrabberTuple(event, profile().handle(event),
+	 * inputGrabber())); }
+	 */
+
 	public Action<?> handle(BogusEvent event) {
 		return profile().handle(event);
 	}
-	
+
 	/*
-	public EventGrabberTuple tuple(BogusEvent event) {
-		if (event == null)
-			return null;
-		return new EventGrabberTuple(event, profile().handle(event), inputGrabber());
-	}
-	*/
-	
+	 * public EventGrabberTuple tuple(BogusEvent event) { if (event == null) return null; return new
+	 * EventGrabberTuple(event, profile().handle(event), inputGrabber()); }
+	 */
+
 	/*
-	// TODO old. remove me.
-	protected boolean validateGrabberTupple(BogusEvent e, Grabber g) {
-		if (alienGrabber())
-			if (branches().isEmpty())
-				enqueueEventTuple(new EventGrabberTuple(e, inputGrabber()), false);
-			else {
-				for (Agent branch : branches())
-					if (branch.handle(e))
-						return true;
-				return false;
-			}
-		else
-			enqueueEventTuple(new EventGrabberTuple(e, profile().handle(e), inputGrabber()));
-		return true;
-	}
-  //*/
-	
+	 * // TODO old. remove me. protected boolean validateGrabberTupple(BogusEvent e, Grabber g) { if (alienGrabber()) if
+	 * (branches().isEmpty()) enqueueEventTuple(new EventGrabberTuple(e, inputGrabber()), false); else { for (Agent branch
+	 * : branches()) if (branch.handle(e)) return true; return false; } else enqueueEventTuple(new EventGrabberTuple(e,
+	 * profile().handle(e), inputGrabber())); return true; } //
+	 */
+
 	/*
-	//new
-	protected boolean validateGrabberTupple(BogusEvent e, Grabber g) {
-		if (alienGrabber()) {
-			//TODO remove this case
-			if (branches().isEmpty()) {
-				enqueueEventTuple(new EventGrabberTuple(e, g));
-				return true;
-			}
-			else {
-				for (Agent branch : branches())
-					if (branch.handle(e))
-						return true;
-				return false;
-			}
-		}
-		else {
-			return proc(e, g, profile());
-		}
-	}
-	// */
-	
-	//TODO pending
+	 * //new protected boolean validateGrabberTupple(BogusEvent e, Grabber g) { if (alienGrabber()) { //TODO remove this
+	 * case if (branches().isEmpty()) { enqueueEventTuple(new EventGrabberTuple(e, g)); return true; } else { for (Agent
+	 * branch : branches()) if (branch.handle(e)) return true; return false; } } else { return proc(e, g, profile()); } }
+	 * //
+	 */
+
+	// TODO pending
 	/*
-	protected boolean validateGrabberTuple(BogusEvent e, ActionGrabber<?> g, Profile<?,?> p) {
-		Action<?> grabberAction = p.handle(e);
-		if( grabberAction == null )	return false;
-		boolean result = inputHandler().enqueueEventTuple(new EventGrabberTuple(e, grabberAction, g));
-		if(!result) {
-		  //re-accommodate really sucks
-			//TODO debug: may simply throw an exception
-			System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name());			
-		}
-		return result;
-	}
-	*/
-	
+	 * protected boolean validateGrabberTuple(BogusEvent e, ActionGrabber<?> g, Profile<?,?> p) { Action<?> grabberAction
+	 * = p.handle(e); if( grabberAction == null ) return false; boolean result = inputHandler().enqueueEventTuple(new
+	 * EventGrabberTuple(e, grabberAction, g)); if(!result) { //re-accommodate really sucks //TODO debug: may simply throw
+	 * an exception System.out.println("ActionGrabber cannot be HANDLE in this agent: " + this.name()); } return result; }
+	 */
+
 	/**
 	 * Convenience function that simply calls {@code resetProfile()}.
 	 * 
@@ -194,7 +153,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	public void resetAllProfiles() {
 		resetProfile();
 	}
-	
+
 	/**
 	 * Convenience function that simply calls {@code profile.removeAllBindings()}.
 	 */

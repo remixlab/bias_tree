@@ -681,8 +681,8 @@ public class KeyFrameInterpolator implements Copyable {
 	}
 
 	/**
-	 * Removes all keyFrames from the path. Calls {@link #removePathFromMotionAgent()}. The
-	 * {@link #numberOfKeyFrames()} is set to 0.
+	 * Removes all keyFrames from the path. Calls {@link #removePathFromMotionAgent()}. The {@link #numberOfKeyFrames()}
+	 * is set to 0.
 	 * 
 	 * @see #removePathFromMotionAgent()
 	 */

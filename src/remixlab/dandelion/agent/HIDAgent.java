@@ -1,3 +1,4 @@
+
 package remixlab.dandelion.agent;
 
 import remixlab.bias.event.*;
@@ -8,12 +9,12 @@ public class HIDAgent extends WheeledMotionAgent<DOF6Action> {
 	public HIDAgent(AbstractScene scn, String n) {
 		super(scn, n);
 	}
-	
+
 	@Override
 	public DOF6Event feed() {
 		return null;
 	}
-	
+
 	public void setZTranslationSensitivity(float s) {
 		eyeBranch.sensitivities()[2] = s;
 		frameBranch.sensitivities()[2] = s;

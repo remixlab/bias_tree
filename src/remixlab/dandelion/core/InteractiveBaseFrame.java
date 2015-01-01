@@ -1,3 +1,4 @@
+
 package remixlab.dandelion.core;
 
 import remixlab.bias.event.DOF1Event;
@@ -8,7 +9,7 @@ import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
 
 class InteractiveBaseFrame extends Frame {
-  //Sens
+	// Sens
 	private float								rotSensitivity;
 	private float								transSensitivity;
 	private float								wheelSensitivity;
@@ -24,23 +25,23 @@ class InteractiveBaseFrame extends Frame {
 	// Whether the SCREEN_TRANS direction (horizontal or vertical) is fixed or not.
 	public boolean							dirIsFixed;
 	private boolean							horiz								= true; // Two simultaneous InteractiveFrame require two mice!
-	
-  // TODO decide whether to include this:
-	protected float							eventSpeed;// spnning and tossing
+
+	// TODO decide whether to include this:
+	protected float							eventSpeed;									// spnning and tossing
 	protected Vec								tDir;
 	protected float							flySpd;
 	protected TimingTask				flyTimerTask;
 	protected Vec								scnUpVec;
 	protected Vec								flyDisp;
 	protected static final long	FLY_UPDATE_PERDIOD	= 10;
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
 				appendSuper(super.hashCode()).
-//				append(grabsInputThreshold).
-//				append(adpThreshold).
-//				append(isInCamPath).
+				// append(grabsInputThreshold).
+				// append(adpThreshold).
+				// append(isInCamPath).
 				append(rotSensitivity).
 				append(spngRotation).
 				append(spngSensitivity).
@@ -66,9 +67,9 @@ class InteractiveBaseFrame extends Frame {
 		InteractiveBaseFrame other = (InteractiveBaseFrame) obj;
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
-//				.append(grabsInputThreshold, other.grabsInputThreshold)
-//				.append(adpThreshold, other.adpThreshold)
-//				.append(isInCamPath, other.isInCamPath)
+				// .append(grabsInputThreshold, other.grabsInputThreshold)
+				// .append(adpThreshold, other.adpThreshold)
+				// .append(isInCamPath, other.isInCamPath)
 				.append(dampFriction, other.dampFriction)
 				.append(sFriction, other.sFriction)
 				.append(rotSensitivity, other.rotSensitivity)
@@ -78,26 +79,26 @@ class InteractiveBaseFrame extends Frame {
 				.append(wheelSensitivity, other.wheelSensitivity)
 				.append(flyDisp, other.flyDisp)
 				.append(flySpd, other.flySpd)
-				.append(scnUpVec, other.scnUpVec)				
+				.append(scnUpVec, other.scnUpVec)
 				.isEquals();
 	}
-	
+
 	public InteractiveBaseFrame(AbstractScene scn) {
 		super(scn);
-		
+
 		setRotationSensitivity(1.0f);
 		setTranslationSensitivity(1.0f);
 		setWheelSensitivity(20.0f);
 		setSpinningSensitivity(0.3f);
 		setDampingFriction(0.5f);
-		
+
 		spinningTimerTask = new TimingTask() {
 			public void execute() {
 				spin();
 			}
 		};
 		scene.registerTimingTask(spinningTimerTask);
-		
+
 		// TODO decide whether to include this:
 		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
 		flyDisp = new Vec(0.0f, 0.0f, 0.0f);
@@ -106,55 +107,55 @@ class InteractiveBaseFrame extends Frame {
 				toss();
 			}
 		};
-		scene.registerTimingTask(flyTimerTask);		
-		//end
+		scene.registerTimingTask(flyTimerTask);
+		// end
 	}
-	
+
 	public InteractiveBaseFrame(AbstractScene scn, Frame referenceFrame) {
 		this(scn);
 		this.setReferenceFrame(referenceFrame);
 	}
-	
+
 	public InteractiveBaseFrame(AbstractScene scn, Vec p, Rotation r, float s) {
 		super(scn, p, r, s);
-		
+
 		setRotationSensitivity(1.0f);
 		setTranslationSensitivity(1.0f);
 		setWheelSensitivity(20.0f);
 		setSpinningSensitivity(0.3f);
 		setDampingFriction(0.5f);
-		
+
 		spinningTimerTask = new TimingTask() {
 			public void execute() {
 				spin();
 			}
 		};
 		scene.registerTimingTask(spinningTimerTask);
-		
-	  // TODO decide whether to include this:
+
+		// TODO decide whether to include this:
 		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
-		flyDisp = new Vec(0.0f, 0.0f, 0.0f);		
+		flyDisp = new Vec(0.0f, 0.0f, 0.0f);
 		flyTimerTask = new TimingTask() {
 			public void execute() {
 				toss();
 			}
 		};
 		scene.registerTimingTask(flyTimerTask);
-		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);		
+		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
 		// end
 	}
-	
+
 	protected InteractiveBaseFrame(InteractiveBaseFrame otherFrame) {
 		super(otherFrame);
-		
+
 		this.spinningTimerTask = new TimingTask() {
 			public void execute() {
 				spin();
 			}
 		};
 		this.scene.registerTimingTask(spinningTimerTask);
-		
-	  // TODO decide whether to include this:
+
+		// TODO decide whether to include this:
 		this.scnUpVec.set(otherFrame.sceneUpVector().get());
 		this.flyDisp.set(otherFrame.flyDisp.get());
 		this.flyTimerTask = new TimingTask() {
@@ -162,43 +163,43 @@ class InteractiveBaseFrame extends Frame {
 				toss();
 			}
 		};
-		this.scene.registerTimingTask(flyTimerTask);	
-		
+		this.scene.registerTimingTask(flyTimerTask);
+
 		// end
 
-//		this.isInCamPath = otherFrame.isInCamPath;
-//
-//		this.setGrabsInputThreshold(otherFrame.grabsInputThreshold(), otherFrame.adaptiveGrabsInputThreshold());
-//		this.setRotationSensitivity(otherFrame.rotationSensitivity());
-//		this.setTranslationSensitivity(otherFrame.translationSensitivity());
-//		this.setWheelSensitivity(otherFrame.wheelSensitivity());
-//
-//		this.setSpinningSensitivity(otherFrame.spinningSensitivity());
-//		this.setDampingFriction(otherFrame.dampingFriction());
-//		
-//		this.setAction(otherFrame.action());
-//
-//		this.spinningTimerTask = new TimingTask() {
-//			public void execute() {
-//				spin();
-//			}
-//		};
-//		this.scene.registerTimingTask(spinningTimerTask);
-//
-//		this.scnUpVec = new Vec();
-//		this.scnUpVec.set(otherFrame.sceneUpVector());
-//		this.flyDisp = new Vec();
-//		this.flyDisp.set(otherFrame.flyDisp);
-//		this.setFlySpeed(otherFrame.flySpeed());
-//
-//		this.flyTimerTask = new TimingTask() {
-//			public void execute() {
-//				toss();
-//			}
-//		};
-//		this.scene.registerTimingTask(flyTimerTask);
+		// this.isInCamPath = otherFrame.isInCamPath;
+		//
+		// this.setGrabsInputThreshold(otherFrame.grabsInputThreshold(), otherFrame.adaptiveGrabsInputThreshold());
+		// this.setRotationSensitivity(otherFrame.rotationSensitivity());
+		// this.setTranslationSensitivity(otherFrame.translationSensitivity());
+		// this.setWheelSensitivity(otherFrame.wheelSensitivity());
+		//
+		// this.setSpinningSensitivity(otherFrame.spinningSensitivity());
+		// this.setDampingFriction(otherFrame.dampingFriction());
+		//
+		// this.setAction(otherFrame.action());
+		//
+		// this.spinningTimerTask = new TimingTask() {
+		// public void execute() {
+		// spin();
+		// }
+		// };
+		// this.scene.registerTimingTask(spinningTimerTask);
+		//
+		// this.scnUpVec = new Vec();
+		// this.scnUpVec.set(otherFrame.sceneUpVector());
+		// this.flyDisp = new Vec();
+		// this.flyDisp.set(otherFrame.flyDisp);
+		// this.setFlySpeed(otherFrame.flySpeed());
+		//
+		// this.flyTimerTask = new TimingTask() {
+		// public void execute() {
+		// toss();
+		// }
+		// };
+		// this.scene.registerTimingTask(flyTimerTask);
 	}
-	
+
 	@Override
 	public InteractiveBaseFrame get() {
 		return new InteractiveBaseFrame(this);
@@ -212,7 +213,7 @@ class InteractiveBaseFrame extends Frame {
 	protected float dampingFrictionFx() {
 		return sFriction;
 	}
-	
+
 	/**
 	 * Defines the spinning deceleration.
 	 * <p>
@@ -222,7 +223,7 @@ class InteractiveBaseFrame extends Frame {
 	public float dampingFriction() {
 		return dampFriction;
 	}
-	
+
 	/**
 	 * Defines the {@link #dampingFriction()}. Values must be in the range [0..1].
 	 */
@@ -241,7 +242,7 @@ class InteractiveBaseFrame extends Frame {
 	protected void setDampingFrictionFx(float spinningFriction) {
 		sFriction = spinningFriction * spinningFriction * spinningFriction;
 	}
-	
+
 	/**
 	 * Defines the {@link #rotationSensitivity()}.
 	 */
@@ -452,7 +453,7 @@ class InteractiveBaseFrame extends Frame {
 		else
 			this.setSpinningRotation(new Rot(spinningRotation().angle() * (eventSpeed / prevSpeed)));
 	}
-	
+
 	/**
 	 * Return 1 if mouse motion was started horizontally and -1 if it was more vertical. Returns 0 if this could not be
 	 * determined yet (perfect diagonal motion, rare).
@@ -476,7 +477,7 @@ class InteractiveBaseFrame extends Frame {
 		else
 			return 0;
 	}
-	
+
 	/**
 	 * Returns a Quaternion computed according to the mouse motion. Mouse positions are projected on a deformed ball,
 	 * centered on ({@code cx}, {@code cy}).
@@ -516,7 +517,7 @@ class InteractiveBaseFrame extends Frame {
 		float d = x * x + y * y;
 		return d < size_limit ? (float) Math.sqrt(size2 - d) : size_limit / (float) Math.sqrt(d);
 	}
-	
+
 	/**
 	 * <a href="http://en.wikipedia.org/wiki/Euler_angles#Extrinsic_rotations">Extrinsic rotation</a> about the
 	 * {@link remixlab.dandelion.core.AbstractScene#eye()} {@link remixlab.dandelion.core.InteractiveEyeFrame} axes.
@@ -546,9 +547,9 @@ class InteractiveBaseFrame extends Frame {
 		q.setZ(trans.z());
 		rotate(q);
 	}
-	
-  //micro-actions procedures
-	
+
+	// micro-actions procedures
+
 	protected void scale2Fit(Vec trans) {
 		// Scale to fit the screen relative event displacement
 		switch (scene.camera().type()) {
@@ -565,7 +566,7 @@ class InteractiveBaseFrame extends Frame {
 			break;
 		}
 	}
-	
+
 	protected Rot computeRot(DOF2Event e2, Vec trans) {
 		Rot rot;
 		if (e2.isRelative()) {
@@ -580,7 +581,7 @@ class InteractiveBaseFrame extends Frame {
 			rot.negate();
 		return rot;
 	}
-	
+
 	protected float computeAngle(DOF1Event e1, boolean wheel) {
 		float angle;
 		if (wheel) // its a wheel wheel :P
@@ -591,7 +592,7 @@ class InteractiveBaseFrame extends Frame {
 			angle = (float) Math.PI * e1.dx() / scene.eye().screenWidth();
 		return angle;
 	}
-	
+
 	protected float delta1(DOF1Event e1, boolean wheel) {
 		float delta;
 		if (wheel) // its a wheel wheel :P
@@ -602,11 +603,11 @@ class InteractiveBaseFrame extends Frame {
 			delta = e1.dx();
 		return delta;
 	}
-	
+
 	protected void translateFromEye(Vec trans) {
 		translateFromEye(trans, translationSensitivity());
 	}
-	
+
 	protected void translateFromEye(Vec trans, float sens) {
 		// Transform from eye to world coordinate system.
 		trans = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trans, sens))
@@ -617,9 +618,9 @@ class InteractiveBaseFrame extends Frame {
 			trans = referenceFrame().transformOf(trans);
 		translate(trans);
 	}
-	
-  // TODO decide whether to include this:
-	
+
+	// TODO decide whether to include this:
+
 	/**
 	 * Returns the up vector used in fly mode, expressed in the world coordinate system.
 	 * <p>
@@ -655,7 +656,7 @@ class InteractiveBaseFrame extends Frame {
 	public final void updateSceneUpVector() {
 		scnUpVec = orientation().rotate(new Vec(0.0f, 1.0f, 0.0f));
 	}
-	
+
 	/**
 	 * Returns {@code true} when the InteractiveFrame is tossing.
 	 * <p>
@@ -670,7 +671,7 @@ class InteractiveBaseFrame extends Frame {
 	public final boolean isTossing() {
 		return flyTimerTask.isActive();
 	}
-	
+
 	/**
 	 * Stops the tossing motion started using {@link #startTossing(MotionEvent)}. {@link #isTossing()} will return
 	 * {@code false} after this call.
@@ -684,7 +685,7 @@ class InteractiveBaseFrame extends Frame {
 	public final void stopTossing() {
 		flyTimerTask.stop();
 	}
-	
+
 	/**
 	 * Returns the incremental translation that is applied by {@link #toss()} to the InteractiveFrame position when it
 	 * {@link #isTossing()}.
@@ -698,7 +699,7 @@ class InteractiveBaseFrame extends Frame {
 	public final Vec tossingDirection() {
 		return tDir;
 	}
-	
+
 	/**
 	 * Defines the {@link #tossingDirection()} in the InteractiveFrame coordinate system.
 	 * 
@@ -707,7 +708,7 @@ class InteractiveBaseFrame extends Frame {
 	public final void setTossingDirection(Vec dir) {
 		tDir = dir;
 	}
-	
+
 	/**
 	 * Starts the tossing of the InteractiveFrame.
 	 * <p>
@@ -723,7 +724,7 @@ class InteractiveBaseFrame extends Frame {
 		eventSpeed = e.speed();
 		flyTimerTask.run(FLY_UPDATE_PERDIOD);
 	}
-	
+
 	/**
 	 * Internal method. Recomputes the {@link #tossingDirection()} according to {@link #dampingFriction()}.
 	 * 
@@ -743,7 +744,7 @@ class InteractiveBaseFrame extends Frame {
 		else
 			setTossingDirection(rotation().rotate(flyDisp));
 	}
-	
+
 	/**
 	 * Translates the InteractiveFrame by its {@link #tossingDirection()}. Invoked by a timer when the InteractiveFrame is
 	 * performing the DRIVE, MOVE_BACKWARD or MOVE_FORWARD dandelion actions.
@@ -764,7 +765,7 @@ class InteractiveBaseFrame extends Frame {
 		else
 			translate(tossingDirection());
 	}
-	
+
 	/**
 	 * Returns the fly speed, expressed in virtual scene units.
 	 * <p>
@@ -793,7 +794,7 @@ class InteractiveBaseFrame extends Frame {
 	public void setFlySpeed(float speed) {
 		flySpd = speed;
 	}
-	
+
 	/**
 	 * Returns a Quaternion that is the composition of two rotations, inferred from the mouse roll (X axis) and pitch (
 	 * {@link #sceneUpVector()} axis).
@@ -809,9 +810,9 @@ class InteractiveBaseFrame extends Frame {
 		Quat rotY = new Quat(transformOf(sceneUpVector()), rotationSensitivity() * (-deltaX) / camera.screenWidth());
 		return Quat.multiply(rotY, rotX);
 	}
-	
+
 	// drive:
-	
+
 	/**
 	 * Returns a Quaternion that is a rotation around current camera Y, proportional to the horizontal mouse position.
 	 */
@@ -819,6 +820,6 @@ class InteractiveBaseFrame extends Frame {
 		float deltaX = event.isAbsolute() ? event.x() : event.dx();
 		return new Quat(new Vec(0.0f, 1.0f, 0.0f), rotationSensitivity() * (-deltaX) / camera.screenWidth());
 	}
-	
+
 	// end decide
 }

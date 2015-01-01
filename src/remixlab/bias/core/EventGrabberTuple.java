@@ -32,30 +32,18 @@ public class EventGrabberTuple {
 		event = e;
 		grabber = g;
 	}
-	
+
 	/*
-	//TODO test this after implementing the actions
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public EventGrabberTuple(BogusEvent e, Action a, ActionGrabber g) {
-		this(e, g);
-		if(a == null) {
-			g.setAction(null);
-			return;
-		}
-		
-		//TODO: critical condition in the new approach needs testing
-		if( g.action() != null ) {
-			if( g.action().referenceAction().getClass() == a.referenceAction().getClass() )
-				g.setAction(a);
-			else {
-				System.out.println("Warning: " + a + " was requested to be added to an event tuple but null was added!");
-				g.setAction(null);
-			}
-		}
-		else
-			g.setAction(a);
-	}
-	//*/
+	 * //TODO test this after implementing the actions
+	 * 
+	 * @SuppressWarnings({ "unchecked", "rawtypes" }) public EventGrabberTuple(BogusEvent e, Action a, ActionGrabber g) {
+	 * this(e, g); if(a == null) { g.setAction(null); return; }
+	 * 
+	 * //TODO: critical condition in the new approach needs testing if( g.action() != null ) { if(
+	 * g.action().referenceAction().getClass() == a.referenceAction().getClass() ) g.setAction(a); else {
+	 * System.out.println("Warning: " + a + " was requested to be added to an event tuple but null was added!");
+	 * g.setAction(null); } } else g.setAction(a); } //
+	 */
 
 	/**
 	 * Calls {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}.

@@ -46,7 +46,8 @@ import remixlab.util.*;
  * {@link remixlab.dandelion.core.AbstractScene#inputHandler()} {@link remixlab.bias.core.InputHandler#agents()} pool
  * upon creation.
  */
-public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionGrabber<MotionAction>, Copyable, Constants {
+public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionGrabber<MotionAction>, Copyable,
+		Constants {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -73,7 +74,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 
 	protected Eye					eye;
 	protected Vec					anchorPnt;
-	protected Vec scnUpVec;
+	protected Vec					scnUpVec;
 
 	// L O C A L T I M E R
 	public boolean				anchorFlag;
@@ -97,9 +98,9 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	public InteractiveEyeFrame(Eye theEye) {
 		super(theEye.scene);
 		eye = theEye;
-		
+
 		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
-		
+
 		// old from here
 		anchorPnt = new Vec(0.0f, 0.0f, 0.0f);
 
@@ -117,13 +118,13 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 		this.scnUpVec = new Vec();
 		this.scnUpVec.set(otherFrame.sceneUpVector());
 		this.flyDisp.set(otherFrame.flyDisp.get());
-		
-		//TODO don't think so: frame is added to the pool when setting the eye
-		//if( scene.motionAgent().eyeBranch().isInPool(otherFrame) )
-			//scene.motionAgent().eyeBranch().addInPool(this);
-		
-	  // old from here
-		
+
+		// TODO don't think so: frame is added to the pool when setting the eye
+		// if( scene.motionAgent().eyeBranch().isInPool(otherFrame) )
+		// scene.motionAgent().eyeBranch().addInPool(this);
+
+		// old from here
+
 		this.anchorPnt = new Vec();
 		this.anchorPnt.set(otherFrame.anchorPnt);
 		this.timerFx = new TimingTask() {
@@ -142,30 +143,30 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	public Eye eye() {
 		return eye;
 	}
-	
-  //grabber implementation
-	
-	protected Action<MotionAction> action;
-	
+
+	// grabber implementation
+
+	protected Action<MotionAction>	action;
+
 	public MotionAction referenceAction() {
-		return action!=null ? action.referenceAction() : null;
+		return action != null ? action.referenceAction() : null;
 	}
-	
+
 	@Override
 	public void setAction(Action<MotionAction> a) {
 		action = a;
 	}
-	
+
 	@Override
 	public Action<MotionAction> action() {
 		return action;
 	}
-	
+
 	@Override
 	public boolean grabsInput(InputAgent agent) {
 		return agent.inputGrabber() == this;
 	}
-	
+
 	@Override
 	public boolean checkIfGrabsInput(BogusEvent event) {
 		if (event instanceof ClickEvent)
@@ -180,8 +181,8 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			return checkIfGrabsInput((DOF6Event) event);
 		return false;
 	}
-	
-	//TODO improve?
+
+	// TODO improve?
 	public boolean checkIfGrabsInput(ClickEvent event) {
 		return true;
 	}
@@ -197,9 +198,9 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	public boolean checkIfGrabsInput(DOF6Event event) {
 		return true;
 	}
-	
+
 	@Override
-	public void performInteraction(BogusEvent event) {		
+	public void performInteraction(BogusEvent event) {
 		if (event instanceof ClickEvent)
 			performInteraction((ClickEvent) event);
 		if (event instanceof DOF1Event)
@@ -211,14 +212,14 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 		if (event instanceof DOF6Event)
 			performInteraction((DOF6Event) event);
 	}
-	
+
 	public void performInteraction(ClickEvent event) {
-		switch(referenceAction()) {
+		switch (referenceAction()) {
 		case CUSTOM_CLICK_ACTION:
 			performCustomAction(event);
 			break;
 		case ALIGN_FRAME:
-			eye.frame().alignWithFrame(null, true);			
+			eye.frame().alignWithFrame(null, true);
 			break;
 		case ANCHOR_FROM_PIXEL:
 			if (eye.setAnchorFromPixel(new Point(event.x(), event.y()))) {
@@ -230,16 +231,16 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			eye.centerScene();
 			break;
 		case ZOOM_ON_PIXEL:
-			if(scene.is2D()) {
+			if (scene.is2D()) {
 				eye.interpolateToZoomOnPixel(new Point(event.x(), event.y()));
 				pupVec = eye.unprojectedCoordinatesOf(new Vec(event.x(), event.y(), 0.5f));
 				pupFlag = true;
 				timerFx.runOnce(1000);
 			}
 			else {
-				Vec pup = ((Camera)eye).pointUnderPixel(new Point(event.x(), event.y()));
+				Vec pup = ((Camera) eye).pointUnderPixel(new Point(event.x(), event.y()));
 				if (pup != null) {
-					((Camera)eye).interpolateToZoomOnTarget(pup);
+					((Camera) eye).interpolateToZoomOnTarget(pup);
 					pupVec = pup;
 					pupFlag = true;
 					timerFx.runOnce(1000);
@@ -247,46 +248,46 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			}
 			break;
 		default:
-			break;		
-		}		
+			break;
+		}
 	}
 
 	public void performInteraction(DOF1Event event) {
-		if(scene.is2D())
+		if (scene.is2D())
 			execAction2D(event, true);
 		else
 			execAction3D(event, true);
 	}
 
 	public void performInteraction(DOF2Event event) {
-		if(scene.is2D())
+		if (scene.is2D())
 			execAction2D(event);
 		else
 			execAction3D(event);
 	}
 
 	public void performInteraction(DOF3Event event) {
-		if(scene.is2D())
+		if (scene.is2D())
 			execAction2D(event);
 		else
 			execAction3D(event);
 	}
 
 	public void performInteraction(DOF6Event event) {
-		if(scene.is2D())
+		if (scene.is2D())
 			execAction2D(event);
 		else
 			execAction3D(event);
 	}
-	
+
 	// 2D
-	
+
 	protected void execAction2D(DOF1Event event) {
 		execAction2D(event, false);
 	}
 
 	protected void execAction2D(DOF1Event event, boolean wheel) {
-		switch(referenceAction()) {
+		switch (referenceAction()) {
 		case CUSTOM_DOF1_ACTION:
 			performCustomAction(event);
 			break;
@@ -308,8 +309,8 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 					: translationSensitivity());
 			break;
 		default:
-			//TODO
-			//AbstractScene.showOnlyEyeWarning(a);
+			// TODO
+			// AbstractScene.showOnlyEyeWarning(a);
 			break;
 		}
 	}
@@ -317,7 +318,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	protected void execAction2D(DOF2Event event) {
 		float deltaX, deltaY;
 		Rotation rot;
-		switch(referenceAction()) {
+		switch (referenceAction()) {
 		case CUSTOM_DOF2_ACTION:
 			performCustomAction(event);
 			break;
@@ -334,7 +335,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			translate(flyDisp);
 			setTossingDirection(flyDisp);
 			startTossing(event);
-			break;		
+			break;
 		case ROTATE:
 		case SCREEN_ROTATE:
 			rot = computeRot(event, eye.projectedCoordinatesOf(anchor()));
@@ -360,8 +361,8 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			break;
 		case ZOOM_ON_REGION:
 			if (event.isAbsolute()) {
-				//TODO restore
-				//AbstractScene.showEventVariationWarning(a);
+				// TODO restore
+				// AbstractScene.showEventVariationWarning(a);
 				break;
 			}
 			int w = (int) Math.abs(event.dx());
@@ -380,36 +381,36 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			execAction2D(event.dof1Event(false));
 			break;
 		default:
-		  //TODO
-			//AbstractScene.showOnlyEyeWarning(a);
+			// TODO
+			// AbstractScene.showOnlyEyeWarning(a);
 			break;
 		}
 	}
-	
+
 	protected void execAction2D(DOF3Event event) {
-		if( referenceAction() ==  MotionAction.CUSTOM_DOF3_ACTION )
+		if (referenceAction() == MotionAction.CUSTOM_DOF3_ACTION)
 			performCustomAction(event);
 		else
 			execAction2D(event.dof2Event());
 	}
 
 	protected void execAction2D(DOF6Event event) {
-		if( referenceAction() ==  MotionAction.CUSTOM_DOF6_ACTION )
+		if (referenceAction() == MotionAction.CUSTOM_DOF6_ACTION)
 			performCustomAction(event);
 		else
 			execAction2D(event.dof3Event());
 	}
-	
+
 	// 3D
-	
+
 	protected void execAction3D(DOF1Event event) {
 		execAction3D(event, false);
 	}
-	
+
 	protected void execAction3D(DOF1Event event, boolean wheel) {
 		float wheelSensitivityCoef = 8E-4f;
 		Vec trns;
-		switch(referenceAction()) {
+		switch (referenceAction()) {
 		case CUSTOM_DOF1_ACTION:
 			performCustomAction(event);
 			break;
@@ -474,7 +475,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 
 	protected void execAction3D(DOF2Event event) {
 		Vec trns = new Vec();
-		switch(referenceAction()) {
+		switch (referenceAction()) {
 		case CUSTOM_DOF2_ACTION:
 			performCustomAction(event);
 			break;
@@ -504,8 +505,8 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			break;
 		case ROTATE:
 			if (event.isAbsolute()) {
-				//TODO restore
-				//AbstractScene.showEventVariationWarning(a);
+				// TODO restore
+				// AbstractScene.showEventVariationWarning(a);
 				break;
 			}
 			trns = eye.projectedCoordinatesOf(anchor());
@@ -517,8 +518,8 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			break;
 		case ROTATE_CAD:
 			if (event.isAbsolute()) {
-				//TODO restore
-				//AbstractScene.showEventVariationWarning(a);
+				// TODO restore
+				// AbstractScene.showEventVariationWarning(a);
 				break;
 			}
 			// Multiply by 2.0 to get on average about the same speed as with the deformed ball
@@ -537,8 +538,8 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			break;
 		case SCREEN_ROTATE:
 			if (event.isAbsolute()) {
-				//TODO restore
-				//AbstractScene.showEventVariationWarning(a);
+				// TODO restore
+				// AbstractScene.showEventVariationWarning(a);
 				break;
 			}
 			trns = eye.projectedCoordinatesOf(anchor());
@@ -554,7 +555,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 				spin();
 			updateSceneUpVector();
 			break;
-		case SCREEN_TRANSLATE:			
+		case SCREEN_TRANSLATE:
 			int dir = originalDirection(event);
 			if (dir == 1)
 				if (event.isAbsolute())
@@ -580,8 +581,8 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			break;
 		case ZOOM_ON_REGION:
 			if (event.isAbsolute()) {
-				//TODO restore
-				//AbstractScene.showEventVariationWarning(a);
+				// TODO restore
+				// AbstractScene.showEventVariationWarning(a);
 				break;
 			}
 			int w = (int) Math.abs(event.dx());
@@ -590,7 +591,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			int tlY = (int) event.prevY() < (int) event.y() ? (int) event.prevY() : (int) event.y();
 			// camera.fitScreenRegion( new Rectangle (tlX, tlY, w, h) );
 			eye.interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
-			break;		
+			break;
 		case ROTATE_Y:
 		case ROTATE_Z:
 		case TRANSLATE_X:
@@ -604,10 +605,10 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	}
 
 	protected void execAction3D(DOF3Event event) {
-		switch(referenceAction()) {
+		switch (referenceAction()) {
 		case CUSTOM_DOF3_ACTION:
 			performCustomAction(event);
-			break;		
+			break;
 		case ROTATE_XYZ:
 			if (event.isAbsolute())
 				rotateAroundEyeAxes(event.x(), -event.y(), -event.z());
@@ -622,7 +623,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), event.z());
 			scale2Fit(trns);
 			translateFromEye(trns);
-			break;		
+			break;
 		default:
 			execAction3D(event.dof2Event());
 			break;
@@ -631,12 +632,12 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 
 	protected void execAction3D(DOF6Event event) {
 		Vec trns = new Vec();
-		switch(referenceAction()) {
+		switch (referenceAction()) {
 		case CUSTOM_DOF6_ACTION:
 			performCustomAction(event);
-			break;		
+			break;
 		case HINGE: // aka google earth navigation
-		  // 1. Relate the eye reference frame:
+			// 1. Relate the eye reference frame:
 			Vec pos = position();
 			Quat o = (Quat) orientation();
 			Frame oldRef = referenceFrame();
@@ -674,7 +675,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			setOrientation(o);
 			break;
 		case TRANSLATE_XYZ_ROTATE_XYZ:
-		  // A. Translate the iFrame			
+			// A. Translate the iFrame
 			if (event.isRelative())
 				trns = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), event.dz());
 			else
@@ -686,19 +687,19 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 				rotateAroundEyeAxes(event.roll(), -event.pitch(), -event.yaw());
 			else
 				rotateAroundEyeAxes(event.drx(), -event.dry(), -event.drz());
-			break;		
+			break;
 		default:
 			execAction3D(event.dof3Event());
 			break;
 		}
 	}
-	
+
 	// Custom
-	
+
 	public void performCustomAction(ClickEvent event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(ClickEvent event)", this.getClass().getName());
 	}
-	
+
 	public void performCustomAction(DOF1Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF1Event event)", this.getClass().getName());
 	}
@@ -714,7 +715,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	public void performCustomAction(DOF6Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF6Event event)", this.getClass().getName());
 	}
-	
+
 	// old from here
 
 	// 2. Local timer

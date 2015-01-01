@@ -134,37 +134,27 @@ public abstract class Agent {
 		trackedGrabber = null;
 		for (Grabber mg : pool()) {
 			// take whatever. Here the first one
-			if (mg.checkIfGrabsInput(event)) {		
+			if (mg.checkIfGrabsInput(event)) {
 				trackedGrabber = mg;
 				return trackedGrabber();
 			}
 		}
 		return trackedGrabber();
 	}
+
 	/*
-	public Grabber updateTrackedGrabber(BogusEvent event) {
-		if (event == null || !inputHandler().isAgentRegistered(this) || !isTracking())
-			return trackedGrabber();
-
-		Grabber g = trackedGrabber();
-
-		// We first check if tracked grabber remains the same
-		if (g != null)
-			if (g.checkIfGrabsInput(event))
-				return trackedGrabber();
-
-		trackedGrabber = null;	
-		for (Grabber mg : pool()) {
-			// take whatever. Here the first one
-			if (mg.checkIfGrabsInput(event)) {		
-				//if (isInPool(mg))
-					trackedGrabber = mg;
-				return trackedGrabber();
-			}
-		}
-		return trackedGrabber();
-	}
-	*/
+	 * public Grabber updateTrackedGrabber(BogusEvent event) { if (event == null ||
+	 * !inputHandler().isAgentRegistered(this) || !isTracking()) return trackedGrabber();
+	 * 
+	 * Grabber g = trackedGrabber();
+	 * 
+	 * // We first check if tracked grabber remains the same if (g != null) if (g.checkIfGrabsInput(event)) return
+	 * trackedGrabber();
+	 * 
+	 * trackedGrabber = null; for (Grabber mg : pool()) { // take whatever. Here the first one if
+	 * (mg.checkIfGrabsInput(event)) { //if (isInPool(mg)) trackedGrabber = mg; return trackedGrabber(); } } return
+	 * trackedGrabber(); }
+	 */
 
 	/**
 	 * Convenience function that simply calls {@code enqueueEventTuple(eventTuple, true)}.
@@ -172,10 +162,8 @@ public abstract class Agent {
 	 * @see #enqueueEventTuple(EventGrabberTuple, boolean)
 	 */
 	/*
-	public void enqueueEventTuple(EventGrabberTuple eventTuple) {
-		enqueueEventTuple(eventTuple, true);
-	}
-	*/
+	 * public void enqueueEventTuple(EventGrabberTuple eventTuple) { enqueueEventTuple(eventTuple, true); }
+	 */
 
 	/**
 	 * Calls {@link remixlab.bias.core.InputHandler#enqueueEventTuple(EventGrabberTuple)} to enqueue the
@@ -187,24 +175,10 @@ public abstract class Agent {
 	 * @see #handle(BogusEvent)
 	 */
 	/*
-	public void enqueueEventTuple(EventGrabberTuple eventTuple) {
-		if (eventTuple != null && handler.isAgentRegistered(this))
-			//TODO test
-			//if ((checkNullAction && eventTuple.action() != null) || (!checkNullAction))
-				inputHandler().enqueueEventTuple(eventTuple);
-	}
-	*/
-
-	/**
-	 * Returns a detailed description of this Agent as a String.
+	 * public void enqueueEventTuple(EventGrabberTuple eventTuple) { if (eventTuple != null &&
+	 * handler.isAgentRegistered(this)) //TODO test //if ((checkNullAction && eventTuple.action() != null) ||
+	 * (!checkNullAction)) inputHandler().enqueueEventTuple(eventTuple); }
 	 */
-	public String info() {
-		String description = new String();
-		description += name();
-		description += "\n";
-		description += "Nothing to be said, except that generic Agents hold more interesting info\n";
-		return description;
-	}
 
 	/**
 	 * Main agent method. Non-generic agents (like this one) simply call
@@ -217,7 +191,7 @@ public abstract class Agent {
 	 * 
 	 * @see #inputGrabber()
 	 */
-	//public abstract boolean handle(BogusEvent event);
+	// public abstract boolean handle(BogusEvent event);
 
 	/**
 	 * Returns a list containing references to all the active grabbers.
@@ -227,7 +201,7 @@ public abstract class Agent {
 	public List<Grabber> pool() {
 		return grabbers;
 	}
-	
+
 	/**
 	 * Adds the grabber in the {@link #pool()}.
 	 * <p>
@@ -239,14 +213,14 @@ public abstract class Agent {
 		if (grabber == null)
 			return false;
 		if (!isInPool(grabber)) {
-			if( ! (grabber instanceof ActionGrabber) ) {				
+			if (!(grabber instanceof ActionGrabber)) {
 				pool().add(grabber);
 				return true;
 			}
 			else {
-			  //TODO debug
+				// TODO debug
 				System.out.println("ActionGrabber cannot be ADDED in this agent: " + this.name());
-			}			
+			}
 		}
 		return false;
 	}
@@ -278,7 +252,7 @@ public abstract class Agent {
 	 * to insert it * back.
 	 */
 	public boolean isInPool(Grabber grabber) {
-		if(grabber == null)
+		if (grabber == null)
 			return false;
 		return pool().contains(grabber);
 	}
@@ -307,16 +281,17 @@ public abstract class Agent {
 	 * {@link #inputGrabber()}
 	 */
 	public void setDefaultGrabber(Grabber grabber) {
-		if( grabber == null ) {
+		if (grabber == null) {
 			defaultGrabber = null;
 			return;
 		}
-		if( this.isInPool(grabber) )
+		if (this.isInPool(grabber))
 			defaultGrabber = grabber;
 		else
-			System.out.println(grabber.getClass().getName() + " should first be added to the " + name() + "'s pool. Use addInPool().");
+			System.out.println(grabber.getClass().getName() + " should first be added to the " + name()
+					+ "'s pool. Use addInPool().");
 	}
-	
+
 	/**
 	 * Resets the {@link #defaultGrabber()}. Convinience function that simply calls: {@code setDefaultGrabber(null)}.
 	 * 

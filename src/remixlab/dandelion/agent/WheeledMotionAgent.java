@@ -1,5 +1,5 @@
-package remixlab.dandelion.agent;
 
+package remixlab.dandelion.agent;
 
 import remixlab.bias.agent.*;
 import remixlab.bias.agent.profile.*;
@@ -9,28 +9,30 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 public class WheeledMotionAgent<A extends Action<?>> extends InputAgent {
-	protected AbstractScene scene;
-	protected ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch;
-	protected ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch;
-	protected PickingMode			pMode;
-	
+	protected AbstractScene																																											scene;
+	protected ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	eyeBranch;
+	protected ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	frameBranch;
+	protected PickingMode																																												pMode;
+
 	public enum PickingMode {
 		MOVE, CLICK
 	};
-	
+
 	public WheeledMotionAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		eyeBranch = new ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(new MotionProfile<DOF1Action>(),
+		eyeBranch = new ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
+				new MotionProfile<DOF1Action>(),
 				new MotionProfile<A>(),
 				new ClickProfile<ClickAction>(), this, (n + "_eye_mouse_agent"));
-		frameBranch = new ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(new MotionProfile<DOF1Action>(),
+		frameBranch = new ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
+				new MotionProfile<DOF1Action>(),
 				new MotionProfile<A>(),
 				new ClickProfile<ClickAction>(), this, (n + "_frame_mouse_agent"));
 		setPickingMode(PickingMode.MOVE);
 		eyeBranch.disableTracking();
 	}
-	
+
 	public void setXTranslationSensitivity(float s) {
 		eyeBranch.sensitivities()[0] = s;
 		frameBranch.sensitivities()[0] = s;
@@ -40,43 +42,62 @@ public class WheeledMotionAgent<A extends Action<?>> extends InputAgent {
 		eyeBranch.sensitivities()[1] = s;
 		frameBranch.sensitivities()[1] = s;
 	}
-	
+
 	public ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {
 		return eyeBranch;
 	}
-	
+
 	public ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch() {
 		return frameBranch;
-	}	
-	
+	}
+
 	public boolean addInPool(InteractiveFrame grabber) {
 		return frameBranch.addInPool(grabber);
 	}
-	
+
+	public boolean addInPool(InteractiveEyeFrame grabber) {
+		System.out.println("Warning InteractiveEyeFrame instances cannot be added!");
+		return false;
+	}
+
 	public boolean removeFromPool(InteractiveFrame grabber) {
 		return frameBranch.removeFromPool(grabber);
 	}
-	
+
+	public boolean removeFromPool(InteractiveEyeFrame grabber) {
+		System.out.println("Warning InteractiveEyeFrame instances cannot be removed!");
+		return false;
+	}
+
 	public boolean isInPool(InteractiveFrame grabber) {
 		return frameBranch.isInPool(grabber);
 	}
-	
+
 	public boolean isInPool(InteractiveEyeFrame grabber) {
 		return eyeBranch.isInPool(grabber);
 	}
-	
+
+	public void setDefaultGrabber(InteractiveFrame grabber) {
+		frameBranch.setDefaultGrabber(grabber);
+	}
+
+	public void setDefaultGrabber(InteractiveEyeFrame grabber) {
+		frameBranch.resetDefaultGrabber();
+		eyeBranch.setDefaultGrabber(grabber);
+	}
+
 	@Override
 	public void disableTracking() {
 		super.disableTracking();
 		frameBranch.disableTracking();
 	}
-	
+
 	@Override
 	public void enableTracking() {
 		super.enableTracking();
 		frameBranch.enableTracking();
 	}
-	
+
 	protected MotionProfile<A> motionProfile() {
 		if (inputGrabber() instanceof InteractiveEyeFrame)
 			return eyeBranch.profile();
@@ -100,10 +121,9 @@ public class WheeledMotionAgent<A extends Action<?>> extends InputAgent {
 			return frameBranch().wheelProfile();
 		return null;
 	}
-	
-	
-  //TODO test all protected down here in stable before going on
-	
+
+	// TODO test all protected down here in stable before going on
+
 	/**
 	 * Profile defining InteractiveEyeFrame action bindings from {@link remixlab.bias.event.shortcut.ButtonShortcut}s.
 	 */
@@ -117,7 +137,7 @@ public class WheeledMotionAgent<A extends Action<?>> extends InputAgent {
 	protected MotionProfile<A> frameProfile() {
 		return frameBranch.profile();
 	}
-	
+
 	/**
 	 * Profile defining InteractiveEyeFrame action bindings from {@link remixlab.bias.event.shortcut.ClickShortcut}s.
 	 */
@@ -131,7 +151,7 @@ public class WheeledMotionAgent<A extends Action<?>> extends InputAgent {
 	protected ClickProfile<ClickAction> frameClickProfile() {
 		return frameBranch().clickProfile();
 	}
-	
+
 	/**
 	 * Profile defining InteractiveEyeFrame action bindings from (wheel)
 	 * {@link remixlab.bias.event.shortcut.ButtonShortcut}s.
@@ -147,9 +167,9 @@ public class WheeledMotionAgent<A extends Action<?>> extends InputAgent {
 	public MotionProfile<DOF1Action> frameWheelProfile() {
 		return frameBranch.wheelProfile();
 	}
-	
+
 	// common api
-	
+
 	public void setPickingMode(PickingMode mode) {
 		pMode = mode;
 	}
@@ -157,7 +177,7 @@ public class WheeledMotionAgent<A extends Action<?>> extends InputAgent {
 	public PickingMode pickingMode() {
 		return pMode;
 	}
-	
+
 	/**
 	 * Same as {@code return buttonModifiersFix(BogusEvent.NOMODIFIER_MASK, button)}.
 	 * 
@@ -176,8 +196,8 @@ public class WheeledMotionAgent<A extends Action<?>> extends InputAgent {
 	public int buttonModifiersFix(int mask, int button) {
 		return mask;
 	}
-	
-  //wheel here
+
+	// wheel here
 
 	/**
 	 * Binds the mask-wheel shortcut to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or
