@@ -988,10 +988,9 @@ public class Scene extends AbstractScene implements PConstants {
 		if (models().size() == 0)
 			pickingBuffer().loadPixels();
 		boolean result = models().add(model);
-		if (model instanceof ModelObject) {
+		//TODO: improved? Maybe when addinpool becomes more intelligent
+		if (model instanceof ModelObject)
 			motionAgent().addInPool(model);
-			keyboardAgent().addInPool(model);
-		}
 		return result;
 	}
 

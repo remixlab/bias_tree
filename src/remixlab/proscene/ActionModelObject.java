@@ -2,6 +2,7 @@
 package remixlab.proscene;
 
 import processing.core.*;
+import remixlab.bias.agent.ActionAgent;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.AbstractScene;
@@ -12,6 +13,7 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 	protected int			id;
 	protected PShape	pshape;
 
+	/*
 	public ActionModelObject(Scene scn, PShape ps) {
 		scene = scn;
 		pshape = ps;
@@ -22,6 +24,26 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 	public ActionModelObject(Scene scn) {
 		scene = scn;
 		scene.addModel(this);
+		id = ++Scene.modelCount;
+	}
+	*/
+	
+  //TODO improve type safety here!
+	//try to remove scene param too
+	public ActionModelObject(Scene scn, ActionAgent<?> agent, PShape ps) {		
+		scene = scn;
+		pshape = ps;
+		if(scene.addModel(this))
+			agent.addInPool(this);
+		id = ++Scene.modelCount;
+	}
+
+  //TODO improve type safety here!
+	//try to remove scene param too
+	public ActionModelObject(Scene scn, ActionAgent<?> agent) {
+		scene = scn;
+		if(scene.addModel(this))
+			agent.addInPool(this);
 		id = ++Scene.modelCount;
 	}
 

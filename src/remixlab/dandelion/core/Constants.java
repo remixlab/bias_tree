@@ -406,7 +406,7 @@ public interface Constants {
 		ZOOM_ON_PIXEL(MotionAction.ZOOM_ON_PIXEL),
 		ANCHOR_FROM_PIXEL(MotionAction.ANCHOR_FROM_PIXEL),
 
-		CUSTOM_CLICK_ACTION(MotionAction.CUSTOM_CLICK_ACTION);
+		CUSTOM(MotionAction.CUSTOM_CLICK_ACTION);
 
 		@Override
 		public MotionAction referenceAction() {
@@ -452,7 +452,7 @@ public interface Constants {
 		ROTATE_Y(MotionAction.ROTATE_Y),
 		ROTATE_Z(MotionAction.ROTATE_Z),
 
-		CUSTOM_DOF1_ACTION(MotionAction.CUSTOM_DOF1_ACTION);
+		CUSTOM(MotionAction.CUSTOM_DOF1_ACTION);
 
 		@Override
 		public MotionAction referenceAction() {
@@ -510,7 +510,7 @@ public interface Constants {
 		SCREEN_TRANSLATE(MotionAction.SCREEN_TRANSLATE),
 		ZOOM_ON_REGION(MotionAction.ZOOM_ON_REGION),
 
-		CUSTOM_DOF2_ACTION(MotionAction.CUSTOM_DOF2_ACTION);
+		CUSTOM(MotionAction.CUSTOM_DOF2_ACTION);
 
 		@Override
 		public MotionAction referenceAction() {
@@ -572,7 +572,7 @@ public interface Constants {
 		TRANSLATE_XYZ(MotionAction.TRANSLATE_XYZ),
 		ROTATE_XYZ(MotionAction.ROTATE_XYZ),
 
-		CUSTOM_DOF3_ACTION(MotionAction.CUSTOM_DOF3_ACTION);
+		CUSTOM(MotionAction.CUSTOM_DOF3_ACTION);
 
 		@Override
 		public MotionAction referenceAction() {
@@ -640,7 +640,7 @@ public interface Constants {
 		// DOF_6
 		TRANSLATE_XYZ_ROTATE_XYZ(MotionAction.TRANSLATE_XYZ_ROTATE_XYZ),
 
-		CUSTOM_DOF6_ACTION(MotionAction.CUSTOM_DOF6_ACTION);
+		CUSTOM(MotionAction.CUSTOM_DOF6_ACTION);
 
 		@Override
 		public MotionAction referenceAction() {
@@ -711,7 +711,7 @@ public interface Constants {
 		INCREASE_FLY_SPEED(SceneAction.INCREASE_FLY_SPEED),
 		DECREASE_FLY_SPEED(SceneAction.DECREASE_FLY_SPEED),
 
-		CUSTOM_KEYBOARD_ACTION(SceneAction.CUSTOM_KEYBOARD_ACTION);
+		CUSTOM(SceneAction.CUSTOM_KEYBOARD_ACTION);
 
 		@Override
 		public SceneAction referenceAction() {

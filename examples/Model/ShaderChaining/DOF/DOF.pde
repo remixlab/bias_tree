@@ -54,7 +54,7 @@ void draw() {
 
   // 1. Draw into main buffer
   for (int i = 0; i < models.length; i++)
-     models[i].shape().setFill(scene.grabsAnyAgentInput(models[i]) ? color(0,255,255) : cols[i]);
+     models[i].shape().setFill(models[i].grabsInput(scene.motionAgent()) ? color(0,255,255) : cols[i]);
   pg.beginDraw();
   scene.beginDraw();
   pg.background(0);

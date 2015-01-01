@@ -101,7 +101,7 @@ public void draw() {
 
   // 1. Draw into main buffer
   for (int i = 0; i < models.length; i++) 
-    if (SrcScene.grabsAnyAgentInput(models[i]))
+    if (models[i].grabsInput(SrcScene.motionAgent()))
       models[i].shape().setFill(color(255, 255, 255, 255));
     else {
       pushStyle();
@@ -212,5 +212,3 @@ void keyPressed() {
   if(key=='9')
     bfxaa = !bfxaa;
 }
-
-

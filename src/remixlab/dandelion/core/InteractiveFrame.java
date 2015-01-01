@@ -162,7 +162,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 
 	// TODO testing instantiation
 	// see here http://stackoverflow.com/questions/23056324/why-does-java-allow-null-value-to-be-assigned-to-an-enum
-	protected Action<MotionAction>	action	= DOF1Action.CUSTOM_DOF1_ACTION;
+	protected Action<MotionAction>	action	= DOF1Action.CUSTOM;
 
 	public MotionAction referenceAction() {
 		return action != null ? action.referenceAction() : null;
@@ -403,14 +403,14 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	protected void execAction2D(DOF3Event event) {
-		if ((DOF3Action) action() == DOF3Action.CUSTOM_DOF3_ACTION)
+		if ( referenceAction() == MotionAction.CUSTOM_DOF3_ACTION)
 			performCustomAction(event);
 		else
 			execAction2D(event.dof2Event());
 	}
 
 	protected void execAction2D(DOF6Event event) {
-		if ((DOF6Action) action() == DOF6Action.CUSTOM_DOF6_ACTION)
+		if ( referenceAction() ==MotionAction.CUSTOM_DOF6_ACTION)
 			performCustomAction(event);
 		else
 			execAction2D(event.dof3Event());

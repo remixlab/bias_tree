@@ -1,6 +1,7 @@
 
 package remixlab.bias.grabber;
 
+import remixlab.bias.agent.ActionAgent;
 import remixlab.bias.core.Action;
 import remixlab.bias.core.Agent;
 import remixlab.bias.core.BogusEvent;
@@ -27,18 +28,9 @@ public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGr
 	 * 
 	 * @see remixlab.bias.core.Agent#pool()
 	 */
-	public ActionGrabberObject(Agent agent) {
+	//TODO improve type safety here!
+	public ActionGrabberObject(ActionAgent<?> agent) {
 		agent.addInPool(this);
-	}
-
-	/**
-	 * Constructs and adds this grabber to all agents belonging to the input handler.
-	 * 
-	 * @see remixlab.bias.core.InputHandler#agents()
-	 */
-	public ActionGrabberObject(InputHandler inputHandler) {
-		for (Agent agent : inputHandler.agents())
-			agent.addInPool(this);
 	}
 
 	public E referenceAction() {
