@@ -1895,13 +1895,14 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().popStyle();
 	}
 
+	//TODO check these comments:
 	@Override
 	protected void drawScreenRotateHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
 		pg().pushStyle();
-		float p1x = mouseAgent().lastDOF2Event().x() - originCorner().x();
-		float p1y = mouseAgent().lastDOF2Event().y() - originCorner().y();
+		float p1x = mouseAgent().lastDOF2Event().x() /*- originCorner().x()*/;
+		float p1y = mouseAgent().lastDOF2Event().y() /*- originCorner().y()*/;
 		Vec p2 = new Vec();
 		if (motionAgent().inputGrabber() instanceof InteractiveFrame
 				|| motionAgent().inputGrabber() instanceof InteractiveEyeFrame) {
@@ -1919,15 +1920,16 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().popStyle();
 	}
 
+  //TODO check these comments:
 	@Override
 	protected void drawZoomWindowHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
 		pg().pushStyle();
-		float p1x = mouseAgent().pressEvent().x() - originCorner().x();
-		float p1y = mouseAgent().pressEvent().y() - originCorner().y();
-		float p2x = mouseAgent().lastDOF2Event().x() - originCorner().x();
-		float p2y = mouseAgent().lastDOF2Event().y() - originCorner().y();
+		float p1x = mouseAgent().pressEvent().x() /*- originCorner().x()*/;
+		float p1y = mouseAgent().pressEvent().y() /*- originCorner().y()*/;
+		float p2x = mouseAgent().lastDOF2Event().x() /*- originCorner().x()*/;
+		float p2y = mouseAgent().lastDOF2Event().y() /*- originCorner().y()*/;
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
 		pg().strokeWeight(2);
