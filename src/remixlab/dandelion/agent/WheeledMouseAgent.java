@@ -240,9 +240,8 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 			dragFrame(lastEvent);
 			return;
 		}
-		// TODO test
-		// else
-		// handle(lastEvent);
+		else
+			handle(lastEvent);
 	}
 
 	protected void dragFrame(DOF2Event e) {
@@ -295,9 +294,8 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 			releaseFrame(lastEvent);
 			return;
 		}
-		// TODO test
-		// else
-		// updateTrackedGrabber(lastEvent);
+		else
+			updateTrackedGrabber(lastEvent);
 	}
 
 	protected void releaseFrame(DOF2Event e) {
