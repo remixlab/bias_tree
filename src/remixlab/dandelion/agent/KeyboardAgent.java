@@ -5,10 +5,11 @@ import remixlab.bias.agent.ActionKeyboardAgent;
 import remixlab.bias.agent.profile.KeyboardProfile;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.bias.inputagent.ActionInputKeyboardAgent;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.KeyboardAction;
 
-public class KeyboardAgent extends InputAgent {
+public class KeyboardAgent extends ActionInputKeyboardAgent<ActionKeyboardAgent<?>> {
 	protected AbstractScene																					scene;
 	protected ActionKeyboardAgent<KeyboardProfile<KeyboardAction>>	keyBranch;
 

@@ -8,21 +8,47 @@ import remixlab.bias.agent.ActionAgent;
 import remixlab.bias.grabber.ActionGrabber;
 
 //public class InputAgent<A extends ActionAgent<?>> extends Agent {
-public class InputAgent extends Agent {
-	protected ActionAgent<?>				trackedAgent, targetAgent;
+
+//public class ActionInputAgent<A extends ActionAgent<?>> extends InputAgent {
+//TODO testing type safety
+//public abstract class InputAgent<A extends ActionAgent<?>> extends Agent {
+public class InputAgent<A extends ActionAgent<?>> extends Agent {
+	protected A				trackedAgent, targetAgent;
 	protected InputHandler					handler;
-	protected List<ActionAgent<?>>	brnchs;
+	protected List<A>	brnchs;
 
 	public InputAgent(InputHandler inputHandler, String name) {
 		super(name);
 		handler = inputHandler;
-		brnchs = new ArrayList<ActionAgent<?>>();
+		brnchs = new ArrayList<A>();
 	}
 
-	public List<ActionAgent<?>> branches() {
+	public List<A> branches() {
 		return brnchs;
 	}
-
+	
+	/*
+	public abstract void addBranch(A actionAgent);
+	// */
+	
+	///*
+	public void addBranch(A actionAgent) {
+		System.out.println("InputAgent add branch " + actionAgent.name());
+  	if (!brnchs.contains(actionAgent)) {
+			this.brnchs.add(0, actionAgent);
+		}
+	}
+	//*/
+	
+	public void removeBranch(A a) {
+		if (brnchs.contains(a)) {
+			if (trackedGrabber() == a.trackedGrabber())
+				trackedGrabber = null;
+			this.brnchs.remove(a);
+		}
+	}
+	
+	/*
 	public void addBranch(ActionAgent<?> a) {
 		if (!brnchs.contains(a)) {
 			this.brnchs.add(0, a);
@@ -36,6 +62,7 @@ public class InputAgent extends Agent {
 			this.brnchs.remove(a);
 		}
 	}
+	*/
 
 	/**
 	 * Returns a detailed description of this Agent as a String.
@@ -115,7 +142,7 @@ public class InputAgent extends Agent {
 		Grabber g = super.updateTrackedGrabber(event);
 		if (g != null)
 			return g;
-		for (ActionAgent<?> branch : branches()) {
+		for (A branch : branches()) {
 			g = branch.updateTrackedGrabber(event);
 			if (g != null) {
 				trackedAgent = branch;
@@ -144,7 +171,7 @@ public class InputAgent extends Agent {
 		if (defaultGrabber() != null)
 			return defaultGrabber();
 		else
-			for (ActionAgent<?> branch : branches())
+			for (A branch : branches())
 				if (branch.defaultGrabber() != null) {
 					targetAgent = branch;
 					return branch.defaultGrabber();

@@ -84,11 +84,11 @@ public abstract class ModelObject implements Model {
 	public boolean checkIfGrabsInput(BogusEvent event) {
 		DOF2Event event2 = null;
 
-		if (((event instanceof KeyboardEvent)) || (event instanceof DOF1Event))
-			throw new RuntimeException("Grabbing a ModelObject is not possible with a "
-					+ ((event instanceof KeyboardEvent) ? "Keyboard" : "DOF1") + "Event");
-
-		if (event instanceof DOF2Event)
+		if(event instanceof KeyboardEvent)
+			return checkIfGrabsInput((KeyboardEvent)event);
+		else if(event instanceof DOF1Event)
+			return checkIfGrabsInput((DOF1Event)event);
+		else if (event instanceof DOF2Event)
 			event2 = ((DOF2Event) event).get();
 		else if (event instanceof DOF3Event)
 			event2 = ((DOF3Event) event).dof2Event();
@@ -103,6 +103,16 @@ public abstract class ModelObject implements Model {
 		if ((0 <= index) && (index < scene.pickingBuffer().pixels.length))
 			return scene.pickingBuffer().pixels[index] == getColor();
 		scene.pickingBuffer().popStyle();
+		return false;
+	}
+	
+	public boolean checkIfGrabsInput(KeyboardEvent event) {
+		Scene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
+		return false;
+	}
+	
+	public boolean checkIfGrabsInput(DOF1Event event) {
+		Scene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
 
