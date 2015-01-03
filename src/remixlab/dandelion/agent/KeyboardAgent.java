@@ -2,7 +2,10 @@
 package remixlab.dandelion.agent;
 
 import remixlab.bias.agent.ActionKeyboardAgent;
+import remixlab.bias.agent.ActionWheeledMotionAgent;
+import remixlab.bias.agent.profile.ClickProfile;
 import remixlab.bias.agent.profile.KeyboardProfile;
+import remixlab.bias.agent.profile.MotionProfile;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.bias.inputagent.ActionInputKeyboardAgent;
@@ -23,6 +26,14 @@ public class KeyboardAgent extends ActionInputKeyboardAgent<ActionKeyboardAgent<
 		sceneBranch().addInPool(scene);
 		sceneBranch().setDefaultGrabber(scene);
 		setDefaultShortcuts();
+	}
+	
+	public <K extends KeyboardProfile<?>> void addBranch(K k, String n) {
+		ActionKeyboardAgent branch = new ActionKeyboardAgent(k, this, n);
+		//System.out.println("ActionInputMotionAgent add branch: " + actionAgent.name());
+  	if (!brnchs.contains(branch)) {
+			this.brnchs.add(0, branch);
+		}
 	}
 
 	public ActionKeyboardAgent<KeyboardProfile<KeyboardAction>> sceneBranch() {

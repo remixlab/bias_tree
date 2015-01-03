@@ -48,6 +48,13 @@ public class InputAgent<A extends ActionAgent<?>> extends Agent {
 		}
 	}
 	
+	public A branch(String name) {
+		for (A branch : branches())
+			if( branch.name().equals(name) )
+				return branch;					
+		return null;
+	}
+	
 	/*
 	public void addBranch(ActionAgent<?> a) {
 		if (!brnchs.contains(a)) {
