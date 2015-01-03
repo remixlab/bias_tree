@@ -7,32 +7,32 @@ import java.util.List;
 import remixlab.bias.agent.ActionAgent;
 import remixlab.bias.grabber.ActionGrabber;
 
-//public class InputAgent<A extends ActionAgent<?>> extends Agent {
+//public class InputAgent<ActionAgent<?> extends ActionAgent<?>> extends Agent {
 
-//public class ActionInputAgent<A extends ActionAgent<?>> extends InputAgent {
+//public class ActionInputAgent<ActionAgent<?> extends ActionAgent<?>> extends InputAgent {
 //TODO testing type safety
-//public abstract class InputAgent<A extends ActionAgent<?>> extends Agent {
-public class Agent<A extends ActionAgent<?>> extends AbstractAgent {
-	protected A				trackedAgent, targetAgent;
+//public abstract class InputAgent<ActionAgent<?> extends ActionAgent<?>> extends Agent {
+public class Agent extends AbstractAgent {
+	protected ActionAgent<?>				trackedAgent, targetAgent;
 	protected InputHandler					handler;
-	protected List<A>	brnchs;
+	protected List<ActionAgent<?>>	brnchs;
 
 	public Agent(InputHandler inputHandler, String name) {
 		super(name);
 		handler = inputHandler;
-		brnchs = new ArrayList<A>();
+		brnchs = new ArrayList<ActionAgent<?>>();
 	}
 
-	public List<A> branches() {
+	public List<ActionAgent<?>> branches() {
 		return brnchs;
 	}
 	
 	/*
-	public abstract void addBranch(A actionAgent);
+	public abstract void addBranch(ActionAgent<?> actionAgent);
 	// */
 	
 	///*
-	public void addBranch(A actionAgent) {
+	public void addBranch(ActionAgent<?> actionAgent) {
 		System.out.println("InputAgent(" + this.name() + ") add branch " + actionAgent.name());
   	if (!brnchs.contains(actionAgent)) {
 			this.brnchs.add(0, actionAgent);
@@ -40,7 +40,7 @@ public class Agent<A extends ActionAgent<?>> extends AbstractAgent {
 	}
 	//*/
 	
-	public void removeBranch(A a) {
+	public void removeBranch(ActionAgent<?> a) {
 		if (brnchs.contains(a)) {
 			if (trackedGrabber() == a.trackedGrabber())
 				trackedGrabber = null;
@@ -48,8 +48,8 @@ public class Agent<A extends ActionAgent<?>> extends AbstractAgent {
 		}
 	}
 	
-	public A branch(String name) {
-		for (A branch : branches())
+	public ActionAgent<?> branch(String name) {
+		for (ActionAgent<?> branch : branches())
 			if( branch.name().equals(name) )
 				return branch;					
 		return null;
@@ -149,7 +149,7 @@ public class Agent<A extends ActionAgent<?>> extends AbstractAgent {
 		Grabber g = super.updateTrackedGrabber(event);
 		if (g != null)
 			return g;
-		for (A branch : branches()) {
+		for (ActionAgent<?> branch : branches()) {
 			g = branch.updateTrackedGrabber(event);
 			if (g != null) {
 				trackedAgent = branch;
@@ -178,7 +178,7 @@ public class Agent<A extends ActionAgent<?>> extends AbstractAgent {
 		if (defaultGrabber() != null)
 			return defaultGrabber();
 		else
-			for (A branch : branches())
+			for (ActionAgent<?> branch : branches())
 				if (branch.defaultGrabber() != null) {
 					targetAgent = branch;
 					return branch.defaultGrabber();

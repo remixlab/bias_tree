@@ -4,7 +4,7 @@ import remixlab.bias.agent.*;
 import remixlab.bias.core.*;
 
 // /*
-public class ActionInputWheeledMotionAgent<A extends ActionWheeledMotionAgent<?,?,?>> extends Agent<A> {
+public class ActionInputWheeledMotionAgent<A extends ActionWheeledMotionAgent<?,?,?>> extends Agent {
 	public ActionInputWheeledMotionAgent(InputHandler inputHandler, String name) {
 		super(inputHandler, name);
 	}

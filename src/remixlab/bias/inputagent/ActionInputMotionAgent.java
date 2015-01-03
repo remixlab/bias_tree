@@ -3,7 +3,7 @@ package remixlab.bias.inputagent;
 import remixlab.bias.agent.*;
 import remixlab.bias.core.*;
 
-public class ActionInputMotionAgent<A extends ActionMotionAgent<?,?>> extends Agent<A> {
+public class ActionInputMotionAgent<A extends ActionMotionAgent<?,?>> extends Agent {
 	public ActionInputMotionAgent(InputHandler inputHandler, String name) {
 		super(inputHandler, name);
 	}
