@@ -37,6 +37,7 @@ ActionInputWheeledMotionAgent<ActionWheeledMotionAgent<?, MotionProfile<A>, ?>> 
 		eyeBranch.disableTracking();
 	}
 	
+	/*
 	public <W extends MotionProfile<?>, M extends MotionProfile<?>, C extends ClickProfile<?>> void addBranch(W w, M p, C c, String n) {
 		ActionWheeledMotionAgent branch = new ActionWheeledMotionAgent(w, p, c, this, nm);
 		//System.out.println("ActionInputMotionAgent add branch: " + actionAgent.name());
@@ -44,6 +45,7 @@ ActionInputWheeledMotionAgent<ActionWheeledMotionAgent<?, MotionProfile<A>, ?>> 
 			this.brnchs.add(0, branch);
 		}
 	}
+	*/
 
 	public void setXTranslationSensitivity(float s) {
 		eyeBranch.sensitivities()[0] = s;

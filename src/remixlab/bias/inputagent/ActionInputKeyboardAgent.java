@@ -9,13 +9,12 @@ public class ActionInputKeyboardAgent<A extends ActionKeyboardAgent<?>> extends 
 		// TODO Auto-generated constructor stub
 	}
 	
-	/*
 	@Override
-	public void addBranch(A actionAgent) {
-		System.out.println("ActionInputKeyboardAgent add branch: " + actionAgent.name());
-  	if (!brnchs.contains(actionAgent)) {
-			this.brnchs.add(0, actionAgent);
+	public void addBranch(ActionAgent<?> actionAgent) {
+		if( !(actionAgent instanceof ActionKeyboardAgent)) {
+			System.out.println("Nothing added in " + this.name());
+			return;
 		}
+		super.addBranch(actionAgent);
 	}
-	//*/
 }

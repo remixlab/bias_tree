@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import remixlab.bias.agent.ActionAgent;
+import remixlab.bias.agent.ActionMotionAgent;
 import remixlab.bias.grabber.ActionGrabber;
 
 //public class InputAgent<ActionAgent<?> extends ActionAgent<?>> extends Agent {
@@ -27,18 +28,12 @@ public class Agent extends AbstractAgent {
 		return brnchs;
 	}
 	
-	/*
-	public abstract void addBranch(ActionAgent<?> actionAgent);
-	// */
-	
-	///*
 	public void addBranch(ActionAgent<?> actionAgent) {
-		System.out.println("InputAgent(" + this.name() + ") add branch " + actionAgent.name());
+		System.out.println(this.name() + " add branch: " + actionAgent.name());
   	if (!brnchs.contains(actionAgent)) {
 			this.brnchs.add(0, actionAgent);
 		}
 	}
-	//*/
 	
 	public void removeBranch(ActionAgent<?> a) {
 		if (brnchs.contains(a)) {
