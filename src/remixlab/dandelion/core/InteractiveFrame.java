@@ -179,7 +179,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	@Override
-	public boolean grabsInput(InputAgent agent) {
+	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
 
@@ -742,27 +742,27 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	/**
 	 * Returns {@code agent.isInPool(this)}.
 	 * 
-	 * @see remixlab.bias.core.Agent#isInPool(Grabber)
+	 * @see remixlab.bias.core.AbstractAgent#isInPool(Grabber)
 	 */
-	public boolean isInAgentPool(Agent agent) {
+	public boolean isInAgentPool(AbstractAgent agent) {
 		return agent.isInPool(this);
 	}
 
 	/**
 	 * Convenience wrapper function that simply calls {agent.addInPool(this)}.
 	 * 
-	 * @see remixlab.bias.core.Agent#addInPool(Grabber)
+	 * @see remixlab.bias.core.AbstractAgent#addInPool(Grabber)
 	 */
-	public void addInAgentPool(Agent agent) {
+	public void addInAgentPool(AbstractAgent agent) {
 		agent.addInPool(this);
 	}
 
 	/**
 	 * Convenience wrapper function that simply calls {@code agent.removeFromPool(this)}.
 	 * 
-	 * @see remixlab.bias.core.Agent#removeFromPool(Grabber)
+	 * @see remixlab.bias.core.AbstractAgent#removeFromPool(Grabber)
 	 */
-	public void removeFromAgentPool(Agent agent) {
+	public void removeFromAgentPool(AbstractAgent agent) {
 		agent.removeFromPool(this);
 	}
 }

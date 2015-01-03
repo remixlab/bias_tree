@@ -46,7 +46,7 @@ public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfil
 	 * = new float[] { 1f, 1f, 1f, 1f, 1f, 1f }; }
 	 */
 
-	public ActionMotionAgent(M p, C c, InputAgent pnt, String n) {
+	public ActionMotionAgent(M p, C c, Agent pnt, String n) {
 		super(p, pnt, n);
 		clickProfile = c;
 		sens = new float[] { 1f, 1f, 1f, 1f, 1f, 1f };

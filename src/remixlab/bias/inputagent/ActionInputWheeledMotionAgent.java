@@ -4,12 +4,12 @@ import remixlab.bias.agent.*;
 import remixlab.bias.core.*;
 
 // /*
-public class ActionInputWheeledMotionAgent<A extends ActionWheeledMotionAgent<?,?,?>> extends InputAgent<A> {
+public class ActionInputWheeledMotionAgent<A extends ActionWheeledMotionAgent<?,?,?>> extends Agent<A> {
 	public ActionInputWheeledMotionAgent(InputHandler inputHandler, String name) {
 		super(inputHandler, name);
 	}
 	
-	///*
+	/*
 	@Override
 	public void addBranch(A actionAgent) {
 		System.out.println("ActionInputWheeledMotionAgent add branch: " + actionAgent.name());

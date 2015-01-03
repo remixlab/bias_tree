@@ -30,7 +30,7 @@ public class ActionKeyboardAgent<K extends KeyboardProfile<?>> extends ActionAge
 	 * public ActionKeyboardAgent(K k, InputHandler scn, String n) { super(k, scn, n); }
 	 */
 
-	public ActionKeyboardAgent(K k, InputAgent pnt, String n) {
+	public ActionKeyboardAgent(K k, Agent pnt, String n) {
 		super(k, pnt, n);
 	}
 

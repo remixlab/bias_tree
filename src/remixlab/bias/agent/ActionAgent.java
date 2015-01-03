@@ -15,7 +15,7 @@ import remixlab.bias.core.*;
 import remixlab.bias.grabber.*;
 
 /**
- * An ActionAgent is just an {@link remixlab.bias.core.Agent} holding some {@link remixlab.bias.agent.profile.Profile}
+ * An ActionAgent is just an {@link remixlab.bias.core.AbstractAgent} holding some {@link remixlab.bias.agent.profile.Profile}
  * s. The Agent uses the {@link remixlab.bias.event.shortcut.Shortcut} -> {@link remixlab.bias.core.Action} mappings
  * defined by each of its Profiles to parse the {@link remixlab.bias.core.BogusEvent} into an user-defined
  * {@link remixlab.bias.core.Action} (see {@link #handle(BogusEvent)}).
@@ -40,18 +40,18 @@ import remixlab.bias.grabber.*;
  * @param <P>
  *          {@link remixlab.bias.agent.profile.Profile} to parameterize the Agent with.
  */
-public class ActionAgent<P extends Profile<?, ?>> extends Agent {
+public class ActionAgent<P extends Profile<?, ?>> extends AbstractAgent {
 	protected P						profile;
-	protected InputAgent	parent;
+	protected Agent	parent;
 
-	public ActionAgent(P p, InputAgent pnt, String n) {
+	public ActionAgent(P p, Agent pnt, String n) {
 		super(n);
 		profile = p;
 		parent = pnt;
 		parent.addBranch(this);
 	}
 
-	public InputAgent parentAgent() {
+	public Agent parentAgent() {
 		return parent;
 	}
 
@@ -96,7 +96,7 @@ public class ActionAgent<P extends Profile<?, ?>> extends Agent {
 	}
 
 	/**
-	 * Overriding of the {@link remixlab.bias.core.Agent} main method. The {@link #profile()} is used to parse the event
+	 * Overriding of the {@link remixlab.bias.core.AbstractAgent} main method. The {@link #profile()} is used to parse the event
 	 * into an user-defined action which is then enqueued as an event-grabber tuple (
 	 * {@link #enqueueEventTuple(EventGrabberTuple)}), used to instruct the {@link #inputGrabber()} the user-defined
 	 * action to perform.

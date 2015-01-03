@@ -163,7 +163,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	}
 
 	@Override
-	public boolean grabsInput(InputAgent agent) {
+	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
 

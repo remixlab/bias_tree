@@ -30,12 +30,12 @@ import remixlab.bias.grabber.*;
  */
 public class InputHandler {
 	// D E V I C E S & E V E N T S
-	protected HashMap<String, InputAgent>		agents;
+	protected HashMap<String, Agent>		agents;
 	protected LinkedList<EventGrabberTuple>	eventTupleQueue;
 
 	public InputHandler() {
 		// agents
-		agents = new HashMap<String, InputAgent>();
+		agents = new HashMap<String, Agent>();
 		// events
 		eventTupleQueue = new LinkedList<EventGrabberTuple>();
 	}
@@ -47,14 +47,14 @@ public class InputHandler {
 	 * The handle comprises the following two loops:
 	 * <p>
 	 * 1. {@link remixlab.bias.core.EventGrabberTuple} producer loop which for each registered agent calls:
-	 * {@link remixlab.bias.core.Agent#handle(BogusEvent)}. Note that the bogus event is obtained from the agents callback
+	 * {@link remixlab.bias.core.AbstractAgent#handle(BogusEvent)}. Note that the bogus event is obtained from the agents callback
 	 * {@link remixlab.bias.core.ActionAgent#feed()} method.<br>
 	 * 2. User-defined action consumer loop: which for each {@link remixlab.bias.core.EventGrabberTuple} calls
 	 * {@link remixlab.bias.core.EventGrabberTuple#perform()}.<br>
 	 */
 	public void handle() {
 		// 1. Agents
-		for (InputAgent agent : agents.values())
+		for (Agent agent : agents.values())
 			agent.handle(agent.feed());
 
 		// 2. Low level events
@@ -69,7 +69,7 @@ public class InputHandler {
 		String description = new String();
 		description += "Agents' info\n";
 		int index = 1;
-		for (InputAgent agent : agents()) {
+		for (Agent agent : agents()) {
 			description += index;
 			description += ". ";
 			description += agent.info();
@@ -83,8 +83,8 @@ public class InputHandler {
 	 * 
 	 * @see #agents()
 	 */
-	public InputAgent[] agentsArray() {
-		return agents.values().toArray(new InputAgent[0]);
+	public Agent[] agentsArray() {
+		return agents.values().toArray(new Agent[0]);
 	}
 
 	/**
@@ -92,19 +92,19 @@ public class InputHandler {
 	 * 
 	 * @see #agentsArray()
 	 */
-	public List<InputAgent> agents() {
-		return new ArrayList<InputAgent>(agents.values());
+	public List<Agent> agents() {
+		return new ArrayList<Agent>(agents.values());
 	}
 
 	/**
 	 * Registers the given agent.
 	 */
-	public void registerAgent(InputAgent agent) {
+	public void registerAgent(Agent agent) {
 		if (!isAgentRegistered(agent))
 			agents.put(agent.name(), agent);
 		else {
 			System.out.println("Nothing done. An agent with the same name is already registered. Current agent names are:");
-			for (InputAgent ag : agents.values())
+			for (Agent ag : agents.values())
 				System.out.println(ag.name());
 		}
 	}
@@ -112,7 +112,7 @@ public class InputHandler {
 	/**
 	 * Returns true if the given agent is registered.
 	 */
-	public boolean isAgentRegistered(InputAgent agent) {
+	public boolean isAgentRegistered(Agent agent) {
 		return agents.containsKey(agent.name());
 	}
 
@@ -124,23 +124,23 @@ public class InputHandler {
 	}
 
 	/**
-	 * Returns the agent by its name. The agent mus be {@link #isAgentRegistered(InputAgent)}.
+	 * Returns the agent by its name. The agent mus be {@link #isAgentRegistered(Agent)}.
 	 */
-	public InputAgent agent(String name) {
+	public Agent agent(String name) {
 		return agents.get(name);
 	}
 
 	/**
 	 * Unregisters the given agent and returns it.
 	 */
-	public InputAgent unregisterAgent(InputAgent agent) {
+	public Agent unregisterAgent(Agent agent) {
 		return agents.remove(agent.name());
 	}
 
 	/**
 	 * Unregisters the given agent by its name and returns it.
 	 */
-	public InputAgent unregisterAgent(String name) {
+	public Agent unregisterAgent(String name) {
 		return agents.remove(name);
 	}
 

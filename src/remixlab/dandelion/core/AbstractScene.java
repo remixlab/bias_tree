@@ -34,7 +34,7 @@ import remixlab.fpstiming.*;
  * {@link remixlab.dandelion.core.Eye} class.</li>
  * <li>A {@link #timingHandler()} which control (single-threaded) timing operations. For details please refer to the
  * {@link remixlab.fpstiming.TimingHandler} class.</li>
- * <li>An {@link #inputHandler()} which handles all user input through {@link remixlab.bias.core.Agent}s (for details
+ * <li>An {@link #inputHandler()} which handles all user input through {@link remixlab.bias.core.AbstractAgent}s (for details
  * please refer to the {@link remixlab.bias.core.InputHandler} class). The {@link #inputHandler()} holds a (default)
  * {@link #motionAgent()} and a (default) {@link #keyboardAgent()} which should be instantiated by derived classes at
  * construction time.</li>
@@ -111,7 +111,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * <li>Call {@link #setEye(Eye)} to set the {@link #eye()}, once it's known if the Scene {@link #is2D()} or
 	 * {@link #is3D()}.</li>
 	 * <li>Instantiate the {@link #motionAgent()} and the {@link #keyboardAgent()} and enable them (register them at the
-	 * {@link #inputHandler()}) and possibly some other {@link remixlab.bias.core.Agent}s as well and .</li>
+	 * {@link #inputHandler()}) and possibly some other {@link remixlab.bias.core.AbstractAgent}s as well and .</li>
 	 * <li>Define whether or not the Scene {@link #isOffscreen()}.</li>
 	 * <li>Call {@link #init()} at the end of the constructor.</li>
 	 * </ol>
@@ -153,7 +153,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	}
 
 	@Override
-	public boolean grabsInput(InputAgent agent) {
+	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
 
@@ -398,7 +398,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * @see #enableMotionAgent()
 	 * @see #enableKeyboardAgent()
 	 */
-	public Agent disableMotionAgent() {
+	public AbstractAgent disableMotionAgent() {
 		if (inputHandler().isAgentRegistered(motionAgent())) {
 			return inputHandler().unregisterAgent(motionAgent());
 		}

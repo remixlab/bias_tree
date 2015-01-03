@@ -20,7 +20,7 @@ import remixlab.dandelion.core.AbstractScene;
 
 /**
  * Default implementation of the Grabber interface which eases implementation by simply overriding
- * {@link #grabsInput(Agent)}.
+ * {@link #grabsInput(AbstractAgent)}.
  */
 public abstract class GrabberObject implements Grabber {
 	/**
@@ -32,9 +32,9 @@ public abstract class GrabberObject implements Grabber {
 	/**
 	 * Constructs and adds this grabber to the agent pool.
 	 * 
-	 * @see remixlab.bias.core.Agent#pool()
+	 * @see remixlab.bias.core.AbstractAgent#pool()
 	 */
-	public GrabberObject(Agent agent) {
+	public GrabberObject(AbstractAgent agent) {
 		agent.addInPool(this);
 	}
 
@@ -44,12 +44,12 @@ public abstract class GrabberObject implements Grabber {
 	 * @see remixlab.bias.core.InputHandler#agents()
 	 */
 	public GrabberObject(InputHandler inputHandler) {
-		for (Agent agent : inputHandler.agents())
+		for (AbstractAgent agent : inputHandler.agents())
 			agent.addInPool(this);
 	}
 
 	@Override
-	public boolean grabsInput(InputAgent agent) {
+	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
 

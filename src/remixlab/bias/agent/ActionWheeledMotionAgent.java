@@ -50,7 +50,7 @@ public class ActionWheeledMotionAgent<W extends MotionProfile<?>, M extends Moti
 	 * wheelProfile = w; }
 	 */
 
-	public ActionWheeledMotionAgent(W w, M p, C c, InputAgent parent, String n) {
+	public ActionWheeledMotionAgent(W w, M p, C c, Agent parent, String n) {
 		super(p, c, parent, n);
 		wheelProfile = w;
 	}

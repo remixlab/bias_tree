@@ -134,7 +134,7 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 	}
 
 	@Override
-	public boolean grabsInput(InputAgent agent) {
+	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
 
