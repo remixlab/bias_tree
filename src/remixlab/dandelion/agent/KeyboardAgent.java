@@ -10,12 +10,12 @@ import remixlab.dandelion.core.Constants.*;
 
 public class KeyboardAgent extends Agent {
 	protected AbstractScene																					scene;
-	protected ActionKeyboardAgent<KeyboardProfile<KeyboardAction>>	keyBranch;
+	protected ActionKeyboardAgent<SceneAction, KeyboardProfile<KeyboardAction>>	keyBranch;
 
 	public KeyboardAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		keyBranch = new ActionKeyboardAgent<KeyboardProfile<KeyboardAction>>(new KeyboardProfile<KeyboardAction>(), this,
+		keyBranch = new ActionKeyboardAgent<SceneAction, KeyboardProfile<KeyboardAction>>(new KeyboardProfile<KeyboardAction>(), this,
 				"scene_keyboard_agent");
 		sceneBranch().disableTracking();
 		// new, mimics eye -> motionAgent -> scene -> keyAgent
@@ -24,6 +24,7 @@ public class KeyboardAgent extends Agent {
 		setDefaultShortcuts();
 	}
 	
+	/*
 	public <K extends KeyboardProfile<?>> void addBranch(K k, String n) {
 		ActionKeyboardAgent<K> branch = new ActionKeyboardAgent<K>(k, this, n);
 		//System.out.println("ActionInputMotionAgent add branch: " + actionAgent.name());
@@ -31,8 +32,9 @@ public class KeyboardAgent extends Agent {
 			this.brnchs.add(0, branch);
 		}
 	}
+	*/
 
-	public ActionKeyboardAgent<KeyboardProfile<KeyboardAction>> sceneBranch() {
+	public ActionKeyboardAgent<SceneAction, KeyboardProfile<KeyboardAction>> sceneBranch() {
 		return keyBranch;
 	}
 

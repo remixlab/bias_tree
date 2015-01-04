@@ -13,6 +13,7 @@ package remixlab.bias.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import remixlab.bias.agent.ActionAgent;
 import remixlab.bias.grabber.*;
 
 /**
@@ -217,11 +218,18 @@ public abstract class AbstractAgent {
 				pool().add(grabber);
 				return true;
 			}
+			/*
 			else {
-				// TODO debug
-				System.out.println("ActionGrabber cannot be ADDED in this agent: " + this.name());
+				if( this instanceof ActionAgent ) {
+					System.out.println("going this way: " + this.name());
+					((ActionAgent<?,?>)this).addInPool((ActionGrabber)grabber);
+					return true;
+				  // TODO debug
+				  //System.out.println("ActionGrabber cannot be ADDED in this agent: " + this.name());
+				}
 			}
-		}
+			*/
+		}		
 		return false;
 	}
 

@@ -26,8 +26,8 @@ import remixlab.bias.event.*;
  * @param <C>
  *          {@link remixlab.bias.agent.profile.ClickProfile} to parameterize the Agent with.
  */
-public class ActionMotionAgent<M extends MotionProfile<?>, C extends ClickProfile<?>> extends
-		ActionAgent<M> {
+public class ActionMotionAgent<E extends Enum<E>, M extends MotionProfile<?>, C extends ClickProfile<?>> extends
+		ActionAgent<E, M> {
 	protected C				clickProfile;
 	protected float[]	sens;
 

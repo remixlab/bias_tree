@@ -30,7 +30,7 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 	
   //TODO improve type safety here!
 	//try to remove scene param too
-	public ActionModelObject(Scene scn, ActionAgent<?> agent, PShape ps) {		
+	public ActionModelObject(Scene scn, ActionAgent<?,?> agent, PShape ps) {		
 		scene = scn;
 		pshape = ps;
 		if(scene.addModel(this))
@@ -40,7 +40,7 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 
   //TODO improve type safety here!
 	//try to remove scene param too
-	public ActionModelObject(Scene scn, ActionAgent<?> agent) {
+	public ActionModelObject(Scene scn, ActionAgent<?,?> agent) {
 		scene = scn;
 		if(scene.addModel(this))
 			agent.addInPool(this);

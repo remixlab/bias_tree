@@ -10,8 +10,8 @@ import remixlab.dandelion.core.Constants.*;
 
 public class WheeledMotionAgent<A extends Action<?>> extends Agent {
 	protected AbstractScene																																											scene;
-	protected ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	eyeBranch;
-	protected ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	frameBranch;
+	protected ActionWheeledMotionAgent<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	eyeBranch;
+	protected ActionWheeledMotionAgent<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	frameBranch;
 	protected PickingMode																																												pMode;
 
 	public enum PickingMode {
@@ -21,11 +21,11 @@ public class WheeledMotionAgent<A extends Action<?>> extends Agent {
 	public WheeledMotionAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		eyeBranch = new ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
+		eyeBranch = new ActionWheeledMotionAgent<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
 				new MotionProfile<DOF1Action>(),
 				new MotionProfile<A>(),
 				new ClickProfile<ClickAction>(), this, (n + "_eye_mouse_agent"));
-		frameBranch = new ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
+		frameBranch = new ActionWheeledMotionAgent<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
 				new MotionProfile<DOF1Action>(),
 				new MotionProfile<A>(),
 				new ClickProfile<ClickAction>(), this, (n + "_frame_mouse_agent"));
@@ -53,11 +53,11 @@ public class WheeledMotionAgent<A extends Action<?>> extends Agent {
 		frameBranch.sensitivities()[1] = s;
 	}
 
-	public ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {
+	public ActionWheeledMotionAgent<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {
 		return eyeBranch;
 	}
 
-	public ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch() {
+	public ActionWheeledMotionAgent<MotionAction,  MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch() {
 		return frameBranch;
 	}
 

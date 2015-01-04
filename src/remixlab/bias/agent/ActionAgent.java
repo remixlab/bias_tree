@@ -40,7 +40,7 @@ import remixlab.bias.grabber.*;
  * @param <P>
  *          {@link remixlab.bias.agent.profile.Profile} to parameterize the Agent with.
  */
-public class ActionAgent<P extends Profile<?, ?>> extends AbstractAgent {
+public class ActionAgent<E extends Enum<E>, P extends Profile<?, ?>> extends AbstractAgent {
 	protected P						profile;
 	protected Agent	parent;
 
@@ -81,16 +81,21 @@ public class ActionAgent<P extends Profile<?, ?>> extends AbstractAgent {
 		}
 		return description;
 	}
-
+	
 	@Override
 	public boolean addInPool(Grabber grabber) {
+		if(grabber instanceof ActionGrabber)
+			addInPool((ActionGrabber) grabber);
+		return false;
+	}
+	
+	public boolean addInPool(ActionGrabber<E> grabber) {
 		if (grabber == null)
 			return false;
 		if (!isInPool(grabber)) {
-			if ((grabber instanceof ActionGrabber<?>)) {
-				pool().add(grabber);
-				return true;
-			}
+		  System.out.println(this.name() + ".addInPool(ActionGrabber<E> grabber) called on " +  grabber.toString());
+			pool().add(grabber);
+			return true;
 		}
 		return false;
 	}

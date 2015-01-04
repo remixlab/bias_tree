@@ -24,7 +24,7 @@ public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGr
 	 * @see remixlab.bias.core.AbstractAgent#pool()
 	 */
 	//TODO improve type safety here!
-	public ActionGrabberObject(ActionAgent<?> agent) {
+	public ActionGrabberObject(ActionAgent<?,?> agent) {
 		agent.addInPool(this);
 	}
 
