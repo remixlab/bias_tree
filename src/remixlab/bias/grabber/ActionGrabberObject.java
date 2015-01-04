@@ -1,14 +1,9 @@
 
 package remixlab.bias.grabber;
 
-import remixlab.bias.agent.ActionAgent;
-import remixlab.bias.core.Action;
-import remixlab.bias.core.AbstractAgent;
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.Agent;
-import remixlab.bias.core.InputHandler;
+import remixlab.bias.agent.*;
+import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.core.AbstractScene;
 
 public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGrabber<E>
 /*
@@ -68,29 +63,29 @@ public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGr
 			performInteraction((DOF6Event) event);
 	}
 
+	//TODO : deal with warnings
 	public void performInteraction(KeyboardEvent event) {
-		AbstractScene
-				.showMissingImplementationWarning("performInteraction(KeyboardEvent event)", this.getClass().getName());
+		//AbstractScene.showMissingImplementationWarning("performInteraction(KeyboardEvent event)", this.getClass().getName());
 	}
 
 	public void performInteraction(ClickEvent event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
+		//AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
 	}
 
 	public void performInteraction(DOF1Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
+		//AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
 	}
 
 	public void performInteraction(DOF2Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
+		//AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
 	}
 
 	public void performInteraction(DOF3Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
+		//AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
 	}
 
 	public void performInteraction(DOF6Event event) {
-		AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
+		//AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
 	}
 
 	@Override
@@ -111,32 +106,32 @@ public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGr
 	}
 
 	public boolean checkIfGrabsInput(KeyboardEvent event) {
-		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
+		//AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
 		return false;
 	}
 
 	public boolean checkIfGrabsInput(ClickEvent event) {
-		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(ClickEvent event)", this.getClass().getName());
+		//AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
 
 	public boolean checkIfGrabsInput(DOF1Event event) {
-		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
+		//AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
 
 	public boolean checkIfGrabsInput(DOF2Event event) {
-		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF2Event event)", this.getClass().getName());
+		//AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF2Event event)", this.getClass().getName());
 		return false;
 	}
 
 	public boolean checkIfGrabsInput(DOF3Event event) {
-		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF3Event event)", this.getClass().getName());
+		//AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF3Event event)", this.getClass().getName());
 		return false;
 	}
 
 	public boolean checkIfGrabsInput(DOF6Event event) {
-		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF6Event event)", this.getClass().getName());
+		//AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF6Event event)", this.getClass().getName());
 		return false;
 	}
 }

@@ -1,11 +1,9 @@
 
 package remixlab.dandelion.agent;
 
-import remixlab.bias.agent.ActionWheeledMotionAgent;
 import remixlab.bias.agent.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.grabber.*;
-import remixlab.bias.inputagent.ActionInputWheeledMotionAgent;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;

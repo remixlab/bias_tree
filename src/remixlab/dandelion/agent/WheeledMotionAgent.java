@@ -5,14 +5,10 @@ import remixlab.bias.agent.*;
 import remixlab.bias.agent.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.inputagent.ActionInputWheeledMotionAgent;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-//public class WheeledMotionAgent<A extends Action<?>> extends InputAgent {
-public class WheeledMotionAgent<A extends Action<?>> extends
-//ActionInputWheeledMotionAgent<ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>> {
-ActionInputWheeledMotionAgent<ActionWheeledMotionAgent<?, MotionProfile<A>, ?>> {
+public class WheeledMotionAgent<A extends Action<?>> extends Agent {
 	protected AbstractScene																																											scene;
 	protected ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	eyeBranch;
 	protected ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	frameBranch;
