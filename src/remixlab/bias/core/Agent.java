@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import remixlab.bias.agent.ActionAgent;
+import remixlab.bias.agent.ActionMotionAgent;
+import remixlab.bias.agent.profile.ClickProfile;
+import remixlab.bias.agent.profile.MotionProfile;
 import remixlab.bias.grabber.ActionGrabber;
 
 //public class InputAgent<ActionAgent<?,?> extends ActionAgent<?,?>> extends Agent {
@@ -25,6 +28,27 @@ public class Agent extends AbstractAgent {
 
 	public List<ActionAgent<?,?>> branches() {
 		return brnchs;
+	}
+	
+	/*
+	public <E extends Enum<E>, A extends Action<E>> ActionAgent<E, MotionProfile<A>> addBranch(A action, Agent parent, String name) {		
+		MotionProfile<A> p = new MotionProfile<A>();
+		ActionAgent<E, MotionProfile<A>> a = new ActionAgent<E, MotionProfile<A>>(p, parent, name);
+		addBranch(a);
+		return a;
+	}
+	*/
+	
+	public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> ActionMotionAgent<E, MotionProfile<M>, ClickProfile<C>> addBranch(M motionAction, C clickAction, String name) {
+		//MotionProfile<M> p = new MotionProfile<M>();
+		//ClickProfile<C> c = new ClickProfile<C>();
+		//return new ActionMotionAgent<E, MotionProfile<M>, ClickProfile<C>>(p, c, this, name);
+		return addBranch(new MotionProfile<M>(), new ClickProfile<C>(), name);
+	}
+	
+	public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> ActionMotionAgent<E, MotionProfile<M>, ClickProfile<C>>
+	       addBranch(MotionProfile<M> m, ClickProfile<C> c, String name) {
+		return new ActionMotionAgent<E, MotionProfile<M>, ClickProfile<C>>(m, c, this, name);
 	}
 	
 	public void addBranch(ActionAgent<?,?> actionAgent) {

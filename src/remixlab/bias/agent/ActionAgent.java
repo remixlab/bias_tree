@@ -40,6 +40,7 @@ import remixlab.bias.grabber.*;
  * @param <P>
  *          {@link remixlab.bias.agent.profile.Profile} to parameterize the Agent with.
  */
+//public class ActionAgent<E extends Enum<E>, P extends Profile<?, /*? extends*/ Action<E>>> extends AbstractAgent {
 public class ActionAgent<E extends Enum<E>, P extends Profile<?, ?>> extends AbstractAgent {
 	protected P						profile;
 	protected Agent	parent;
