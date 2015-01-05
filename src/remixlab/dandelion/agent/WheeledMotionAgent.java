@@ -8,7 +8,8 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-public class WheeledMotionAgent<A extends Action<?>> extends Agent {
+//public class WheeledMotionAgent<A extends Action<?>> extends Agent {
+public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	protected AbstractScene																																											scene;
 	protected ActionWheeledMotionAgent<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	eyeBranch;
 	protected ActionWheeledMotionAgent<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	frameBranch;

@@ -20,7 +20,7 @@ import remixlab.bias.core.*;
  * @param <K>
  *          The {@link remixlab.bias.agent.profile.KeyboardProfile} to parameterize this Agent with.
  */
-public class ActionKeyboardAgent<E extends Enum<E>, K extends KeyboardProfile<?>> extends ActionAgent<E, K> {
+public class ActionKeyboardAgent<E extends Enum<E>, K extends KeyboardProfile<? extends Action<E>>> extends ActionAgent<E, K> {
 	/**
 	 * Simply calls
 	 * {@link remixlab.bias.agent.ActionAgent#ActionAgent(remixlab.bias.agent.profile.Profile, InputHandler, String)} on
