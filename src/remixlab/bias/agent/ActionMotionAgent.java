@@ -13,6 +13,7 @@ package remixlab.bias.agent;
 import remixlab.bias.agent.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.bias.grabber.ActionGrabber;
 
 /**
  * An {@link remixlab.bias.agent.ActionAgent} with an extra {@link remixlab.bias.agent.profile.ClickProfile} defining
@@ -160,12 +161,18 @@ public class ActionMotionAgent<E extends Enum<E>, M extends MotionProfile<? exte
 	}
 
 	@Override
-	public Action<?> handle(BogusEvent event) {
+	public Action<E> handle(ActionGrabber<E> grabber, BogusEvent event) {
+		if(grabber == null || event == null )
+			return null;
+		Action<E> action = null;
 		if (event instanceof MotionEvent)
-			return profile().handle(event);
+			action = profile().handle(event);
 		if (event instanceof ClickEvent)
-			return clickProfile.handle(event);
-		return null;
+			action = clickProfile.handle(event);
+		if(action != null) {
+			grabber.setAction(action);
+		}			
+		return action;
 	}
 
 	/*

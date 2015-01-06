@@ -398,7 +398,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * @see #enableMotionAgent()
 	 * @see #enableKeyboardAgent()
 	 */
-	public AbstractAgent disableMotionAgent() {
+	public Agent disableMotionAgent() {
 		if (inputHandler().isAgentRegistered(motionAgent())) {
 			return inputHandler().unregisterAgent(motionAgent());
 		}
@@ -1588,6 +1588,9 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	public void setEye(Eye vp) {
 		if (vp == null)
 			return;
+		
+		if(eye() != null)
+			motionAgent().removeFromPool(eye().frame());
 
 		vp.setSceneRadius(radius());
 		vp.setSceneCenter(center());
@@ -1596,9 +1599,8 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 
 		eye = vp;
 
-		motionAgent().eyeBranch().clearPool();
-		motionAgent().eyeBranch().addInPool(eye.frame());
-		motionAgent().eyeBranch().setDefaultGrabber(eye.frame());
+		motionAgent().addInPool(eye.frame());
+		motionAgent().setDefaultGrabber(eye.frame());
 
 		showAll();
 	}

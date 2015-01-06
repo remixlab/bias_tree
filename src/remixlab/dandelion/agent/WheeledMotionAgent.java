@@ -31,7 +31,6 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 				new MotionProfile<A>(),
 				new ClickProfile<ClickAction>(), this, (n + "_frame_mouse_agent"));
 		setPickingMode(PickingMode.MOVE);
-		eyeBranch.disableTracking();
 	}
 	
 	/*
@@ -43,6 +42,14 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 		}
 	}
 	*/
+	
+	public boolean addInPool(InteractiveFrame frame) {
+		return addInPool(frame, frameBranch);
+	}
+	
+	public boolean addInPool(InteractiveEyeFrame frame) {
+		return addInPool(frame, eyeBranch);
+	}
 
 	public void setXTranslationSensitivity(float s) {
 		eyeBranch.sensitivities()[0] = s;
@@ -61,54 +68,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	public ActionWheeledMotionAgent<MotionAction,  MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch() {
 		return frameBranch;
 	}
-
-	public boolean addInPool(InteractiveFrame grabber) {
-		return frameBranch.addInPool(grabber);
-	}
-
-	public boolean addInPool(InteractiveEyeFrame grabber) {
-		System.out.println("Warning InteractiveEyeFrame instances cannot be added!");
-		return false;
-	}
-
-	public boolean removeFromPool(InteractiveFrame grabber) {
-		return frameBranch.removeFromPool(grabber);
-	}
-
-	public boolean removeFromPool(InteractiveEyeFrame grabber) {
-		System.out.println("Warning InteractiveEyeFrame instances cannot be removed!");
-		return false;
-	}
-
-	public boolean isInPool(InteractiveFrame grabber) {
-		return frameBranch.isInPool(grabber);
-	}
-
-	public boolean isInPool(InteractiveEyeFrame grabber) {
-		return eyeBranch.isInPool(grabber);
-	}
-
-	public void setDefaultGrabber(InteractiveFrame grabber) {
-		frameBranch.setDefaultGrabber(grabber);
-	}
-
-	public void setDefaultGrabber(InteractiveEyeFrame grabber) {
-		frameBranch.resetDefaultGrabber();
-		eyeBranch.setDefaultGrabber(grabber);
-	}
-
-	@Override
-	public void disableTracking() {
-		super.disableTracking();
-		frameBranch.disableTracking();
-	}
-
-	@Override
-	public void enableTracking() {
-		super.enableTracking();
-		frameBranch.enableTracking();
-	}
-
+	
 	protected MotionProfile<A> motionProfile() {
 		if (inputGrabber() instanceof InteractiveEyeFrame)
 			return eyeBranch.profile();

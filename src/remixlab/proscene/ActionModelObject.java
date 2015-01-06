@@ -10,42 +10,32 @@ import remixlab.dandelion.core.AbstractScene;
 public abstract class ActionModelObject<E extends Enum<E>> implements ActionModel<E> {
 	Action<E>					action;
 	protected Scene		scene;
+	//protected Agent  agent;
 	protected int			id;
 	protected PShape	pshape;
-
-	/*
-	public ActionModelObject(Scene scn, PShape ps) {
-		scene = scn;
-		pshape = ps;
-		scene.addModel(this);
-		id = ++Scene.modelCount;
-	}
-
-	public ActionModelObject(Scene scn) {
-		scene = scn;
-		scene.addModel(this);
-		id = ++Scene.modelCount;
-	}
-	*/
 	
-  //TODO improve type safety here!
-	//try to remove scene param too
-	public ActionModelObject(Scene scn, ActionAgent<?,?> agent, PShape ps) {		
+	//public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent, PShape ps) {
+	public <K extends ActionAgent<E, ?/* extends Action<E>*/>> ActionModelObject(Scene scn, Agent a, K actionAgent, PShape ps) {
 		scene = scn;
 		pshape = ps;
 		if(scene.addModel(this))
-			agent.addInPool(this);
+			a.addInPool(this, actionAgent);
 		id = ++Scene.modelCount;
 	}
 
-  //TODO improve type safety here!
-	//try to remove scene param too
-	public ActionModelObject(Scene scn, ActionAgent<?,?> agent) {
+	public <K extends ActionAgent<E, ?/* extends Action<E>*/>> ActionModelObject(Scene scn, Agent a, K actionAgent) {
+	//public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent) {
 		scene = scn;
 		if(scene.addModel(this))
-			agent.addInPool(this);
+			a.addInPool(this, actionAgent);
 		id = ++Scene.modelCount;
 	}
+	
+	public ActionModelObject(Scene scn) {
+			scene = scn;
+			if(scene.addModel(this))
+			id = ++Scene.modelCount;
+		}
 
 	public E referenceAction() {
 		return action != null ? action.referenceAction() : null;

@@ -10,8 +10,6 @@
 
 package remixlab.bias.core;
 
-import remixlab.bias.grabber.ActionGrabber;
-
 /**
  * [{@link remixlab.bias.core.BogusEvent},{@link remixlab.bias.core.Grabber}] tuples which encapsulate message passing
  * from {@link remixlab.bias.core.BogusEvent} to {@link remixlab.bias.core.Grabber} to perform actions.

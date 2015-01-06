@@ -62,7 +62,7 @@ public void addTorus() {
 
 public void removeTorus() {
   if (toruses.size() > 0) {
-    scene.inputHandler().removeFromAllAgentPools(((InteractiveTorus) toruses.get(0)).iFrame);
+    scene.mouseAgent().removeFromPool(((InteractiveTorus) toruses.get(0)).iFrame);
     toruses.remove(0);
   }
 }

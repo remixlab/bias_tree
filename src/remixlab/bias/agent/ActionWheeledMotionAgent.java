@@ -13,6 +13,7 @@ package remixlab.bias.agent;
 import remixlab.bias.agent.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.bias.grabber.ActionGrabber;
 
 /**
  * A {@link remixlab.bias.agent.ActionMotionAgent} with an extra {@link remixlab.bias.agent.profile.MotionProfile}
@@ -102,17 +103,22 @@ public class ActionWheeledMotionAgent<E extends Enum<E>, W extends MotionProfile
 		}
 		return description;
 	}
-
+	
 	@Override
-	public Action<?> handle(BogusEvent event) {
-		if (event instanceof MotionEvent) {
-			if (event instanceof DOF1Event)
-				return wheelProfile.handle(event);
-			return profile().handle(event);
-		}
-		if (event instanceof ClickEvent)
-			return clickProfile.handle(event);
-		return null;
+	public Action<E> handle(ActionGrabber<E> grabber, BogusEvent event) {
+		if(grabber == null || event == null )
+			return null;
+		Action<E> action = null;
+		if (event instanceof DOF1Event)
+			action = wheelProfile().handle(event);
+		else if (event instanceof MotionEvent)
+			action = profile().handle(event);
+		else if (event instanceof ClickEvent)
+			action = clickProfile.handle(event);
+		if(action != null) {
+			grabber.setAction(action);
+		}			
+		return action;
 	}
 
 	/*

@@ -184,19 +184,19 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 
 	// TODO improve?
 	public boolean checkIfGrabsInput(ClickEvent event) {
-		return true;
+		return false;
 	}
 
 	public boolean checkIfGrabsInput(DOF2Event event) {
-		return true;
+		return false;
 	}
 
 	public boolean checkIfGrabsInput(DOF3Event event) {
-		return true;
+		return false;
 	}
 
 	public boolean checkIfGrabsInput(DOF6Event event) {
-		return true;
+		return false;
 	}
 
 	@Override

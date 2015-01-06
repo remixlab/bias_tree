@@ -120,8 +120,8 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
 
-		if (scene.motionAgent().frameBranch().isInPool(otherFrame))
-			scene.motionAgent().frameBranch().addInPool(this);
+		if (scene.motionAgent().isInPool(otherFrame))
+			scene.motionAgent().addInPool(this);
 
 		this.setAction(otherFrame.action());
 
@@ -737,32 +737,5 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 			adpThreshold = adaptive;
 			grabsInputThreshold = threshold;
 		}
-	}
-
-	/**
-	 * Returns {@code agent.isInPool(this)}.
-	 * 
-	 * @see remixlab.bias.core.AbstractAgent#isInPool(Grabber)
-	 */
-	public boolean isInAgentPool(AbstractAgent agent) {
-		return agent.isInPool(this);
-	}
-
-	/**
-	 * Convenience wrapper function that simply calls {agent.addInPool(this)}.
-	 * 
-	 * @see remixlab.bias.core.AbstractAgent#addInPool(Grabber)
-	 */
-	public void addInAgentPool(AbstractAgent agent) {
-		agent.addInPool(this);
-	}
-
-	/**
-	 * Convenience wrapper function that simply calls {@code agent.removeFromPool(this)}.
-	 * 
-	 * @see remixlab.bias.core.AbstractAgent#removeFromPool(Grabber)
-	 */
-	public void removeFromAgentPool(AbstractAgent agent) {
-		agent.removeFromPool(this);
 	}
 }

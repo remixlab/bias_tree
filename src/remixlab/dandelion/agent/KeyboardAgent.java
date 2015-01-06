@@ -14,13 +14,17 @@ public class KeyboardAgent extends Agent {
 
 	public KeyboardAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
-		scene = scn;
+		scene = scn; 
 		keyBranch = new ActionKeyboardAgent<SceneAction, KeyboardProfile<KeyboardAction>>(new KeyboardProfile<KeyboardAction>(), this,
 				"scene_keyboard_agent");
-		sceneBranch().disableTracking();
 		// new, mimics eye -> motionAgent -> scene -> keyAgent
-		sceneBranch().addInPool(scene);
-		sceneBranch().setDefaultGrabber(scene);
+		/*
+		The inferred type 
+		 ActionKeyboardAgent<Constants.SceneAction,KeyboardProfile<Constants.KeyboardAction>> is not a valid substitute for the bounded parameter <K extends 
+		 ActionAgent<E,? extends Action<E>>>
+		 */
+		addInPool(scene, keyBranch);
+		setDefaultGrabber(scene);
 		setDefaultShortcuts();
 	}
 	
@@ -42,22 +46,6 @@ public class KeyboardAgent extends Agent {
 	public KeyboardEvent feed() {
 		return null;
 	}
-
-	// -->
-
-	@Override
-	public void disableTracking() {
-		super.disableTracking();
-		sceneBranch().disableTracking();
-	}
-
-	@Override
-	public void enableTracking() {
-		super.enableTracking();
-		sceneBranch().enableTracking();
-	}
-
-	// <--
 
 	protected KeyboardProfile<KeyboardAction> keyboardProfile() {
 		return sceneBranch().keyboardProfile();

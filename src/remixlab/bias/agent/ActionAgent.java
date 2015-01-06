@@ -40,18 +40,24 @@ import remixlab.bias.grabber.*;
  * @param <P>
  *          {@link remixlab.bias.agent.profile.Profile} to parameterize the Agent with.
  */
-public class ActionAgent<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>> extends AbstractAgent {
+public class ActionAgent<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>> {
 //public class ActionAgent<E extends Enum<E>, P extends Profile<?, ?>> extends AbstractAgent {
 	protected P						profile;
 	protected Agent	parent;
+	protected String				name;
 
 	public ActionAgent(P p, Agent pnt, String n) {
-		super(n);
+		name = n;		
 		profile = p;
 		parent = pnt;
 		parent.addBranch(this);
 	}
+	
+	public String name() {
+		return name;
+	}
 
+	//TODO just agent
 	public Agent parentAgent() {
 		return parent;
 	}
@@ -83,24 +89,6 @@ public class ActionAgent<E extends Enum<E>, P extends Profile<?, ? extends Actio
 		return description;
 	}
 	
-	@Override
-	public boolean addInPool(Grabber grabber) {
-		if(grabber instanceof ActionGrabber)
-			addInPool((ActionGrabber) grabber);
-		return false;
-	}
-	
-	public boolean addInPool(ActionGrabber<E> grabber) {
-		if (grabber == null)
-			return false;
-		if (!isInPool(grabber)) {
-		  System.out.println(this.name() + ".addInPool(ActionGrabber<E> grabber) called on " +  grabber.toString());
-			pool().add(grabber);
-			return true;
-		}
-		return false;
-	}
-
 	/**
 	 * Overriding of the {@link remixlab.bias.core.AbstractAgent} main method. The {@link #profile()} is used to parse the event
 	 * into an user-defined action which is then enqueued as an event-grabber tuple (
@@ -119,9 +107,14 @@ public class ActionAgent<E extends Enum<E>, P extends Profile<?, ? extends Actio
 	 * == null) return false; inputHandler().enqueueEventTuple(new EventGrabberTuple(event, profile().handle(event),
 	 * inputGrabber())); }
 	 */
-
-	public Action<?> handle(BogusEvent event) {
-		return profile().handle(event);
+	public Action<E> handle(ActionGrabber<E> grabber, BogusEvent event) {
+		if(grabber == null || event == null )
+			return null;
+		Action<E> action = profile().handle(event);
+		if(action != null) {
+			grabber.setAction(action);
+		}			
+		return action;
 	}
 
 	/*

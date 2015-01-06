@@ -373,7 +373,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #enableKeyboardAgent()
 	 */
 	@Override
-	public AbstractAgent disableMotionAgent() {
+	public Agent disableMotionAgent() {
 		if (isMotionAgentEnabled()) {
 			parent.unregisterMethod("mouseEvent", motionAgent());
 			return inputHandler().unregisterAgent(motionAgent());
@@ -987,10 +987,10 @@ public class Scene extends AbstractScene implements PConstants {
 			return false;
 		if (models().size() == 0)
 			pickingBuffer().loadPixels();
-		boolean result = models().add(model);
-		//TODO: improved? Maybe when addinpool becomes more intelligent
+		boolean result = models().add(model);		
 		if (model instanceof ModelObject)
-			motionAgent().addInPool(model);
+			for (Agent agent : inputHandler().agents())
+				agent.addInPool(this);
 		return result;
 	}
 
@@ -1752,7 +1752,7 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void drawPickingTargets(boolean keyFrame) {
 		pg().pushStyle();
-		for (Grabber mg : motionAgent().frameBranch().pool()) {
+		for (Grabber mg : motionAgent().pool()) {
 			if (mg instanceof InteractiveFrame) {
 				InteractiveFrame iF = (InteractiveFrame) mg;// downcast needed
 				// frames
