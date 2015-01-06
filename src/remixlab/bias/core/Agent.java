@@ -5,93 +5,94 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import remixlab.bias.agent.ActionAgent;
-import remixlab.bias.agent.ActionKeyboardAgent;
-import remixlab.bias.agent.ActionMotionAgent;
-import remixlab.bias.agent.profile.ClickProfile;
-import remixlab.bias.agent.profile.KeyboardProfile;
-import remixlab.bias.agent.profile.MotionProfile;
-import remixlab.bias.agent.profile.Profile;
-import remixlab.bias.grabber.ActionGrabber;
-import remixlab.dandelion.agent.KeyboardAgent;
+import remixlab.bias.branch.*;
+import remixlab.bias.branch.profile.*;
 
 public class Agent {
 	/*
-	{
-		public boolean isInPool(ActionGrabber<E> grabber) {
-			if (grabber == null)
-				return false;
-			return pool().contains(grabber);
-		}
-		
-		public List<ActionGrabber<E>> pool() {
-			return grabbers;
-		}
-		
-		public boolean addInPool(ActionGrabber<E> grabber) {
-			if (grabber == null)
-				return false;
-			if (!grabbers.contains(grabber)) {
-					grabbers.add(grabber);
-					return true;
-			}		
-			return false;
-		}
-	}
-	*/
-	
+	 * { public boolean isInPool(ActionGrabber<E> grabber) { if (grabber == null) return false; return
+	 * pool().contains(grabber); }
+	 * 
+	 * public List<ActionGrabber<E>> pool() { return grabbers; }
+	 * 
+	 * public boolean addInPool(ActionGrabber<E> grabber) { if (grabber == null) return false; if
+	 * (!grabbers.contains(grabber)) { grabbers.add(grabber); return true; } return false; } }
+	 */
+
 	public class Tuple {
-		Grabber g;
-		ActionAgent<?,?> a;
-		public <E extends Enum<E>> Tuple(ActionGrabber<E> _g, ActionAgent<E, ?> _a) {
+		Grabber				g;
+		Branch<?, ?>	b;
+
+		public <E extends Enum<E>> Tuple(ActionGrabber<E> _g, Branch<E, ?> _a) {
 			g = _g;
-			a = _a;
+			b = _a;
 		}
-		
+
 		public Tuple(Grabber _g) {
 			g = _g;
-			a = null;
+			b = null;
 		}
-		
+
 		public Tuple() {
 			g = null;
-			a = null;
+			b = null;
 		}
 		
 		/*
-		public ActionAgent<?,?> branch() {
-			return a;
+		public <E extends Enum<E>> Branch<E, ?> branch() {
+			if(g instanceof ActionGrabber<?>)
+				return (Branch<E, ?>) b;
+			return null;
+		}
+		
+		public <E extends Enum<E>> ActionGrabber<E> grabber() {
+			if(g instanceof ActionGrabber)
+				return (ActionGrabber<E>) g;
+			return null;
 		}
 		*/
 	}
 	
 	/*
-	public class ActionTuple<E extends Enum<E>> extends Tuple {
-		//Grabber g;
-		//ActionAgent<?,?> a;
-		public <E extends Enum<E>> ActionTuple(ActionGrabber<E> _g, ActionAgent<?,? extends Action<E>> _a) {
-			super(_g);
+	public class BranchTuple<E extends Enum<E>> extends Tuple {
+		public BranchTuple(ActionGrabber<E> _g, Branch<E, ?> _a) {
 			g = _g;
-			a = _a;
+			b = _a;
+		}
+
+		public BranchTuple(Grabber _g) {
+			g = _g;
+			b = null;
+		}
+
+		public BranchTuple() {
+			g = null;
+			b = null;
 		}
 		
-		public ActionTuple(Grabber _g) {
-			g = _g;
-			a = null;
+		public Branch<E, ?> branch(ActionGrabber<E> grabber) {
+			return (Branch<E, ?>) b;
 		}
 	}
 	*/
-	
-	protected String				nm;
-	
-	protected List<ActionAgent<?,?>>	brnchs;
-	protected List<Tuple> tuples;
-	
-	protected Tuple				trackedGrabber;
-	protected Tuple				defaultGrabber;
-	protected boolean				agentTrckn;
-	
-	protected InputHandler					handler;
+
+	/*
+	 * public class ActionTuple<E extends Enum<E>> extends Tuple { //Grabber g; //ActionAgent<?,?> a; public <E extends
+	 * Enum<E>> ActionTuple(ActionGrabber<E> _g, ActionAgent<?,? extends Action<E>> _a) { super(_g); g = _g; a = _a; }
+	 * 
+	 * public ActionTuple(Grabber _g) { g = _g; a = null; } }
+	 */
+
+	protected String							nm;
+
+	protected List<Branch<?, ?>>	brnchs;
+	protected List<Tuple>					tuples;
+
+	protected Tuple								trackedGrabber;
+	protected Tuple								defaultGrabber;
+	protected boolean							agentTrckn;
+
+	protected InputHandler				handler;
 
 	/**
 	 * Constructs an Agent with the given name and registers is at the given inputHandler.
@@ -101,11 +102,11 @@ public class Agent {
 		tuples = new ArrayList<Tuple>();
 		trackedGrabber = new Tuple();
 		defaultGrabber = new Tuple();
-		setTracking(true);		
+		setTracking(true);
 		handler = inputHandler;
-		brnchs = new ArrayList<ActionAgent<?,?>>();
+		brnchs = new ArrayList<Branch<?, ?>>();
 	}
-	
+
 	/**
 	 * Removes the grabber from the {@link #pool()}.
 	 * <p>
@@ -113,11 +114,11 @@ public class Agent {
 	 */
 	public boolean removeFromPool(Grabber grabber) {
 		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
-	    Tuple t = it.next();
-	    if( t.g == grabber ) {
-	    	it.remove();
-	    	return true;
-	    }
+			Tuple t = it.next();
+			if (t.g == grabber) {
+				it.remove();
+				return true;
+			}
 		}
 		return false;
 	}
@@ -132,6 +133,22 @@ public class Agent {
 		tuples.clear();
 	}
 	
+	public <E extends Enum<E>> void clearPool(Branch<E, ?> branch) {
+		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
+			Tuple t = it.next();
+			if (t.b == branch)
+				it.remove();
+		}
+	}
+	
+	public <E extends Enum<E>> List<ActionGrabber<E>> pool(Branch<E, ?> branch) {
+		List<ActionGrabber<E>> list = new ArrayList<ActionGrabber<E>>();
+		for (Tuple t : tuples)
+			if (t.b == branch)
+				list.add((ActionGrabber<E>) t.g);
+		return list;
+	}
+
 	public List<Grabber> pool() {
 		List<Grabber> grabbers = new ArrayList<Grabber>();
 		for (Tuple t : tuples)
@@ -152,38 +169,37 @@ public class Agent {
 		return pool().contains(grabber);
 	}
 
-	public List<ActionAgent<?,?>> branches() {
+	public List<Branch<?, ?>> branches() {
 		return brnchs;
 	}
-	
+
 	/*
-	public <E extends Enum<E>, A extends Action<E>> ActionAgent<E, MotionProfile<A>> addBranch(A action, Agent parent, String name) {		
-		MotionProfile<A> p = new MotionProfile<A>();
-		ActionAgent<E, MotionProfile<A>> a = new ActionAgent<E, MotionProfile<A>>(p, parent, name);
-		addBranch(a);
-		return a;
-	}
-	*/
-	
-	//TODO discard
-	public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> ActionMotionAgent<E, MotionProfile<M>, ClickProfile<C>> addBranch(M motionAction, C clickAction, String name) {
+	 * public <E extends Enum<E>, A extends Action<E>> ActionAgent<E, MotionProfile<A>> addBranch(A action, Agent parent,
+	 * String name) { MotionProfile<A> p = new MotionProfile<A>(); ActionAgent<E, MotionProfile<A>> a = new ActionAgent<E,
+	 * MotionProfile<A>>(p, parent, name); addBranch(a); return a; }
+	 */
+
+	// TODO discard
+	public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> MotionBranch<E, MotionProfile<M>, ClickProfile<C>> addBranch(
+			M motionAction, C clickAction, String name) {
 		return addBranch(new MotionProfile<M>(), new ClickProfile<C>(), name);
 	}
-	
+
 	// keep!
-	public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> ActionMotionAgent<E, MotionProfile<M>, ClickProfile<C>> addBranch(MotionProfile<M> m, ClickProfile<C> c, String name) {
-		return new ActionMotionAgent<E, MotionProfile<M>, ClickProfile<C>>(m, c, this, name);
+	public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> MotionBranch<E, MotionProfile<M>, ClickProfile<C>> addBranch(
+			MotionProfile<M> m, ClickProfile<C> c, String name) {
+		return new MotionBranch<E, MotionProfile<M>, ClickProfile<C>>(m, c, this, name);
 	}
-	
-	public <E extends Enum<E>, K extends ActionAgent<E, ?/* extends Action<E>*/>, G extends ActionGrabber<E> > boolean
-	addInPool(G grabber, K actionAgent) {
-	// Overkill but feels safer ;)
-			if (grabber == null || this.isInPool(grabber) )
-				return false;
-			tuples.add(new Tuple(grabber, actionAgent));
-			return true;
+
+	public <E extends Enum<E>, K extends Branch<E, ?/* extends Action<E> */>, G extends ActionGrabber<E>> boolean
+			addInPool(G grabber, K actionAgent) {
+		// Overkill but feels safer ;)
+		if (grabber == null || this.isInPool(grabber))
+			return false;
+		tuples.add(new Tuple(grabber, actionAgent));
+		return true;
 	}
-	
+
 	/**
 	 * Adds the grabber in the {@link #pool()}.
 	 * <p>
@@ -203,62 +219,52 @@ public class Agent {
 		tuples.add(new Tuple(grabber));
 		return true;
 	}
-	
-	public boolean addBranch(ActionAgent<?,?> actionAgent) {
-		//System.out.println(this.name() + " add branch: " + actionAgent.name());
-  	if (!brnchs.contains(actionAgent)) {
-  		//TODO: priority seems not needed
+
+	//TODO shoould NOT go if hierarchy is implemented
+	// /*
+	public boolean addBranch(Branch<?, ?> actionAgent) {
+		// System.out.println(this.name() + " add branch: " + actionAgent.name());
+		if (!brnchs.contains(actionAgent)) {
+			// TODO: priority seems not needed
 			this.brnchs.add(0, actionAgent);
 			return true;
 		}
-  	return false;
+		return false;
 	}
-	
-	public boolean removeBranch(ActionAgent<?,?> actionAgent) {
+	// */
+
+	public boolean removeBranch(Branch<?, ?> actionAgent) {
 		if (brnchs.contains(actionAgent)) {
-			for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
-		    Tuple t = it.next();
-		    if( t.a == actionAgent ) {
-		    	it.remove();
-		    }
-			}
+		  this.clearPool(actionAgent);
 			this.brnchs.remove(actionAgent);
 			return true;
 		}
 		return false;
 	}
-	
-	public <E extends Enum<E>> ActionAgent<E,?> branch(ActionGrabber<E> actionGrabber) {
-		if(actionGrabber == null)
+
+	public <E extends Enum<E>> Branch<E, ?> branch(ActionGrabber<E> actionGrabber) {
+		if (actionGrabber == null)
 			return null;
 		for (Tuple t : tuples)
-			if(t.g == actionGrabber)
-				return (ActionAgent<E, ?>) t.a;
+			if (t.g == actionGrabber)
+				return (Branch<E, ?>) t.b;
+				//return t.branch();//TODO SEEMS to work :p
 		return null;
-	}
-	
-	public ActionAgent<?,?> branch(String name) {
-		for (ActionAgent<?,?> branch : branches())
-			if( branch.name().equals(name) )
-				return branch;					
-		return null;
-	}
-	
-	/*
-	public void addBranch(ActionAgent<?,?> a) {
-		if (!brnchs.contains(a)) {
-			this.brnchs.add(0, a);
-		}
 	}
 
-	public void removeBranch(ActionAgent<?,?> a) {
-		if (brnchs.contains(a)) {
-			if (trackedGrabber() == a.trackedGrabber())
-				trackedGrabber = null;
-			this.brnchs.remove(a);
-		}
+	public Branch<?, ?> branch(String name) {
+		for (Branch<?, ?> branch : branches())
+			if (branch.name().equals(name))
+				return branch;
+		return null;
 	}
-	*/
+
+	/*
+	 * public void addBranch(ActionAgent<?,?> a) { if (!brnchs.contains(a)) { this.brnchs.add(0, a); } }
+	 * 
+	 * public void removeBranch(ActionAgent<?,?> a) { if (brnchs.contains(a)) { if (trackedGrabber() ==
+	 * a.trackedGrabber()) trackedGrabber = null; this.brnchs.remove(a); } }
+	 */
 
 	/**
 	 * Returns a detailed description of this Agent as a String.
@@ -269,7 +275,7 @@ public class Agent {
 		description += "\n";
 		description += "ActionAgents' info\n";
 		int index = 1;
-		for (ActionAgent<?,?> branch : branches()) {
+		for (Branch<?, ?> branch : branches()) {
 			description += index;
 			description += ". ";
 			description += branch.info();
@@ -295,7 +301,7 @@ public class Agent {
 	public InputHandler inputHandler() {
 		return handler;
 	}
-	
+
 	/**
 	 * If {@link #isTracking()} is enabled and the agent is registered at the {@link #inputHandler()} then queries each
 	 * object in the {@link #pool()} to check if the {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)})
@@ -338,21 +344,21 @@ public class Agent {
 	public boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)
 			return false;
-		if(trackedGrabber() != null) {
-			if(inputGrabber() instanceof ActionGrabber<?>)
-				if(trackedGrabber.a.handle((ActionGrabber)inputGrabber(), event) == null)
+		if (trackedGrabber() != null) {
+			if (inputGrabber() instanceof ActionGrabber<?>)
+				if (trackedGrabber.b.handle((ActionGrabber) inputGrabber(), event) == null)
 					return false;
 			inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
 		}
-		else if(defaultGrabber() != null) {
-			if(inputGrabber() instanceof ActionGrabber<?>)
-				if(defaultGrabber.a.handle((ActionGrabber)inputGrabber(), event) == null)
+		else if (defaultGrabber() != null) {
+			if (inputGrabber() instanceof ActionGrabber<?>)
+				if (defaultGrabber.b.handle((ActionGrabber) inputGrabber(), event) == null)
 					return false;
 			inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
 		}
 		return false;
 	}
-	
+
 	/**
 	 * If {@link #trackedGrabber()} is non null, returns it. Otherwise returns the {@link #defaultGrabber()}.
 	 * 
@@ -365,10 +371,12 @@ public class Agent {
 			return defaultGrabber();
 	}
 
-	/*
-	 * public boolean isInputGrabber(Grabber g) { return g.grabsInput(this); }
-	 */
-	
+	public boolean isInputGrabber(Grabber g) {
+		//TODO discard grabsInput from Grabber
+		//return g.grabsInput(this);
+		return inputGrabber() == g;
+	}
+
 	/**
 	 * @return Agents name
 	 */
@@ -420,75 +428,13 @@ public class Agent {
 		setTracking(!isTracking());
 	}
 
-	/*
-	 * public Grabber updateTrackedGrabber(BogusEvent event) { if (event == null ||
-	 * !inputHandler().isAgentRegistered(this) || !isTracking()) return trackedGrabber();
-	 * 
-	 * Grabber g = trackedGrabber();
-	 * 
-	 * // We first check if tracked grabber remains the same if (g != null) if (g.checkIfGrabsInput(event)) return
-	 * trackedGrabber();
-	 * 
-	 * trackedGrabber = null; for (Grabber mg : pool()) { // take whatever. Here the first one if
-	 * (mg.checkIfGrabsInput(event)) { //if (isInPool(mg)) trackedGrabber = mg; return trackedGrabber(); } } return
-	 * trackedGrabber(); }
-	 */
-
-	/**
-	 * Convenience function that simply calls {@code enqueueEventTuple(eventTuple, true)}.
-	 * 
-	 * @see #enqueueEventTuple(EventGrabberTuple, boolean)
-	 */
-	/*
-	 * public void enqueueEventTuple(EventGrabberTuple eventTuple) { enqueueEventTuple(eventTuple, true); }
-	 */
-
-	/**
-	 * Calls {@link remixlab.bias.core.InputHandler#enqueueEventTuple(EventGrabberTuple)} to enqueue the
-	 * {@link remixlab.bias.core.EventGrabberTuple} for later execution. If {@code checkNullAction} is {@code true} the
-	 * tuple will be enqueued only if event tuple action is non-null.
-	 * <p>
-	 * <b>Note</b> that this method is automatically called by {@link #handle(BogusEvent)}.
-	 * 
-	 * @see #handle(BogusEvent)
-	 */
-	/*
-	 * public void enqueueEventTuple(EventGrabberTupele eventTuple) { if (eventTuple != null &&
-	 * handler.isAgentRegistered(this)) //TODO test //if ((checkNullAction && eventTuple.action() != null) ||
-	 * (!checkNullAction)) inputHandler().enqueueEventTuple(eventTuple); }
-	 */
-
-	/**
-	 * Main agent method. Non-generic agents (like this one) simply call
-	 * {@code inputHandler().enqueueEventTuple(new EventGrabberTuple(event, grabber()))}.
-	 * <p>
-	 * Generic agents parse the bogus event to determine the user-defined action the {@link #inputGrabber()} should
-	 * perform.
-	 * <p>
-	 * <b>Note</b> that the agent must be registered agrabberst the {@link #inputHandler()} for this method to take effect.
-	 * 
-	 * @see #inputGrabber()
-	 */
-	// public abstract boolean handle(BogusEvent event);
-
-	/**
-	 * Returns a list containing references to all the active grabbers.
-	 * <p>
-	 * Used to parse all the grabbers and to check if any of them {@link remixlab.bias.core.Grabber#grabsInput(Agent)}.
-	 */
-	/*
-	public List<Grabber> pool() {
-		return grabbers;
-	}
-	*/
-
 	/**
 	 * Returns the grabber set after {@link #updateTrackedGrabber(BogusEvent)} is called. It may be null.
 	 */
 	public Grabber trackedGrabber() {
 		return trackedGrabber == null ? null : trackedGrabber.g;
 	}
-	
+
 	/**
 	 * Default {@link #inputGrabber()} returned when {@link #trackedGrabber()} is null and set with
 	 * {@link #setDefaultGrabber(Grabber)}.
@@ -507,7 +453,7 @@ public class Agent {
 	 */
 	public boolean setDefaultGrabber(Grabber grabber) {
 		for (Tuple t : tuples)
-			if(t.g == grabber) {
+			if (t.g == grabber) {
 				this.defaultGrabber = t;
 				return true;
 			}

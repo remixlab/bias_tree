@@ -8,9 +8,9 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.agent;
+package remixlab.bias.branch;
 
-import remixlab.bias.agent.profile.KeyboardProfile;
+import remixlab.bias.branch.profile.KeyboardProfile;
 import remixlab.bias.core.*;
 
 /**
@@ -18,31 +18,31 @@ import remixlab.bias.core.*;
  * plan to implement your own KeyboardAgent.
  * 
  * @param <K>
- *          The {@link remixlab.bias.agent.profile.KeyboardProfile} to parameterize this Agent with.
+ *          The {@link remixlab.bias.branch.profile.KeyboardProfile} to parameterize this Agent with.
  */
-public class ActionKeyboardAgent<E extends Enum<E>, K extends KeyboardProfile<? extends Action<E>>> extends ActionAgent<E, K> {
+public class KeyboardBranch<E extends Enum<E>, K extends KeyboardProfile<? extends Action<E>>> extends Branch<E, K> {
 	/**
 	 * Simply calls
-	 * {@link remixlab.bias.agent.ActionAgent#ActionAgent(remixlab.bias.agent.profile.Profile, InputHandler, String)} on
-	 * the given parameters.
+	 * {@link remixlab.bias.branch.Branch#ActionAgent(remixlab.bias.branch.profile.Profile, InputHandler, String)} on the
+	 * given parameters.
 	 */
 	/*
 	 * public ActionKeyboardAgent(K k, InputHandler scn, String n) { super(k, scn, n); }
 	 */
 
-	public ActionKeyboardAgent(K k, Agent pnt, String n) {
+	public KeyboardBranch(K k, Agent pnt, String n) {
 		super(k, pnt, n);
 	}
 
 	/**
-	 * @return The {@link remixlab.bias.agent.profile.KeyboardProfile}
+	 * @return The {@link remixlab.bias.branch.profile.KeyboardProfile}
 	 */
 	public K keyboardProfile() {
 		return profile();
 	}
 
 	/**
-	 * Sets the The {@link remixlab.bias.agent.profile.KeyboardProfile}.
+	 * Sets the The {@link remixlab.bias.branch.profile.KeyboardProfile}.
 	 */
 	public void setKeyboardProfile(K kprofile) {
 		setProfile(profile);

@@ -27,7 +27,7 @@ class InteractiveBaseFrame extends Frame {
 	private boolean							horiz								= true; // Two simultaneous InteractiveFrame require two mice!
 
 	// TODO decide whether to include this:
-	protected float							eventSpeed;									// spnning and tossing
+	protected float							eventSpeed;								// spnning and tossing
 	protected Vec								tDir;
 	protected float							flySpd;
 	protected TimingTask				flyTimerTask;

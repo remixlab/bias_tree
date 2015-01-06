@@ -13,7 +13,6 @@ package remixlab.dandelion.core;
 import remixlab.dandelion.core.Constants.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.grabber.ActionGrabber;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
@@ -403,14 +402,14 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	protected void execAction2D(DOF3Event event) {
-		if ( referenceAction() == MotionAction.CUSTOM_DOF3_ACTION)
+		if (referenceAction() == MotionAction.CUSTOM_DOF3_ACTION)
 			performCustomAction(event);
 		else
 			execAction2D(event.dof2Event());
 	}
 
 	protected void execAction2D(DOF6Event event) {
-		if ( referenceAction() ==MotionAction.CUSTOM_DOF6_ACTION)
+		if (referenceAction() == MotionAction.CUSTOM_DOF6_ACTION)
 			performCustomAction(event);
 		else
 			execAction2D(event.dof3Event());

@@ -987,7 +987,7 @@ public class Scene extends AbstractScene implements PConstants {
 			return false;
 		if (models().size() == 0)
 			pickingBuffer().loadPixels();
-		boolean result = models().add(model);		
+		boolean result = models().add(model);
 		if (model instanceof ModelObject)
 			for (Agent agent : inputHandler().agents())
 				agent.addInPool(this);
@@ -1895,7 +1895,7 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().popStyle();
 	}
 
-	//TODO check these comments:
+	// TODO check these comments:
 	@Override
 	protected void drawScreenRotateHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
@@ -1920,7 +1920,7 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().popStyle();
 	}
 
-  //TODO check these comments:
+	// TODO check these comments:
 	@Override
 	protected void drawZoomWindowHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))

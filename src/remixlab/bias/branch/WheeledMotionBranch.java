@@ -8,39 +8,38 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.agent;
+package remixlab.bias.branch;
 
-import remixlab.bias.agent.profile.*;
+import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.grabber.ActionGrabber;
 
 /**
- * A {@link remixlab.bias.agent.ActionMotionAgent} with an extra {@link remixlab.bias.agent.profile.MotionProfile}
- * defining {@link remixlab.bias.event.shortcut.ButtonShortcut} -> {@link remixlab.bias.core.Action} mappings.
+ * A {@link remixlab.bias.branch.MotionBranch} with an extra {@link remixlab.bias.branch.profile.MotionProfile} defining
+ * {@link remixlab.bias.event.shortcut.ButtonShortcut} -> {@link remixlab.bias.core.Action} mappings.
  * <p>
  * The Agent thus is defined by three profiles: the {@link #motionProfile()} (alias for {@link #profile()} provided for
  * convenience), the {@link #clickProfile()} and the extra {@link #wheelProfile()}.
  * 
  * @param <W>
- *          {@link remixlab.bias.agent.profile.MotionProfile} to parameterize the Agent with.
+ *          {@link remixlab.bias.branch.profile.MotionProfile} to parameterize the Agent with.
  * @param <M>
- *          {@link remixlab.bias.agent.profile.MotionProfile} to parameterize the Agent with.
+ *          {@link remixlab.bias.branch.profile.MotionProfile} to parameterize the Agent with.
  * @param <C>
- *          {@link remixlab.bias.agent.profile.ClickProfile} to parameterize the Agent with.
+ *          {@link remixlab.bias.branch.profile.ClickProfile} to parameterize the Agent with.
  */
-public class ActionWheeledMotionAgent<E extends Enum<E>, W extends MotionProfile<? extends Action<E>>, M extends MotionProfile<? extends Action<E>>, C extends ClickProfile<? extends Action<E>>>
-		extends ActionMotionAgent<E, M, C> {
+public class WheeledMotionBranch<E extends Enum<E>, W extends MotionProfile<? extends Action<E>>, M extends MotionProfile<? extends Action<E>>, C extends ClickProfile<? extends Action<E>>>
+		extends MotionBranch<E, M, C> {
 
 	protected W	wheelProfile;
 
 	/**
 	 * @param w
-	 *          {@link remixlab.bias.agent.profile.MotionProfile} instance
+	 *          {@link remixlab.bias.branch.profile.MotionProfile} instance
 	 * @param p
-	 *          {@link remixlab.bias.agent.profile.MotionProfile} second instance
+	 *          {@link remixlab.bias.branch.profile.MotionProfile} second instance
 	 * @param c
-	 *          {@link remixlab.bias.agent.profile.ClickProfile} instance
+	 *          {@link remixlab.bias.branch.profile.ClickProfile} instance
 	 * @param tHandler
 	 *          {@link remixlab.bias.core.InputHandler} to register this Agent to
 	 * @param n
@@ -51,20 +50,20 @@ public class ActionWheeledMotionAgent<E extends Enum<E>, W extends MotionProfile
 	 * wheelProfile = w; }
 	 */
 
-	public ActionWheeledMotionAgent(W w, M p, C c, Agent parent, String n) {
+	public WheeledMotionBranch(W w, M p, C c, Agent parent, String n) {
 		super(p, c, parent, n);
 		wheelProfile = w;
 	}
 
 	/**
-	 * @return the agents second {@link remixlab.bias.agent.profile.MotionProfile} instance.
+	 * @return the agents second {@link remixlab.bias.branch.profile.MotionProfile} instance.
 	 */
 	public W wheelProfile() {
 		return wheelProfile;
 	}
 
 	/**
-	 * Sets the {@link remixlab.bias.agent.profile.MotionProfile} second instance.
+	 * Sets the {@link remixlab.bias.branch.profile.MotionProfile} second instance.
 	 */
 	public void setWheelProfile(W profile) {
 		wheelProfile = profile;
@@ -103,10 +102,10 @@ public class ActionWheeledMotionAgent<E extends Enum<E>, W extends MotionProfile
 		}
 		return description;
 	}
-	
+
 	@Override
 	public Action<E> handle(ActionGrabber<E> grabber, BogusEvent event) {
-		if(grabber == null || event == null )
+		if (grabber == null || event == null)
 			return null;
 		Action<E> action = null;
 		if (event instanceof DOF1Event)
@@ -115,9 +114,9 @@ public class ActionWheeledMotionAgent<E extends Enum<E>, W extends MotionProfile
 			action = profile().handle(event);
 		else if (event instanceof ClickEvent)
 			action = clickProfile.handle(event);
-		if(action != null) {
+		if (action != null) {
 			grabber.setAction(action);
-		}			
+		}
 		return action;
 	}
 

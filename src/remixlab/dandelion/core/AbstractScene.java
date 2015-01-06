@@ -16,7 +16,6 @@ import java.util.Iterator;
 import remixlab.bias.core.*;
 import remixlab.dandelion.core.Constants.*;
 import remixlab.bias.event.*;
-import remixlab.bias.grabber.ActionGrabber;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.constraint.*;
 import remixlab.dandelion.geom.*;
@@ -34,10 +33,10 @@ import remixlab.fpstiming.*;
  * {@link remixlab.dandelion.core.Eye} class.</li>
  * <li>A {@link #timingHandler()} which control (single-threaded) timing operations. For details please refer to the
  * {@link remixlab.fpstiming.TimingHandler} class.</li>
- * <li>An {@link #inputHandler()} which handles all user input through {@link remixlab.bias.core.AbstractAgent}s (for details
- * please refer to the {@link remixlab.bias.core.InputHandler} class). The {@link #inputHandler()} holds a (default)
- * {@link #motionAgent()} and a (default) {@link #keyboardAgent()} which should be instantiated by derived classes at
- * construction time.</li>
+ * <li>An {@link #inputHandler()} which handles all user input through {@link remixlab.bias.core.AbstractAgent}s (for
+ * details please refer to the {@link remixlab.bias.core.InputHandler} class). The {@link #inputHandler()} holds a
+ * (default) {@link #motionAgent()} and a (default) {@link #keyboardAgent()} which should be instantiated by derived
+ * classes at construction time.</li>
  * <li>A {@link #matrixHelper()} which handles matrix operations either through the
  * {@link remixlab.dandelion.core.MatrixStackHelper} or through a third party matrix stack (like it's done with
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>
@@ -1588,8 +1587,8 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	public void setEye(Eye vp) {
 		if (vp == null)
 			return;
-		
-		if(eye() != null)
+
+		if (eye() != null)
 			motionAgent().removeFromPool(eye().frame());
 
 		vp.setSceneRadius(radius());

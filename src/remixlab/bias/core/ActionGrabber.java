@@ -1,8 +1,5 @@
 
-package remixlab.bias.grabber;
-
-import remixlab.bias.core.Action;
-import remixlab.bias.core.Grabber;
+package remixlab.bias.core;
 
 public interface ActionGrabber<E extends Enum<E>> extends Grabber {
 	// E referenceAction();

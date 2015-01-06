@@ -2,7 +2,7 @@
 package remixlab.proscene;
 
 import processing.core.*;
-import remixlab.bias.agent.ActionAgent;
+import remixlab.bias.branch.Branch;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.AbstractScene;
@@ -10,32 +10,32 @@ import remixlab.dandelion.core.AbstractScene;
 public abstract class ActionModelObject<E extends Enum<E>> implements ActionModel<E> {
 	Action<E>					action;
 	protected Scene		scene;
-	//protected Agent  agent;
+	// protected Agent agent;
 	protected int			id;
 	protected PShape	pshape;
-	
-	//public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent, PShape ps) {
-	public <K extends ActionAgent<E, ?/* extends Action<E>*/>> ActionModelObject(Scene scn, Agent a, K actionAgent, PShape ps) {
+
+	// public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent, PShape ps) {
+	public <K extends Branch<E, ?/* extends Action<E> */>> ActionModelObject(Scene scn, Agent a, K actionAgent, PShape ps) {
 		scene = scn;
 		pshape = ps;
-		if(scene.addModel(this))
+		if (scene.addModel(this))
 			a.addInPool(this, actionAgent);
 		id = ++Scene.modelCount;
 	}
 
-	public <K extends ActionAgent<E, ?/* extends Action<E>*/>> ActionModelObject(Scene scn, Agent a, K actionAgent) {
-	//public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent) {
+	public <K extends Branch<E, ?/* extends Action<E> */>> ActionModelObject(Scene scn, Agent a, K actionAgent) {
+		// public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent) {
 		scene = scn;
-		if(scene.addModel(this))
+		if (scene.addModel(this))
 			a.addInPool(this, actionAgent);
 		id = ++Scene.modelCount;
 	}
-	
+
 	public ActionModelObject(Scene scn) {
-			scene = scn;
-			if(scene.addModel(this))
+		scene = scn;
+		if (scene.addModel(this))
 			id = ++Scene.modelCount;
-		}
+	}
 
 	public E referenceAction() {
 		return action != null ? action.referenceAction() : null;
@@ -91,10 +91,10 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 	public boolean checkIfGrabsInput(BogusEvent event) {
 		DOF2Event event2 = null;
 
-		if(event instanceof KeyboardEvent)
-			return checkIfGrabsInput((KeyboardEvent)event);
-		else if(event instanceof DOF1Event)
-			return checkIfGrabsInput((DOF1Event)event);
+		if (event instanceof KeyboardEvent)
+			return checkIfGrabsInput((KeyboardEvent) event);
+		else if (event instanceof DOF1Event)
+			return checkIfGrabsInput((DOF1Event) event);
 		else if (event instanceof DOF2Event)
 			event2 = ((DOF2Event) event).get();
 		else if (event instanceof DOF3Event)
@@ -112,12 +112,12 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 		scene.pickingBuffer().popStyle();
 		return false;
 	}
-	
+
 	public boolean checkIfGrabsInput(KeyboardEvent event) {
 		Scene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
 		return false;
 	}
-	
+
 	public boolean checkIfGrabsInput(DOF1Event event) {
 		Scene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;

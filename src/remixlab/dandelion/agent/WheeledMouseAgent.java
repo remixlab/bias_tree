@@ -1,16 +1,16 @@
 
 package remixlab.dandelion.agent;
 
-import remixlab.bias.agent.profile.*;
+import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
-import remixlab.bias.grabber.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
-//public class WheeledMouseAgent<A extends DOF2Action>
-//extends ActionInputWheeledMotionAgent<ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>> {
+	// public class WheeledMouseAgent<A extends DOF2Action>
+	// extends ActionInputWheeledMotionAgent<ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>,
+	// ClickProfile<ClickAction>>> {
 	protected DOF2Event				pressEvent;
 	protected DOF2Event				lastEvent;
 	protected DOF2Event				prevEvent;

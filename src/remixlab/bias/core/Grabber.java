@@ -12,8 +12,8 @@ package remixlab.bias.core;
 
 /**
  * Grabbers are means to attach a set of user-defined {@link remixlab.bias.core.Action} groups to application objects.
- * Grabbers are attached to {@link remixlab.bias.core.AbstractAgent}s through their API, and may be attached to more than just a
- * single Agent.
+ * Grabbers are attached to {@link remixlab.bias.core.AbstractAgent}s through their API, and may be attached to more
+ * than just a single Agent.
  * <p>
  * Each application object willing to subscribe a group of user defined actions should either implement the Grabber
  * interface or extend from the {@link remixlab.bias.core.GrabberObject} class (which provides a default implementation
@@ -35,8 +35,10 @@ public interface Grabber {
 	void performInteraction(BogusEvent event);
 
 	/**
-	 * Check if this object is the {@link remixlab.bias.core.AbstractAgent#inputGrabber()}. Returns {@code true} if this object
-	 * grabs the agent and {@code false} otherwise.
+	 * Check if this object is the {@link remixlab.bias.core.AbstractAgent#inputGrabber()}. Returns {@code true} if this
+	 * object grabs the agent and {@code false} otherwise.
 	 */
+	//TODO thinking this should be completely discarded in favor of
+	// boolean agent.isInputGrabber(grabber);
 	boolean grabsInput(Agent agent);
 }

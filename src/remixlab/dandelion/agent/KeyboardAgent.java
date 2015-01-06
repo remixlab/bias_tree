@@ -1,44 +1,40 @@
 
 package remixlab.dandelion.agent;
 
-import remixlab.bias.agent.*;
-import remixlab.bias.agent.profile.*;
+import remixlab.bias.branch.*;
+import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 public class KeyboardAgent extends Agent {
-	protected AbstractScene																					scene;
-	protected ActionKeyboardAgent<SceneAction, KeyboardProfile<KeyboardAction>>	keyBranch;
+	protected AbstractScene																									scene;
+	protected KeyboardBranch<SceneAction, KeyboardProfile<KeyboardAction>>	keyBranch;
 
 	public KeyboardAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
-		scene = scn; 
-		keyBranch = new ActionKeyboardAgent<SceneAction, KeyboardProfile<KeyboardAction>>(new KeyboardProfile<KeyboardAction>(), this,
+		scene = scn;
+		keyBranch = new KeyboardBranch<SceneAction, KeyboardProfile<KeyboardAction>>(new KeyboardProfile<KeyboardAction>(),
+				this,
 				"scene_keyboard_agent");
 		// new, mimics eye -> motionAgent -> scene -> keyAgent
 		/*
-		The inferred type 
-		 ActionKeyboardAgent<Constants.SceneAction,KeyboardProfile<Constants.KeyboardAction>> is not a valid substitute for the bounded parameter <K extends 
-		 ActionAgent<E,? extends Action<E>>>
+		 * The inferred type ActionKeyboardAgent<Constants.SceneAction,KeyboardProfile<Constants.KeyboardAction>> is not a
+		 * valid substitute for the bounded parameter <K extends ActionAgent<E,? extends Action<E>>>
 		 */
 		addInPool(scene, keyBranch);
 		setDefaultGrabber(scene);
 		setDefaultShortcuts();
 	}
-	
-	/*
-	public <K extends KeyboardProfile<?>> void addBranch(K k, String n) {
-		ActionKeyboardAgent<K> branch = new ActionKeyboardAgent<K>(k, this, n);
-		//System.out.println("ActionInputMotionAgent add branch: " + actionAgent.name());
-  	if (!brnchs.contains(branch)) {
-			this.brnchs.add(0, branch);
-		}
-	}
-	*/
 
-	public ActionKeyboardAgent<SceneAction, KeyboardProfile<KeyboardAction>> sceneBranch() {
+	/*
+	 * public <K extends KeyboardProfile<?>> void addBranch(K k, String n) { ActionKeyboardAgent<K> branch = new
+	 * ActionKeyboardAgent<K>(k, this, n); //System.out.println("ActionInputMotionAgent add branch: " +
+	 * actionAgent.name()); if (!brnchs.contains(branch)) { this.brnchs.add(0, branch); } }
+	 */
+
+	public KeyboardBranch<SceneAction, KeyboardProfile<KeyboardAction>> sceneBranch() {
 		return keyBranch;
 	}
 

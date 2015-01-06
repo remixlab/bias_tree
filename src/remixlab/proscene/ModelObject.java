@@ -84,10 +84,10 @@ public abstract class ModelObject implements Model {
 	public boolean checkIfGrabsInput(BogusEvent event) {
 		DOF2Event event2 = null;
 
-		if(event instanceof KeyboardEvent)
-			return checkIfGrabsInput((KeyboardEvent)event);
-		else if(event instanceof DOF1Event)
-			return checkIfGrabsInput((DOF1Event)event);
+		if (event instanceof KeyboardEvent)
+			return checkIfGrabsInput((KeyboardEvent) event);
+		else if (event instanceof DOF1Event)
+			return checkIfGrabsInput((DOF1Event) event);
 		else if (event instanceof DOF2Event)
 			event2 = ((DOF2Event) event).get();
 		else if (event instanceof DOF3Event)
@@ -105,12 +105,12 @@ public abstract class ModelObject implements Model {
 		scene.pickingBuffer().popStyle();
 		return false;
 	}
-	
+
 	public boolean checkIfGrabsInput(KeyboardEvent event) {
 		Scene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
 		return false;
 	}
-	
+
 	public boolean checkIfGrabsInput(DOF1Event event) {
 		Scene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;

@@ -1,8 +1,8 @@
 
 package remixlab.dandelion.agent;
 
-import remixlab.bias.agent.*;
-import remixlab.bias.agent.profile.*;
+import remixlab.bias.branch.*;
+import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
@@ -10,10 +10,10 @@ import remixlab.dandelion.core.Constants.*;
 
 //public class WheeledMotionAgent<A extends Action<?>> extends Agent {
 public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
-	protected AbstractScene																																											scene;
-	protected ActionWheeledMotionAgent<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	eyeBranch;
-	protected ActionWheeledMotionAgent<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	frameBranch;
-	protected PickingMode																																												pMode;
+	protected AbstractScene																																															scene;
+	protected WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	eyeBranch;
+	protected WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	frameBranch;
+	protected PickingMode																																																pMode;
 
 	public enum PickingMode {
 		MOVE, CLICK
@@ -22,31 +22,28 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	public WheeledMotionAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		eyeBranch = new ActionWheeledMotionAgent<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
+		eyeBranch = new WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
 				new MotionProfile<DOF1Action>(),
 				new MotionProfile<A>(),
 				new ClickProfile<ClickAction>(), this, (n + "_eye_mouse_agent"));
-		frameBranch = new ActionWheeledMotionAgent<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
+		frameBranch = new WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
 				new MotionProfile<DOF1Action>(),
 				new MotionProfile<A>(),
 				new ClickProfile<ClickAction>(), this, (n + "_frame_mouse_agent"));
 		setPickingMode(PickingMode.MOVE);
 	}
-	
+
 	/*
-	public <W extends MotionProfile<?>, M extends MotionProfile<?>, C extends ClickProfile<?>> void addBranch(W w, M p, C c, String n) {
-		ActionWheeledMotionAgent branch = new ActionWheeledMotionAgent(w, p, c, this, nm);
-		//System.out.println("ActionInputMotionAgent add branch: " + actionAgent.name());
-  	if (!brnchs.contains(branch)) {
-			this.brnchs.add(0, branch);
-		}
-	}
-	*/
-	
+	 * public <W extends MotionProfile<?>, M extends MotionProfile<?>, C extends ClickProfile<?>> void addBranch(W w, M p,
+	 * C c, String n) { ActionWheeledMotionAgent branch = new ActionWheeledMotionAgent(w, p, c, this, nm);
+	 * //System.out.println("ActionInputMotionAgent add branch: " + actionAgent.name()); if (!brnchs.contains(branch)) {
+	 * this.brnchs.add(0, branch); } }
+	 */
+
 	public boolean addInPool(InteractiveFrame frame) {
 		return addInPool(frame, frameBranch);
 	}
-	
+
 	public boolean addInPool(InteractiveEyeFrame frame) {
 		return addInPool(frame, eyeBranch);
 	}
@@ -61,14 +58,14 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 		frameBranch.sensitivities()[1] = s;
 	}
 
-	public ActionWheeledMotionAgent<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {
+	public WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {
 		return eyeBranch;
 	}
 
-	public ActionWheeledMotionAgent<MotionAction,  MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch() {
+	public WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch() {
 		return frameBranch;
 	}
-	
+
 	protected MotionProfile<A> motionProfile() {
 		if (inputGrabber() instanceof InteractiveEyeFrame)
 			return eyeBranch.profile();

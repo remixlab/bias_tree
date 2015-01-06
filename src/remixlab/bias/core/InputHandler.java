@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import remixlab.bias.grabber.*;
-
 /**
  * The InputHandler object is the high level package handler which holds a collection of {@link #agents()}, and an event
  * dispatcher queue of {@link remixlab.bias.core.EventGrabberTuple}s ({@link #eventTupleQueue()}). Such tuple represents
@@ -30,7 +28,7 @@ import remixlab.bias.grabber.*;
  */
 public class InputHandler {
 	// D E V I C E S & E V E N T S
-	protected HashMap<String, Agent>		agents;
+	protected HashMap<String, Agent>				agents;
 	protected LinkedList<EventGrabberTuple>	eventTupleQueue;
 
 	public InputHandler() {
@@ -47,8 +45,8 @@ public class InputHandler {
 	 * The handle comprises the following two loops:
 	 * <p>
 	 * 1. {@link remixlab.bias.core.EventGrabberTuple} producer loop which for each registered agent calls:
-	 * {@link remixlab.bias.core.AbstractAgent#handle(BogusEvent)}. Note that the bogus event is obtained from the agents callback
-	 * {@link remixlab.bias.core.ActionAgent#feed()} method.<br>
+	 * {@link remixlab.bias.core.AbstractAgent#handle(BogusEvent)}. Note that the bogus event is obtained from the agents
+	 * callback {@link remixlab.bias.core.Branch#feed()} method.<br>
 	 * 2. User-defined action consumer loop: which for each {@link remixlab.bias.core.EventGrabberTuple} calls
 	 * {@link remixlab.bias.core.EventGrabberTuple#perform()}.<br>
 	 */
