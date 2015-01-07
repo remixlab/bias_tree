@@ -33,12 +33,4 @@ public interface Grabber {
 	 * action.
 	 */
 	void performInteraction(BogusEvent event);
-
-	/**
-	 * Check if this object is the {@link remixlab.bias.core.AbstractAgent#inputGrabber()}. Returns {@code true} if this
-	 * object grabs the agent and {@code false} otherwise.
-	 */
-	//TODO thinking this should be completely discarded in favor of
-	// boolean agent.isInputGrabber(grabber);
-	boolean grabsInput(Agent agent);
 }

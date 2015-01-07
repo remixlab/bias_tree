@@ -418,7 +418,6 @@ public interface Constants {
 			return this.referenceAction().description();
 		}
 
-		@Override
 		public int dofs() {
 			return act.dofs();
 		}
@@ -464,7 +463,6 @@ public interface Constants {
 			return this.referenceAction().description();
 		}
 
-		@Override
 		public int dofs() {
 			return act.dofs();
 		}
@@ -522,7 +520,6 @@ public interface Constants {
 			return this.referenceAction().description();
 		}
 
-		@Override
 		public int dofs() {
 			return act.dofs();
 		}
@@ -584,7 +581,6 @@ public interface Constants {
 			return this.referenceAction().description();
 		}
 
-		@Override
 		public int dofs() {
 			return act.dofs();
 		}
@@ -652,7 +648,6 @@ public interface Constants {
 			return this.referenceAction().description();
 		}
 
-		@Override
 		public int dofs() {
 			return act.dofs();
 		}
@@ -723,7 +718,6 @@ public interface Constants {
 			return this.referenceAction().description();
 		}
 
-		@Override
 		public int dofs() {
 			return act.dofs();
 		}

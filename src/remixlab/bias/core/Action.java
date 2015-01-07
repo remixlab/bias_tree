@@ -53,10 +53,6 @@ package remixlab.bias.core;
  *     return "A simple motion action";
  *   }
  * 
- *   public int dofs() {
- *     return 2;
- *   }
- * 
  *   GlobalAction act;
  * 
  *   MotionAction(GlobalAction a) {
@@ -79,9 +75,4 @@ public interface Action<E extends Enum<E>> {
 	 * Returns a description of the action.
 	 */
 	String description();
-
-	/**
-	 * Returns the degrees-of-freedom needed to perform the action.
-	 */
-	public int dofs();
 }

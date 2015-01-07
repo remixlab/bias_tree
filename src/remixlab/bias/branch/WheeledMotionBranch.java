@@ -16,7 +16,7 @@ import remixlab.bias.event.*;
 
 /**
  * A {@link remixlab.bias.branch.MotionBranch} with an extra {@link remixlab.bias.branch.profile.MotionProfile} defining
- * {@link remixlab.bias.event.shortcut.ButtonShortcut} -> {@link remixlab.bias.core.Action} mappings.
+ * {@link remixlab.bias.event.shortcut.MotionShortcut} -> {@link remixlab.bias.core.Action} mappings.
  * <p>
  * The Agent thus is defined by three profiles: the {@link #motionProfile()} (alias for {@link #profile()} provided for
  * convenience), the {@link #clickProfile()} and the extra {@link #wheelProfile()}.

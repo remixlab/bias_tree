@@ -18,14 +18,14 @@ import remixlab.util.HashCodeBuilder;
 /**
  * Base class of all DOF_n_Events: {@link remixlab.bias.core.BogusEvent}s defined from DOFs (degrees-of-freedom).
  * <p>
- * A MotionEvent encapsulates a {@link remixlab.bias.event.shortcut.ButtonShortcut}. MotionEvents may be relative or
+ * A MotionEvent encapsulates a {@link remixlab.bias.event.shortcut.MotionShortcut}. MotionEvents may be relative or
  * absolute (see {@link #isRelative()}, {@link #isAbsolute()}) depending whether or not they're defined from a previous
  * MotionEvent (see {@link #setPreviousEvent(MotionEvent)}). While relative motion events have {@link #distance()},
  * {@link #speed()}, and {@link #delay()}, absolute motion events don't.
  */
 public class MotionEvent extends BogusEvent {
 	// some motion actions may be performed without any button, e.g., mouse move (instead of drag).
-	public static final int	NOBUTTON	= 0;
+	public static final int	NULL	= 0;
 
 	@Override
 	public int hashCode() {
@@ -65,25 +65,25 @@ public class MotionEvent extends BogusEvent {
 	protected boolean	rel;
 
 	/**
-	 * Constructs a MotionEvent with an "empty" {@link remixlab.bias.event.shortcut.ButtonShortcut}.
+	 * Constructs a MotionEvent with an "empty" {@link remixlab.bias.event.shortcut.MotionShortcut}.
 	 */
 	public MotionEvent() {
 		super();
-		this.button = NOBUTTON;
+		this.button = NULL;
 	}
 
 	/**
 	 * Constructs a MotionEvent taking the given {@code modifiers} as a
-	 * {@link remixlab.bias.event.shortcut.ButtonShortcut}.
+	 * {@link remixlab.bias.event.shortcut.MotionShortcut}.
 	 */
 	public MotionEvent(int modifiers) {
 		super(modifiers);
-		this.button = NOBUTTON;
+		this.button = NULL;
 	}
 
 	/**
 	 * Constructs a MotionEvent taking the given {@code modifiers} and {@code modifiers} as a
-	 * {@link remixlab.bias.event.shortcut.ButtonShortcut}.
+	 * {@link remixlab.bias.event.shortcut.MotionShortcut}.
 	 */
 	public MotionEvent(int modifiers, int button) {
 		super(modifiers);
@@ -111,15 +111,15 @@ public class MotionEvent extends BogusEvent {
 	}
 
 	/**
-	 * Returns the button defining the event's {@link remixlab.bias.event.shortcut.ButtonShortcut}.
+	 * Returns the button defining the event's {@link remixlab.bias.event.shortcut.MotionShortcut}.
 	 */
-	public int button() {
+	public int id() {
 		return button;
 	}
 
 	@Override
-	public ButtonShortcut shortcut() {
-		return new ButtonShortcut(modifiers(), button());
+	public MotionShortcut shortcut() {
+		return new MotionShortcut(modifiers(), id());
 	}
 
 	/**

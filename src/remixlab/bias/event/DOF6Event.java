@@ -405,18 +405,18 @@ public class DOF6Event extends MotionEvent {
 		DOF3Event e3;
 		if (isRelative()) {
 			if (fromTranslation) {
-				pe3 = new DOF3Event(prevX(), prevY(), prevZ(), modifiers(), button());
-				e3 = new DOF3Event(pe3, x(), y(), z(), modifiers(), button());
+				pe3 = new DOF3Event(prevX(), prevY(), prevZ(), modifiers(), id());
+				e3 = new DOF3Event(pe3, x(), y(), z(), modifiers(), id());
 			} else {
-				pe3 = new DOF3Event(prevRX(), prevRY(), prevRZ(), modifiers(), button());
-				e3 = new DOF3Event(pe3, rx(), ry(), rz(), modifiers(), button());
+				pe3 = new DOF3Event(prevRX(), prevRY(), prevRZ(), modifiers(), id());
+				e3 = new DOF3Event(pe3, rx(), ry(), rz(), modifiers(), id());
 			}
 		} else {
 			if (fromTranslation) {
-				e3 = new DOF3Event(x(), y(), z(), modifiers(), button());
+				e3 = new DOF3Event(x(), y(), z(), modifiers(), id());
 			}
 			else {
-				e3 = new DOF3Event(rx(), ry(), rz(), modifiers(), button());
+				e3 = new DOF3Event(rx(), ry(), rz(), modifiers(), id());
 			}
 		}
 		e3.modifiedTimestamp(this.timestamp());

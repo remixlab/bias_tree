@@ -990,7 +990,7 @@ public class Scene extends AbstractScene implements PConstants {
 		boolean result = models().add(model);
 		if (model instanceof ModelObject)
 			for (Agent agent : inputHandler().agents())
-				agent.addInPool(this);
+				agent.add(this);
 		return result;
 	}
 
@@ -1752,13 +1752,14 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void drawPickingTargets(boolean keyFrame) {
 		pg().pushStyle();
-		for (Grabber mg : motionAgent().pool()) {
+		for (Grabber mg : motionAgent().grabbers()) {
 			if (mg instanceof InteractiveFrame) {
 				InteractiveFrame iF = (InteractiveFrame) mg;// downcast needed
 				// frames
 				if (!(iF.isInEyePath() ^ keyFrame)) {
 					Vec center = projectedCoordinatesOf(iF.position());
-					if (mg.grabsInput(motionAgent())) {
+					//if (mg.grabsInput(motionAgent())) {
+					if (motionAgent().isInputGrabber(mg) ) {
 						pg().pushStyle();
 						pg().strokeWeight(2 * pg().strokeWeight);
 						pg().colorMode(HSB, 255);

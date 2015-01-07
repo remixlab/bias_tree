@@ -23,7 +23,7 @@ public class KeyboardAgent extends Agent {
 		 * The inferred type ActionKeyboardAgent<Constants.SceneAction,KeyboardProfile<Constants.KeyboardAction>> is not a
 		 * valid substitute for the bounded parameter <K extends ActionAgent<E,? extends Action<E>>>
 		 */
-		addInPool(scene, keyBranch);
+		add(scene, keyBranch);
 		setDefaultGrabber(scene);
 		setDefaultShortcuts();
 	}

@@ -41,11 +41,11 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 
 	public boolean addInPool(InteractiveFrame frame) {
-		return addInPool(frame, frameBranch);
+		return add(frame, frameBranch);
 	}
 
 	public boolean addInPool(InteractiveEyeFrame frame) {
-		return addInPool(frame, eyeBranch);
+		return add(frame, eyeBranch);
 	}
 
 	public void setXTranslationSensitivity(float s) {
@@ -93,14 +93,14 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	// TODO test all protected down here in stable before going on
 
 	/**
-	 * Profile defining InteractiveEyeFrame action bindings from {@link remixlab.bias.event.shortcut.ButtonShortcut}s.
+	 * Profile defining InteractiveEyeFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
 	 */
 	protected MotionProfile<A> eyeProfile() {
 		return eyeBranch.profile();
 	}
 
 	/**
-	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.ButtonShortcut}s.
+	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
 	 */
 	protected MotionProfile<A> frameProfile() {
 		return frameBranch.profile();
@@ -122,14 +122,14 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 
 	/**
 	 * Profile defining InteractiveEyeFrame action bindings from (wheel)
-	 * {@link remixlab.bias.event.shortcut.ButtonShortcut}s.
+	 * {@link remixlab.bias.event.shortcut.MotionShortcut}s.
 	 */
 	public MotionProfile<DOF1Action> eyeWheelProfile() {
 		return eyeBranch.wheelProfile();
 	}
 
 	/**
-	 * Profile defining InteractiveFrame action bindings from (wheel) {@link remixlab.bias.event.shortcut.ButtonShortcut}
+	 * Profile defining InteractiveFrame action bindings from (wheel) {@link remixlab.bias.event.shortcut.MotionShortcut}
 	 * s.
 	 */
 	public MotionProfile<DOF1Action> frameWheelProfile() {
@@ -173,7 +173,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public void setWheelBinding(Target target, int mask, DOF1Action action) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		profile.setBinding(mask, MotionEvent.NOBUTTON, action);
+		profile.setBinding(mask, MotionEvent.NULL, action);
 	}
 
 	/**
@@ -189,7 +189,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public void removeWheelBinding(Target target, int mask) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		profile.removeBinding(mask, MotionEvent.NOBUTTON);
+		profile.removeBinding(mask, MotionEvent.NULL);
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public boolean hasWheelBinding(Target target, int mask) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return profile.hasBinding(mask, MotionEvent.NOBUTTON);
+		return profile.hasBinding(mask, MotionEvent.NULL);
 	}
 
 	/**
@@ -230,7 +230,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public DOF1Action wheelAction(Target target, int mask, DOF1Action action) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return (DOF1Action) profile.action(mask, MotionEvent.NOBUTTON);
+		return (DOF1Action) profile.action(mask, MotionEvent.NULL);
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public DOF1Action wheelAction(Target target, DOF1Action action) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return (DOF1Action) profile.action(MotionEvent.NOBUTTON);
+		return (DOF1Action) profile.action(MotionEvent.NULL);
 	}
 
 	// mouse click

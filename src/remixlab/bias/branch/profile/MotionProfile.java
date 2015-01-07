@@ -16,17 +16,17 @@ import remixlab.bias.event.shortcut.*;
 
 /**
  * A {@link remixlab.bias.branch.profile.Profile} defining a mapping between
- * {@link remixlab.bias.event.shortcut.ButtonShortcut}s and user-defined {@link remixlab.bias.core.Action}s.
+ * {@link remixlab.bias.event.shortcut.MotionShortcut}s and user-defined {@link remixlab.bias.core.Action}s.
  * 
  * @param <A>
  *          {@link remixlab.bias.core.Action} : User-defined action.
  */
-public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, A> {
+public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, A> {
 	/**
 	 * Returns true if the given binding binds an action.
 	 */
 	public boolean hasBinding() {
-		return hasBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
+		return hasBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL);
 	}
 
 	/**
@@ -45,14 +45,14 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * @param button
 	 */
 	public boolean hasBinding(Integer mask, Integer button) {
-		return hasBinding(new ButtonShortcut(mask, button));
+		return hasBinding(new MotionShortcut(mask, button));
 	}
 
 	/**
 	 * Convenience function that simply calls {@code setWheelShortcut(0, action)}.
 	 */
 	public void setBinding(A action) {
-		setBinding(MotionEvent.NOBUTTON, action);
+		setBinding(MotionEvent.NULL, action);
 	}
 
 	/**
@@ -77,14 +77,14 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 			Action<?> a = action(mask, button);
 			System.out.println("Warning: overwritting binding which was previously associated to " + a);
 		}
-		setBinding(new ButtonShortcut(mask, button), action);
+		setBinding(new MotionShortcut(mask, button), action);
 	}
 
 	/**
 	 * Convenience function that simply calls {@code removeWheelShortcut(0)}.
 	 */
 	public void removeBinding() {
-		removeBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
+		removeBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL);
 	}
 
 	/**
@@ -103,14 +103,14 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * @param button
 	 */
 	public void removeBinding(Integer mask, Integer button) {
-		removeBinding(new ButtonShortcut(mask, button));
+		removeBinding(new MotionShortcut(mask, button));
 	}
 
 	/**
 	 * Returns the action associated to the given binding.
 	 */
 	public Action<?> action() {
-		return action(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
+		return action(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL);
 	}
 
 	/**
@@ -129,6 +129,6 @@ public class MotionProfile<A extends Action<?>> extends Profile<ButtonShortcut, 
 	 * @param button
 	 */
 	public Action<?> action(Integer mask, Integer button) {
-		return action(new ButtonShortcut(mask, button));
+		return action(new MotionShortcut(mask, button));
 	}
 }

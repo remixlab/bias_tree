@@ -151,7 +151,6 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 		return action;
 	}
 
-	@Override
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
@@ -1589,7 +1588,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 			return;
 
 		if (eye() != null)
-			motionAgent().removeFromPool(eye().frame());
+			motionAgent().remove(eye().frame());
 
 		vp.setSceneRadius(radius());
 		vp.setSceneCenter(center());

@@ -100,7 +100,7 @@ public class BogusEvent implements Copyable {
 	}
 
 	/**
-	 * @return the modifiers defining the event {@link remixlab.bias.event.shortcut.ButtonShortcut}.
+	 * @return the modifiers defining the event {@link remixlab.bias.event.shortcut.MotionShortcut}.
 	 */
 	public int modifiers() {
 		return modifiers;

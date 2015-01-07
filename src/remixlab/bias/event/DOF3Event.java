@@ -252,10 +252,10 @@ public class DOF3Event extends MotionEvent {
 		DOF2Event pe2;
 		DOF2Event e2;
 		if (isRelative()) {
-			pe2 = new DOF2Event(prevX(), prevY(), modifiers(), button());
-			e2 = new DOF2Event(pe2, x(), y(), modifiers(), button());
+			pe2 = new DOF2Event(prevX(), prevY(), modifiers(), id());
+			e2 = new DOF2Event(pe2, x(), y(), modifiers(), id());
 		} else {
-			e2 = new DOF2Event(x(), y(), modifiers(), button());
+			e2 = new DOF2Event(x(), y(), modifiers(), id());
 		}
 		e2.modifiedTimestamp(this.timestamp());
 		e2.delay = this.delay();

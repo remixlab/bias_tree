@@ -6,20 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import remixlab.bias.branch.*;
-import remixlab.bias.branch.profile.*;
 
 public class Agent {
-	/*
-	 * { public boolean isInPool(ActionGrabber<E> grabber) { if (grabber == null) return false; return
-	 * pool().contains(grabber); }
-	 * 
-	 * public List<ActionGrabber<E>> pool() { return grabbers; }
-	 * 
-	 * public boolean addInPool(ActionGrabber<E> grabber) { if (grabber == null) return false; if
-	 * (!grabbers.contains(grabber)) { grabbers.add(grabber); return true; } return false; } }
-	 */
-
-	public class Tuple {
+	class Tuple {
 		Grabber				g;
 		Branch<?, ?>	b;
 
@@ -37,51 +26,7 @@ public class Agent {
 			g = null;
 			b = null;
 		}
-		
-		/*
-		public <E extends Enum<E>> Branch<E, ?> branch() {
-			if(g instanceof ActionGrabber<?>)
-				return (Branch<E, ?>) b;
-			return null;
-		}
-		
-		public <E extends Enum<E>> ActionGrabber<E> grabber() {
-			if(g instanceof ActionGrabber)
-				return (ActionGrabber<E>) g;
-			return null;
-		}
-		*/
 	}
-	
-	/*
-	public class BranchTuple<E extends Enum<E>> extends Tuple {
-		public BranchTuple(ActionGrabber<E> _g, Branch<E, ?> _a) {
-			g = _g;
-			b = _a;
-		}
-
-		public BranchTuple(Grabber _g) {
-			g = _g;
-			b = null;
-		}
-
-		public BranchTuple() {
-			g = null;
-			b = null;
-		}
-		
-		public Branch<E, ?> branch(ActionGrabber<E> grabber) {
-			return (Branch<E, ?>) b;
-		}
-	}
-	*/
-
-	/*
-	 * public class ActionTuple<E extends Enum<E>> extends Tuple { //Grabber g; //ActionAgent<?,?> a; public <E extends
-	 * Enum<E>> ActionTuple(ActionGrabber<E> _g, ActionAgent<?,? extends Action<E>> _a) { super(_g); g = _g; a = _a; }
-	 * 
-	 * public ActionTuple(Grabber _g) { g = _g; a = null; } }
-	 */
 
 	protected String							nm;
 
@@ -108,11 +53,11 @@ public class Agent {
 	}
 
 	/**
-	 * Removes the grabber from the {@link #pool()}.
+	 * Removes the grabber from the {@link #grabbers()}.
 	 * <p>
-	 * See {@link #addInPool(Grabber)} for details. Removing a grabber that is not in {@link #pool()} has no effect.
+	 * See {@link #add(Grabber)} for details. Removing a grabber that is not in {@link #grabbers()} has no effect.
 	 */
-	public boolean removeFromPool(Grabber grabber) {
+	public boolean remove(Grabber grabber) {
 		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
 			Tuple t = it.next();
 			if (t.g == grabber) {
@@ -124,16 +69,56 @@ public class Agent {
 	}
 
 	/**
-	 * Clears the {@link #pool()}.
+	 * Clears the {@link #grabbers()}.
 	 * <p>
-	 * Use this method only if it is faster to clear the {@link #pool()} and then to add back a few grabbers than to
+	 * Use this method only if it is faster to clear the {@link #grabbers()} and then to add back a few grabbers than to
 	 * remove each one independently.
 	 */
-	public void clearPool() {
+	public void clearGrabbers() {
 		tuples.clear();
 	}
 	
-	public <E extends Enum<E>> void clearPool(Branch<E, ?> branch) {
+	public List<Grabber> grabbers() {
+		List<Grabber> grabbers = new ArrayList<Grabber>();
+		for (Tuple t : tuples)
+			grabbers.add(t.g);
+		return grabbers;
+	}
+	
+	/**
+	 * Returns true if the grabber is currently in the agents {@link #grabbers()} list.
+	 * <p>
+	 * When set to false using {@link #remove(Grabber)}, the handler no longer
+	 * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} on this grabber. Use {@link #add(Grabber)}
+	 * to insert it * back.
+	 */
+	public boolean isGrabber(Grabber grabber) {
+		if (grabber == null)
+			return false;
+		return grabbers().contains(grabber);
+	}
+	
+	/**
+	 * Adds the grabber in the {@link #grabbers()}.
+	 * <p>
+	 * Use {@link #remove(Grabber)} to remove the grabber from the pool, so that it is no longer tested with
+	 * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} by the handler, and hence can no longer grab the
+	 * agent focus. Use {@link #isGrabber(Grabber)} to know the current state of the grabber.
+	 */
+	public boolean add(Grabber grabber) {
+		if (grabber == null)
+			return false;
+		if (grabber instanceof ActionGrabber) {
+			System.out.println("use addInPool(G grabber, K actionAgent) instead");
+			return false;
+		}
+		if (isGrabber(grabber))
+			return false;
+		tuples.add(new Tuple(grabber));
+		return true;
+	}
+	
+	public <E extends Enum<E>> void clearGrabbers(Branch<E, ?> branch) {
 		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
 			Tuple t = it.next();
 			if (t.b == branch)
@@ -141,114 +126,61 @@ public class Agent {
 		}
 	}
 	
-	public <E extends Enum<E>> List<ActionGrabber<E>> pool(Branch<E, ?> branch) {
+	@SuppressWarnings("unchecked")
+	public <E extends Enum<E>> List<ActionGrabber<E>> grabbers(Branch<E, ?> branch) {
 		List<ActionGrabber<E>> list = new ArrayList<ActionGrabber<E>>();
 		for (Tuple t : tuples)
 			if (t.b == branch)
 				list.add((ActionGrabber<E>) t.g);
 		return list;
 	}
-
-	public List<Grabber> pool() {
-		List<Grabber> grabbers = new ArrayList<Grabber>();
-		for (Tuple t : tuples)
-			grabbers.add(t.g);
-		return grabbers;
-	}
-
-	/**
-	 * Returns true if the grabber is currently in the agents {@link #pool()} list.
-	 * <p>
-	 * When set to false using {@link #removeFromPool(Grabber)}, the handler no longer
-	 * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} on this grabber. Use {@link #addInPool(Grabber)}
-	 * to insert it * back.
-	 */
-	public boolean isInPool(Grabber grabber) {
-		if (grabber == null)
-			return false;
-		return pool().contains(grabber);
-	}
-
-	public List<Branch<?, ?>> branches() {
-		return brnchs;
-	}
-
+	
 	/*
 	 * public <E extends Enum<E>, A extends Action<E>> ActionAgent<E, MotionProfile<A>> addBranch(A action, Agent parent,
 	 * String name) { MotionProfile<A> p = new MotionProfile<A>(); ActionAgent<E, MotionProfile<A>> a = new ActionAgent<E,
 	 * MotionProfile<A>>(p, parent, name); addBranch(a); return a; }
 	 */
 
-	// TODO discard
-	public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> MotionBranch<E, MotionProfile<M>, ClickProfile<C>> addBranch(
+	/*
+	public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> MotionBranch<E, MotionProfile<M>, ClickProfile<C>>
+	addBranch(
 			M motionAction, C clickAction, String name) {
 		return addBranch(new MotionProfile<M>(), new ClickProfile<C>(), name);
 	}
+	*/
 
 	// keep!
+	/*
 	public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> MotionBranch<E, MotionProfile<M>, ClickProfile<C>> addBranch(
 			MotionProfile<M> m, ClickProfile<C> c, String name) {
 		return new MotionBranch<E, MotionProfile<M>, ClickProfile<C>>(m, c, this, name);
 	}
+	*/
+	
+	// end-> */
+
+	public List<Branch<?, ?>> branches() {
+		return brnchs;
+	}
 
 	public <E extends Enum<E>, K extends Branch<E, ?/* extends Action<E> */>, G extends ActionGrabber<E>> boolean
-			addInPool(G grabber, K actionAgent) {
+			add(G grabber, K actionAgent) {
 		// Overkill but feels safer ;)
-		if (grabber == null || this.isInPool(grabber))
+		if (grabber == null || this.isGrabber(grabber))
 			return false;
 		tuples.add(new Tuple(grabber, actionAgent));
 		return true;
 	}
-
-	/**
-	 * Adds the grabber in the {@link #pool()}.
-	 * <p>
-	 * Use {@link #removeFromPool(Grabber)} to remove the grabber from the pool, so that it is no longer tested with
-	 * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} by the handler, and hence can no longer grab the
-	 * agent focus. Use {@link #isInPool(Grabber)} to know the current state of the grabber.
-	 */
-	public boolean addInPool(Grabber grabber) {
-		if (grabber == null)
-			return false;
-		if (grabber instanceof ActionGrabber) {
-			System.out.println("use addInPool(G grabber, K actionAgent) instead");
-			return false;
-		}
-		if (isInPool(grabber))
-			return false;
-		tuples.add(new Tuple(grabber));
-		return true;
-	}
-
-	//TODO shoould NOT go if hierarchy is implemented
-	// /*
-	public boolean addBranch(Branch<?, ?> actionAgent) {
-		// System.out.println(this.name() + " add branch: " + actionAgent.name());
-		if (!brnchs.contains(actionAgent)) {
-			// TODO: priority seems not needed
-			this.brnchs.add(0, actionAgent);
-			return true;
-		}
-		return false;
-	}
-	// */
-
-	public boolean removeBranch(Branch<?, ?> actionAgent) {
-		if (brnchs.contains(actionAgent)) {
-		  this.clearPool(actionAgent);
-			this.brnchs.remove(actionAgent);
-			return true;
-		}
-		return false;
-	}
-
+	
+  //these two are not good enough
+	/*
 	public <E extends Enum<E>> Branch<E, ?> branch(ActionGrabber<E> actionGrabber) {
 		if (actionGrabber == null)
 			return null;
 		for (Tuple t : tuples)
 			if (t.g == actionGrabber)
 				return (Branch<E, ?>) t.b;
-				//return t.branch();//TODO SEEMS to work :p
+				//return t.branch();//SEEMS to work :p
 		return null;
 	}
 
@@ -258,13 +190,37 @@ public class Agent {
 				return branch;
 		return null;
 	}
+	*/
+	
+	public boolean isBranch(Branch<?, ?> actionAgent) {
+		return brnchs.contains(actionAgent);
+	}
+	
+  public boolean add(Branch<?, ?> actionAgent) {
+		// System.out.println(this.name() + " add branch: " + actionAgent.name());
+		if (!brnchs.contains(actionAgent)) {
+			// TODO: priority seems not needed
+			//this.brnchs.add(0, actionAgent);//priority
+			this.brnchs.add(actionAgent);
+			return true;
+		}
+		return false;
+	}
 
-	/*
-	 * public void addBranch(ActionAgent<?,?> a) { if (!brnchs.contains(a)) { this.brnchs.add(0, a); } }
-	 * 
-	 * public void removeBranch(ActionAgent<?,?> a) { if (brnchs.contains(a)) { if (trackedGrabber() ==
-	 * a.trackedGrabber()) trackedGrabber = null; this.brnchs.remove(a); } }
-	 */
+	public boolean remove(Branch<?, ?> actionAgent) {
+		if (brnchs.contains(actionAgent)) {
+		  this.clearGrabbers(actionAgent);
+			this.brnchs.remove(actionAgent);
+			return true;
+		}
+		return false;
+	}
+	
+	public void clearBranches() {
+		for (Branch<?, ?> branch : branches())
+			clearGrabbers(branch);
+		branches().clear();
+	}
 
 	/**
 	 * Returns a detailed description of this Agent as a String.
@@ -304,16 +260,16 @@ public class Agent {
 
 	/**
 	 * If {@link #isTracking()} is enabled and the agent is registered at the {@link #inputHandler()} then queries each
-	 * object in the {@link #pool()} to check if the {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)})
+	 * object in the {@link #grabbers()} to check if the {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)})
 	 * condition is met. The first object meeting the condition will be set as the {@link #inputGrabber()} and returned.
-	 * Note that a null grabber means that no object in the {@link #pool()} met the condition. A {@link #inputGrabber()}
+	 * Note that a null grabber means that no object in the {@link #grabbers()} met the condition. A {@link #inputGrabber()}
 	 * may also be enforced simply with {@link #setDefaultGrabber(Grabber)}.
 	 * <p>
 	 * <b>Note</b> you don't have to call this method since the {@link #inputHandler()} handler does it automatically
 	 * every frame.
 	 * 
 	 * @param event
-	 *          to query the {@link #pool()}
+	 *          to query the {@link #grabbers()}
 	 * @return the new grabber which may be null.
 	 * 
 	 * @see #setDefaultGrabber(Grabber)
@@ -341,6 +297,7 @@ public class Agent {
 		return trackedGrabber();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)
 			return false;

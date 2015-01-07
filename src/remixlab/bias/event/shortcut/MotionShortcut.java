@@ -26,7 +26,7 @@ import remixlab.util.HashCodeBuilder;
  * also defined a shortcut. Empty shortcuts may bind button-less motion interactions (e.g., mouse move without any
  * button pressed).
  */
-public final class ButtonShortcut extends Shortcut implements Copyable {
+public final class MotionShortcut extends Shortcut implements Copyable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -44,7 +44,7 @@ public final class ButtonShortcut extends Shortcut implements Copyable {
 		if (obj.getClass() != getClass())
 			return false;
 
-		ButtonShortcut other = (ButtonShortcut) obj;
+		MotionShortcut other = (MotionShortcut) obj;
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(button, other.button)
@@ -56,8 +56,8 @@ public final class ButtonShortcut extends Shortcut implements Copyable {
 	/**
 	 * Constructs an "empty" shortcut by conveniently calling {@code this(B_NOMODIFIER_MASK, B_NOBUTTON);}
 	 */
-	public ButtonShortcut() {
-		this(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON);
+	public MotionShortcut() {
+		this(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public final class ButtonShortcut extends Shortcut implements Copyable {
 	 * @param b
 	 *          button
 	 */
-	public ButtonShortcut(Integer b) {
+	public MotionShortcut(Integer b) {
 		this(MotionEvent.NOMODIFIER_MASK, b);
 	}
 
@@ -78,19 +78,19 @@ public final class ButtonShortcut extends Shortcut implements Copyable {
 	 * @param b
 	 *          button
 	 */
-	public ButtonShortcut(Integer m, Integer b) {
+	public MotionShortcut(Integer m, Integer b) {
 		super(m);
 		this.button = b;
 	}
 
-	protected ButtonShortcut(ButtonShortcut other) {
+	protected MotionShortcut(MotionShortcut other) {
 		super(other);
 		this.button = new Integer(other.button);
 	}
 
 	@Override
-	public ButtonShortcut get() {
-		return new ButtonShortcut(this);
+	public MotionShortcut get() {
+		return new MotionShortcut(this);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public final class ButtonShortcut extends Shortcut implements Copyable {
 	 */
 	protected String description(Integer b) {
 		String r = BogusEvent.modifiersText(mask);
-		String bn = (b == MotionEvent.NOBUTTON) ? "NO_BUTTON" : b.toString() + "_BUTTON";
+		String bn = (b == MotionEvent.NULL) ? "NO_BUTTON" : b.toString() + "_BUTTON";
 		r += (r.length() > 0) ? "+" + bn : bn;
 		return r;
 	}

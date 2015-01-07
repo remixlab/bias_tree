@@ -333,7 +333,7 @@ public class KeyFrameInterpolator implements Copyable {
 			KeyFrame kf = (KeyFrame) element.get();
 			this.keyFrameList.add(kf);
 			if (kf.frame() instanceof InteractiveFrame)
-				scene.motionAgent().removeFromPool((InteractiveFrame) kf.frame());
+				scene.motionAgent().remove((InteractiveFrame) kf.frame());
 		}
 
 		this.currentFrame0 = keyFrameList.listIterator(otherKFI.currentFrame0.nextIndex());
@@ -676,7 +676,7 @@ public class KeyFrameInterpolator implements Copyable {
 			stopInterpolation();
 		KeyFrame kf = keyFrameList.remove(index);
 		if (kf.frm instanceof InteractiveFrame)
-			scene.motionAgent().removeFromPool((InteractiveFrame) kf.frm);
+			scene.motionAgent().remove((InteractiveFrame) kf.frm);
 		setInterpolationTime(firstTime());
 	}
 
@@ -704,7 +704,7 @@ public class KeyFrameInterpolator implements Copyable {
 	public void removePathFromMotionAgent() {
 		for (int i = 0; i < keyFrameList.size(); ++i)
 			if (keyFrameList.get(i).frame() instanceof InteractiveFrame)
-				scene.motionAgent().removeFromPool((InteractiveFrame) keyFrameList.get(i).frame());
+				scene.motionAgent().remove((InteractiveFrame) keyFrameList.get(i).frame());
 	}
 
 	/**

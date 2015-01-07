@@ -119,7 +119,7 @@ public class ClickEvent extends BogusEvent {
 
 	@Override
 	public ClickShortcut shortcut() {
-		return new ClickShortcut(modifiers(), button(), clickCount());
+		return new ClickShortcut(modifiers(), id(), clickCount());
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class ClickEvent extends BogusEvent {
 	/**
 	 * @return clicked button
 	 */
-	public int button() {
+	public int id() {
 		return button;
 	}
 }

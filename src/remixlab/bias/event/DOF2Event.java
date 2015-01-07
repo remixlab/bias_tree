@@ -219,17 +219,17 @@ public class DOF2Event extends MotionEvent {
 		DOF1Event e1;
 		if (fromX) {
 			if (isRelative()) {
-				pe1 = new DOF1Event(prevX(), modifiers(), button());
-				e1 = new DOF1Event(pe1, x(), modifiers(), button());
+				pe1 = new DOF1Event(prevX(), modifiers(), id());
+				e1 = new DOF1Event(pe1, x(), modifiers(), id());
 			} else {
-				e1 = new DOF1Event(x(), modifiers(), button());
+				e1 = new DOF1Event(x(), modifiers(), id());
 			}
 		} else {
 			if (isRelative()) {
-				pe1 = new DOF1Event(prevY(), modifiers(), button());
-				e1 = new DOF1Event(pe1, y(), modifiers(), button());
+				pe1 = new DOF1Event(prevY(), modifiers(), id());
+				e1 = new DOF1Event(pe1, y(), modifiers(), id());
 			} else {
-				e1 = new DOF1Event(y(), modifiers(), button());
+				e1 = new DOF1Event(y(), modifiers(), id());
 			}
 		}
 		e1.modifiedTimestamp(this.timestamp());

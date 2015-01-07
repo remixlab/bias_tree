@@ -19,7 +19,7 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 		scene = scn;
 		pshape = ps;
 		if (scene.addModel(this))
-			a.addInPool(this, actionAgent);
+			a.add(this, actionAgent);
 		id = ++Scene.modelCount;
 	}
 
@@ -27,7 +27,7 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 		// public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent) {
 		scene = scn;
 		if (scene.addModel(this))
-			a.addInPool(this, actionAgent);
+			a.add(this, actionAgent);
 		id = ++Scene.modelCount;
 	}
 
@@ -123,7 +123,6 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 		return false;
 	}
 
-	@Override
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
