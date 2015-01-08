@@ -49,7 +49,7 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 		name = n;
 		profile = p;
 		parent = pnt;
-		parent.add(this);
+		parent.addBranch(this);
 	}
 
 	public String name() {

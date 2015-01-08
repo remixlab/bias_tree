@@ -41,11 +41,11 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 
 	public boolean addInPool(InteractiveFrame frame) {
-		return add(frame, frameBranch);
+		return addGrabber(frame, frameBranch);
 	}
 
 	public boolean addInPool(InteractiveEyeFrame frame) {
-		return add(frame, eyeBranch);
+		return addGrabber(frame, eyeBranch);
 	}
 
 	public void setXTranslationSensitivity(float s) {

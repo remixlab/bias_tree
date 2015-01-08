@@ -35,7 +35,7 @@ public abstract class GrabberObject implements Grabber {
 	 * @see remixlab.bias.core.AbstractAgent#grabbers()
 	 */
 	public GrabberObject(Agent agent) {
-		agent.add(this);
+		agent.addGrabber(this);
 	}
 
 	/**
@@ -45,7 +45,7 @@ public abstract class GrabberObject implements Grabber {
 	 */
 	public GrabberObject(InputHandler inputHandler) {
 		for (Agent agent : inputHandler.agents())
-			agent.add(this);
+			agent.addGrabber(this);
 	}
 
 	/**

@@ -55,9 +55,9 @@ public class Agent {
 	/**
 	 * Removes the grabber from the {@link #grabbers()}.
 	 * <p>
-	 * See {@link #add(Grabber)} for details. Removing a grabber that is not in {@link #grabbers()} has no effect.
+	 * See {@link #addGrabber(Grabber)} for details. Removing a grabber that is not in {@link #grabbers()} has no effect.
 	 */
-	public boolean remove(Grabber grabber) {
+	public boolean removeGrabber(Grabber grabber) {
 		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
 			Tuple t = it.next();
 			if (t.g == grabber) {
@@ -88,11 +88,11 @@ public class Agent {
 	/**
 	 * Returns true if the grabber is currently in the agents {@link #grabbers()} list.
 	 * <p>
-	 * When set to false using {@link #remove(Grabber)}, the handler no longer
-	 * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} on this grabber. Use {@link #add(Grabber)}
+	 * When set to false using {@link #removeGrabber(Grabber)}, the handler no longer
+	 * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} on this grabber. Use {@link #addGrabber(Grabber)}
 	 * to insert it * back.
 	 */
-	public boolean isGrabber(Grabber grabber) {
+	public boolean hasGrabber(Grabber grabber) {
 		if (grabber == null)
 			return false;
 		return grabbers().contains(grabber);
@@ -101,18 +101,18 @@ public class Agent {
 	/**
 	 * Adds the grabber in the {@link #grabbers()}.
 	 * <p>
-	 * Use {@link #remove(Grabber)} to remove the grabber from the pool, so that it is no longer tested with
+	 * Use {@link #removeGrabber(Grabber)} to remove the grabber from the pool, so that it is no longer tested with
 	 * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} by the handler, and hence can no longer grab the
-	 * agent focus. Use {@link #isGrabber(Grabber)} to know the current state of the grabber.
+	 * agent focus. Use {@link #hasGrabber(Grabber)} to know the current state of the grabber.
 	 */
-	public boolean add(Grabber grabber) {
+	public boolean addGrabber(Grabber grabber) {
 		if (grabber == null)
 			return false;
 		if (grabber instanceof ActionGrabber) {
 			System.out.println("use addInPool(G grabber, K actionAgent) instead");
 			return false;
 		}
-		if (isGrabber(grabber))
+		if (hasGrabber(grabber))
 			return false;
 		tuples.add(new Tuple(grabber));
 		return true;
@@ -164,9 +164,9 @@ public class Agent {
 	}
 
 	public <E extends Enum<E>, K extends Branch<E, ?/* extends Action<E> */>, G extends ActionGrabber<E>> boolean
-			add(G grabber, K actionAgent) {
+			addGrabber(G grabber, K actionAgent) {
 		// Overkill but feels safer ;)
-		if (grabber == null || this.isGrabber(grabber))
+		if (grabber == null || this.hasGrabber(grabber))
 			return false;
 		tuples.add(new Tuple(grabber, actionAgent));
 		return true;
@@ -192,11 +192,11 @@ public class Agent {
 	}
 	*/
 	
-	public boolean isBranch(Branch<?, ?> actionAgent) {
+	public boolean hasBranch(Branch<?, ?> actionAgent) {
 		return brnchs.contains(actionAgent);
 	}
 	
-  public boolean add(Branch<?, ?> actionAgent) {
+  public boolean addBranch(Branch<?, ?> actionAgent) {
 		// System.out.println(this.name() + " add branch: " + actionAgent.name());
 		if (!brnchs.contains(actionAgent)) {
 			// TODO: priority seems not needed
@@ -207,7 +207,7 @@ public class Agent {
 		return false;
 	}
 
-	public boolean remove(Branch<?, ?> actionAgent) {
+	public boolean removeBranch(Branch<?, ?> actionAgent) {
 		if (brnchs.contains(actionAgent)) {
 		  this.clearGrabbers(actionAgent);
 			this.brnchs.remove(actionAgent);

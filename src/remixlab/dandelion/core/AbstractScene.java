@@ -1588,7 +1588,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 			return;
 
 		if (eye() != null)
-			motionAgent().remove(eye().frame());
+			motionAgent().removeGrabber(eye().frame());
 
 		vp.setSceneRadius(radius());
 		vp.setSceneCenter(center());

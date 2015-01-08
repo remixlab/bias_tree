@@ -23,7 +23,7 @@ public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGr
 	 * @see remixlab.bias.core.AbstractAgent#grabbers()
 	 */
 	public ActionGrabberObject(Agent agent, Branch<E, ? extends Action<E>> actionAgent) {
-		agent.add(this, actionAgent);
+		agent.addGrabber(this, actionAgent);
 	}
 
 	public E referenceAction() {

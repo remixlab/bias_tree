@@ -119,7 +119,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
 
-		if (scene.motionAgent().isGrabber(otherFrame))
+		if (scene.motionAgent().hasGrabber(otherFrame))
 			scene.motionAgent().addInPool(this);
 
 		this.setAction(otherFrame.action());
