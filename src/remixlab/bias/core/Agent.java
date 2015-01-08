@@ -77,14 +77,14 @@ public class Agent {
 	public void clearGrabbers() {
 		tuples.clear();
 	}
-	
+
 	public List<Grabber> grabbers() {
 		List<Grabber> grabbers = new ArrayList<Grabber>();
 		for (Tuple t : tuples)
 			grabbers.add(t.g);
 		return grabbers;
 	}
-	
+
 	/**
 	 * Returns true if the grabber is currently in the agents {@link #grabbers()} list.
 	 * <p>
@@ -97,7 +97,7 @@ public class Agent {
 			return false;
 		return grabbers().contains(grabber);
 	}
-	
+
 	/**
 	 * Adds the grabber in the {@link #grabbers()}.
 	 * <p>
@@ -117,7 +117,7 @@ public class Agent {
 		tuples.add(new Tuple(grabber));
 		return true;
 	}
-	
+
 	public <E extends Enum<E>> void clearGrabbers(Branch<E, ?> branch) {
 		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
 			Tuple t = it.next();
@@ -125,7 +125,7 @@ public class Agent {
 				it.remove();
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <E extends Enum<E>> List<ActionGrabber<E>> grabbers(Branch<E, ?> branch) {
 		List<ActionGrabber<E>> list = new ArrayList<ActionGrabber<E>>();
@@ -134,7 +134,7 @@ public class Agent {
 				list.add((ActionGrabber<E>) t.g);
 		return list;
 	}
-	
+
 	/*
 	 * public <E extends Enum<E>, A extends Action<E>> ActionAgent<E, MotionProfile<A>> addBranch(A action, Agent parent,
 	 * String name) { MotionProfile<A> p = new MotionProfile<A>(); ActionAgent<E, MotionProfile<A>> a = new ActionAgent<E,
@@ -142,21 +142,18 @@ public class Agent {
 	 */
 
 	/*
-	public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> MotionBranch<E, MotionProfile<M>, ClickProfile<C>>
-	addBranch(
-			M motionAction, C clickAction, String name) {
-		return addBranch(new MotionProfile<M>(), new ClickProfile<C>(), name);
-	}
-	*/
+	 * public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> MotionBranch<E, MotionProfile<M>,
+	 * ClickProfile<C>> addBranch( M motionAction, C clickAction, String name) { return addBranch(new MotionProfile<M>(),
+	 * new ClickProfile<C>(), name); }
+	 */
 
 	// keep!
 	/*
-	public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> MotionBranch<E, MotionProfile<M>, ClickProfile<C>> addBranch(
-			MotionProfile<M> m, ClickProfile<C> c, String name) {
-		return new MotionBranch<E, MotionProfile<M>, ClickProfile<C>>(m, c, this, name);
-	}
-	*/
-	
+	 * public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> MotionBranch<E, MotionProfile<M>,
+	 * ClickProfile<C>> addBranch( MotionProfile<M> m, ClickProfile<C> c, String name) { return new MotionBranch<E,
+	 * MotionProfile<M>, ClickProfile<C>>(m, c, this, name); }
+	 */
+
 	// end-> */
 
 	public List<Branch<?, ?>> branches() {
@@ -171,36 +168,26 @@ public class Agent {
 		tuples.add(new Tuple(grabber, actionAgent));
 		return true;
 	}
-	
-  //these two are not good enough
-	/*
-	public <E extends Enum<E>> Branch<E, ?> branch(ActionGrabber<E> actionGrabber) {
-		if (actionGrabber == null)
-			return null;
-		for (Tuple t : tuples)
-			if (t.g == actionGrabber)
-				return (Branch<E, ?>) t.b;
-				//return t.branch();//SEEMS to work :p
-		return null;
-	}
 
-	public Branch<?, ?> branch(String name) {
-		for (Branch<?, ?> branch : branches())
-			if (branch.name().equals(name))
-				return branch;
-		return null;
-	}
-	*/
-	
+	// these two are not good enough
+	/*
+	 * public <E extends Enum<E>> Branch<E, ?> branch(ActionGrabber<E> actionGrabber) { if (actionGrabber == null) return
+	 * null; for (Tuple t : tuples) if (t.g == actionGrabber) return (Branch<E, ?>) t.b; //return t.branch();//SEEMS to
+	 * work :p return null; }
+	 * 
+	 * public Branch<?, ?> branch(String name) { for (Branch<?, ?> branch : branches()) if (branch.name().equals(name))
+	 * return branch; return null; }
+	 */
+
 	public boolean hasBranch(Branch<?, ?> actionAgent) {
 		return brnchs.contains(actionAgent);
 	}
-	
-  public boolean addBranch(Branch<?, ?> actionAgent) {
+
+	public boolean addBranch(Branch<?, ?> actionAgent) {
 		// System.out.println(this.name() + " add branch: " + actionAgent.name());
 		if (!brnchs.contains(actionAgent)) {
 			// TODO: priority seems not needed
-			//this.brnchs.add(0, actionAgent);//priority
+			// this.brnchs.add(0, actionAgent);//priority
 			this.brnchs.add(actionAgent);
 			return true;
 		}
@@ -209,13 +196,13 @@ public class Agent {
 
 	public boolean removeBranch(Branch<?, ?> actionAgent) {
 		if (brnchs.contains(actionAgent)) {
-		  this.clearGrabbers(actionAgent);
+			this.clearGrabbers(actionAgent);
 			this.brnchs.remove(actionAgent);
 			return true;
 		}
 		return false;
 	}
-	
+
 	public void clearBranches() {
 		for (Branch<?, ?> branch : branches())
 			clearGrabbers(branch);
@@ -262,8 +249,8 @@ public class Agent {
 	 * If {@link #isTracking()} is enabled and the agent is registered at the {@link #inputHandler()} then queries each
 	 * object in the {@link #grabbers()} to check if the {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)})
 	 * condition is met. The first object meeting the condition will be set as the {@link #inputGrabber()} and returned.
-	 * Note that a null grabber means that no object in the {@link #grabbers()} met the condition. A {@link #inputGrabber()}
-	 * may also be enforced simply with {@link #setDefaultGrabber(Grabber)}.
+	 * Note that a null grabber means that no object in the {@link #grabbers()} met the condition. A
+	 * {@link #inputGrabber()} may also be enforced simply with {@link #setDefaultGrabber(Grabber)}.
 	 * <p>
 	 * <b>Note</b> you don't have to call this method since the {@link #inputHandler()} handler does it automatically
 	 * every frame.
@@ -329,8 +316,8 @@ public class Agent {
 	}
 
 	public boolean isInputGrabber(Grabber g) {
-		//TODO discard grabsInput from Grabber
-		//return g.grabsInput(this);
+		// TODO discard grabsInput from Grabber
+		// return g.grabsInput(this);
 		return inputGrabber() == g;
 	}
 

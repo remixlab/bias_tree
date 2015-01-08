@@ -88,10 +88,9 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 	}
 
 	/**
-	 * The {@link #profile()} is used to parse the
-	 * event into an user-defined action which is then enqueued as an event-grabber tuple (
-	 * {@link #enqueueEventTuple(EventGrabberTuple)}), used to instruct the {@link #inputGrabber()} the user-defined
-	 * action to perform.
+	 * The {@link #profile()} is used to parse the event into an user-defined action which is then enqueued as an
+	 * event-grabber tuple ( {@link #enqueueEventTuple(EventGrabberTuple)}), used to instruct the {@link #inputGrabber()}
+	 * the user-defined action to perform.
 	 * <p>
 	 * <b>Note 1:</b> {@link #isInputGrabberAlien()}s always make the tuple to be enqueued even if the action is null (see
 	 * {@link #enqueueEventTuple(EventGrabberTuple, boolean)}).

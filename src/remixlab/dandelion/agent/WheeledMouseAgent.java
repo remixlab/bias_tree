@@ -447,19 +447,19 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 		frameBranch().resetAllProfiles();
 		eyeBranch().resetAllProfiles();
 		eyeProfile().setBinding(DOF2Action.ROTATE);
-		eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NULL,
+		eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOID,
 				scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
-		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NULL, DOF2Action.TRANSLATE);
-		eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NULL, DOF2Action.ZOOM_ON_REGION);
+		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOID, DOF2Action.TRANSLATE);
+		eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOID, DOF2Action.ZOOM_ON_REGION);
 		setButtonBinding(Target.EYE, center, DOF2Action.SCREEN_TRANSLATE);
 		setButtonBinding(Target.EYE, right, DOF2Action.SCREEN_ROTATE);
-		eyeProfile().setBinding(MotionEvent.ALT, MotionEvent.NULL, null);
+		eyeProfile().setBinding(MotionEvent.ALT, MotionEvent.NOID, null);
 		frameProfile().setBinding(DOF2Action.ROTATE);
-		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NULL, DOF2Action.SCALE);
-		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NULL, DOF2Action.TRANSLATE);
+		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOID, DOF2Action.SCALE);
+		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOID, DOF2Action.TRANSLATE);
 		setButtonBinding(Target.FRAME, center, DOF2Action.SCREEN_TRANSLATE);
 		setButtonBinding(Target.FRAME, right, DOF2Action.SCREEN_ROTATE);
-		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NULL, null);
+		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOID, null);
 		setCommonBindings();
 	}
 
@@ -498,7 +498,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 		eyeProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.MOVE_FORWARD);
 		eyeProfile().setBinding(buttonModifiersFix(right), right, DOF2Action.MOVE_BACKWARD);
 		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, left), left, DOF2Action.ROTATE_Z);
-		eyeWheelProfile().setBinding(MotionEvent.CTRL, MotionEvent.NULL, DOF1Action.ROTATE_Z);
+		eyeWheelProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOID, DOF1Action.ROTATE_Z);
 		if (scene.is3D()) {
 			eyeProfile().setBinding(buttonModifiersFix(center), center, DOF2Action.LOOK_AROUND);
 			eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, center), center, DOF2Action.DRIVE);
@@ -552,19 +552,19 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	public void setAsFirstPersonTrackpad() {
 		frameBranch().resetAllProfiles();
 		eyeBranch().resetAllProfiles();
-		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NULL, DOF2Action.MOVE_FORWARD);
-		eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NULL, DOF2Action.MOVE_BACKWARD);
-		eyeProfile().setBinding(MotionEvent.ALT, MotionEvent.NULL, null);
+		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOID, DOF2Action.MOVE_FORWARD);
+		eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOID, DOF2Action.MOVE_BACKWARD);
+		eyeProfile().setBinding(MotionEvent.ALT, MotionEvent.NOID, null);
 		setButtonBinding(Target.EYE, right, DOF2Action.ROTATE_Z);
 		eyeWheelProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), DOF1Action.ROTATE_Z);
 		if (scene.is3D()) {
 			eyeProfile().setBinding(DOF2Action.LOOK_AROUND);
-			eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NULL, DOF2Action.DRIVE);
+			eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOID, DOF2Action.DRIVE);
 		}
 		frameProfile().setBinding(DOF2Action.ROTATE);
-		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NULL, DOF2Action.SCALE);
-		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NULL, DOF2Action.TRANSLATE);
-		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NULL, null);
+		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOID, DOF2Action.SCALE);
+		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOID, DOF2Action.TRANSLATE);
+		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOID, null);
 		setButtonBinding(Target.FRAME, center, DOF2Action.SCREEN_TRANSLATE);
 		setButtonBinding(Target.FRAME, right, DOF2Action.SCREEN_ROTATE);
 		setCommonBindings();
@@ -633,13 +633,13 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	public void setAsThirdPersonTrackpad() {
 		frameBranch().resetAllProfiles();
 		eyeBranch().resetAllProfiles();
-		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NULL, DOF2Action.MOVE_FORWARD);
-		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NULL, DOF2Action.MOVE_BACKWARD);
+		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NOID, DOF2Action.MOVE_FORWARD);
+		frameProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NOID, DOF2Action.MOVE_BACKWARD);
 		frameWheelProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), DOF1Action.ROTATE_Z);
-		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NULL, null);
+		frameProfile().setBinding(MotionEvent.ALT, MotionEvent.NOID, null);
 		if (scene.is3D()) {
 			frameProfile().setBinding(DOF2Action.LOOK_AROUND);
-			frameProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NULL, DOF2Action.DRIVE);
+			frameProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NOID, DOF2Action.DRIVE);
 		}
 		setCommonBindings();
 	}
@@ -659,9 +659,9 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 		eyeClickProfile().setBinding(buttonModifiersFix(right), right, 2, ClickAction.CENTER_FRAME);
 		frameClickProfile().setBinding(buttonModifiersFix(left), left, 2, ClickAction.ALIGN_FRAME);
 		frameClickProfile().setBinding(buttonModifiersFix(right), right, 2, ClickAction.CENTER_FRAME);
-		eyeWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL,
+		eyeWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID,
 				scene.is3D() ? DOF1Action.ZOOM : DOF1Action.SCALE);
-		frameWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL, DOF1Action.SCALE);
+		frameWheelProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID, DOF1Action.SCALE);
 	}
 
 	// WRAPPERS
@@ -671,7 +671,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 */
 	public void setBinding(Target target, DOF2Action action) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		profile.setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL, action);
+		profile.setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID, action);
 	}
 
 	/**
@@ -679,7 +679,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 */
 	public void setBinding(Target target, int mask, DOF2Action action) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		profile.setBinding(mask, MotionEvent.NULL, action);
+		profile.setBinding(mask, MotionEvent.NOID, action);
 	}
 
 	/**
@@ -687,7 +687,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 */
 	public void removeBinding(Target target) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		profile.removeBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL);
+		profile.removeBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID);
 	}
 
 	/**
@@ -695,7 +695,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 */
 	public void removeBinding(Target target, int mask) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		profile.removeBinding(mask, MotionEvent.NULL);
+		profile.removeBinding(mask, MotionEvent.NOID);
 	}
 
 	/**
@@ -703,7 +703,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 */
 	public boolean hasBinding(Target target) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		return profile.hasBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL);
+		return profile.hasBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID);
 	}
 
 	/**
@@ -711,7 +711,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 */
 	public boolean hasBinding(Target target, int mask) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		return profile.hasBinding(mask, MotionEvent.NULL);
+		return profile.hasBinding(mask, MotionEvent.NOID);
 	}
 
 	/**
@@ -720,7 +720,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 */
 	public DOF2Action action(Target target) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		return (DOF2Action) profile.action(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL);
+		return (DOF2Action) profile.action(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID);
 	}
 
 	/**
@@ -729,7 +729,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 */
 	public DOF2Action action(Target target, int mask) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		return (DOF2Action) profile.action(mask, MotionEvent.NULL);
+		return (DOF2Action) profile.action(mask, MotionEvent.NOID);
 	}
 
 	/**

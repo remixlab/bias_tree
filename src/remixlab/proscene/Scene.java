@@ -1758,8 +1758,8 @@ public class Scene extends AbstractScene implements PConstants {
 				// frames
 				if (!(iF.isInEyePath() ^ keyFrame)) {
 					Vec center = projectedCoordinatesOf(iF.position());
-					//if (mg.grabsInput(motionAgent())) {
-					if (motionAgent().isInputGrabber(mg) ) {
+					// if (mg.grabsInput(motionAgent())) {
+					if (motionAgent().isInputGrabber(mg)) {
 						pg().pushStyle();
 						pg().strokeWeight(2 * pg().strokeWeight);
 						pg().colorMode(HSB, 255);

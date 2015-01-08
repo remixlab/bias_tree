@@ -26,7 +26,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Returns true if the given binding binds an action.
 	 */
 	public boolean hasBinding() {
-		return hasBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL);
+		return hasBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID);
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Convenience function that simply calls {@code setWheelShortcut(0, action)}.
 	 */
 	public void setBinding(A action) {
-		setBinding(MotionEvent.NULL, action);
+		setBinding(MotionEvent.NOID, action);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Convenience function that simply calls {@code removeWheelShortcut(0)}.
 	 */
 	public void removeBinding() {
-		removeBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL);
+		removeBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Returns the action associated to the given binding.
 	 */
 	public Action<?> action() {
-		return action(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL);
+		return action(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID);
 	}
 
 	/**

@@ -57,7 +57,7 @@ public class MouseAgent extends WheeledMouseAgent {
 	public void mouseEvent(processing.event.MouseEvent e) {
 		if (e.getAction() == processing.event.MouseEvent.MOVE) {
 			move(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
-					e.getModifiers(), MotionEvent.NULL));
+					e.getModifiers(), MotionEvent.NOID));
 		}
 		if (e.getAction() == processing.event.MouseEvent.PRESS) {
 			press(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(),
@@ -72,7 +72,7 @@ public class MouseAgent extends WheeledMouseAgent {
 					- scene.originCorner().y(), e.getModifiers(), e.getButton()));
 		}
 		if (e.getAction() == processing.event.MouseEvent.WHEEL) {
-			wheel(new DOF1Event(e.getCount(), e.getModifiers(), MotionEvent.NULL));
+			wheel(new DOF1Event(e.getCount(), e.getModifiers(), MotionEvent.NOID));
 		}
 		if (e.getAction() == processing.event.MouseEvent.CLICK) {
 			click(new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),

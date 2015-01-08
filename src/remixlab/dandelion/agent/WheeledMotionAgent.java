@@ -25,26 +25,20 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 		eyeBranch = new WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
 				new MotionProfile<DOF1Action>(),
 				new MotionProfile<A>(),
-				new ClickProfile<ClickAction>(), this, (n + "_eye_mouse_agent"));
+				new ClickProfile<ClickAction>(), this, (n + "_eye_mouse_branch"));
 		frameBranch = new WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
 				new MotionProfile<DOF1Action>(),
 				new MotionProfile<A>(),
-				new ClickProfile<ClickAction>(), this, (n + "_frame_mouse_agent"));
+				new ClickProfile<ClickAction>(), this, (n + "_frame_mouse_branch"));
 		setPickingMode(PickingMode.MOVE);
 	}
-
-	/*
-	 * public <W extends MotionProfile<?>, M extends MotionProfile<?>, C extends ClickProfile<?>> void addBranch(W w, M p,
-	 * C c, String n) { ActionWheeledMotionAgent branch = new ActionWheeledMotionAgent(w, p, c, this, nm);
-	 * //System.out.println("ActionInputMotionAgent add branch: " + actionAgent.name()); if (!brnchs.contains(branch)) {
-	 * this.brnchs.add(0, branch); } }
-	 */
 
 	public boolean addInPool(InteractiveFrame frame) {
 		return addGrabber(frame, frameBranch);
 	}
 
 	public boolean addInPool(InteractiveEyeFrame frame) {
+		this.clearGrabbers(eyeBranch);
 		return addGrabber(frame, eyeBranch);
 	}
 
@@ -173,7 +167,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public void setWheelBinding(Target target, int mask, DOF1Action action) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		profile.setBinding(mask, MotionEvent.NULL, action);
+		profile.setBinding(mask, MotionEvent.NOID, action);
 	}
 
 	/**
@@ -189,7 +183,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public void removeWheelBinding(Target target, int mask) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		profile.removeBinding(mask, MotionEvent.NULL);
+		profile.removeBinding(mask, MotionEvent.NOID);
 	}
 
 	/**
@@ -205,7 +199,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public boolean hasWheelBinding(Target target, int mask) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return profile.hasBinding(mask, MotionEvent.NULL);
+		return profile.hasBinding(mask, MotionEvent.NOID);
 	}
 
 	/**
@@ -230,7 +224,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public DOF1Action wheelAction(Target target, int mask, DOF1Action action) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return (DOF1Action) profile.action(mask, MotionEvent.NULL);
+		return (DOF1Action) profile.action(mask, MotionEvent.NOID);
 	}
 
 	/**
@@ -239,7 +233,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public DOF1Action wheelAction(Target target, DOF1Action action) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return (DOF1Action) profile.action(MotionEvent.NULL);
+		return (DOF1Action) profile.action(MotionEvent.NOID);
 	}
 
 	// mouse click

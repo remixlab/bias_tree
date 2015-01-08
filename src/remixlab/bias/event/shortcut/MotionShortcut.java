@@ -31,7 +31,7 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
 				appendSuper(super.hashCode()).
-				append(button).
+				append(id).
 				toHashCode();
 	}
 
@@ -47,17 +47,17 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 		MotionShortcut other = (MotionShortcut) obj;
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
-				.append(button, other.button)
+				.append(id, other.id)
 				.isEquals();
 	}
 
-	protected final Integer	button;
+	protected final Integer	id;
 
 	/**
 	 * Constructs an "empty" shortcut by conveniently calling {@code this(B_NOMODIFIER_MASK, B_NOBUTTON);}
 	 */
 	public MotionShortcut() {
-		this(MotionEvent.NOMODIFIER_MASK, MotionEvent.NULL);
+		this(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID);
 	}
 
 	/**
@@ -80,12 +80,12 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 */
 	public MotionShortcut(Integer m, Integer b) {
 		super(m);
-		this.button = b;
+		this.id = b;
 	}
 
 	protected MotionShortcut(MotionShortcut other) {
 		super(other);
-		this.button = new Integer(other.button);
+		this.id = new Integer(other.id);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 * @return description
 	 */
 	public String description() {
-		return description(button);
+		return description(id);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 */
 	protected String description(Integer b) {
 		String r = BogusEvent.modifiersText(mask);
-		String bn = (b == MotionEvent.NULL) ? "NO_BUTTON" : b.toString() + "_BUTTON";
+		String bn = (b == MotionEvent.NOID) ? "NO_BUTTON" : b.toString() + "_BUTTON";
 		r += (r.length() > 0) ? "+" + bn : bn;
 		return r;
 	}
