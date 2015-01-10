@@ -472,6 +472,13 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
+	 * Removes all shortcut bindings.
+	 */
+	public void removeKeyboardShortcuts() {
+		keyboardAgent().removeShortcuts();
+	}
+
+	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasKeyboardShortcut(Character key) {
@@ -983,6 +990,8 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #removeModel(Model)
 	 */
 	public boolean addModel(Model model) {
+		if (model == null)
+			return false;
 		if (models().contains(model))
 			return false;
 		if (models().size() == 0)
@@ -995,6 +1004,13 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
+	 * Returns true if scene has {@code model} and false otherwise.
+	 */
+	public boolean hasModel(Model model) {
+		return models().contains(model);
+	}
+
+	/**
 	 * Remove the {@code model} from the scene.
 	 * 
 	 * @see #models()
@@ -1004,6 +1020,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 */
 	public boolean removeModel(Model model) {
 		return models().remove(model);
+	}
+
+	public void removeModels() {
+		models().clear();
 	}
 
 	/**

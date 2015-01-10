@@ -27,6 +27,12 @@ public class KeyboardAgent extends Agent {
 		setDefaultGrabber(scene);
 		setDefaultShortcuts();
 	}
+	
+	@Override
+	public void resetDefaultGrabber() {
+		addGrabber(scene, keyBranch);
+		setDefaultGrabber(scene);
+	}
 
 	/*
 	 * public <K extends KeyboardProfile<?>> void addBranch(K k, String n) { ActionKeyboardAgent<K> branch = new
@@ -61,7 +67,7 @@ public class KeyboardAgent extends Agent {
 	 * {@code 'S' -> KeyboardAction.SHOW_ALL}<br>
 	 */
 	public void setDefaultShortcuts() {
-		keyboardProfile().removeAllBindings();
+		keyboardProfile().removeBindings();
 		keyboardProfile().setBinding('a', KeyboardAction.TOGGLE_AXES_VISUAL_HINT);
 		keyboardProfile().setBinding('f', KeyboardAction.TOGGLE_PICKING_VISUAL_HINT);
 		keyboardProfile().setBinding('g', KeyboardAction.TOGGLE_GRID_VISUAL_HINT);
@@ -81,13 +87,13 @@ public class KeyboardAgent extends Agent {
 	public void setKeyCodeToPlayPath(int vkey, int path) {
 		switch (path) {
 		case 1:
-			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_1);
+			keyboardProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_1);
 			break;
 		case 2:
-			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_2);
+			keyboardProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_2);
 			break;
 		case 3:
-			keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_3);
+			keyboardProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, vkey, KeyboardAction.PLAY_PATH_3);
 			break;
 		default:
 			break;
@@ -120,6 +126,13 @@ public class KeyboardAgent extends Agent {
 	 */
 	public void removeShortcut(int mask, int vKey) {
 		keyboardProfile().removeBinding(mask, vKey);
+	}
+
+	/**
+	 * Removes all shortcut bindings.
+	 */
+	public void removeShortcuts() {
+		keyboardProfile().removeBindings();
 	}
 
 	/**

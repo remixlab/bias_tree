@@ -21,14 +21,6 @@ import remixlab.bias.core.*;
  *          The {@link remixlab.bias.branch.profile.KeyboardProfile} to parameterize this Agent with.
  */
 public class KeyboardBranch<E extends Enum<E>, K extends KeyboardProfile<? extends Action<E>>> extends Branch<E, K> {
-	/**
-	 * Simply calls
-	 * {@link remixlab.bias.branch.Branch#ActionAgent(remixlab.bias.branch.profile.Profile, InputHandler, String)} on the
-	 * given parameters.
-	 */
-	/*
-	 * public ActionKeyboardAgent(K k, InputHandler scn, String n) { super(k, scn, n); }
-	 */
 
 	public KeyboardBranch(K k, Agent pnt, String n) {
 		super(k, pnt, n);
@@ -46,12 +38,5 @@ public class KeyboardBranch<E extends Enum<E>, K extends KeyboardProfile<? exten
 	 */
 	public void setKeyboardProfile(K kprofile) {
 		setProfile(profile);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code clickProfile.removeAllBindings()}.
-	 */
-	public void resetKeyboardProfile() {
-		profile.removeAllBindings();
 	}
 }

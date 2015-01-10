@@ -1300,7 +1300,7 @@ public abstract class Eye implements Copyable {
 				System.out.println("Path " + key + " stopped");
 			} else {
 				if (anyInterpolationStarted())
-					stopAllInterpolations();
+					stopInterpolations();
 				kfi.get(key).startInterpolation();
 				if (kfi.get(key).numberOfKeyFrames() > 1)
 					System.out.println("Path " + key + " started");
@@ -1358,7 +1358,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Stops all interpolations currently being performed associated with this Eye.
 	 */
-	public void stopAllInterpolations() {
+	public void stopInterpolations() {
 		Iterator<Integer> itrtr = kfi.keySet().iterator();
 		while (itrtr.hasNext()) {
 			Integer key = itrtr.next();
@@ -1616,7 +1616,7 @@ public abstract class Eye implements Copyable {
 	 */
 	public void interpolateToZoomOnRegion(Rect rectangle) {
 		if (anyInterpolationStarted())
-			stopAllInterpolations();
+			stopInterpolations();
 
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
@@ -1646,7 +1646,7 @@ public abstract class Eye implements Copyable {
 	 */
 	public void interpolateToFitScene() {
 		if (anyInterpolationStarted())
-			stopAllInterpolations();
+			stopInterpolations();
 
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
@@ -1687,7 +1687,7 @@ public abstract class Eye implements Copyable {
 		// if (interpolationKfi.interpolationIsStarted())
 		// interpolationKfi.stopInterpolation();
 		if (anyInterpolationStarted())
-			stopAllInterpolations();
+			stopInterpolations();
 
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));

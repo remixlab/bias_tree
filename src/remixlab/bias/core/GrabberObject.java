@@ -19,8 +19,7 @@ import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.core.AbstractScene;
 
 /**
- * Default implementation of the Grabber interface which eases implementation by simply overriding
- * {@link #isInputGrabber(AbstractAgent)}.
+ * Default implementation of the Grabber interface which eases implementation.
  */
 public abstract class GrabberObject implements Grabber {
 	/**
@@ -32,7 +31,7 @@ public abstract class GrabberObject implements Grabber {
 	/**
 	 * Constructs and adds this grabber to the agent pool.
 	 * 
-	 * @see remixlab.bias.core.AbstractAgent#grabbers()
+	 * @see remixlab.bias.core.Agent#grabbers()
 	 */
 	public GrabberObject(Agent agent) {
 		agent.addGrabber(this);
@@ -49,8 +48,8 @@ public abstract class GrabberObject implements Grabber {
 	}
 
 	/**
-	 * Check if this object is the {@link remixlab.bias.core.AbstractAgent#inputGrabber()}. Returns {@code true} if this
-	 * object grabs the agent and {@code false} otherwise.
+	 * Check if this object is the {@link remixlab.bias.core.Agent#inputGrabber()}. Returns {@code true} if this object
+	 * grabs the agent and {@code false} otherwise.
 	 */
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;

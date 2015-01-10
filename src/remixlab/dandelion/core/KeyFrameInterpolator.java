@@ -716,7 +716,7 @@ public class KeyFrameInterpolator implements Copyable {
 	public void addPathToMotionAgent() {
 		for (int i = 0; i < keyFrameList.size(); ++i)
 			if (keyFrameList.get(i).frame() instanceof InteractiveFrame)
-				scene.motionAgent().addInPool((InteractiveFrame) keyFrameList.get(i).frame());
+				scene.motionAgent().addGrabber((InteractiveFrame) keyFrameList.get(i).frame());
 	}
 
 	protected void updateModifiedFrameValues() {

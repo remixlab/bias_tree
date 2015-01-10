@@ -14,14 +14,13 @@ import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
 
 /**
- * An ActionAgent is just an {@link remixlab.bias.core.AbstractAgent} holding some
- * {@link remixlab.bias.branch.profile.Profile} s. The Agent uses the {@link remixlab.bias.event.shortcut.Shortcut} ->
+ * A branch holds some {@link remixlab.bias.branch.profile.Profile}s relating the same reference action set (defined by
+ * the enum parameter type). The branch uses the {@link remixlab.bias.event.shortcut.Shortcut} ->
  * {@link remixlab.bias.core.Action} mappings defined by each of its Profiles to parse the
- * {@link remixlab.bias.core.BogusEvent} into an user-defined {@link remixlab.bias.core.Action} (see
- * {@link #handle(BogusEvent)}).
+ * {@link remixlab.bias.core.BogusEvent} into an user-defined {@link remixlab.bias.core.Action}.
  * <p>
  * The default implementation here holds only a single {@link remixlab.bias.branch.profile.Profile} (see
- * {@link #profile()}) attribute (note that we use the type of the Profile to parameterize the ActionAgent). Different
+ * {@link #profile()}) attribute (note that we use the type of the Profile to parameterize the Branch). Different
  * profile groups are provided by the {@link remixlab.bias.branch.MotionBranch}, the
  * {@link remixlab.bias.branch.WheeledMotionBranch} and the {@link remixlab.bias.branch.KeyboardBranch} specializations,
  * which roughly represent an HIDevice (like a kinect), a wheeled HIDevice (like a mouse) and a generic keyboard,
@@ -29,13 +28,14 @@ import remixlab.bias.core.*;
  * <p>
  * Third-parties implementations should "simply":
  * <ul>
- * <li>Derive from the ActionAgent above that best fits their needs.</li>
- * <li>Supply a routine to reduce application-specific input data into BogusEvents (given them their name).</li>
- * <li>Properly call {@link #updateTrackedGrabber(BogusEvent)} and {@link #handle(BogusEvent)} on them.</li>
- * </ul>
- * The <b>remixlab.proscene.Scene.ProsceneMouse</b> and <b>remixlab.proscene.Scene.ProsceneKeyboard</b> classes provide
- * good example implementations. Note that the ActionAgent methods defined in this package (bias) should rarely be in
- * need to be overridden, not even {@link #handle(BogusEvent)}.
+ * <li>Derive from the Branch above that best fits their needs and add it into an agent (
+ * {@link remixlab.bias.core.Agent#appendBranch(Branch)}).</li>
+ * <li>Configure its profiles.
+ * <li>Add some grabbers into the branch ({@link remixlab.bias.core.Agent#addGrabber(ActionGrabber, Branch)}).</li>
+ * </ul>.
+ * 
+ * @param <E>
+ *          Reference action set used to parameterized the Agent.
  * 
  * @param <P>
  *          {@link remixlab.bias.branch.profile.Profile} to parameterize the Agent with.
@@ -49,7 +49,7 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 		name = n;
 		profile = p;
 		parent = pnt;
-		parent.addBranch(this);
+		parent.appendBranch(this);
 	}
 
 	public String name() {
@@ -73,6 +73,8 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 	 * @param p
 	 */
 	public void setProfile(P p) {
+		if (p == null)
+			return;
 		profile = p;
 	}
 
@@ -88,16 +90,8 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 	}
 
 	/**
-	 * The {@link #profile()} is used to parse the event into an user-defined action which is then enqueued as an
-	 * event-grabber tuple ( {@link #enqueueEventTuple(EventGrabberTuple)}), used to instruct the {@link #inputGrabber()}
-	 * the user-defined action to perform.
-	 * <p>
-	 * <b>Note 1:</b> {@link #isInputGrabberAlien()}s always make the tuple to be enqueued even if the action is null (see
-	 * {@link #enqueueEventTuple(EventGrabberTuple, boolean)}).
-	 * <p>
-	 * <b>Note 2:</b> This method should be overridden only in the (rare) case the ActionAgent should deal with custom
-	 * BogusEvents defined by the third-party, i.e., bogus events different than those declared in the
-	 * {@code remixlab.bias.event} package.
+	 * The {@link #profile()} is used to parse the event into an user-defined action which is then set into the grabber
+	 * (see {@link remixlab.bias.core.ActionGrabber#setAction(Action)}) and returned.
 	 */
 	public Action<E> handle(ActionGrabber<E> grabber, BogusEvent event) {
 		if (grabber == null || event == null)
@@ -107,21 +101,5 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 			grabber.setAction(action);
 		}
 		return action;
-	}
-
-	/**
-	 * Convenience function that simply calls {@code resetProfile()}.
-	 * 
-	 * @see #resetProfile()
-	 */
-	public void resetAllProfiles() {
-		resetProfile();
-	}
-
-	/**
-	 * Convenience function that simply calls {@code profile.removeAllBindings()}.
-	 */
-	public void resetProfile() {
-		profile.removeAllBindings();
 	}
 }

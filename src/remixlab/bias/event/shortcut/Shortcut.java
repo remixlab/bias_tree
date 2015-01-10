@@ -59,7 +59,7 @@ public class Shortcut implements Copyable {
 	 * B_NOMODIFIER_MASK.
 	 */
 	public Shortcut() {
-		mask = BogusEvent.NOMODIFIER_MASK;
+		mask = BogusEvent.NO_MODIFIER_MASK;
 	}
 
 	protected Shortcut(Shortcut other) {

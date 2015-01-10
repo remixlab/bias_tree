@@ -33,22 +33,18 @@ public class MotionBranch<E extends Enum<E>, M extends MotionProfile<? extends A
 	protected float[]	sens;
 
 	/**
+	 * 
 	 * @param p
 	 *          {@link remixlab.bias.branch.profile.MotionProfile} instance
 	 * @param c
 	 *          {@link remixlab.bias.branch.profile.ClickProfile} instance
-	 * @param tHandler
-	 *          {@link remixlab.bias.core.InputHandler} to register this Agent to
+	 * @param a
+	 *          {@link remixlab.bias.core.Agent} instance
 	 * @param n
-	 *          Agent name
+	 *          the branch name
 	 */
-	/*
-	 * public ActionMotionAgent(M p, C c, InputHandler tHandler, String n) { super(p, tHandler, n); clickProfile = c; sens
-	 * = new float[] { 1f, 1f, 1f, 1f, 1f, 1f }; }
-	 */
-
-	public MotionBranch(M p, C c, Agent pnt, String n) {
-		super(p, pnt, n);
+	public MotionBranch(M p, C c, Agent a, String n) {
+		super(p, a, n);
 		clickProfile = c;
 		sens = new float[] { 1f, 1f, 1f, 1f, 1f, 1f };
 	}
@@ -79,26 +75,6 @@ public class MotionBranch<E extends Enum<E>, M extends MotionProfile<? extends A
 	 */
 	public void setClickProfile(C profile) {
 		clickProfile = profile;
-	}
-
-	/**
-	 * Convenience function that simply calls {@code clickProfile.removeAllBindings()}.
-	 */
-	public void resetClickProfile() {
-		clickProfile.removeAllBindings();
-	}
-
-	@Override
-	public void resetAllProfiles() {
-		resetProfile();
-		resetClickProfile();
-	}
-
-	/**
-	 * Alias for {@link #resetProfile()}
-	 */
-	public void resetMotionProfile() {
-		resetProfile();
 	}
 
 	/**

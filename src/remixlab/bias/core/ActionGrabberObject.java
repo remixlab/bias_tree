@@ -20,7 +20,7 @@ public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGr
 	/**
 	 * Constructs and adds this grabber to the agent pool.
 	 * 
-	 * @see remixlab.bias.core.AbstractAgent#grabbers()
+	 * @see remixlab.bias.core.Agent#grabbers()
 	 */
 	public ActionGrabberObject(Agent agent, Branch<E, ? extends Action<E>> actionAgent) {
 		agent.addGrabber(this, actionAgent);
@@ -41,8 +41,8 @@ public abstract class ActionGrabberObject<E extends Enum<E>> implements ActionGr
 	}
 
 	/**
-	 * Check if this object is the {@link remixlab.bias.core.AbstractAgent#inputGrabber()}. Returns {@code true} if this
-	 * object grabs the agent and {@code false} otherwise.
+	 * Check if this object is the {@link remixlab.bias.core.Agent#inputGrabber()}. Returns {@code true} if this object
+	 * grabs the agent and {@code false} otherwise.
 	 */
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;

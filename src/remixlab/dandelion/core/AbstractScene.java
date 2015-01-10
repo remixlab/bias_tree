@@ -33,10 +33,10 @@ import remixlab.fpstiming.*;
  * {@link remixlab.dandelion.core.Eye} class.</li>
  * <li>A {@link #timingHandler()} which control (single-threaded) timing operations. For details please refer to the
  * {@link remixlab.fpstiming.TimingHandler} class.</li>
- * <li>An {@link #inputHandler()} which handles all user input through {@link remixlab.bias.core.AbstractAgent}s (for
- * details please refer to the {@link remixlab.bias.core.InputHandler} class). The {@link #inputHandler()} holds a
- * (default) {@link #motionAgent()} and a (default) {@link #keyboardAgent()} which should be instantiated by derived
- * classes at construction time.</li>
+ * <li>An {@link #inputHandler()} which handles all user input through {@link remixlab.bias.core.Agent}s (for details
+ * please refer to the {@link remixlab.bias.core.InputHandler} class). The {@link #inputHandler()} holds a (default)
+ * {@link #motionAgent()} and a (default) {@link #keyboardAgent()} which should be instantiated by derived classes at
+ * construction time.</li>
  * <li>A {@link #matrixHelper()} which handles matrix operations either through the
  * {@link remixlab.dandelion.core.MatrixStackHelper} or through a third party matrix stack (like it's done with
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>
@@ -110,7 +110,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * <li>Call {@link #setEye(Eye)} to set the {@link #eye()}, once it's known if the Scene {@link #is2D()} or
 	 * {@link #is3D()}.</li>
 	 * <li>Instantiate the {@link #motionAgent()} and the {@link #keyboardAgent()} and enable them (register them at the
-	 * {@link #inputHandler()}) and possibly some other {@link remixlab.bias.core.AbstractAgent}s as well and .</li>
+	 * {@link #inputHandler()}) and possibly some other {@link remixlab.bias.core.Agent}s as well and .</li>
 	 * <li>Define whether or not the Scene {@link #isOffscreen()}.</li>
 	 * <li>Call {@link #init()} at the end of the constructor.</li>
 	 * </ol>
@@ -1542,7 +1542,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 
 		// perform small animation ;)
 		if (eye().anyInterpolationStarted())
-			eye().stopAllInterpolations();
+			eye().stopInterpolations();
 		// eye().interpolateTo(avatar().eyeFrame());//works only when eyeFrame scaling = magnitude
 		Frame eyeFrameCopy = avatar().eyeFrame().get();
 		eyeFrameCopy.setMagnitude(avatar().eyeFrame().scaling());
@@ -1597,7 +1597,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 
 		eye = vp;
 
-		motionAgent().addInPool(eye.frame());
+		motionAgent().addGrabber(eye.frame());
 		motionAgent().setDefaultGrabber(eye.frame());
 
 		showAll();

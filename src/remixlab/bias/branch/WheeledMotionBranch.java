@@ -40,18 +40,13 @@ public class WheeledMotionBranch<E extends Enum<E>, W extends MotionProfile<? ex
 	 *          {@link remixlab.bias.branch.profile.MotionProfile} second instance
 	 * @param c
 	 *          {@link remixlab.bias.branch.profile.ClickProfile} instance
-	 * @param tHandler
-	 *          {@link remixlab.bias.core.InputHandler} to register this Agent to
+	 * @param a
+	 *          {@link remixlab.bias.core.Agent} instance
 	 * @param n
 	 *          Agent name
 	 */
-	/*
-	 * public ActionWheeledMotionAgent(W w, M p, C c, InputHandler tHandler, String n) { super(p, c, tHandler, n);
-	 * wheelProfile = w; }
-	 */
-
-	public WheeledMotionBranch(W w, M p, C c, Agent parent, String n) {
-		super(p, c, parent, n);
+	public WheeledMotionBranch(W w, M p, C c, Agent a, String n) {
+		super(p, c, a, n);
 		wheelProfile = w;
 	}
 
@@ -67,20 +62,6 @@ public class WheeledMotionBranch<E extends Enum<E>, W extends MotionProfile<? ex
 	 */
 	public void setWheelProfile(W profile) {
 		wheelProfile = profile;
-	}
-
-	/**
-	 * Convenience function that simply calls {@code clickProfile.removeAllBindings()}.
-	 */
-	public void resetWheelProfile() {
-		wheelProfile.removeAllBindings();
-	}
-
-	@Override
-	public void resetAllProfiles() {
-		resetProfile();
-		resetClickProfile();
-		resetWheelProfile();
 	}
 
 	@Override
@@ -119,59 +100,4 @@ public class WheeledMotionBranch<E extends Enum<E>, W extends MotionProfile<? ex
 		}
 		return action;
 	}
-
-	/*
-	 * @Override public boolean handle(BogusEvent event) { // overkill but feels safer ;) if (event == null ||
-	 * !handler.isAgentRegistered(this) || inputGrabber() == null) return false; //return validateGrabberTupple(event,
-	 * inputGrabber()); if (event instanceof ClickEvent) { // if (alienGrabber()) // enqueueEventTuple(new
-	 * EventGrabberTuple(event, inputGrabber()), false); // begin new if (isInputGrabberAlien()) //TODO remove this case
-	 * if (branches().isEmpty()) { inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber())); return
-	 * true; } else { for (Agent branch : branches()) if (branch.handle(event)) return true; return false; } // end else {
-	 * if(inputGrabber() instanceof ActionGrabber<?>) return validateGrabberTuple(event, (ActionGrabber<?>)inputGrabber(),
-	 * clickProfile()); else { //re-accommodate really sucks //TODO debug: may simply throw an exception
-	 * System.out.println("Grabber cannot be HANDLE in this agent: " + this.name()); return false; } } } else if (event
-	 * instanceof MotionEvent) { ((MotionEvent) event).modulate(sens); // if (alienGrabber()) // enqueueEventTuple(new
-	 * EventGrabberTuple(event, inputGrabber()), false); // begin new if (isInputGrabberAlien()) //TODO remove this case
-	 * if (branches().isEmpty()) { inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber())); return
-	 * true; } else { for (Agent branch : branches()) if (branch.handle(event)) return true; return false; } // end else
-	 * if (event instanceof DOF1Event) { if(inputGrabber() instanceof ActionGrabber<?>) return validateGrabberTuple(event,
-	 * (ActionGrabber<?>)inputGrabber(), wheelProfile()); else { //re-accommodate really sucks //TODO debug: may simply
-	 * throw an exception System.out.println("Grabber cannot be HANDLE in this agent: " + this.name()); return false; }
-	 * //enqueueEventTuple(new EventGrabberTuple(event, wheelProfile().handle(event), g)); } else { if(inputGrabber()
-	 * instanceof ActionGrabber<?>) return validateGrabberTuple(event, (ActionGrabber<?>)inputGrabber(), motionProfile());
-	 * else { //re-accommodate really sucks //TODO debug: may simply throw an exception
-	 * System.out.println("Grabber cannot be HANDLE in this agent: " + this.name()); return false; }
-	 * //enqueueEventTuple(new EventGrabberTuple(event, motionProfile().handle(event), g)); } } return true; }
-	 */
-
-	/*
-	 * // TODO old. remove me.
-	 * 
-	 * @Override protected boolean validateGrabberTupple(BogusEvent event, Grabber g) { if (event instanceof ClickEvent)
-	 * // if (alienGrabber()) // enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false); // begin new if
-	 * (alienGrabber()) if (branches().isEmpty()) enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false);
-	 * else { for (Agent branch : branches()) if (branch.handle(event)) return true; return false; } // end else
-	 * enqueueEventTuple(new EventGrabberTuple(event, clickProfile().handle(event), inputGrabber())); else if (event
-	 * instanceof MotionEvent) { ((MotionEvent) event).modulate(sens); // if (alienGrabber()) // enqueueEventTuple(new
-	 * EventGrabberTuple(event, inputGrabber()), false); // begin new if (alienGrabber()) if (branches().isEmpty())
-	 * enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false); else { for (Agent branch : branches()) if
-	 * (branch.handle(event)) return true; return false; } // end else if (event instanceof DOF1Event)
-	 * enqueueEventTuple(new EventGrabberTuple(event, wheelProfile().handle(event), inputGrabber())); else
-	 * enqueueEventTuple(new EventGrabberTuple(event, motionProfile().handle(event), inputGrabber())); } return true; } //
-	 */
-
-	/*
-	 * //new protected boolean validateGrabberTupple(BogusEvent event, Grabber g) { if (event instanceof ClickEvent) { //
-	 * if (alienGrabber()) // enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()), false); // begin new if
-	 * (alienGrabber()) //TODO remove this case if (branches().isEmpty()) { enqueueEventTuple(new EventGrabberTuple(event,
-	 * g)); return true; } else { for (Agent branch : branches()) if (branch.handle(event)) return true; return false; }
-	 * // end else { return proc(event, g, clickProfile()); } } else if (event instanceof MotionEvent) { ((MotionEvent)
-	 * event).modulate(sens); // if (alienGrabber()) // enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()),
-	 * false); // begin new if (alienGrabber()) //TODO remove this case if (branches().isEmpty()) { enqueueEventTuple(new
-	 * EventGrabberTuple(event, g)); return true; } else { for (Agent branch : branches()) if (branch.handle(event))
-	 * return true; return false; } // end else if (event instanceof DOF1Event) { return proc(event, g, wheelProfile());
-	 * //enqueueEventTuple(new EventGrabberTuple(event, wheelProfile().handle(event), g)); } else { return proc(event, g,
-	 * motionProfile()); //enqueueEventTuple(new EventGrabberTuple(event, motionProfile().handle(event), g)); } } return
-	 * true; } //
-	 */
 }

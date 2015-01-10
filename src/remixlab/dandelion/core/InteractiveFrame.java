@@ -94,7 +94,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 
 		// TODO pending according to final iFrame hierarchy
 		// if( !(this instanceof InteractiveEyeFrame) )
-		scene.motionAgent().addInPool(this);
+		scene.motionAgent().addGrabber(this);
 		isInCamPath = false;
 
 		setGrabsInputThreshold(20);
@@ -120,7 +120,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		super(otherFrame);
 
 		if (scene.motionAgent().hasGrabber(otherFrame))
-			scene.motionAgent().addInPool(this);
+			scene.motionAgent().addGrabber(this);
 
 		this.setAction(otherFrame.action());
 
@@ -178,8 +178,8 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	/**
-	 * Check if this object is the {@link remixlab.bias.core.AbstractAgent#inputGrabber()}. Returns {@code true} if this
-	 * object grabs the agent and {@code false} otherwise.
+	 * Check if this object is the {@link remixlab.bias.core.Agent#inputGrabber()}. Returns {@code true} if this object
+	 * grabs the agent and {@code false} otherwise.
 	 */
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;

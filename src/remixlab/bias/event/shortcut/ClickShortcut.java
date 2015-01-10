@@ -61,7 +61,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	 *          button
 	 */
 	public ClickShortcut(Integer b) {
-		this(BogusEvent.NOMODIFIER_MASK, b, 1);
+		this(BogusEvent.NO_MODIFIER_MASK, b, 1);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	 *          number of clicks
 	 */
 	public ClickShortcut(Integer b, Integer c) {
-		this(BogusEvent.NOMODIFIER_MASK, b, c);
+		this(BogusEvent.NO_MODIFIER_MASK, b, c);
 	}
 
 	/**

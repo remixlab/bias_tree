@@ -53,7 +53,14 @@ public class Agent {
 	}
 
 	/**
-	 * Removes the grabber from the {@link #grabbers()}.
+	 * @return Agents name
+	 */
+	public String name() {
+		return nm;
+	}
+
+	/**
+	 * Removes the grabber from the {@link #grabbers()} list.
 	 * <p>
 	 * See {@link #addGrabber(Grabber)} for details. Removing a grabber that is not in {@link #grabbers()} has no effect.
 	 */
@@ -61,6 +68,7 @@ public class Agent {
 		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
 			Tuple t = it.next();
 			if (t.g == grabber) {
+				if( defaultGrabber() == t.g ) setDefaultGrabber(null);
 				it.remove();
 				return true;
 			}
@@ -69,20 +77,18 @@ public class Agent {
 	}
 
 	/**
-	 * Clears the {@link #grabbers()}.
-	 * <p>
-	 * Use this method only if it is faster to clear the {@link #grabbers()} and then to add back a few grabbers than to
-	 * remove each one independently.
+	 * Clears the {@link #grabbers()} list.
 	 */
-	public void clearGrabbers() {
+	public void removeGrabbers() {
+		setDefaultGrabber(null);
 		tuples.clear();
 	}
 
 	public List<Grabber> grabbers() {
-		List<Grabber> grabbers = new ArrayList<Grabber>();
+		List<Grabber> pool = new ArrayList<Grabber>();
 		for (Tuple t : tuples)
-			grabbers.add(t.g);
-		return grabbers;
+			pool.add(t.g);
+		return pool;
 	}
 
 	/**
@@ -109,21 +115,13 @@ public class Agent {
 		if (grabber == null)
 			return false;
 		if (grabber instanceof ActionGrabber) {
-			System.out.println("use addInPool(G grabber, K actionAgent) instead");
+			System.out.println("use addGrabber(G grabber, K actionAgent) instead");
 			return false;
 		}
 		if (hasGrabber(grabber))
 			return false;
 		tuples.add(new Tuple(grabber));
 		return true;
-	}
-
-	public <E extends Enum<E>> void clearGrabbers(Branch<E, ?> branch) {
-		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
-			Tuple t = it.next();
-			if (t.b == branch)
-				it.remove();
-		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -135,17 +133,20 @@ public class Agent {
 		return list;
 	}
 
-	/*
-	 * public <E extends Enum<E>, A extends Action<E>> ActionAgent<E, MotionProfile<A>> addBranch(A action, Agent parent,
-	 * String name) { MotionProfile<A> p = new MotionProfile<A>(); ActionAgent<E, MotionProfile<A>> a = new ActionAgent<E,
-	 * MotionProfile<A>>(p, parent, name); addBranch(a); return a; }
-	 */
+	public <E extends Enum<E>, K extends Branch<E, ?/* extends Action<E> */>, G extends ActionGrabber<E>> boolean
+			addGrabber(G grabber, K branch) {
+		// Overkill but feels safer ;)
+		if (grabber == null || this.hasGrabber(grabber) || branch == null)
+			return false;
+		if (!hasBranch(branch))
+			this.appendBranch(branch);
+		tuples.add(new Tuple(grabber, branch));
+		return true;
+	}
 
-	/*
-	 * public <E extends Enum<E>, M extends Action<E>, C extends Action<E>> MotionBranch<E, MotionProfile<M>,
-	 * ClickProfile<C>> addBranch( M motionAction, C clickAction, String name) { return addBranch(new MotionProfile<M>(),
-	 * new ClickProfile<C>(), name); }
-	 */
+	public List<Branch<?, ?>> branches() {
+		return brnchs;
+	}
 
 	// keep!
 	/*
@@ -154,58 +155,54 @@ public class Agent {
 	 * MotionProfile<M>, ClickProfile<C>>(m, c, this, name); }
 	 */
 
-	// end-> */
-
-	public List<Branch<?, ?>> branches() {
-		return brnchs;
-	}
-
-	public <E extends Enum<E>, K extends Branch<E, ?/* extends Action<E> */>, G extends ActionGrabber<E>> boolean
-			addGrabber(G grabber, K actionAgent) {
-		// Overkill but feels safer ;)
-		if (grabber == null || this.hasGrabber(grabber))
+	public boolean appendBranch(Branch<?, ?> branch) {
+		if (branch == null)
 			return false;
-		tuples.add(new Tuple(grabber, actionAgent));
-		return true;
-	}
-
-	// these two are not good enough
-	/*
-	 * public <E extends Enum<E>> Branch<E, ?> branch(ActionGrabber<E> actionGrabber) { if (actionGrabber == null) return
-	 * null; for (Tuple t : tuples) if (t.g == actionGrabber) return (Branch<E, ?>) t.b; //return t.branch();//SEEMS to
-	 * work :p return null; }
-	 * 
-	 * public Branch<?, ?> branch(String name) { for (Branch<?, ?> branch : branches()) if (branch.name().equals(name))
-	 * return branch; return null; }
-	 */
-
-	public boolean hasBranch(Branch<?, ?> actionAgent) {
-		return brnchs.contains(actionAgent);
-	}
-
-	public boolean addBranch(Branch<?, ?> actionAgent) {
-		// System.out.println(this.name() + " add branch: " + actionAgent.name());
-		if (!brnchs.contains(actionAgent)) {
+		if (!brnchs.contains(branch)) {
 			// TODO: priority seems not needed
 			// this.brnchs.add(0, actionAgent);//priority
-			this.brnchs.add(actionAgent);
+			this.brnchs.add(branch);
 			return true;
 		}
 		return false;
 	}
 
-	public boolean removeBranch(Branch<?, ?> actionAgent) {
-		if (brnchs.contains(actionAgent)) {
-			this.clearGrabbers(actionAgent);
-			this.brnchs.remove(actionAgent);
+	public boolean hasBranch(Branch<?, ?> branch) {
+		return brnchs.contains(branch);
+	}
+
+	public <E extends Enum<E>> void resetBranch(Branch<E, ?> branch) {
+		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
+			Tuple t = it.next();
+			if (t.b == branch) {
+				if( defaultGrabber() == t.g ) setDefaultGrabber(null);
+				it.remove();				
+			}
+		}
+	}
+
+	public void resetBranches() {
+		if(defaultGrabber() instanceof ActionGrabber<?>)
+			setDefaultGrabber(null);
+		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
+			Tuple t = it.next();
+			if (t.g instanceof ActionGrabber<?>)
+				it.remove();
+		}
+	}
+
+	public boolean pruneBranch(Branch<?, ?> branch) {
+		if (brnchs.contains(branch)) {
+			this.resetBranch(branch);
+			this.brnchs.remove(branch);
 			return true;
 		}
 		return false;
 	}
 
-	public void clearBranches() {
+	public void pruneBranches() {
 		for (Branch<?, ?> branch : branches())
-			clearGrabbers(branch);
+			resetBranch(branch);
 		branches().clear();
 	}
 
@@ -251,9 +248,6 @@ public class Agent {
 	 * condition is met. The first object meeting the condition will be set as the {@link #inputGrabber()} and returned.
 	 * Note that a null grabber means that no object in the {@link #grabbers()} met the condition. A
 	 * {@link #inputGrabber()} may also be enforced simply with {@link #setDefaultGrabber(Grabber)}.
-	 * <p>
-	 * <b>Note</b> you don't have to call this method since the {@link #inputHandler()} handler does it automatically
-	 * every frame.
 	 * 
 	 * @param event
 	 *          to query the {@link #grabbers()}
@@ -284,8 +278,17 @@ public class Agent {
 		return trackedGrabber();
 	}
 
+	/**
+	 * Main agent method. Parses the {@link #inputGrabber()} using the proper branch to determine the user-defined action
+	 * the {@link #inputGrabber()} should perform. Calls
+	 * {@code inputHandler().enqueueEventTuple(new EventGrabberTuple(event, grabber()))}.
+	 * <p>
+	 * <b>Note</b> that the agent must be registered at the {@link #inputHandler()} for this method to take effect.
+	 * 
+	 * @see #inputGrabber()
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public boolean handle(BogusEvent event) {
+	protected boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)
 			return false;
 		if (trackedGrabber() != null) {
@@ -315,17 +318,11 @@ public class Agent {
 			return defaultGrabber();
 	}
 
-	public boolean isInputGrabber(Grabber g) {
-		// TODO discard grabsInput from Grabber
-		// return g.grabsInput(this);
-		return inputGrabber() == g;
-	}
-
 	/**
-	 * @return Agents name
+	 * Returns true if {@code g} is the agent's {@link #inputGrabber()} and false otherwise.
 	 */
-	public String name() {
-		return nm;
+	public boolean isInputGrabber(Grabber g) {
+		return inputGrabber() == g;
 	}
 
 	/**
@@ -396,6 +393,10 @@ public class Agent {
 	 * {@link #inputGrabber()}
 	 */
 	public boolean setDefaultGrabber(Grabber grabber) {
+		if(grabber == null) {
+			this.defaultGrabber = null;
+			return true;
+		}			
 		for (Tuple t : tuples)
 			if (t.g == grabber) {
 				this.defaultGrabber = t;
@@ -405,7 +406,7 @@ public class Agent {
 	}
 
 	/**
-	 * Resets the {@link #defaultGrabber()}. Convinience function that simply calls: {@code setDefaultGrabber(null)}.
+	 * Resets the {@link #defaultGrabber()}. Convenience function that simply calls: {@code setDefaultGrabber(null)}.
 	 * 
 	 * @see #setDefaultGrabber(Grabber)
 	 */

@@ -25,7 +25,7 @@ import remixlab.util.HashCodeBuilder;
  */
 public class MotionEvent extends BogusEvent {
 	// some motion actions may be performed without any button, e.g., mouse move (instead of drag).
-	public static final int	NOID	= 0;
+	public static final int	NO_ID	= 0;
 
 	@Override
 	public int hashCode() {
@@ -69,7 +69,7 @@ public class MotionEvent extends BogusEvent {
 	 */
 	public MotionEvent() {
 		super();
-		this.button = NOID;
+		this.button = NO_ID;
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class MotionEvent extends BogusEvent {
 	 */
 	public MotionEvent(int modifiers) {
 		super(modifiers);
-		this.button = NOID;
+		this.button = NO_ID;
 	}
 
 	/**

@@ -33,14 +33,20 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 		setPickingMode(PickingMode.MOVE);
 	}
 
-	public boolean addInPool(InteractiveFrame frame) {
+	public boolean addGrabber(InteractiveFrame frame) {
 		return addGrabber(frame, frameBranch);
 	}
 
-	public boolean addInPool(InteractiveEyeFrame frame) {
-		this.clearGrabbers(eyeBranch);
+	public boolean addGrabber(InteractiveEyeFrame frame) {
+		//this.resetBranch(eyeBranch);
 		return addGrabber(frame, eyeBranch);
 	}
+	
+	@Override
+	public void resetDefaultGrabber() {
+		addGrabber(scene.eye().frame());
+		this.setDefaultGrabber(scene.eye().frame());
+	} 
 
 	public void setXTranslationSensitivity(float s) {
 		eyeBranch.sensitivities()[0] = s;
@@ -146,7 +152,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 * @see #buttonModifiersFix(int, int)
 	 */
 	public int buttonModifiersFix(int button) {
-		return buttonModifiersFix(BogusEvent.NOMODIFIER_MASK, button);
+		return buttonModifiersFix(BogusEvent.NO_MODIFIER_MASK, button);
 	}
 
 	/**
@@ -167,7 +173,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public void setWheelBinding(Target target, int mask, DOF1Action action) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		profile.setBinding(mask, MotionEvent.NOID, action);
+		profile.setBinding(mask, MotionEvent.NO_ID, action);
 	}
 
 	/**
@@ -183,7 +189,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public void removeWheelBinding(Target target, int mask) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		profile.removeBinding(mask, MotionEvent.NOID);
+		profile.removeBinding(mask, MotionEvent.NO_ID);
 	}
 
 	/**
@@ -195,11 +201,19 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	}
 
 	/**
+	 * Removes all wheel bindings from the given {@code target} (EYE or FRAME).
+	 */
+	public void removeWheelBindings(Target target) {
+		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
+		profile.removeBindings();
+	}
+
+	/**
 	 * Returns {@code true} if the mask-wheel shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasWheelBinding(Target target, int mask) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return profile.hasBinding(mask, MotionEvent.NOID);
+		return profile.hasBinding(mask, MotionEvent.NO_ID);
 	}
 
 	/**
@@ -224,7 +238,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public DOF1Action wheelAction(Target target, int mask, DOF1Action action) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return (DOF1Action) profile.action(mask, MotionEvent.NOID);
+		return (DOF1Action) profile.action(mask, MotionEvent.NO_ID);
 	}
 
 	/**
@@ -233,7 +247,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public DOF1Action wheelAction(Target target, DOF1Action action) {
 		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return (DOF1Action) profile.action(MotionEvent.NOID);
+		return (DOF1Action) profile.action(MotionEvent.NO_ID);
 	}
 
 	// mouse click
@@ -289,6 +303,14 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	public void removeClickBinding(Target target, int button) {
 		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
 		profile.removeBinding(buttonModifiersFix(button), button, 1);
+	}
+
+	/**
+	 * Removes all click bindings from the given {@code target} (EYE or FRAME).
+	 */
+	public void removeClickBindings(Target target) {
+		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
+		profile.removeBindings();
 	}
 
 	/**

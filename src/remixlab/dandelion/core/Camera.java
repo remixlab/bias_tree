@@ -1116,7 +1116,7 @@ public class Camera extends Eye implements Copyable {
 		float coef = 0.1f;
 
 		if (anyInterpolationStarted())
-			stopAllInterpolations();
+			stopInterpolations();
 
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));

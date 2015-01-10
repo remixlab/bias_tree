@@ -55,13 +55,13 @@ public class KeyAgent extends KeyboardAgent {
 		// VK values here: http://docs.oracle.com/javase/7/docs/api/constant-values.html
 		super.setDefaultShortcuts();
 		// VK_LEFT : 37
-		keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, 37, KeyboardAction.MOVE_LEFT);
+		keyboardProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 37, KeyboardAction.MOVE_LEFT);
 		// VK_UP : 38
-		keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, 38, KeyboardAction.MOVE_UP);
+		keyboardProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 38, KeyboardAction.MOVE_UP);
 		// VK_RIGHT : 39
-		keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, 39, KeyboardAction.MOVE_RIGHT);
+		keyboardProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 39, KeyboardAction.MOVE_RIGHT);
 		// VK_DOWN : 40
-		keyboardProfile().setBinding(BogusEvent.NOMODIFIER_MASK, 40, KeyboardAction.MOVE_DOWN);
+		keyboardProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 40, KeyboardAction.MOVE_DOWN);
 
 		// VK_1 : 49
 		keyboardProfile().setBinding(BogusEvent.CTRL, 49, KeyboardAction.ADD_KEYFRAME_TO_PATH_1);

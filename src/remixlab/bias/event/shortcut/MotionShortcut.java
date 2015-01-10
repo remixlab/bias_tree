@@ -57,7 +57,7 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 * Constructs an "empty" shortcut by conveniently calling {@code this(B_NOMODIFIER_MASK, B_NOBUTTON);}
 	 */
 	public MotionShortcut() {
-		this(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID);
+		this(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 *          button
 	 */
 	public MotionShortcut(Integer b) {
-		this(MotionEvent.NOMODIFIER_MASK, b);
+		this(MotionEvent.NO_MODIFIER_MASK, b);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 */
 	protected String description(Integer b) {
 		String r = BogusEvent.modifiersText(mask);
-		String bn = (b == MotionEvent.NOID) ? "NO_BUTTON" : b.toString() + "_BUTTON";
+		String bn = (b == MotionEvent.NO_ID) ? "NO_BUTTON" : b.toString() + "_BUTTON";
 		r += (r.length() > 0) ? "+" + bn : bn;
 		return r;
 	}

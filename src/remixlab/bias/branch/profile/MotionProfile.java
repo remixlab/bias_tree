@@ -26,7 +26,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Returns true if the given binding binds an action.
 	 */
 	public boolean hasBinding() {
-		return hasBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID);
+		return hasBinding(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * @param button
 	 */
 	public boolean hasBinding(Integer button) {
-		return hasBinding(MotionEvent.NOMODIFIER_MASK, button);
+		return hasBinding(MotionEvent.NO_MODIFIER_MASK, button);
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Convenience function that simply calls {@code setWheelShortcut(0, action)}.
 	 */
 	public void setBinding(A action) {
-		setBinding(MotionEvent.NOID, action);
+		setBinding(MotionEvent.NO_ID, action);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * @param action
 	 */
 	public void setBinding(Integer button, A action) {
-		setBinding(MotionEvent.NOMODIFIER_MASK, button, action);
+		setBinding(MotionEvent.NO_MODIFIER_MASK, button, action);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Convenience function that simply calls {@code removeWheelShortcut(0)}.
 	 */
 	public void removeBinding() {
-		removeBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID);
+		removeBinding(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * @param button
 	 */
 	public void removeBinding(Integer button) {
-		removeBinding(MotionEvent.NOMODIFIER_MASK, button);
+		removeBinding(MotionEvent.NO_MODIFIER_MASK, button);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Returns the action associated to the given binding.
 	 */
 	public Action<?> action() {
-		return action(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOID);
+		return action(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * @param button
 	 */
 	public Action<?> action(Integer button) {
-		return action(MotionEvent.NOMODIFIER_MASK, button);
+		return action(MotionEvent.NO_MODIFIER_MASK, button);
 	}
 
 	/**
