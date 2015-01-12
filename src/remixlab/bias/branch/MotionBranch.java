@@ -29,8 +29,7 @@ import remixlab.bias.event.*;
 public class MotionBranch<E extends Enum<E>, M extends MotionProfile<? extends Action<E>>, C extends ClickProfile<? extends Action<E>>>
 		extends
 		Branch<E, M> {
-	protected C				clickProfile;
-	protected float[]	sens;
+	protected C	clickProfile;
 
 	/**
 	 * 
@@ -46,7 +45,6 @@ public class MotionBranch<E extends Enum<E>, M extends MotionProfile<? extends A
 	public MotionBranch(M p, C c, Agent a, String n) {
 		super(p, a, n);
 		clickProfile = c;
-		sens = new float[] { 1f, 1f, 1f, 1f, 1f, 1f };
 	}
 
 	/**
@@ -75,49 +73,6 @@ public class MotionBranch<E extends Enum<E>, M extends MotionProfile<? extends A
 	 */
 	public void setClickProfile(C profile) {
 		clickProfile = profile;
-	}
-
-	/**
-	 * Set dof1 sensitivity value which is needed by {@link remixlab.bias.event.MotionEvent#modulate(float[])}.
-	 */
-	public void setSensitivities(float x) {
-		setSensitivities(x, 0, 0, 0, 0, 0);
-	}
-
-	/**
-	 * Set dof1 and dof2 sensitivities value which are needed by {@link remixlab.bias.event.MotionEvent#modulate(float[])}
-	 * .
-	 */
-	public void setSensitivities(float x, float y) {
-		setSensitivities(x, y, 0, 0, 0, 0);
-	}
-
-	/**
-	 * Set dof1, dof2 and dof3 sensitivities values which are needed by
-	 * {@link remixlab.bias.event.MotionEvent#modulate(float[])}.
-	 */
-	public void setSensitivities(float x, float y, float z) {
-		setSensitivities(x, y, z, 0, 0, 0);
-	}
-
-	/**
-	 * Set dof1, dof2, dof3, dof4, dof5 and dof6 sensitivities values which are needed by
-	 * {@link remixlab.bias.event.MotionEvent#modulate(float[])}.
-	 */
-	public void setSensitivities(float x, float y, float z, float rx, float ry, float rz) {
-		sens[0] = x;
-		sens[1] = y;
-		sens[2] = z;
-		sens[3] = rx;
-		sens[4] = ry;
-		sens[5] = rz;
-	}
-
-	/**
-	 * Returns the sensitivities that modulate the {@link remixlab.bias.event.MotionEvent}
-	 */
-	public float[] sensitivities() {
-		return sens;
 	}
 
 	@Override

@@ -19,6 +19,8 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 		MOVE, CLICK
 	};
 
+	protected float	wSens	= 1f;
+
 	public WheeledMotionAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
@@ -33,29 +35,46 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 		setPickingMode(PickingMode.MOVE);
 	}
 
+	@Override
+	public float[] sensitivities(MotionEvent event) {
+		if (event instanceof DOF1Event)
+			return new float[] { wSens, 1f, 1f, 1f, 1f, 1f };
+		else
+			return new float[] { 1f, 1f, 1f, 1f, 1f, 1f };
+	}
+
+	/**
+	 * Defines the {@link #wheelSensitivity()}.
+	 */
+	public void setWheelSensitivity(float sensitivity) {
+		wSens = sensitivity;
+	}
+
+	/**
+	 * Returns the wheel sensitivity.
+	 * <p>
+	 * Default value is 20.0. A higher value will make the wheel action more efficient (usually meaning a faster zoom).
+	 * Use a negative value to invert the zoom in and out directions.
+	 * 
+	 * @see #setWheelSensitivity(float)
+	 */
+	public float wheelSensitivity() {
+		return wSens;
+	}
+
 	public boolean addGrabber(InteractiveFrame frame) {
 		return addGrabber(frame, frameBranch);
 	}
 
 	public boolean addGrabber(InteractiveEyeFrame frame) {
-		//this.resetBranch(eyeBranch);
+		// this.resetBranch(eyeBranch);
 		return addGrabber(frame, eyeBranch);
 	}
-	
+
 	@Override
 	public void resetDefaultGrabber() {
 		addGrabber(scene.eye().frame());
 		this.setDefaultGrabber(scene.eye().frame());
-	} 
-
-	public void setXTranslationSensitivity(float s) {
-		eyeBranch.sensitivities()[0] = s;
-		frameBranch.sensitivities()[0] = s;
-	}
-
-	public void setYTranslationSensitivity(float s) {
-		eyeBranch.sensitivities()[1] = s;
-		frameBranch.sensitivities()[1] = s;
 	}
 
 	public WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {

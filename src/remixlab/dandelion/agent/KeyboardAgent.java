@@ -27,7 +27,7 @@ public class KeyboardAgent extends Agent {
 		setDefaultGrabber(scene);
 		setDefaultShortcuts();
 	}
-	
+
 	@Override
 	public void resetDefaultGrabber() {
 		addGrabber(scene, keyBranch);

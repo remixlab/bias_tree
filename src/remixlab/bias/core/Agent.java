@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import remixlab.bias.branch.*;
+import remixlab.bias.event.MotionEvent;
 
 public class Agent {
 	class Tuple {
@@ -68,7 +69,8 @@ public class Agent {
 		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
 			Tuple t = it.next();
 			if (t.g == grabber) {
-				if( defaultGrabber() == t.g ) setDefaultGrabber(null);
+				if (defaultGrabber() == t.g)
+					setDefaultGrabber(null);
 				it.remove();
 				return true;
 			}
@@ -175,14 +177,15 @@ public class Agent {
 		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
 			Tuple t = it.next();
 			if (t.b == branch) {
-				if( defaultGrabber() == t.g ) setDefaultGrabber(null);
-				it.remove();				
+				if (defaultGrabber() == t.g)
+					setDefaultGrabber(null);
+				it.remove();
 			}
 		}
 	}
 
 	public void resetBranches() {
-		if(defaultGrabber() instanceof ActionGrabber<?>)
+		if (defaultGrabber() instanceof ActionGrabber<?>)
 			setDefaultGrabber(null);
 		for (Iterator<Tuple> it = tuples.iterator(); it.hasNext();) {
 			Tuple t = it.next();
@@ -278,6 +281,10 @@ public class Agent {
 		return trackedGrabber();
 	}
 
+	public float[] sensitivities(MotionEvent event) {
+		return new float[] { 1f, 1f, 1f, 1f, 1f, 1f };
+	}
+
 	/**
 	 * Main agent method. Parses the {@link #inputGrabber()} using the proper branch to determine the user-defined action
 	 * the {@link #inputGrabber()} should perform. Calls
@@ -291,6 +298,8 @@ public class Agent {
 	protected boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)
 			return false;
+		if (event instanceof MotionEvent)
+			((MotionEvent) event).modulate(sensitivities((MotionEvent) event));
 		if (trackedGrabber() != null) {
 			if (inputGrabber() instanceof ActionGrabber<?>)
 				if (trackedGrabber.b.handle((ActionGrabber) inputGrabber(), event) == null)
@@ -393,10 +402,10 @@ public class Agent {
 	 * {@link #inputGrabber()}
 	 */
 	public boolean setDefaultGrabber(Grabber grabber) {
-		if(grabber == null) {
+		if (grabber == null) {
 			this.defaultGrabber = null;
 			return true;
-		}			
+		}
 		for (Tuple t : tuples)
 			if (t.g == grabber) {
 				this.defaultGrabber = t;
