@@ -64,7 +64,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * Defines the {@link #ySensitivity()}.
 	 */
 	public void setYSensitivity(float sensitivity) {
-		xSens = sensitivity;
+		ySens = sensitivity;
 	}
 
 	/**

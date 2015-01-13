@@ -50,7 +50,7 @@ public class JoystickAgent extends WheeledMotionAgent<DOF3Action> {
 	 * Defines the {@link #ySensitivity()}.
 	 */
 	public void setYSensitivity(float sensitivity) {
-		xSens = sensitivity;
+		ySens = sensitivity;
 	}
 
 	/**
