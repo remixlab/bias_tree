@@ -64,7 +64,7 @@ void setup() {
 }
 
 void draw() {
-  handleMouse();//*/
+  handleAgents();
   canvas.beginDraw();
   scene.beginDraw();
   canvas.background(255);
@@ -97,12 +97,16 @@ void mouseDragged() {
 }
 //*/
 
-void handleMouse() {
+void handleAgents() {
   scene.enableMotionAgent();
   ctrlScene.disableMotionAgent();
+  scene.enableKeyboardAgent();
+  ctrlScene.disableKeyboardAgent();
   if ((oX < mouseX) && (oY < mouseY) && showAid) {
-    scene.disableMotionAgent();
-    ctrlScene.enableMotionAgent();
+  scene.disableMotionAgent();
+  ctrlScene.enableMotionAgent();
+  scene.disableKeyboardAgent();
+  ctrlScene.enableKeyboardAgent();
   }
 }
 

@@ -26,7 +26,7 @@ public abstract class Button2D extends GrabberObject {
     textFont(myFont);
     textAlign(LEFT);
     setText(t);
-    scene.motionAgent().addInPool(this);
+    scene.motionAgent().addGrabber(this);
   }
 
   public void setText(String text) {

@@ -999,7 +999,7 @@ public class Scene extends AbstractScene implements PConstants {
 		boolean result = models().add(model);
 		if (model instanceof ModelObject)
 			for (Agent agent : inputHandler().agents())
-				agent.addGrabber(this);
+				agent.addGrabber(model);
 		return result;
 	}
 

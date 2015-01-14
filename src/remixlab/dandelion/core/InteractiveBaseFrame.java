@@ -8,7 +8,7 @@ import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
 
-class InteractiveBaseFrame extends Frame {
+public class InteractiveBaseFrame extends Frame {
 	// Sens
 	private float								rotSensitivity;
 	private float								transSensitivity;

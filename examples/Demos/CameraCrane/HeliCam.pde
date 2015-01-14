@@ -46,7 +46,7 @@ public class HeliCam {
     rotor.setRotationConstraint(AxisPlaneConstraint.Type.AXIS, new Vec(0.0f, 0.0f, 1.0f));
     frame(4).setConstraint(rotor);
     frame(4).setSpinningRotation(rotation);
-    frame(4).removeFromAgentPool(mainScene.motionAgent());
+    mainScene.motionAgent().removeGrabber(frame(4));
   }
 
   public void draw(Scene scn) {

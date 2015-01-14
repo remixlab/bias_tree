@@ -14,6 +14,7 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.Constants.*;
 import remixlab.bias.core.*;
+import remixlab.bias.event.*;
 
 Scene scene;
 Board board;

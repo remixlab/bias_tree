@@ -30,7 +30,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	public WheeledMouseAgent(AbstractScene scn, String n) {
 		super(scn, n);
 		// todo pending
-		this.setWheelSensitivity(20.0f);
+		// this.setWheelSensitivity(20.0f);
 	}
 
 	@Override

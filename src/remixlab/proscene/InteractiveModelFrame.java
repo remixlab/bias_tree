@@ -22,8 +22,8 @@ import remixlab.dandelion.core.*;
 import remixlab.util.*;
 
 /**
- * A model is an InteractiveFrame implementing the model interface: It provides default 2D/3D high-level precise picking
- * & interaction to pshapes.
+ * An InteractiveModelFrame is an InteractiveFrame implementing the model interface: It provides default 2D/3D
+ * high-level precise picking & interaction to pshapes.
  */
 public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	// TODO complete hashCode and equals, once the rest is done

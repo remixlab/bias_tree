@@ -21,7 +21,7 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
 Scene scene;
-ArrayList buttons;	
+ArrayList<Button2D> buttons;	
 int xM = 10;
 InteractiveFrame interactiveFrame;
 boolean isIFrame = false;
@@ -116,7 +116,7 @@ void displayControls() {
     scene.endScreenDrawing();
   }
 
-  InteractiveFrame iFrame;		
+  InteractiveBaseFrame iFrame;	
   if ( isIFrame ) {
     iFrame = interactiveFrame;
     scene.beginScreenDrawing();
@@ -169,15 +169,15 @@ void decreaseSensitivity(Sensitivity sens) {
     decreaseSensitivity(scene.eye().frame(), sens);
 }	
 
-void increaseSensitivity(InteractiveFrame iFrame, Sensitivity sens) {
+void increaseSensitivity(InteractiveBaseFrame iFrame, Sensitivity sens) {
   changeSensitivity(iFrame, sens, true);
 }
 
-void decreaseSensitivity(InteractiveFrame iFrame, Sensitivity sens) {
+void decreaseSensitivity(InteractiveBaseFrame iFrame, Sensitivity sens) {
   changeSensitivity(iFrame, sens, false);
 }	
 
-void changeSensitivity(InteractiveFrame iFrame, Sensitivity sens, boolean increase) {
+void changeSensitivity(InteractiveBaseFrame iFrame, Sensitivity sens, boolean increase) {
   float step = 1;
   float res;
   switch (sens) {
@@ -214,7 +214,7 @@ void changeSensitivity(InteractiveFrame iFrame, Sensitivity sens, boolean increa
   }
 }
 
-boolean areDefaultsSet(InteractiveFrame iFrame) {
+boolean areDefaultsSet(InteractiveBaseFrame iFrame) {
   if (   equals(iFrame.rotationSensitivity(), defRotSens)
       && equals(iFrame.translationSensitivity(), defTransSens)
       && equals(iFrame.spinningSensitivity(), defSpngSens)
@@ -225,7 +225,7 @@ boolean areDefaultsSet(InteractiveFrame iFrame) {
   return false;
 }
 
-void setDefaults(InteractiveFrame iFrame) {
+void setDefaults(InteractiveBaseFrame iFrame) {
   iFrame.setRotationSensitivity(defRotSens);
   iFrame.setTranslationSensitivity(defTransSens);
   iFrame.setSpinningSensitivity(defSpngSens);
@@ -255,9 +255,10 @@ void keyPressed() {
     dispControls = !dispControls;
     for (int i = 0; i < buttons.size(); i++)
       if (dispControls)
-        scene.inputHandler().addInAllAgentPools((ClickButton) buttons.get(i));
+        scene.motionAgent().addGrabber(buttons.get(i)); //(((ClickButton) buttons.get(i));
       else
-        scene.inputHandler().removeFromAllAgentPools((ClickButton) buttons.get(i));
+        scene.motionAgent().removeGrabber(buttons.get(i));
+        //scene.inputHandler().removeFromAllAgentPools((ClickButton) buttons.get(i));
   }		
   if (key == 'd' || key == 'D') {
     if ( isIFrame )

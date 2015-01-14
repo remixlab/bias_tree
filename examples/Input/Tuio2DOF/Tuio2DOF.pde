@@ -14,10 +14,11 @@ import java.util.Vector;
 import TUIO.*;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.core.Constants.*;
 import remixlab.dandelion.geom.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.agent.*;
+import remixlab.bias.branch.*;
 import remixlab.proscene.*;
 
 Scene scene;
@@ -35,8 +36,13 @@ public void setup() {
   scene.setPickingVisualHint(true);
   boxes = new Box[30];
 
-  for (int i = 0; i < boxes.length; i++)
+  for (int i = 0; i < boxes.length; i++) {
     boxes[i] = new Box(scene);
+    agent.addGrabber(boxes[i].iFrame);
+  }
+  
+  agent.resetDefaultGrabber();
+  //agent.setDefaultGrabber(boxes[5].iFrame);
 
   tuioClient = new TuioProcessing(this, 3333);
   // 'h' also displays it:

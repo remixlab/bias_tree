@@ -54,7 +54,7 @@ public class Box {
     if (drawAxes)
       scene.drawAxes(max(w, h, d)*1.3f);
     noStroke();
-    if (scene.grabsAnyAgentInput(iFrame))
+    if (scene.motionAgent().isInputGrabber(iFrame))
       fill(255, 0, 0);
     else
       fill(getColor());

@@ -102,7 +102,11 @@ public void mouseDragged() {
   // a mouse drag will cause action execution without involving any agent:
   event = new DOF2Event(prevEvent, (float) mouseX, (float) mouseY);
   // the action will be executed by the iFrame or the camera:
-  scene.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, mouseAction, iFrameGrabsInput ? iFrame : scene.eye().frame()));
+  if(iFrameGrabsInput)
+    iFrame.setAction(mouseAction);
+  else
+    scene.eye().frame().setAction(mouseAction);
+  scene.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, iFrameGrabsInput ? iFrame : scene.eye().frame()));
   prevEvent = event.get();
 }
 
@@ -115,8 +119,9 @@ public void keyPressed() {
       keyAction = KeyboardAction.TOGGLE_GRID_VISUAL_HINT;
     if (key == 'g')
       keyAction = KeyboardAction.TOGGLE_AXES_VISUAL_HINT;
-    kEvent = new KeyboardEvent(key);      
-    scene.inputHandler().enqueueEventTuple(new EventGrabberTuple(kEvent, keyAction, scene));
+    kEvent = new KeyboardEvent(key); 
+    scene.setAction(keyAction);
+    scene.inputHandler().enqueueEventTuple(new EventGrabberTuple(kEvent, scene));
   }
   // Grabbing the iFrame may be done with the keyboard:
   if (key == 'y') {

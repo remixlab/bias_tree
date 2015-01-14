@@ -92,7 +92,11 @@ public void mouseMoved() {
 public void mouseDragged() {
   if (!scene.isMotionAgentEnabled()) {
     event = new DOF2Event(prevEvent, (float) mouseX, (float) mouseY);
-    scene.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, mouseAction, grabsInput ? iFrame : scene.eye().frame()));
+    if(grabsInput)
+      iFrame.setAction(mouseAction);
+    else
+      scene.eye().frame().setAction(mouseAction);
+    scene.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, grabsInput ? iFrame : scene.eye().frame()));
     prevEvent = event.get();
   }
 }
@@ -105,8 +109,9 @@ public void keyPressed() {
         keyAction = KeyboardAction.TOGGLE_GRID_VISUAL_HINT;
       if (key == 'g')
         keyAction = KeyboardAction.TOGGLE_AXES_VISUAL_HINT;
-      kEvent = new KeyboardEvent(key);      
-      scene.inputHandler().enqueueEventTuple(new EventGrabberTuple(kEvent, keyAction, scene));
+      kEvent = new KeyboardEvent(key);
+      scene.setAction(keyAction);
+      scene.inputHandler().enqueueEventTuple(new EventGrabberTuple(kEvent, scene));
     }
   }
   if ( key == 'k' || key == 'K' ) {

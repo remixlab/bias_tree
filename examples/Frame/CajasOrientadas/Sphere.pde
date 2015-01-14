@@ -47,7 +47,7 @@ public class Sphere {
 
     if (drawAxes)
       scene.drawAxes(radius()*1.3f);
-    if (scene.grabsAnyAgentInput(iFrame)) {
+    if (scene.motionAgent().isInputGrabber(iFrame)) {
       fill(255, 0, 0);
       sphere(radius()*1.2f);
     }

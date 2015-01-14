@@ -11,7 +11,6 @@ public class Board {
   }
 
   public void order() {
-    scene.inputHandler().clearAgentPool(scene.motionAgent()); // tell proscene to clear objects in the grabber pool
     patches = new Patch[size][size];
     int number = 1; // current patch number
     PImage pimg = null; // current patch image

@@ -1,4 +1,5 @@
-public class TUIOAgent extends WheeledMouseAgent {
+//public class TUIOAgent extends WheeledMouseAgent {
+public class TUIOAgent extends WheeledMotionAgent<DOF2Action> {
   Scene scene;
   DOF2Event event, prevEvent;
 
@@ -16,8 +17,8 @@ public class TUIOAgent extends WheeledMouseAgent {
     event = new DOF2Event(prevEvent, 
     tcur.getScreenX(scene.width()), 
     tcur.getScreenY(scene.height()), 
-    DOF2Event.NOMODIFIER_MASK, 
-    DOF2Event.NOBUTTON);
+    DOF2Event.NO_MODIFIER_MASK, 
+    DOF2Event.NO_ID);
     updateTrackedGrabber(event);
     prevEvent = event.get();
   }
@@ -27,8 +28,8 @@ public class TUIOAgent extends WheeledMouseAgent {
     event = new DOF2Event(prevEvent, 
     tcur.getScreenX(scene.width()), 
     tcur.getScreenY(scene.height()), 
-    DOF2Event.NOMODIFIER_MASK, 
-    DOF2Event.NOBUTTON);
+    DOF2Event.NO_MODIFIER_MASK, 
+    DOF2Event.NO_ID);
     handle(event);
     prevEvent = event.get();
   }
@@ -38,8 +39,8 @@ public class TUIOAgent extends WheeledMouseAgent {
     event = new DOF2Event(prevEvent, 
     tcur.getScreenX(scene.width()), 
     tcur.getScreenY(scene.height()), 
-    DOF2Event.NOMODIFIER_MASK, 
-    DOF2Event.NOBUTTON);
+    DOF2Event.NO_MODIFIER_MASK, 
+    DOF2Event.NO_ID);
     prevEvent = event.get();
     disableTracking();
     enableTracking();

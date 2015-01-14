@@ -56,11 +56,10 @@ void setup() {
   ctrlScene.setAxesVisualHint(false);
   ctrlScene.setGridVisualHint(false);
   e = new ModelEllipse(ctrlScene);
-  ctrlScene.motionAgent().addInPool(e);
 }
 
 void draw() {
-  handleMouse();
+  handleAgents();
   canvas.beginDraw();
   scene.beginDraw();
   canvas.background(255);
@@ -89,12 +88,16 @@ void mouseDragged() {
   mouseMove = false;
 }
 
-void handleMouse() {
+void handleAgents() {
   scene.enableMotionAgent();
   ctrlScene.disableMotionAgent();
+  scene.enableKeyboardAgent();
+  ctrlScene.disableKeyboardAgent();
   if ((oX < mouseX) && (oY < mouseY) && showAid) {
-    scene.disableMotionAgent();
-    ctrlScene.enableMotionAgent();
+  scene.disableMotionAgent();
+  ctrlScene.enableMotionAgent();
+  scene.disableKeyboardAgent();
+  ctrlScene.enableKeyboardAgent();
   }
 }
 
