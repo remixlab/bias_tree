@@ -81,7 +81,7 @@ void setup() {
     }
   };
   
-  hidAgent.addInPool(model);
+  hidAgent.addGrabber(model);
   //declare some sensitivities for the space navigator device
   hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
 

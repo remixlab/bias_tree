@@ -21,6 +21,15 @@ public class HIDAgent extends WheeledMotionAgent<DOF6Action> {
 	public DOF6Event feed() {
 		return null;
 	}
+	
+	public void setSensitivities(float x, float y, float z, float rx, float ry, float rz) {
+		xSens		= x;
+		ySens		= y;
+		zSens		= z;
+		xrSens	= rx;
+		yrSens	= ry;
+		zrSens	= rz;
+	}
 
 	public void setXTranslationSensitivity(float s) {
 		xSens = s;

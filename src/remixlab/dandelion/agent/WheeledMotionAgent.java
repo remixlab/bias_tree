@@ -114,28 +114,28 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	/**
 	 * Profile defining InteractiveEyeFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
 	 */
-	protected MotionProfile<A> eyeProfile() {
+	public MotionProfile<A> eyeProfile() {
 		return eyeBranch.profile();
 	}
 
 	/**
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
 	 */
-	protected MotionProfile<A> frameProfile() {
+	public MotionProfile<A> frameProfile() {
 		return frameBranch.profile();
 	}
 
 	/**
 	 * Profile defining InteractiveEyeFrame action bindings from {@link remixlab.bias.event.shortcut.ClickShortcut}s.
 	 */
-	protected ClickProfile<ClickAction> eyeClickProfile() {
+	public ClickProfile<ClickAction> eyeClickProfile() {
 		return eyeBranch().clickProfile();
 	}
 
 	/**
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.ClickShortcut}s.
 	 */
-	protected ClickProfile<ClickAction> frameClickProfile() {
+	public ClickProfile<ClickAction> frameClickProfile() {
 		return frameBranch().clickProfile();
 	}
 
