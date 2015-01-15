@@ -50,6 +50,7 @@ public class Agent {
 		defaultGrabber = new Tuple();
 		setTracking(true);
 		handler = inputHandler;
+		handler.registerAgent(this);
 		brnchs = new ArrayList<Branch<?, ?>>();
 	}
 

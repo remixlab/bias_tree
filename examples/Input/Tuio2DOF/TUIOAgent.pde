@@ -1,5 +1,5 @@
-//public class TUIOAgent extends WheeledMouseAgent {
-public class TUIOAgent extends WheeledMotionAgent<DOF2Action> {
+public class TUIOAgent extends WheeledMouseAgent {
+//public class TUIOAgent extends WheeledMotionAgent<DOF2Action> {
   Scene scene;
   DOF2Event event, prevEvent;
 

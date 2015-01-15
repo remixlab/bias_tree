@@ -41,8 +41,8 @@ public void setup() {
     agent.addGrabber(boxes[i].iFrame);
   }
   
-  agent.resetDefaultGrabber();
-  //agent.setDefaultGrabber(boxes[5].iFrame);
+  agent.addGrabber(scene.eye().frame());
+  agent.setDefaultGrabber(scene.eye().frame());
 
   tuioClient = new TuioProcessing(this, 3333);
   // 'h' also displays it:
