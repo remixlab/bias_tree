@@ -8,7 +8,7 @@ import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
 
-class InteractiveBaseFrame extends Frame {
+class InteractiveBaseFrame extends Frame implements Sensitivities {
 	// Sens
 	private float								rotSensitivity;
 	private float								transSensitivity;
@@ -220,6 +220,7 @@ class InteractiveBaseFrame extends Frame {
 	 * Default value is 0.5. Use {@link #setDampingFriction(float)} to tune this value. A higher value will make damping
 	 * more difficult (a value of 1.0 forbids damping).
 	 */
+	@Override
 	public float dampingFriction() {
 		return dampFriction;
 	}
@@ -227,6 +228,7 @@ class InteractiveBaseFrame extends Frame {
 	/**
 	 * Defines the {@link #dampingFriction()}. Values must be in the range [0..1].
 	 */
+	@Override
 	public void setDampingFriction(float f) {
 		if (f < 0 || f > 1)
 			return;
@@ -246,6 +248,7 @@ class InteractiveBaseFrame extends Frame {
 	/**
 	 * Defines the {@link #rotationSensitivity()}.
 	 */
+	@Override
 	public final void setRotationSensitivity(float sensitivity) {
 		rotSensitivity = sensitivity;
 	}
@@ -253,6 +256,7 @@ class InteractiveBaseFrame extends Frame {
 	/**
 	 * Defines the {@link #translationSensitivity()}.
 	 */
+	@Override
 	public final void setTranslationSensitivity(float sensitivity) {
 		transSensitivity = sensitivity;
 	}
@@ -260,6 +264,7 @@ class InteractiveBaseFrame extends Frame {
 	/**
 	 * Defines the {@link #spinningSensitivity()}.
 	 */
+	@Override
 	public final void setSpinningSensitivity(float sensitivity) {
 		spngSensitivity = sensitivity;
 	}
@@ -267,6 +272,7 @@ class InteractiveBaseFrame extends Frame {
 	/**
 	 * Defines the {@link #wheelSensitivity()}.
 	 */
+	@Override
 	public final void setWheelSensitivity(float sensitivity) {
 		wheelSensitivity = sensitivity;
 	}
@@ -282,6 +288,7 @@ class InteractiveBaseFrame extends Frame {
 	 * @see #spinningSensitivity()
 	 * @see #wheelSensitivity()
 	 */
+	@Override
 	public final float rotationSensitivity() {
 		return rotSensitivity;
 	}
@@ -300,6 +307,7 @@ class InteractiveBaseFrame extends Frame {
 	 * @see #spinningSensitivity()
 	 * @see #wheelSensitivity()
 	 */
+	@Override
 	public final float translationSensitivity() {
 		return transSensitivity;
 	}
@@ -320,6 +328,7 @@ class InteractiveBaseFrame extends Frame {
 	 * @see #wheelSensitivity()
 	 * @see #setDampingFriction(float)
 	 */
+	@Override
 	public final float spinningSensitivity() {
 		return spngSensitivity;
 	}
@@ -335,6 +344,7 @@ class InteractiveBaseFrame extends Frame {
 	 * @see #rotationSensitivity()
 	 * @see #spinningSensitivity()
 	 */
+	@Override
 	public float wheelSensitivity() {
 		return wheelSensitivity;
 	}

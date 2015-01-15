@@ -116,7 +116,7 @@ void displayControls() {
     scene.endScreenDrawing();
   }
 
-  InteractiveBaseFrame iFrame;	
+  Sensitivities iFrame;	
   if ( isIFrame ) {
     iFrame = interactiveFrame;
     scene.beginScreenDrawing();
@@ -169,15 +169,15 @@ void decreaseSensitivity(Sensitivity sens) {
     decreaseSensitivity(scene.eye().frame(), sens);
 }	
 
-void increaseSensitivity(InteractiveBaseFrame iFrame, Sensitivity sens) {
+void increaseSensitivity(Sensitivities iFrame, Sensitivity sens) {
   changeSensitivity(iFrame, sens, true);
 }
 
-void decreaseSensitivity(InteractiveBaseFrame iFrame, Sensitivity sens) {
+void decreaseSensitivity(Sensitivities iFrame, Sensitivity sens) {
   changeSensitivity(iFrame, sens, false);
 }	
 
-void changeSensitivity(InteractiveBaseFrame iFrame, Sensitivity sens, boolean increase) {
+void changeSensitivity(Sensitivities iFrame, Sensitivity sens, boolean increase) {
   float step = 1;
   float res;
   switch (sens) {
@@ -214,7 +214,7 @@ void changeSensitivity(InteractiveBaseFrame iFrame, Sensitivity sens, boolean in
   }
 }
 
-boolean areDefaultsSet(InteractiveBaseFrame iFrame) {
+boolean areDefaultsSet(Sensitivities iFrame) {
   if (   equals(iFrame.rotationSensitivity(), defRotSens)
       && equals(iFrame.translationSensitivity(), defTransSens)
       && equals(iFrame.spinningSensitivity(), defSpngSens)
@@ -225,7 +225,7 @@ boolean areDefaultsSet(InteractiveBaseFrame iFrame) {
   return false;
 }
 
-void setDefaults(InteractiveBaseFrame iFrame) {
+void setDefaults(Sensitivities iFrame) {
   iFrame.setRotationSensitivity(defRotSens);
   iFrame.setTranslationSensitivity(defTransSens);
   iFrame.setSpinningSensitivity(defSpngSens);
