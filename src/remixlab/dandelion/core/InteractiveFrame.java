@@ -329,7 +329,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	protected void execAction2D(DOF2Event event) {
-		Vec trans;
+		Vec trns;
 		float deltaX, deltaY;
 		switch (referenceAction()) {
 		case CUSTOM_DOF2_ACTION:
@@ -338,16 +338,16 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		case MOVE_BACKWARD:
 			rotate(computeRot(event, scene.window().projectedCoordinatesOf(position())));
 			flyDisp.set(-flySpeed(), 0.0f, 0.0f);
-			trans = localInverseTransformOf(flyDisp);
-			translate(trans);
-			setTossingDirection(trans);
+			trns = localInverseTransformOf(flyDisp);
+			translate(trns);
+			setTossingDirection(trns);
 			startTossing(event);
 			break;
 		case MOVE_FORWARD:
 			rotate(computeRot(event, scene.window().projectedCoordinatesOf(position())));
 			flyDisp.set(flySpeed(), 0.0f, 0.0f);
-			trans = localInverseTransformOf(flyDisp);
-			setTossingDirection(trans);
+			trns = localInverseTransformOf(flyDisp);
+			setTossingDirection(trns);
 			startTossing(event);
 			break;
 		case ROTATE:
@@ -429,7 +429,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	protected void execAction3D(DOF1Event event, boolean wheel) {
-		Vec trans;
+		Vec trns;
 		float delta;
 		switch (referenceAction()) {
 		case CUSTOM_DOF1_ACTION:
@@ -453,19 +453,19 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 			scale(delta >= 0 ? s : 1 / s);
 			break;
 		case TRANSLATE_X:
-			trans = new Vec(delta1(event, wheel), 0.0f, 0.0f);
-			scale2Fit(trans);
-			translateFromEye(trans, wheel ? 1 : translationSensitivity());
+			trns = new Vec(delta1(event, wheel), 0.0f, 0.0f);
+			scale2Fit(trns);
+			translateFromEye(trns, wheel ? 1 : translationSensitivity());
 			break;
 		case TRANSLATE_Y:
-			trans = new Vec(0.0f, scene.isRightHanded() ? -delta1(event, wheel) : delta1(event, wheel), 0.0f);
-			scale2Fit(trans);
-			translateFromEye(trans, wheel ? 1 : translationSensitivity());
+			trns = new Vec(0.0f, scene.isRightHanded() ? -delta1(event, wheel) : delta1(event, wheel), 0.0f);
+			scale2Fit(trns);
+			translateFromEye(trns, wheel ? 1 : translationSensitivity());
 			break;
 		case TRANSLATE_Z:
-			trans = new Vec(0.0f, 0.0f, delta1(event, wheel));
-			scale2Fit(trans);
-			translateFromEye(trans, wheel ? 1 : translationSensitivity());
+			trns = new Vec(0.0f, 0.0f, delta1(event, wheel));
+			scale2Fit(trns);
+			translateFromEye(trns, wheel ? 1 : translationSensitivity());
 			break;
 		case ZOOM:
 			if (wheel) {
@@ -487,8 +487,8 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	protected void execAction3D(DOF2Event event) {
-		Quat rot;
-		Vec trans;
+		Quat rt;
+		Vec trns;
 		float angle;
 		switch (referenceAction()) {
 		case CUSTOM_DOF2_ACTION:
@@ -497,8 +497,8 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		case DRIVE:
 			rotate(turnQuaternion(event.dof1Event(), scene.camera()));
 			flyDisp.set(0.0f, 0.0f, flySpeed());
-			trans = rotation().rotate(flyDisp);
-			setTossingDirection(trans);
+			trns = rotation().rotate(flyDisp);
+			setTossingDirection(trns);
 			startTossing(event);
 			break;
 		case LOOK_AROUND:
@@ -507,15 +507,15 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		case MOVE_BACKWARD:
 			rotate(rollPitchQuaternion(event, scene.camera()));
 			flyDisp.set(0.0f, 0.0f, flySpeed());
-			trans = rotation().rotate(flyDisp);
-			setTossingDirection(trans);
+			trns = rotation().rotate(flyDisp);
+			setTossingDirection(trns);
 			startTossing(event);
 			break;
 		case MOVE_FORWARD:
 			rotate(rollPitchQuaternion(event, scene.camera()));
 			flyDisp.set(0.0f, 0.0f, -flySpeed());
-			trans = rotation().rotate(flyDisp);
-			setTossingDirection(trans);
+			trns = rotation().rotate(flyDisp);
+			setTossingDirection(trns);
 			startTossing(event);
 			break;
 		case ROTATE:
@@ -524,13 +524,13 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 				// AbstractScene.showEventVariationWarning(a);
 				break;
 			}
-			trans = scene.camera().projectedCoordinatesOf(position());
-			rot = deformedBallQuaternion(event, trans.x(), trans.y(), scene.camera());
-			trans = rot.axis();
-			trans = scene.camera().frame().orientation().rotate(trans);
-			trans = transformOf(trans);
-			rot = new Quat(trans, -rot.angle());
-			setSpinningRotation(rot);
+			trns = scene.camera().projectedCoordinatesOf(position());
+			rt = deformedBallQuaternion(event, trns.x(), trns.y(), scene.camera());
+			trns = rt.axis();
+			trns = scene.camera().frame().orientation().rotate(trns);
+			trns = transformOf(trns);
+			rt = new Quat(trns, -rt.angle());
+			setSpinningRotation(rt);
 			if (Util.nonZero(dampingFriction()))
 				startSpinning(event);
 			else
@@ -542,15 +542,15 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 				// AbstractScene.showEventVariationWarning(a);
 				break;
 			}
-			trans = scene.camera().projectedCoordinatesOf(position());
-			float prev_angle = (float) Math.atan2(event.prevY() - trans.vec[1], event.prevX() - trans.vec[0]);
-			angle = (float) Math.atan2(event.y() - trans.vec[1], event.x() - trans.vec[0]);
+			trns = scene.camera().projectedCoordinatesOf(position());
+			float prev_angle = (float) Math.atan2(event.prevY() - trns.vec[1], event.prevX() - trns.vec[0]);
+			angle = (float) Math.atan2(event.y() - trns.vec[1], event.x() - trns.vec[0]);
 			Vec axis = transformOf(scene.camera().frame().orientation().rotate(new Vec(0.0f, 0.0f, -1.0f)));
 			if (scene.isRightHanded())
-				rot = new Quat(axis, angle - prev_angle);
+				rt = new Quat(axis, angle - prev_angle);
 			else
-				rot = new Quat(axis, prev_angle - angle);
-			setSpinningRotation(rot);
+				rt = new Quat(axis, prev_angle - angle);
+			setSpinningRotation(rt);
 			if (Util.nonZero(dampingFriction()))
 				startSpinning(event);
 			else
@@ -558,27 +558,27 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 			break;
 		case SCREEN_TRANSLATE:
 			int dir = originalDirection(event);
-			trans = new Vec();
+			trns = new Vec();
 			if (dir == 1)
 				if (event.isAbsolute())
-					trans.set(event.x(), 0.0f, 0.0f);
+					trns.set(event.x(), 0.0f, 0.0f);
 				else
-					trans.set(event.dx(), 0.0f, 0.0f);
+					trns.set(event.dx(), 0.0f, 0.0f);
 			else if (dir == -1)
 				if (event.isAbsolute())
-					trans.set(0.0f, scene.isRightHanded() ? -event.y() : event.y(), 0.0f);
+					trns.set(0.0f, scene.isRightHanded() ? -event.y() : event.y(), 0.0f);
 				else
-					trans.set(0.0f, scene.isRightHanded() ? -event.dy() : event.dy(), 0.0f);
-			scale2Fit(trans);
-			translateFromEye(trans);
+					trns.set(0.0f, scene.isRightHanded() ? -event.dy() : event.dy(), 0.0f);
+			scale2Fit(trns);
+			translateFromEye(trns);
 			break;
 		case TRANSLATE:
 			if (event.isRelative())
-				trans = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), 0.0f);
+				trns = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), 0.0f);
 			else
-				trans = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), 0.0f);
-			scale2Fit(trans);
-			translateFromEye(trans);
+				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), 0.0f);
+			scale2Fit(trns);
+			translateFromEye(trns);
 			break;
 		case ROTATE_Y:
 		case ROTATE_Z:

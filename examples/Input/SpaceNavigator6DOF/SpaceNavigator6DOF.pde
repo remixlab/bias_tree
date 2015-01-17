@@ -67,7 +67,7 @@ void setup() {
   scene.setAxesVisualHint(false);  
   scene.setRadius(260);
   scene.showAll();
-  
+
   satellite = loadShape("satellite.obj");
   model = new InteractiveModelFrame(scene, satellite);
   model.translate(new Vec(180, 180, 0));
@@ -77,11 +77,13 @@ void setup() {
     @Override
     public DOF6Event feed() {
       return new DOF6Event(sliderXpos.getValue(), sliderYpos.getValue(), sliderZpos.getValue(), 
-                           sliderXrot.getValue(), sliderYrot.getValue(), sliderZrot.getValue(), 0, 0);
+      sliderXrot.getValue(), sliderYrot.getValue(), sliderZrot.getValue(), 0, 0);
     }
   };
-  
+
   hidAgent.addGrabber(model);
+  hidAgent.addGrabber(scene.eye().frame());
+  hidAgent.setDefaultGrabber(scene.eye().frame());
   //declare some sensitivities for the space navigator device
   hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
 
@@ -91,29 +93,31 @@ void setup() {
 void draw() {    
   background(0);
   // the hidAgent sensitivities should not vary when its input grabber is the model:
-  if( hidAgent.inputGrabber() == model )
-    hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
-  else if(hidAgent.eyeProfile().isActionBound(DOF6Action.HINGE))
-    hidAgent.setSensitivities(0.0001, 0.0001, -0.01, 0.0001, 0.0001, 0.0001);      
+  if ( hidAgent.inputGrabber() == model )
+    hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.001, 0.001, 0.001);
+  else if ( hidAgent.inputGrabber() == scene.eye().frame() )
+    if (hidAgent.eyeProfile().isActionBound(DOF6Action.HINGE))
+      hidAgent.setSensitivities(0.0001, 0.0001, -0.01, 0.0001, 0.0001, 0.0001);
+    else
+      hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
   renderGlobe();
   model.draw();
 }
 
 void keyPressed() {
   if (key == 'x') scene.flip();
-  if(key == ' ')
-    if( hidAgent.eyeProfile().isActionBound(DOF6Action.HINGE) ) {
+  if (key == ' ')
+    if ( hidAgent.eyeProfile().isActionBound(DOF6Action.HINGE) ) {
       hidAgent.eyeProfile().setBinding(DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
       hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
       scene.eye().lookAt(scene.center());
       scene.showAll();
-    }
-    else {
+    } else {
       hidAgent.eyeProfile().setBinding(DOF6Action.HINGE);
       hidAgent.setSensitivities(0.0001, 0.0001, -0.01, 0.0001, 0.0001, 0.0001); 
-      Vec t = new Vec(0,0,0.7*globeRadius);
+      Vec t = new Vec(0, 0, 0.7*globeRadius);
       float a = TWO_PI - 2;      
-      Vec tr = scene.camera().frame().rotation().rotate(t);
+      //Vec tr = scene.camera().frame().rotation().rotate(t);
       scene.camera().setPosition(t);
       //For HINGE to work flawlessly we need to line up the eye up vector along the anchor and
       //the camera position:
@@ -121,7 +125,7 @@ void keyPressed() {
       //The rest is just to make the scene appear in front of us. We could have just used
       //the space navigator itself to make that happen too.
       Quat q = new Quat();
-      q.fromEulerAngles(a,0,0);
+      q.fromEulerAngles(a, 0, 0);
       scene.camera().frame().rotate(q);
     }
   if ( key == 'i') {

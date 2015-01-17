@@ -168,13 +168,11 @@ public class InputHandler {
 			if (!eventTuple.event().isNull()) {
 				if (eventTuple.grabber() instanceof ActionGrabber<?>) {
 					if (((ActionGrabber<?>) eventTuple.grabber()).action() != null) {
-						eventTupleQueue.add(eventTuple);
-						return true;
+						return eventTupleQueue.add(eventTuple);
 					}
 				}
 				else {
-					eventTupleQueue.add(eventTuple);
-					return true;
+					return eventTupleQueue.add(eventTuple);
 				}
 			}
 		return false;

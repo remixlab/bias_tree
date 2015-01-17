@@ -123,7 +123,6 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 		else if (inputGrabber() instanceof InteractiveFrame) {
 			moveFrame(lastEvent);
 		}
-
 		handle(lastEvent);
 	}
 

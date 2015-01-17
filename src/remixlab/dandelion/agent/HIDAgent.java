@@ -15,20 +15,30 @@ public class HIDAgent extends WheeledMotionAgent<DOF6Action> {
 
 	public HIDAgent(AbstractScene scn, String n) {
 		super(scn, n);
+		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+		frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
 	}
 
 	@Override
 	public DOF6Event feed() {
 		return null;
 	}
-	
+
+	@Override
+	public float[] sensitivities(MotionEvent event) {
+		if (event instanceof DOF6Event)
+			return new float[] { xSens, ySens, zSens, xrSens, yrSens, zrSens };
+		else
+			return super.sensitivities(event);
+	}
+
 	public void setSensitivities(float x, float y, float z, float rx, float ry, float rz) {
-		xSens		= x;
-		ySens		= y;
-		zSens		= z;
-		xrSens	= rx;
-		yrSens	= ry;
-		zrSens	= rz;
+		xSens = x;
+		ySens = y;
+		zSens = z;
+		xrSens = rx;
+		yrSens = ry;
+		zrSens = rz;
 	}
 
 	public void setXTranslationSensitivity(float s) {

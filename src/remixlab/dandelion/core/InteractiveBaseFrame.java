@@ -546,50 +546,49 @@ class InteractiveBaseFrame extends Frame implements Sensitivities {
 			AbstractScene.showDepthWarning("rotateAroundEyeAxes");
 			return;
 		}
-		Vec trans = new Vec();
+		Vec trns = new Vec();
 		Quat q = new Quat(scene.isLeftHanded() ? roll : -roll, -pitch, scene.isLeftHanded() ? yaw : -yaw);
-		// trans = scene.camera().projectedCoordinatesOf(position());
-		trans.set(-q.x(), -q.y(), -q.z());
-		trans = scene.camera().frame().orientation().rotate(trans);
-		trans = transformOf(trans);
-		q.setX(trans.x());
-		q.setY(trans.y());
-		q.setZ(trans.z());
+		trns.set(-q.x(), -q.y(), -q.z());
+		trns = scene.camera().frame().orientation().rotate(trns);
+		trns = transformOf(trns);
+		q.setX(trns.x());
+		q.setY(trns.y());
+		q.setZ(trns.z());
 		rotate(q);
 	}
 
 	// micro-actions procedures
 
-	protected void scale2Fit(Vec trans) {
+	protected void scale2Fit(Vec trns) {
 		// Scale to fit the screen relative event displacement
 		switch (scene.camera().type()) {
 		case PERSPECTIVE:
-			trans.multiply(2.0f
+			trns.multiply(2.0f
 					* (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
 					* Math.abs((scene.camera().frame().coordinatesOf(position())).vec[2] * scene.camera().frame().magnitude())
 					/ scene.camera().screenHeight());
 			break;
 		case ORTHOGRAPHIC:
 			float[] wh = scene.camera().getBoundaryWidthHeight();
-			trans.vec[0] *= 2.0 * wh[0] / scene.camera().screenWidth();
-			trans.vec[1] *= 2.0 * wh[1] / scene.camera().screenHeight();
+			trns.vec[0] *= 2.0 * wh[0] / scene.camera().screenWidth();
+			trns.vec[1] *= 2.0 * wh[1] / scene.camera().screenHeight();
 			break;
 		}
 	}
 
-	protected Rot computeRot(DOF2Event e2, Vec trans) {
-		Rot rot;
+	protected Rot computeRot(DOF2Event e2, Vec trns) {
+		Rot rt;
 		if (e2.isRelative()) {
 			Point prevPos = new Point(e2.prevX(), e2.prevY());
 			Point curPos = new Point(e2.x(), e2.y());
-			rot = new Rot(new Point(trans.x(), trans.y()), prevPos, curPos);
-			rot = new Rot(rot.angle() * rotationSensitivity());
+			rt = new Rot(new Point(trns.x(), trns.y()), prevPos, curPos);
+			rt = new Rot(rt.angle() * rotationSensitivity());
 		}
 		else
-			rot = new Rot(e2.x() * rotationSensitivity());
+			rt = new Rot(e2.x() * rotationSensitivity());
 		if (scene.isRightHanded())
-			rot.negate();
-		return rot;
+			rt.negate();
+		return rt;
 	}
 
 	protected float computeAngle(DOF1Event e1, boolean wheel) {
@@ -614,19 +613,19 @@ class InteractiveBaseFrame extends Frame implements Sensitivities {
 		return delta;
 	}
 
-	protected void translateFromEye(Vec trans) {
-		translateFromEye(trans, translationSensitivity());
+	protected void translateFromEye(Vec trns) {
+		translateFromEye(trns, translationSensitivity());
 	}
 
-	protected void translateFromEye(Vec trans, float sens) {
+	protected void translateFromEye(Vec trns, float sens) {
 		// Transform from eye to world coordinate system.
-		trans = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trans, sens))
-				: scene.camera().frame().orientation().rotate(Vec.multiply(trans, sens));
+		trns = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trns, sens))
+				: scene.camera().frame().orientation().rotate(Vec.multiply(trns, sens));
 
 		// And then down to frame
 		if (referenceFrame() != null)
-			trans = referenceFrame().transformOf(trans);
-		translate(trans);
+			trns = referenceFrame().transformOf(trns);
+		translate(trns);
 	}
 
 	// TODO decide whether to include this:

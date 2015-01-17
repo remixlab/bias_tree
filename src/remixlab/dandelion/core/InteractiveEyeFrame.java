@@ -319,7 +319,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 
 	protected void execAction2D(DOF2Event event) {
 		float deltaX, deltaY;
-		Rotation rot;
+		Rotation rt;
 		switch (referenceAction()) {
 		case CUSTOM_DOF2_ACTION:
 			performCustomAction(event);
@@ -340,16 +340,16 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			break;
 		case ROTATE:
 		case SCREEN_ROTATE:
-			rot = computeRot(event, eye.projectedCoordinatesOf(anchor()));
+			rt = computeRot(event, eye.projectedCoordinatesOf(anchor()));
 			if (event.isRelative()) {
-				setSpinningRotation(rot);
+				setSpinningRotation(rt);
 				if (Util.nonZero(dampingFriction()))
 					startSpinning(event);
 				else
 					spin();
 			} else
 				// absolute needs testing
-				rotate(rot);
+				rotate(rt);
 			break;
 		case SCREEN_TRANSLATE:
 			break;
@@ -549,8 +549,8 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 					- (float) Math.atan2(event.prevY() - trns.vec[1], event.prevX() - trns.vec[0]);
 			if (scene.isLeftHanded())
 				angle = -angle;
-			Rotation rot = new Quat(new Vec(0.0f, 0.0f, 1.0f), angle);
-			setSpinningRotation(rot);
+			Rotation rt = new Quat(new Vec(0.0f, 0.0f, 1.0f), angle);
+			setSpinningRotation(rt);
 			if (Util.nonZero(dampingFriction()))
 				startSpinning(event);
 			else
@@ -781,35 +781,35 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	}
 
 	@Override
-	protected void scale2Fit(Vec trans) {
+	protected void scale2Fit(Vec trns) {
 		// Scale to fit the screen mouse displacement
 		switch (scene.camera().type()) {
 		case PERSPECTIVE:
-			trans.multiply(2.0f * (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
+			trns.multiply(2.0f * (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
 					* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
 					/ scene.camera().screenHeight());
 			break;
 		case ORTHOGRAPHIC:
 			float[] wh = scene.camera().getBoundaryWidthHeight();
-			trans.vec[0] *= 2.0f * wh[0] / scene.camera().screenWidth();
-			trans.vec[1] *= 2.0f * wh[1] / scene.camera().screenHeight();
+			trns.vec[0] *= 2.0f * wh[0] / scene.camera().screenWidth();
+			trns.vec[1] *= 2.0f * wh[1] / scene.camera().screenHeight();
 			break;
 		}
 	}
 
 	@Override
-	protected Rot computeRot(DOF2Event e2, Vec trans) {
-		Rot rot;
+	protected Rot computeRot(DOF2Event e2, Vec trns) {
+		Rot rt;
 		if (e2.isRelative()) {
 			Point prevPos = new Point(e2.prevX(), e2.prevY());
 			Point curPos = new Point(e2.x(), e2.y());
-			rot = new Rot(new Point(trans.x(), trans.y()), prevPos, curPos);
-			rot = new Rot(rot.angle() * rotationSensitivity());
+			rt = new Rot(new Point(trns.x(), trns.y()), prevPos, curPos);
+			rt = new Rot(rt.angle() * rotationSensitivity());
 		}
 		else
-			rot = new Rot(e2.x() * rotationSensitivity());
+			rt = new Rot(e2.x() * rotationSensitivity());
 		if (scene.isLeftHanded())
-			rot.negate();
-		return rot;
+			rt.negate();
+		return rt;
 	}
 }
