@@ -97,7 +97,7 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 		if (grabber == null || event == null)
 			return null;
 		Action<E> action = profile().handle(event);
-		//if (action != null)	grabber.setAction(action);
+		// if (action != null) grabber.setAction(action);
 		return action;
 	}
 }

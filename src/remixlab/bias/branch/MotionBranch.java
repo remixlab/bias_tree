@@ -100,7 +100,7 @@ public class MotionBranch<E extends Enum<E>, M extends MotionProfile<? extends A
 			action = profile().handle(event);
 		if (event instanceof ClickEvent)
 			action = clickProfile.handle(event);
-		//if (action != null) grabber.setAction(action);
+		// if (action != null) grabber.setAction(action);
 		return action;
 	}
 }

@@ -1,3 +1,12 @@
+/*********************************************************************************
+ * bias_tree
+ * Copyright (c) 2014 National University of Colombia, https://github.com/remixlab
+ * @author Jean Pierre Charalambos, http://otrolado.info/
+ *
+ * All rights reserved. Library that eases the creation of interactive
+ * scenes, released under the terms of the GNU Public License v3.0
+ * which is available at http://www.gnu.org/licenses/gpl.html
+ *********************************************************************************/
 
 package remixlab.bias.core;
 
@@ -296,17 +305,19 @@ public class Agent {
 	 * @see #inputGrabber()
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected boolean handle(BogusEvent event) {
+	protected <E extends Enum<E>> boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)
 			return false;
-		if (event.isNull())	return false;
+		if (event.isNull())
+			return false;
 		if (event instanceof MotionEvent)
 			((MotionEvent) event).modulate(sensitivities((MotionEvent) event));
 		if (inputGrabber() != null) {
 			if (inputGrabber() instanceof ActionGrabber<?>) {
 				Tuple t = trackedGrabber() != null ? trackedGrabber : defaultGrabber;
-				Action<?> action = t.b.handle((ActionGrabber) inputGrabber(), event);
-				return action != null ? inputHandler().enqueueEventTuple(new EventGrabberTuple(event, (ActionGrabber<?>)inputGrabber(), action)) : false;				
+				Action<E> action = (Action<E>) t.b.handle((ActionGrabber) inputGrabber(), event);
+				return action != null ? inputHandler().enqueueEventTuple(
+						new EventGrabberTuple(event, (ActionGrabber<E>) inputGrabber(), action)) : false;
 			}
 			return inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
 		}
@@ -319,10 +330,7 @@ public class Agent {
 	 * @see #trackedGrabber()
 	 */
 	public Grabber inputGrabber() {
-		if (trackedGrabber() != null)
-			return trackedGrabber();
-		else
-			return defaultGrabber();
+		return trackedGrabber() != null ? trackedGrabber() : defaultGrabber();
 	}
 
 	/**
