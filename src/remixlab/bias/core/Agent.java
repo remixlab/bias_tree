@@ -299,14 +299,14 @@ public class Agent {
 	protected boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)
 			return false;
-		//if (event.isNull())	return false;
+		if (event.isNull())	return false;
 		if (event instanceof MotionEvent)
 			((MotionEvent) event).modulate(sensitivities((MotionEvent) event));
 		if (inputGrabber() != null) {
 			if (inputGrabber() instanceof ActionGrabber<?>) {
-				Tuple t = trackedGrabber() != null ?  trackedGrabber : defaultGrabber;
-				if (t.b.handle((ActionGrabber) inputGrabber(), event) == null)
-					return false;
+				Tuple t = trackedGrabber() != null ? trackedGrabber : defaultGrabber;
+				Action<?> action = t.b.handle((ActionGrabber) inputGrabber(), event);
+				return action != null ? inputHandler().enqueueEventTuple(new EventGrabberTuple(event, (ActionGrabber<?>)inputGrabber(), action)) : false;				
 			}
 			return inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber()));
 		}

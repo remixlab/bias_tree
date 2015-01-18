@@ -95,9 +95,7 @@ public class WheeledMotionBranch<E extends Enum<E>, W extends MotionProfile<? ex
 			action = profile().handle(event);
 		else if (event instanceof ClickEvent)
 			action = clickProfile.handle(event);
-		if (action != null) {
-			grabber.setAction(action);
-		}
+		//if (action != null)	grabber.setAction(action);
 		return action;
 	}
 }

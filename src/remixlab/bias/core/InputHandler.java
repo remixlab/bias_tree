@@ -165,16 +165,8 @@ public class InputHandler {
 	public boolean enqueueEventTuple(EventGrabberTuple eventTuple) {
 		// TODO needs testing
 		if (!eventTupleQueue.contains(eventTuple))
-			if (!eventTuple.event().isNull()) {
-				if (eventTuple.grabber() instanceof ActionGrabber<?>) {
-					if (((ActionGrabber<?>) eventTuple.grabber()).action() != null) {
-						return eventTupleQueue.add(eventTuple);
-					}
-				}
-				else {
-					return eventTupleQueue.add(eventTuple);
-				}
-			}
+			if (!eventTuple.event().isNull())
+				return eventTupleQueue.add(eventTuple);
 		return false;
 	}
 

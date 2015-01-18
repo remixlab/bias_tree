@@ -32,32 +32,34 @@ public class EventGrabberTuple {
 		grabber = g;
 	}
 	
+	/*
 	public <E extends Enum<E>> EventGrabberTuple(BogusEvent e, ActionGrabber<E> g, Action<E> a) {
 		System.out.println("creating e,g,a tuple");
 		event = e;
 		grabber = g;
 		action = a;
 	}
-
-	/*
-	 * //TODO test this after implementing the actions
-	 * 
-	 * @SuppressWarnings({ "unchecked", "rawtypes" }) public EventGrabberTuple(BogusEvent e, Action a, ActionGrabber g) {
-	 * this(e, g); if(a == null) { g.setAction(null); return; }
-	 * 
-	 * //TODO: critical condition in the new approach needs testing if( g.action() != null ) { if(
-	 * g.action().referenceAction().getClass() == a.referenceAction().getClass() ) g.setAction(a); else {
-	 * System.out.println("Warning: " + a + " was requested to be added to an event tuple but null was added!");
-	 * g.setAction(null); } } else g.setAction(a); } //
-	 */
+	//*/
+	
+	///*
+	public EventGrabberTuple(BogusEvent e, ActionGrabber<?> g, Action<?> a) {
+		event = e;
+		grabber = g;
+		action = a;
+	}
+	//*/
 
 	/**
 	 * Calls {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}.
 	 * 
 	 * @return true if succeeded and false otherwise.
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public boolean perform() {
 		if (grabber != null) {
+			if( grabber instanceof ActionGrabber ) {
+				((ActionGrabber) grabber).setAction(action);
+			}
 			grabber.performInteraction(event);
 			return true;
 		}
