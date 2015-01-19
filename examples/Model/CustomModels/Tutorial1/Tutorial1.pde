@@ -15,14 +15,14 @@ public class ModelEllipse extends InteractiveModelFrame {
   //pure P5 should not override the following two:
   // /**
   @Override
-  public void performInteraction(DOF2Event event) {
+  public void performCustomAction(DOF2Event event) {
     radiusX += event.dx();
     radiusY += event.dy();
     update();
   }
   
   @Override
-  public void performInteraction(ClickEvent event) {
+  public void performCustomAction(ClickEvent event) {
     colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
     update();
   }
@@ -59,6 +59,7 @@ void setup() {
   
   e = new ModelEllipse(ctrlScene);
   ctrlScene.mouseAgent().setButtonBinding(Target.FRAME, LEFT, DOF2Action.CUSTOM);
+  ctrlScene.mouseAgent().setButtonBinding(Target.FRAME, CENTER, DOF2Action.CUSTOM);
   ctrlScene.mouseAgent().setClickBinding(Target.FRAME, RIGHT, ClickAction.CUSTOM);
   ctrlScene.mouseAgent().setClickBinding(Target.FRAME, LEFT, ClickAction.CUSTOM);
 }
