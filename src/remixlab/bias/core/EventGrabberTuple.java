@@ -32,18 +32,19 @@ public class EventGrabberTuple {
 		grabber = g;
 	}
 
-	// /*
+	/**
+	 * @param e
+	 *          {@link remixlab.bias.core.BogusEvent}
+	 * @param g
+	 *          {@link remixlab.bias.core.Grabber}
+	 * @param a
+	 *          {@link remixlab.bias.core.Action}
+	 */
 	public <E extends Enum<E>> EventGrabberTuple(BogusEvent e, ActionGrabber<E> g, Action<E> a) {
 		event = e;
 		grabber = g;
 		action = a;
 	}
-
-	// */
-
-	/*
-	 * public EventGrabberTuple(BogusEvent e, ActionGrabber<?> g, Action<?> a) { event = e; grabber = g; action = a; } //
-	 */
 
 	/**
 	 * Calls {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}.
