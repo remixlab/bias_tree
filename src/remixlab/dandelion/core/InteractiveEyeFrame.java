@@ -217,7 +217,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 
 	public void performInteraction(ClickEvent event) {
 		switch (referenceAction()) {
-		case CUSTOM_CLICK_ACTION:
+		case CUSTOM_CLICK:
 			performCustomAction(event);
 			break;
 		case ALIGN_FRAME:
@@ -290,7 +290,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 
 	protected void execAction2D(DOF1Event event, boolean wheel) {
 		switch (referenceAction()) {
-		case CUSTOM_DOF1_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case ROTATE_Z:
@@ -321,7 +321,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 		float deltaX, deltaY;
 		Rotation rt;
 		switch (referenceAction()) {
-		case CUSTOM_DOF2_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case MOVE_BACKWARD:
@@ -390,14 +390,14 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	}
 
 	protected void execAction2D(DOF3Event event) {
-		if (referenceAction() == MotionAction.CUSTOM_DOF3_ACTION)
+		if (referenceAction() == MotionAction.CUSTOM)
 			performCustomAction(event);
 		else
 			execAction2D(event.dof2Event());
 	}
 
 	protected void execAction2D(DOF6Event event) {
-		if (referenceAction() == MotionAction.CUSTOM_DOF6_ACTION)
+		if (referenceAction() == MotionAction.CUSTOM)
 			performCustomAction(event);
 		else
 			execAction2D(event.dof3Event());
@@ -413,7 +413,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 		float wheelSensitivityCoef = 8E-4f;
 		Vec trns;
 		switch (referenceAction()) {
-		case CUSTOM_DOF1_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case ROTATE_X:
@@ -478,7 +478,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	protected void execAction3D(DOF2Event event) {
 		Vec trns = new Vec();
 		switch (referenceAction()) {
-		case CUSTOM_DOF2_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case DRIVE:
@@ -608,7 +608,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 
 	protected void execAction3D(DOF3Event event) {
 		switch (referenceAction()) {
-		case CUSTOM_DOF3_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case ROTATE_XYZ:
@@ -635,7 +635,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 	protected void execAction3D(DOF6Event event) {
 		Vec trns = new Vec();
 		switch (referenceAction()) {
-		case CUSTOM_DOF6_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case HINGE: // aka google earth navigation

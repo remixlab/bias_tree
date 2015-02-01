@@ -26,175 +26,145 @@ public interface Constants {
 		/**
 		 * Center frame
 		 */
-		CENTER_FRAME("Center frame", true, 0),
+		CENTER_FRAME("Center frame", true),
 		/**
 		 * Align frame with world
 		 */
-		ALIGN_FRAME("Align frame with world", true, 0),
+		ALIGN_FRAME("Align frame with world", true),
 
 		// Click actions require cursor pos:
 		/**
 		 * Interpolate the eye to zoom on pixel
 		 */
-		ZOOM_ON_PIXEL("Interpolate the eye to zoom on pixel", true, 0),
+		ZOOM_ON_PIXEL("Interpolate the eye to zoom on pixel", true),
 		/**
 		 * Set the anchor from the pixel under the pointer
 		 */
-		ANCHOR_FROM_PIXEL("Set the anchor from the pixel under the pointer", true, 0),
+		ANCHOR_FROM_PIXEL("Set the anchor from the pixel under the pointer", true),
 
 		// Wheel
 
 		/**
 		 * custom Scale frame
 		 */
-		SCALE("Scale frame", true, 1),
+		SCALE("Scale frame", true),
 		/**
 		 * Zoom eye
 		 */
-		ZOOM("Zoom eye", false, 1),
+		ZOOM("Zoom eye", false),
 		/**
 		 * Zoom eye on anchor
 		 */
-		ZOOM_ON_ANCHOR("Zoom eye on anchor", false, 1),
+		ZOOM_ON_ANCHOR("Zoom eye on anchor", false),
 		/**
 		 * Translate along screen X axis
 		 */
-		TRANSLATE_X("Translate along screen X axis", true, 1),
+		TRANSLATE_X("Translate along screen X axis", true),
 		/**
 		 * Translate along screen Y axis
 		 */
-		TRANSLATE_Y("Translate along screen Y axis", true, 1),
+		TRANSLATE_Y("Translate along screen Y axis", true),
 		/**
 		 * Translate along screen Z axis
 		 */
-		TRANSLATE_Z("Translate along screen Z axis", false, 1),
+		TRANSLATE_Z("Translate along screen Z axis", false),
 		/**
 		 * Rotate frame around screen x axis (eye or interactive frame)
 		 */
-		ROTATE_X("Rotate frame around screen x axis (eye or interactive frame)", false, 1),
+		ROTATE_X("Rotate frame around screen x axis (eye or interactive frame)", false),
 		/**
 		 * Rotate frame around screen y axis (eye or interactive frame)
 		 */
-		ROTATE_Y("Rotate frame around screen y axis (eye or interactive frame)", false, 1),
+		ROTATE_Y("Rotate frame around screen y axis (eye or interactive frame)", false),
 		/**
 		 * Rotate frame around screen z axis (eye or interactive frame)
 		 */
-		ROTATE_Z("Rotate frame around screen z axis (eye or interactive frame)", true, 1),
+		ROTATE_Z("Rotate frame around screen z axis (eye or interactive frame)", true),
 		/**
 		 * Drive (camera or interactive frame)
 		 */
-		DRIVE("Drive (camera or interactive frame)", false, 2),
+		DRIVE("Drive (camera or interactive frame)", false),
 
 		// 2 DOFs ACTIONs
 		/**
 		 * Frame (eye or interactive frame) arcball rotate
 		 */
-		ROTATE("Frame (eye or interactive frame) arcball rotate", true, 2),
+		ROTATE("Frame (eye or interactive frame) arcball rotate", true),
 		/**
 		 * Rotate camera frame as in CAD applications
 		 */
-		ROTATE_CAD("Rotate camera frame as in CAD applications", false, 2),
+		ROTATE_CAD("Rotate camera frame as in CAD applications", false),
 		/**
 		 * Translate frame (eye or interactive frame)
 		 */
-		TRANSLATE("Translate frame (eye or interactive frame)", true, 2),
+		TRANSLATE("Translate frame (eye or interactive frame)", true),
 		/**
 		 * Move forward frame (camera or interactive frame)
 		 */
-		MOVE_FORWARD("Move forward frame (camera or interactive frame)", true, 2),
+		MOVE_FORWARD("Move forward frame (camera or interactive frame)", true),
 		/**
 		 * Move backward frame (camera or interactive frame)
 		 */
-		MOVE_BACKWARD("Move backward frame (camera or interactive frame)", true, 2),
+		MOVE_BACKWARD("Move backward frame (camera or interactive frame)", true),
 		/**
 		 * Look around with frame (camera or interactive frame)
 		 */
-		LOOK_AROUND("Look around with frame (camera or interactive frame)", false, 2),
+		LOOK_AROUND("Look around with frame (camera or interactive frame)", false),
 		/**
 		 * Screen rotate (eye or interactive frame)
 		 */
-		SCREEN_ROTATE("Screen rotate (eye or interactive frame)", true, 2),
+		SCREEN_ROTATE("Screen rotate (eye or interactive frame)", true),
 		/**
 		 * Screen translate frame (eye or interactive frame)
 		 */
-		SCREEN_TRANSLATE("Screen translate frame (eye or interactive frame)", true, 2),
+		SCREEN_TRANSLATE("Screen translate frame (eye or interactive frame)", true),
 		/**
 		 * Zoom on region (eye or interactive frame)
 		 */
-		ZOOM_ON_REGION("Zoom on region (eye or interactive frame)", true, 2),
+		ZOOM_ON_REGION("Zoom on region (eye or interactive frame)", true),
 		/**
 		 * Translate frame (camera or interactive frame) from dx, dy, dz simultaneously
 		 */
-		TRANSLATE_XYZ("Translate frame (camera or interactive frame) from dx, dy, dz simultaneously", false, 3),
+		TRANSLATE_XYZ("Translate frame (camera or interactive frame) from dx, dy, dz simultaneously", false),
 		/**
 		 * Rotate frame (camera or interactive frame) from Euler angles
 		 */
-		ROTATE_XYZ("Rotate frame (camera or interactive frame) from Euler angles", false, 3),
+		ROTATE_XYZ("Rotate frame (camera or interactive frame) from Euler angles", false),
 		/**
 		 * Translate frame (camera or interactive frame) from dx, dy, dz and rotate it from Euler angles simultaneously
 		 */
 		TRANSLATE_XYZ_ROTATE_XYZ(
 				"Translate frame (camera or interactive frame) from dx, dy, dz and rotate it from Euler angles simultaneously",
-				false, 6),
+				false),
 		/**
 		 * Move camera on the surface of a sphere using 5-DOF's: 2 rotations around scene anchor, 1 rotation around scene-up
 		 * vector and 1 translation along it, and 1 rotation around eye X-axis.
 		 */
-		HINGE("Move camera on the surface of a sphere using 5-DOF's", false, 6),
+		HINGE("Move camera on the surface of a sphere using 5-DOF's", false),
 
 		// CUSTOM ACTIONs
 
 		/**
-		 * User defined action
+		 * User defined click-action
 		 */
-		CUSTOM_CLICK_ACTION("User defined action", 0),
+		CUSTOM_CLICK("User defined click-action"),
 
 		/**
-		 * User defined dof1-action
+		 * User defined motion-action
 		 */
-		CUSTOM_DOF1_ACTION("User defined dof1-action", 1),
-
-		/**
-		 * User defined dof2-action
-		 */
-		CUSTOM_DOF2_ACTION("User defined dof2-action", 2),
-
-		/**
-		 * User defined dof3-action
-		 */
-		CUSTOM_DOF3_ACTION("User defined dof3-action", 3),
-
-		/**
-		 * User defined dof6-action
-		 */
-		CUSTOM_DOF6_ACTION("User defined dof6-action", 6);
+		CUSTOM("User defined motion-action");
 
 		String	description;
 		boolean	twoD;
-		int			dofs;
-
-		MotionAction(String description, boolean td, int ds) {
-			this.description = description;
-			this.twoD = td;
-			this.dofs = ds;
-		}
-
-		MotionAction(String description, int ds) {
-			this.description = description;
-			this.twoD = true;
-			this.dofs = ds;
-		}
 
 		MotionAction(String description, boolean td) {
 			this.description = description;
 			this.twoD = td;
-			this.dofs = 2;
 		}
 
 		MotionAction(String description) {
 			this.description = description;
 			this.twoD = true;
-			this.dofs = 0;
 		}
 
 		/**
@@ -209,13 +179,6 @@ public interface Constants {
 		 */
 		public boolean is2D() {
 			return twoD;
-		}
-
-		/**
-		 * Returns the degrees-of-freedom needed to perform the action item.
-		 */
-		public int dofs() {
-			return dofs;
 		}
 	}
 
@@ -225,150 +188,135 @@ public interface Constants {
 		/**
 		 * Add keyframe to path 1
 		 */
-		ADD_KEYFRAME_TO_PATH_1("Add keyframe to path 1", true, 0),
+		ADD_KEYFRAME_TO_PATH_1("Add keyframe to path 1", true),
 		/**
 		 * Play path 1
 		 */
-		PLAY_PATH_1("Play path 1", true, 0),
+		PLAY_PATH_1("Play path 1", true),
 		/**
 		 * Delete path 1
 		 */
-		DELETE_PATH_1("Delete path 1", true, 0),
+		DELETE_PATH_1("Delete path 1", true),
 		/**
 		 * Add keyframe to path 2
 		 */
-		ADD_KEYFRAME_TO_PATH_2("Add keyframe to path 2", true, 0),
+		ADD_KEYFRAME_TO_PATH_2("Add keyframe to path 2", true),
 		/**
 		 * Play path 2
 		 */
-		PLAY_PATH_2("Play path 2", true, 0),
+		PLAY_PATH_2("Play path 2", true),
 		/**
 		 * Delete path 2
 		 */
-		DELETE_PATH_2("Delete path 2", true, 0),
+		DELETE_PATH_2("Delete path 2", true),
 		/**
 		 * Add keyframe to path 3
 		 */
-		ADD_KEYFRAME_TO_PATH_3("Add keyframe to path 3", true, 0),
+		ADD_KEYFRAME_TO_PATH_3("Add keyframe to path 3", true),
 		/**
 		 * Play path 3
 		 */
-		PLAY_PATH_3("Play path 3", true, 0),
+		PLAY_PATH_3("Play path 3", true),
 		/**
 		 * Delete path 3
 		 */
-		DELETE_PATH_3("Delete path 3", true, 0),
+		DELETE_PATH_3("Delete path 3", true),
 
 		/**
 		 * Zoom to fit the scene
 		 */
-		INTERPOLATE_TO_FIT("Zoom to fit the scene", true, 0),
+		INTERPOLATE_TO_FIT("Zoom to fit the scene", true),
 
 		// GENERAL KEYBOARD ACTIONs
 		/**
 		 * Toggles axes visual hint
 		 */
-		TOGGLE_AXES_VISUAL_HINT("Toggles axes visual hint", true, 0),
+		TOGGLE_AXES_VISUAL_HINT("Toggles axes visual hint", true),
 		/**
 		 * Toggles grid visual hint
 		 */
-		TOGGLE_GRID_VISUAL_HINT("Toggles grid visual hint", true, 0),
+		TOGGLE_GRID_VISUAL_HINT("Toggles grid visual hint", true),
 		/**
 		 * Toggles paths visual hint
 		 */
-		TOGGLE_PATHS_VISUAL_HINT("Toggles paths visual hint", true, 0),
+		TOGGLE_PATHS_VISUAL_HINT("Toggles paths visual hint", true),
 		/**
 		 * Toggles frame visual hint
 		 */
-		TOGGLE_PICKING_VISUAL_HINT("Toggles frame visual hint", true, 0),
+		TOGGLE_PICKING_VISUAL_HINT("Toggles frame visual hint", true),
 		/**
 		 * Toggles animation
 		 */
-		TOGGLE_ANIMATION("Toggles animation", true, 0),
+		TOGGLE_ANIMATION("Toggles animation", true),
 		/**
 		 * Toggles camera type
 		 */
-		TOGGLE_CAMERA_TYPE("Toggles camera type", false, 0),
+		TOGGLE_CAMERA_TYPE("Toggles camera type", false),
 		/**
 		 * Displays the global help
 		 */
-		DISPLAY_INFO("Displays the global help", true, 0),
+		DISPLAY_INFO("Displays the global help", true),
 		/**
 		 * Reset the anchor to the world origin
 		 */
-		RESET_ANCHOR("Reset the anchor to the world origin", true, 0),
+		RESET_ANCHOR("Reset the anchor to the world origin", true),
 		/**
 		 * Show the whole scene
 		 */
-		SHOW_ALL("Show the whole scene", true, 0),
+		SHOW_ALL("Show the whole scene", true),
 
 		// CAMERA KEYBOARD ACTIONs
 		/**
 		 * Move eye to the left
 		 */
-		MOVE_LEFT("Move eye to the left", true, 0),
+		MOVE_LEFT("Move eye to the left", true),
 		/**
 		 * Move eye to the right
 		 */
-		MOVE_RIGHT("Move eye to the right", true, 0),
+		MOVE_RIGHT("Move eye to the right", true),
 		/**
 		 * Move eye up
 		 */
-		MOVE_UP("Move eye up", true, 0),
+		MOVE_UP("Move eye up", true),
 		/**
 		 * Move eye down
 		 */
-		MOVE_DOWN("Move eye down", true, 0),
+		MOVE_DOWN("Move eye down", true),
 		/**
 		 * Increase frame rotation sensitivity
 		 */
-		INCREASE_ROTATION_SENSITIVITY("Increase frame rotation sensitivity", true, 0),
+		INCREASE_ROTATION_SENSITIVITY("Increase frame rotation sensitivity", true),
 		/**
 		 * Decrease frame rotation sensitivity
 		 */
-		DECREASE_ROTATION_SENSITIVITY("Decrease frame rotation sensitivity", true, 0),
+		DECREASE_ROTATION_SENSITIVITY("Decrease frame rotation sensitivity", true),
 		/**
 		 * Increase eye fly speed
 		 */
-		INCREASE_FLY_SPEED("Increase eye fly speed", true, 0),
+		INCREASE_FLY_SPEED("Increase eye fly speed", true),
 		/**
 		 * Decrease eye fly speed
 		 */
-		DECREASE_FLY_SPEED("Decrease eye fly speed", true, 0),
+		DECREASE_FLY_SPEED("Decrease eye fly speed", true),
 
 		// CUSTOM ACTIONs
 
 		/**
 		 * User defined keyboard-action
 		 */
-		CUSTOM_KEYBOARD_ACTION("User defined click-action", 0);
+		CUSTOM("User defined keyboard-action");
 
 		String	description;
-		boolean	twoD;
-		int			dofs;
-
-		SceneAction(String description, boolean td, int ds) {
-			this.description = description;
-			this.twoD = td;
-			this.dofs = ds;
-		}
-
-		SceneAction(String description, int ds) {
-			this.description = description;
-			this.twoD = true;
-			this.dofs = ds;
-		}
+		boolean	twoD;		
 
 		SceneAction(String description, boolean td) {
 			this.description = description;
 			this.twoD = td;
-			this.dofs = 2;
 		}
 
 		SceneAction(String description) {
 			this.description = description;
 			this.twoD = true;
-			this.dofs = 0;
 		}
 
 		/**
@@ -383,13 +331,6 @@ public interface Constants {
 		 */
 		public boolean is2D() {
 			return twoD;
-		}
-
-		/**
-		 * Returns the degrees-of-freedom needed to perform the action item.
-		 */
-		public int dofs() {
-			return dofs;
 		}
 	}
 
@@ -406,7 +347,7 @@ public interface Constants {
 		ZOOM_ON_PIXEL(MotionAction.ZOOM_ON_PIXEL),
 		ANCHOR_FROM_PIXEL(MotionAction.ANCHOR_FROM_PIXEL),
 
-		CUSTOM(MotionAction.CUSTOM_CLICK_ACTION);
+		CUSTOM_CLICK(MotionAction.CUSTOM_CLICK);
 
 		@Override
 		public MotionAction referenceAction() {
@@ -416,10 +357,6 @@ public interface Constants {
 		@Override
 		public String description() {
 			return this.referenceAction().description();
-		}
-
-		public int dofs() {
-			return act.dofs();
 		}
 
 		/**
@@ -451,7 +388,7 @@ public interface Constants {
 		ROTATE_Y(MotionAction.ROTATE_Y),
 		ROTATE_Z(MotionAction.ROTATE_Z),
 
-		CUSTOM(MotionAction.CUSTOM_DOF1_ACTION);
+		CUSTOM(MotionAction.CUSTOM);
 
 		@Override
 		public MotionAction referenceAction() {
@@ -461,10 +398,6 @@ public interface Constants {
 		@Override
 		public String description() {
 			return this.referenceAction().description();
-		}
-
-		public int dofs() {
-			return act.dofs();
 		}
 
 		/**
@@ -508,7 +441,7 @@ public interface Constants {
 		SCREEN_TRANSLATE(MotionAction.SCREEN_TRANSLATE),
 		ZOOM_ON_REGION(MotionAction.ZOOM_ON_REGION),
 
-		CUSTOM(MotionAction.CUSTOM_DOF2_ACTION);
+		CUSTOM(MotionAction.CUSTOM);
 
 		@Override
 		public MotionAction referenceAction() {
@@ -518,10 +451,6 @@ public interface Constants {
 		@Override
 		public String description() {
 			return this.referenceAction().description();
-		}
-
-		public int dofs() {
-			return act.dofs();
 		}
 
 		/**
@@ -569,7 +498,7 @@ public interface Constants {
 		TRANSLATE_XYZ(MotionAction.TRANSLATE_XYZ),
 		ROTATE_XYZ(MotionAction.ROTATE_XYZ),
 
-		CUSTOM(MotionAction.CUSTOM_DOF3_ACTION);
+		CUSTOM(MotionAction.CUSTOM);
 
 		@Override
 		public MotionAction referenceAction() {
@@ -579,10 +508,6 @@ public interface Constants {
 		@Override
 		public String description() {
 			return this.referenceAction().description();
-		}
-
-		public int dofs() {
-			return act.dofs();
 		}
 
 		/**
@@ -636,7 +561,7 @@ public interface Constants {
 		// DOF_6
 		TRANSLATE_XYZ_ROTATE_XYZ(MotionAction.TRANSLATE_XYZ_ROTATE_XYZ),
 
-		CUSTOM(MotionAction.CUSTOM_DOF6_ACTION);
+		CUSTOM(MotionAction.CUSTOM);
 
 		@Override
 		public MotionAction referenceAction() {
@@ -646,10 +571,6 @@ public interface Constants {
 		@Override
 		public String description() {
 			return this.referenceAction().description();
-		}
-
-		public int dofs() {
-			return act.dofs();
 		}
 
 		/**
@@ -706,7 +627,7 @@ public interface Constants {
 		INCREASE_FLY_SPEED(SceneAction.INCREASE_FLY_SPEED),
 		DECREASE_FLY_SPEED(SceneAction.DECREASE_FLY_SPEED),
 
-		CUSTOM(SceneAction.CUSTOM_KEYBOARD_ACTION);
+		CUSTOM(SceneAction.CUSTOM);
 
 		@Override
 		public SceneAction referenceAction() {
@@ -716,10 +637,6 @@ public interface Constants {
 		@Override
 		public String description() {
 			return this.referenceAction().description();
-		}
-
-		public int dofs() {
-			return act.dofs();
 		}
 
 		/**

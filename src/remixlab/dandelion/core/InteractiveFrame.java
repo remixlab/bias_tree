@@ -240,7 +240,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		case ALIGN_FRAME:
 			alignWithFrame(scene.eye().frame());
 			break;
-		case CUSTOM_CLICK_ACTION:
+		case CUSTOM_CLICK:
 			performCustomAction(event);
 			break;
 		case ANCHOR_FROM_PIXEL:
@@ -294,7 +294,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 
 	protected void execAction2D(DOF1Event event, boolean wheel) {
 		switch (referenceAction()) {
-		case CUSTOM_DOF1_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case ROTATE_Z:
@@ -332,7 +332,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		Vec trns;
 		float deltaX, deltaY;
 		switch (referenceAction()) {
-		case CUSTOM_DOF2_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case MOVE_BACKWARD:
@@ -405,14 +405,14 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	protected void execAction2D(DOF3Event event) {
-		if (referenceAction() == MotionAction.CUSTOM_DOF3_ACTION)
+		if (referenceAction() == MotionAction.CUSTOM)
 			performCustomAction(event);
 		else
 			execAction2D(event.dof2Event());
 	}
 
 	protected void execAction2D(DOF6Event event) {
-		if (referenceAction() == MotionAction.CUSTOM_DOF6_ACTION)
+		if (referenceAction() == MotionAction.CUSTOM)
 			performCustomAction(event);
 		else
 			execAction2D(event.dof3Event());
@@ -432,7 +432,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		Vec trns;
 		float delta;
 		switch (referenceAction()) {
-		case CUSTOM_DOF1_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case ROTATE_X:
@@ -491,7 +491,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		Vec trns;
 		float angle;
 		switch (referenceAction()) {
-		case CUSTOM_DOF2_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case DRIVE:
@@ -594,7 +594,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 
 	protected void execAction3D(DOF3Event event) {
 		switch (referenceAction()) {
-		case CUSTOM_DOF3_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case ROTATE_XYZ:
@@ -621,7 +621,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 
 	protected void execAction3D(DOF6Event event) {
 		switch (referenceAction()) {
-		case CUSTOM_DOF6_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case TRANSLATE_XYZ_ROTATE_XYZ:

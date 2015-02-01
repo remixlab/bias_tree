@@ -173,7 +173,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 		case ADD_KEYFRAME_TO_PATH_3:
 			eye().addKeyFrameToPath(3);
 			break;
-		case CUSTOM_KEYBOARD_ACTION:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case DECREASE_FLY_SPEED:
