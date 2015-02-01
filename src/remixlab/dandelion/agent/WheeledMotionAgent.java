@@ -184,7 +184,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 		return mask;
 	}
 
-	// wheel here
+	// wheel here TODO really should go downwards the hierarchy
 
 	/**
 	 * Binds the mask-wheel shortcut to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or

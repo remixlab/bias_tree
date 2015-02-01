@@ -424,10 +424,10 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * 
-	 * @see #setAsFirstPerson()
+	 * @see #dragToFirstPerson()
 	 * @see #setAsThirdPerson()
 	 */
-	public void setAsArcball() {
+	public void dragToArcball() {
 		removeFrameBindings();
 		removeEyeBindings();
 		eyeProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.ROTATE);
@@ -471,10 +471,10 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * <p>
 	 * Note that Alt + No-button is bound to the null action.
 	 * 
-	 * @see #setAsFirstPerson()
+	 * @see #dragToFirstPerson()
 	 * @see #setAsThirdPerson()
 	 */
-	public void setAsArcballTrackpad() {
+	public void slipToArcball() {
 		removeFrameBindings();
 		removeEyeBindings();
 		eyeProfile().setBinding(DOF2Action.ROTATE);
@@ -520,10 +520,10 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * 
-	 * @see #setAsArcball()
+	 * @see #dragToArcball()
 	 * @see #setAsThirdPerson()
 	 */
-	public void setAsFirstPerson() {
+	public void dragToFirstPerson() {
 		removeFrameBindings();
 		removeEyeBindings();
 		eyeProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.MOVE_FORWARD);
@@ -577,10 +577,10 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * 
-	 * @see #setAsArcball()
+	 * @see #dragToArcball()
 	 * @see #setAsThirdPerson()
 	 */
-	public void setAsFirstPersonTrackpad() {
+	public void slipToFirstPerson() {
 		removeFrameBindings();
 		removeEyeBindings();
 		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NO_ID, DOF2Action.MOVE_FORWARD);
@@ -617,8 +617,8 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * 
-	 * @see #setAsArcball()
-	 * @see #setAsFirstPerson()
+	 * @see #dragToArcball()
+	 * @see #dragToFirstPerson()
 	 */
 	public void setAsThirdPerson() {
 		removeFrameBindings();
@@ -658,8 +658,8 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * 
-	 * @see #setAsArcball()
-	 * @see #setAsFirstPerson()
+	 * @see #dragToArcball()
+	 * @see #dragToFirstPerson()
 	 */
 	public void setAsThirdPersonTrackpad() {
 		removeFrameBindings();
@@ -695,7 +695,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * <p>
-	 * which are used in {@link #setAsArcball()}, {@link #setAsFirstPerson()} and {@link #setAsThirdPerson()}
+	 * which are used in {@link #dragToArcball()}, {@link #dragToFirstPerson()} and {@link #setAsThirdPerson()}
 	 */
 	protected void setCommonBindings() {
 		eyeClickProfile().setBinding(buttonModifiersFix(left), left, 2, ClickAction.ALIGN_FRAME);
