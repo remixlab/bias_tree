@@ -92,12 +92,12 @@ public void keyPressed() {
     setExoticCustomization();
   if(key == 'u') {
     mouse.setPickingMode(MouseAgent.PickingMode.MOVE);
-    mouse.setAsArcball();
+    mouse.dragToArcball();
     keyboard.setDefaultShortcuts();
   }
   if(key == 'v') {
     mouse.setPickingMode(MouseAgent.PickingMode.CLICK);
-    mouse.setAsArcballTrackpad();
+    mouse.moveToArcball();
     keyboard.setDefaultShortcuts();
   }
   if(key == 'q') {

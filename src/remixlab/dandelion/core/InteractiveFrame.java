@@ -240,7 +240,7 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 		case ALIGN_FRAME:
 			alignWithFrame(scene.eye().frame());
 			break;
-		case CUSTOM_CLICK:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case ANCHOR_FROM_PIXEL:

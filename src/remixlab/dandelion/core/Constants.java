@@ -145,11 +145,6 @@ public interface Constants {
 		// CUSTOM ACTIONs
 
 		/**
-		 * User defined click-action
-		 */
-		CUSTOM_CLICK("User defined click-action"),
-
-		/**
 		 * User defined motion-action
 		 */
 		CUSTOM("User defined motion-action");
@@ -347,7 +342,7 @@ public interface Constants {
 		ZOOM_ON_PIXEL(MotionAction.ZOOM_ON_PIXEL),
 		ANCHOR_FROM_PIXEL(MotionAction.ANCHOR_FROM_PIXEL),
 
-		CUSTOM_CLICK(MotionAction.CUSTOM_CLICK);
+		CUSTOM(MotionAction.CUSTOM);
 
 		@Override
 		public MotionAction referenceAction() {

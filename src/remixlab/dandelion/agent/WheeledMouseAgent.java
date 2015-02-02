@@ -425,7 +425,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * 
 	 * @see #dragToFirstPerson()
-	 * @see #setAsThirdPerson()
+	 * @see #dragToThirdPerson()
 	 */
 	public void dragToArcball() {
 		removeFrameBindings();
@@ -472,9 +472,9 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * Note that Alt + No-button is bound to the null action.
 	 * 
 	 * @see #dragToFirstPerson()
-	 * @see #setAsThirdPerson()
+	 * @see #dragToThirdPerson()
 	 */
-	public void slipToArcball() {
+	public void moveToArcball() {
 		removeFrameBindings();
 		removeEyeBindings();
 		eyeProfile().setBinding(DOF2Action.ROTATE);
@@ -521,7 +521,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * 
 	 * @see #dragToArcball()
-	 * @see #setAsThirdPerson()
+	 * @see #dragToThirdPerson()
 	 */
 	public void dragToFirstPerson() {
 		removeFrameBindings();
@@ -578,9 +578,9 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * 
 	 * @see #dragToArcball()
-	 * @see #setAsThirdPerson()
+	 * @see #dragToThirdPerson()
 	 */
-	public void slipToFirstPerson() {
+	public void moveToFirstPerson() {
 		removeFrameBindings();
 		removeEyeBindings();
 		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NO_ID, DOF2Action.MOVE_FORWARD);
@@ -620,7 +620,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * @see #dragToArcball()
 	 * @see #dragToFirstPerson()
 	 */
-	public void setAsThirdPerson() {
+	public void dragToThirdPerson() {
 		removeFrameBindings();
 		removeEyeBindings();
 		frameProfile().setBinding(buttonModifiersFix(left), left, DOF2Action.MOVE_FORWARD);
@@ -661,7 +661,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * @see #dragToArcball()
 	 * @see #dragToFirstPerson()
 	 */
-	public void setAsThirdPersonTrackpad() {
+	public void moveToPerson() {
 		removeFrameBindings();
 		removeEyeBindings();
 		frameProfile().setBinding(MotionEvent.CTRL, MotionEvent.NO_ID, DOF2Action.MOVE_FORWARD);
@@ -695,7 +695,7 @@ public class WheeledMouseAgent extends WheeledMotionAgent<DOF2Action> {
 	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
 	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
 	 * <p>
-	 * which are used in {@link #dragToArcball()}, {@link #dragToFirstPerson()} and {@link #setAsThirdPerson()}
+	 * which are used in {@link #dragToArcball()}, {@link #dragToFirstPerson()} and {@link #dragToThirdPerson()}
 	 */
 	protected void setCommonBindings() {
 		eyeClickProfile().setBinding(buttonModifiersFix(left), left, 2, ClickAction.ALIGN_FRAME);

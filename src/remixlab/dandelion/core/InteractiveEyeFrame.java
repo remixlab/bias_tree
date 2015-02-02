@@ -217,7 +217,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 
 	public void performInteraction(ClickEvent event) {
 		switch (referenceAction()) {
-		case CUSTOM_CLICK:
+		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case ALIGN_FRAME:
