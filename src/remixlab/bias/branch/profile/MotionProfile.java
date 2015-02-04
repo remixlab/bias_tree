@@ -32,20 +32,20 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	/**
 	 * Returns true if the given binding binds an action.
 	 * 
-	 * @param button
+	 * @param id
 	 */
-	public boolean hasBinding(Integer button) {
-		return hasBinding(MotionEvent.NO_MODIFIER_MASK, button);
+	public boolean hasBinding(Integer id) {
+		return hasBinding(MotionEvent.NO_MODIFIER_MASK, id);
 	}
 
 	/**
 	 * Returns true if the given binding binds an action.
 	 * 
 	 * @param mask
-	 * @param button
+	 * @param id
 	 */
-	public boolean hasBinding(Integer mask, Integer button) {
-		return hasBinding(new MotionShortcut(mask, button));
+	public boolean hasBinding(Integer mask, Integer id) {
+		return hasBinding(new MotionShortcut(mask, id));
 	}
 
 	/**
@@ -69,15 +69,15 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Binds the action to the given binding
 	 * 
 	 * @param mask
-	 * @param button
+	 * @param id
 	 * @param action
 	 */
-	public void setBinding(Integer mask, Integer button, A action) {
-		if (hasBinding(mask, button)) {
-			Action<?> a = action(mask, button);
+	public void setBinding(Integer mask, Integer id, A action) {
+		if (hasBinding(mask, id)) {
+			Action<?> a = action(mask, id);
 			System.out.println("Warning: overwritting binding which was previously associated to " + a);
 		}
-		setBinding(new MotionShortcut(mask, button), action);
+		setBinding(new MotionShortcut(mask, id), action);
 	}
 
 	/**
@@ -90,20 +90,20 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	/**
 	 * Removes the action binding.
 	 * 
-	 * @param button
+	 * @param id
 	 */
-	public void removeBinding(Integer button) {
-		removeBinding(MotionEvent.NO_MODIFIER_MASK, button);
+	public void removeBinding(Integer id) {
+		removeBinding(MotionEvent.NO_MODIFIER_MASK, id);
 	}
 
 	/**
 	 * Removes the action binding.
 	 * 
 	 * @param mask
-	 * @param button
+	 * @param id
 	 */
-	public void removeBinding(Integer mask, Integer button) {
-		removeBinding(new MotionShortcut(mask, button));
+	public void removeBinding(Integer mask, Integer id) {
+		removeBinding(new MotionShortcut(mask, id));
 	}
 
 	/**
@@ -116,19 +116,19 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	/**
 	 * Returns the action associated to the given binding.
 	 * 
-	 * @param button
+	 * @param id
 	 */
-	public Action<?> action(Integer button) {
-		return action(MotionEvent.NO_MODIFIER_MASK, button);
+	public Action<?> action(Integer id) {
+		return action(MotionEvent.NO_MODIFIER_MASK, id);
 	}
 
 	/**
 	 * Returns the action associated to the given binding.
 	 * 
 	 * @param mask
-	 * @param button
+	 * @param id
 	 */
-	public Action<?> action(Integer mask, Integer button) {
-		return action(new MotionShortcut(mask, button));
+	public Action<?> action(Integer mask, Integer id) {
+		return action(new MotionShortcut(mask, id));
 	}
 }

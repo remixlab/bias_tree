@@ -1,3 +1,10 @@
+/**
+ * DOF.
+ * by Jean Pierre Charalambos.
+ *
+ * Press 'h' to display the key shortcuts and mouse bindings in the console.
+ */
+
 import remixlab.proscene.*;
 
 PShader depthShader, dofShader;

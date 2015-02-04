@@ -21,9 +21,9 @@ import remixlab.bias.event.*;
 public class MouseAgent extends WheeledMouseAgent {
 	public MouseAgent(Scene scn, String n) {
 		super(scn, n);
-		left = PApplet.LEFT;
-		center = PApplet.CENTER;
-		right = PApplet.RIGHT;
+		LEFT_ID = PApplet.LEFT;
+		CENTER_ID = PApplet.CENTER;
+		RIGHT_ID = PApplet.RIGHT;
 		dragToArcball();
 		// registration requires a call to PApplet.registerMethod("mouseEvent", motionAgent());
 		// which is done in Scene.enableMotionAgent(), which also register the agent at the inputHandler
@@ -43,10 +43,10 @@ public class MouseAgent extends WheeledMouseAgent {
 	public int buttonModifiersFix(int m, int button) {
 		int mask = m;
 		// ALT
-		if (button == center)
+		if (button == CENTER_ID)
 			mask = (BogusEvent.ALT | m);
 		// META
-		else if (button == right)
+		else if (button == RIGHT_ID)
 			mask = (BogusEvent.META | m);
 		return mask;
 	}
@@ -71,8 +71,8 @@ public class MouseAgent extends WheeledMouseAgent {
 			release(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY()
 					- scene.originCorner().y(), e.getModifiers(), e.getButton()));
 		}
-		if (e.getAction() == processing.event.MouseEvent.WHEEL) {
-			wheel(new DOF1Event(e.getCount(), e.getModifiers(), MotionEvent.NO_ID));
+		if (e.getAction() == processing.event.MouseEvent.WHEEL) {// e.getAction() = MouseEvent.WHEEL = 8
+			wheel(new DOF1Event(e.getCount(), e.getModifiers(), WHEEL_ID));
 		}
 		if (e.getAction() == processing.event.MouseEvent.CLICK) {
 			click(new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),

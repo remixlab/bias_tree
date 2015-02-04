@@ -21,10 +21,9 @@ import remixlab.bias.core.*;
  * <p>
  * The default implementation here holds only a single {@link remixlab.bias.branch.profile.Profile} (see
  * {@link #profile()}) attribute (note that we use the type of the Profile to parameterize the Branch). Different
- * profile groups are provided by the {@link remixlab.bias.branch.MotionBranch}, the
- * {@link remixlab.bias.branch.WheeledMotionBranch} and the {@link remixlab.bias.branch.KeyboardBranch} specializations,
- * which roughly represent an HIDevice (like a kinect), a wheeled HIDevice (like a mouse) and a generic keyboard,
- * respectively.
+ * profile groups are provided by the {@link remixlab.bias.branch.MotionBranch} and the
+ * {@link remixlab.bias.branch.KeyboardBranch} specializations, which roughly represent an HIDevice (like a kinect) and
+ * a generic keyboard, respectively.
  * <p>
  * Third-parties implementations should "simply":
  * <ul>

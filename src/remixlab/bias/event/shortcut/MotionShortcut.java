@@ -63,11 +63,11 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	/**
 	 * Defines a shortcut from the given button.
 	 * 
-	 * @param b
+	 * @param id
 	 *          button
 	 */
-	public MotionShortcut(Integer b) {
-		this(MotionEvent.NO_MODIFIER_MASK, b);
+	public MotionShortcut(Integer id) {
+		this(MotionEvent.NO_MODIFIER_MASK, id);
 	}
 
 	/**
@@ -75,12 +75,12 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 * 
 	 * @param m
 	 *          the mask
-	 * @param b
+	 * @param id
 	 *          button
 	 */
-	public MotionShortcut(Integer m, Integer b) {
+	public MotionShortcut(Integer m, Integer id) {
 		super(m);
-		this.id = b;
+		this.id = id;
 	}
 
 	protected MotionShortcut(MotionShortcut other) {
@@ -91,6 +91,10 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	@Override
 	public MotionShortcut get() {
 		return new MotionShortcut(this);
+	}
+
+	public int id() {
+		return id;
 	}
 
 	/**
@@ -105,9 +109,9 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	/**
 	 * Internal. Low-level description() function.
 	 */
-	protected String description(Integer b) {
+	protected String description(Integer id) {
 		String r = BogusEvent.modifiersText(mask);
-		String bn = (b == MotionEvent.NO_ID) ? "NO_BUTTON" : b.toString() + "_BUTTON";
+		String bn = (id == MotionEvent.NO_ID) ? "NO_ID" : id.toString() + "_ID";
 		r += (r.length() > 0) ? "+" + bn : bn;
 		return r;
 	}

@@ -1,3 +1,12 @@
+/*********************************************************************************
+ * dandelion_tree
+ * Copyright (c) 2014 National University of Colombia, https://github.com/remixlab
+ * @author Jean Pierre Charalambos, http://otrolado.info/
+ *
+ * All rights reserved. Library that eases the creation of interactive
+ * scenes, released under the terms of the GNU Public License v3.0
+ * which is available at http://www.gnu.org/licenses/gpl.html
+ *********************************************************************************/
 
 package remixlab.dandelion.agent;
 
@@ -5,7 +14,7 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-public class JoystickAgent extends WheeledMotionAgent<DOF3Action> {
+public class JoystickAgent extends MotionAgent<DOF3Action> {
 	protected float	xSens	= 1f;
 	protected float	ySens	= 1f;
 	protected float	zSens	= 1f;

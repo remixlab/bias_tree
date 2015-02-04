@@ -12,7 +12,6 @@ package remixlab.dandelion.core;
 
 import remixlab.bias.core.Action;
 
-//TODO left out only a single CUSTOM action if dofs() are discarded
 //TODO fix docs
 public interface Constants {
 	/**
@@ -302,7 +301,7 @@ public interface Constants {
 		CUSTOM("User defined keyboard-action");
 
 		String	description;
-		boolean	twoD;		
+		boolean	twoD;
 
 		SceneAction(String description, boolean td) {
 			this.description = description;

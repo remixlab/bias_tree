@@ -171,8 +171,6 @@ public class Agent {
 		if (branch == null)
 			return false;
 		if (!brnchs.contains(branch)) {
-			// TODO: priority seems not needed
-			// this.brnchs.add(0, actionAgent);//priority
 			this.brnchs.add(branch);
 			return true;
 		}

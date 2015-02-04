@@ -1,3 +1,12 @@
+/*********************************************************************************
+ * dandelion_tree
+ * Copyright (c) 2014 National University of Colombia, https://github.com/remixlab
+ * @author Jean Pierre Charalambos, http://otrolado.info/
+ *
+ * All rights reserved. Library that eases the creation of interactive
+ * scenes, released under the terms of the GNU Public License v3.0
+ * which is available at http://www.gnu.org/licenses/gpl.html
+ *********************************************************************************/
 
 package remixlab.dandelion.agent;
 
@@ -9,27 +18,111 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 //public class WheeledMotionAgent<A extends Action<?>> extends Agent {
-public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
-	protected AbstractScene																																															scene;
-	protected WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	eyeBranch;
-	protected WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>	frameBranch;
-	protected PickingMode																																																pMode;
+public class MotionAgent<A extends Action<MotionAction>> extends Agent {
+	protected AbstractScene																														scene;
+	protected MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>>	eyeBranch;
+	protected MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>>	frameBranch;
+	protected PickingMode																															pMode;
 
 	public enum PickingMode {
 		MOVE, CLICK
 	};
 
+	public static DOF2Action dof2Action(DOF1Action dof1Action) {
+		return DOF2Action.valueOf(dof1Action.toString());
+	}
+
+	public static DOF3Action dof3Action(DOF1Action dof1Action) {
+		return DOF3Action.valueOf(dof1Action.toString());
+	}
+
+	public static DOF6Action dof6Action(DOF1Action dof1Action) {
+		return DOF6Action.valueOf(dof1Action.toString());
+	}
+
+	public static DOF3Action dof3Action(DOF2Action dof2Action) {
+		return DOF3Action.valueOf(dof2Action.toString());
+	}
+
+	public static DOF6Action dof6Action(DOF2Action dof2Action) {
+		return DOF6Action.valueOf(dof2Action.toString());
+	}
+
+	public static DOF6Action dof6Action(DOF3Action dof3Action) {
+		return DOF6Action.valueOf(dof3Action.toString());
+	}
+
+	//
+
+	public static DOF1Action dof1Action(DOF2Action dof2Action) {
+		DOF1Action dof1Action = null;
+		try {
+			dof1Action = DOF1Action.valueOf(dof2Action.toString());
+		} catch (IllegalArgumentException e) {
+			System.out.println("non-existant DOF1Action");
+		}
+		return dof1Action;
+	}
+
+	public static DOF1Action dof3Action(DOF3Action dof3Action) {
+		DOF1Action dof1Action = null;
+		try {
+			dof1Action = DOF1Action.valueOf(dof3Action.toString());
+		} catch (IllegalArgumentException e) {
+			System.out.println("non-existant DOF1Action");
+		}
+		return dof1Action;
+	}
+
+	public static DOF1Action dof1Action(DOF6Action dof6Action) {
+		DOF1Action dof1Action = null;
+		try {
+			dof1Action = DOF1Action.valueOf(dof6Action.toString());
+		} catch (IllegalArgumentException e) {
+			System.out.println("non-existant DOF1Action");
+		}
+		return dof1Action;
+	}
+
+	public static DOF2Action dof2Action(DOF2Action dof3Action) {
+		DOF2Action dof2Action = null;
+		try {
+			dof2Action = DOF2Action.valueOf(dof3Action.toString());
+		} catch (IllegalArgumentException e) {
+			System.out.println("non-existant DOF2Action");
+		}
+		return dof2Action;
+	}
+
+	public static DOF2Action dof2Action(DOF6Action dof6Action) {
+		DOF2Action dof2Action = null;
+		try {
+			dof2Action = DOF2Action.valueOf(dof6Action.toString());
+		} catch (IllegalArgumentException e) {
+			System.out.println("non-existant DOF2Action");
+		}
+		return dof2Action;
+	}
+
+	public static DOF3Action dof3Action(DOF6Action dof6Action) {
+		DOF3Action dof3Action = null;
+		try {
+			dof3Action = DOF3Action.valueOf(dof6Action.toString());
+		} catch (IllegalArgumentException e) {
+			System.out.println("non-existant DOF3Action");
+		}
+		return dof3Action;
+	}
+
 	protected float	wSens	= 1f;
 
-	public WheeledMotionAgent(AbstractScene scn, String n) {
+	public MotionAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		eyeBranch = new WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
-				new MotionProfile<DOF1Action>(),
+		eyeBranch = new MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>>(
 				new MotionProfile<A>(),
 				new ClickProfile<ClickAction>(), this, (n + "_eye_mouse_branch"));
-		frameBranch = new WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>>(
-				new MotionProfile<DOF1Action>(),
+		frameBranch = new MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>>(
 				new MotionProfile<A>(),
 				new ClickProfile<ClickAction>(), this, (n + "_frame_mouse_branch"));
 		setPickingMode(PickingMode.MOVE);
@@ -62,6 +155,16 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 		return wSens;
 	}
 
+	@Override
+	public boolean appendBranch(Branch<?, ?> branch) {
+		if (branch instanceof MotionBranch)
+			return super.appendBranch(branch);
+		else {
+			System.out.println("Branch should be instanceof MotionBranch to be appended");
+			return false;
+		}
+	}
+
 	public boolean addGrabber(InteractiveFrame frame) {
 		return addGrabber(frame, frameBranch);
 	}
@@ -77,11 +180,11 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 		this.setDefaultGrabber(scene.eye().frame());
 	}
 
-	public WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {
+	public MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {
 		return eyeBranch;
 	}
 
-	public WheeledMotionBranch<MotionAction, MotionProfile<DOF1Action>, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch() {
+	public MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch() {
 		return frameBranch;
 	}
 
@@ -101,13 +204,11 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 		return null;
 	}
 
-	protected MotionProfile<DOF1Action> wheelProfile() {
-		if (inputGrabber() instanceof InteractiveEyeFrame)
-			return eyeBranch.wheelProfile();
-		if (inputGrabber() instanceof InteractiveFrame)
-			return frameBranch().wheelProfile();
-		return null;
-	}
+	/*
+	 * protected MotionProfile<DOF1Action> wheelProfile() { if (inputGrabber() instanceof InteractiveEyeFrame) return
+	 * eyeBranch.wheelProfile(); if (inputGrabber() instanceof InteractiveFrame) return frameBranch().wheelProfile();
+	 * return null; }
+	 */
 
 	// TODO test all protected down here in stable before going on
 
@@ -143,17 +244,17 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 	 * Profile defining InteractiveEyeFrame action bindings from (wheel)
 	 * {@link remixlab.bias.event.shortcut.MotionShortcut}s.
 	 */
-	public MotionProfile<DOF1Action> eyeWheelProfile() {
-		return eyeBranch.wheelProfile();
-	}
+	/*
+	 * public MotionProfile<DOF1Action> eyeWheelProfile() { return eyeBranch.wheelProfile(); }
+	 */
 
 	/**
 	 * Profile defining InteractiveFrame action bindings from (wheel) {@link remixlab.bias.event.shortcut.MotionShortcut}
 	 * s.
 	 */
-	public MotionProfile<DOF1Action> frameWheelProfile() {
-		return frameBranch.wheelProfile();
-	}
+	/*
+	 * public MotionProfile<DOF1Action> frameWheelProfile() { return frameBranch.wheelProfile(); }
+	 */
 
 	// common api
 
@@ -184,92 +285,7 @@ public class WheeledMotionAgent<A extends Action<MotionAction>> extends Agent {
 		return mask;
 	}
 
-	// wheel here TODO really should go downwards the hierarchy
-
-	/**
-	 * Binds the mask-wheel shortcut to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or
-	 * FRAME).
-	 */
-	public void setWheelBinding(Target target, int mask, DOF1Action action) {
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		profile.setBinding(mask, MotionEvent.NO_ID, action);
-	}
-
-	/**
-	 * Binds the wheel to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME).
-	 */
-	public void setWheelBinding(Target target, DOF1Action action) {
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		profile.setBinding(action);
-	}
-
-	/**
-	 * Removes the mask-wheel shortcut binding from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeWheelBinding(Target target, int mask) {
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		profile.removeBinding(mask, MotionEvent.NO_ID);
-	}
-
-	/**
-	 * Removes the wheel binding from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeWheelBinding(Target target) {
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		profile.removeBinding();
-	}
-
-	/**
-	 * Removes all wheel bindings from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeWheelBindings(Target target) {
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		profile.removeBindings();
-	}
-
-	/**
-	 * Returns {@code true} if the mask-wheel shortcut is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean hasWheelBinding(Target target, int mask) {
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return profile.hasBinding(mask, MotionEvent.NO_ID);
-	}
-
-	/**
-	 * Returns {@code true} if the wheel is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean hasWheelBinding(Target target) {
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return profile.hasBinding();
-	}
-
-	/**
-	 * Returns {@code true} if the mouse wheel action is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean isWheelActionBound(Target target, DOF1Action action) {
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return profile.isActionBound(action);
-	}
-
-	/**
-	 * Returns the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given mask-wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
-	 */
-	public DOF1Action wheelAction(Target target, int mask, DOF1Action action) {
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return (DOF1Action) profile.action(mask, MotionEvent.NO_ID);
-	}
-
-	/**
-	 * Returns the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
-	 */
-	public DOF1Action wheelAction(Target target, DOF1Action action) {
-		MotionProfile<DOF1Action> profile = target == Target.EYE ? eyeBranch.wheelProfile() : frameBranch.wheelProfile();
-		return (DOF1Action) profile.action(MotionEvent.NO_ID);
-	}
-
-	// mouse click
+	// click
 
 	/**
 	 * Binds the mask-button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action to be performed by the

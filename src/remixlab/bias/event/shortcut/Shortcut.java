@@ -79,4 +79,8 @@ public class Shortcut implements Copyable {
 	public String description() {
 		return BogusEvent.modifiersText(mask);
 	}
+
+	public int modifiers() {
+		return mask;
+	}
 }

@@ -42,54 +42,54 @@ import remixlab.fpstiming.*;
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>
  */
 public abstract class AbstractScene extends AnimatorObject implements ActionGrabber<SceneAction>, Constants {
-	protected boolean								dottedGrid;
+	protected boolean					dottedGrid;
 
 	// O B J E C T S
-	protected MatrixHelper					matrixHelper;
-	protected Eye										eye;
-	protected Trackable							trck;
+	protected MatrixHelper		matrixHelper;
+	protected Eye							eye;
+	protected Trackable				trck;
 
 	// E X C E P T I O N H A N D L I N G
-	protected int										startCoordCalls;
+	protected int							startCoordCalls;
 
 	// NUMBER OF FRAMES SINCE THE FIRST SCENE WAS INSTANTIATED
-	static public long							frameCount;
+	static public long				frameCount;
 
 	// InputHandler
-	protected InputHandler					iHandler;
+	protected InputHandler		iHandler;
 
 	// D I S P L A Y F L A G S
-	protected int										visualHintMask;
+	protected int							visualHintMask;
 
 	// LEFT vs RIGHT_HAND
-	protected boolean								rightHanded;
+	protected boolean					rightHanded;
 
 	// S I Z E
-	protected int										width, height;
+	protected int							width, height;
 
 	// offscreen
 	// TODO should be protected
-	public Point										upperLeftCorner;
-	protected boolean								offscreen;
-	protected long									lastEqUpdate;
+	public Point							upperLeftCorner;
+	protected boolean					offscreen;
+	protected long						lastEqUpdate;
 
 	// FRAME SYNC requires this:
-	protected final long						deltaCount;
+	protected final long			deltaCount;
 
-	protected WheeledMotionAgent<?>	defMotionAgent;
-	protected KeyboardAgent					defKeyboardAgent;
+	protected MotionAgent<?>	defMotionAgent;
+	protected KeyboardAgent		defKeyboardAgent;
 
 	/**
 	 * Visual hints as "the last shall be first"
 	 */
-	public final static int					AXES		= 1 << 0;
-	public final static int					GRID		= 1 << 1;
-	public final static int					PICKING	= 1 << 2;
-	public final static int					PATHS		= 1 << 3;
-	public final static int					ZOOM		= 1 << 4; // prosceneMouse.zoomOnRegion
-	public final static int					ROTATE	= 1 << 5; // prosceneMouse.screenRotate
+	public final static int		AXES		= 1 << 0;
+	public final static int		GRID		= 1 << 1;
+	public final static int		PICKING	= 1 << 2;
+	public final static int		PATHS		= 1 << 3;
+	public final static int		ZOOM		= 1 << 4; // prosceneMouse.zoomOnRegion
+	public final static int		ROTATE	= 1 << 5; // prosceneMouse.screenRotate
 
-	protected Platform							platform;
+	protected Platform				platform;
 
 	public enum Platform {
 		PROCESSING_DESKTOP, PROCESSING_ANDROID, PROCESSING_JS
@@ -283,7 +283,8 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	}
 
 	public boolean checkIfGrabsInput(KeyboardEvent event) {
-		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
+		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)",
+		// this.getClass().getName());
 		return false;
 	}
 
@@ -361,7 +362,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * 
 	 * @see #keyboardAgent()
 	 */
-	public WheeledMotionAgent<?> motionAgent() {
+	public MotionAgent<?> motionAgent() {
 		return defMotionAgent;
 	}
 

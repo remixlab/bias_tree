@@ -115,9 +115,9 @@ void keyPressed() {
     this.redraw();
   }
   if ( key == 'u' )
-    scene.motionAgent().eyeWheelProfile().setBinding(DOF1Action.ZOOM);
+    scene.mouseAgent().setWheelBinding(Target.EYE, DOF1Action.ZOOM);
   if ( key == 'v' )
-    scene.motionAgent().eyeWheelProfile().setBinding(DOF1Action.SCALE);
+    scene.mouseAgent().setWheelBinding(Target.EYE, DOF1Action.SCALE);
 }
 
 public class StdCamera extends Camera {
