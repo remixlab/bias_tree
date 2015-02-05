@@ -401,6 +401,18 @@ public interface Constants {
 			return act.is2D();
 		}
 
+		public DOF2Action dof2Action() {
+			return DOF2Action.valueOf(this.toString());
+		}
+
+		public DOF3Action dof3Action() {
+			return DOF3Action.valueOf(this.toString());
+		}
+
+		public DOF6Action dof6Action() {
+			return DOF6Action.valueOf(this.toString());
+		}
+
 		MotionAction	act;
 
 		DOF1Action(MotionAction a) {
@@ -452,6 +464,24 @@ public interface Constants {
 		 */
 		public boolean is2D() {
 			return act.is2D();
+		}
+
+		public DOF3Action dof3Action() {
+			return DOF3Action.valueOf(this.toString());
+		}
+
+		public DOF6Action dof6Action() {
+			return DOF6Action.valueOf(this.toString());
+		}
+
+		public DOF1Action dof1Action() {
+			DOF1Action dof1Action = null;
+			try {
+				dof1Action = DOF1Action.valueOf(this.toString());
+			} catch (IllegalArgumentException e) {
+				System.out.println("non-existant DOF1Action");
+			}
+			return dof1Action;
 		}
 
 		MotionAction	act;
@@ -509,6 +539,30 @@ public interface Constants {
 		 */
 		public boolean is2D() {
 			return act.is2D();
+		}
+
+		public DOF6Action dof6Action() {
+			return DOF6Action.valueOf(this.toString());
+		}
+
+		public DOF1Action dof1Action() {
+			DOF1Action dof1Action = null;
+			try {
+				dof1Action = DOF1Action.valueOf(this.toString());
+			} catch (IllegalArgumentException e) {
+				System.out.println("non-existant DOF1Action");
+			}
+			return dof1Action;
+		}
+
+		public DOF2Action dof2Action() {
+			DOF2Action dof2Action = null;
+			try {
+				dof2Action = DOF2Action.valueOf(this.toString());
+			} catch (IllegalArgumentException e) {
+				System.out.println("non-existant DOF2Action");
+			}
+			return dof2Action;
 		}
 
 		MotionAction	act;
@@ -572,6 +626,36 @@ public interface Constants {
 		 */
 		public boolean is2D() {
 			return act.is2D();
+		}
+
+		public DOF1Action dof1Action() {
+			DOF1Action dof1Action = null;
+			try {
+				dof1Action = DOF1Action.valueOf(this.toString());
+			} catch (IllegalArgumentException e) {
+				System.out.println("non-existant DOF1Action");
+			}
+			return dof1Action;
+		}
+
+		public DOF2Action dof2Action() {
+			DOF2Action dof2Action = null;
+			try {
+				dof2Action = DOF2Action.valueOf(this.toString());
+			} catch (IllegalArgumentException e) {
+				System.out.println("non-existant DOF2Action");
+			}
+			return dof2Action;
+		}
+
+		public DOF3Action dof3Action() {
+			DOF3Action dof3Action = null;
+			try {
+				dof3Action = DOF3Action.valueOf(this.toString());
+			} catch (IllegalArgumentException e) {
+				System.out.println("non-existant DOF3Action");
+			}
+			return dof3Action;
 		}
 
 		MotionAction	act;

@@ -17,7 +17,6 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-//public class WheeledMotionAgent<A extends Action<?>> extends Agent {
 public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	protected AbstractScene																														scene;
 	protected MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>>	eyeBranch;
@@ -27,92 +26,6 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	public enum PickingMode {
 		MOVE, CLICK
 	};
-
-	public static DOF2Action dof2Action(DOF1Action dof1Action) {
-		return DOF2Action.valueOf(dof1Action.toString());
-	}
-
-	public static DOF3Action dof3Action(DOF1Action dof1Action) {
-		return DOF3Action.valueOf(dof1Action.toString());
-	}
-
-	public static DOF6Action dof6Action(DOF1Action dof1Action) {
-		return DOF6Action.valueOf(dof1Action.toString());
-	}
-
-	public static DOF3Action dof3Action(DOF2Action dof2Action) {
-		return DOF3Action.valueOf(dof2Action.toString());
-	}
-
-	public static DOF6Action dof6Action(DOF2Action dof2Action) {
-		return DOF6Action.valueOf(dof2Action.toString());
-	}
-
-	public static DOF6Action dof6Action(DOF3Action dof3Action) {
-		return DOF6Action.valueOf(dof3Action.toString());
-	}
-
-	//
-
-	public static DOF1Action dof1Action(DOF2Action dof2Action) {
-		DOF1Action dof1Action = null;
-		try {
-			dof1Action = DOF1Action.valueOf(dof2Action.toString());
-		} catch (IllegalArgumentException e) {
-			System.out.println("non-existant DOF1Action");
-		}
-		return dof1Action;
-	}
-
-	public static DOF1Action dof3Action(DOF3Action dof3Action) {
-		DOF1Action dof1Action = null;
-		try {
-			dof1Action = DOF1Action.valueOf(dof3Action.toString());
-		} catch (IllegalArgumentException e) {
-			System.out.println("non-existant DOF1Action");
-		}
-		return dof1Action;
-	}
-
-	public static DOF1Action dof1Action(DOF6Action dof6Action) {
-		DOF1Action dof1Action = null;
-		try {
-			dof1Action = DOF1Action.valueOf(dof6Action.toString());
-		} catch (IllegalArgumentException e) {
-			System.out.println("non-existant DOF1Action");
-		}
-		return dof1Action;
-	}
-
-	public static DOF2Action dof2Action(DOF2Action dof3Action) {
-		DOF2Action dof2Action = null;
-		try {
-			dof2Action = DOF2Action.valueOf(dof3Action.toString());
-		} catch (IllegalArgumentException e) {
-			System.out.println("non-existant DOF2Action");
-		}
-		return dof2Action;
-	}
-
-	public static DOF2Action dof2Action(DOF6Action dof6Action) {
-		DOF2Action dof2Action = null;
-		try {
-			dof2Action = DOF2Action.valueOf(dof6Action.toString());
-		} catch (IllegalArgumentException e) {
-			System.out.println("non-existant DOF2Action");
-		}
-		return dof2Action;
-	}
-
-	public static DOF3Action dof3Action(DOF6Action dof6Action) {
-		DOF3Action dof3Action = null;
-		try {
-			dof3Action = DOF3Action.valueOf(dof6Action.toString());
-		} catch (IllegalArgumentException e) {
-			System.out.println("non-existant DOF3Action");
-		}
-		return dof3Action;
-	}
 
 	protected float	wSens	= 1f;
 

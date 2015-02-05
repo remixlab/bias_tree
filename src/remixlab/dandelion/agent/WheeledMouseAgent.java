@@ -21,9 +21,6 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
-	// public class WheeledMouseAgent<A extends DOF2Action>
-	// extends ActionInputWheeledMotionAgent<ActionWheeledMotionAgent<MotionProfile<DOF1Action>, MotionProfile<A>,
-	// ClickProfile<ClickAction>>> {
 	protected DOF2Event				pressEvent;
 	protected DOF2Event				lastEvent;
 	protected DOF2Event				prevEvent;
@@ -691,13 +688,11 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 
 	public void removeEyeBindings() {
 		eyeBranch().clickProfile().removeBindings();
-		// eyeBranch().wheelProfile().removeBindings();
 		eyeBranch().motionProfile().removeBindings();
 	}
 
 	public void removeFrameBindings() {
 		frameBranch().clickProfile().removeBindings();
-		// frameBranch().wheelProfile().removeBindings();
 		frameBranch().motionProfile().removeBindings();
 	}
 
@@ -892,7 +887,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 */
 	public void setWheelBinding(Target target, int mask, DOF1Action action) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		profile.setBinding(mask, WHEEL_ID, MotionAgent.dof2Action(action));
+		profile.setBinding(mask, WHEEL_ID, action.dof2Action());
 	}
 
 	/**
@@ -900,7 +895,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 */
 	public void setWheelBinding(Target target, DOF1Action action) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		profile.setBinding(WHEEL_ID, MotionAgent.dof2Action(action));
+		profile.setBinding(WHEEL_ID, action.dof2Action());
 	}
 
 	/**
@@ -927,7 +922,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		Iterator<Entry<MotionShortcut, DOF2Action>> it = profile.map().entrySet().iterator();
 		while (it.hasNext()) {
 			Entry<MotionShortcut, DOF2Action> entry = it.next();
-			if (entry.getKey().id() == WHEEL_ID && (MotionAgent.dof1Action(entry.getValue()) != null))
+			if (entry.getKey().id() == WHEEL_ID && entry.getValue().dof1Action() != null)
 				it.remove();
 		}
 	}
@@ -953,7 +948,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 */
 	public boolean isWheelActionBound(Target target, DOF1Action action) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		return profile.isActionBound(MotionAgent.dof2Action(action));
+		return profile.isActionBound(action.dof2Action());
 	}
 
 	/**
@@ -962,7 +957,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 */
 	public DOF1Action wheelAction(Target target, int mask, DOF1Action action) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		return MotionAgent.dof1Action((DOF2Action) profile.action(mask, WHEEL_ID));
+		return ((DOF2Action) profile.action(mask, WHEEL_ID)).dof1Action();
 	}
 
 	/**
@@ -971,6 +966,6 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 */
 	public DOF1Action wheelAction(Target target, DOF1Action action) {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		return MotionAgent.dof1Action((DOF2Action) profile.action(WHEEL_ID));
+		return ((DOF2Action) profile.action(WHEEL_ID)).dof1Action();
 	}
 }

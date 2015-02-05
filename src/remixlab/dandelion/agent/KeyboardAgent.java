@@ -28,10 +28,6 @@ public class KeyboardAgent extends Agent {
 				this,
 				"scene_keyboard_agent");
 		// new, mimics eye -> motionAgent -> scene -> keyAgent
-		/*
-		 * The inferred type ActionKeyboardAgent<Constants.SceneAction,KeyboardProfile<Constants.KeyboardAction>> is not a
-		 * valid substitute for the bounded parameter <K extends ActionAgent<E,? extends Action<E>>>
-		 */
 		addGrabber(scene, keyBranch);
 		setDefaultGrabber(scene);
 		setDefaultShortcuts();
