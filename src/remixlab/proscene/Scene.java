@@ -171,10 +171,9 @@ public class Scene extends AbstractScene implements PConstants {
 				JAVA2D);
 
 		// 4. (TODO prev 6.) Create agents and register P5 methods
-		if (platform() == Platform.PROCESSING_ANDROID) {
-			// TODO re-add
-			// defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
-			// defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
+		if (platform() == Platform.PROCESSING_ANDROID) {		
+			defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
+			defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
 		} else {
 			defMotionAgent = new MouseAgent(this, "proscene_mouse");
 			defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
@@ -393,6 +392,20 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		return (MouseAgent) defMotionAgent;
 	}
+	
+	/**
+	 * Returns the default touch agent handling touch events. If you plan to customize your touch use this
+	 * method.
+	 * 
+	 * @see #DroidTouchAgent()
+	 */
+	public DroidTouchAgent touchAgent() {
+		if (platform() == Platform.PROCESSING_DESKTOP) {
+			throw new RuntimeException("Proscene touchAgent() is not available in Desktop mode");
+		}
+		return (DroidTouchAgent) defMotionAgent;
+	}
+
 
 	// TODO doc me and re-add me
 	/*
@@ -885,19 +898,8 @@ public class Scene extends AbstractScene implements PConstants {
 		postDraw();
 	}
 
-	@Override
-	public void postDraw() {
-		super.postDraw();
-		if (platform() == Platform.PROCESSING_ANDROID)
-			fixP5AndroidPost();
-	}
-
 	// Android: remove this method if needed to compile the project
 	public void post() {
-		fixP5AndroidPost();
-	}
-
-	protected void fixP5AndroidPost() {
 		// draw into picking buffer
 		pickingBuffer().beginDraw();
 		pickingBuffer().pushStyle();
@@ -906,7 +908,8 @@ public class Scene extends AbstractScene implements PConstants {
 			drawModels(pickingBuffer());
 		pickingBuffer().popStyle();
 		pickingBuffer().endDraw();
-		pickingBuffer().loadPixels();
+		if (models().size() > 0)
+			pickingBuffer().loadPixels();
 	}
 
 	/**
