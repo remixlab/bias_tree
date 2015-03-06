@@ -39,12 +39,6 @@ public class KeyboardAgent extends Agent {
 		setDefaultGrabber(scene);
 	}
 
-	/*
-	 * public <K extends KeyboardProfile<?>> void addBranch(K k, String n) { ActionKeyboardAgent<K> branch = new
-	 * ActionKeyboardAgent<K>(k, this, n); //System.out.println("ActionInputMotionAgent add branch: " +
-	 * actionAgent.name()); if (!brnchs.contains(branch)) { this.brnchs.add(0, branch); } }
-	 */
-
 	public KeyboardBranch<SceneAction, KeyboardProfile<KeyboardAction>> sceneBranch() {
 		return keyBranch;
 	}

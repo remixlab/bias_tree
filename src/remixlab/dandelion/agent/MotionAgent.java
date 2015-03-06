@@ -117,12 +117,6 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		return null;
 	}
 
-	/*
-	 * protected MotionProfile<DOF1Action> wheelProfile() { if (inputGrabber() instanceof InteractiveEyeFrame) return
-	 * eyeBranch.wheelProfile(); if (inputGrabber() instanceof InteractiveFrame) return frameBranch().wheelProfile();
-	 * return null; }
-	 */
-
 	// TODO test all protected down here in stable before going on
 
 	/**
@@ -152,22 +146,6 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	public ClickProfile<ClickAction> frameClickProfile() {
 		return frameBranch().clickProfile();
 	}
-
-	/**
-	 * Profile defining InteractiveEyeFrame action bindings from (wheel)
-	 * {@link remixlab.bias.event.shortcut.MotionShortcut}s.
-	 */
-	/*
-	 * public MotionProfile<DOF1Action> eyeWheelProfile() { return eyeBranch.wheelProfile(); }
-	 */
-
-	/**
-	 * Profile defining InteractiveFrame action bindings from (wheel) {@link remixlab.bias.event.shortcut.MotionShortcut}
-	 * s.
-	 */
-	/*
-	 * public MotionProfile<DOF1Action> frameWheelProfile() { return frameBranch.wheelProfile(); }
-	 */
 
 	// common api
 
