@@ -64,6 +64,7 @@ public abstract class Eye implements Copyable {
 				append(scrnWidth).
 				append(tempFrame).
 				append(viewport).
+				append(anchorPnt).
 				toHashCode();
 	}
 
@@ -94,6 +95,7 @@ public abstract class Eye implements Copyable {
 				.append(scrnWidth, other.scrnWidth)
 				.append(tempFrame, other.tempFrame)
 				.append(viewport, other.viewport)
+				.append(anchorPnt, other.anchorPnt)
 				.isEquals();
 	}
 
@@ -141,6 +143,8 @@ public abstract class Eye implements Copyable {
 	public long																				lastNonFrameUpdate						= 0;
 	protected long																		lastFPCoeficientsUpdateIssued	= -1;
 
+	protected Vec																			anchorPnt;
+
 	public Eye(AbstractScene scn) {
 		scene = scn;
 
@@ -162,6 +166,7 @@ public abstract class Eye implements Copyable {
 		enableBoundaryEquations(false);
 		interpolationKfi = new KeyFrameInterpolator(scene, frame());
 		kfi = new HashMap<Integer, KeyFrameInterpolator>();
+		anchorPnt = new Vec(0.0f, 0.0f, 0.0f);
 		setFrame(new InteractiveEyeFrame(this));
 		setSceneRadius(100);
 		setSceneCenter(new Vec(0.0f, 0.0f, 0.0f));
@@ -174,6 +179,9 @@ public abstract class Eye implements Copyable {
 	protected Eye(Eye oVP) {
 		this.scene = oVP.scene;
 		this.fpCoefficientsUpdate = oVP.fpCoefficientsUpdate;
+
+		this.anchorPnt = new Vec();
+		this.anchorPnt.set(oVP.anchorPnt);
 
 		if (scene.is2D()) {
 			this.fpCoefficients = new float[4][3];
@@ -569,15 +577,17 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * <b>Attention:</b> {@link #setSceneCenter(Vec)} changes this value.
 	 */
-	public final Vec anchor() {
-		return frame().anchor();
+	public Vec anchor() {
+		return anchorPnt;
 	}
 
 	/**
-	 * Changes the {@link #anchor()} to {@code rap} (defined in the world coordinate system).
+	 * Sets the {@link #anchor()}, defined in the world coordinate system.
 	 */
-	public void setAnchor(Vec rap) {
-		frame().setAnchor(rap);
+	public void setAnchor(Vec refP) {
+		anchorPnt = refP;
+		if (scene.is2D())
+			anchorPnt.setZ(0);
 	}
 
 	/**

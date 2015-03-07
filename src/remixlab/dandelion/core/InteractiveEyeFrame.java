@@ -25,12 +25,12 @@ import remixlab.util.*;
  * those defined for the InteractiveFrame). For instance, with a move-to-the-right user gesture the InteractiveEyeFrame
  * has to go to the <i>left</i>, so that the <i>scene</i> seems to move to the right.
  * <p>
- * Depending on the Dandelion action an InteractiveEyeFrame rotates either around its {@link #anchor()} (e.g., ROTATE,
- * HINGE) which is a wrapper to {@link Eye#anchor()}), or its {@link #sceneUpVector()} (e.g., ROTATE_CAD). In the latter
- * case the {@link #sceneUpVector()} defines a 'vertical' direction around which the camera rotates. The camera can
- * rotate left or right, around this axis. It can also be moved up or down to show the 'top' and 'bottom' views of the
- * scene. As a result, the {@link #sceneUpVector()} will always appear vertical in the scene, and the horizon is
- * preserved and stays projected along the camera's horizontal axis. Use
+ * Depending on the Dandelion action an InteractiveEyeFrame rotates either around the
+ * {@link remixlab.dandelion.core.Eye#anchor()} (e.g., ROTATE, HINGE), or its {@link #sceneUpVector()} (e.g.,
+ * ROTATE_CAD). In the latter case the {@link #sceneUpVector()} defines a 'vertical' direction around which the camera
+ * rotates. The camera can rotate left or right, around this axis. It can also be moved up or down to show the 'top' and
+ * 'bottom' views of the scene. As a result, the {@link #sceneUpVector()} will always appear vertical in the scene, and
+ * the horizon is preserved and stays projected along the camera's horizontal axis. Use
  * {@link remixlab.dandelion.core.Camera#setUpVector(Vec)} to define the {@link #sceneUpVector()} and align the camera
  * before starting a ROTATE_CAD action to ensure these invariants are preserved.
  * <p>
@@ -47,32 +47,7 @@ import remixlab.util.*;
  */
 public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAction>, Copyable,
 		Constants {
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37).
-				appendSuper(super.hashCode()).
-				append(anchorPnt).
-				toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (obj == this)
-			return true;
-		if (obj.getClass() != getClass())
-			return false;
-
-		InteractiveEyeFrame other = (InteractiveEyeFrame) obj;
-		return new EqualsBuilder()
-				.appendSuper(super.equals(obj))
-				.append(anchorPnt, other.anchorPnt)
-				.isEquals();
-	}
-
 	protected Eye					eye;
-	protected Vec					anchorPnt;
 	protected Vec					scnUpVec;
 
 	// L O C A L T I M E R
@@ -88,8 +63,8 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 	/**
 	 * Default constructor.
 	 * <p>
-	 * {@link #flySpeed()} is set to 0.0 and {@link #sceneUpVector()} is set to the Y-axis. The {@link #anchor()} is set
-	 * to 0.
+	 * {@link #flySpeed()} is set to 0.0 and {@link #sceneUpVector()} is set to the Y-axis. The
+	 * {@link remixlab.dandelion.core.Eye#anchor()} is set to 0.
 	 * <p>
 	 * <b>Attention:</b> Created object is removed from the {@link remixlab.dandelion.core.AbstractScene#inputHandler()}
 	 * {@link remixlab.bias.core.InputHandler#agents()} pool.
@@ -99,9 +74,6 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 		eye = theEye;
 
 		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
-
-		// old from here
-		anchorPnt = new Vec(0.0f, 0.0f, 0.0f);
 
 		timerFx = new TimingTask() {
 			public void execute() {
@@ -123,9 +95,6 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 		// scene.motionAgent().eyeBranch().addInPool(this);
 
 		// old from here
-
-		this.anchorPnt = new Vec();
-		this.anchorPnt.set(otherFrame.anchorPnt);
 		this.timerFx = new TimingTask() {
 			public void execute() {
 				unSetTimerFlag();
@@ -340,7 +309,7 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 			break;
 		case ROTATE:
 		case SCREEN_ROTATE:
-			rt = computeRot(event, eye.projectedCoordinatesOf(anchor()));
+			rt = computeRot(event, eye.projectedCoordinatesOf(scene.eye().anchor()));
 			if (event.isRelative()) {
 				setSpinningRotation(rt);
 				if (Util.nonZero(dampingFriction()))
@@ -511,7 +480,7 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 				// AbstractScene.showEventVariationWarning(a);
 				break;
 			}
-			trns = eye.projectedCoordinatesOf(anchor());
+			trns = eye.projectedCoordinatesOf(scene.eye().anchor());
 			setSpinningRotation(deformedBallQuaternion(event, trns.vec[0], trns.vec[1], (Camera) eye));
 			if (Util.nonZero(dampingFriction()))
 				startSpinning(event);
@@ -544,7 +513,7 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 				// AbstractScene.showEventVariationWarning(a);
 				break;
 			}
-			trns = eye.projectedCoordinatesOf(anchor());
+			trns = eye.projectedCoordinatesOf(scene.eye().anchor());
 			float angle = (float) Math.atan2(event.y() - trns.vec[1], event.x() - trns.vec[0])
 					- (float) Math.atan2(event.prevY() - trns.vec[1], event.prevX() - trns.vec[0]);
 			if (scene.isLeftHanded())
@@ -644,8 +613,8 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 			Quat o = (Quat) orientation();
 			RefFrame oldRef = referenceFrame();
 			Frame rFrame = new Frame(scene);
-			rFrame.setPosition(anchor());
-			rFrame.setZAxis(Vec.subtract(pos, anchor()));
+			rFrame.setPosition(scene.eye().anchor());
+			rFrame.setZAxis(Vec.subtract(pos, scene.eye().anchor()));
 			rFrame.setXAxis(xAxis());
 			setReferenceFrame(rFrame);
 			setPosition(pos);
@@ -733,7 +702,7 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 	/**
 	 * Overloading of {@link remixlab.dandelion.core.InteractiveFrame#spin()}.
 	 * <p>
-	 * Rotates the InteractiveEyeFrame around its {@link #anchor()} instead of its origin.
+	 * Rotates the InteractiveEyeFrame around the {@link remixlab.dandelion.core.Eye#anchor()} instead of its origin.
 	 */
 	@Override
 	public void spin() {
@@ -742,32 +711,11 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 				stopSpinning();
 				return;
 			}
-			rotateAroundPoint(spinningRotation(), anchor());
+			rotateAroundPoint(spinningRotation(), scene.eye().anchor());
 			recomputeSpinningRotation();
 		}
 		else
-			rotateAroundPoint(spinningRotation(), anchor());
-	}
-
-	/**
-	 * Returns the point the InteractiveEyeFrame revolves around when rotated.
-	 * <p>
-	 * It is defined in the world coordinate system. Default value is 0.
-	 * <p>
-	 * When the InteractiveEyeFrame is associated to an Eye, {@link remixlab.dandelion.core.Eye#anchor()} also returns
-	 * this value.
-	 */
-	public Vec anchor() {
-		return anchorPnt;
-	}
-
-	/**
-	 * Sets the {@link #anchor()}, defined in the world coordinate system.
-	 */
-	public void setAnchor(Vec refP) {
-		anchorPnt = refP;
-		if (scene.is2D())
-			anchorPnt.setZ(0);
+			rotateAroundPoint(spinningRotation(), scene.eye().anchor());
 	}
 
 	// This methods gives the same results as the super method. It's only provided to simplify computation
@@ -786,7 +734,7 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 		switch (scene.camera().type()) {
 		case PERSPECTIVE:
 			trns.multiply(2.0f * (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
-					* Math.abs(coordinatesOf(anchor()).vec[2] * magnitude())
+					* Math.abs(coordinatesOf(scene.eye().anchor()).vec[2] * magnitude())
 					/ scene.camera().screenHeight());
 			break;
 		case ORTHOGRAPHIC:

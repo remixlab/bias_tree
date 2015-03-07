@@ -927,7 +927,7 @@ public class Camera extends Eye implements Copyable {
 	@Override
 	public void setAnchor(Vec rap) {
 		float prevDist = distanceToAnchor();
-		frame().setAnchor(rap);
+		this.anchorPnt = rap;
 		float newDist = distanceToAnchor();
 		if ((Util.nonZero(prevDist)) && (Util.nonZero(newDist)))
 			rapK *= prevDist / newDist;
