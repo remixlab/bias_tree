@@ -35,7 +35,7 @@ import remixlab.util.*;
  * <b>Note:</b> Once created, the InteractiveFrame is automatically added to the scene
  * {@link remixlab.bias.core.InputHandler#agents()} pool.
  */
-public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrabber<MotionAction>, Copyable, Constants {
+public class InteractiveFrame extends Frame implements ActionGrabber<MotionAction>, Copyable, Constants {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -109,9 +109,9 @@ public class InteractiveFrame extends InteractiveBaseFrame implements ActionGrab
 	}
 
 	/**
-	 * Same as {@code this(scn)} and then calls {@link #setReferenceFrame(Frame)} on {@code referenceFrame}.
+	 * Same as {@code this(scn)} and then calls {@link #setReferenceFrame(RefFrame)} on {@code referenceFrame}.
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame) {
+	public InteractiveFrame(AbstractScene scn, RefFrame referenceFrame) {
 		this(scn);
 		this.setReferenceFrame(referenceFrame);
 	}

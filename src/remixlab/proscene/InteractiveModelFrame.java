@@ -19,6 +19,7 @@ import processing.core.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
 /**
@@ -60,7 +61,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		id = ++Scene.modelCount;
 	}
 
-	public InteractiveModelFrame(Scene scn, Frame referenceFrame) {
+	public InteractiveModelFrame(Scene scn, RefFrame referenceFrame) {
 		super(scn, referenceFrame);
 		((Scene) scene).addModel(this);
 		id = ++Scene.modelCount;
@@ -78,7 +79,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		pshape = ps;
 	}
 
-	public InteractiveModelFrame(Scene scn, PShape ps, Frame referenceFrame) {
+	public InteractiveModelFrame(Scene scn, PShape ps, RefFrame referenceFrame) {
 		super(scn, referenceFrame);
 		((Scene) scene).addModel(this);
 		id = ++Scene.modelCount;

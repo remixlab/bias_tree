@@ -2107,8 +2107,8 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 
 	/**
 	 * Apply the local transformation defined by {@code frame}, i.e., respect to the frame
-	 * {@link remixlab.dandelion.core.Frame#referenceFrame()}. The Frame is first translated and then rotated around the
-	 * new translated origin.
+	 * {@link remixlab.dandelion.geom.RefFrame#referenceFrame()}. The Frame is first translated and then rotated around
+	 * the new translated origin.
 	 * <p>
 	 * This method may be used to modify the modelview matrix from a Frame hierarchy. For example, with this Frame
 	 * hierarchy:
@@ -2140,9 +2140,9 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * <p>
 	 * <b>Attention:</b> When drawing a frame hierarchy as above, this method should be used whenever possible.
 	 * 
-	 * @see #applyWorldTransformation(Frame)
+	 * @see #applyWorldTransformation(RefFrame)
 	 */
-	public void applyTransformation(Frame frame) {
+	public void applyTransformation(RefFrame frame) {
 		if (is2D()) {
 			translate(frame.translation().x(), frame.translation().y());
 			rotate(frame.rotation().angle());
@@ -2157,11 +2157,11 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	}
 
 	/**
-	 * Same as {@link #applyTransformation(Frame)} but applies the global transformation defined by the frame.
+	 * Same as {@link #applyTransformation(RefFrame)} but applies the global transformation defined by the frame.
 	 */
-	public void applyWorldTransformation(Frame frame) {
+	public void applyWorldTransformation(RefFrame frame) {
 		// TODO check for beta2 doing these with frames position(), orientation() and magnitude()
-		Frame refFrame = frame.referenceFrame();
+		RefFrame refFrame = frame.referenceFrame();
 		if (refFrame != null) {
 			applyWorldTransformation(refFrame);
 			applyTransformation(frame);

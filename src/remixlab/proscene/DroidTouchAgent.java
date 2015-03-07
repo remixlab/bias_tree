@@ -20,15 +20,16 @@ import remixlab.dandelion.core.Constants.*;
  * Proscene {@link remixlab.dandelion.agent.MultiTouchAgent}.
  */
 public class DroidTouchAgent extends MultiTouchAgent {
-	Scene			scene;
+	Scene	scene;
+
 	public DroidTouchAgent(Scene scn, String n) {
 		super(scn, n);
 		// inputHandler().unregisterAgent(this);
 		scene = scn;
 		setDefaultBinding();
 	}
-	
-	public void setDefaultBinding(){
+
+	public void setDefaultBinding() {
 		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_ONE_ID.id(), DOF6Action.ROTATE);
 		frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_ONE_ID.id(), DOF6Action.ROTATE);
 		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_TWO_ID.id(), DOF6Action.TRANSLATE);
@@ -46,16 +47,16 @@ public class DroidTouchAgent extends MultiTouchAgent {
 		int turnOrientation;
 		int code = action & android.view.MotionEvent.ACTION_MASK;
 		int index = action >> android.view.MotionEvent.ACTION_POINTER_ID_SHIFT;
-		
+
 		float x = e.getX(index);
 		float y = e.getY(index);
 		int id = e.getPointerId(index);
 		Gestures gesture;
-		//PApplet.print("touch");
+		// PApplet.print("touch");
 		// pass the events to the TouchProcessor
 		if (code == android.view.MotionEvent.ACTION_DOWN || code == android.view.MotionEvent.ACTION_POINTER_DOWN) {
 			// touch(new DOF6Event(x, y, 0, 0, 0, 0));
-			//PApplet.print("down");
+			// PApplet.print("down");
 			touchProcessor.pointDown(x, y, id);
 			touchProcessor.parse();
 			event = new DOF6Event(null,
@@ -72,7 +73,7 @@ public class DroidTouchAgent extends MultiTouchAgent {
 			prevEvent = event.get();
 		}
 		else if (code == android.view.MotionEvent.ACTION_UP || code == android.view.MotionEvent.ACTION_POINTER_UP) {
-			//PApplet.print("up");
+			// PApplet.print("up");
 			touchProcessor.pointUp(id);
 			if (e.getPointerCount() == 1) {
 				gesture = touchProcessor.parseTap();
@@ -85,7 +86,7 @@ public class DroidTouchAgent extends MultiTouchAgent {
 
 		}
 		else if (code == android.view.MotionEvent.ACTION_MOVE) {
-			//PApplet.print("move");
+			// PApplet.print("move");
 			int numPointers = e.getPointerCount();
 			for (int i = 0; i < numPointers; i++) {
 				id = e.getPointerId(i);
@@ -95,7 +96,7 @@ public class DroidTouchAgent extends MultiTouchAgent {
 			}
 			gesture = touchProcessor.parseGesture();
 			if (gesture != null) {
-				//PApplet.print(gesture.id());
+				// PApplet.print(gesture.id());
 				event = new DOF6Event(prevEvent, touchProcessor.getCx(), touchProcessor.getCy(), 0, 0, 0, 0,
 						MotionEvent.NO_MODIFIER_MASK,
 						gesture.id());
@@ -128,7 +129,7 @@ public class DroidTouchAgent extends MultiTouchAgent {
 								gesture.id()
 								);
 						break;
-					case OPPOSABLE_THREE_ID: 
+					case OPPOSABLE_THREE_ID:
 						event = new DOF6Event(prevEvent,
 								x,
 								y,

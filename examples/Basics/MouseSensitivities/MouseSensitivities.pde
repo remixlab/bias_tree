@@ -1,5 +1,5 @@
 /**
- * Mouse Sensitivities.
+ * Mouse Frame.
  * by Jean Pierre Charalambos.
  * 
  * This example illustrates the variables that can be fine tuned to control
@@ -116,7 +116,7 @@ void displayControls() {
     scene.endScreenDrawing();
   }
 
-  Sensitivities iFrame;	
+  Frame iFrame;	
   if ( isIFrame ) {
     iFrame = interactiveFrame;
     scene.beginScreenDrawing();
@@ -169,15 +169,15 @@ void decreaseSensitivity(Sensitivity sens) {
     decreaseSensitivity(scene.eye().frame(), sens);
 }	
 
-void increaseSensitivity(Sensitivities iFrame, Sensitivity sens) {
+void increaseSensitivity(Frame iFrame, Sensitivity sens) {
   changeSensitivity(iFrame, sens, true);
 }
 
-void decreaseSensitivity(Sensitivities iFrame, Sensitivity sens) {
+void decreaseSensitivity(Frame iFrame, Sensitivity sens) {
   changeSensitivity(iFrame, sens, false);
 }	
 
-void changeSensitivity(Sensitivities iFrame, Sensitivity sens, boolean increase) {
+void changeSensitivity(Frame iFrame, Sensitivity sens, boolean increase) {
   float step = 1;
   float res;
   switch (sens) {
@@ -214,7 +214,7 @@ void changeSensitivity(Sensitivities iFrame, Sensitivity sens, boolean increase)
   }
 }
 
-boolean areDefaultsSet(Sensitivities iFrame) {
+boolean areDefaultsSet(Frame iFrame) {
   if (   equals(iFrame.rotationSensitivity(), defRotSens)
       && equals(iFrame.translationSensitivity(), defTransSens)
       && equals(iFrame.spinningSensitivity(), defSpngSens)
@@ -225,7 +225,7 @@ boolean areDefaultsSet(Sensitivities iFrame) {
   return false;
 }
 
-void setDefaults(Sensitivities iFrame) {
+void setDefaults(Frame iFrame) {
   iFrame.setRotationSensitivity(defRotSens);
   iFrame.setTranslationSensitivity(defTransSens);
   iFrame.setSpinningSensitivity(defSpngSens);

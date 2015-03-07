@@ -33,13 +33,14 @@ import remixlab.util.*;
  * The {@link #position()} and {@link #orientation()} of the Eye are defined by an
  * {@link remixlab.dandelion.core.InteractiveEyeFrame} (retrieved using {@link #frame()}). These methods are just
  * convenient wrappers to the equivalent Frame methods. This also means that the Eye {@link #frame()} can be attached to
- * a {@link remixlab.dandelion.core.Frame#referenceFrame()} which enables complex Eye setups. An Eye has its own
- * magnitude, different from that of the scene (i.e., {@link remixlab.dandelion.core.Frame#magnitude()} doesn't
+ * a {@link remixlab.dandelion.geom.RefFrame#referenceFrame()} which enables complex Eye setups. An Eye has its own
+ * magnitude, different from that of the scene (i.e., {@link remixlab.dandelion.geom.RefFrame#magnitude()} doesn't
  * necessarily equals {@code 1}), which allows to scale the view. Use {@link #eyeCoordinatesOf(Vec)} and
  * {@link #worldCoordinatesOf(Vec)} (or any of the powerful Frame transformations, such as
- * {@link remixlab.dandelion.core.Frame#coordinatesOf(Vec)}, {@link remixlab.dandelion.core.Frame#transformOf(Vec)},
- * ...) to convert to and from the Eye {@link #frame()} coordinate system. {@link #projectedCoordinatesOf(Vec)} and
- * {@link #unprojectedCoordinatesOf(Vec)} will convert from screen to 3D coordinates.
+ * {@link remixlab.dandelion.geom.RefFrame#coordinatesOf(Vec)},
+ * {@link remixlab.dandelion.geom.RefFrame#transformOf(Vec)}, ...) to convert to and from the Eye {@link #frame()}
+ * coordinate system. {@link #projectedCoordinatesOf(Vec)} and {@link #unprojectedCoordinatesOf(Vec)} will convert from
+ * screen to 3D coordinates.
  * <p>
  * An Eye can also be used outside of an Scene for its coordinate system conversion capabilities.
  */
@@ -385,7 +386,7 @@ public abstract class Eye implements Copyable {
 	 * Returns the Eye position, defined in the world coordinate system.
 	 * <p>
 	 * Use {@link #setPosition(Vec)} to set the Eye position. Other convenient methods are showEntireScene() or
-	 * fitSphere(). Actually returns {@link remixlab.dandelion.core.Frame#position()}.
+	 * fitSphere(). Actually returns {@link remixlab.dandelion.geom.RefFrame#position()}.
 	 */
 	public final Vec position() {
 		return frame().position();
@@ -813,7 +814,7 @@ public abstract class Eye implements Copyable {
 	 * {@link #worldCoordinatesOf(Vec)} performs the inverse transformation.
 	 * <p>
 	 * Note that the point coordinates are simply converted in a different coordinate system. They are not projected on
-	 * screen. Use {@link #projectedCoordinatesOf(Vec, Frame)} for that.
+	 * screen. Use {@link #projectedCoordinatesOf(Vec, RefFrame)} for that.
 	 */
 	public Vec eyeCoordinatesOf(Vec src) {
 		return frame().coordinatesOf(src);
@@ -932,7 +933,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply returns {@code projectedCoordinatesOf(src, null)}.
 	 * 
-	 * @see #projectedCoordinatesOf(Vec, Frame)
+	 * @see #projectedCoordinatesOf(Vec, RefFrame)
 	 */
 	public final Vec projectedCoordinatesOf(Vec src) {
 		return projectedCoordinatesOf(null, src, null);
@@ -941,7 +942,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply returns {@code projectedCoordinatesOf(projview, src, null)}.
 	 * 
-	 * @see #projectedCoordinatesOf(Vec, Frame)
+	 * @see #projectedCoordinatesOf(Vec, RefFrame)
 	 */
 	public final Vec projectedCoordinatesOf(Mat projview, Vec src) {
 		return projectedCoordinatesOf(projview, src, null);
@@ -950,9 +951,9 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply returns {@code projectedCoordinatesOf(null, src, frame)}.
 	 * 
-	 * @see #projectedCoordinatesOf(Vec, Frame)
+	 * @see #projectedCoordinatesOf(Vec, RefFrame)
 	 */
-	public final Vec projectedCoordinatesOf(Vec src, Frame frame) {
+	public final Vec projectedCoordinatesOf(Vec src, RefFrame frame) {
 		return projectedCoordinatesOf(null, src, frame);
 	}
 
@@ -973,9 +974,9 @@ public abstract class Eye implements Copyable {
 	 * {@link #getProjection()} and {@link #getViewport()}) and is completely independent of the processing matrices. You
 	 * can hence define a virtual Eye and use this method to compute projections out of a classical rendering context.
 	 * 
-	 * @see #unprojectedCoordinatesOf(Vec, Frame)
+	 * @see #unprojectedCoordinatesOf(Vec, RefFrame)
 	 */
-	public final Vec projectedCoordinatesOf(Mat projview, Vec src, Frame frame) {
+	public final Vec projectedCoordinatesOf(Mat projview, Vec src, RefFrame frame) {
 		float xyz[] = new float[3];
 
 		if (frame != null) {
@@ -990,7 +991,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply returns {@code unprojectedCoordinatesOf(src, null)}.
 	 * 
-	 * #see {@link #unprojectedCoordinatesOf(Vec, Frame)}
+	 * #see {@link #unprojectedCoordinatesOf(Vec, RefFrame)}
 	 */
 	public final Vec unprojectedCoordinatesOf(Vec src) {
 		return this.unprojectedCoordinatesOf(null, src, null);
@@ -999,7 +1000,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply returns {@code unprojectedCoordinatesOf(projviewInv, src, null)}.
 	 * 
-	 * #see {@link #unprojectedCoordinatesOf(Vec, Frame)}
+	 * #see {@link #unprojectedCoordinatesOf(Vec, RefFrame)}
 	 */
 	public final Vec unprojectedCoordinatesOf(Mat projviewInv, Vec src) {
 		return this.unprojectedCoordinatesOf(projviewInv, src, null);
@@ -1008,9 +1009,9 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply returns {@code unprojectedCoordinatesOf(null, src, frame)}.
 	 * 
-	 * #see {@link #unprojectedCoordinatesOf(Vec, Frame)}
+	 * #see {@link #unprojectedCoordinatesOf(Vec, RefFrame)}
 	 */
-	public final Vec unprojectedCoordinatesOf(Vec src, Frame frame) {
+	public final Vec unprojectedCoordinatesOf(Vec src, RefFrame frame) {
 		return unprojectedCoordinatesOf(null, src, frame);
 	}
 
@@ -1026,9 +1027,9 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * The result is expressed in the {@code frame} coordinate system. When {@code frame} is {@code null}, the result is
 	 * expressed in the world coordinates system. The possible {@code frame} hierarchy (i.e., when
-	 * {@link remixlab.dandelion.core.Frame#referenceFrame()} is non-null) is taken into account.
+	 * {@link remixlab.dandelion.geom.RefFrame#referenceFrame()} is non-null) is taken into account.
 	 * <p>
-	 * {@link #projectedCoordinatesOf(Vec, Frame)} performs the inverse transformation.
+	 * {@link #projectedCoordinatesOf(Vec, RefFrame)} performs the inverse transformation.
 	 * <p>
 	 * This method only uses the intrinsic Eye parameters (see {@link #getView()}, {@link #getProjection()} and
 	 * {@link #getViewport()}) and is completely independent of the Processing matrices. You can hence define a virtual
@@ -1042,10 +1043,10 @@ public abstract class Eye implements Copyable {
 	 * should buffer the entire inverse projection matrix (view, projection and then viewport) to speed-up the queries.
 	 * See the gluUnProject man page for details.
 	 * 
-	 * @see #projectedCoordinatesOf(Vec, Frame)
+	 * @see #projectedCoordinatesOf(Vec, RefFrame)
 	 * @see #setScreenWidthAndHeight(int, int)
 	 */
-	public final Vec unprojectedCoordinatesOf(Mat projviewInv, Vec src, Frame frame) {
+	public final Vec unprojectedCoordinatesOf(Mat projviewInv, Vec src, RefFrame frame) {
 		float xyz[] = new float[3];
 		// unproject(src.vec[0], src.vec[1], src.vec[2], this.getViewMatrix(true), this.getProjectionMatrix(true),
 		// getViewport(), xyz);

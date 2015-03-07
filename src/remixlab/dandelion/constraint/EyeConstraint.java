@@ -44,7 +44,7 @@ public class EyeConstraint extends AxisPlaneConstraint {
 	 * a plane defined in the {@link #eye()} coordinate system by {@link #translationConstraintDirection()}.
 	 */
 	@Override
-	public Vec constrainTranslation(Vec translation, Frame frame) {
+	public Vec constrainTranslation(Vec translation, RefFrame frame) {
 		Vec res = translation.get();
 		Vec proj;
 		switch (translationConstraintType()) {
@@ -78,7 +78,7 @@ public class EyeConstraint extends AxisPlaneConstraint {
 	 * whose direction is defined in the {@link #eye()} coordinate system by {@link #rotationConstraintDirection()}.
 	 */
 	@Override
-	public Rotation constrainRotation(Rotation rotation, Frame frame) {
+	public Rotation constrainRotation(Rotation rotation, RefFrame frame) {
 		Rotation res = rotation.get();
 		switch (rotationConstraintType()) {
 		case FREE:

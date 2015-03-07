@@ -63,8 +63,9 @@ import remixlab.util.*;
  * along a path.
  * <p>
  * <b>Attention:</b> If a Constraint is attached to the {@link #frame()} (see
- * {@link remixlab.dandelion.core.Frame#constraint()}), it should be deactivated before {@link #interpolationStarted()},
- * otherwise the interpolated motion (computed as if there was no constraint) will probably be erroneous.
+ * {@link remixlab.dandelion.geom.RefFrame#constraint()}), it should be deactivated before
+ * {@link #interpolationStarted()}, otherwise the interpolated motion (computed as if there was no constraint) will
+ * probably be erroneous.
  */
 public class KeyFrameInterpolator implements Copyable {
 	@Override
@@ -847,7 +848,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 */
 	public Frame keyFrame(int index) {
 		/**
-		 * AbstractKeyFrame kf = keyFr.get(index); return new RefFrame(kf.orientation(), kf.position(), kf.magnitude());
+		 * AbstractKeyFrame kf = keyFr.get(index); return new Frame(kf.orientation(), kf.position(), kf.magnitude());
 		 */
 		return keyFrameList.get(index).frame();
 	}

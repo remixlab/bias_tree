@@ -45,7 +45,7 @@ import remixlab.util.*;
  * {@link remixlab.dandelion.core.AbstractScene#inputHandler()} {@link remixlab.bias.core.InputHandler#agents()} pool
  * upon creation.
  */
-public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionGrabber<MotionAction>, Copyable,
+public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAction>, Copyable,
 		Constants {
 	@Override
 	public int hashCode() {
@@ -642,7 +642,7 @@ public class InteractiveEyeFrame extends InteractiveBaseFrame implements ActionG
 			// 1. Relate the eye reference frame:
 			Vec pos = position();
 			Quat o = (Quat) orientation();
-			Frame oldRef = referenceFrame();
+			RefFrame oldRef = referenceFrame();
 			Frame rFrame = new Frame(scene);
 			rFrame.setPosition(anchor());
 			rFrame.setZAxis(Vec.subtract(pos, anchor()));

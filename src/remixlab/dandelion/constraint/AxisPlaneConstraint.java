@@ -66,8 +66,8 @@ public abstract class AxisPlaneConstraint extends Constraint {
 	 * an axis direction ( {@link Type#AXIS}), will be forced to stay into a plane ({@link Type#PLANE} ) or will not able
 	 * to translate at all ({@link Type#FORBIDDEN}).
 	 * <p>
-	 * Use {@link remixlab.dandelion.core.Frame#setPosition(Vec)} to define the position of the constrained Frame before
-	 * it gets constrained.
+	 * Use {@link remixlab.dandelion.geom.RefFrame#setPosition(Vec)} to define the position of the constrained Frame
+	 * before it gets constrained.
 	 */
 	public Type translationConstraintType() {
 		return transConstraintType;
@@ -170,7 +170,7 @@ public abstract class AxisPlaneConstraint extends Constraint {
 	 * Depending on this value, the Frame will freely rotate ({@link Type#FREE}), will only be able to rotate around an
 	 * axis ({@link Type#AXIS}), or will not able to rotate at all {@link Type#FORBIDDEN}.
 	 * <p>
-	 * Use {@link remixlab.dandelion.core.Frame#setOrientation(Rotation)} to define the orientation of the constrained
+	 * Use {@link remixlab.dandelion.geom.RefFrame#setOrientation(Rotation)} to define the orientation of the constrained
 	 * Frame before it gets constrained.
 	 * <p>
 	 * <b>Attention:</b> An {@link Type#PLANE} Type is not meaningful for rotational constraints and will be ignored.

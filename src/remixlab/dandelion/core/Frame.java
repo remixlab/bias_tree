@@ -3,119 +3,75 @@
  * Copyright (c) 2014 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  *
- * All rights refserved. Library that eases the creation of interactive
+ * All rights reserved. Library that eases the creation of interactive
  * scenes, released under the terms of the GNU Public License v3.0
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
 package remixlab.dandelion.core;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import remixlab.dandelion.constraint.*;
+import remixlab.bias.event.DOF1Event;
+import remixlab.bias.event.DOF2Event;
+import remixlab.bias.event.MotionEvent;
 import remixlab.dandelion.geom.*;
+import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
 
 /**
- * A Frame is a 2D or 3D coordinate system, represented by a {@link #position()}, an {@link #orientation()} and
- * {@link #magnitude()}. The order of these transformations is important: the Frame is first translated, then rotated
- * around the new translated origin and then scaled.
- * <p>
- * A Frame is useful to define the position, orientation and magnitude of an object, using its {@link #matrix()} method,
- * as shown below:
- * <p>
- * {@code // Builds a Frame at position (0.5,0,0) and oriented such that its Y axis is along the (1,1,1) } <br>
- * {@code // direction. One could also have used setPosition() and setOrientation().} <br>
- * {@code Frame fr(new Vec(0.5,0,0), new Quat(new Vec(0,1,0), new Vec(1,1,1)));} <br>
- * {@code scene.pushModelView();} <br>
- * {@code scene.applyModelView(fr.matrix());} <br>
- * {@code // Draw your object here, in the local fr coordinate system.} <br>
- * {@code scene.popModelView();} <br>
- * <p>
  * The frame is loosely-coupled with the scene object used to instantiate it, i.e., the transformation it represents may
  * be applied to a different scene. See {@link #applyTransformation()} and {@link #applyTransformation(AbstractScene)}.
- * <p>
- * Many functions are provided to transform a point from one coordinate system (Frame) to an other: see
- * {@link #coordinatesOf(Vec)}, {@link #inverseCoordinatesOf(Vec)}, {@link #coordinatesOfIn(Vec, Frame)},
- * {@link #coordinatesOfFrom(Vec, Frame)}...
- * <p>
- * You may also want to transform a vector (such as a normal), which corresponds to applying only the rotational part of
- * the frame transformation: see {@link #transformOf(Vec)} and {@link #inverseTransformOf(Vec)}.
- * <p>
- * The {@link #translation()}, {@link #rotation()} and uniform positive {@link #scaling()} that are encapsulated in a
- * Frame can also be used to represent an angle preserving transformation of space. Such a transformation can also be
- * interpreted as a change of coordinate system, and the coordinate system conversion functions actually allow you to
- * use a Frame as an angle preserving transformation. Use {@link #inverseCoordinatesOf(Vec)} (resp.
- * {@link #coordinatesOf(Vec)}) to apply the transformation (resp. its inverse). Note the inversion.
- * <p>
  * <p>
  * Two frames can be synced together ({@link #sync(Frame, Frame)}), meaning that they will share their global parameters
  * (position, orientation and magnitude) taken the one that has been most recently updated. Syncing can be useful to
  * share frames among different off-screen scenes (see ProScene's CameraCrane and the AuxiliarViewer examples).
- * 
- * <h3>Hierarchy of Frames</h3>
- * 
- * The position, orientation and magnitude of a Frame are actually defined with respect to a {@link #referenceFrame()}.
- * The default {@link #referenceFrame()} is the world coordinate system (represented by a {@code null}
- * {@link #referenceFrame()}). If you {@link #setReferenceFrame(Frame)} to a different Frame, you must then
- * differentiate:
- * <p>
- * <ul>
- * <li>The <b>local</b> {@link #translation()}, {@link #rotation()} and {@link #scaling()}, defined with respect to the
- * {@link #referenceFrame()}.</li>
- * <li>the <b>global</b> {@link #position()}, {@link #orientation()} and {@link #magnitude()}, always defined with
- * respect to the world coordinate system.</li>
- * </ul>
- * <p>
- * A Frame is actually defined by its {@link #translation()} with respect to its {@link #referenceFrame()}, then by
- * {@link #rotation()} of the coordinate system around the new translated origin and then by a uniform positive
- * {@link #scaling()} along its rotated axes.
- * <p>
- * This terminology for <b>local</b> ({@link #translation()}, {@link #rotation()} and {@link #scaling()}) and
- * <b>global</b> ({@link #position()}, {@link #orientation()} and {@link #magnitude()}) definitions is used in all the
- * methods' names and should be sufficient to prevent ambiguities. These notions are obviously identical when the
- * {@link #referenceFrame()} is {@code null}, i.e., when the Frame is defined in the world coordinate system (the one
- * you are left with after calling {@link remixlab.dandelion.core.AbstractScene#preDraw()}).
- * <p>
- * Frames can hence easily be organized in a tree hierarchy, which root is the world coordinate system. A loop in the
- * hierarchy would result in an inconsistent (multiple) Frame definition. Therefore
- * {@link #settingAsReferenceFrameWillCreateALoop(Frame)} checks this and prevents {@link #referenceFrame()} from
- * creating such a loop.
- * <p>
- * This frame hierarchy is used in methods like {@link #coordinatesOfIn(Vec, Frame)},
- * {@link #coordinatesOfFrom(Vec, Frame)}... which allow coordinates (or vector) conversions from a Frame to any other
- * one (including the world coordinate system).
- * 
- * <h3>Constraints</h3>
- * 
- * An interesting feature of Frames is that their displacements can be constrained. When a
- * {@link remixlab.dandelion.constraint.Constraint} is attached to a Frame, it filters the input of
- * {@link #translate(Vec)} and {@link #rotate(Rotation)}, and only the resulting filtered motion is applied to the
- * Frame. The default {@link #constraint()} {@code null} resulting in no filtering. Use
- * {@link #setConstraint(Constraint)} to attach a Constraint to a frame.
- * <p>
- * Classical constraints are provided for convenience (see {@link remixlab.dandelion.constraint.LocalConstraint},
- * {@link remixlab.dandelion.constraint.WorldConstraint} and {@link remixlab.dandelion.constraint.EyeConstraint}) and
- * new constraints can very easily be implemented.
- * 
- * <h3>Derived classes</h3>
- * 
- * The {@link remixlab.dandelion.core.InteractiveFrame} class inherits Frame and implements all sorts of motion actions
- * (see {@link remixlab.dandelion.core.Constants}), so that a Frame (and hence an object) can be manipulated in the
- * scene by whatever user interaction means you can imagine.
  */
-public class Frame implements Copyable {
+public class Frame extends RefFrame {
+	// Sens
+	private float								rotSensitivity;
+	private float								transSensitivity;
+	private float								wheelSensitivity;
+
+	// spinning stuff:
+	private float								spngSensitivity;
+	private TimingTask					spinningTimerTask;
+	private Rotation						spngRotation;
+	protected float							dampFriction;							// new
+	// toss and spin share the damp var:
+	private float								sFriction;									// new
+
+	// Whether the SCREEN_TRANS direction (horizontal or vertical) is fixed or not.
+	public boolean							dirIsFixed;
+	private boolean							horiz								= true; // Two simultaneous InteractiveFrame require two mice!
+
+	// TODO decide whether to include this:
+	protected float							eventSpeed;								// spnning and tossing
+	protected Vec								tDir;
+	protected float							flySpd;
+	protected TimingTask				flyTimerTask;
+	protected Vec								scnUpVec;
+	protected Vec								flyDisp;
+	protected static final long	FLY_UPDATE_PERDIOD	= 10;
+
+	protected long							lastUpdate;
+	protected AbstractScene			scene;
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
-				append(trans).
-				append(rot).
-				append(scl).
-				append(refFrame).
-				append(cnstrnt).
-				append(childrenList).
+				appendSuper(super.hashCode()).
+				// append(grabsInputThreshold).
+				// append(adpThreshold).
+				// append(isInCamPath).
+				append(rotSensitivity).
+				append(spngRotation).
+				append(spngSensitivity).
+				append(dampFriction).
+				append(sFriction).
+				append(transSensitivity).
+				append(wheelSensitivity).
+				append(flyDisp).
+				append(flySpd).
+				append(scnUpVec).
 				append(lastUpdate).
 				toHashCode();
 	}
@@ -131,106 +87,332 @@ public class Frame implements Copyable {
 
 		Frame other = (Frame) obj;
 		return new EqualsBuilder()
-				.append(trans, other.trans)
-				.append(scl, other.scl)
-				.append(rot, other.rot)
-				.append(refFrame, other.refFrame)
-				.append(childrenList, other.childrenList)
+				.appendSuper(super.equals(obj))
+				// .append(grabsInputThreshold, other.grabsInputThreshold)
+				// .append(adpThreshold, other.adpThreshold)
+				// .append(isInCamPath, other.isInCamPath)
+				.append(dampFriction, other.dampFriction)
+				.append(sFriction, other.sFriction)
+				.append(rotSensitivity, other.rotSensitivity)
+				.append(spngRotation, other.spngRotation)
+				.append(spngSensitivity, other.spngSensitivity)
+				.append(transSensitivity, other.transSensitivity)
+				.append(wheelSensitivity, other.wheelSensitivity)
+				.append(flyDisp, other.flyDisp)
+				.append(flySpd, other.flySpd)
+				.append(scnUpVec, other.scnUpVec)
 				.append(lastUpdate, other.lastUpdate)
-				.append(cnstrnt, other.cnstrnt)
 				.isEquals();
 	}
 
-	protected Vec						trans;
-	protected float					scl;
-	protected Rotation			rot;
-	protected Frame					refFrame;
-	protected Constraint		cnstrnt;
-	protected long					lastUpdate;
-	protected List<Frame>		childrenList;
-
-	protected AbstractScene	scene;
-
 	/**
-	 * Same as {@code this(scn, null)}.
+	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #Frame(AbstractScene, Frame)
-	 * @see #Frame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
 	 */
 	public Frame(AbstractScene scn) {
-		this(scn, null);
+		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
-	 * Same as {@code this(scn, p, r, 1)}.
+	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #Frame(AbstractScene, Vec, Rotation, float)
-	 * @see #Frame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 */
+	public Frame(AbstractScene scn, Vec p) {
+		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, null, new Vec(), r, 1)}.
+	 * 
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 */
+	public Frame(AbstractScene scn, Rotation r) {
+		this(scn, null, new Vec(), r, 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
+	 * 
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 */
+	public Frame(AbstractScene scn, float s) {
+		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
+	}
+
+	/**
+	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s)}.
+	 * 
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 */
+	public Frame(AbstractScene scn, Vec p, float s) {
+		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s);
+	}
+
+	/**
+	 * Same as {@code this(scn, null, p, r, 1)}.
+	 * 
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
 	 */
 	public Frame(AbstractScene scn, Vec p, Rotation r) {
-		this(scn, p, r, 1);
+		this(scn, null, p, r, 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, null, new Vec(), r, s)}.
+	 * 
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 */
+	public Frame(AbstractScene scn, Rotation r, float s) {
+		this(scn, null, new Vec(), r, s);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, r, s)}.
 	 * 
-	 * @see #Frame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
 	 */
 	public Frame(AbstractScene scn, Vec p, Rotation r, float s) {
 		this(scn, null, p, r, s);
 	}
 
 	/**
-	 * Same as {@code this(scn, referenceFrame, p, r, 1)}.
+	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #Frame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, Frame referenceFrame) {
-		this(scn, referenceFrame, new Vec(0, 0, 0), scn.is3D() ? new Quat() : new Rot(), 1);
+	public Frame(AbstractScene scn, RefFrame referenceFrame) {
+		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
+	 * 
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 */
+	public Frame(AbstractScene scn, RefFrame referenceFrame, Vec p) {
+		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, referenceFrame, new Vec(), r, 1)}.
+	 * 
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 */
+	public Frame(AbstractScene scn, RefFrame referenceFrame, Rotation r) {
+		this(scn, referenceFrame, new Vec(), r, 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
+	 * 
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 */
+	public Frame(AbstractScene scn, RefFrame referenceFrame, float s) {
+		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
+	}
+
+	/**
+	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s)}.
+	 * 
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 */
+	public Frame(AbstractScene scn, RefFrame referenceFrame, Vec p, float s) {
+		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, r, 1)}.
 	 * 
-	 * @see #Frame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r) {
+	public Frame(AbstractScene scn, RefFrame referenceFrame, Vec p, Rotation r) {
 		this(scn, referenceFrame, p, r, 1);
 	}
 
 	/**
-	 * Creates a Frame with {@code referenceFrame} as {@link #referenceFrame()}, and {@code p}, {@code r} and {@code s} as
-	 * the frame {@link #translation()}, {@link #rotation()} and {@link #scaling()}, respectively.
+	 * Same as {@code this(scn, referenceFrame, new Vec(), r, s)}.
+	 * 
+	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
-		scene = scn;
-		childrenList = new ArrayList<Frame>();
-		setTranslation(p);
-		if ((scene.is3D() && r instanceof Quat) || (scene.is2D() && r instanceof Rot))
-			setRotation(r);
-		else
-			setRotation(scene.is3D() ? new Quat() : new Rot());
-		setScaling(s);
-		setReferenceFrame(referenceFrame);
+	public Frame(AbstractScene scn, RefFrame referenceFrame, Rotation r, float s) {
+		this(scn, referenceFrame, new Vec(), r, s);
 	}
 
-	protected Frame(Frame other) {
-		scene = other.scene;
-		childrenList = new ArrayList<Frame>();
-		Iterator<Frame> iterator = other.childrenList.iterator();
-		while (iterator.hasNext())
-			childrenList.add(iterator.next());
-		trans = other.translation().get();
-		rot = other.rotation().get();
-		scl = other.scaling();
-		refFrame = other.referenceFrame();
-		cnstrnt = other.constraint();
-		lastUpdate = other.lastUpdate();
+	/**
+	 * Creates a Frame bound to {@code scn} with {@code referenceFrame} as {@link #referenceFrame()}, and {@code p},
+	 * {@code r} and {@code s} as the frame {@link #translation()}, {@link #rotation()} and {@link #scaling()},
+	 * respectively.
+	 */
+	public Frame(AbstractScene scn, RefFrame referenceFrame, Vec p, Rotation r, float s) {
+		super(referenceFrame, p, r, s);
+		scene = scn;
+
+		setRotationSensitivity(1.0f);
+		setTranslationSensitivity(1.0f);
+		setWheelSensitivity(20.0f);
+		setSpinningSensitivity(0.3f);
+		setDampingFriction(0.5f);
+
+		spinningTimerTask = new TimingTask() {
+			public void execute() {
+				spin();
+			}
+		};
+		scene.registerTimingTask(spinningTimerTask);
+
+		// TODO decide whether to include this:
+		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
+		flyDisp = new Vec(0.0f, 0.0f, 0.0f);
+		flyTimerTask = new TimingTask() {
+			public void execute() {
+				toss();
+			}
+		};
+		scene.registerTimingTask(flyTimerTask);
+		// end
+	}
+
+	protected Frame(Frame otherFrame) {
+		super(otherFrame);
+		this.scene = otherFrame.scene;
+
+		this.spinningTimerTask = new TimingTask() {
+			public void execute() {
+				spin();
+			}
+		};
+
+		this.scene.registerTimingTask(spinningTimerTask);
+
+		// TODO decide whether to include this:
+		scnUpVec = new Vec();
+		flyDisp = new Vec();
+		this.scnUpVec.set(otherFrame.sceneUpVector().get());
+		this.flyDisp.set(otherFrame.flyDisp.get());
+		this.flyTimerTask = new TimingTask() {
+			public void execute() {
+				toss();
+			}
+		};
+		this.scene.registerTimingTask(flyTimerTask);
+		lastUpdate = otherFrame.lastUpdate();
+
+		// end
+
+		// this.isInCamPath = otherFrame.isInCamPath;
+		//
+		// this.setGrabsInputThreshold(otherFrame.grabsInputThreshold(), otherFrame.adaptiveGrabsInputThreshold());
+		// this.setRotationSensitivity(otherFrame.rotationSensitivity());
+		// this.setTranslationSensitivity(otherFrame.translationSensitivity());
+		// this.setWheelSensitivity(otherFrame.wheelSensitivity());
+		//
+		// this.setSpinningSensitivity(otherFrame.spinningSensitivity());
+		// this.setDampingFriction(otherFrame.dampingFriction());
+		//
+		// this.setAction(otherFrame.action());
+		//
+		// this.spinningTimerTask = new TimingTask() {
+		// public void execute() {
+		// spin();
+		// }
+		// };
+		// this.scene.registerTimingTask(spinningTimerTask);
+		//
+		// this.scnUpVec = new Vec();
+		// this.scnUpVec.set(otherFrame.sceneUpVector());
+		// this.flyDisp = new Vec();
+		// this.flyDisp.set(otherFrame.flyDisp);
+		// this.setFlySpeed(otherFrame.flySpeed());
+		//
+		// this.flyTimerTask = new TimingTask() {
+		// public void execute() {
+		// toss();
+		// }
+		// };
+		// this.scene.registerTimingTask(flyTimerTask);
 	}
 
 	@Override
 	public Frame get() {
 		return new Frame(this);
+	}
+
+	// APPLY TRANSFORMATION
+
+	/**
+	 * Convenience function that simply calls {@code applyTransformation(scene)}. It applies the transformation defined by
+	 * the frame to the scene used to instantiated.
+	 * 
+	 * @see #applyTransformation(AbstractScene)
+	 * @see #matrix()
+	 */
+	public void applyTransformation() {
+		applyTransformation(scene);
+	}
+
+	/**
+	 * Convenience function that simply calls {@code applyWorldTransformation(scene)}. It applies the world transformation
+	 * defined by the frame to the scene used to instantiated.
+	 * 
+	 * @see #applyWorldTransformation(AbstractScene)
+	 * @see #worldMatrix()
+	 */
+	public void applyWorldTransformation() {
+		applyWorldTransformation(scene);
+	}
+
+	/**
+	 * Convenience function that simply calls {@code scn.applyTransformation(this)}. You may apply the transformation
+	 * represented by this frame to any scene you want using this method.
+	 * <p>
+	 * Very efficient prefer always this than
+	 * 
+	 * @see #applyTransformation()
+	 * @see #matrix()
+	 * @see remixlab.dandelion.core.AbstractScene#applyTransformation(RefFrame)
+	 */
+	public void applyTransformation(AbstractScene scn) {
+		scn.applyTransformation(this);
+	}
+
+	/**
+	 * Convenience function that simply calls {@code scn.applyWorldTransformation(this)}. You may apply the world
+	 * transformation represented by this frame to any scene you want using this method.
+	 * 
+	 * @see #applyWorldTransformation()
+	 * @see #worldMatrix()
+	 * @see remixlab.dandelion.core.AbstractScene#applyWorldTransformation(RefFrame)
+	 */
+	public void applyWorldTransformation(AbstractScene scn) {
+		scn.applyWorldTransformation(this);
+	}
+
+	// MODIFIED
+
+	/**
+	 * Internal use. Automatically call by all methods which change the Frame state.
+	 */
+	protected void modified() {
+		if (scene != null)
+			lastUpdate = scene.frameCount();
+		super.modified();
+	}
+
+	/**
+	 * Internal use. Needed by {@link #sync(RefFrame, RefFrame, boolean)}.
+	 */
+	// TODO decide whether to include this one since it now seems overkill to me -jp
+	protected long lastGlobalUpdate() {
+		return lastUpdate() + scene.deltaCount;
+	}
+
+	/**
+	 * @return the last frame the Frame was updated.
+	 */
+	public long lastUpdate() {
+		return lastUpdate;
 	}
 
 	// SYNC
@@ -252,7 +434,7 @@ public class Frame implements Copyable {
 	 * among the two frames. The {@link #referenceFrame()} and {@link #constraint()} (if any) of each frame are kept
 	 * separately.
 	 * 
-	 * @see #fromFrame(Frame)
+	 * @see #fromFrame(RefFrame)
 	 */
 	public static void sync(Frame f1, Frame f2) {
 		if (f1.lastGlobalUpdate() == f2.lastGlobalUpdate())
@@ -262,1345 +444,622 @@ public class Frame implements Copyable {
 		target.fromFrame(source);
 	}
 
-	// MODIFIED
+	// Fx
 
 	/**
-	 * Internal use. Automatically call by all methods which change the Frame state.
+	 * Internal use.
+	 * <p>
+	 * Returns the cached value of the spinning friction used in {@link #recomputeSpinningRotation()}.
 	 */
-	protected void modified() {
-		lastUpdate = scene.frameCount();
-		for (Frame child : childrenList)
-			child.modified();
+	protected float dampingFrictionFx() {
+		return sFriction;
 	}
 
 	/**
-	 * Internal use. Needed by {@link #sync(Frame, Frame, boolean)}.
+	 * Defines the spinning deceleration.
+	 * <p>
+	 * Default value is 0.5. Use {@link #setDampingFriction(float)} to tune this value. A higher value will make damping
+	 * more difficult (a value of 1.0 forbids damping).
 	 */
-	protected long lastGlobalUpdate() {
-		return lastUpdate() + scene.deltaCount;
+	public float dampingFriction() {
+		return dampFriction;
 	}
 
 	/**
-	 * @return the last frame the Frame was updated.
+	 * Defines the {@link #dampingFriction()}. Values must be in the range [0..1].
 	 */
-	public long lastUpdate() {
-		return lastUpdate;
-	}
-
-	// DIM
-
-	/**
-	 * @return true if frame is 2D.
-	 */
-	public boolean is2D() {
-		return !is3D();
-	}
-
-	/**
-	 * @return true if frame is 3D.
-	 */
-	public boolean is3D() {
-		return rotation() instanceof Quat;
-	}
-
-	// REFERENCE_FRAME
-
-	/**
-	 * Returns the reference Frame, in which coordinates system the Frame is defined.
-	 * <p>
-	 * The Frame {@link #translation()}, {@link #rotation()} and {@link #scaling()} are defined with respect to the
-	 * {@link #referenceFrame()} coordinate system. A {@code null} reference Frame (default value) means that the Frame is
-	 * defined in the world coordinate system.
-	 * <p>
-	 * Use {@link #position()}, {@link #orientation()} and {@link #magnitude()} to recursively convert values along the
-	 * reference Frame chain and to get values expressed in the world coordinate system. The values match when the
-	 * reference Frame is {@code null}.
-	 * <p>
-	 * Use {@link #setReferenceFrame(Frame)} to set this value and create a Frame hierarchy. Convenient functions allow
-	 * you to convert coordinates from one Frame to another: see {@link #coordinatesOf(Vec)},
-	 * {@link #localCoordinatesOf(Vec)} , {@link #coordinatesOfIn(Vec, Frame)} and their inverse functions.
-	 * <p>
-	 * Vectors can also be converted using {@link #transformOf(Vec)}, {@link #transformOfIn(Vec, Frame)},
-	 * {@link #localTransformOf(Vec)} and their inverse functions.
-	 */
-	public final Frame referenceFrame() {
-		return refFrame;
-	}
-
-	/**
-	 * Sets the {@link #referenceFrame()} of the Frame.
-	 * <p>
-	 * The Frame {@link #translation()}, {@link #rotation()} and {@link #scaling()} are then defined in the
-	 * {@link #referenceFrame()} coordinate system.
-	 * <p>
-	 * Use {@link #position()}, {@link #orientation()} and {@link #magnitude()} to express these in the world coordinate
-	 * system.
-	 * <p>
-	 * Using this method, you can create a hierarchy of Frames. This hierarchy needs to be a tree, which root is the world
-	 * coordinate system (i.e., {@code null} {@link #referenceFrame()}). No action is performed if setting
-	 * {@code refFrame} as the {@link #referenceFrame()} would create a loop in the Frame hierarchy.
-	 */
-	public final void setReferenceFrame(Frame rFrame) {
-		if (settingAsReferenceFrameWillCreateALoop(rFrame)) {
-			System.out.println("Frame.setReferenceFrame would create a loop in Frame hierarchy. Nothing done.");
+	public void setDampingFriction(float f) {
+		if (f < 0 || f > 1)
 			return;
-		}
-		if (referenceFrame() == rFrame)
-			return;
-		if (referenceFrame() != null) // old
-			referenceFrame().childrenList.remove(this);
-		refFrame = rFrame;
-		if (referenceFrame() != null) // new
-			referenceFrame().childrenList.add(this);
-		modified();
+		dampFriction = f;
+		setDampingFrictionFx(dampFriction);
 	}
 
 	/**
-	 * Returns {@code true} if setting {@code frame} as the Frame's {@link #referenceFrame()} would create a loop in the
-	 * Frame hierarchy.
-	 */
-	public final boolean settingAsReferenceFrameWillCreateALoop(Frame frame) {
-		Frame f = frame;
-		while (f != null) {
-			if (f == Frame.this)
-				return true;
-			f = f.referenceFrame();
-		}
-		return false;
-	}
-
-	/**
-	 * Returns a list of the frame children, i.e., frame which {@link #referenceFrame()} is this.
-	 */
-	public List<Frame> children() {
-		return childrenList;
-	}
-
-	// CONSTRAINT
-
-	/**
-	 * Returns the current {@link remixlab.dandelion.constraint.Constraint} applied to the Frame.
+	 * Internal use.
 	 * <p>
-	 * A {@code null} value (default) means that no Constraint is used to filter the Frame translation and rotation.
-	 * <p>
-	 * See the Constraint class documentation for details.
+	 * Computes and caches the value of the spinning friction used in {@link #recomputeSpinningRotation()}.
 	 */
-	public Constraint constraint() {
-		return cnstrnt;
+	protected void setDampingFrictionFx(float spinningFriction) {
+		sFriction = spinningFriction * spinningFriction * spinningFriction;
 	}
 
 	/**
-	 * Sets the {@link #constraint()} attached to the Frame.
-	 * <p>
-	 * A {@code null} value means no constraint.
+	 * Defines the {@link #rotationSensitivity()}.
 	 */
-	public void setConstraint(Constraint c) {
-		cnstrnt = c;
+	public final void setRotationSensitivity(float sensitivity) {
+		rotSensitivity = sensitivity;
 	}
 
-	// TRANSLATION
+	/**
+	 * Defines the {@link #translationSensitivity()}.
+	 */
+	public final void setTranslationSensitivity(float sensitivity) {
+		transSensitivity = sensitivity;
+	}
 
 	/**
-	 * Returns the Frame translation, defined with respect to the {@link #referenceFrame()}.
+	 * Defines the {@link #spinningSensitivity()}.
+	 */
+	public final void setSpinningSensitivity(float sensitivity) {
+		spngSensitivity = sensitivity;
+	}
+
+	/**
+	 * Defines the {@link #wheelSensitivity()}.
+	 */
+	public final void setWheelSensitivity(float sensitivity) {
+		wheelSensitivity = sensitivity;
+	}
+
+	/**
+	 * Returns the influence of a gesture displacement on the InteractiveFrame rotation.
 	 * <p>
-	 * Use {@link #position()} to get the result in world coordinates. These two values are identical when the
-	 * {@link #referenceFrame()} is {@code null} (default).
+	 * Default value is 1.0 (which matches an identical mouse displacement), a higher value will generate a larger
+	 * rotation (and inversely for lower values). A 0.0 value will forbid rotation (see also {@link #constraint()}).
 	 * 
-	 * @see #setTranslation(Vec)
-	 * @see #setTranslationWithConstraint(Vec)
+	 * @see #setRotationSensitivity(float)
+	 * @see #translationSensitivity()
+	 * @see #spinningSensitivity()
+	 * @see #wheelSensitivity()
 	 */
-	public final Vec translation() {
-		return trans;
+	public final float rotationSensitivity() {
+		return rotSensitivity;
 	}
 
 	/**
-	 * Sets the {@link #translation()} of the frame, locally defined with respect to the {@link #referenceFrame()}.
+	 * Returns the influence of a gesture displacement on the InteractiveFrame translation.
 	 * <p>
-	 * Use {@link #setPosition(Vec)} to define the world coordinates {@link #position()}. Use
-	 * {@link #setTranslationWithConstraint(Vec)} to take into account the potential {@link #constraint()} of the Frame.
-	 */
-	public final void setTranslation(Vec t) {
-		trans = t;
-		modified();
-	}
-
-	/**
-	 * Same as {@link #setTranslation(Vec)}, but if there's a {@link #constraint()} it is satisfied.
-	 * 
-	 * @see #setRotationWithConstraint(Rotation)
-	 * @see #setPositionWithConstraint(Vec)
-	 * @see #setScaling(float)
-	 */
-	public final void setTranslationWithConstraint(Vec translation) {
-		Vec deltaT = Vec.subtract(translation, this.translation());
-		if (constraint() != null)
-			deltaT = constraint().constrainTranslation(deltaT, this);
-
-		translate(deltaT);
-	}
-
-	/**
-	 * Same as {@link #setTranslation(Vec)}, but with {@code float} parameters.
-	 */
-	public final void setTranslation(float x, float y) {
-		setTranslation(new Vec(x, y));
-	}
-
-	/**
-	 * Same as {@link #setTranslation(Vec)}, but with {@code float} parameters.
-	 */
-	public final void setTranslation(float x, float y, float z) {
-		setTranslation(new Vec(x, y, z));
-	}
-
-	/**
-	 * Same as {@link #translate(Vec)} but with {@code float} parameters.
-	 */
-	public final void translate(float x, float y, float z) {
-		translate(new Vec(x, y, z));
-	}
-
-	/**
-	 * Same as {@link #translate(Vec)} but with {@code float} parameters.
-	 */
-	public final void translate(float x, float y) {
-		translate(new Vec(x, y));
-	}
-
-	/**
-	 * Translates the Frame according to {@code t}, locally defined with respect to the {@link #referenceFrame()}.
+	 * Default value is 1.0 which in the case of a mouse interaction makes the InteractiveFrame precisely stays under the
+	 * mouse cursor.
 	 * <p>
-	 * If there's a {@link #constraint()} it is satisfied. Hence the translation actually applied to the Frame may differ
-	 * from {@code t} (since it can be filtered by the {@link #constraint()}). Use {@link #setTranslation(Vec)} to
-	 * directly translate the Frame without taking the {@link #constraint()} into account.
+	 * With an identical gesture displacement, a higher value will generate a larger translation (and inversely for lower
+	 * values). A 0.0 value will forbid translation (see also {@link #constraint()}).
 	 * 
-	 * @see #rotate(Rotation)
-	 * @see #scale(float)
+	 * @see #setTranslationSensitivity(float)
+	 * @see #rotationSensitivity()
+	 * @see #spinningSensitivity()
+	 * @see #wheelSensitivity()
 	 */
-	public void translate(Vec t) {
-		if (constraint() != null)
-			translation().add(constraint().constrainTranslation(t, this));
-		else
-			translation().add(t);
-		modified();
-	}
-
-	// POSITION
-
-	/**
-	 * Returns the position of the Frame, defined in the world coordinate system.
-	 * 
-	 * @see #orientation()
-	 * @see #magnitude()
-	 * @see #setPosition(Vec)
-	 * @see #translation()
-	 */
-	public final Vec position() {
-		return inverseCoordinatesOf(new Vec(0, 0, 0));
+	public final float translationSensitivity() {
+		return transSensitivity;
 	}
 
 	/**
-	 * Sets the {@link #position()} of the Frame, defined in the world coordinate system.
+	 * Returns the minimum gesture speed required to make the InteractiveFrame {@link #spin()}. Spinning requires to set
+	 * to {@link #dampingFriction()} to 0.
 	 * <p>
-	 * Use {@link #setTranslation(Vec)} to define the local Frame translation (with respect to the
-	 * {@link #referenceFrame()}). The potential {@link #constraint()} of the Frame is not taken into account, use
-	 * {@link #setPositionWithConstraint(Vec)} instead.
-	 */
-	public final void setPosition(Vec p) {
-		if (referenceFrame() != null)
-			setTranslation(referenceFrame().coordinatesOf(p));
-		else
-			setTranslation(p);
-	}
-
-	/**
-	 * Same as {@link #setPosition(Vec)}, but with {@code float} parameters.
-	 */
-	public final void setPosition(float x, float y) {
-		setPosition(new Vec(x, y));
-	}
-
-	/**
-	 * Same as {@link #setPosition(Vec)}, but with {@code float} parameters.
-	 */
-	public final void setPosition(float x, float y, float z) {
-		setPosition(new Vec(x, y, z));
-	}
-
-	/**
-	 * Same as {@link #setPosition(Vec)}, but if there's a {@link #constraint()} it is satisfied (without modifying
-	 * {@code position}).
-	 * 
-	 * @see #setOrientationWithConstraint(Rotation)
-	 * @see #setTranslationWithConstraint(Vec)
-	 */
-	public final void setPositionWithConstraint(Vec position) {
-		if (referenceFrame() != null)
-			position = referenceFrame().coordinatesOf(position);
-
-		setTranslationWithConstraint(position);
-	}
-
-	// ROTATION
-
-	/**
-	 * Returns the Frame rotation, defined with respect to the {@link #referenceFrame()} (i.e, the current Rotation
-	 * orientation).
+	 * See {@link #spin()}, {@link #spinningRotation()} and {@link #startSpinning(MotionEvent)} for details.
 	 * <p>
-	 * Use {@link #orientation()} to get the result in world coordinates. These two values are identical when the
-	 * {@link #referenceFrame()} is {@code null} (default).
+	 * Gesture speed is expressed in pixels per milliseconds. Default value is 0.3 (300 pixels per second). Use
+	 * {@link #setSpinningSensitivity(float)} to tune this value. A higher value will make spinning more difficult (a
+	 * value of 100.0 forbids spinning in practice).
 	 * 
-	 * @see #setRotation(Rotation)
-	 * @see #setRotationWithConstraint(Rotation)
+	 * @see #setSpinningSensitivity(float)
+	 * @see #translationSensitivity()
+	 * @see #rotationSensitivity()
+	 * @see #wheelSensitivity()
+	 * @see #setDampingFriction(float)
 	 */
-	public final Rotation rotation() {
-		return rot;
+	public final float spinningSensitivity() {
+		return spngSensitivity;
 	}
 
 	/**
-	 * Set the current rotation. See the different {@link remixlab.dandelion.geom.Rotation} constructors.
+	 * Returns the wheel sensitivity.
 	 * <p>
-	 * Sets the {@link #rotation()} of the Frame, locally defined with respect to the {@link #referenceFrame()}.
+	 * Default value is 20.0. A higher value will make the wheel action more efficient (usually meaning a faster zoom).
+	 * Use a negative value to invert the zoom in and out directions.
+	 * 
+	 * @see #setWheelSensitivity(float)
+	 * @see #translationSensitivity()
+	 * @see #rotationSensitivity()
+	 * @see #spinningSensitivity()
+	 */
+	public float wheelSensitivity() {
+		return wheelSensitivity;
+	}
+
+	/**
+	 * Returns {@code true} when the InteractiveFrame is spinning.
 	 * <p>
-	 * Use {@link #setOrientation(Rotation)} to define the world coordinates {@link #orientation()}. The potential
-	 * {@link #constraint()} of the Frame is not taken into account, use {@link #setRotationWithConstraint(Rotation)}
-	 * instead.
-	 * 
-	 * @see #setRotationWithConstraint(Rotation)
-	 * @see #rotation()
-	 * @see #setTranslation(Vec)
-	 */
-	public final void setRotation(Rotation r) {
-		rot = r;
-		modified();
-	}
-
-	/**
-	 * Same as {@link #setRotation(Rotation)} but with {@code float} Rotation parameters.
-	 */
-	public final void setRotation(float x, float y, float z, float w) {
-		if (is2D()) {
-			AbstractScene.showDepthWarning("setRotation(float x, float y, float z, float w)");
-			return;
-		}
-		setRotation(new Quat(x, y, z, w));
-	}
-
-	/**
-	 * Defines a 2D {@link remixlab.dandelion.geom.Rotation}.
-	 * 
-	 * @param a
-	 *          angle
-	 */
-	public final void setRotation(float a) {
-		if (is3D()) {
-			AbstractScene.showDepthWarning("setRotation(float a)", false);
-			return;
-		}
-		setRotation(new Rot(a));
-	}
-
-	/**
-	 * Same as {@link #setRotation(Rotation)}, but if there's a {@link #constraint()} it's satisfied.
-	 * 
-	 * @see #setTranslationWithConstraint(Vec)
-	 * @see #setOrientationWithConstraint(Rotation)
-	 * @see #setScaling(float)
-	 */
-	public final void setRotationWithConstraint(Rotation rotation) {
-		Rotation deltaQ;
-
-		if (is3D())
-			deltaQ = Quat.compose(rotation().inverse(), rotation);
-		else
-			deltaQ = Rot.compose(rotation().inverse(), rotation);
-
-		if (constraint() != null)
-			deltaQ = constraint().constrainRotation(deltaQ, this);
-
-		deltaQ.normalize(); // Prevent numerical drift
-
-		rotate(deltaQ);
-	}
-
-	/**
-	 * Rotates the Frame by {@code r} (defined in the Frame coordinate system): {@code rotation().compose(r)}.
+	 * During spinning, {@link #spin()} rotates the InteractiveFrame by its {@link #spinningRotation()} at a frequency
+	 * defined when the InteractiveFrame {@link #startSpinning(MotionEvent)}.
 	 * <p>
-	 * If there's a {@link #constraint()} it is satisfied. Hence the rotation actually applied to the Frame may differ
-	 * from {@code q} (since it can be filtered by the {@link #constraint()}). Use {@link #setRotation(Rotation)} to
-	 * directly rotate the Frame without taking the {@link #constraint()} into account.
+	 * Use {@link #startSpinning(MotionEvent)} and {@link #stopSpinning()} to change this state. Default value is
+	 * {@code false}.
 	 * 
-	 * @see #translate(Vec)
+	 * @see #isTossing()
 	 */
-	public final void rotate(Rotation r) {
-		if (constraint() != null)
-			rotation().compose(constraint().constrainRotation(r, this));
-		else
-			rotation().compose(r);
-		if (is3D())
-			((Quat) rotation()).normalize(); // Prevents numerical drift
-		modified();
+	public final boolean isSpinning() {
+		return spinningTimerTask.isActive();
 	}
 
 	/**
-	 * Same as {@link #rotate(Rotation)} but with {@code float} rotation parameters.
-	 */
-	public final void rotate(float x, float y, float z, float w) {
-		if (is2D()) {
-			AbstractScene.showDepthWarning("rotate(float x, float y, float z, float w)");
-			return;
-		}
-		rotate(new Quat(x, y, z, w));
-	}
-
-	/**
-	 * Makes the Frame {@link #rotate(Rotation)} by {@code rotation} around {@code point}.
+	 * Returns the incremental rotation that is applied by {@link #spin()} to the InteractiveFrame orientation when it
+	 * {@link #isSpinning()}.
 	 * <p>
-	 * {@code point} is defined in the world coordinate system, while the {@code rotation} axis is defined in the Frame
+	 * Default value is a {@code null} rotation. Use {@link #setSpinningRotation(Rotation)} to change this value.
+	 * <p>
+	 * The {@link #spinningRotation()} axis is defined in the InteractiveFrame coordinate system. You can use
+	 * {@link remixlab.dandelion.geom.RefFrame#transformOfFrom(Vec, RefFrame)} to convert this axis from another Frame
 	 * coordinate system.
 	 * <p>
-	 * If the Frame has a {@link #constraint()}, {@code rotation} is first constrained using
-	 * {@link remixlab.dandelion.constraint.Constraint#constrainRotation(Rotation, Frame)}. Hence the rotation actually
-	 * applied to the Frame may differ from {@code rotation} (since it can be filtered by the {@link #constraint()}).
-	 * <p>
-	 * The translation which results from the filtered rotation around {@code point} is then computed and filtered using
-	 * {@link remixlab.dandelion.constraint.Constraint#constrainTranslation(Vec, Frame)}.
-	 */
-	public void rotateAroundPoint(Rotation rotation, Vec point) {
-		if (constraint() != null)
-			rotation = constraint().constrainRotation(rotation, this);
-
-		this.rotation().compose(rotation);
-		if (is3D())
-			this.rotation().normalize(); // Prevents numerical drift
-
-		Rotation q;
-		if (is3D())
-			q = new Quat(orientation().rotate(((Quat) rotation).axis()), rotation.angle());
-		else
-			q = new Rot(rotation.angle());
-		Vec t = Vec.add(point, q.rotate(Vec.subtract(position(), point)));
-		t.subtract(translation());
-		if (constraint() != null)
-			translate(constraint().constrainTranslation(t, this));
-		else
-			translate(t);
-	}
-
-	// ORIENTATION
-
-	/**
-	 * Returns the orientation of the Frame, defined in the world coordinate system.
+	 * <b>Attention: </b>Spinning may be decelerated according to {@link #dampingFriction()} till it stops completely.
 	 * 
-	 * @see #position()
-	 * @see #magnitude()
-	 * @see #setOrientation(Rotation)
-	 * @see #rotation()
+	 * @see #tossingDirection()
 	 */
-	public final Rotation orientation() {
-		Rotation res = rotation().get();
-		Frame fr = referenceFrame();
-		while (fr != null) {
-			if (is3D())
-				res = Quat.compose(fr.rotation(), res);
-			else
-				res = Rot.compose(fr.rotation(), res);
-			fr = fr.referenceFrame();
-		}
-		return res;
+	public final Rotation spinningRotation() {
+		return spngRotation;
 	}
 
 	/**
-	 * Sets the {@link #orientation()} of the Frame, defined in the world coordinate system.
-	 * <p>
-	 * Use {@link #setRotation(Rotation)} to define the local frame rotation (with respect to the
-	 * {@link #referenceFrame()}). The potential {@link #constraint()} of the Frame is not taken into account, use
-	 * {@link #setOrientationWithConstraint(Rotation)} instead.
-	 */
-	public final void setOrientation(Rotation q) {
-		if (referenceFrame() != null) {
-			if (is3D())
-				setRotation(Quat.compose(referenceFrame().orientation().inverse(), q));
-			else
-				setRotation(Rot.compose(referenceFrame().orientation().inverse(), q));
-		}
-		else
-			setRotation(q);
-	}
-
-	/**
-	 * Same as {@link #setOrientation(Rotation)}, but with {@code float} parameters.
-	 */
-	public final void setOrientation(float x, float y, float z, float w) {
-		setOrientation(new Quat(x, y, z, w));
-	}
-
-	/**
-	 * Same as {@link #setOrientation(Rotation)}, but if there's a {@link #constraint()} it is satisfied (without
-	 * modifying {@code orientation}).
+	 * Defines the {@link #spinningRotation()}. Its axis is defined in the InteractiveFrame coordinate system.
 	 * 
-	 * @see #setPositionWithConstraint(Vec)
-	 * @see #setRotationWithConstraint(Rotation)
+	 * @see #setTossingDirection(Vec)
 	 */
-	public final void setOrientationWithConstraint(Rotation orientation) {
-		if (referenceFrame() != null) {
-			if (is3D())
-				orientation = Quat.compose(referenceFrame().orientation().inverse(), orientation);
-			else
-				orientation = Rot.compose(referenceFrame().orientation().inverse(), orientation);
-		}
-
-		setRotationWithConstraint(orientation);
+	public final void setSpinningRotation(Rotation spinningRotation) {
+		spngRotation = spinningRotation;
 	}
 
-	// SCALING
-
 	/**
-	 * Returns the Frame scaling, defined with respect to the {@link #referenceFrame()}.
+	 * Stops the spinning motion started using {@link #startSpinning(MotionEvent)}. {@link #isSpinning()} will return
+	 * {@code false} after this call.
 	 * <p>
-	 * Use {@link #magnitude()} to get the result in world coordinates. These two values are identical when the
-	 * {@link #referenceFrame()} is {@code null} (default).
+	 * <b>Attention: </b>This method may be called by {@link #spin()}, since spinning may be decelerated according to
+	 * {@link #dampingFriction()} till it stops completely.
 	 * 
-	 * @see #setScaling(float)
+	 * @see #dampingFriction()
+	 * @see #toss()
 	 */
-	public final float scaling() {
-		return scl;
+	public final void stopSpinning() {
+		spinningTimerTask.stop();
 	}
 
 	/**
-	 * Sets the {@link #scaling()} of the frame, locally defined with respect to the {@link #referenceFrame()}.
+	 * Starts the spinning of the InteractiveFrame.
 	 * <p>
-	 * Use {@link #setMagnitude(float)} to define the world coordinates {@link #magnitude()}.
-	 */
-	public final void setScaling(float s) {
-		if (Util.positive(s)) {
-			scl = s;
-			modified();
-		}
-		else
-			System.out.println("Warning. Scaling should be positive. Nothing done");
-	}
-
-	/**
-	 * Scales the Frame according to {@code s}, locally defined with respect to the {@link #referenceFrame()}.
+	 * This method starts a timer that will call {@link #spin()} every {@code updateInterval} milliseconds. The
+	 * InteractiveFrame {@link #isSpinning()} until you call {@link #stopSpinning()}.
+	 * <p>
+	 * <b>Attention: </b>Spinning may be decelerated according to {@link #dampingFriction()} till it stops completely.
 	 * 
-	 * @see #rotate(Rotation)
-	 * @see #translate(Vec)
+	 * @see #dampingFriction()
+	 * @see #toss()
 	 */
-	public void scale(float s) {
-		setScaling(scaling() * s);
+	public void startSpinning(MotionEvent e) {
+		eventSpeed = e.speed();
+		int updateInterval = (int) e.delay();
+		if (updateInterval > 0)
+			spinningTimerTask.run(updateInterval);
 	}
 
-	// MAGNITUDE
-
 	/**
-	 * Returns the magnitude of the Frame, defined in the world coordinate system.
+	 * Rotates the InteractiveFrame by its {@link #spinningRotation()}. Called by a timer when the InteractiveFrame
+	 * {@link #isSpinning()}.
+	 * <p>
+	 * <b>Attention: </b>Spinning may be decelerated according to {@link #dampingFriction()} till it stops completely.
 	 * 
-	 * @see #orientation()
-	 * @see #position()
-	 * @see #setPosition(Vec)
-	 * @see #translation()
+	 * @see #dampingFriction()
+	 * @see #toss()
 	 */
-	public float magnitude() {
-		if (referenceFrame() != null)
-			return referenceFrame().magnitude() * scaling();
-		else
-			return scaling();
-	}
-
-	/**
-	 * Sets the {@link #magnitude()} of the Frame, defined in the world coordinate system.
-	 * <p>
-	 * Use {@link #setScaling(float)} to define the local Frame scaling (with respect to the {@link #referenceFrame()}).
-	 */
-	public final void setMagnitude(float m) {
-		Frame refFrame = referenceFrame();
-		if (refFrame != null)
-			setScaling(m / refFrame.magnitude());
-		else
-			setScaling(m);
-	}
-
-	// ALIGNMENT
-
-	/**
-	 * Convenience function that simply calls {@code alignWithFrame(frame, false, 0.85f)}
-	 */
-	public final void alignWithFrame(Frame frame) {
-		alignWithFrame(frame, false, 0.85f);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code alignWithFrame(frame, move, 0.85f)}
-	 */
-	public final void alignWithFrame(Frame frame, boolean move) {
-		alignWithFrame(frame, move, 0.85f);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code alignWithFrame(frame, false, threshold)}
-	 */
-	public final void alignWithFrame(Frame frame, float threshold) {
-		alignWithFrame(frame, false, threshold);
-	}
-
-	/**
-	 * Aligns the Frame with {@code frame}, so that two of their axis are parallel.
-	 * <p>
-	 * If one of the X, Y and Z axis of the Frame is almost parallel to any of the X, Y, or Z axis of {@code frame}, the
-	 * Frame is rotated so that these two axis actually become parallel.
-	 * <p>
-	 * If, after this first rotation, two other axis are also almost parallel, a second alignment is performed. The two
-	 * frames then have identical orientations, up to 90 degrees rotations.
-	 * <p>
-	 * {@code threshold} measures how close two axis must be to be considered parallel. It is compared with the absolute
-	 * values of the dot product of the normalized axis.
-	 * <p>
-	 * When {@code move} is set to {@code true}, the Frame {@link #position()} is also affected by the alignment. The new
-	 * Frame {@link #position()} is such that the {@code frame} frame position (computed with {@link #coordinatesOf(Vec)},
-	 * in the Frame coordinates system) does not change.
-	 * <p>
-	 * {@code frame} may be {@code null} and then represents the world coordinate system (same convention than for the
-	 * {@link #referenceFrame()}).
-	 */
-	public final void alignWithFrame(Frame frame, boolean move, float threshold) {
-		if (is3D()) {
-			Vec[][] directions = new Vec[2][3];
-
-			for (int d = 0; d < 3; ++d) {
-				Vec dir = new Vec((d == 0) ? 1.0f : 0.0f, (d == 1) ? 1.0f : 0.0f, (d == 2) ? 1.0f : 0.0f);
-				if (frame != null)
-					directions[0][d] = frame.orientation().rotate(dir);
-				else
-					directions[0][d] = dir;
-				directions[1][d] = orientation().rotate(dir);
+	public void spin() {
+		if (Util.nonZero(dampingFriction())) {
+			if (eventSpeed == 0) {
+				stopSpinning();
+				return;
 			}
-
-			float maxProj = 0.0f;
-			float proj;
-			short[] index = new short[2];
-			index[0] = index[1] = 0;
-
-			Vec vec = new Vec(0.0f, 0.0f, 0.0f);
-			for (int i = 0; i < 3; ++i) {
-				for (int j = 0; j < 3; ++j) {
-					vec.set(directions[0][i]);
-					proj = Math.abs(vec.dot(directions[1][j]));
-					if ((proj) >= maxProj) {
-						index[0] = (short) i;
-						index[1] = (short) j;
-						maxProj = proj;
-					}
-				}
-			}
-			Frame old = new Frame(this); // correct line
-			// VFrame old = this.get();// this call the get overloaded method and hence add the frame to the mouse grabber
-
-			vec.set(directions[0][index[0]]);
-			float coef = vec.dot(directions[1][index[1]]);
-
-			if (Math.abs(coef) >= threshold) {
-				vec.set(directions[0][index[0]]);
-				Vec axis = vec.cross(directions[1][index[1]]);
-				float angle = (float) Math.asin(axis.magnitude());
-				if (coef >= 0.0)
-					angle = -angle;
-				// setOrientation(Quaternion(axis, angle) * orientation());
-				Quat q = new Quat(axis, angle);
-				q = Quat.multiply(((Quat) rotation()).inverse(), q);
-				q = Quat.multiply(q, (Quat) orientation());
-				rotate(q);
-
-				// Try to align an other axis direction
-				short d = (short) ((index[1] + 1) % 3);
-				Vec dir = new Vec((d == 0) ? 1.0f : 0.0f, (d == 1) ? 1.0f : 0.0f, (d == 2) ? 1.0f : 0.0f);
-				dir = orientation().rotate(dir);
-
-				float max = 0.0f;
-				for (int i = 0; i < 3; ++i) {
-					vec.set(directions[0][i]);
-					proj = Math.abs(vec.dot(dir));
-					if (proj > max) {
-						index[0] = (short) i;
-						max = proj;
-					}
-				}
-
-				if (max >= threshold) {
-					vec.set(directions[0][index[0]]);
-					axis = vec.cross(dir);
-					angle = (float) Math.asin(axis.magnitude());
-					vec.set(directions[0][index[0]]);
-					if (vec.dot(dir) >= 0.0)
-						angle = -angle;
-					// setOrientation(Quaternion(axis, angle) * orientation());
-					q.fromAxisAngle(axis, angle);
-					q = Quat.multiply(((Quat) rotation()).inverse(), q);
-					q = Quat.multiply(q, (Quat) orientation());
-					rotate(q);
-				}
-			}
-			if (move) {
-				Vec center = new Vec(0.0f, 0.0f, 0.0f);
-				if (frame != null)
-					center = frame.position();
-
-				vec = Vec.subtract(center, inverseTransformOf(old.coordinatesOf(center)));
-				vec.subtract(translation());
-				translate(vec);
-			}
+			rotate(spinningRotation());
+			recomputeSpinningRotation();
 		}
-		else {
-			Rot o;
-			if (frame != null)
-				o = (Rot) frame.orientation();
+		else
+			rotate(spinningRotation());
+	}
+
+	/**
+	 * Internal method. Recomputes the {@link #spinningRotation()} according to {@link #dampingFriction()}.
+	 * 
+	 * @see #recomputeTossingDirection()
+	 */
+	protected void recomputeSpinningRotation() {
+		float prevSpeed = eventSpeed;
+		float damping = 1.0f - dampingFrictionFx();
+		eventSpeed *= damping;
+		if (Math.abs(eventSpeed) < .001f)
+			eventSpeed = 0;
+		// float currSpeed = eventSpeed;
+		if (scene.is3D())
+			((Quat) spinningRotation()).fromAxisAngle(((Quat) spinningRotation()).axis(), spinningRotation().angle()
+					* (eventSpeed / prevSpeed));
+		else
+			this.setSpinningRotation(new Rot(spinningRotation().angle() * (eventSpeed / prevSpeed)));
+	}
+
+	/**
+	 * Return 1 if mouse motion was started horizontally and -1 if it was more vertical. Returns 0 if this could not be
+	 * determined yet (perfect diagonal motion, rare).
+	 */
+	protected int originalDirection(DOF2Event event) {
+		if (!dirIsFixed) {
+			Point delta;
+			if (event.isAbsolute())
+				delta = new Point(event.x(), event.y());
 			else
-				o = new Rot();
-			o.normalize(true);
-			((Rot) orientation()).normalize(true);
-
-			float angle = 0; // if( (-QUARTER_PI <= delta) && (delta < QUARTER_PI) )
-			float delta = Math.abs(o.angle() - orientation().angle());
-
-			if (((float) Math.PI / 4 <= delta) && (delta < ((float) Math.PI * 3 / 4)))
-				angle = (float) Math.PI / 2;
-			else if ((((float) Math.PI * 3 / 4) <= delta) && (delta < ((float) Math.PI * 5 / 4)))
-				angle = (float) Math.PI;
-			else if ((((float) Math.PI * 5 / 4) <= delta) && (delta < ((float) Math.PI * 7 / 4)))
-				angle = (float) Math.PI * 3 / 2;
-
-			angle += o.angle();
-			Rot other = new Rot(angle);
-			other.normalize();
-			setOrientation(other);
+				delta = new Point(event.dx(), event.dy());
+			dirIsFixed = Math.abs(delta.x()) != Math.abs(delta.y());
+			horiz = Math.abs(delta.x()) > Math.abs(delta.y());
 		}
-	}
 
-	/**
-	 * Translates the Frame so that its {@link #position()} lies on the line defined by {@code origin} and
-	 * {@code direction} (defined in the world coordinate system).
-	 * <p>
-	 * Simply uses an orthogonal projection. {@code direction} does not need to be normalized.
-	 */
-	public final void projectOnLine(Vec origin, Vec direction) {
-		Vec shift = Vec.subtract(origin, position());
-		Vec proj = shift;
-		proj = Vec.projectVectorOnAxis(proj, direction);
-		translate(Vec.subtract(shift, proj));
-	}
-
-	/**
-	 * Rotates the frame so that its {@link #xAxis()} becomes {@code axis} defined in the world coordinate system.
-	 * <p>
-	 * <b>Attention:</b> this rotation is not uniquely defined. See {@link remixlab.dandelion.geom.Quat#fromTo(Vec, Vec)}.
-	 * 
-	 * @see #xAxis()
-	 * @see #setYAxis(Vec)
-	 * @see #setZAxis(Vec)
-	 */
-	public void setXAxis(Vec axis) {
-		if (is3D())
-			rotate(new Quat(new Vec(1.0f, 0.0f, 0.0f), transformOf(axis)));
+		if (dirIsFixed)
+			if (horiz)
+				return 1;
+			else
+				return -1;
 		else
-			rotate(new Rot(new Vec(1.0f, 0.0f, 0.0f), transformOf(axis)));
+			return 0;
 	}
 
 	/**
-	 * Rotates the frame so that its {@link #yAxis()} becomes {@code axis} defined in the world coordinate system.
-	 * <p>
-	 * <b>Attention:</b> this rotation is not uniquely defined. See {@link remixlab.dandelion.geom.Quat#fromTo(Vec, Vec)}.
+	 * Returns a Quaternion computed according to the mouse motion. Mouse positions are projected on a deformed ball,
+	 * centered on ({@code cx}, {@code cy}).
+	 */
+	protected Quat deformedBallQuaternion(DOF2Event event, float cx, float cy, Camera camera) {
+		// TODO absolute events!?
+		float x = event.x();
+		float y = event.y();
+		float prevX = event.prevX();
+		float prevY = event.prevY();
+		// Points on the deformed ball
+		float px = rotationSensitivity() * ((int) prevX - cx) / camera.screenWidth();
+		float py = rotationSensitivity() * (scene.isLeftHanded() ? ((int) prevY - cy) : (cy - (int) prevY))
+				/ camera.screenHeight();
+		float dx = rotationSensitivity() * (x - cx) / camera.screenWidth();
+		float dy = rotationSensitivity() * (scene.isLeftHanded() ? (y - cy) : (cy - y)) / camera.screenHeight();
+
+		Vec p1 = new Vec(px, py, projectOnBall(px, py));
+		Vec p2 = new Vec(dx, dy, projectOnBall(dx, dy));
+		// Approximation of rotation angle Should be divided by the projectOnBall size, but it is 1.0
+		Vec axis = p2.cross(p1);
+		float angle = 2.0f * (float) Math.asin((float) Math.sqrt(axis.squaredNorm() / p1.squaredNorm() / p2.squaredNorm()));
+		return new Quat(axis, angle);
+	}
+
+	/**
+	 * Returns "pseudo-distance" from (x,y) to ball of radius size. For a point inside the ball, it is proportional to the
+	 * euclidean distance to the ball. For a point outside the ball, it is proportional to the inverse of this distance
+	 * (tends to zero) on the ball, the function is continuous.
+	 */
+	protected static float projectOnBall(float x, float y) {
+		// If you change the size value, change angle computation in deformedBallQuaternion().
+		float size = 1.0f;
+		float size2 = size * size;
+		float size_limit = size2 * 0.5f;
+
+		float d = x * x + y * y;
+		return d < size_limit ? (float) Math.sqrt(size2 - d) : size_limit / (float) Math.sqrt(d);
+	}
+
+	/**
+	 * <a href="http://en.wikipedia.org/wiki/Euler_angles#Extrinsic_rotations">Extrinsic rotation</a> about the
+	 * {@link remixlab.dandelion.core.AbstractScene#eye()} {@link remixlab.dandelion.core.InteractiveEyeFrame} axes.
 	 * 
-	 * @see #yAxis()
-	 * @see #setYAxis(Vec)
-	 * @see #setZAxis(Vec)
-	 */
-	public void setYAxis(Vec axis) {
-		if (is3D())
-			rotate(new Quat(new Vec(0.0f, 1.0f, 0.0f), transformOf(axis)));
-		else
-			rotate(new Rot(new Vec(0.0f, 1.0f, 0.0f), transformOf(axis)));
-	}
-
-	/**
-	 * Rotates the frame so that its {@link #zAxis()} becomes {@code axis} defined in the world coordinate system.
-	 * <p>
-	 * <b>Attention:</b> this rotation is not uniquely defined. See {@link remixlab.dandelion.geom.Quat#fromTo(Vec, Vec)}.
+	 * @param roll
+	 *          Rotation angle in radians around the Eye x-Axis
+	 * @param pitch
+	 *          Rotation angle in radians around the Eye y-Axis
+	 * @param yaw
+	 *          Rotation angle in radians around the Eye z-Axis
 	 * 
-	 * @see #zAxis()
-	 * @see #setYAxis(Vec)
-	 * @see #setZAxis(Vec)
+	 * @see remixlab.dandelion.geom.Quat#fromEulerAngles(float, float, float)
 	 */
-	public void setZAxis(Vec axis) {
-		if (is3D())
-			rotate(new Quat(new Vec(0.0f, 0.0f, 1.0f), transformOf(axis)));
-		else
-			System.out.println("There's no point in setting the Z axis in 2D");
-	}
-
-	/**
-	 * Same as {@code return xAxis(true)}
-	 * 
-	 * @see #xAxis(boolean)
-	 */
-	public Vec xAxis() {
-		return xAxis(true);
-	}
-
-	/**
-	 * Returns the x-axis of the frame, represented as a normalized vector defined in the world coordinate system.
-	 * 
-	 * @see #setXAxis(Vec)
-	 * @see #yAxis()
-	 * @see #zAxis()
-	 */
-	public Vec xAxis(boolean positive) {
-		Vec res;
-		if (is3D()) {
-			res = inverseTransformOf(new Vec(positive ? 1.0f : -1.0f, 0.0f, 0.0f));
-			if (Util.diff(magnitude(), 1))
-				res.normalize();
-		}
-		else {
-			res = inverseTransformOf(new Vec(positive ? 1.0f : -1.0f, 0.0f));
-			if (Util.diff(magnitude(), 1))
-				res.normalize();
-		}
-		return res;
-	}
-
-	/**
-	 * Same as {@code return yAxis(true)}
-	 * 
-	 * @see #yAxis(boolean)
-	 */
-	public Vec yAxis() {
-		return yAxis(true);
-	}
-
-	/**
-	 * Returns the y-axis of the frame, represented as a normalized vector defined in the world coordinate system.
-	 * 
-	 * @see #setYAxis(Vec)
-	 * @see #xAxis()
-	 * @see #zAxis()
-	 */
-	public Vec yAxis(boolean positive) {
-		Vec res;
-		if (is3D()) {
-			res = inverseTransformOf(new Vec(0.0f, positive ? 1.0f : -1.0f, 0.0f));
-			if (Util.diff(magnitude(), 1))
-				res.normalize();
-		}
-		else {
-			res = inverseTransformOf(new Vec(0.0f, positive ? 1.0f : -1.0f));
-			if (Util.diff(magnitude(), 1))
-				res.normalize();
-		}
-		return res;
-	}
-
-	/**
-	 * Same as {@code return zAxis(true)}
-	 * 
-	 * @see #zAxis(boolean)
-	 */
-	public Vec zAxis() {
-		return zAxis(true);
-	}
-
-	/**
-	 * Returns the z-axis of the frame, represented as a normalized vector defined in the world coordinate system.
-	 * 
-	 * @see #setZAxis(Vec)
-	 * @see #xAxis()
-	 * @see #yAxis()
-	 */
-	public Vec zAxis(boolean positive) {
-		Vec res = new Vec();
-		if (is3D()) {
-			res = inverseTransformOf(new Vec(0.0f, 0.0f, positive ? 1.0f : -1.0f));
-			if (Util.diff(magnitude(), 1))
-				res.normalize();
-		}
-		return res;
-	}
-
-	// CONVERSION
-
-	/**
-	 * Convenience function that simply calls {@code applyTransformation(scene)}. It applies the transformation defined by
-	 * the frame to the scene used to instantiated.
-	 * 
-	 * @see #applyTransformation(AbstractScene)
-	 * @see #matrix()
-	 * @see remixlab.dandelion.core.Frame#applyTransformation(AbstractScene)
-	 */
-	public void applyTransformation() {
-		applyTransformation(scene);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code applyWorldTransformation(scene)}. It applies the world transformation
-	 * defined by the frame to the scene used to instantiated.
-	 * 
-	 * @see #applyWorldTransformation(AbstractScene)
-	 * @see #worldMatrix()
-	 * @see remixlab.dandelion.core.Frame#applyWorldTransformation(AbstractScene)
-	 */
-	public void applyWorldTransformation() {
-		applyWorldTransformation(scene);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code scn.applyTransformation(this)}. You may apply the transformation
-	 * represented by this frame to any scene you want using this method.
-	 * 
-	 * @see #applyTransformation()
-	 * @see #matrix()
-	 * @see remixlab.dandelion.core.AbstractScene#applyTransformation(Frame)
-	 */
-	public void applyTransformation(AbstractScene scn) {
-		scn.applyTransformation(this);
-	}
-
-	/**
-	 * Convenience function that simply calls {@code scn.applyWorldTransformation(this)}. You may apply the world
-	 * transformation represented by this frame to any scene you want using this method.
-	 * 
-	 * @see #applyWorldTransformation()
-	 * @see #worldMatrix()
-	 * @see remixlab.dandelion.core.AbstractScene#applyWorldTransformation(Frame)
-	 */
-	public void applyWorldTransformation(AbstractScene scn) {
-		scn.applyWorldTransformation(this);
-	}
-
-	/**
-	 * Returns the {@link remixlab.dandelion.geom.Mat} associated with this Frame.
-	 * <p>
-	 * This method could be used in conjunction with {@code applyMatrix()} to modify the
-	 * {@link remixlab.dandelion.core.AbstractScene#modelView()} matrix from a Frame hierarchy. For example, with this
-	 * Frame hierarchy:
-	 * <p>
-	 * {@code Frame body = new Frame();} <br>
-	 * {@code Frame leftArm = new Frame();} <br>
-	 * {@code Frame rightArm = new Frame();} <br>
-	 * {@code leftArm.setReferenceFrame(body);} <br>
-	 * {@code rightArm.setReferenceFrame(body);} <br>
-	 * <p>
-	 * The associated drawing code should look like:
-	 * <p>
-	 * {@code scene.pushModelView();}<br>
-	 * {@code scene.applyMatrix(body.matrix());} <br>
-	 * {@code drawBody();} <br>
-	 * {@code scene.pushModelView();} <br>
-	 * {@code scene.applyMatrix(leftArm.matrix());} <br>
-	 * {@code drawArm();} <br>
-	 * {@code scene.popModelView();} <br>
-	 * {@code scene.pushModelView();} <br>
-	 * {@code scene.applyMatrix(rightArm.matrix());} <br>
-	 * {@code drawArm();} <br>
-	 * {@code scene.popModelView();} <br>
-	 * {@code scene.popModelView();} <br>
-	 * <p>
-	 * Note the use of nested {@code pushModelView()} and {@code popModelView()} blocks to represent the frame hierarchy:
-	 * {@code leftArm} and {@code rightArm} are both correctly drawn with respect to the {@code body} coordinate system.
-	 * <p>
-	 * <b>Attention:</b> In Processing this technique is inefficient because {@code papplet.applyMatrix} will try to
-	 * calculate the inverse of the transform. Avoid it whenever possible and instead use
-	 * {@link #applyTransformation(AbstractScene)} which always is very efficient.
-	 * <p>
-	 * This matrix only represents the local Frame transformation (i.e., with respect to the {@link #referenceFrame()}).
-	 * Use {@link #worldMatrix()} to get the full Frame transformation matrix (i.e., from the world to the Frame
-	 * coordinate system). These two match when the {@link #referenceFrame()} is {@code null}.
-	 * <p>
-	 * The result is only valid until the next call to {@code matrix()} or {@link #worldMatrix()}. Use it immediately (as
-	 * above).
-	 * 
-	 * @see #applyTransformation(AbstractScene)
-	 */
-	public final Mat matrix() {
-		Mat pM = new Mat();
-
-		pM = rotation().matrix();
-
-		pM.mat[12] = translation().vec[0];
-		pM.mat[13] = translation().vec[1];
-		pM.mat[14] = translation().vec[2];
-
-		if (scaling() != 1) {
-			pM.setM00(pM.m00() * scaling());
-			pM.setM10(pM.m10() * scaling());
-			pM.setM20(pM.m20() * scaling());
-
-			pM.setM01(pM.m01() * scaling());
-			pM.setM11(pM.m11() * scaling());
-			pM.setM21(pM.m21() * scaling());
-
-			pM.setM02(pM.m02() * scaling());
-			pM.setM12(pM.m12() * scaling());
-			pM.setM22(pM.m22() * scaling());
-		}
-
-		return pM;
-	}
-
-	/**
-	 * Returns the transformation matrix represented by the Frame.
-	 * <p>
-	 * This method should be used in conjunction with {@code applyMatrix()} to modify the
-	 * {@link remixlab.dandelion.core.AbstractScene#modelView()} matrix from a Frame:
-	 * <p>
-	 * {@code // Here the modelview matrix corresponds to the world coordinate system.} <br>
-	 * {@code Frame fr = new Frame(pos, Rotation(from, to));} <br>
-	 * {@code scene.pushModelView();} <br>
-	 * {@code scene.applyMatrix(worldMatrix());} <br>
-	 * {@code // draw object in the fr coordinate system.} <br>
-	 * {@code scene.popModelView();} <br>
-	 * <p>
-	 * This matrix represents the global Frame transformation: the entire {@link #referenceFrame()} hierarchy is taken
-	 * into account to define the Frame transformation from the world coordinate system. Use {@link #matrix()} to get the
-	 * local Frame transformation matrix (i.e. defined with respect to the {@link #referenceFrame()}). These two match
-	 * when the {@link #referenceFrame()} is {@code null}.
-	 * <p>
-	 * <b>Attention:</b> The result is only valid until the next call to {@link #matrix()} or {@code worldMatrix()}. Use
-	 * it immediately (as above).
-	 */
-	public final Mat worldMatrix() {
-		if (referenceFrame() != null)
-			return new Frame(scene, position(), orientation(), magnitude()).matrix();
-		else
-			return matrix();
-	}
-
-	/**
-	 * Convenience function that simply calls {@code fromMatrix(pM, 1))}.
-	 * 
-	 * @see #fromMatrix(Mat, float)
-	 */
-	public final void fromMatrix(Mat pM) {
-		fromMatrix(pM, 1);
-	}
-
-	/**
-	 * Sets the Frame from a Mat representation: rotation in the upper left 3x3 matrix and translation on the last column.
-	 * Scaling is defined separately in {@code scl}.
-	 * <p>
-	 * Hence, if a code fragment looks like:
-	 * <p>
-	 * {@code float [] m = new float [16]; m[0]=...;} <br>
-	 * {@code gl.glMultMatrixf(m);} <br>
-	 * <p>
-	 * It is equivalent to write:
-	 * <p>
-	 * {@code Frame fr = new Frame();} <br>
-	 * {@code fr.fromMatrix(m);} <br>
-	 * {@code applyMatrix(fr.matrix());} <br>
-	 * <p>
-	 * Using this conversion, you can benefit from the powerful Frame transformation methods to translate points and
-	 * vectors to and from the Frame coordinate system to any other Frame coordinate system (including the world
-	 * coordinate system). See {@link #coordinatesOf(Vec)} and {@link #transformOf(Vec)}.
-	 */
-	public final void fromMatrix(Mat pM, float scl) {
-		if (Util.zero(pM.mat[15])) {
-			System.out.println("Doing nothing: pM.mat[15] should be non-zero!");
+	public void rotateAroundEyeAxes(float roll, float pitch, float yaw) {
+		if (scene.is2D()) {
+			AbstractScene.showDepthWarning("rotateAroundEyeAxes");
 			return;
 		}
+		Vec trns = new Vec();
+		Quat q = new Quat(scene.isLeftHanded() ? roll : -roll, -pitch, scene.isLeftHanded() ? yaw : -yaw);
+		trns.set(-q.x(), -q.y(), -q.z());
+		trns = scene.camera().frame().orientation().rotate(trns);
+		trns = transformOf(trns);
+		q.setX(trns.x());
+		q.setY(trns.y());
+		q.setZ(trns.z());
+		rotate(q);
+	}
 
-		translation().vec[0] = pM.mat[12] / pM.mat[15];
-		translation().vec[1] = pM.mat[13] / pM.mat[15];
-		translation().vec[2] = pM.mat[14] / pM.mat[15];
+	// micro-actions procedures
 
-		float[][] r = new float[3][3];
+	protected void scale2Fit(Vec trns) {
+		// Scale to fit the screen relative event displacement
+		switch (scene.camera().type()) {
+		case PERSPECTIVE:
+			trns.multiply(2.0f
+					* (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
+					* Math.abs((scene.camera().frame().coordinatesOf(position())).vec[2] * scene.camera().frame().magnitude())
+					/ scene.camera().screenHeight());
+			break;
+		case ORTHOGRAPHIC:
+			float[] wh = scene.camera().getBoundaryWidthHeight();
+			trns.vec[0] *= 2.0 * wh[0] / scene.camera().screenWidth();
+			trns.vec[1] *= 2.0 * wh[1] / scene.camera().screenHeight();
+			break;
+		}
+	}
 
-		r[0][0] = pM.mat[0] / pM.mat[15];
-		r[0][1] = pM.mat[4] / pM.mat[15];
-		r[0][2] = pM.mat[8] / pM.mat[15];
-		r[1][0] = pM.mat[1] / pM.mat[15];
-		r[1][1] = pM.mat[5] / pM.mat[15];
-		r[1][2] = pM.mat[9] / pM.mat[15];
-		r[2][0] = pM.mat[2] / pM.mat[15];
-		r[2][1] = pM.mat[6] / pM.mat[15];
-		r[2][2] = pM.mat[10] / pM.mat[15];
+	protected Rot computeRot(DOF2Event e2, Vec trns) {
+		Rot rt;
+		if (e2.isRelative()) {
+			Point prevPos = new Point(e2.prevX(), e2.prevY());
+			Point curPos = new Point(e2.x(), e2.y());
+			rt = new Rot(new Point(trns.x(), trns.y()), prevPos, curPos);
+			rt = new Rot(rt.angle() * rotationSensitivity());
+		}
+		else
+			rt = new Rot(e2.x() * rotationSensitivity());
+		if (scene.isRightHanded())
+			rt.negate();
+		return rt;
+	}
 
-		setScaling(scl);// calls modified() :P
+	protected float computeAngle(DOF1Event e1, boolean wheel) {
+		float angle;
+		if (wheel) // its a wheel wheel :P
+			angle = (float) Math.PI * e1.x() * wheelSensitivity() / scene.eye().screenWidth();
+		else if (e1.isAbsolute())
+			angle = (float) Math.PI * e1.x() / scene.eye().screenWidth();
+		else
+			angle = (float) Math.PI * e1.dx() / scene.eye().screenWidth();
+		return angle;
+	}
 
-		if (scaling() != 1) {
-			r[0][0] = r[0][0] / scaling();
-			r[1][0] = r[1][0] / scaling();
-			r[2][0] = r[2][0] / scaling();
+	protected float delta1(DOF1Event e1, boolean wheel) {
+		float delta;
+		if (wheel) // its a wheel wheel :P
+			delta = e1.x() * wheelSensitivity();
+		else if (e1.isAbsolute())
+			delta = e1.x();
+		else
+			delta = e1.dx();
+		return delta;
+	}
 
-			r[0][1] = r[0][1] / scaling();
-			r[1][1] = r[1][1] / scaling();
-			r[2][1] = r[2][1] / scaling();
+	protected void translateFromEye(Vec trns) {
+		translateFromEye(trns, translationSensitivity());
+	}
 
-			if (this.is3D()) {
-				r[0][2] = r[0][2] / scaling();
-				r[1][2] = r[1][2] / scaling();
-				r[2][2] = r[2][2] / scaling();
+	protected void translateFromEye(Vec trns, float sens) {
+		// Transform from eye to world coordinate system.
+		trns = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trns, sens))
+				: scene.camera().frame().orientation().rotate(Vec.multiply(trns, sens));
+
+		// And then down to frame
+		if (referenceFrame() != null)
+			trns = referenceFrame().transformOf(trns);
+		translate(trns);
+	}
+
+	// TODO decide whether to include this:
+
+	/**
+	 * Returns the up vector used in fly mode, expressed in the world coordinate system.
+	 * <p>
+	 * Fly mode corresponds to the MOVE_FORWARD and MOVE_BACKWARD action bindings. In these modes, horizontal
+	 * displacements of the mouse rotate the InteractiveFrame around this vector. Vertical displacements rotate always
+	 * around the frame {@code X} axis.
+	 * <p>
+	 * This value is also used within the CAD_ROTATE action to define the up vector (and incidentally the 'horizon' plane)
+	 * around which the camera will rotate.
+	 * <p>
+	 * Default value is (0,1,0), but it is updated by the Eye when set as its {@link remixlab.dandelion.core.Eye#frame()}.
+	 * {@link remixlab.dandelion.core.Eye#setOrientation(Rotation)} and
+	 * {@link remixlab.dandelion.core.Eye#setUpVector(Vec)} modify this value and should be used instead.
+	 */
+	public Vec sceneUpVector() {
+		return scnUpVec;
+	}
+
+	/**
+	 * Sets the {@link #sceneUpVector()}, defined in the world coordinate system.
+	 * <p>
+	 * Default value is (0,1,0), but it is updated by the Eye when set as its {@link remixlab.dandelion.core.Eye#frame()}.
+	 * Use {@link remixlab.dandelion.core.Eye#setUpVector(Vec)} instead in that case.
+	 */
+	public void setSceneUpVector(Vec up) {
+		scnUpVec = up;
+	}
+
+	/**
+	 * This method will be called by the Eye when its orientation is changed, so that the {@link #sceneUpVector()} is
+	 * changed accordingly. You should not need to call this method.
+	 */
+	public final void updateSceneUpVector() {
+		scnUpVec = orientation().rotate(new Vec(0.0f, 1.0f, 0.0f));
+	}
+
+	/**
+	 * Returns {@code true} when the InteractiveFrame is tossing.
+	 * <p>
+	 * During tossing, {@link #toss()} translates the InteractiveFrame by its {@link #tossingDirection()} at a frequency
+	 * defined when the InteractiveFrame {@link #startTossing(MotionEvent)}.
+	 * <p>
+	 * Use {@link #startTossing(MotionEvent)} and {@link #stopTossing()} to change this state. Default value is
+	 * {@code false}.
+	 * 
+	 * {@link #isSpinning()}
+	 */
+	public final boolean isTossing() {
+		return flyTimerTask.isActive();
+	}
+
+	/**
+	 * Stops the tossing motion started using {@link #startTossing(MotionEvent)}. {@link #isTossing()} will return
+	 * {@code false} after this call.
+	 * <p>
+	 * <b>Attention: </b>This method may be called by {@link #toss()}, since tossing may be decelerated according to
+	 * {@link #dampingFriction()} till it stops completely.
+	 * 
+	 * @see #dampingFriction()
+	 * @see #spin()
+	 */
+	public final void stopTossing() {
+		flyTimerTask.stop();
+	}
+
+	/**
+	 * Returns the incremental translation that is applied by {@link #toss()} to the InteractiveFrame position when it
+	 * {@link #isTossing()}.
+	 * <p>
+	 * Default value is no translation. Use {@link #setTossingDirection(Vec)} to change this value.
+	 * <p>
+	 * <b>Attention: </b>Tossing may be decelerated according to {@link #dampingFriction()} till it stops completely.
+	 * 
+	 * @see #spinningRotation()
+	 */
+	public final Vec tossingDirection() {
+		return tDir;
+	}
+
+	/**
+	 * Defines the {@link #tossingDirection()} in the InteractiveFrame coordinate system.
+	 * 
+	 * @see #setSpinningRotation(Rotation)
+	 */
+	public final void setTossingDirection(Vec dir) {
+		tDir = dir;
+	}
+
+	/**
+	 * Starts the tossing of the InteractiveFrame.
+	 * <p>
+	 * This method starts a timer that will call {@link #toss()} every FLY_UPDATE_PERDIOD milliseconds. The
+	 * InteractiveFrame {@link #isTossing()} until you call {@link #stopTossing()}.
+	 * <p>
+	 * <b>Attention: </b>Tossing may be decelerated according to {@link #dampingFriction()} till it stops completely.
+	 * 
+	 * @see #dampingFriction()
+	 * @see #spin()
+	 */
+	public void startTossing(MotionEvent e) {
+		eventSpeed = e.speed();
+		flyTimerTask.run(FLY_UPDATE_PERDIOD);
+	}
+
+	/**
+	 * Internal method. Recomputes the {@link #tossingDirection()} according to {@link #dampingFriction()}.
+	 * 
+	 * @see #recomputeSpinningRotation()
+	 */
+	protected void recomputeTossingDirection() {
+		float prevSpeed = eventSpeed;
+		float damping = 1.0f - dampingFrictionFx();
+		eventSpeed *= damping;
+		if (Math.abs(eventSpeed) < .001f)
+			eventSpeed = 0;
+
+		flyDisp.setZ(flyDisp.z() * (eventSpeed / prevSpeed));
+
+		if (scene.is2D())
+			setTossingDirection(localInverseTransformOf(flyDisp));
+		else
+			setTossingDirection(rotation().rotate(flyDisp));
+	}
+
+	/**
+	 * Translates the InteractiveFrame by its {@link #tossingDirection()}. Invoked by a timer when the InteractiveFrame is
+	 * performing the DRIVE, MOVE_BACKWARD or MOVE_FORWARD dandelion actions.
+	 * <p>
+	 * <b>Attention: </b>Tossing may be decelerated according to {@link #dampingFriction()} till it stops completely.
+	 * 
+	 * @see #spin()
+	 */
+	public void toss() {
+		if (Util.nonZero(dampingFriction())) {
+			if (eventSpeed == 0) {
+				stopTossing();
+				return;
 			}
+			translate(tossingDirection());
+			recomputeTossingDirection();
 		}
-
-		Vec x = new Vec(r[0][0], r[1][0], r[2][0]);
-		Vec y = new Vec(r[0][1], r[1][1], r[2][1]);
-		Vec z = new Vec(r[0][2], r[1][2], r[2][2]);
-
-		rotation().fromRotatedBasis(x, y, z);
-	}
-
-	/**
-	 * Same as {@code fromFrame(otherFrame, null)}.
-	 * 
-	 * @see #fromFrame(Frame, Frame)
-	 */
-	public void fromFrame(Frame otherFrame) {
-		fromFrame(otherFrame, null);
-	}
-
-	/**
-	 * If {@code referenceFrame == null} sets {@link #position()}, {@link #orientation()} and {@link #magnitude()} values
-	 * from those of {@code otherFrame}. Otherwise, sets {@link #translation()}, {@link #rotation()} and
-	 * {@link #scaling()} values from those of {@code otherFrame} and sets {@code referenceFrame} as
-	 * {@link #referenceFrame()}.
-	 */
-	public void fromFrame(Frame otherFrame, Frame referenceFrame) {
-		if (referenceFrame == null) {
-			setPosition(otherFrame.position());
-			setOrientation(otherFrame.orientation());
-			setMagnitude(otherFrame.magnitude());
-		}
-		else {
-			setTranslation(otherFrame.translation().get());
-			setRotation(otherFrame.rotation().get());
-			setScaling(otherFrame.scaling());
-			setReferenceFrame(referenceFrame);
-		}
-	}
-
-	/**
-	 * Returns a Frame representing the inverse of the Frame space transformation.
-	 * <p>
-	 * The the new Frame {@link #rotation()} is the {@link remixlab.dandelion.geom.Rotation#inverse()} of the original
-	 * rotation. Its {@link #translation()} is the negated inverse rotated image of the original translation. Its
-	 * {@link #scaling()} is 1 / original scaling.
-	 * <p>
-	 * If a Frame is considered as a space rigid transformation, i.e., translation and rotation, but no scaling
-	 * (scaling=1), the inverse() Frame performs the inverse transformation.
-	 * <p>
-	 * Only the local Frame transformation (i.e., defined with respect to the {@link #referenceFrame()}) is inverted. Use
-	 * {@link #worldInverse()} for a global inverse.
-	 * <p>
-	 * The resulting Frame has the same {@link #referenceFrame()} as the Frame and a {@code null} {@link #constraint()}.
-	 */
-	public final Frame inverse() {
-		Frame fr = new Frame(scene, Vec.multiply(rotation().inverseRotate(translation()), -1), rotation().inverse(),
-				1 / scaling());
-		fr.setReferenceFrame(referenceFrame());
-		return fr;
-	}
-
-	/**
-	 * 
-	 * Returns the {@link #inverse()} of the Frame world transformation.
-	 * <p>
-	 * The {@link #orientation()} of the new Frame is the {@link remixlab.dandelion.geom.Quat#inverse()} of the original
-	 * orientation. Its {@link #position()} is the negated and inverse rotated image of the original position. The
-	 * {@link #magnitude()} is the the original magnitude multiplicative inverse.
-	 * <p>
-	 * The result Frame has a {@code null} {@link #referenceFrame()} and a {@code null} {@link #constraint()}.
-	 * <p>
-	 * Use {@link #inverse()} for a local (i.e., with respect to {@link #referenceFrame()}) transformation inverse.
-	 */
-	public final Frame worldInverse() {
-		return (new Frame(scene, Vec.multiply(orientation().inverseRotate(position()), -1), orientation().inverse(),
-				1 / magnitude()));
-	}
-
-	// POINT CONVERSION
-
-	/**
-	 * Returns the Frame coordinates of the point whose position in the {@code from} coordinate system is {@code src}
-	 * (converts from {@code from} to Frame).
-	 * <p>
-	 * {@link #coordinatesOfIn(Vec, Frame)} performs the inverse transformation.
-	 */
-	public final Vec coordinatesOfFrom(Vec src, Frame from) {
-		if (this == from)
-			return src;
-		else if (referenceFrame() != null)
-			return localCoordinatesOf(referenceFrame().coordinatesOfFrom(src, from));
 		else
-			return localCoordinatesOf(from.inverseCoordinatesOf(src));
+			translate(tossingDirection());
 	}
 
 	/**
-	 * Returns the {@code in} coordinates of the point whose position in the Frame coordinate system is {@code src}
-	 * (converts from Frame to {@code in}).
+	 * Returns the fly speed, expressed in virtual scene units.
 	 * <p>
-	 * {@link #coordinatesOfFrom(Vec, Frame)} performs the inverse transformation.
+	 * It corresponds to the incremental displacement that is periodically applied to the InteractiveFrame position when a
+	 * MOVE_FORWARD or MOVE_BACKWARD action is proceeded.
+	 * <p>
+	 * <b>Attention:</b> When the InteractiveFrame is set as the {@link remixlab.dandelion.core.Eye#frame()} or when it is
+	 * set as the {@link remixlab.dandelion.core.AbstractScene#avatar()} (which indeed is an instance of the
+	 * InteractiveAvatarFrame class), this value is set according to the
+	 * {@link remixlab.dandelion.core.AbstractScene#radius()} by
+	 * {@link remixlab.dandelion.core.AbstractScene#setRadius(float)}.
 	 */
-	public final Vec coordinatesOfIn(Vec src, Frame in) {
-		Frame fr = this;
-		Vec res = src;
-		while ((fr != null) && (fr != in)) {
-			res = fr.localInverseCoordinatesOf(res);
-			fr = fr.referenceFrame();
-		}
-
-		if (fr != in)
-			// in was not found in the branch of this, res is now expressed in the world
-			// coordinate system. Simply convert to in coordinate system.
-			res = in.coordinatesOf(res);
-
-		return res;
+	public float flySpeed() {
+		return flySpd;
 	}
 
 	/**
-	 * Returns the Frame coordinates of a point {@code src} defined in the {@link #referenceFrame()} coordinate system
-	 * (converts from {@link #referenceFrame()} to Frame).
+	 * Sets the {@link #flySpeed()}, defined in virtual scene units.
 	 * <p>
-	 * {@link #localInverseCoordinatesOf(Vec)} performs the inverse conversion.
-	 * 
-	 * @see #localTransformOf(Vec)
+	 * Default value is 0.0, but it is modified according to the {@link remixlab.dandelion.core.AbstractScene#radius()}
+	 * when the InteractiveFrame is set as the {@link remixlab.dandelion.core.Eye#frame()} (which indeed is an instance of
+	 * the InteractiveEyeFrame class) or when the InteractiveFrame is set as the
+	 * {@link remixlab.dandelion.core.AbstractScene#avatar()} (which indeed is an instance of the InteractiveAvatarFrame
+	 * class).
 	 */
-	public final Vec localCoordinatesOf(Vec src) {
-		return Vec.divide(rotation().inverseRotate(Vec.subtract(src, translation())), scaling());
+	public void setFlySpeed(float speed) {
+		flySpd = speed;
 	}
 
 	/**
-	 * Returns the Frame coordinates of a point {@code src} defined in the world coordinate system (converts from world to
-	 * Frame).
-	 * <p>
-	 * {@link #inverseCoordinatesOf(Vec)} performs the inverse conversion. {@link #transformOf(Vec)} converts vectors
-	 * instead of coordinates.
+	 * Returns a Quaternion that is the composition of two rotations, inferred from the mouse roll (X axis) and pitch (
+	 * {@link #sceneUpVector()} axis).
 	 */
-	public final Vec coordinatesOf(Vec src) {
-		if (referenceFrame() != null)
-			return localCoordinatesOf(referenceFrame().coordinatesOf(src));
-		else
-			return localCoordinatesOf(src);
+	protected final Quat rollPitchQuaternion(DOF2Event event, Camera camera) {
+		float deltaX = event.isAbsolute() ? event.x() : event.dx();
+		float deltaY = event.isAbsolute() ? event.y() : event.dy();
+
+		if (scene.isRightHanded())
+			deltaY = -deltaY;
+
+		Quat rotX = new Quat(new Vec(1.0f, 0.0f, 0.0f), rotationSensitivity() * deltaY / camera.screenHeight());
+		Quat rotY = new Quat(transformOf(sceneUpVector()), rotationSensitivity() * (-deltaX) / camera.screenWidth());
+		return Quat.multiply(rotY, rotX);
 	}
 
-	// VECTOR CONVERSION
+	// drive:
 
 	/**
-	 * Returns the Frame transform of the vector whose coordinates in the {@code from} coordinate system is {@code src}
-	 * (converts vectors from {@code from} to Frame).
-	 * <p>
-	 * {@link #transformOfIn(Vec, Frame)} performs the inverse transformation.
+	 * Returns a Quaternion that is a rotation around current camera Y, proportional to the horizontal mouse position.
 	 */
-	public final Vec transformOfFrom(Vec src, Frame from) {
-		if (this == from)
-			return src;
-		else if (referenceFrame() != null)
-			return localTransformOf(referenceFrame().transformOfFrom(src, from));
-		else
-			return localTransformOf(from.inverseTransformOf(src));
+	protected final Quat turnQuaternion(DOF1Event event, Camera camera) {
+		float deltaX = event.isAbsolute() ? event.x() : event.dx();
+		return new Quat(new Vec(0.0f, 1.0f, 0.0f), rotationSensitivity() * (-deltaX) / camera.screenWidth());
 	}
 
-	/**
-	 * Returns the {@code in} transform of the vector whose coordinates in the Frame coordinate system is {@code src}
-	 * (converts vectors from Frame to {@code in}).
-	 * <p>
-	 * {@link #transformOfFrom(Vec, Frame)} performs the inverse transformation.
-	 */
-	public final Vec transformOfIn(Vec src, Frame in) {
-		Frame fr = this;
-		Vec res = src;
-		while ((fr != null) && (fr != in)) {
-			res = fr.localInverseTransformOf(res);
-			fr = fr.referenceFrame();
-		}
-
-		if (fr != in)
-			// in was not found in the branch of this, res is now expressed in
-			// the world coordinate system. Simply convert to in coordinate system.
-			res = in.transformOf(res);
-
-		return res;
-	}
-
-	/**
-	 * Returns the {@link #referenceFrame()} coordinates of a point {@code src} defined in the Frame coordinate system
-	 * (converts from Frame to {@link #referenceFrame()}).
-	 * <p>
-	 * {@link #localCoordinatesOf(Vec)} performs the inverse conversion.
-	 * 
-	 * @see #localInverseTransformOf(Vec)
-	 */
-	public final Vec localInverseCoordinatesOf(Vec src) {
-		return Vec.add(rotation().rotate(Vec.multiply(src, scaling())), translation());
-	}
-
-	/**
-	 * Returns the world coordinates of the point whose position in the Frame coordinate system is {@code src} (converts
-	 * from Frame to world).
-	 * <p>
-	 * {@link #coordinatesOf(Vec)} performs the inverse conversion. Use {@link #inverseTransformOf(Vec)} to transform
-	 * vectors instead of coordinates.
-	 */
-	public final Vec inverseCoordinatesOf(Vec src) {
-		Frame fr = this;
-		Vec res = src;
-		while (fr != null) {
-			res = fr.localInverseCoordinatesOf(res);
-			fr = fr.referenceFrame();
-		}
-		return res;
-	}
-
-	/**
-	 * Returns the Frame transform of a vector {@code src} defined in the world coordinate system (converts vectors from
-	 * world to Frame).
-	 * <p>
-	 * {@link #inverseTransformOf(Vec)} performs the inverse transformation. {@link #coordinatesOf(Vec)} converts
-	 * coordinates instead of vectors (here only the rotational part of the transformation is taken into account).
-	 */
-	public final Vec transformOf(Vec src) {
-		if (referenceFrame() != null)
-			return localTransformOf(referenceFrame().transformOf(src));
-		else
-			return localTransformOf(src);
-	}
-
-	/**
-	 * Returns the world transform of the vector whose coordinates in the Frame coordinate system is {@code src} (converts
-	 * vectors from Frame to world).
-	 * <p>
-	 * {@link #transformOf(Vec)} performs the inverse transformation. Use {@link #inverseCoordinatesOf(Vec)} to transform
-	 * coordinates instead of vectors.
-	 */
-	public final Vec inverseTransformOf(Vec src) {
-		Frame fr = this;
-		Vec res = src;
-		while (fr != null) {
-			res = fr.localInverseTransformOf(res);
-			fr = fr.referenceFrame();
-		}
-		return res;
-	}
-
-	/**
-	 * Returns the Frame transform of a vector {@code src} defined in the {@link #referenceFrame()} coordinate system
-	 * (converts vectors from {@link #referenceFrame()} to Frame).
-	 * <p>
-	 * {@link #localInverseTransformOf(Vec)} performs the inverse transformation.
-	 * 
-	 * @see #localCoordinatesOf(Vec)
-	 */
-	public final Vec localTransformOf(Vec src) {
-		return Vec.divide(rotation().inverseRotate(src), scaling());
-	}
-
-	/**
-	 * Returns the {@link #referenceFrame()} transform of a vector {@code src} defined in the Frame coordinate system
-	 * (converts vectors from Frame to {@link #referenceFrame()}).
-	 * <p>
-	 * {@link #localTransformOf(Vec)} performs the inverse transformation.
-	 * 
-	 * @see #localInverseCoordinatesOf(Vec)
-	 */
-	public final Vec localInverseTransformOf(Vec src) {
-		return rotation().rotate(Vec.multiply(src, scaling()));
-	}
+	// end decide
 }

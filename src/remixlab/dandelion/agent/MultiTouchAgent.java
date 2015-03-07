@@ -26,12 +26,11 @@ import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
 /**
- * An {@link remixlab.dandelion.agent.ActionWheeledBiMotionAgent} representing a Wheeled mouse and thus only holds 2
- * Degrees-Of-Freedom (e.g., two translations or two rotations), such as most mice.
+ * A specialization of {@link remixlab.dandelion.agent.HIDAgent} that handles touch surfaces.
  */
 public class MultiTouchAgent extends HIDAgent {
 
-	protected DOF6Event	event, prevEvent;
+	protected DOF6Event				event, prevEvent;
 	protected TouchProcessor	touchProcessor;
 
 	/**
@@ -47,7 +46,7 @@ public class MultiTouchAgent extends HIDAgent {
 		PINCH_TWO_ID("Touch surface with two fingers and bring them together or move them appart", 7),
 		PINCH_THREE_ID("Touch surface with three fingers and bring them together or move them appart", 8),
 		OPPOSABLE_THREE_ID("Press surface with two fingers and move third finger over surface without losing contact", 9);
-		
+
 		String	description;
 		int			id;
 
@@ -84,24 +83,25 @@ public class MultiTouchAgent extends HIDAgent {
 	 */
 	public void setGestureBinding(Target target, Gestures gesture, DOF6Action action) {
 		MotionProfile<DOF6Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		if (gesture == Gestures.DRAG_THREE_ID || gesture == Gestures.TURN_THREE_ID || gesture == Gestures.PINCH_THREE_ID || gesture == Gestures.OPPOSABLE_THREE_ID  )
+		if (gesture == Gestures.DRAG_THREE_ID || gesture == Gestures.TURN_THREE_ID || gesture == Gestures.PINCH_THREE_ID
+				|| gesture == Gestures.OPPOSABLE_THREE_ID)
 			profile.setBinding(gesture.id, action);
 		else
 			System.out.println("You can not assign a DOF6 to gesture");
 	}
-	
+
 	/**
 	 * Binds the gesture shortcut to the (DOF3) dandelion action to be performed by the given {@code target} (EYE or
 	 * FRAME).
 	 */
 	public void setGestureBinding(Target target, Gestures gesture, DOF3Action action) {
 		MotionProfile<DOF6Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		if (gesture == Gestures.TAP_ID || gesture == Gestures.DRAG_ONE_ID )
+		if (gesture == Gestures.TAP_ID || gesture == Gestures.DRAG_ONE_ID)
 			System.out.println("You can not assign a DOF3 to gesture");
 		else
 			profile.setBinding(gesture.id, action.dof6Action());
 	}
-	
+
 	/**
 	 * Binds the gesture shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or
 	 * FRAME).
@@ -113,7 +113,7 @@ public class MultiTouchAgent extends HIDAgent {
 		else
 			profile.setBinding(gesture.id, action.dof6Action());
 	}
-	
+
 	/**
 	 * Binds the gesture shortcut to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or
 	 * FRAME).
@@ -122,7 +122,6 @@ public class MultiTouchAgent extends HIDAgent {
 		MotionProfile<DOF6Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		profile.setBinding(gesture.id, action.dof6Action());
 	}
-
 
 	/**
 	 * Removes the gesture shortcut binding from the given {@code target} (EYE or FRAME).
@@ -138,7 +137,7 @@ public class MultiTouchAgent extends HIDAgent {
 			profile.removeBinding(gesture.id);
 		}
 	}
-	
+
 	/**
 	 * Returns {@code true} if the gesture shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
@@ -205,7 +204,7 @@ public class MultiTouchAgent extends HIDAgent {
 		ClickProfile<ClickAction> profile = target == Target.EYE ? clickProfile() : frameClickProfile();
 		return (ClickAction) profile.action(gesture.id);
 	}
-	
+
 	// TouchProcessor and helper classes were adapted from Android Multi-Touch event demo by David Bouchard,
 	// http://www.deadpixel.ca
 	// Event classes
@@ -522,7 +521,7 @@ public class MultiTouchAgent extends HIDAgent {
 						gesture = Gestures.TURN_TWO_ID;
 					else if (TurnEvent.numberOfPoints == 3)
 						gesture = Gestures.TURN_THREE_ID;
-				}else{
+				} else {
 					if (touchPoints.size() == 3)
 						gesture = Gestures.OPPOSABLE_THREE_ID;
 				}
@@ -729,5 +728,5 @@ public class MultiTouchAgent extends HIDAgent {
 			this.r = r;
 		}
 	}
-	
+
 }
