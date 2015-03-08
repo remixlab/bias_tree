@@ -14,7 +14,6 @@ import remixlab.dandelion.core.Constants.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.geom.*;
-import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
 
 /**
@@ -47,18 +46,7 @@ import remixlab.util.*;
  */
 public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAction>, Copyable,
 		Constants {
-	protected Eye					eye;
-	protected Vec					scnUpVec;
-
-	// L O C A L T I M E R
-	public boolean				anchorFlag;
-	public boolean				pupFlag;
-	public Vec						pupVec;
-	protected TimingTask	timerFx;
-
-	// Inverse the direction of an horizontal mouse motion. Depends on the projected
-	// screen orientation of the vertical axis when the mouse button is pressed.
-	public boolean				cadRotationIsReversed;
+	protected Eye	eye;
 
 	/**
 	 * Default constructor.
@@ -72,35 +60,15 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 	public InteractiveEyeFrame(Eye theEye) {
 		super(theEye.scene);
 		eye = theEye;
-
-		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
-
-		timerFx = new TimingTask() {
-			public void execute() {
-				unSetTimerFlag();
-			}
-		};
-		scene.registerTimingTask(timerFx);
 	}
 
 	protected InteractiveEyeFrame(InteractiveEyeFrame otherFrame) {
 		super(otherFrame);
 		this.eye = otherFrame.eye;
-		this.scnUpVec = new Vec();
-		this.scnUpVec.set(otherFrame.sceneUpVector());
-		this.flyDisp.set(otherFrame.flyDisp.get());
 
 		// TODO don't think so: frame is added to the pool when setting the eye
 		// if( scene.motionAgent().eyeBranch().isInPool(otherFrame) )
 		// scene.motionAgent().eyeBranch().addInPool(this);
-
-		// old from here
-		this.timerFx = new TimingTask() {
-			public void execute() {
-				unSetTimerFlag();
-			}
-		};
-		this.scene.registerTimingTask(timerFx);
 	}
 
 	@Override
@@ -194,8 +162,8 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 			break;
 		case ANCHOR_FROM_PIXEL:
 			if (eye.setAnchorFromPixel(new Point(event.x(), event.y()))) {
-				anchorFlag = true;
-				timerFx.runOnce(1000);
+				eye.anchorFlag = true;
+				eye.timerFx.runOnce(1000);
 			}
 			break;
 		case CENTER_FRAME:
@@ -204,17 +172,17 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 		case ZOOM_ON_PIXEL:
 			if (scene.is2D()) {
 				eye.interpolateToZoomOnPixel(new Point(event.x(), event.y()));
-				pupVec = eye.unprojectedCoordinatesOf(new Vec(event.x(), event.y(), 0.5f));
-				pupFlag = true;
-				timerFx.runOnce(1000);
+				eye.pupVec = eye.unprojectedCoordinatesOf(new Vec(event.x(), event.y(), 0.5f));
+				eye.pupFlag = true;
+				eye.timerFx.runOnce(1000);
 			}
 			else {
 				Vec pup = ((Camera) eye).pointUnderPixel(new Point(event.x(), event.y()));
 				if (pup != null) {
 					((Camera) eye).interpolateToZoomOnTarget(pup);
-					pupVec = pup;
-					pupFlag = true;
-					timerFx.runOnce(1000);
+					eye.pupVec = pup;
+					eye.pupFlag = true;
+					eye.timerFx.runOnce(1000);
 				}
 			}
 			break;
@@ -496,7 +464,7 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 			// Multiply by 2.0 to get on average about the same speed as with the deformed ball
 			float dx = -2.0f * rotationSensitivity() * event.dx() / scene.camera().screenWidth();
 			float dy = 2.0f * rotationSensitivity() * event.dy() / scene.camera().screenHeight();
-			if (cadRotationIsReversed)
+			if (((Camera) eye).cadRotationIsReversed)
 				dx = -dx;
 			if (scene.isRightHanded())
 				dy = -dy;
@@ -688,16 +656,6 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 	}
 
 	// old from here
-
-	// 2. Local timer
-
-	/**
-	 * Internal use. Called from the timer to stop displaying the point under pixel and anchor visual hints.
-	 */
-	protected void unSetTimerFlag() {
-		anchorFlag = false;
-		pupFlag = false;
-	}
 
 	/**
 	 * Overloading of {@link remixlab.dandelion.core.InteractiveFrame#spin()}.

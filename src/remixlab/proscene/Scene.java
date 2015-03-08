@@ -1910,7 +1910,7 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	protected void drawPointUnderPixelHint() {
 		pg().pushStyle();
-		Vec v = eye().projectedCoordinatesOf(eye().frame().pupVec);
+		Vec v = eye().projectedCoordinatesOf(eye().pupVec);
 		pg().stroke(255);
 		pg().strokeWeight(3);
 		drawCross(v.vec[0], v.vec[1], 30);

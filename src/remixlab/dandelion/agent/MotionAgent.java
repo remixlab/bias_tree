@@ -89,8 +89,10 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 
 	@Override
 	public void resetDefaultGrabber() {
-		addGrabber(scene.eye().frame());
-		this.setDefaultGrabber(scene.eye().frame());
+		if (scene.eye().frame() instanceof InteractiveEyeFrame) {
+			addGrabber((InteractiveEyeFrame) scene.eye().frame());
+			this.setDefaultGrabber((InteractiveEyeFrame) scene.eye().frame());
+		}
 	}
 
 	public MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {

@@ -118,7 +118,6 @@ public class InteractiveFrame extends Frame implements ActionGrabber<MotionActio
 
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
-
 		if (scene.motionAgent().hasGrabber(otherFrame))
 			scene.motionAgent().addGrabber(this);
 
@@ -146,7 +145,7 @@ public class InteractiveFrame extends Frame implements ActionGrabber<MotionActio
 	 * 
 	 * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
 	 */
-	protected InteractiveFrame(AbstractScene scn, InteractiveEyeFrame iFrame) {
+	protected InteractiveFrame(AbstractScene scn, Frame iFrame) {
 		super(scn, iFrame.translation().get(), iFrame.rotation().get(), iFrame.scaling());
 
 		isInCamPath = true;

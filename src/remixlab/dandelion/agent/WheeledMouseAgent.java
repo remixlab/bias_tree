@@ -218,7 +218,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 				|| (dA == MotionAction.ROTATE_CAD)
 				|| (dA == MotionAction.SCREEN_ROTATE) || (dA == MotionAction.TRANSLATE_XYZ_ROTATE_XYZ));
 		if (rotateMode && scene.is3D())
-			scene.camera().frame().cadRotationIsReversed = scene.camera().frame()
+			scene.camera().cadRotationIsReversed = scene.camera().frame()
 					.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
 		need4Spin = (rotateMode && (((InteractiveFrame) inputGrabber()).dampingFriction() == 0));
 		drive = (dA == MotionAction.DRIVE);
@@ -255,7 +255,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 				|| (dA == MotionAction.ROTATE_CAD)
 				|| (dA == MotionAction.SCREEN_ROTATE) || (dA == MotionAction.TRANSLATE_XYZ_ROTATE_XYZ));
 		if (rotateMode && scene.is3D())
-			scene.camera().frame().cadRotationIsReversed = scene.camera().frame()
+			scene.camera().cadRotationIsReversed = scene.camera().frame()
 					.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
 		need4Spin = (rotateMode && (((InteractiveEyeFrame) inputGrabber()).dampingFriction() == 0));
 		drive = (dA == MotionAction.DRIVE);

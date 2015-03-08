@@ -287,9 +287,9 @@ public class Frame extends RefFrame {
 		this.scene.registerTimingTask(spinningTimerTask);
 
 		// TODO decide whether to include this:
-		scnUpVec = new Vec();
-		flyDisp = new Vec();
-		this.scnUpVec.set(otherFrame.sceneUpVector().get());
+		this.scnUpVec = new Vec();
+		this.scnUpVec.set(otherFrame.sceneUpVector());
+		this.flyDisp = new Vec();
 		this.flyDisp.set(otherFrame.flyDisp.get());
 		this.flyTimerTask = new TimingTask() {
 			public void execute() {

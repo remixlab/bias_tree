@@ -15,6 +15,7 @@ import java.util.Iterator;
 
 import remixlab.bias.core.Grabber;
 import remixlab.dandelion.geom.*;
+import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
 
 /**
@@ -107,7 +108,7 @@ public abstract class Eye implements Copyable {
 	};
 
 	// F r a m e
-	protected InteractiveEyeFrame											frm;
+	protected Frame																		frm;
 
 	// S C E N E O B J E C T
 	protected AbstractScene														scene;
@@ -128,7 +129,7 @@ public abstract class Eye implements Copyable {
 	protected HashMap<Integer, KeyFrameInterpolator>	kfi;
 	// protected Iterator<Integer> itrtr;
 	protected KeyFrameInterpolator										interpolationKfi;
-	protected InteractiveEyeFrame											tempFrame;
+	protected Frame																		tempFrame;
 
 	// F r u s t u m p l a n e c o e f f i c i e n t s
 	protected float																		fpCoefficients[][];
@@ -144,6 +145,12 @@ public abstract class Eye implements Copyable {
 	protected long																		lastFPCoeficientsUpdateIssued	= -1;
 
 	protected Vec																			anchorPnt;
+
+	// L O C A L T I M E R
+	public boolean																		anchorFlag;
+	public boolean																		pupFlag;
+	public Vec																				pupVec;
+	protected TimingTask															timerFx;
 
 	public Eye(AbstractScene scn) {
 		scene = scn;
@@ -167,7 +174,16 @@ public abstract class Eye implements Copyable {
 		interpolationKfi = new KeyFrameInterpolator(scene, frame());
 		kfi = new HashMap<Integer, KeyFrameInterpolator>();
 		anchorPnt = new Vec(0.0f, 0.0f, 0.0f);
+
+		this.timerFx = new TimingTask() {
+			public void execute() {
+				unSetTimerFlag();
+			}
+		};
+		this.scene.registerTimingTask(timerFx);
+
 		setFrame(new InteractiveEyeFrame(this));
+
 		setSceneRadius(100);
 		setSceneCenter(new Vec(0.0f, 0.0f, 0.0f));
 		setScreenWidthAndHeight(scene.width(), scene.height());
@@ -208,6 +224,13 @@ public abstract class Eye implements Copyable {
 				this.dist[i] = oVP.dist[i];
 		}
 
+		this.timerFx = new TimingTask() {
+			public void execute() {
+				unSetTimerFlag();
+			}
+		};
+		this.scene.registerTimingTask(timerFx);
+
 		this.frm = oVP.frame().get();
 		this.interpolationKfi = oVP.interpolationKfi.get();
 		this.kfi = new HashMap<Integer, KeyFrameInterpolator>();
@@ -232,10 +255,20 @@ public abstract class Eye implements Copyable {
 	 * Returns the InteractiveEyeFrame attached to the Eye.
 	 * <p>
 	 * This InteractiveEyeFrame defines its {@link #position()}, {@link #orientation()} and can translate bogus events
-	 * into Eye displacement. Set using {@link #setFrame(InteractiveEyeFrame)}.
+	 * into Eye displacement. Set using {@link #setFrame(Frame)}.
 	 */
-	public InteractiveEyeFrame frame() {
+	public Frame frame() {
 		return frm;
+	}
+
+	// 2. Local timer
+
+	/**
+	 * Internal use. Called from the timer to stop displaying the point under pixel and anchor visual hints.
+	 */
+	protected void unSetTimerFlag() {
+		anchorFlag = false;
+		pupFlag = false;
 	}
 
 	/**
@@ -312,7 +345,7 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * A {@code null} {@code icf} reference will silently be ignored.
 	 */
-	public final void setFrame(InteractiveEyeFrame icf) {
+	public final void setFrame(Frame icf) {
 		if (icf == null)
 			return;
 
@@ -1270,8 +1303,8 @@ public abstract class Eye implements Copyable {
 	 * Adds the current Eye {@link #position()} and {@link #orientation()} as a keyFrame to path {@code key}. If
 	 * {@code editablePath} is {@code true}, builds an InteractiveFrame (from the current Eye {@link #position()} and
 	 * {@link #orientation()}) before adding it (see
-	 * {@link remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene, InteractiveEyeFrame)} ). In the
-	 * latter mode the resulting created path will be editable.
+	 * {@link remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene, Frame)} ). In the latter mode the
+	 * resulting created path will be editable.
 	 * <p>
 	 * This method can also be used if you simply want to save an Eye point of view (a path made of a single keyFrame).
 	 * Use {@link #playPath(int)} to make the Eye play the keyFrame path (resp. restore the point of view). Use
@@ -1633,8 +1666,11 @@ public abstract class Eye implements Copyable {
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 
 		// Small hack: attach a temporary frame to take advantage of fitScreenRegion without modifying frame
-		tempFrame = new InteractiveEyeFrame(this);
-		InteractiveEyeFrame originalFrame = frame();
+		tempFrame = new Frame(scene);
+		// TODO experimental
+		// InteractiveEyeFrame originalFrame = frame();
+		Frame originalFrame = frame();
+		// InteractiveEyeFrame originalFrame = (InteractiveEyeFrame)frame();
 		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
 		tempFrame.setOrientation(frame().orientation().get());
 		tempFrame.setMagnitude(frame().magnitude());
@@ -1663,8 +1699,11 @@ public abstract class Eye implements Copyable {
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 
 		// Small hack: attach a temporary frame to take advantage of showEntireScene without modifying frame
-		tempFrame = new InteractiveEyeFrame(this);
-		InteractiveEyeFrame originalFrame = frame();
+		tempFrame = new Frame(scene);
+		// TODO experimental
+		// InteractiveEyeFrame originalFrame = frame();
+		Frame originalFrame = frame();
+		// InteractiveEyeFrame originalFrame = (InteractiveEyeFrame)frame();
 		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
 		tempFrame.setOrientation(frame().orientation().get());
 		tempFrame.setMagnitude(frame().magnitude());

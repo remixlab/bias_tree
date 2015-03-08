@@ -88,18 +88,22 @@ public class Camera extends Eye implements Copyable {
 	};
 
 	// C a m e r a p a r a m e t e r s
-	private float	zNearCoef;
-	private float	zClippingCoef;
-	private Type	tp;								// PERSPECTIVE or ORTHOGRAPHIC
+	private float		zNearCoef;
+	private float		zClippingCoef;
+	private Type		tp;										// PERSPECTIVE or ORTHOGRAPHIC
 
 	// S t e r e o p a r a m e t e r s
-	private float	IODist;						// inter-ocular distance, in meters
-	private float	focusDist;					// in scene units
-	private float	physicalDist2Scrn;	// in meters
-	private float	physicalScrnWidth;	// in meters
+	private float		IODist;								// inter-ocular distance, in meters
+	private float		focusDist;							// in scene units
+	private float		physicalDist2Scrn;			// in meters
+	private float		physicalScrnWidth;			// in meters
 
 	// rescale ortho when anchor changes
-	private float	rapK	= 1;
+	private float		rapK	= 1;
+
+	// Inverse the direction of an horizontal mouse motion. Depends on the projected
+	// screen orientation of the vertical axis when the mouse button is pressed.
+	public boolean	cadRotationIsReversed;
 
 	/**
 	 * Main constructor.
@@ -1125,8 +1129,11 @@ public class Camera extends Eye implements Copyable {
 						.orientation(), frame().magnitude()), 0.4f);
 
 		// Small hack: attach a temporary frame to take advantage of lookAt without modifying frame
-		tempFrame = new InteractiveEyeFrame(this);
-		InteractiveEyeFrame originalFrame = frame();
+		tempFrame = new Frame(scene);
+		// TODO experimental
+		// InteractiveEyeFrame originalFrame = frame();
+		Frame originalFrame = frame();
+		// InteractiveEyeFrame originalFrame = (InteractiveEyeFrame)frame();
 		tempFrame.setPosition(Vec.add(Vec.multiply(frame().position(), coef), Vec.multiply(target, (1.0f - coef))));
 		tempFrame.setOrientation(frame().orientation().get());
 		tempFrame.setMagnitude(frame().magnitude());

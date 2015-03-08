@@ -241,8 +241,8 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 		case RESET_ANCHOR:
 			eye().setAnchor(new Vec(0, 0, 0));
 			// looks horrible, but works ;)
-			eye().frame().anchorFlag = true;
-			eye().frame().timerFx.runOnce(1000);
+			eye().anchorFlag = true;
+			eye().timerFx.runOnce(1000);
 			break;
 		case SHOW_ALL:
 			showAll();
@@ -1025,9 +1025,9 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 			drawZoomWindowHint();
 		if (rotateVisualHint())
 			drawScreenRotateHint();
-		if (eye().frame().anchorFlag)
+		if (eye().anchorFlag)
 			drawAnchorHint();
-		if (eye().frame().pupFlag)
+		if (eye().pupFlag)
 			drawPointUnderPixelHint();
 	}
 
@@ -1560,7 +1560,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * @see #setAvatar(Trackable)
 	 */
 	public void unsetAvatar() {
-		motionAgent().setDefaultGrabber(eye().frame());
+		motionAgent().resetDefaultGrabber();
 		motionAgent().enableTracking();
 		trck = null;
 	}
@@ -1589,7 +1589,8 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 			return;
 
 		if (eye() != null)
-			motionAgent().removeGrabber(eye().frame());
+			if (eye().frame() instanceof InteractiveEyeFrame)
+				motionAgent().removeGrabber((InteractiveEyeFrame) eye().frame());
 
 		vp.setSceneRadius(radius());
 		vp.setSceneCenter(center());
@@ -1597,9 +1598,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 		vp.setScreenWidthAndHeight(width(), height());
 
 		eye = vp;
-
-		motionAgent().addGrabber(eye.frame());
-		motionAgent().setDefaultGrabber(eye.frame());
+		motionAgent().resetDefaultGrabber();
 
 		showAll();
 	}
