@@ -34,14 +34,13 @@ import remixlab.util.*;
  * The {@link #position()} and {@link #orientation()} of the Eye are defined by an
  * {@link remixlab.dandelion.core.InteractiveEyeFrame} (retrieved using {@link #frame()}). These methods are just
  * convenient wrappers to the equivalent Frame methods. This also means that the Eye {@link #frame()} can be attached to
- * a {@link remixlab.dandelion.geom.RefFrame#referenceFrame()} which enables complex Eye setups. An Eye has its own
- * magnitude, different from that of the scene (i.e., {@link remixlab.dandelion.geom.RefFrame#magnitude()} doesn't
+ * a {@link remixlab.dandelion.geom.Frame#referenceFrame()} which enables complex Eye setups. An Eye has its own
+ * magnitude, different from that of the scene (i.e., {@link remixlab.dandelion.geom.Frame#magnitude()} doesn't
  * necessarily equals {@code 1}), which allows to scale the view. Use {@link #eyeCoordinatesOf(Vec)} and
  * {@link #worldCoordinatesOf(Vec)} (or any of the powerful Frame transformations, such as
- * {@link remixlab.dandelion.geom.RefFrame#coordinatesOf(Vec)},
- * {@link remixlab.dandelion.geom.RefFrame#transformOf(Vec)}, ...) to convert to and from the Eye {@link #frame()}
- * coordinate system. {@link #projectedCoordinatesOf(Vec)} and {@link #unprojectedCoordinatesOf(Vec)} will convert from
- * screen to 3D coordinates.
+ * {@link remixlab.dandelion.geom.Frame#coordinatesOf(Vec)}, {@link remixlab.dandelion.geom.Frame#transformOf(Vec)},
+ * ...) to convert to and from the Eye {@link #frame()} coordinate system. {@link #projectedCoordinatesOf(Vec)} and
+ * {@link #unprojectedCoordinatesOf(Vec)} will convert from screen to 3D coordinates.
  * <p>
  * An Eye can also be used outside of an Scene for its coordinate system conversion capabilities.
  */
@@ -108,7 +107,7 @@ public abstract class Eye implements Copyable {
 	};
 
 	// F r a m e
-	protected Frame																		frm;
+	protected SceneFrame															frm;
 
 	// S C E N E O B J E C T
 	protected AbstractScene														scene;
@@ -129,7 +128,7 @@ public abstract class Eye implements Copyable {
 	protected HashMap<Integer, KeyFrameInterpolator>	kfi;
 	// protected Iterator<Integer> itrtr;
 	protected KeyFrameInterpolator										interpolationKfi;
-	protected Frame																		tempFrame;
+	protected SceneFrame															tempFrame;
 
 	// F r u s t u m p l a n e c o e f f i c i e n t s
 	protected float																		fpCoefficients[][];
@@ -255,9 +254,9 @@ public abstract class Eye implements Copyable {
 	 * Returns the InteractiveEyeFrame attached to the Eye.
 	 * <p>
 	 * This InteractiveEyeFrame defines its {@link #position()}, {@link #orientation()} and can translate bogus events
-	 * into Eye displacement. Set using {@link #setFrame(Frame)}.
+	 * into Eye displacement. Set using {@link #setFrame(SceneFrame)}.
 	 */
-	public Frame frame() {
+	public SceneFrame frame() {
 		return frm;
 	}
 
@@ -304,7 +303,7 @@ public abstract class Eye implements Copyable {
 	}
 
 	/**
-	 * Max between {@link remixlab.dandelion.core.Frame#lastUpdate()} and {@link #lastNonFrameUpdate()}.
+	 * Max between {@link remixlab.dandelion.core.SceneFrame#lastUpdate()} and {@link #lastNonFrameUpdate()}.
 	 * 
 	 * @return last frame the Eye was updated
 	 * 
@@ -345,12 +344,17 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * A {@code null} {@code icf} reference will silently be ignored.
 	 */
-	public final void setFrame(Frame icf) {
+	public final void setFrame(SceneFrame icf) {
 		if (icf == null)
 			return;
 
+		scene.motionAgent().removeGrabber(frame());
+
 		frm = icf;
 		interpolationKfi.setFrame(frame());
+
+		if (this == scene.eye())
+			scene.motionAgent().resetDefaultGrabber();
 	}
 
 	/**
@@ -427,7 +431,7 @@ public abstract class Eye implements Copyable {
 	 * Returns the Eye position, defined in the world coordinate system.
 	 * <p>
 	 * Use {@link #setPosition(Vec)} to set the Eye position. Other convenient methods are showEntireScene() or
-	 * fitSphere(). Actually returns {@link remixlab.dandelion.geom.RefFrame#position()}.
+	 * fitSphere(). Actually returns {@link remixlab.dandelion.geom.Frame#position()}.
 	 */
 	public final Vec position() {
 		return frame().position();
@@ -857,7 +861,7 @@ public abstract class Eye implements Copyable {
 	 * {@link #worldCoordinatesOf(Vec)} performs the inverse transformation.
 	 * <p>
 	 * Note that the point coordinates are simply converted in a different coordinate system. They are not projected on
-	 * screen. Use {@link #projectedCoordinatesOf(Vec, RefFrame)} for that.
+	 * screen. Use {@link #projectedCoordinatesOf(Vec, Frame)} for that.
 	 */
 	public Vec eyeCoordinatesOf(Vec src) {
 		return frame().coordinatesOf(src);
@@ -976,7 +980,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply returns {@code projectedCoordinatesOf(src, null)}.
 	 * 
-	 * @see #projectedCoordinatesOf(Vec, RefFrame)
+	 * @see #projectedCoordinatesOf(Vec, Frame)
 	 */
 	public final Vec projectedCoordinatesOf(Vec src) {
 		return projectedCoordinatesOf(null, src, null);
@@ -985,7 +989,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply returns {@code projectedCoordinatesOf(projview, src, null)}.
 	 * 
-	 * @see #projectedCoordinatesOf(Vec, RefFrame)
+	 * @see #projectedCoordinatesOf(Vec, Frame)
 	 */
 	public final Vec projectedCoordinatesOf(Mat projview, Vec src) {
 		return projectedCoordinatesOf(projview, src, null);
@@ -994,9 +998,9 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply returns {@code projectedCoordinatesOf(null, src, frame)}.
 	 * 
-	 * @see #projectedCoordinatesOf(Vec, RefFrame)
+	 * @see #projectedCoordinatesOf(Vec, Frame)
 	 */
-	public final Vec projectedCoordinatesOf(Vec src, RefFrame frame) {
+	public final Vec projectedCoordinatesOf(Vec src, Frame frame) {
 		return projectedCoordinatesOf(null, src, frame);
 	}
 
@@ -1017,9 +1021,9 @@ public abstract class Eye implements Copyable {
 	 * {@link #getProjection()} and {@link #getViewport()}) and is completely independent of the processing matrices. You
 	 * can hence define a virtual Eye and use this method to compute projections out of a classical rendering context.
 	 * 
-	 * @see #unprojectedCoordinatesOf(Vec, RefFrame)
+	 * @see #unprojectedCoordinatesOf(Vec, Frame)
 	 */
-	public final Vec projectedCoordinatesOf(Mat projview, Vec src, RefFrame frame) {
+	public final Vec projectedCoordinatesOf(Mat projview, Vec src, Frame frame) {
 		float xyz[] = new float[3];
 
 		if (frame != null) {
@@ -1034,7 +1038,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply returns {@code unprojectedCoordinatesOf(src, null)}.
 	 * 
-	 * #see {@link #unprojectedCoordinatesOf(Vec, RefFrame)}
+	 * #see {@link #unprojectedCoordinatesOf(Vec, Frame)}
 	 */
 	public final Vec unprojectedCoordinatesOf(Vec src) {
 		return this.unprojectedCoordinatesOf(null, src, null);
@@ -1043,7 +1047,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply returns {@code unprojectedCoordinatesOf(projviewInv, src, null)}.
 	 * 
-	 * #see {@link #unprojectedCoordinatesOf(Vec, RefFrame)}
+	 * #see {@link #unprojectedCoordinatesOf(Vec, Frame)}
 	 */
 	public final Vec unprojectedCoordinatesOf(Mat projviewInv, Vec src) {
 		return this.unprojectedCoordinatesOf(projviewInv, src, null);
@@ -1052,9 +1056,9 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply returns {@code unprojectedCoordinatesOf(null, src, frame)}.
 	 * 
-	 * #see {@link #unprojectedCoordinatesOf(Vec, RefFrame)}
+	 * #see {@link #unprojectedCoordinatesOf(Vec, Frame)}
 	 */
-	public final Vec unprojectedCoordinatesOf(Vec src, RefFrame frame) {
+	public final Vec unprojectedCoordinatesOf(Vec src, Frame frame) {
 		return unprojectedCoordinatesOf(null, src, frame);
 	}
 
@@ -1070,9 +1074,9 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * The result is expressed in the {@code frame} coordinate system. When {@code frame} is {@code null}, the result is
 	 * expressed in the world coordinates system. The possible {@code frame} hierarchy (i.e., when
-	 * {@link remixlab.dandelion.geom.RefFrame#referenceFrame()} is non-null) is taken into account.
+	 * {@link remixlab.dandelion.geom.Frame#referenceFrame()} is non-null) is taken into account.
 	 * <p>
-	 * {@link #projectedCoordinatesOf(Vec, RefFrame)} performs the inverse transformation.
+	 * {@link #projectedCoordinatesOf(Vec, Frame)} performs the inverse transformation.
 	 * <p>
 	 * This method only uses the intrinsic Eye parameters (see {@link #getView()}, {@link #getProjection()} and
 	 * {@link #getViewport()}) and is completely independent of the Processing matrices. You can hence define a virtual
@@ -1086,10 +1090,10 @@ public abstract class Eye implements Copyable {
 	 * should buffer the entire inverse projection matrix (view, projection and then viewport) to speed-up the queries.
 	 * See the gluUnProject man page for details.
 	 * 
-	 * @see #projectedCoordinatesOf(Vec, RefFrame)
+	 * @see #projectedCoordinatesOf(Vec, Frame)
 	 * @see #setScreenWidthAndHeight(int, int)
 	 */
-	public final Vec unprojectedCoordinatesOf(Mat projviewInv, Vec src, RefFrame frame) {
+	public final Vec unprojectedCoordinatesOf(Mat projviewInv, Vec src, Frame frame) {
 		float xyz[] = new float[3];
 		// unproject(src.vec[0], src.vec[1], src.vec[2], this.getViewMatrix(true), this.getProjectionMatrix(true),
 		// getViewport(), xyz);
@@ -1303,8 +1307,8 @@ public abstract class Eye implements Copyable {
 	 * Adds the current Eye {@link #position()} and {@link #orientation()} as a keyFrame to path {@code key}. If
 	 * {@code editablePath} is {@code true}, builds an InteractiveFrame (from the current Eye {@link #position()} and
 	 * {@link #orientation()}) before adding it (see
-	 * {@link remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene, Frame)} ). In the latter mode the
-	 * resulting created path will be editable.
+	 * {@link remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene, SceneFrame)} ). In the latter mode
+	 * the resulting created path will be editable.
 	 * <p>
 	 * This method can also be used if you simply want to save an Eye point of view (a path made of a single keyFrame).
 	 * Use {@link #playPath(int)} to make the Eye play the keyFrame path (resp. restore the point of view). Use
@@ -1666,10 +1670,10 @@ public abstract class Eye implements Copyable {
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 
 		// Small hack: attach a temporary frame to take advantage of fitScreenRegion without modifying frame
-		tempFrame = new Frame(scene);
+		tempFrame = new SceneFrame(scene);
 		// TODO experimental
 		// InteractiveEyeFrame originalFrame = frame();
-		Frame originalFrame = frame();
+		SceneFrame originalFrame = frame();
 		// InteractiveEyeFrame originalFrame = (InteractiveEyeFrame)frame();
 		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
 		tempFrame.setOrientation(frame().orientation().get());
@@ -1699,10 +1703,10 @@ public abstract class Eye implements Copyable {
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 
 		// Small hack: attach a temporary frame to take advantage of showEntireScene without modifying frame
-		tempFrame = new Frame(scene);
+		tempFrame = new SceneFrame(scene);
 		// TODO experimental
 		// InteractiveEyeFrame originalFrame = frame();
-		Frame originalFrame = frame();
+		SceneFrame originalFrame = frame();
 		// InteractiveEyeFrame originalFrame = (InteractiveEyeFrame)frame();
 		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
 		tempFrame.setOrientation(frame().orientation().get());
@@ -1718,9 +1722,9 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience function that simply calls {@code interpolateTo(fr, 1)}.
 	 * 
-	 * @see #interpolateTo(Frame, float)
+	 * @see #interpolateTo(SceneFrame, float)
 	 */
-	public void interpolateTo(Frame fr) {
+	public void interpolateTo(SceneFrame fr) {
 		interpolateTo(fr, 1);
 	}
 
@@ -1729,11 +1733,11 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * {@code fr} is expressed in world coordinates. {@code duration} tunes the interpolation speed.
 	 * 
-	 * @see #interpolateTo(Frame)
+	 * @see #interpolateTo(SceneFrame)
 	 * @see #interpolateToFitScene()
 	 * @see #interpolateToZoomOnPixel(Point)
 	 */
-	public void interpolateTo(Frame fr, float duration) {
+	public void interpolateTo(SceneFrame fr, float duration) {
 		// if (interpolationKfi.interpolationIsStarted())
 		// interpolationKfi.stopInterpolation();
 		if (anyInterpolationStarted())

@@ -21,11 +21,12 @@ import remixlab.util.*;
  * The frame is loosely-coupled with the scene object used to instantiate it, i.e., the transformation it represents may
  * be applied to a different scene. See {@link #applyTransformation()} and {@link #applyTransformation(AbstractScene)}.
  * <p>
- * Two frames can be synced together ({@link #sync(Frame, Frame)}), meaning that they will share their global parameters
- * (position, orientation and magnitude) taken the one that has been most recently updated. Syncing can be useful to
- * share frames among different off-screen scenes (see ProScene's CameraCrane and the AuxiliarViewer examples).
+ * Two frames can be synced together ({@link #sync(SceneFrame, SceneFrame)}), meaning that they will share their global
+ * parameters (position, orientation and magnitude) taken the one that has been most recently updated. Syncing can be
+ * useful to share frames among different off-screen scenes (see ProScene's CameraCrane and the AuxiliarViewer
+ * examples).
  */
-public class Frame extends RefFrame {
+public class SceneFrame extends Frame {
 	// Sens
 	private float								rotSensitivity;
 	private float								transSensitivity;
@@ -85,7 +86,7 @@ public class Frame extends RefFrame {
 		if (obj.getClass() != getClass())
 			return false;
 
-		Frame other = (Frame) obj;
+		SceneFrame other = (SceneFrame) obj;
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				// .append(grabsInputThreshold, other.grabsInputThreshold)
@@ -108,135 +109,135 @@ public class Frame extends RefFrame {
 	/**
 	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn) {
+	public SceneFrame(AbstractScene scn) {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, Vec p) {
+	public SceneFrame(AbstractScene scn, Vec p) {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, new Vec(), r, 1)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, Rotation r) {
+	public SceneFrame(AbstractScene scn, Rotation r) {
 		this(scn, null, new Vec(), r, 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, float s) {
+	public SceneFrame(AbstractScene scn, float s) {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, Vec p, float s) {
+	public SceneFrame(AbstractScene scn, Vec p, float s) {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, r, 1)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, Vec p, Rotation r) {
+	public SceneFrame(AbstractScene scn, Vec p, Rotation r) {
 		this(scn, null, p, r, 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, new Vec(), r, s)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, Rotation r, float s) {
+	public SceneFrame(AbstractScene scn, Rotation r, float s) {
 		this(scn, null, new Vec(), r, s);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, r, s)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, Vec p, Rotation r, float s) {
+	public SceneFrame(AbstractScene scn, Vec p, Rotation r, float s) {
 		this(scn, null, p, r, s);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, RefFrame referenceFrame) {
+	public SceneFrame(AbstractScene scn, Frame referenceFrame) {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, RefFrame referenceFrame, Vec p) {
+	public SceneFrame(AbstractScene scn, Frame referenceFrame, Vec p) {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), r, 1)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, RefFrame referenceFrame, Rotation r) {
+	public SceneFrame(AbstractScene scn, Frame referenceFrame, Rotation r) {
 		this(scn, referenceFrame, new Vec(), r, 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, RefFrame referenceFrame, float s) {
+	public SceneFrame(AbstractScene scn, Frame referenceFrame, float s) {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, RefFrame referenceFrame, Vec p, float s) {
+	public SceneFrame(AbstractScene scn, Frame referenceFrame, Vec p, float s) {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, r, 1)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, RefFrame referenceFrame, Vec p, Rotation r) {
+	public SceneFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r) {
 		this(scn, referenceFrame, p, r, 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), r, s)}.
 	 * 
-	 * @see #Frame(AbstractScene, RefFrame, Vec, Rotation, float)
+	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public Frame(AbstractScene scn, RefFrame referenceFrame, Rotation r, float s) {
+	public SceneFrame(AbstractScene scn, Frame referenceFrame, Rotation r, float s) {
 		this(scn, referenceFrame, new Vec(), r, s);
 	}
 
@@ -245,7 +246,7 @@ public class Frame extends RefFrame {
 	 * {@code r} and {@code s} as the frame {@link #translation()}, {@link #rotation()} and {@link #scaling()},
 	 * respectively.
 	 */
-	public Frame(AbstractScene scn, RefFrame referenceFrame, Vec p, Rotation r, float s) {
+	public SceneFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(referenceFrame, p, r, s);
 		scene = scn;
 
@@ -274,7 +275,7 @@ public class Frame extends RefFrame {
 		// end
 	}
 
-	protected Frame(Frame otherFrame) {
+	protected SceneFrame(SceneFrame otherFrame) {
 		super(otherFrame);
 		this.scene = otherFrame.scene;
 
@@ -335,8 +336,8 @@ public class Frame extends RefFrame {
 	}
 
 	@Override
-	public Frame get() {
-		return new Frame(this);
+	public SceneFrame get() {
+		return new SceneFrame(this);
 	}
 
 	// APPLY TRANSFORMATION
@@ -371,7 +372,7 @@ public class Frame extends RefFrame {
 	 * 
 	 * @see #applyTransformation()
 	 * @see #matrix()
-	 * @see remixlab.dandelion.core.AbstractScene#applyTransformation(RefFrame)
+	 * @see remixlab.dandelion.core.AbstractScene#applyTransformation(Frame)
 	 */
 	public void applyTransformation(AbstractScene scn) {
 		scn.applyTransformation(this);
@@ -383,7 +384,7 @@ public class Frame extends RefFrame {
 	 * 
 	 * @see #applyWorldTransformation()
 	 * @see #worldMatrix()
-	 * @see remixlab.dandelion.core.AbstractScene#applyWorldTransformation(RefFrame)
+	 * @see remixlab.dandelion.core.AbstractScene#applyWorldTransformation(Frame)
 	 */
 	public void applyWorldTransformation(AbstractScene scn) {
 		scn.applyWorldTransformation(this);
@@ -401,7 +402,7 @@ public class Frame extends RefFrame {
 	}
 
 	/**
-	 * Internal use. Needed by {@link #sync(RefFrame, RefFrame, boolean)}.
+	 * Internal use. Needed by {@link #sync(Frame, Frame, boolean)}.
 	 */
 	// TODO decide whether to include this one since it now seems overkill to me -jp
 	protected long lastGlobalUpdate() {
@@ -420,9 +421,9 @@ public class Frame extends RefFrame {
 	/**
 	 * Same as {@code sync(this, otherFrame)}.
 	 * 
-	 * @see #sync(Frame, Frame)
+	 * @see #sync(SceneFrame, SceneFrame)
 	 */
-	public void sync(Frame otherFrame) {
+	public void sync(SceneFrame otherFrame) {
 		sync(this, otherFrame);
 	}
 
@@ -434,13 +435,13 @@ public class Frame extends RefFrame {
 	 * among the two frames. The {@link #referenceFrame()} and {@link #constraint()} (if any) of each frame are kept
 	 * separately.
 	 * 
-	 * @see #fromFrame(RefFrame)
+	 * @see #fromFrame(Frame)
 	 */
-	public static void sync(Frame f1, Frame f2) {
+	public static void sync(SceneFrame f1, SceneFrame f2) {
 		if (f1.lastGlobalUpdate() == f2.lastGlobalUpdate())
 			return;
-		Frame source = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f1 : f2;
-		Frame target = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f2 : f1;
+		SceneFrame source = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f1 : f2;
+		SceneFrame target = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f2 : f1;
 		target.fromFrame(source);
 	}
 
@@ -602,7 +603,7 @@ public class Frame extends RefFrame {
 	 * Default value is a {@code null} rotation. Use {@link #setSpinningRotation(Rotation)} to change this value.
 	 * <p>
 	 * The {@link #spinningRotation()} axis is defined in the InteractiveFrame coordinate system. You can use
-	 * {@link remixlab.dandelion.geom.RefFrame#transformOfFrom(Vec, RefFrame)} to convert this axis from another Frame
+	 * {@link remixlab.dandelion.geom.Frame#transformOfFrom(Vec, Frame)} to convert this axis from another Frame
 	 * coordinate system.
 	 * <p>
 	 * <b>Attention: </b>Spinning may be decelerated according to {@link #dampingFriction()} till it stops completely.

@@ -29,12 +29,12 @@ import java.util.ArrayList;
  * <p>
  * Stereo display is possible on devices with quad buffer capabilities (with {@code PERSPECTIVE} {@link #type()} only).
  * <p>
- * <b>Attention: </b> the {@link #frame()} {@link remixlab.dandelion.geom.RefFrame#magnitude()} is used to set the
+ * <b>Attention: </b> the {@link #frame()} {@link remixlab.dandelion.geom.Frame#magnitude()} is used to set the
  * {@link #fieldOfView()} or compute {@link #getBoundaryWidthHeight()} if the camera {@link #type()} is
  * {@code PERSPECTIVE} or {@code ORTHOGRAPHIC}, respectively. The Camera magnitude is thus generally different from that
  * of the scene. Use {@link #eyeCoordinatesOf(Vec)} and {@link #worldCoordinatesOf(Vec)} (or any of the powerful Frame
- * transformations ( {@link remixlab.dandelion.geom.RefFrame#coordinatesOf(Vec)},
- * {@link remixlab.dandelion.geom.RefFrame#transformOf(Vec)}, ...)) to convert to and from the Eye {@link #frame()}
+ * transformations ( {@link remixlab.dandelion.geom.Frame#coordinatesOf(Vec)},
+ * {@link remixlab.dandelion.geom.Frame#transformOf(Vec)}, ...)) to convert to and from the Eye {@link #frame()}
  * coordinate system.
  */
 public class Camera extends Eye implements Copyable {
@@ -297,7 +297,7 @@ public class Camera extends Eye implements Copyable {
 
 	/**
 	 * Sets the vertical {@link #fieldOfView()} of the Camera (in radians). The {@link #fieldOfView()} is encapsulated as
-	 * the camera {@link remixlab.dandelion.geom.RefFrame#magnitude()} using the following expression:
+	 * the camera {@link remixlab.dandelion.geom.Frame#magnitude()} using the following expression:
 	 * {@code frame().setMagnitude((float) Math.tan(fov / 2.0f))}.
 	 * <p>
 	 * Note that {@link #focusDistance()} is set to {@link #sceneRadius()} / tan( {@link #fieldOfView()}/2) by this
@@ -1125,14 +1125,14 @@ public class Camera extends Eye implements Copyable {
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 		interpolationKfi.addKeyFrame(
-				new Frame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame()
+				new SceneFrame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame()
 						.orientation(), frame().magnitude()), 0.4f);
 
 		// Small hack: attach a temporary frame to take advantage of lookAt without modifying frame
-		tempFrame = new Frame(scene);
+		tempFrame = new SceneFrame(scene);
 		// TODO experimental
 		// InteractiveEyeFrame originalFrame = frame();
-		Frame originalFrame = frame();
+		SceneFrame originalFrame = frame();
 		// InteractiveEyeFrame originalFrame = (InteractiveEyeFrame)frame();
 		tempFrame.setPosition(Vec.add(Vec.multiply(frame().position(), coef), Vec.multiply(target, (1.0f - coef))));
 		tempFrame.setOrientation(frame().orientation().get());

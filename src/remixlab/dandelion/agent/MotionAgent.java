@@ -79,20 +79,64 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	}
 
 	public boolean addGrabber(InteractiveFrame frame) {
-		return addGrabber(frame, frameBranch);
+		return super.addGrabber(frame, frameBranch);
 	}
 
 	public boolean addGrabber(InteractiveEyeFrame frame) {
 		// this.resetBranch(eyeBranch);
-		return addGrabber(frame, eyeBranch);
+		return super.addGrabber(frame, eyeBranch);
+	}
+
+	public boolean addGrabber(SceneFrame frame) {
+		if (frame instanceof Grabber) {
+			if (frame instanceof InteractiveFrame)
+				return addGrabber((InteractiveFrame) frame);
+			else if (frame instanceof InteractiveEyeFrame)
+				return addGrabber((InteractiveEyeFrame) frame);
+			return addGrabber((Grabber) frame);
+		}
+		return false;
+	}
+
+	public boolean removeGrabber(InteractiveFrame frame) {
+		return super.removeGrabber(frame);
+	}
+
+	public boolean removeGrabber(InteractiveEyeFrame frame) {
+		return super.removeGrabber(frame);
+	}
+
+	public boolean removeGrabber(SceneFrame frame) {
+		if (frame instanceof Grabber) {
+			if (frame instanceof InteractiveFrame)
+				return removeGrabber((InteractiveFrame) frame);
+			else if (frame instanceof InteractiveEyeFrame)
+				return removeGrabber((InteractiveEyeFrame) frame);
+			return removeGrabber((Grabber) frame);
+		}
+		return false;
 	}
 
 	@Override
 	public void resetDefaultGrabber() {
-		if (scene.eye().frame() instanceof InteractiveEyeFrame) {
-			addGrabber((InteractiveEyeFrame) scene.eye().frame());
-			this.setDefaultGrabber((InteractiveEyeFrame) scene.eye().frame());
-		}
+		// if (scene.eye().frame() instanceof InteractiveEyeFrame) {
+		addGrabber(scene.eye().frame());
+		setDefaultGrabber(scene.eye().frame());
+		// }
+	}
+
+	public boolean setDefaultGrabber(InteractiveFrame frame) {
+		return super.setDefaultGrabber(frame);
+	}
+
+	public boolean setDefaultGrabber(InteractiveEyeFrame frame) {
+		return super.setDefaultGrabber(frame);
+	}
+
+	public boolean setDefaultGrabber(SceneFrame frame) {
+		if (frame instanceof Grabber)
+			return super.setDefaultGrabber((Grabber) frame);
+		return false;
 	}
 
 	public MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {

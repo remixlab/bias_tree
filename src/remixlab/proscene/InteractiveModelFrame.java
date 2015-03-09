@@ -61,7 +61,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		id = ++Scene.modelCount;
 	}
 
-	public InteractiveModelFrame(Scene scn, RefFrame referenceFrame) {
+	public InteractiveModelFrame(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		((Scene) scene).addModel(this);
 		id = ++Scene.modelCount;
@@ -79,7 +79,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		pshape = ps;
 	}
 
-	public InteractiveModelFrame(Scene scn, PShape ps, RefFrame referenceFrame) {
+	public InteractiveModelFrame(Scene scn, PShape ps, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		((Scene) scene).addModel(this);
 		id = ++Scene.modelCount;

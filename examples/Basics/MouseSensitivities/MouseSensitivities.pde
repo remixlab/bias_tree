@@ -116,7 +116,7 @@ void displayControls() {
     scene.endScreenDrawing();
   }
 
-  Frame iFrame;	
+  SceneFrame iFrame;
   if ( isIFrame ) {
     iFrame = interactiveFrame;
     scene.beginScreenDrawing();
@@ -169,15 +169,15 @@ void decreaseSensitivity(Sensitivity sens) {
     decreaseSensitivity(scene.eye().frame(), sens);
 }	
 
-void increaseSensitivity(Frame iFrame, Sensitivity sens) {
+void increaseSensitivity(SceneFrame iFrame, Sensitivity sens) {
   changeSensitivity(iFrame, sens, true);
 }
 
-void decreaseSensitivity(Frame iFrame, Sensitivity sens) {
+void decreaseSensitivity(SceneFrame iFrame, Sensitivity sens) {
   changeSensitivity(iFrame, sens, false);
 }	
 
-void changeSensitivity(Frame iFrame, Sensitivity sens, boolean increase) {
+void changeSensitivity(SceneFrame iFrame, Sensitivity sens, boolean increase) {
   float step = 1;
   float res;
   switch (sens) {
@@ -214,7 +214,7 @@ void changeSensitivity(Frame iFrame, Sensitivity sens, boolean increase) {
   }
 }
 
-boolean areDefaultsSet(Frame iFrame) {
+boolean areDefaultsSet(SceneFrame iFrame) {
   if (   equals(iFrame.rotationSensitivity(), defRotSens)
       && equals(iFrame.translationSensitivity(), defTransSens)
       && equals(iFrame.spinningSensitivity(), defSpngSens)
@@ -225,7 +225,7 @@ boolean areDefaultsSet(Frame iFrame) {
   return false;
 }
 
-void setDefaults(Frame iFrame) {
+void setDefaults(SceneFrame iFrame) {
   iFrame.setRotationSensitivity(defRotSens);
   iFrame.setTranslationSensitivity(defTransSens);
   iFrame.setSpinningSensitivity(defSpngSens);
@@ -267,7 +267,5 @@ void keyPressed() {
       setDefaults( scene.eye().frame() );
   }
   if ( key == 'i')
-    //TODO go like this:
-    //scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == null ? interactiveFrame : null);
     scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == interactiveFrame ? scene.eye().frame() : interactiveFrame);
 }

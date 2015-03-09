@@ -16,12 +16,11 @@ import remixlab.util.Copyable;
 /**
  * 2D implementation of the {@link remixlab.dandelion.core.Eye} abstract class.
  * <p>
- * <b>Attention: </b> the {@link #frame()} {@link remixlab.dandelion.geom.RefFrame#magnitude()} is used to scale the
- * view. The Window magnitude is thus generally different from that of the scene. Use {@link #eyeCoordinatesOf(Vec)} and
+ * <b>Attention: </b> the {@link #frame()} {@link remixlab.dandelion.geom.Frame#magnitude()} is used to scale the view.
+ * The Window magnitude is thus generally different from that of the scene. Use {@link #eyeCoordinatesOf(Vec)} and
  * {@link #worldCoordinatesOf(Vec)} (or any of the powerful Frame transformations (
- * {@link remixlab.dandelion.geom.RefFrame#coordinatesOf(Vec)},
- * {@link remixlab.dandelion.geom.RefFrame#transformOf(Vec)}, ...)) to convert to and from the Eye {@link #frame()}
- * coordinate system.
+ * {@link remixlab.dandelion.geom.Frame#coordinatesOf(Vec)}, {@link remixlab.dandelion.geom.Frame#transformOf(Vec)},
+ * ...)) to convert to and from the Eye {@link #frame()} coordinate system.
  */
 public class Window extends Eye implements Copyable {
 	static final float	FAKED_ZNEAR	= -10;

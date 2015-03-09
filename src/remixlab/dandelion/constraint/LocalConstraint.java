@@ -17,7 +17,7 @@ import remixlab.util.Util;
  * An AxisPlaneConstraint defined in the Frame local coordinate system.
  * <p>
  * The {@link #translationConstraintDirection()} and {@link #rotationConstraintDirection()} are expressed in the Frame
- * local coordinate system (see {@link remixlab.dandelion.geom.RefFrame#referenceFrame()}).
+ * local coordinate system (see {@link remixlab.dandelion.geom.Frame#referenceFrame()}).
  */
 public class LocalConstraint extends AxisPlaneConstraint {
 
@@ -26,7 +26,7 @@ public class LocalConstraint extends AxisPlaneConstraint {
 	 * a plane defined in the local coordinate system by {@link #translationConstraintDirection()}.
 	 */
 	@Override
-	public Vec constrainTranslation(Vec translation, RefFrame frame) {
+	public Vec constrainTranslation(Vec translation, Frame frame) {
 		Vec res = new Vec(translation.vec[0], translation.vec[1], translation.vec[2]);
 		Vec proj;
 		switch (translationConstraintType()) {
@@ -58,7 +58,7 @@ public class LocalConstraint extends AxisPlaneConstraint {
 	 * whose direction is defined in the Frame local coordinate system by {@link #rotationConstraintDirection()}.
 	 */
 	@Override
-	public Rotation constrainRotation(Rotation rotation, RefFrame frame) {
+	public Rotation constrainRotation(Rotation rotation, Frame frame) {
 		Rotation res = rotation.get();
 		switch (rotationConstraintType()) {
 		case FREE:

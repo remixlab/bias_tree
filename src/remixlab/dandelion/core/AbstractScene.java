@@ -1545,7 +1545,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 		if (eye().anyInterpolationStarted())
 			eye().stopInterpolations();
 		// eye().interpolateTo(avatar().eyeFrame());//works only when eyeFrame scaling = magnitude
-		Frame eyeFrameCopy = avatar().eyeFrame().get();
+		SceneFrame eyeFrameCopy = avatar().eyeFrame().get();
 		eyeFrameCopy.setMagnitude(avatar().eyeFrame().scaling());
 		eye().interpolateTo(eyeFrameCopy);
 
@@ -1589,8 +1589,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 			return;
 
 		if (eye() != null)
-			if (eye().frame() instanceof InteractiveEyeFrame)
-				motionAgent().removeGrabber((InteractiveEyeFrame) eye().frame());
+			motionAgent().removeGrabber(eye().frame());
 
 		vp.setSceneRadius(radius());
 		vp.setSceneCenter(center());
@@ -2106,8 +2105,8 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 
 	/**
 	 * Apply the local transformation defined by {@code frame}, i.e., respect to the frame
-	 * {@link remixlab.dandelion.geom.RefFrame#referenceFrame()}. The Frame is first translated and then rotated around
-	 * the new translated origin.
+	 * {@link remixlab.dandelion.geom.Frame#referenceFrame()}. The Frame is first translated and then rotated around the
+	 * new translated origin.
 	 * <p>
 	 * This method may be used to modify the modelview matrix from a Frame hierarchy. For example, with this Frame
 	 * hierarchy:
@@ -2139,9 +2138,9 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 * <p>
 	 * <b>Attention:</b> When drawing a frame hierarchy as above, this method should be used whenever possible.
 	 * 
-	 * @see #applyWorldTransformation(RefFrame)
+	 * @see #applyWorldTransformation(Frame)
 	 */
-	public void applyTransformation(RefFrame frame) {
+	public void applyTransformation(Frame frame) {
 		if (is2D()) {
 			translate(frame.translation().x(), frame.translation().y());
 			rotate(frame.rotation().angle());
@@ -2156,11 +2155,11 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	}
 
 	/**
-	 * Same as {@link #applyTransformation(RefFrame)} but applies the global transformation defined by the frame.
+	 * Same as {@link #applyTransformation(Frame)} but applies the global transformation defined by the frame.
 	 */
-	public void applyWorldTransformation(RefFrame frame) {
+	public void applyWorldTransformation(Frame frame) {
 		// TODO check for beta2 doing these with frames position(), orientation() and magnitude()
-		RefFrame refFrame = frame.referenceFrame();
+		Frame refFrame = frame.referenceFrame();
 		if (refFrame != null) {
 			applyWorldTransformation(refFrame);
 			applyTransformation(frame);

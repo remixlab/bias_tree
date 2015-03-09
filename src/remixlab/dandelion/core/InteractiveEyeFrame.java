@@ -44,7 +44,7 @@ import remixlab.util.*;
  * {@link remixlab.dandelion.core.AbstractScene#inputHandler()} {@link remixlab.bias.core.InputHandler#agents()} pool
  * upon creation.
  */
-public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAction>, Copyable,
+public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<MotionAction>, Copyable,
 		Constants {
 	protected Eye	eye;
 
@@ -108,33 +108,6 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 
 	@Override
 	public boolean checkIfGrabsInput(BogusEvent event) {
-		if (event instanceof ClickEvent)
-			return checkIfGrabsInput((ClickEvent) event);
-		if (event instanceof DOF1Event)
-			return checkIfGrabsInput((DOF1Event) event);
-		if (event instanceof DOF2Event)
-			return checkIfGrabsInput((DOF2Event) event);
-		if (event instanceof DOF3Event)
-			return checkIfGrabsInput((DOF3Event) event);
-		if (event instanceof DOF6Event)
-			return checkIfGrabsInput((DOF6Event) event);
-		return false;
-	}
-
-	// TODO improve?
-	public boolean checkIfGrabsInput(ClickEvent event) {
-		return false;
-	}
-
-	public boolean checkIfGrabsInput(DOF2Event event) {
-		return false;
-	}
-
-	public boolean checkIfGrabsInput(DOF3Event event) {
-		return false;
-	}
-
-	public boolean checkIfGrabsInput(DOF6Event event) {
 		return false;
 	}
 
@@ -158,31 +131,31 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 			performCustomAction(event);
 			break;
 		case ALIGN_FRAME:
-			eye.frame().alignWithFrame(null, true);
+			alignWithFrame(null, true);
 			break;
 		case ANCHOR_FROM_PIXEL:
-			if (eye.setAnchorFromPixel(new Point(event.x(), event.y()))) {
-				eye.anchorFlag = true;
-				eye.timerFx.runOnce(1000);
+			if (eye().setAnchorFromPixel(new Point(event.x(), event.y()))) {
+				eye().anchorFlag = true;
+				eye().timerFx.runOnce(1000);
 			}
 			break;
 		case CENTER_FRAME:
-			eye.centerScene();
+			eye().centerScene();
 			break;
 		case ZOOM_ON_PIXEL:
 			if (scene.is2D()) {
-				eye.interpolateToZoomOnPixel(new Point(event.x(), event.y()));
-				eye.pupVec = eye.unprojectedCoordinatesOf(new Vec(event.x(), event.y(), 0.5f));
-				eye.pupFlag = true;
-				eye.timerFx.runOnce(1000);
+				eye().interpolateToZoomOnPixel(new Point(event.x(), event.y()));
+				eye().pupVec = eye().unprojectedCoordinatesOf(new Vec(event.x(), event.y(), 0.5f));
+				eye().pupFlag = true;
+				eye().timerFx.runOnce(1000);
 			}
 			else {
-				Vec pup = ((Camera) eye).pointUnderPixel(new Point(event.x(), event.y()));
+				Vec pup = ((Camera) eye()).pointUnderPixel(new Point(event.x(), event.y()));
 				if (pup != null) {
-					((Camera) eye).interpolateToZoomOnTarget(pup);
-					eye.pupVec = pup;
-					eye.pupFlag = true;
-					eye.timerFx.runOnce(1000);
+					((Camera) eye()).interpolateToZoomOnTarget(pup);
+					eye().pupVec = pup;
+					eye().pupFlag = true;
+					eye().timerFx.runOnce(1000);
 				}
 			}
 			break;
@@ -262,14 +235,14 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 			performCustomAction(event);
 			break;
 		case MOVE_BACKWARD:
-			rotate(computeRot(event, scene.window().projectedCoordinatesOf(position())));
+			rotate(computeRot(event, eye().projectedCoordinatesOf(position())));
 			flyDisp.set(flySpeed(), 0.0f, 0.0f);
 			translate(flyDisp);
 			setTossingDirection(flyDisp);
 			startTossing(event);
 			break;
 		case MOVE_FORWARD:
-			rotate(computeRot(event, scene.eye().projectedCoordinatesOf(position())));
+			rotate(computeRot(event, eye().projectedCoordinatesOf(position())));
 			flyDisp.set(-flySpeed(), 0.0f, 0.0f);
 			translate(flyDisp);
 			setTossingDirection(flyDisp);
@@ -277,7 +250,7 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 			break;
 		case ROTATE:
 		case SCREEN_ROTATE:
-			rt = computeRot(event, eye.projectedCoordinatesOf(scene.eye().anchor()));
+			rt = computeRot(event, eye().projectedCoordinatesOf(eye().anchor()));
 			if (event.isRelative()) {
 				setSpinningRotation(rt);
 				if (Util.nonZero(dampingFriction()))
@@ -309,7 +282,7 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 			int h = (int) Math.abs(event.dy());
 			int tlY = (int) event.prevY() < (int) event.y() ? (int) event.prevY() : (int) event.y();
 			// viewWindow.fitScreenRegion( new Rectangle (tlX, tlY, w, h) );
-			eye.interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
+			eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
 			break;
 		case ROTATE_Z:
 		case TRANSLATE_X:
@@ -383,15 +356,15 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 			translateFromEye(trns, wheel ? 1 : translationSensitivity());
 			break;
 		case ZOOM:
-			float coef = Math.max(Math.abs((coordinatesOf(eye.anchor())).vec[2] * magnitude()),
-					0.2f * eye.sceneRadius());
+			float coef = Math.max(Math.abs((coordinatesOf(eye().anchor())).vec[2] * magnitude()),
+					0.2f * eye().sceneRadius());
 			if (wheel)
 				delta = coef * event.x() * -wheelSensitivity() * wheelSensitivityCoef;
 			// TODO should absolute be divided by camera.screenHeight()?
 			else if (event.isAbsolute())
-				delta = -coef * event.x() / eye.screenHeight();
+				delta = -coef * event.x() / eye().screenHeight();
 			else
-				delta = -coef * event.dx() / eye.screenHeight();
+				delta = -coef * event.dx() / eye().screenHeight();
 			trns = new Vec(0.0f, 0.0f, delta);
 			translate(orientation().rotate(trns));
 			break;
@@ -400,9 +373,9 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 				delta = event.x() * -wheelSensitivity() * wheelSensitivityCoef;
 			// TODO should absolute be divided by camera.screenHeight()?
 			else if (event.isAbsolute())
-				delta = -event.x() / eye.screenHeight();
+				delta = -event.x() / eye().screenHeight();
 			else
-				delta = -event.dx() / eye.screenHeight();
+				delta = -event.dx() / eye().screenHeight();
 			trns = Vec.subtract(position(), scene.camera().anchor());
 			if (trns.magnitude() > 0.02f * scene.radius() || delta > 0.0f)
 				translate(Vec.multiply(trns, delta));
@@ -448,8 +421,8 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 				// AbstractScene.showEventVariationWarning(a);
 				break;
 			}
-			trns = eye.projectedCoordinatesOf(scene.eye().anchor());
-			setSpinningRotation(deformedBallQuaternion(event, trns.vec[0], trns.vec[1], (Camera) eye));
+			trns = eye().projectedCoordinatesOf(eye().anchor());
+			setSpinningRotation(deformedBallQuaternion(event, trns.vec[0], trns.vec[1], (Camera) eye()));
 			if (Util.nonZero(dampingFriction()))
 				startSpinning(event);
 			else
@@ -464,7 +437,7 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 			// Multiply by 2.0 to get on average about the same speed as with the deformed ball
 			float dx = -2.0f * rotationSensitivity() * event.dx() / scene.camera().screenWidth();
 			float dy = 2.0f * rotationSensitivity() * event.dy() / scene.camera().screenHeight();
-			if (((Camera) eye).cadRotationIsReversed)
+			if (((Camera) eye()).cadRotationIsReversed)
 				dx = -dx;
 			if (scene.isRightHanded())
 				dy = -dy;
@@ -481,7 +454,7 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 				// AbstractScene.showEventVariationWarning(a);
 				break;
 			}
-			trns = eye.projectedCoordinatesOf(scene.eye().anchor());
+			trns = eye().projectedCoordinatesOf(eye().anchor());
 			float angle = (float) Math.atan2(event.y() - trns.vec[1], event.x() - trns.vec[0])
 					- (float) Math.atan2(event.prevY() - trns.vec[1], event.prevX() - trns.vec[0]);
 			if (scene.isLeftHanded())
@@ -529,7 +502,7 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 			int h = (int) Math.abs(event.dy());
 			int tlY = (int) event.prevY() < (int) event.y() ? (int) event.prevY() : (int) event.y();
 			// camera.fitScreenRegion( new Rectangle (tlX, tlY, w, h) );
-			eye.interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
+			eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
 			break;
 		case ROTATE_Y:
 		case ROTATE_Z:
@@ -579,10 +552,10 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 			// 1. Relate the eye reference frame:
 			Vec pos = position();
 			Quat o = (Quat) orientation();
-			RefFrame oldRef = referenceFrame();
-			Frame rFrame = new Frame(scene);
-			rFrame.setPosition(scene.eye().anchor());
-			rFrame.setZAxis(Vec.subtract(pos, scene.eye().anchor()));
+			Frame oldRef = referenceFrame();
+			SceneFrame rFrame = new SceneFrame(scene);
+			rFrame.setPosition(eye().anchor());
+			rFrame.setZAxis(Vec.subtract(pos, eye().anchor()));
 			rFrame.setXAxis(xAxis());
 			setReferenceFrame(rFrame);
 			setPosition(pos);
@@ -669,11 +642,11 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 				stopSpinning();
 				return;
 			}
-			rotateAroundPoint(spinningRotation(), scene.eye().anchor());
+			rotateAroundPoint(spinningRotation(), eye().anchor());
 			recomputeSpinningRotation();
 		}
 		else
-			rotateAroundPoint(spinningRotation(), scene.eye().anchor());
+			rotateAroundPoint(spinningRotation(), eye().anchor());
 	}
 
 	// This methods gives the same results as the super method. It's only provided to simplify computation
@@ -692,7 +665,7 @@ public class InteractiveEyeFrame extends Frame implements ActionGrabber<MotionAc
 		switch (scene.camera().type()) {
 		case PERSPECTIVE:
 			trns.multiply(2.0f * (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
-					* Math.abs(coordinatesOf(scene.eye().anchor()).vec[2] * magnitude())
+					* Math.abs(coordinatesOf(eye().anchor()).vec[2] * magnitude())
 					/ scene.camera().screenHeight());
 			break;
 		case ORTHOGRAPHIC:

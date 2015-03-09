@@ -76,8 +76,8 @@ public void setup() {
 // off-screen rendering
 public void draw() {
   handleMouse();
-  Frame.sync(armScene.camera().frame(), armCam.frame(5));
-  Frame.sync(heliScene.camera().frame(), heliCam.frame(3));
+  SceneFrame.sync(armScene.camera().frame(), armCam.frame(5));
+  SceneFrame.sync(heliScene.camera().frame(), heliCam.frame(3));
   canvas.beginDraw();
   mainScene.beginDraw();
   drawing(mainScene);

@@ -1071,7 +1071,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #setMatrixHelper(MatrixHelper)
 	 * @see #drawModels()
 	 * @see #drawModels(PGraphics)
-	 * @see #applyWorldTransformation(PGraphics, RefFrame)
+	 * @see #applyWorldTransformation(PGraphics, Frame)
 	 */
 	public MatrixHelper matrixHelper(PGraphics pgraphics) {
 		return (pgraphics instanceof processing.opengl.PGraphicsOpenGL) ? new GLMatrixHelper(this,
@@ -1096,12 +1096,12 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Apply the local transformation defined by the given {@code frame} on the given {@code pgraphics}. This method
 	 * doesn't call {@link #bindMatrices(PGraphics)} which should be called manually (only makes sense when {@link #pg()}
-	 * is different than {@code pgraphics}). Needed by {@link #applyWorldTransformation(PGraphics, RefFrame)}.
+	 * is different than {@code pgraphics}). Needed by {@link #applyWorldTransformation(PGraphics, Frame)}.
 	 * 
-	 * @see #applyWorldTransformation(PGraphics, RefFrame)
+	 * @see #applyWorldTransformation(PGraphics, Frame)
 	 * @see #bindMatrices(PGraphics)
 	 */
-	public void applyTransformation(PGraphics pgraphics, RefFrame frame) {
+	public void applyTransformation(PGraphics pgraphics, Frame frame) {
 		if (pgraphics instanceof PGraphics3D) {
 			pgraphics.translate(frame.translation().vec[0], frame.translation().vec[1], frame.translation().vec[2]);
 			pgraphics.rotate(frame.rotation().angle(), ((Quat) frame.rotation()).axis().vec[0],
@@ -1121,11 +1121,11 @@ public class Scene extends AbstractScene implements PConstants {
 	 * is different than {@code pgraphics}). Needed by {@link remixlab.proscene.Model#draw(PGraphics)}
 	 * 
 	 * @see remixlab.proscene.Model#draw(PGraphics)
-	 * @see #applyTransformation(PGraphics, RefFrame)
+	 * @see #applyTransformation(PGraphics, Frame)
 	 * @see #bindMatrices(PGraphics)
 	 */
-	public void applyWorldTransformation(PGraphics pgraphics, RefFrame frame) {
-		RefFrame refFrame = frame.referenceFrame();
+	public void applyWorldTransformation(PGraphics pgraphics, Frame frame) {
+		Frame refFrame = frame.referenceFrame();
 		if (refFrame != null) {
 			applyWorldTransformation(pgraphics, refFrame);
 			applyTransformation(pgraphics, frame);
@@ -1576,10 +1576,10 @@ public class Scene extends AbstractScene implements PConstants {
 			pg().strokeWeight(2 * pg().strokeWeight);
 			pg().noFill();
 
-			List<Frame> path = kfi.path();
+			List<SceneFrame> path = kfi.path();
 			if (((mask & 1) != 0) && path.size() > 1) {
 				pg().beginShape();
-				for (Frame myFr : path)
+				for (SceneFrame myFr : path)
 					vertex(myFr.position().x(), myFr.position().y(), myFr.position().z());
 				pg().endShape();
 			}
@@ -1589,7 +1589,7 @@ public class Scene extends AbstractScene implements PConstants {
 					nbFrames = nbSteps;
 				float goal = 0.0f;
 
-				for (Frame myFr : path)
+				for (SceneFrame myFr : path)
 					if ((count++) >= goal) {
 						goal += nbSteps / (float) nbFrames;
 						pushModelView();

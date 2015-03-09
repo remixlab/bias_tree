@@ -56,9 +56,9 @@ public void setup() {
 
 public void draw() {
   handleMouse();
-  Frame.sync(frame1, auxFrame1);
-  Frame.sync(frame2, auxFrame2);
-  Frame.sync(frame3, auxFrame3);
+  SceneFrame.sync(frame1, auxFrame1);
+  SceneFrame.sync(frame2, auxFrame2);
+  SceneFrame.sync(frame3, auxFrame3);
   canvas.beginDraw();
   scene.beginDraw();
   canvas.background(0);

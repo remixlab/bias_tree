@@ -34,8 +34,8 @@ import remixlab.util.*;
  * {@code scene.popModelView();} <br>
  * <p>
  * Many functions are provided to transform a point from one coordinate system (Frame) to an other: see
- * {@link #coordinatesOf(Vec)}, {@link #inverseCoordinatesOf(Vec)}, {@link #coordinatesOfIn(Vec, RefFrame)},
- * {@link #coordinatesOfFrom(Vec, RefFrame)}...
+ * {@link #coordinatesOf(Vec)}, {@link #inverseCoordinatesOf(Vec)}, {@link #coordinatesOfIn(Vec, Frame)},
+ * {@link #coordinatesOfFrom(Vec, Frame)}...
  * <p>
  * You may also want to transform a vector (such as a normal), which corresponds to applying only the rotational part of
  * the frame transformation: see {@link #transformOf(Vec)} and {@link #inverseTransformOf(Vec)}.
@@ -51,7 +51,7 @@ import remixlab.util.*;
  * 
  * The position, orientation and magnitude of a Frame are actually defined with respect to a {@link #referenceFrame()}.
  * The default {@link #referenceFrame()} is the world coordinate system (represented by a {@code null}
- * {@link #referenceFrame()}). If you {@link #setReferenceFrame(RefFrame)} to a different Frame, you must then
+ * {@link #referenceFrame()}). If you {@link #setReferenceFrame(Frame)} to a different Frame, you must then
  * differentiate:
  * <p>
  * <ul>
@@ -73,12 +73,12 @@ import remixlab.util.*;
  * <p>
  * Frames can hence easily be organized in a tree hierarchy, which root is the world coordinate system. A loop in the
  * hierarchy would result in an inconsistent (multiple) Frame definition. Therefore
- * {@link #settingAsReferenceFrameWillCreateALoop(RefFrame)} checks this and prevents {@link #referenceFrame()} from
+ * {@link #settingAsReferenceFrameWillCreateALoop(Frame)} checks this and prevents {@link #referenceFrame()} from
  * creating such a loop.
  * <p>
- * This frame hierarchy is used in methods like {@link #coordinatesOfIn(Vec, RefFrame)},
- * {@link #coordinatesOfFrom(Vec, RefFrame)}... which allow coordinates (or vector) conversions from a Frame to any
- * other one (including the world coordinate system).
+ * This frame hierarchy is used in methods like {@link #coordinatesOfIn(Vec, Frame)},
+ * {@link #coordinatesOfFrom(Vec, Frame)}... which allow coordinates (or vector) conversions from a Frame to any other
+ * one (including the world coordinate system).
  * 
  * <h3>Constraints</h3>
  * 
@@ -98,7 +98,7 @@ import remixlab.util.*;
  * (see {@link remixlab.dandelion.core.Constants}), so that a Frame (and hence an object) can be manipulated in the
  * scene by whatever user interaction means you can imagine.
  */
-public class RefFrame implements Copyable {
+public class Frame implements Copyable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -120,7 +120,7 @@ public class RefFrame implements Copyable {
 		if (obj.getClass() != getClass())
 			return false;
 
-		RefFrame other = (RefFrame) obj;
+		Frame other = (Frame) obj;
 		return new EqualsBuilder()
 				.append(trans, other.trans)
 				.append(scl, other.scl)
@@ -131,68 +131,68 @@ public class RefFrame implements Copyable {
 				.isEquals();
 	}
 
-	protected Vec							trans;
-	protected float						scl;
-	protected Rotation				rot;
-	protected RefFrame				refFrame;
-	protected Constraint			cnstrnt;
-	protected List<RefFrame>	childrenList;
+	protected Vec					trans;
+	protected float				scl;
+	protected Rotation		rot;
+	protected Frame				refFrame;
+	protected Constraint	cnstrnt;
+	protected List<Frame>	childrenList;
 
-	public RefFrame() {
+	public Frame() {
 		this(true);
 	}
 
 	/**
 	 * Same as {@code this(null, new Vec(), three_d ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #RefFrame(Vec, Rotation, float)
+	 * @see #Frame(Vec, Rotation, float)
 	 */
-	public RefFrame(boolean three_d) {
+	public Frame(boolean three_d) {
 		this(null, new Vec(), three_d ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(null, new Vec(), r, s)}.
 	 * 
-	 * @see #RefFrame(Vec, Rotation, float)
+	 * @see #Frame(Vec, Rotation, float)
 	 */
-	public RefFrame(Rotation r, float s) {
+	public Frame(Rotation r, float s) {
 		this(null, new Vec(), r, s);
 	}
 
 	/**
 	 * Same as {@code this(p, r, 1)}.
 	 * 
-	 * @see #RefFrame(Vec, Rotation, float)
+	 * @see #Frame(Vec, Rotation, float)
 	 */
-	public RefFrame(Vec p, Rotation r) {
+	public Frame(Vec p, Rotation r) {
 		this(p, r, 1);
 	}
 
 	/**
 	 * Same as {@code this(null, p, r, s)}.
 	 * 
-	 * @see #RefFrame(RefFrame, Vec, Rotation, float)
+	 * @see #Frame(Frame, Vec, Rotation, float)
 	 */
-	public RefFrame(Vec p, Rotation r, float s) {
+	public Frame(Vec p, Rotation r, float s) {
 		this(null, p, r, s);
 	}
 
 	/**
 	 * Same as {@code this(referenceFrame, p, r, 1)}.
 	 * 
-	 * @see #RefFrame(RefFrame, Vec, Rotation, float)
+	 * @see #Frame(Frame, Vec, Rotation, float)
 	 */
-	public RefFrame(RefFrame referenceFrame, Vec p, Rotation r) {
+	public Frame(Frame referenceFrame, Vec p, Rotation r) {
 		this(referenceFrame, p, r, 1);
 	}
 
 	/**
 	 * Same as {@code this(referenceFrame, new Vec(), r, 1)}.
 	 * 
-	 * @see #RefFrame(RefFrame, Vec, Rotation, float)
+	 * @see #Frame(Frame, Vec, Rotation, float)
 	 */
-	public RefFrame(RefFrame referenceFrame, Rotation r, float s) {
+	public Frame(Frame referenceFrame, Rotation r, float s) {
 		this(referenceFrame, new Vec(), r, 1);
 	}
 
@@ -200,17 +200,17 @@ public class RefFrame implements Copyable {
 	 * Creates a Frame with {@code referenceFrame} as {@link #referenceFrame()}, and {@code p}, {@code r} and {@code s} as
 	 * the frame {@link #translation()}, {@link #rotation()} and {@link #scaling()}, respectively.
 	 */
-	public RefFrame(RefFrame referenceFrame, Vec p, Rotation r, float s) {
-		childrenList = new ArrayList<RefFrame>();
+	public Frame(Frame referenceFrame, Vec p, Rotation r, float s) {
+		childrenList = new ArrayList<Frame>();
 		setTranslation(p);
 		setRotation(r);
 		setScaling(s);
 		setReferenceFrame(referenceFrame);
 	}
 
-	protected RefFrame(RefFrame other) {
-		childrenList = new ArrayList<RefFrame>();
-		Iterator<RefFrame> iterator = other.childrenList.iterator();
+	protected Frame(Frame other) {
+		childrenList = new ArrayList<Frame>();
+		Iterator<Frame> iterator = other.childrenList.iterator();
 		while (iterator.hasNext())
 			childrenList.add(iterator.next());
 		trans = other.translation().get();
@@ -221,8 +221,8 @@ public class RefFrame implements Copyable {
 	}
 
 	@Override
-	public RefFrame get() {
-		return new RefFrame(this);
+	public Frame get() {
+		return new Frame(this);
 	}
 
 	// MODIFIED
@@ -231,7 +231,7 @@ public class RefFrame implements Copyable {
 	 * Internal use. Automatically call by all methods which change the Frame state.
 	 */
 	protected void modified() {
-		for (RefFrame child : childrenList)
+		for (Frame child : childrenList)
 			child.modified();
 	}
 
@@ -264,14 +264,14 @@ public class RefFrame implements Copyable {
 	 * reference Frame chain and to get values expressed in the world coordinate system. The values match when the
 	 * reference Frame is {@code null}.
 	 * <p>
-	 * Use {@link #setReferenceFrame(RefFrame)} to set this value and create a Frame hierarchy. Convenient functions allow
+	 * Use {@link #setReferenceFrame(Frame)} to set this value and create a Frame hierarchy. Convenient functions allow
 	 * you to convert coordinates from one Frame to another: see {@link #coordinatesOf(Vec)},
-	 * {@link #localCoordinatesOf(Vec)} , {@link #coordinatesOfIn(Vec, RefFrame)} and their inverse functions.
+	 * {@link #localCoordinatesOf(Vec)} , {@link #coordinatesOfIn(Vec, Frame)} and their inverse functions.
 	 * <p>
-	 * Vectors can also be converted using {@link #transformOf(Vec)}, {@link #transformOfIn(Vec, RefFrame)},
+	 * Vectors can also be converted using {@link #transformOf(Vec)}, {@link #transformOfIn(Vec, Frame)},
 	 * {@link #localTransformOf(Vec)} and their inverse functions.
 	 */
-	public final RefFrame referenceFrame() {
+	public final Frame referenceFrame() {
 		return refFrame;
 	}
 
@@ -288,7 +288,7 @@ public class RefFrame implements Copyable {
 	 * coordinate system (i.e., {@code null} {@link #referenceFrame()}). No action is performed if setting
 	 * {@code refFrame} as the {@link #referenceFrame()} would create a loop in the Frame hierarchy.
 	 */
-	public final void setReferenceFrame(RefFrame rFrame) {
+	public final void setReferenceFrame(Frame rFrame) {
 		if (settingAsReferenceFrameWillCreateALoop(rFrame)) {
 			System.out.println("Frame.setReferenceFrame would create a loop in Frame hierarchy. Nothing done.");
 			return;
@@ -307,10 +307,10 @@ public class RefFrame implements Copyable {
 	 * Returns {@code true} if setting {@code frame} as the Frame's {@link #referenceFrame()} would create a loop in the
 	 * Frame hierarchy.
 	 */
-	public final boolean settingAsReferenceFrameWillCreateALoop(RefFrame frame) {
-		RefFrame f = frame;
+	public final boolean settingAsReferenceFrameWillCreateALoop(Frame frame) {
+		Frame f = frame;
 		while (f != null) {
-			if (f == RefFrame.this)
+			if (f == Frame.this)
 				return true;
 			f = f.referenceFrame();
 		}
@@ -320,7 +320,7 @@ public class RefFrame implements Copyable {
 	/**
 	 * Returns a list of the frame children, i.e., frame which {@link #referenceFrame()} is this.
 	 */
-	public List<RefFrame> children() {
+	public List<Frame> children() {
 		return childrenList;
 	}
 
@@ -608,11 +608,11 @@ public class RefFrame implements Copyable {
 	 * coordinate system.
 	 * <p>
 	 * If the Frame has a {@link #constraint()}, {@code rotation} is first constrained using
-	 * {@link remixlab.dandelion.constraint.Constraint#constrainRotation(Rotation, RefFrame)}. Hence the rotation actually
+	 * {@link remixlab.dandelion.constraint.Constraint#constrainRotation(Rotation, Frame)}. Hence the rotation actually
 	 * applied to the Frame may differ from {@code rotation} (since it can be filtered by the {@link #constraint()}).
 	 * <p>
 	 * The translation which results from the filtered rotation around {@code point} is then computed and filtered using
-	 * {@link remixlab.dandelion.constraint.Constraint#constrainTranslation(Vec, RefFrame)}.
+	 * {@link remixlab.dandelion.constraint.Constraint#constrainTranslation(Vec, Frame)}.
 	 */
 	public void rotateAroundPoint(Rotation rotation, Vec point) {
 		if (constraint() != null)
@@ -647,7 +647,7 @@ public class RefFrame implements Copyable {
 	 */
 	public final Rotation orientation() {
 		Rotation res = rotation().get();
-		RefFrame fr = referenceFrame();
+		Frame fr = referenceFrame();
 		while (fr != null) {
 			if (is3D())
 				res = Quat.compose(fr.rotation(), res);
@@ -762,7 +762,7 @@ public class RefFrame implements Copyable {
 	 * Use {@link #setScaling(float)} to define the local Frame scaling (with respect to the {@link #referenceFrame()}).
 	 */
 	public final void setMagnitude(float m) {
-		RefFrame refFrame = referenceFrame();
+		Frame refFrame = referenceFrame();
 		if (refFrame != null)
 			setScaling(m / refFrame.magnitude());
 		else
@@ -774,21 +774,21 @@ public class RefFrame implements Copyable {
 	/**
 	 * Convenience function that simply calls {@code alignWithFrame(frame, false, 0.85f)}
 	 */
-	public final void alignWithFrame(RefFrame frame) {
+	public final void alignWithFrame(Frame frame) {
 		alignWithFrame(frame, false, 0.85f);
 	}
 
 	/**
 	 * Convenience function that simply calls {@code alignWithFrame(frame, move, 0.85f)}
 	 */
-	public final void alignWithFrame(RefFrame frame, boolean move) {
+	public final void alignWithFrame(Frame frame, boolean move) {
 		alignWithFrame(frame, move, 0.85f);
 	}
 
 	/**
 	 * Convenience function that simply calls {@code alignWithFrame(frame, false, threshold)}
 	 */
-	public final void alignWithFrame(RefFrame frame, float threshold) {
+	public final void alignWithFrame(Frame frame, float threshold) {
 		alignWithFrame(frame, false, threshold);
 	}
 
@@ -811,7 +811,7 @@ public class RefFrame implements Copyable {
 	 * {@code frame} may be {@code null} and then represents the world coordinate system (same convention than for the
 	 * {@link #referenceFrame()}).
 	 */
-	public final void alignWithFrame(RefFrame frame, boolean move, float threshold) {
+	public final void alignWithFrame(Frame frame, boolean move, float threshold) {
 		if (is3D()) {
 			Vec[][] directions = new Vec[2][3];
 
@@ -841,7 +841,7 @@ public class RefFrame implements Copyable {
 					}
 				}
 			}
-			RefFrame old = new RefFrame(this); // correct line
+			Frame old = new Frame(this); // correct line
 			// VFrame old = this.get();// this call the get overloaded method and hence add the frame to the mouse grabber
 
 			vec.set(directions[0][index[0]]);
@@ -1165,7 +1165,7 @@ public class RefFrame implements Copyable {
 	 */
 	public final Mat worldMatrix() {
 		if (referenceFrame() != null)
-			return new RefFrame(position(), orientation(), magnitude()).matrix();
+			return new Frame(position(), orientation(), magnitude()).matrix();
 		else
 			return matrix();
 	}
@@ -1248,9 +1248,9 @@ public class RefFrame implements Copyable {
 	/**
 	 * Same as {@code fromFrame(otherFrame, null)}.
 	 * 
-	 * @see #fromFrame(RefFrame, RefFrame)
+	 * @see #fromFrame(Frame, Frame)
 	 */
-	public void fromFrame(RefFrame otherFrame) {
+	public void fromFrame(Frame otherFrame) {
 		fromFrame(otherFrame, null);
 	}
 
@@ -1260,7 +1260,7 @@ public class RefFrame implements Copyable {
 	 * {@link #scaling()} values from those of {@code otherFrame} and sets {@code referenceFrame} as
 	 * {@link #referenceFrame()}.
 	 */
-	public void fromFrame(RefFrame otherFrame, RefFrame referenceFrame) {
+	public void fromFrame(Frame otherFrame, Frame referenceFrame) {
 		if (referenceFrame == null) {
 			setPosition(otherFrame.position());
 			setOrientation(otherFrame.orientation());
@@ -1289,8 +1289,8 @@ public class RefFrame implements Copyable {
 	 * <p>
 	 * The resulting Frame has the same {@link #referenceFrame()} as the Frame and a {@code null} {@link #constraint()}.
 	 */
-	public final RefFrame inverse() {
-		RefFrame fr = new RefFrame(Vec.multiply(rotation().inverseRotate(translation()), -1), rotation().inverse(),
+	public final Frame inverse() {
+		Frame fr = new Frame(Vec.multiply(rotation().inverseRotate(translation()), -1), rotation().inverse(),
 				1 / scaling());
 		fr.setReferenceFrame(referenceFrame());
 		return fr;
@@ -1308,8 +1308,8 @@ public class RefFrame implements Copyable {
 	 * <p>
 	 * Use {@link #inverse()} for a local (i.e., with respect to {@link #referenceFrame()}) transformation inverse.
 	 */
-	public final RefFrame worldInverse() {
-		return (new RefFrame(Vec.multiply(orientation().inverseRotate(position()), -1), orientation().inverse(),
+	public final Frame worldInverse() {
+		return (new Frame(Vec.multiply(orientation().inverseRotate(position()), -1), orientation().inverse(),
 				1 / magnitude()));
 	}
 
@@ -1319,9 +1319,9 @@ public class RefFrame implements Copyable {
 	 * Returns the Frame coordinates of the point whose position in the {@code from} coordinate system is {@code src}
 	 * (converts from {@code from} to Frame).
 	 * <p>
-	 * {@link #coordinatesOfIn(Vec, RefFrame)} performs the inverse transformation.
+	 * {@link #coordinatesOfIn(Vec, Frame)} performs the inverse transformation.
 	 */
-	public final Vec coordinatesOfFrom(Vec src, RefFrame from) {
+	public final Vec coordinatesOfFrom(Vec src, Frame from) {
 		if (this == from)
 			return src;
 		else if (referenceFrame() != null)
@@ -1334,10 +1334,10 @@ public class RefFrame implements Copyable {
 	 * Returns the {@code in} coordinates of the point whose position in the Frame coordinate system is {@code src}
 	 * (converts from Frame to {@code in}).
 	 * <p>
-	 * {@link #coordinatesOfFrom(Vec, RefFrame)} performs the inverse transformation.
+	 * {@link #coordinatesOfFrom(Vec, Frame)} performs the inverse transformation.
 	 */
-	public final Vec coordinatesOfIn(Vec src, RefFrame in) {
-		RefFrame fr = this;
+	public final Vec coordinatesOfIn(Vec src, Frame in) {
+		Frame fr = this;
 		Vec res = src;
 		while ((fr != null) && (fr != in)) {
 			res = fr.localInverseCoordinatesOf(res);
@@ -1384,9 +1384,9 @@ public class RefFrame implements Copyable {
 	 * Returns the Frame transform of the vector whose coordinates in the {@code from} coordinate system is {@code src}
 	 * (converts vectors from {@code from} to Frame).
 	 * <p>
-	 * {@link #transformOfIn(Vec, RefFrame)} performs the inverse transformation.
+	 * {@link #transformOfIn(Vec, Frame)} performs the inverse transformation.
 	 */
-	public final Vec transformOfFrom(Vec src, RefFrame from) {
+	public final Vec transformOfFrom(Vec src, Frame from) {
 		if (this == from)
 			return src;
 		else if (referenceFrame() != null)
@@ -1399,10 +1399,10 @@ public class RefFrame implements Copyable {
 	 * Returns the {@code in} transform of the vector whose coordinates in the Frame coordinate system is {@code src}
 	 * (converts vectors from Frame to {@code in}).
 	 * <p>
-	 * {@link #transformOfFrom(Vec, RefFrame)} performs the inverse transformation.
+	 * {@link #transformOfFrom(Vec, Frame)} performs the inverse transformation.
 	 */
-	public final Vec transformOfIn(Vec src, RefFrame in) {
-		RefFrame fr = this;
+	public final Vec transformOfIn(Vec src, Frame in) {
+		Frame fr = this;
 		Vec res = src;
 		while ((fr != null) && (fr != in)) {
 			res = fr.localInverseTransformOf(res);
@@ -1437,7 +1437,7 @@ public class RefFrame implements Copyable {
 	 * vectors instead of coordinates.
 	 */
 	public final Vec inverseCoordinatesOf(Vec src) {
-		RefFrame fr = this;
+		Frame fr = this;
 		Vec res = src;
 		while (fr != null) {
 			res = fr.localInverseCoordinatesOf(res);
@@ -1468,7 +1468,7 @@ public class RefFrame implements Copyable {
 	 * coordinates instead of vectors.
 	 */
 	public final Vec inverseTransformOf(Vec src) {
-		RefFrame fr = this;
+		Frame fr = this;
 		Vec res = src;
 		while (fr != null) {
 			res = fr.localInverseTransformOf(res);

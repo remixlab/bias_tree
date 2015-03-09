@@ -35,7 +35,7 @@ import remixlab.util.*;
  * <b>Note:</b> Once created, the InteractiveFrame is automatically added to the scene
  * {@link remixlab.bias.core.InputHandler#agents()} pool.
  */
-public class InteractiveFrame extends Frame implements ActionGrabber<MotionAction>, Copyable, Constants {
+public class InteractiveFrame extends SceneFrame implements ActionGrabber<MotionAction>, Copyable, Constants {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -79,8 +79,141 @@ public class InteractiveFrame extends Frame implements ActionGrabber<MotionActio
 	protected boolean	isInCamPath;
 
 	/**
-	 * Default constructor.
-	 * <p>
+	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn) {
+		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Vec p) {
+		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, null, new Vec(), r, 1)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Rotation r) {
+		this(scn, null, new Vec(), r, 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, float s) {
+		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
+	}
+
+	/**
+	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Vec p, float s) {
+		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s);
+	}
+
+	/**
+	 * Same as {@code this(scn, null, p, r, 1)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Vec p, Rotation r) {
+		this(scn, null, p, r, 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, null, new Vec(), r, s)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Rotation r, float s) {
+		this(scn, null, new Vec(), r, s);
+	}
+
+	/**
+	 * Same as {@code this(scn, null, p, r, s)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Vec p, Rotation r, float s) {
+		this(scn, null, p, r, s);
+	}
+
+	/**
+	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Frame referenceFrame) {
+		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p) {
+		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, referenceFrame, new Vec(), r, 1)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Rotation r) {
+		this(scn, referenceFrame, new Vec(), r, 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, float s) {
+		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
+	}
+
+	/**
+	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, float s) {
+		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s);
+	}
+
+	/**
+	 * Same as {@code this(scn, referenceFrame, p, r, 1)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r) {
+		this(scn, referenceFrame, p, r, 1);
+	}
+
+	/**
+	 * Same as {@code this(scn, referenceFrame, new Vec(), r, s)}.
+	 * 
+	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 */
+	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Rotation r, float s) {
+		this(scn, referenceFrame, new Vec(), r, s);
+	}
+
+	/**
 	 * The {@link #translation()} is set to 0, with an identity {@link #rotation()} and no {@link #scaling()} (see Frame
 	 * constructor for details). The different sensitivities are set to their default values (see
 	 * {@link #rotationSensitivity()} , {@link #translationSensitivity()}, {@link #spinningSensitivity()} and
@@ -89,14 +222,10 @@ public class InteractiveFrame extends Frame implements ActionGrabber<MotionActio
 	 * <b>Note:</b> the InteractiveFrame is automatically added to the {@link remixlab.bias.core.InputHandler#agents()}
 	 * pool.
 	 */
-	public InteractiveFrame(AbstractScene scn) {
-		super(scn);
-
-		// TODO pending according to final iFrame hierarchy
-		// if( !(this instanceof InteractiveEyeFrame) )
+	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
+		super(scn, referenceFrame, p, r, s);
 		scene.motionAgent().addGrabber(this);
 		isInCamPath = false;
-
 		setGrabsInputThreshold(20);
 		// TODO future versions should go (except for iFrames in eyePath?):
 		// setGrabsInputThreshold(Math.round(scene.radius()/10f), true);
@@ -106,14 +235,6 @@ public class InteractiveFrame extends Frame implements ActionGrabber<MotionActio
 
 		// if (!(this instanceof InteractiveEyeFrame))
 		setFlySpeed(0.01f * scene.radius());
-	}
-
-	/**
-	 * Same as {@code this(scn)} and then calls {@link #setReferenceFrame(RefFrame)} on {@code referenceFrame}.
-	 */
-	public InteractiveFrame(AbstractScene scn, RefFrame referenceFrame) {
-		this(scn);
-		this.setReferenceFrame(referenceFrame);
 	}
 
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
@@ -145,7 +266,7 @@ public class InteractiveFrame extends Frame implements ActionGrabber<MotionActio
 	 * 
 	 * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
 	 */
-	protected InteractiveFrame(AbstractScene scn, Frame iFrame) {
+	protected InteractiveFrame(AbstractScene scn, SceneFrame iFrame) {
 		super(scn, iFrame.translation().get(), iFrame.rotation().get(), iFrame.scaling());
 
 		isInCamPath = true;

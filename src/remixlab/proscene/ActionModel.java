@@ -13,5 +13,5 @@ package remixlab.proscene;
 import remixlab.bias.core.ActionGrabber;
 
 //TODO should really think whether or not this interface is public
-interface ActionModel<E extends Enum<E>> extends Model, ActionGrabber<E> {
+public interface ActionModel<E extends Enum<E>> extends Model, ActionGrabber<E> {
 }
