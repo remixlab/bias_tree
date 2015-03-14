@@ -260,6 +260,13 @@ public abstract class Eye implements Copyable {
 		return frm;
 	}
 
+	/**
+	 * Returns the scene this object belongs to
+	 */
+	public AbstractScene scene() {
+		return scene;
+	}
+
 	// 2. Local timer
 
 	/**

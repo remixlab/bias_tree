@@ -357,6 +357,13 @@ public class KeyFrameInterpolator implements Copyable {
 	}
 
 	/**
+	 * Returns the scene this object belongs to
+	 */
+	public AbstractScene scene() {
+		return scene;
+	}
+
+	/**
 	 * Internal use. Updates the last frame path was updated. Called by {@link #checkValidity()}.
 	 */
 	protected void checked() {

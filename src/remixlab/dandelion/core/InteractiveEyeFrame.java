@@ -649,7 +649,9 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 			rotateAroundPoint(spinningRotation(), eye().anchor());
 	}
 
-	// This methods gives the same results as the super method. It's only provided to simplify computation
+	/**
+	 * This methods gives the same results as the super method. It's only provided to simplify computation.
+	 */
 	@Override
 	public void rotateAroundEyeAxes(float roll, float pitch, float yaw) {
 		if (scene.is2D()) {
@@ -659,23 +661,7 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 		rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));
 	}
 
-	@Override
-	protected void scale2Fit(Vec trns) {
-		// Scale to fit the screen mouse displacement
-		switch (scene.camera().type()) {
-		case PERSPECTIVE:
-			trns.multiply(2.0f * (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
-					* Math.abs(coordinatesOf(eye().anchor()).vec[2] * magnitude())
-					/ scene.camera().screenHeight());
-			break;
-		case ORTHOGRAPHIC:
-			float[] wh = scene.camera().getBoundaryWidthHeight();
-			trns.vec[0] *= 2.0f * wh[0] / scene.camera().screenWidth();
-			trns.vec[1] *= 2.0f * wh[1] / scene.camera().screenHeight();
-			break;
-		}
-	}
-
+	// TODO: should be same level as deformedBallQuaternion
 	@Override
 	protected Rot computeRot(DOF2Event e2, Vec trns) {
 		Rot rt;

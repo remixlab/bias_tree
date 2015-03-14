@@ -340,6 +340,13 @@ public class SceneFrame extends Frame {
 		return new SceneFrame(this);
 	}
 
+	/**
+	 * Returns the scene this object belongs to
+	 */
+	public AbstractScene scene() {
+		return scene;
+	}
+
 	// APPLY TRANSFORMATION
 
 	/**
@@ -724,7 +731,7 @@ public class SceneFrame extends Frame {
 	 * Returns a Quaternion computed according to the mouse motion. Mouse positions are projected on a deformed ball,
 	 * centered on ({@code cx}, {@code cy}).
 	 */
-	protected Quat deformedBallQuaternion(DOF2Event event, float cx, float cy, Camera camera) {
+	public Quat deformedBallQuaternion(DOF2Event event, float cx, float cy, Camera camera) {
 		// TODO absolute events!?
 		float x = event.x();
 		float y = event.y();
@@ -792,12 +799,18 @@ public class SceneFrame extends Frame {
 	// micro-actions procedures
 
 	protected void scale2Fit(Vec trns) {
+		if( scene.is2D() ) {
+			AbstractScene.showDepthWarning("scale2Fit");
+			return;
+		}
 		// Scale to fit the screen relative event displacement
 		switch (scene.camera().type()) {
 		case PERSPECTIVE:
 			trns.multiply(2.0f
 					* (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
-					* Math.abs((scene.camera().frame().coordinatesOf(position())).vec[2] * scene.camera().frame().magnitude())
+					* Math.abs(scene.camera().frame()
+							.coordinatesOf(this == scene.eye().frame() ? scene.eye().anchor() : position()).vec[2]
+							* scene.camera().frame().magnitude())
 					/ scene.camera().screenHeight());
 			break;
 		case ORTHOGRAPHIC:
@@ -1040,7 +1053,7 @@ public class SceneFrame extends Frame {
 	 * Returns a Quaternion that is the composition of two rotations, inferred from the mouse roll (X axis) and pitch (
 	 * {@link #sceneUpVector()} axis).
 	 */
-	protected final Quat rollPitchQuaternion(DOF2Event event, Camera camera) {
+	public final Quat rollPitchQuaternion(DOF2Event event, Camera camera) {
 		float deltaX = event.isAbsolute() ? event.x() : event.dx();
 		float deltaY = event.isAbsolute() ? event.y() : event.dy();
 
@@ -1057,7 +1070,7 @@ public class SceneFrame extends Frame {
 	/**
 	 * Returns a Quaternion that is a rotation around current camera Y, proportional to the horizontal mouse position.
 	 */
-	protected final Quat turnQuaternion(DOF1Event event, Camera camera) {
+	public Quat turnQuaternion(DOF1Event event, Camera camera) {
 		float deltaX = event.isAbsolute() ? event.x() : event.dx();
 		return new Quat(new Vec(0.0f, 1.0f, 0.0f), rotationSensitivity() * (-deltaX) / camera.screenWidth());
 	}

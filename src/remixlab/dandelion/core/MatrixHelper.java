@@ -35,6 +35,13 @@ public abstract class MatrixHelper {
 		isProjViwInvCached = false;
 	}
 
+	/**
+	 * Returns the scene this object belongs to
+	 */
+	public AbstractScene scene() {
+		return scene;
+	}
+
 	public void bind(boolean recompute) {
 		loadProjection(recompute);
 		loadModelView(recompute);

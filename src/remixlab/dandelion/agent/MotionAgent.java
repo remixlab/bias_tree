@@ -41,6 +41,13 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		setPickingMode(PickingMode.MOVE);
 	}
 
+	/**
+	 * Returns the scene this object belongs to
+	 */
+	public AbstractScene scene() {
+		return scene;
+	}
+
 	@Override
 	public float[] sensitivities(MotionEvent event) {
 		if (event instanceof DOF1Event)

@@ -33,6 +33,13 @@ public class KeyboardAgent extends Agent {
 		setDefaultShortcuts();
 	}
 
+	/**
+	 * Returns the scene this object belongs to
+	 */
+	public AbstractScene scene() {
+		return scene;
+	}
+
 	@Override
 	public void resetDefaultGrabber() {
 		addGrabber(scene, keyBranch);
