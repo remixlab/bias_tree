@@ -489,7 +489,8 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 			else
 				trns = new Vec(-event.x(), scene.isRightHanded() ? event.y() : -event.y(), 0.0f);
 			scale2Fit(trns);
-			translate(orientation().rotate(Vec.multiply(trns, translationSensitivity())));
+			translateFromEye(trns);
+			//translate(orientation().rotate(Vec.multiply(trns, translationSensitivity())));
 			break;
 		case ZOOM_ON_REGION:
 			if (event.isAbsolute()) {
