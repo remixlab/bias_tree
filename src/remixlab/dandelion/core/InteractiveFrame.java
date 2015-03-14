@@ -472,7 +472,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 			break;
 		case ROTATE:
 		case SCREEN_ROTATE:
-			Rot rt = computeRot(event, scene.window().projectedCoordinatesOf(position()));
+			Rotation rt = computeRot(event, scene.window().projectedCoordinatesOf(position()));
 			if (event.isRelative()) {
 				setSpinningRotation(rt);
 				if (Util.nonZero(dampingFriction()))

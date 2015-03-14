@@ -631,25 +631,6 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 	// old from here
 
 	/**
-	 * Overloading of {@link remixlab.dandelion.core.InteractiveFrame#spin()}.
-	 * <p>
-	 * Rotates the InteractiveEyeFrame around the {@link remixlab.dandelion.core.Eye#anchor()} instead of its origin.
-	 */
-	@Override
-	public void spin() {
-		if (dampFriction > 0) {
-			if (eventSpeed == 0) {
-				stopSpinning();
-				return;
-			}
-			rotateAroundPoint(spinningRotation(), eye().anchor());
-			recomputeSpinningRotation();
-		}
-		else
-			rotateAroundPoint(spinningRotation(), eye().anchor());
-	}
-
-	/**
 	 * This methods gives the same results as the super method. It's only provided to simplify computation.
 	 */
 	@Override
@@ -659,22 +640,5 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 			return;
 		}
 		rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));
-	}
-
-	// TODO: should be same level as deformedBallQuaternion
-	@Override
-	protected Rot computeRot(DOF2Event e2, Vec trns) {
-		Rot rt;
-		if (e2.isRelative()) {
-			Point prevPos = new Point(e2.prevX(), e2.prevY());
-			Point curPos = new Point(e2.x(), e2.y());
-			rt = new Rot(new Point(trns.x(), trns.y()), prevPos, curPos);
-			rt = new Rot(rt.angle() * rotationSensitivity());
-		}
-		else
-			rt = new Rot(e2.x() * rotationSensitivity());
-		if (scene.isLeftHanded())
-			rt.negate();
-		return rt;
 	}
 }

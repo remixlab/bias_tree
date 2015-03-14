@@ -663,7 +663,9 @@ public class SceneFrame extends Frame {
 	}
 
 	/**
-	 * Rotates the InteractiveFrame by its {@link #spinningRotation()}. Called by a timer when the InteractiveFrame
+	 * Rotates the scene-frame by its {@link #spinningRotation()} or around the
+	 * {@link remixlab.dandelion.core.Eye#anchor()} when this scene-frame is the
+	 * {@link remixlab.dandelion.core.AbstractScene#eye()}. Called by a timer when the InteractiveFrame
 	 * {@link #isSpinning()}.
 	 * <p>
 	 * <b>Attention: </b>Spinning may be decelerated according to {@link #dampingFriction()} till it stops completely.
@@ -677,11 +679,16 @@ public class SceneFrame extends Frame {
 				stopSpinning();
 				return;
 			}
-			rotate(spinningRotation());
+			if (this != scene.eye().frame())
+				rotate(spinningRotation());
+			else
+				rotateAroundPoint(spinningRotation(), scene.eye().anchor());
 			recomputeSpinningRotation();
 		}
-		else
+		else if (this != scene.eye().frame())
 			rotate(spinningRotation());
+		else
+			rotateAroundPoint(spinningRotation(), scene.eye().anchor());
 	}
 
 	/**
@@ -725,6 +732,21 @@ public class SceneFrame extends Frame {
 				return -1;
 		else
 			return 0;
+	}
+
+	protected Rotation computeRot(DOF2Event e2, Vec trns) {
+		Rot rt;
+		if (e2.isRelative()) {
+			Point prevPos = new Point(e2.prevX(), e2.prevY());
+			Point curPos = new Point(e2.x(), e2.y());
+			rt = new Rot(new Point(trns.x(), trns.y()), prevPos, curPos);
+			rt = new Rot(rt.angle() * rotationSensitivity());
+		}
+		else
+			rt = new Rot(e2.x() * rotationSensitivity());
+		if ((scene.isRightHanded() && this != scene.eye().frame()) || (scene.isLeftHanded() && this == scene.eye().frame()))
+			rt.negate();
+		return rt;
 	}
 
 	/**
@@ -799,7 +821,7 @@ public class SceneFrame extends Frame {
 	// micro-actions procedures
 
 	protected void scale2Fit(Vec trns) {
-		if( scene.is2D() ) {
+		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("scale2Fit");
 			return;
 		}
@@ -819,21 +841,6 @@ public class SceneFrame extends Frame {
 			trns.vec[1] *= 2.0 * wh[1] / scene.camera().screenHeight();
 			break;
 		}
-	}
-
-	protected Rot computeRot(DOF2Event e2, Vec trns) {
-		Rot rt;
-		if (e2.isRelative()) {
-			Point prevPos = new Point(e2.prevX(), e2.prevY());
-			Point curPos = new Point(e2.x(), e2.y());
-			rt = new Rot(new Point(trns.x(), trns.y()), prevPos, curPos);
-			rt = new Rot(rt.angle() * rotationSensitivity());
-		}
-		else
-			rt = new Rot(e2.x() * rotationSensitivity());
-		if (scene.isRightHanded())
-			rt.negate();
-		return rt;
 	}
 
 	protected float computeAngle(DOF1Event e1, boolean wheel) {
