@@ -235,14 +235,14 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 			performCustomAction(event);
 			break;
 		case MOVE_BACKWARD:
-			rotate(computeRot(event, eye().projectedCoordinatesOf(position())));
+			rotate(deformedBallRotation(event, eye().projectedCoordinatesOf(position())));
 			flyDisp.set(flySpeed(), 0.0f, 0.0f);
 			translate(flyDisp);
 			setTossingDirection(flyDisp);
 			startTossing(event);
 			break;
 		case MOVE_FORWARD:
-			rotate(computeRot(event, eye().projectedCoordinatesOf(position())));
+			rotate(deformedBallRotation(event, eye().projectedCoordinatesOf(position())));
 			flyDisp.set(-flySpeed(), 0.0f, 0.0f);
 			translate(flyDisp);
 			setTossingDirection(flyDisp);
@@ -250,7 +250,7 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 			break;
 		case ROTATE:
 		case SCREEN_ROTATE:
-			rt = computeRot(event, eye().projectedCoordinatesOf(eye().anchor()));
+			rt = deformedBallRotation(event, eye().projectedCoordinatesOf(eye().anchor()));
 			if (event.isRelative()) {
 				setSpinningRotation(rt);
 				if (Util.nonZero(dampingFriction()))
@@ -422,7 +422,7 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 				break;
 			}
 			trns = eye().projectedCoordinatesOf(eye().anchor());
-			setSpinningRotation(deformedBallQuaternion(event, trns.vec[0], trns.vec[1], (Camera) eye()));
+			setSpinningRotation(deformedBallRotation(event, trns));
 			if (Util.nonZero(dampingFriction()))
 				startSpinning(event);
 			else
@@ -605,6 +605,18 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 			break;
 		}
 	}
+	
+	/**
+	 * This methods gives the same results as the super method. It's only provided to simplify computation.
+	 */
+	@Override
+	public void rotateAroundEyeAxes(float roll, float pitch, float yaw) {
+		if (scene.is2D()) {
+			AbstractScene.showDepthWarning("rollPitchYaw");
+			return;
+		}
+		rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));
+	}
 
 	// Custom
 
@@ -626,19 +638,5 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 
 	public void performCustomAction(DOF6Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF6Event event)", this.getClass().getName());
-	}
-
-	// old from here
-
-	/**
-	 * This methods gives the same results as the super method. It's only provided to simplify computation.
-	 */
-	@Override
-	public void rotateAroundEyeAxes(float roll, float pitch, float yaw) {
-		if (scene.is2D()) {
-			AbstractScene.showDepthWarning("rollPitchYaw");
-			return;
-		}
-		rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));
 	}
 }

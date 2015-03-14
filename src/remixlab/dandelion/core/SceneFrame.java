@@ -734,44 +734,47 @@ public class SceneFrame extends Frame {
 			return 0;
 	}
 
-	protected Rotation computeRot(DOF2Event e2, Vec trns) {
-		Rot rt;
-		if (e2.isRelative()) {
-			Point prevPos = new Point(e2.prevX(), e2.prevY());
-			Point curPos = new Point(e2.x(), e2.y());
-			rt = new Rot(new Point(trns.x(), trns.y()), prevPos, curPos);
-			rt = new Rot(rt.angle() * rotationSensitivity());
-		}
-		else
-			rt = new Rot(e2.x() * rotationSensitivity());
-		if ((scene.isRightHanded() && this != scene.eye().frame()) || (scene.isLeftHanded() && this == scene.eye().frame()))
-			rt.negate();
-		return rt;
-	}
-
 	/**
-	 * Returns a Quaternion computed according to the mouse motion. Mouse positions are projected on a deformed ball,
-	 * centered on ({@code cx}, {@code cy}).
+	 * Returns a Rotation computed according to the mouse motion. Mouse positions are projected on a deformed ball,
+	 * centered on ({@code trns.x()}, {@code trns.y()}).
 	 */
-	public Quat deformedBallQuaternion(DOF2Event event, float cx, float cy, Camera camera) {
-		// TODO absolute events!?
-		float x = event.x();
-		float y = event.y();
-		float prevX = event.prevX();
-		float prevY = event.prevY();
-		// Points on the deformed ball
-		float px = rotationSensitivity() * ((int) prevX - cx) / camera.screenWidth();
-		float py = rotationSensitivity() * (scene.isLeftHanded() ? ((int) prevY - cy) : (cy - (int) prevY))
-				/ camera.screenHeight();
-		float dx = rotationSensitivity() * (x - cx) / camera.screenWidth();
-		float dy = rotationSensitivity() * (scene.isLeftHanded() ? (y - cy) : (cy - y)) / camera.screenHeight();
+	public Rotation deformedBallRotation(DOF2Event event, Vec trns) {
+		if(scene.is2D()) {
+			Rot rt;
+			if (event.isRelative()) {
+				Point prevPos = new Point(event.prevX(), event.prevY());
+				Point curPos = new Point(event.x(), event.y());
+				rt = new Rot(new Point(trns.x(), trns.y()), prevPos, curPos);
+				rt = new Rot(rt.angle() * rotationSensitivity());
+			}
+			else
+				rt = new Rot(event.x() * rotationSensitivity());
+			if ((scene.isRightHanded() && this != scene.eye().frame()) || (scene.isLeftHanded() && this == scene.eye().frame()))
+				rt.negate();
+			return rt;
+		}
+		else{
+		  // TODO absolute events!?
+			float cx = trns.x();
+			float cy = trns.y();
+			float x = event.x();
+			float y = event.y();
+			float prevX = event.prevX();
+			float prevY = event.prevY();
+			// Points on the deformed ball
+			float px = rotationSensitivity() * ((int) prevX - cx) / scene.camera().screenWidth();
+			float py = rotationSensitivity() * (scene.isLeftHanded() ? ((int) prevY - cy) : (cy - (int) prevY))
+					/ scene.camera().screenHeight();
+			float dx = rotationSensitivity() * (x - cx) / scene.camera().screenWidth();
+			float dy = rotationSensitivity() * (scene.isLeftHanded() ? (y - cy) : (cy - y)) / scene.camera().screenHeight();
 
-		Vec p1 = new Vec(px, py, projectOnBall(px, py));
-		Vec p2 = new Vec(dx, dy, projectOnBall(dx, dy));
-		// Approximation of rotation angle Should be divided by the projectOnBall size, but it is 1.0
-		Vec axis = p2.cross(p1);
-		float angle = 2.0f * (float) Math.asin((float) Math.sqrt(axis.squaredNorm() / p1.squaredNorm() / p2.squaredNorm()));
-		return new Quat(axis, angle);
+			Vec p1 = new Vec(px, py, projectOnBall(px, py));
+			Vec p2 = new Vec(dx, dy, projectOnBall(dx, dy));
+			// Approximation of rotation angle Should be divided by the projectOnBall size, but it is 1.0
+			Vec axis = p2.cross(p1);
+			float angle = 2.0f * (float) Math.asin((float) Math.sqrt(axis.squaredNorm() / p1.squaredNorm() / p2.squaredNorm()));
+			return new Quat(axis, angle);			
+		}
 	}
 
 	/**
@@ -779,7 +782,7 @@ public class SceneFrame extends Frame {
 	 * euclidean distance to the ball. For a point outside the ball, it is proportional to the inverse of this distance
 	 * (tends to zero) on the ball, the function is continuous.
 	 */
-	protected static float projectOnBall(float x, float y) {
+	protected float projectOnBall(float x, float y) {
 		// If you change the size value, change angle computation in deformedBallQuaternion().
 		float size = 1.0f;
 		float size2 = size * size;
@@ -820,7 +823,7 @@ public class SceneFrame extends Frame {
 
 	// micro-actions procedures
 
-	protected void scale2Fit(Vec trns) {
+	public void scale2Fit(Vec trns) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("scale2Fit");
 			return;
@@ -865,11 +868,11 @@ public class SceneFrame extends Frame {
 		return delta;
 	}
 
-	protected void translateFromEye(Vec trns) {
+	public void translateFromEye(Vec trns) {
 		translateFromEye(trns, translationSensitivity());
 	}
 
-	protected void translateFromEye(Vec trns, float sens) {
+	public void translateFromEye(Vec trns, float sens) {
 		// Transform from eye to world coordinate system.
 		trns = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trns, sens))
 				: scene.camera().frame().orientation().rotate(Vec.multiply(trns, sens));

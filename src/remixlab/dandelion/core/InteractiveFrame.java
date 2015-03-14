@@ -456,7 +456,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 			performCustomAction(event);
 			break;
 		case MOVE_BACKWARD:
-			rotate(computeRot(event, scene.window().projectedCoordinatesOf(position())));
+			rotate(deformedBallRotation(event, scene.window().projectedCoordinatesOf(position())));
 			flyDisp.set(-flySpeed(), 0.0f, 0.0f);
 			trns = localInverseTransformOf(flyDisp);
 			translate(trns);
@@ -464,15 +464,17 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 			startTossing(event);
 			break;
 		case MOVE_FORWARD:
-			rotate(computeRot(event, scene.window().projectedCoordinatesOf(position())));
+			rotate(deformedBallRotation(event, scene.window().projectedCoordinatesOf(position())));
 			flyDisp.set(flySpeed(), 0.0f, 0.0f);
 			trns = localInverseTransformOf(flyDisp);
+			//TODO new line, needs testing but seemed like a bug not to have it
+			translate(trns);
 			setTossingDirection(trns);
 			startTossing(event);
 			break;
 		case ROTATE:
 		case SCREEN_ROTATE:
-			Rotation rt = computeRot(event, scene.window().projectedCoordinatesOf(position()));
+			Rotation rt = deformedBallRotation(event, scene.window().projectedCoordinatesOf(position()));
 			if (event.isRelative()) {
 				setSpinningRotation(rt);
 				if (Util.nonZero(dampingFriction()))
@@ -645,7 +647,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 				break;
 			}
 			trns = scene.camera().projectedCoordinatesOf(position());
-			rt = deformedBallQuaternion(event, trns.x(), trns.y(), scene.camera());
+			rt = (Quat) deformedBallRotation(event, trns);
 			trns = rt.axis();
 			trns = scene.camera().frame().orientation().rotate(trns);
 			trns = transformOf(trns);
