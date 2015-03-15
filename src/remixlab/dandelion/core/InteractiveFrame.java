@@ -576,17 +576,20 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 			break;
 		case TRANSLATE_X:
 			trns = new Vec(delta1(event, wheel), 0.0f, 0.0f);
-			scale2Fit(trns);
+			//TODO experimenting
+			//scale2Fit(trns);
 			translateFromEye(trns, wheel ? 1 : translationSensitivity());
 			break;
 		case TRANSLATE_Y:
 			trns = new Vec(0.0f, scene.isRightHanded() ? -delta1(event, wheel) : delta1(event, wheel), 0.0f);
-			scale2Fit(trns);
+		  //TODO experimenting
+			//scale2Fit(trns);
 			translateFromEye(trns, wheel ? 1 : translationSensitivity());
 			break;
 		case TRANSLATE_Z:
 			trns = new Vec(0.0f, 0.0f, delta1(event, wheel));
-			scale2Fit(trns);
+		  //TODO experimenting
+			//scale2Fit(trns);
 			translateFromEye(trns, wheel ? 1 : translationSensitivity());
 			break;
 		case ZOOM:
@@ -691,7 +694,8 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 					trns.set(0.0f, scene.isRightHanded() ? -event.y() : event.y(), 0.0f);
 				else
 					trns.set(0.0f, scene.isRightHanded() ? -event.dy() : event.dy(), 0.0f);
-			scale2Fit(trns);
+		  //TODO experimenting
+			//scale2Fit(trns);
 			translateFromEye(trns);
 			break;
 		case TRANSLATE:
@@ -699,7 +703,8 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 				trns = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), 0.0f);
 			else
 				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), 0.0f);
-			scale2Fit(trns);
+		  //TODO experimenting
+			//scale2Fit(trns);
 			translateFromEye(trns);
 			break;
 		case ROTATE_Y:
@@ -731,7 +736,8 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 				trns = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), event.dz());
 			else
 				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), event.z());
-			scale2Fit(trns);
+			//TODO experimenting
+			//scale2Fit(trns);
 			translateFromEye(trns);
 			break;
 		// ROTATE_CAD: ROTATE_X: SCALE: TRANSLATE_Y: TRANSLATE_Z: ZOOM: ZOOM_ON_ANCHOR: ZOOM_ON_REGION:
@@ -753,7 +759,8 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 				trns = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), event.dz());
 			else
 				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), event.z());
-			scale2Fit(trns);
+			//TODO experimenting
+			//scale2Fit(trns);
 			translateFromEye(trns);
 			// B. Rotate the iFrame
 			if (event.isAbsolute())

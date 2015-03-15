@@ -873,6 +873,8 @@ public class SceneFrame extends Frame {
 	}
 
 	public void translateFromEye(Vec trns, float sens) {
+		if( scene.is3D() )
+			scale2Fit(trns);
 		// Transform from eye to world coordinate system.
 		trns = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trns, sens))
 				: scene.camera().frame().orientation().rotate(Vec.multiply(trns, sens));
