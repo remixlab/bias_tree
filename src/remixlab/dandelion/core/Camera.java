@@ -923,7 +923,7 @@ public class Camera extends Eye implements Copyable {
 	 * @see #getBoundaryWidthHeight(float[])
 	 */
 	@Override
-	protected float rescalingOrthoFactor() {
+	public float rescalingOrthoFactor() {
 		float toAnchor = this.distanceToAnchor();
 		return (2 * (Util.zero(toAnchor) ? Util.FLOAT_EPS : toAnchor) * rapK / screenHeight());
 	}

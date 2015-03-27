@@ -252,7 +252,7 @@ public class SceneFrame extends Frame {
 
 		setRotationSensitivity(1.0f);
 		setTranslationSensitivity(1.0f);
-		setWheelSensitivity(20.0f);
+		setWheelSensitivity(5.0f);
 		setSpinningSensitivity(0.3f);
 		setDampingFriction(0.5f);
 
@@ -576,7 +576,7 @@ public class SceneFrame extends Frame {
 	/**
 	 * Returns the wheel sensitivity.
 	 * <p>
-	 * Default value is 20.0. A higher value will make the wheel action more efficient (usually meaning a faster zoom).
+	 * Default value is 5.0. A higher value will make the wheel action more efficient (usually meaning faster motion).
 	 * Use a negative value to invert the zoom in and out directions.
 	 * 
 	 * @see #setWheelSensitivity(float)
@@ -820,32 +820,87 @@ public class SceneFrame extends Frame {
 		q.setZ(trns.z());
 		rotate(q);
 	}
-
-	// micro-actions procedures
-
-	public void scale2Fit(Vec trns) {
+	
+	protected void gesture2Eye(Vec trns) {
+	  // Scale to fit the screen relative event displacement
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("scale2Fit");
 			return;
 		}
-		// Scale to fit the screen relative event displacement
 		switch (scene.camera().type()) {
 		case PERSPECTIVE:
-			trns.multiply(2.0f
-					* (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
-					* Math.abs(scene.camera().frame()
-							.coordinatesOf(this == scene.eye().frame() ? scene.eye().anchor() : position()).vec[2]
-							* scene.camera().frame().magnitude())
-					/ scene.camera().screenHeight());
+			float k = (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
+					* Math.abs(scene.camera().frame().coordinatesOf(this == scene.eye().frame() ? scene.eye().anchor() : position()).vec[2]	* scene.camera().frame().magnitude());
+					//* Math.abs(scene.camera().frame().coordinatesOf(this == scene.eye().frame() ? scene.eye().anchor() : position()).vec[2]);
+			trns.vec[0] *= 2.0 * k / scene.camera().screenHeight();
+			trns.vec[1] *= 2.0 * k / scene.camera().screenHeight();
 			break;
 		case ORTHOGRAPHIC:
 			float[] wh = scene.camera().getBoundaryWidthHeight();
-			trns.vec[0] *= 2.0 * wh[0] / scene.camera().screenWidth();
+			//float[] wh = scene.camera().getOrthoWidthHeight();
+			trns.vec[0] *= 2.0 * wh[0] / scene.camera().screenWidth();			
 			trns.vec[1] *= 2.0 * wh[1] / scene.camera().screenHeight();
 			break;
 		}
+		float coef;
+		if( this == scene.eye().frame() ) {
+			//float coef = 8E-4f;
+			coef = Math.max(Math.abs((coordinatesOf(scene.camera().anchor())).vec[2] * magnitude()), 0.2f * scene.camera().sceneRadius());
+			trns.vec[2] *= coef / scene.camera().screenHeight();
+			//TODO eye wheel seems different
+			//trns.vec[2] *= coef * 8E-4f;
+		}
+		else {
+			coef = Vec.subtract(scene.camera().position(), position()).magnitude();
+			trns.vec[2] *= coef / scene.camera().screenHeight();
+		}
+		//if( this == scene.eye().frame() )
+			trns.divide(scene.eye().frame().magnitude());
 	}
 
+	// micro-actions procedures
+
+	protected Vec screen2Eye(Vec trns) {
+	  // Scale to fit the screen relative event displacement
+		Vec r = new Vec();
+		if (scene.is2D()) {
+			AbstractScene.showDepthWarning("scale2Fit");
+			return r;
+		}
+		r = trans.get();
+		switch (scene.camera().type()) {
+		case PERSPECTIVE:
+			float k = (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
+					* Math.abs(scene.camera().frame().coordinatesOf(this == scene.eye().frame() ? scene.eye().anchor() : position()).vec[2]	* scene.camera().frame().magnitude());			
+			r.vec[0] *= 2.0 * k / scene.camera().screenHeight();
+			r.vec[1] *= 2.0 * k / scene.camera().screenHeight();
+			break;
+		case ORTHOGRAPHIC:
+			float[] wh = scene.camera().getBoundaryWidthHeight();
+			r.vec[0] *= 2.0 * wh[0] / scene.camera().screenWidth();			
+			r.vec[1] *= 2.0 * wh[1] / scene.camera().screenHeight();
+			break;
+		}
+		float coef;
+		if( this == scene.eye().frame() ) {
+			//float coef = 8E-4f;
+			coef = Math.max(Math.abs((coordinatesOf(scene.camera().anchor())).vec[2] * magnitude()), 0.2f * scene.camera().sceneRadius());
+			r.vec[2] *= coef / scene.camera().screenHeight();
+			//TODO eye wheel seems different
+			//trns.vec[2] *= coef * 8E-4f;
+		}
+		else {
+			coef = Vec.subtract(scene.camera().position(), position()).magnitude();
+			r.vec[2] *= coef / scene.camera().screenHeight();
+		}
+		return r;
+	}
+	
+	protected float computeAngle(DOF1Event e1) {
+		return delta1(e1) * (float) Math.PI / scene.eye().screenWidth();
+	}
+
+	/*
 	protected float computeAngle(DOF1Event e1, boolean wheel) {
 		float angle;
 		if (wheel) // its a wheel wheel :P
@@ -856,7 +911,13 @@ public class SceneFrame extends Frame {
 			angle = (float) Math.PI * e1.dx() / scene.eye().screenWidth();
 		return angle;
 	}
+	*/
+	
+	protected float delta1(DOF1Event e1) {
+		return e1.isAbsolute() ? e1.x() : e1.dx();
+	}
 
+	/*
 	protected float delta1(DOF1Event e1, boolean wheel) {
 		float delta;
 		if (wheel) // its a wheel wheel :P
@@ -867,23 +928,64 @@ public class SceneFrame extends Frame {
 			delta = e1.dx();
 		return delta;
 	}
+	*/
 
-	public void translateFromEye(Vec trns) {
-		translateFromEye(trns, translationSensitivity());
+	// /*
+	public void translateFromGesture(Vec trns) {
+		translateFromGesture(trns, translationSensitivity());
 	}
 
+	public void translateFromGesture(Vec trns, float sens) {
+	  if( scene.is3D() )
+	  	gesture2Eye(trns);
+	  translateFromEye(trns, sens);
+	}
+	
 	public void translateFromEye(Vec trns, float sens) {
-		if( scene.is3D() )
-			scale2Fit(trns);
-		// Transform from eye to world coordinate system.
-		trns = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trns, sens))
-				: scene.camera().frame().orientation().rotate(Vec.multiply(trns, sens));
-
+	  // Transform from eye to world coordinate system.
+		//TODO what does this mean?
+		//trns = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trns, sens)) : scene.camera().frame().orientation().rotate(Vec.multiply(trns, sens));
+		//trns = scene.eye().frame().orientation().rotate(Vec.multiply(trns, sens));
+		trns = scene.eye().frame().inverseTransformOf(Vec.multiply(trns, sens));
+		
+		if(this != scene.eye().frame())
+			translateFromWorld(trns, sens);
+		else
+			translate(trns);
+	}
+	
+	public void translateFromWorld(Vec trns, float sens) {
 		// And then down to frame
 		if (referenceFrame() != null)
 			trns = referenceFrame().transformOf(trns);
-		translate(trns);
+		translate(trns);			
 	}
+	//*/
+	
+	/*
+	public void translateFromGesture(Vec trns) {
+		translateFromGesture(trns, translationSensitivity());
+	}
+
+	public void translateFromGesture(Vec trns, float sens) {
+	  if( scene.is3D() )
+			gesture2Eye(trns);
+	  translateFromEye(trns, sens);
+	}
+	
+	public void translateFromEye(Vec trns, float sens) {
+	  // Transform from eye to world coordinate system.
+		trns = scene.is2D() ? scene.window().frame().inverseTransformOf(trns)	: scene.camera().frame().orientation().rotate(trns);		
+		translateFromWorld(trns, sens);
+	}
+	
+	public void translateFromWorld(Vec trns, float sens) {
+		// And then down to frame
+		if (referenceFrame() != null)
+			trns = referenceFrame().transformOf(trns);
+		translate(Vec.multiply(trns, sens));
+	}
+	//*/
 
 	// TODO decide whether to include this:
 

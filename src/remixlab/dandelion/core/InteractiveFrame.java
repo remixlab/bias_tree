@@ -418,20 +418,24 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 			performCustomAction(event);
 			break;
 		case ROTATE_Z:
-			Rot rt = new Rot(scene.isRightHanded() ? computeAngle(event, wheel) : -computeAngle(event, wheel));
+			//TODO needs testing
+			Rot rt = new Rot((wheel ? wheelSensitivity() : rotationSensitivity()) * (scene.isRightHanded() ? computeAngle(event) : -computeAngle(event)) );
 			rotate(rt);
 			setSpinningRotation(rt);
 			break;
 		case SCALE:
-			float delta = delta1(event, wheel);
+			//TODO needs testing
+			float delta = delta1(event) * ( wheel ? wheelSensitivity() : translationSensitivity());
 			float s = 1 + Math.abs(delta) / (float) scene.height();
 			scale(delta >= 0 ? s : 1 / s);
 			break;
 		case TRANSLATE_X:
-			translateFromEye(new Vec(delta1(event, wheel), 0), wheel ? 1 : translationSensitivity());
+		//TODO needs testing
+			translateFromGesture(new Vec(delta1(event), 0), wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case TRANSLATE_Y:
-			translateFromEye(new Vec(0, scene.isRightHanded() ? -delta1(event, wheel) : delta1(event, wheel)), wheel ? 1
+		//TODO needs testing
+			translateFromGesture(new Vec(0, scene.isRightHanded() ? -delta1(event) : delta1(event)), wheel ? wheelSensitivity()
 					: translationSensitivity());
 			break;
 		case ROTATE_X:
@@ -493,9 +497,9 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 				deltaY = scene.isRightHanded() ? event.y() : -event.y();
 			int dir = originalDirection(event);
 			if (dir == 1)
-				translateFromEye(new Vec(deltaX, 0.0f, 0.0f));
+				translateFromGesture(new Vec(deltaX, 0.0f, 0.0f));
 			else if (dir == -1)
-				translateFromEye(new Vec(0.0f, -deltaY, 0.0f));
+				translateFromGesture(new Vec(0.0f, -deltaY, 0.0f));
 			break;
 		case TRANSLATE:
 			deltaX = (event.isRelative()) ? event.dx() : event.x();
@@ -503,7 +507,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 				deltaY = scene.isRightHanded() ? event.dy() : -event.dy();
 			else
 				deltaY = scene.isRightHanded() ? event.y() : -event.y();
-			translateFromEye(new Vec(deltaX, -deltaY, 0.0f));
+			translateFromGesture(new Vec(deltaX, -deltaY, 0.0f));
 			break;
 		case ROTATE_Z:
 		case TRANSLATE_X:
@@ -558,57 +562,75 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 			performCustomAction(event);
 			break;
 		case ROTATE_X:
-			if (scene.is3D())
-				rotateAroundEyeAxes(computeAngle(event, wheel), 0, 0);
+			//TODO needs testing
+			rotateAroundEyeAxes((wheel ? wheelSensitivity() : rotationSensitivity()) * computeAngle(event), 0, 0);
 			break;
 		case ROTATE_Y:
-			if (scene.is3D())
-				rotateAroundEyeAxes(0, -computeAngle(event, wheel), 0);
+		//TODO needs testing
+			rotateAroundEyeAxes(0, (wheel ? wheelSensitivity() : rotationSensitivity()) * -computeAngle(event), 0);
 			break;
 		case ROTATE_Z:
-			if (scene.is3D())
-				rotateAroundEyeAxes(0, 0, -computeAngle(event, wheel));
+		//TODO needs testing
+			rotateAroundEyeAxes(0, 0, (wheel ? wheelSensitivity() : rotationSensitivity()) * -computeAngle(event));
 			break;
 		case SCALE:
-			delta = delta1(event, wheel);
+			//TODO needs testing
+			delta = delta1(event) * ( wheel ? wheelSensitivity() : translationSensitivity() );
 			float s = 1 + Math.abs(delta) / (float) scene.height();
 			scale(delta >= 0 ? s : 1 / s);
 			break;
 		case TRANSLATE_X:
-			trns = new Vec(delta1(event, wheel), 0.0f, 0.0f);
+			trns = new Vec(delta1(event), 0.0f, 0.0f);
 			//TODO experimenting
 			//scale2Fit(trns);
-			translateFromEye(trns, wheel ? 1 : translationSensitivity());
+			translateFromGesture(trns, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case TRANSLATE_Y:
-			trns = new Vec(0.0f, scene.isRightHanded() ? -delta1(event, wheel) : delta1(event, wheel), 0.0f);
+			trns = new Vec(0.0f, scene.isRightHanded() ? -delta1(event) : delta1(event), 0.0f);
 		  //TODO experimenting
 			//scale2Fit(trns);
-			translateFromEye(trns, wheel ? 1 : translationSensitivity());
+			translateFromGesture(trns, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case TRANSLATE_Z:
-			trns = new Vec(0.0f, 0.0f, delta1(event, wheel));
+			trns = new Vec(0.0f, 0.0f, delta1(event));
 		  //TODO experimenting
 			//scale2Fit(trns);
-			translateFromEye(trns, wheel ? 1 : translationSensitivity());
+			translateFromGesture(trns, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case ZOOM:
+			//TODO leave it as TRANSLATE_Z and remove translateFE
 			if (wheel) {
 				delta = event.x() * wheelSensitivity();
-				translateFromEye(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
+				translateFE(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
 						/ scene.camera().screenHeight()), 1);
 			}
 			else {
 				delta = event.isAbsolute() ? event.x() : event.dx();
-				translateFromEye(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
+				translateFE(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
 						/ scene.camera().screenHeight()));
 			}
+			break;
 		case ZOOM_ON_ANCHOR:
 			AbstractScene.showOnlyEyeWarning(referenceAction());
 			break;
 		default:
 			break;
 		}
+	}
+	
+	protected void translateFE(Vec trans) {
+		translateFE(trans, translationSensitivity());
+	}
+
+	protected void translateFE(Vec trans, float sens) {
+		// Transform from eye to world coordinate system.
+		trans = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trans, sens))
+				: scene.camera().frame().orientation().rotate(Vec.multiply(trans, sens));
+
+		// And then down to frame
+		if (referenceFrame() != null)
+			trans = referenceFrame().transformOf(trans);
+		translate(trans);
 	}
 
 	protected void execAction3D(DOF2Event event) {
@@ -696,7 +718,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 					trns.set(0.0f, scene.isRightHanded() ? -event.dy() : event.dy(), 0.0f);
 		  //TODO experimenting
 			//scale2Fit(trns);
-			translateFromEye(trns);
+			translateFromGesture(trns);
 			break;
 		case TRANSLATE:
 			if (event.isRelative())
@@ -705,7 +727,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), 0.0f);
 		  //TODO experimenting
 			//scale2Fit(trns);
-			translateFromEye(trns);
+			translateFromGesture(trns);
 			break;
 		case ROTATE_Y:
 		case ROTATE_Z:
@@ -738,7 +760,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), event.z());
 			//TODO experimenting
 			//scale2Fit(trns);
-			translateFromEye(trns);
+			translateFromGesture(trns);
 			break;
 		// ROTATE_CAD: ROTATE_X: SCALE: TRANSLATE_Y: TRANSLATE_Z: ZOOM: ZOOM_ON_ANCHOR: ZOOM_ON_REGION:
 		default:
@@ -761,7 +783,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), event.z());
 			//TODO experimenting
 			//scale2Fit(trns);
-			translateFromEye(trns);
+			translateFromGesture(trns);
 			// B. Rotate the iFrame
 			if (event.isAbsolute())
 				rotateAroundEyeAxes(event.roll(), -event.pitch(), -event.yaw());

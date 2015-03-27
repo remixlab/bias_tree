@@ -851,14 +851,29 @@ public abstract class Eye implements Copyable {
 
 		return target;
 	}
+	
+	public float[] getOrthoWidthHeight() {
+		return getBoundaryWidthHeight(new float[2]);
+	}
+	
+	public float[] getOrthoWidthHeight(float[] target) {
+		if ((target == null) || (target.length != 2)) {
+			target = new float[2];
+		}
+
+		target[0] = (frame().magnitude() * this.screenWidth() / 2);
+		target[1] = (frame().magnitude() * this.screenHeight() / 2);
+
+		return target;
+	}
 
 	/**
-	 * Simply returns {@code 1} which is valid for 2d Windows and ortho Cameras. Returned value is overriden by the camera
-	 * class.
+	 * Simply returns {@code 1} which is valid for 2d Windows. Value is different for ortho Cameras and thus the method
+	 * is overridden by the camera class.
 	 * 
 	 * @see #getBoundaryWidthHeight(float[])
 	 */
-	protected float rescalingOrthoFactor() {
+	public float rescalingOrthoFactor() {
 		return 1.0f;
 	}
 

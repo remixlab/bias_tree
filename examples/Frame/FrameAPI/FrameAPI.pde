@@ -213,7 +213,7 @@ void displayText() {
     text("Converts vectors (grey arrows) and points (see the cyan arrow) from frame 3 to frame 4", 5, 35);
     break;
   case m5: // f4 -> f3
-    text("Converts vectors (grey arrows) and points (see the cyan arrow) from frame 4 to frame 4", 5, 35);
+    text("Converts vectors (grey arrows) and points (see the cyan arrow) from frame 4 to frame 3", 5, 35);
     break;
   case m6: // f5 -> f4
     text("Converts vectors (grey arrows) and points (see the cyan arrow) from frame 5 to frame 4", 5, 35);
