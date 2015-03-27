@@ -55,6 +55,7 @@ public class SceneFrame extends Frame {
 
 	protected long							lastUpdate;
 	protected AbstractScene			scene;
+	protected Eye theeye;
 
 	@Override
 	public int hashCode() {
@@ -114,6 +115,11 @@ public class SceneFrame extends Frame {
 	public SceneFrame(AbstractScene scn) {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
+	
+	public SceneFrame(Eye eye) {
+		this(eye.scene());
+		theeye = eye;
+	}
 
 	/**
 	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
@@ -122,6 +128,11 @@ public class SceneFrame extends Frame {
 	 */
 	public SceneFrame(AbstractScene scn, Vec p) {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1);
+	}
+	
+	public SceneFrame(Eye eye, Vec p) {
+		this(eye.scene(), p);
+		theeye = eye;
 	}
 
 	/**
@@ -132,6 +143,11 @@ public class SceneFrame extends Frame {
 	public SceneFrame(AbstractScene scn, Rotation r) {
 		this(scn, null, new Vec(), r, 1);
 	}
+	
+	public SceneFrame(Eye eye, Rotation r) {
+		this(eye.scene(), r);
+		theeye = eye;
+	}
 
 	/**
 	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
@@ -140,6 +156,11 @@ public class SceneFrame extends Frame {
 	 */
 	public SceneFrame(AbstractScene scn, float s) {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
+	}
+	
+	public SceneFrame(Eye eye, float s) {
+		this(eye.scene(), s);
+		theeye = eye;
 	}
 
 	/**
@@ -150,6 +171,11 @@ public class SceneFrame extends Frame {
 	public SceneFrame(AbstractScene scn, Vec p, float s) {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
+	
+	public SceneFrame(Eye eye, Vec p, float s) {
+		this(eye.scene(), p, s);
+		theeye = eye;
+	}
 
 	/**
 	 * Same as {@code this(scn, null, p, r, 1)}.
@@ -158,6 +184,11 @@ public class SceneFrame extends Frame {
 	 */
 	public SceneFrame(AbstractScene scn, Vec p, Rotation r) {
 		this(scn, null, p, r, 1);
+	}
+	
+	public SceneFrame(Eye eye, Vec p, Rotation r) {
+		this(eye.scene(), p, r);
+		theeye = eye;
 	}
 
 	/**
@@ -168,6 +199,11 @@ public class SceneFrame extends Frame {
 	public SceneFrame(AbstractScene scn, Rotation r, float s) {
 		this(scn, null, new Vec(), r, s);
 	}
+	
+	public SceneFrame(Eye eye, Rotation r, float s) {
+		this(eye.scene(), r, s);
+		theeye = eye;
+	}
 
 	/**
 	 * Same as {@code this(scn, null, p, r, s)}.
@@ -176,6 +212,11 @@ public class SceneFrame extends Frame {
 	 */
 	public SceneFrame(AbstractScene scn, Vec p, Rotation r, float s) {
 		this(scn, null, p, r, s);
+	}
+	
+	public SceneFrame(Eye eye, Vec p, Rotation r, float s) {
+		this(eye.scene(), p, r, s);
+		theeye = eye;
 	}
 
 	/**
@@ -186,6 +227,11 @@ public class SceneFrame extends Frame {
 	public SceneFrame(AbstractScene scn, Frame referenceFrame) {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
+	
+	public SceneFrame(Eye eye, Frame referenceFrame) {
+		this(eye.scene(), referenceFrame);
+		theeye = eye;
+	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
@@ -194,6 +240,11 @@ public class SceneFrame extends Frame {
 	 */
 	public SceneFrame(AbstractScene scn, Frame referenceFrame, Vec p) {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1);
+	}
+	
+	public SceneFrame(Eye eye, Frame referenceFrame, Vec p) {
+		this(eye.scene(), referenceFrame, p);
+		theeye = eye;
 	}
 
 	/**
@@ -204,6 +255,11 @@ public class SceneFrame extends Frame {
 	public SceneFrame(AbstractScene scn, Frame referenceFrame, Rotation r) {
 		this(scn, referenceFrame, new Vec(), r, 1);
 	}
+	
+	public SceneFrame(Eye eye, Frame referenceFrame, Rotation r) {
+		this(eye.scene(), referenceFrame, r);
+		theeye = eye;
+	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
@@ -212,6 +268,11 @@ public class SceneFrame extends Frame {
 	 */
 	public SceneFrame(AbstractScene scn, Frame referenceFrame, float s) {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
+	}
+	
+	public SceneFrame(Eye eye, Frame referenceFrame, float s) {
+		this(eye.scene(), referenceFrame, s);
+		theeye = eye;
 	}
 
 	/**
@@ -222,6 +283,11 @@ public class SceneFrame extends Frame {
 	public SceneFrame(AbstractScene scn, Frame referenceFrame, Vec p, float s) {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
+	
+	public SceneFrame(Eye eye, Frame referenceFrame, Vec p, float s) {
+		this(eye.scene(), referenceFrame, p ,s);
+		theeye = eye;
+	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, r, 1)}.
@@ -231,6 +297,11 @@ public class SceneFrame extends Frame {
 	public SceneFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r) {
 		this(scn, referenceFrame, p, r, 1);
 	}
+	
+	public SceneFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r) {
+		this(eye.scene(), referenceFrame, p, r);
+		theeye = eye;
+	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), r, s)}.
@@ -239,6 +310,11 @@ public class SceneFrame extends Frame {
 	 */
 	public SceneFrame(AbstractScene scn, Frame referenceFrame, Rotation r, float s) {
 		this(scn, referenceFrame, new Vec(), r, s);
+	}
+	
+	public SceneFrame(Eye eye, Frame referenceFrame, Rotation r, float s) {
+		this(eye.scene(), referenceFrame, r, s);
+		theeye = eye;
 	}
 
 	/**
@@ -274,10 +350,16 @@ public class SceneFrame extends Frame {
 		scene.registerTimingTask(flyTimerTask);
 		// end
 	}
+	
+	public SceneFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
+		this(eye.scene(), referenceFrame, p, r, s);
+		theeye = eye;
+	}
 
 	protected SceneFrame(SceneFrame otherFrame) {
 		super(otherFrame);
 		this.scene = otherFrame.scene;
+		this.theeye = otherFrame.theeye;
 
 		this.spinningTimerTask = new TimingTask() {
 			public void execute() {
@@ -345,6 +427,14 @@ public class SceneFrame extends Frame {
 	 */
 	public AbstractScene scene() {
 		return scene;
+	}
+	
+	public Eye eye() {
+		return theeye;
+	}
+	
+	public boolean isEyeFrame() {
+		return theeye != null;
 	}
 
 	// APPLY TRANSFORMATION
@@ -679,16 +769,16 @@ public class SceneFrame extends Frame {
 				stopSpinning();
 				return;
 			}
-			if (this != scene.eye().frame())
-				rotate(spinningRotation());
-			else
+			if (isEyeFrame())
 				rotateAroundPoint(spinningRotation(), scene.eye().anchor());
+			else
+				rotate(spinningRotation());
 			recomputeSpinningRotation();
 		}
-		else if (this != scene.eye().frame())
-			rotate(spinningRotation());
-		else
+		else if (isEyeFrame())
 			rotateAroundPoint(spinningRotation(), scene.eye().anchor());
+		else
+			rotate(spinningRotation());			
 	}
 
 	/**
@@ -749,7 +839,7 @@ public class SceneFrame extends Frame {
 			}
 			else
 				rt = new Rot(event.x() * rotationSensitivity());
-			if ((scene.isRightHanded() && this != scene.eye().frame()) || (scene.isLeftHanded() && this == scene.eye().frame()))
+			if ((scene.isRightHanded() && !isEyeFrame()) || (scene.isLeftHanded() && isEyeFrame()))
 				rt.negate();
 			return rt;
 		}
@@ -833,8 +923,8 @@ public class SceneFrame extends Frame {
 		switch (scene.camera().type()) {
 		case PERSPECTIVE:
 			float k = (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
-					* Math.abs(scene.camera().frame().coordinatesOf(this == scene.eye().frame() ? scene.eye().anchor() : position()).vec[2]	* scene.camera().frame().magnitude());
-					//* Math.abs(scene.camera().frame().coordinatesOf(this == scene.eye().frame() ? scene.eye().anchor() : position()).vec[2]);
+					* Math.abs(scene.camera().frame().coordinatesOf(isEyeFrame() ? scene.eye().anchor() : position()).vec[2]	* scene.camera().frame().magnitude());
+					//* Math.abs(scene.camera().frame().coordinatesOf(isEyeFrame() ? scene.eye().anchor() : position()).vec[2]);
 			eyeVec.vec[0] *= 2.0 * k / scene.camera().screenHeight();
 			eyeVec.vec[1] *= 2.0 * k / scene.camera().screenHeight();
 			break;
@@ -846,7 +936,7 @@ public class SceneFrame extends Frame {
 			break;
 		}
 		float coef;
-		if( this == scene.eye().frame() ) {
+		if( isEyeFrame() ) {
 			//float coef = 8E-4f;
 			coef = Math.max(Math.abs((coordinatesOf(scene.camera().anchor())).vec[2] * magnitude()), 0.2f * scene.camera().sceneRadius());
 			eyeVec.vec[2] *= coef / scene.camera().screenHeight();
@@ -857,7 +947,7 @@ public class SceneFrame extends Frame {
 			coef = Vec.subtract(scene.camera().position(), position()).magnitude();
 			eyeVec.vec[2] *= coef / scene.camera().screenHeight();
 		}
-		//if( this == scene.eye().frame() )
+		//if( isEyeFrame() )
 		eyeVec.divide(scene.eye().frame().magnitude());
 	  return eyeVec;
 	}
@@ -883,7 +973,7 @@ public class SceneFrame extends Frame {
 	  // Transform from eye to world coordinate system.
 		trns = scene.eye().frame().inverseTransformOf(Vec.multiply(trns, sens));
 		
-		if(this != scene.eye().frame()) {
+		if(!isEyeFrame()) {
 			if (referenceFrame() != null)
 				trns = referenceFrame().transformOf(trns);
 			translate(trns);

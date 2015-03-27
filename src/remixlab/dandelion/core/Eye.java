@@ -358,6 +358,7 @@ public abstract class Eye implements Copyable {
 		scene.motionAgent().removeGrabber(frame());
 
 		frm = icf;
+		frm.theeye = this;
 		interpolationKfi.setFrame(frame());
 
 		if (this == scene.eye())

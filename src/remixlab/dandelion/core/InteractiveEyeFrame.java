@@ -46,7 +46,6 @@ import remixlab.util.*;
  */
 public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<MotionAction>, Copyable,
 		Constants {
-	protected Eye	eye;
 
 	/**
 	 * Default constructor.
@@ -58,13 +57,11 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 	 * {@link remixlab.bias.core.InputHandler#agents()} pool.
 	 */
 	public InteractiveEyeFrame(Eye theEye) {
-		super(theEye.scene);
-		eye = theEye;
+		super(theEye);
 	}
 
 	protected InteractiveEyeFrame(InteractiveEyeFrame otherFrame) {
-		super(otherFrame);
-		this.eye = otherFrame.eye;
+		super(otherFrame.theeye);
 
 		// TODO don't think so: frame is added to the pool when setting the eye
 		// if( scene.motionAgent().eyeBranch().isInPool(otherFrame) )
@@ -74,10 +71,6 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 	@Override
 	public InteractiveEyeFrame get() {
 		return new InteractiveEyeFrame(this);
-	}
-
-	public Eye eye() {
-		return eye;
 	}
 
 	// grabber implementation
