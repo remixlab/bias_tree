@@ -217,11 +217,11 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 			break;
 		case TRANSLATE_X:
 			//TODO needs testing
-			translateFromGesture(new Vec(delta1(event), 0), wheel ? wheelSensitivity() : translationSensitivity());
+			screenTranslate(new Vec(delta1(event), 0), wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case TRANSLATE_Y:
 			//TODO needs testing			
-			translateFromGesture(new Vec(0, scene.isRightHanded() ? -delta1(event) : delta1(event)), wheel ? wheelSensitivity()
+			screenTranslate(new Vec(0, scene.isRightHanded() ? -delta1(event) : delta1(event)), wheel ? wheelSensitivity()
 					: translationSensitivity());
 			break;
 		default:
@@ -273,7 +273,7 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 				deltaY = scene.isRightHanded() ? -event.dy() : event.dy();
 			else
 				deltaY = scene.isRightHanded() ? -event.y() : event.y();
-			translateFromGesture(new Vec(-deltaX, -deltaY, 0.0f));
+			screenTranslate(new Vec(-deltaX, -deltaY, 0.0f));
 			break;
 		case ZOOM_ON_REGION:
 			if (event.isAbsolute()) {
@@ -349,19 +349,19 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 			trns = new Vec(delta1(event), 0.0f, 0.0f);
 		  //TODO experimenting
 			//scale2Fit(trns);
-			translateFromGesture(trns, wheel ? wheelSensitivity() : translationSensitivity());
+			screenTranslate(trns, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case TRANSLATE_Y:
 			trns = new Vec(0.0f, scene.isRightHanded() ? -delta1(event) : delta1(event), 0.0f);
 		  //TODO experimenting
 			//scale2Fit(trns);
-			translateFromGesture(trns, wheel ? wheelSensitivity() : translationSensitivity());
+			screenTranslate(trns, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case TRANSLATE_Z:
 			trns = new Vec(0.0f, 0.0f, delta1(event));
 			//TODO experimenting
 			//scale2Fit(trns);
-			translateFromGesture(trns, wheel ? wheelSensitivity() : translationSensitivity());
+			screenTranslate(trns, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case ZOOM:
 		  //TODO leave it as TRANSLATE_Z
@@ -401,7 +401,7 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 			trns.normalize();
 			trns.multiply(delta1(event));
 			//translateFromGesture(trns, wheel ? wheelSensitivity() : translationSensitivity());
-			translateFromEye(trns, wheel ? wheelSensitivity() : translationSensitivity());
+			eyeTranslate(trns, wheel ? wheelSensitivity() : translationSensitivity());
 			//*/			
 			
 			/*
@@ -527,7 +527,7 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 			//scale2Fit(trns);
 			//trns = Vec.multiply(trns, translationSensitivity());
 			//translate(orientation().rotate(trns));
-			translateFromGesture(trns);
+			screenTranslate(trns);
 			break;
 		case TRANSLATE:
 			if (event.isRelative())
@@ -536,7 +536,7 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 				trns = new Vec(-event.x(), scene.isRightHanded() ? event.y() : -event.y(), 0.0f);
 		  //TODO experimenting
 			//scale2Fit(trns);
-			translateFromGesture(trns);
+			screenTranslate(trns);
 			//translate(orientation().rotate(Vec.multiply(trns, translationSensitivity())));
 			break;
 		case ZOOM_ON_REGION:
@@ -583,7 +583,7 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), event.z());
 		  //TODO experimenting
 			//scale2Fit(trns);
-			translateFromGesture(trns);
+			screenTranslate(trns);
 			break;
 		default:
 			execAction3D(event.dof2Event());
@@ -643,7 +643,7 @@ public class InteractiveEyeFrame extends SceneFrame implements ActionGrabber<Mot
 				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), event.z());
 		  //TODO experimenting
 			//scale2Fit(trns);
-			translateFromGesture(trns);
+			screenTranslate(trns);
 			// B. Rotate the iFrame
 			if (event.isAbsolute())
 				rotateAroundEyeAxes(event.roll(), -event.pitch(), -event.yaw());
