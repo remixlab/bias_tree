@@ -10,9 +10,7 @@
 
 package remixlab.dandelion.core;
 
-import remixlab.bias.event.DOF1Event;
-import remixlab.bias.event.DOF2Event;
-import remixlab.bias.event.MotionEvent;
+import remixlab.bias.event.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
@@ -900,15 +898,22 @@ public class SceneFrame extends Frame {
 			AbstractScene.showDepthWarning("rotateAroundEyeAxes");
 			return;
 		}
-		Vec trns = new Vec();
-		Quat q = new Quat(scene.isLeftHanded() ? roll : -roll, -pitch, scene.isLeftHanded() ? yaw : -yaw);
-		trns.set(-q.x(), -q.y(), -q.z());
-		trns = scene.camera().frame().orientation().rotate(trns);
-		trns = transformOf(trns);
-		q.setX(trns.x());
-		q.setY(trns.y());
-		q.setZ(trns.z());
-		rotate(q);
+		
+		// don't really need to differentiate among the two cases, but eyeFrame can be speeded up
+		if(isEyeFrame() ) {
+			rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));
+		}
+		else {
+			Vec trns = new Vec();
+			Quat q = new Quat(scene.isLeftHanded() ? roll : -roll, -pitch, scene.isLeftHanded() ? yaw : -yaw);
+			trns.set(-q.x(), -q.y(), -q.z());
+			trns = scene.camera().frame().orientation().rotate(trns);
+			trns = transformOf(trns);
+			q.setX(trns.x());
+			q.setY(trns.y());
+			q.setZ(trns.z());
+			rotate(q);
+		}
 	}
 
 	// micro-actions procedures
@@ -919,7 +924,7 @@ public class SceneFrame extends Frame {
 		if (scene.is2D())
 			// Quite excited to see how simple it's in 2d:
 			return eyeVec;
-		// and amazed of how dirty it's in 3d:
+		// ... and amazed as to how dirty it's in 3d:
 		switch (scene.camera().type()) {
 		case PERSPECTIVE:
 			float k = (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
@@ -959,17 +964,247 @@ public class SceneFrame extends Frame {
 	protected float delta1(DOF1Event e1) {
 		return e1.isAbsolute() ? e1.x() : e1.dx();
 	}
-
-	public void screenTranslate(Vec trns) {
+	
+	//TODO: decide
+	//public void gestureTranslateX(MotionEvent event, float sens) {
+		
+	//}
+	
+	public void align() {
+		if(isEyeFrame())
+			alignWithFrame(null, true);
+		else
+			alignWithFrame(scene.eye().frame());
+	}
+	
+	public void center() {
+		if(isEyeFrame())
+			eye().centerScene();
+		else
+			projectOnLine(scene.eye().position(), scene.eye().viewDirection());
+	}	
+	
+	public void gestureTranslateX(DOF1Event event, float sens) {
+		if(isEyeFrame())
+			screenTranslate(new Vec(-delta1(event), 0), sens);
+		else
+			screenTranslate(new Vec(delta1(event), 0), sens);
+	}
+	
+	public void gestureTranslateY(DOF1Event event, float sens) {
+		if(isEyeFrame())
+			screenTranslate(new Vec(0, scene.isRightHanded() ? delta1(event) : -delta1(event)), sens);
+		else
+			screenTranslate(new Vec(0, scene.isRightHanded() ? -delta1(event) : delta1(event)), sens);
+	}
+	
+	public void gestureTranslateZ(DOF1Event event, float sens) {
+		if(scene.is2D()) {
+			AbstractScene.showDepthWarning("gestureTranslateZ");
+			return;
+		}
+		if(isEyeFrame())
+			screenTranslate(new Vec(0.0f, 0.0f, -delta1(event)), sens);
+		else
+			screenTranslate(new Vec(0.0f, 0.0f, delta1(event)), sens);
+	}
+	
+	public void gestureTranslateXY(DOF2Event event) {
+		Vec trns = new Vec();
+		if(isEyeFrame()) {
+			if (event.isRelative())
+				trns = new Vec(-event.dx(), scene.isRightHanded() ? event.dy() : -event.dy(), 0.0f);
+			else
+				trns = new Vec(-event.x(), scene.isRightHanded() ? event.y() : -event.y(), 0.0f);		
+		} else {
+			if (event.isRelative())
+				trns = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), 0.0f);
+			else
+				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), 0.0f);
+		}
+		screenTranslate(trns);
+	}
+	
+	public void gestureTranslateXYZ(DOF3Event event) {
+		Vec trns = new Vec();
+		if(isEyeFrame()) {
+			if (event.isRelative())
+				trns = new Vec(-event.dx(), scene.isRightHanded() ? event.dy() : -event.dy(), -event.dz());
+			else
+				trns = new Vec(-event.x(), scene.isRightHanded() ? event.y() : -event.y(), -event.z());
+		}
+		else {
+			if (event.isRelative())
+				trns = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), event.dz());
+			else
+				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), event.z());
+		}
+		screenTranslate(trns);
+	}
+	
+  public void gestureTranslateXYZ(DOF6Event event) {
+  	gestureTranslateXYZ(event.dof3Event());
+	}
+  
+  public void gestureRotateX(DOF1Event event, float sens) {
+  	if(scene.is2D()) {
+			AbstractScene.showDepthWarning("gestureRotateZ");
+			return;
+		}
+  	if(isEyeFrame()) {
+  		rotateAroundEyeAxes(0, 0, sens * -computeAngle(event));
+  	}
+  	else {
+  		rotateAroundEyeAxes(0, 0, sens * -computeAngle(event));
+  	}
+  }  
+  
+  public void gestureRotateY(DOF1Event event, float sens) {
+  	if(scene.is2D()) {
+			AbstractScene.showDepthWarning("gestureRotateY");
+			return;
+		}
+  	if(isEyeFrame()) {
+  		rotateAroundEyeAxes(0, sens * -computeAngle(event), 0);
+  	}
+  	else {
+  		rotateAroundEyeAxes(0, sens * -computeAngle(event), 0);
+  	}
+  }
+  
+  public void gestureRotateZ(DOF1Event event, float sens) {
+  	if(isEyeFrame()) {
+  		if(is2D()) {
+  			Rot rt = new Rot(sens * (scene.isRightHanded() ? computeAngle(event) : -computeAngle(event)));
+  			rotate(rt);
+  			setSpinningRotation(rt);
+  		}
+  		else
+  			//TODO see if it can handle 2d case <-> Check where to handle sens!
+  			rotateAroundEyeAxes(0, 0, sens * -computeAngle(event));
+  	}
+  	else {
+  		if(is2D()) {
+  			Rot rt = new Rot(sens * (scene.isRightHanded() ? computeAngle(event) : -computeAngle(event)) );
+  			rotate(rt);
+  			setSpinningRotation(rt);
+  			}
+  		else
+  			rotateAroundEyeAxes(0, 0, sens * -computeAngle(event));
+  	}
+  }
+  
+  //TODO compare ROTATE_Z and arcball in 2d case -> idea: discard arcball2d
+  public void arcball(DOF2Event event) {
+  	Rotation rt;
+		Vec trns;
+  	if(isEyeFrame()) {
+  		if(is2D()) {//TODO same as 3D case
+  			rt = deformedBallRotation(event, eye().projectedCoordinatesOf(eye().anchor()));
+  			if (event.isRelative()) {
+  				setSpinningRotation(rt);
+  				if (Util.nonZero(dampingFriction()))
+  					startSpinning(event);
+  				else
+  					spin();
+  			} else {
+  				// absolute needs testing
+  				rotate(rt);
+  			}
+			}
+  		else {
+  			rt = deformedBallRotation(event, eye().projectedCoordinatesOf(eye().anchor()));
+  			if (event.isRelative()) {
+  				setSpinningRotation(rt);
+    			if (Util.nonZero(dampingFriction()))
+    				startSpinning(event);
+    			else
+    				spin();
+  			}
+  			else {
+  				rotate(rt);
+  				// TODO previously was like this:
+  				// AbstractScene.showEventVariationWarning(a);
+  				//return;
+  			}  			
+  		}
+  	}
+  	else {
+  		//TODO test leaving 3d as the 2d case here!
+  		if(is2D()) {
+  			rt = deformedBallRotation(event, scene.window().projectedCoordinatesOf(position()));
+  			if (event.isRelative()) {
+  				setSpinningRotation(rt);
+  				if (Util.nonZero(dampingFriction()))
+  					startSpinning(event);
+  				else
+  					spin();
+  			} else {
+  				// absolute needs testing
+  				rotate(rt);
+  			}
+  		}
+  		else {
+  			if (event.isRelative()) {
+  				trns = scene.camera().projectedCoordinatesOf(position());
+    			rt = deformedBallRotation(event, trns);
+    			trns = ((Quat)rt).axis();
+    			trns = scene.camera().frame().orientation().rotate(trns);
+    			trns = transformOf(trns);
+    			rt = new Quat(trns, -rt.angle());
+    			setSpinningRotation(rt);
+    			if (Util.nonZero(dampingFriction()))
+    				startSpinning(event);
+    			else
+    				spin();
+  			}
+  			else {
+  				// TODO restore
+  				// AbstractScene.showEventVariationWarning(a);
+  				return;
+  			}
+  		}
+  	}
+  }
+  
+  //TODO rotate_cad is missing
+  
+  //TODO sensitivities are missing
+  public void gestureRotateXYZ(DOF3Event event) {
+  	if(isEyeFrame()) {
+  		if (event.isRelative())
+				rotateAroundEyeAxes(event.dx(), -event.dy(), -event.dz());
+			else
+				rotateAroundEyeAxes(event.x(), -event.y(), -event.z());
+  	}
+  	else  {
+  		if (event.isRelative())
+  			rotateAroundEyeAxes(event.dx(), -event.dy(), -event.dz());
+			else
+				rotateAroundEyeAxes(event.x(), -event.y(), -event.z());				
+		}
+  }
+  
+  public void gestureRotateXYZ(DOF6Event event) {
+  	gestureRotateXYZ(event.dof3Event(false));
+  }
+  
+  //TODO pending gestureRotate siblings!
+  
+  //TODO find better names for this private methods
+  //TODO make me public
+  private void screenTranslate(Vec trns) {
 		screenTranslate(trns, translationSensitivity());
 	}
 
-	public void screenTranslate(Vec trns, float sens) {
+	//TODO make me public
+	private void screenTranslate(Vec trns, float sens) {
 	  //if( scene.is3D() )	gesture2Eye(trns);
 	  eyeTranslate(screen2Eye(trns), sens);
 	}
 	
-	public void eyeTranslate(Vec trns, float sens) {
+  //TODO make me public
+	private void eyeTranslate(Vec trns, float sens) {
 	  // Transform from eye to world coordinate system.
 		trns = scene.eye().frame().inverseTransformOf(Vec.multiply(trns, sens));
 		

@@ -115,10 +115,12 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 
 	public boolean removeGrabber(SceneFrame frame) {
 		if (frame instanceof Grabber) {
-			if (frame instanceof InteractiveFrame)
-				return removeGrabber((InteractiveFrame) frame);
-			else if (frame instanceof InteractiveEyeFrame)
-				return removeGrabber((InteractiveEyeFrame) frame);
+			if (frame instanceof InteractiveFrame) {
+				if( frame.isEyeFrame() )
+					return removeGrabber((InteractiveEyeFrame) frame);
+				else
+					return removeGrabber((InteractiveFrame) frame);	
+			}
 			return removeGrabber((Grabber) frame);
 		}
 		return false;
