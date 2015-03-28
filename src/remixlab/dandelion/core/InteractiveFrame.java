@@ -42,7 +42,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 				appendSuper(super.hashCode()).
 				append(grabsInputThreshold).
 				append(adpThreshold).
-				append(isInCamPath).
+				append(eyeFrame).
 				// append(flyDisp).
 				// append(flySpd).
 				// append(scnUpVec).
@@ -64,7 +64,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 				.appendSuper(super.equals(obj))
 				.append(grabsInputThreshold, other.grabsInputThreshold)
 				.append(adpThreshold, other.adpThreshold)
-				.append(isInCamPath, other.isInCamPath)
+				.append(eyeFrame, other.eyeFrame)
 				.append(dampFriction, other.dampFriction)
 				// .append(flyDisp, other.flyDisp)
 				// .append(flySpd, other.flySpd)
@@ -76,7 +76,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 	private float			grabsInputThreshold;
 	private boolean		adpThreshold;
 
-	protected boolean	isInCamPath;
+	protected SceneFrame eyeFrame;
 
 	/**
 	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
@@ -224,8 +224,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 	 */
 	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(scn, referenceFrame, p, r, s);
-		scene.motionAgent().addGrabber(this);
-		isInCamPath = false;
+		scene.motionAgent().addGrabber(this);		
 		setGrabsInputThreshold(20);
 		// TODO future versions should go (except for iFrames in eyePath?):
 		// setGrabsInputThreshold(Math.round(scene.radius()/10f), true);
@@ -269,7 +268,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 	protected InteractiveFrame(AbstractScene scn, SceneFrame iFrame) {
 		super(scn, iFrame.translation().get(), iFrame.rotation().get(), iFrame.scaling());
 
-		isInCamPath = true;
+		eyeFrame = iFrame;
 		setGrabsInputThreshold(20);
 		// TODO future versions should go (except for iFrames in eyePath?):
 		// setGrabsInputThreshold(Math.round(scene.radius()/10f), true);
@@ -810,7 +809,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 	 * 
 	 */
 	public boolean isInEyePath() {
-		return isInCamPath;
+		return eyeFrame != null;
 	}
 
 	/**
