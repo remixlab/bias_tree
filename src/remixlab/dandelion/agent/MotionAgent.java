@@ -85,31 +85,29 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		}
 	}
 
+	/*
 	public boolean addGrabber(InteractiveFrame frame) {
 		return super.addGrabber(frame, frameBranch);
 	}
 
-	public boolean addGrabber(InteractiveEyeFrame frame) {
+	public boolean addGrabber(InteractiveFrame frame) {
 		// this.resetBranch(eyeBranch);
 		return super.addGrabber(frame, eyeBranch);
 	}
+	*/
 
 	public boolean addGrabber(SceneFrame frame) {
-		if (frame instanceof Grabber) {
-			if (frame instanceof InteractiveFrame)
-				return addGrabber((InteractiveFrame) frame);
-			else if (frame instanceof InteractiveEyeFrame)
-				return addGrabber((InteractiveEyeFrame) frame);
-			return addGrabber((Grabber) frame);
-		}
-		return false;
+		if(frame instanceof InteractiveFrame)
+			return addGrabber((InteractiveFrame)frame, frame.isEyeFrame() ? eyeBranch: frameBranch);
+		return super.addGrabber(frame);
 	}
 
+	/*
 	public boolean removeGrabber(InteractiveFrame frame) {
 		return super.removeGrabber(frame);
 	}
 
-	public boolean removeGrabber(InteractiveEyeFrame frame) {
+	public boolean removeGrabber(InteractiveFrame frame) {
 		return super.removeGrabber(frame);
 	}
 
@@ -117,7 +115,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		if (frame instanceof Grabber) {
 			if (frame instanceof InteractiveFrame) {
 				if( frame.isEyeFrame() )
-					return removeGrabber((InteractiveEyeFrame) frame);
+					return removeGrabber((InteractiveFrame) frame);
 				else
 					return removeGrabber((InteractiveFrame) frame);	
 			}
@@ -125,20 +123,22 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		}
 		return false;
 	}
+	*/
 
 	@Override
 	public void resetDefaultGrabber() {
-		// if (scene.eye().frame() instanceof InteractiveEyeFrame) {
+		// if (scene.eye().frame() instanceof InteractiveFrame) {
 		addGrabber(scene.eye().frame());
 		setDefaultGrabber(scene.eye().frame());
 		// }
 	}
 
+	/*
 	public boolean setDefaultGrabber(InteractiveFrame frame) {
 		return super.setDefaultGrabber(frame);
 	}
 
-	public boolean setDefaultGrabber(InteractiveEyeFrame frame) {
+	public boolean setDefaultGrabber(InteractiveFrame frame) {
 		return super.setDefaultGrabber(frame);
 	}
 
@@ -147,6 +147,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 			return super.setDefaultGrabber((Grabber) frame);
 		return false;
 	}
+	*/
 
 	public MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {
 		return eyeBranch;
@@ -157,25 +158,27 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	}
 
 	protected MotionProfile<A> motionProfile() {
-		if (inputGrabber() instanceof InteractiveEyeFrame)
-			return eyeBranch.profile();
 		if (inputGrabber() instanceof InteractiveFrame)
-			return frameBranch().profile();
+			if( ((InteractiveFrame)inputGrabber()).isEyeFrame() )
+				return eyeBranch.profile();
+			else
+				return frameBranch().profile();
 		return null;
 	}
 
 	protected ClickProfile<ClickAction> clickProfile() {
-		if (inputGrabber() instanceof InteractiveEyeFrame)
-			return eyeBranch.clickProfile();
 		if (inputGrabber() instanceof InteractiveFrame)
-			return frameBranch.clickProfile();
+			if( ((InteractiveFrame)inputGrabber()).isEyeFrame() )
+				return eyeBranch.clickProfile();
+			else
+				return frameBranch.clickProfile();
 		return null;
 	}
 
 	// TODO test all protected down here in stable before going on
 
 	/**
-	 * Profile defining InteractiveEyeFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
+	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
 	 */
 	public MotionProfile<A> eyeProfile() {
 		return eyeBranch.profile();
@@ -189,7 +192,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	}
 
 	/**
-	 * Profile defining InteractiveEyeFrame action bindings from {@link remixlab.bias.event.shortcut.ClickShortcut}s.
+	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.ClickShortcut}s.
 	 */
 	public ClickProfile<ClickAction> eyeClickProfile() {
 		return eyeBranch().clickProfile();
@@ -262,7 +265,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 
 	/**
 	 * Removes the mask-button-ncs (number-of-clicks) click-shortcut binding from the
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or from the
+	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code true}) or from the
 	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
 	 */
 	public void removeClickBinding(Target target, int mask, int button, int ncs) {

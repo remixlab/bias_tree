@@ -48,10 +48,6 @@ public interface Constants {
 		 */
 		SCALE("Scale frame", true),
 		/**
-		 * Zoom eye
-		 */
-		ZOOM("Zoom eye", false),
-		/**
 		 * Zoom eye on anchor
 		 */
 		ZOOM_ON_ANCHOR("Zoom eye on anchor", false),
@@ -373,7 +369,6 @@ public interface Constants {
 	public enum DOF1Action implements Action<MotionAction> {
 		// DOF_1
 		SCALE(MotionAction.SCALE),
-		ZOOM(MotionAction.ZOOM),
 		ZOOM_ON_ANCHOR(MotionAction.ZOOM_ON_ANCHOR),
 		TRANSLATE_X(MotionAction.TRANSLATE_X),
 		TRANSLATE_Y(MotionAction.TRANSLATE_Y),
@@ -426,7 +421,6 @@ public interface Constants {
 	public enum DOF2Action implements Action<MotionAction> {
 		// DOF_1
 		SCALE(MotionAction.SCALE),
-		ZOOM(MotionAction.ZOOM),
 		ZOOM_ON_ANCHOR(MotionAction.ZOOM_ON_ANCHOR),
 		TRANSLATE_X(MotionAction.TRANSLATE_X),
 		TRANSLATE_Y(MotionAction.TRANSLATE_Y),
@@ -497,7 +491,6 @@ public interface Constants {
 	public enum DOF3Action implements Action<MotionAction> {
 		// DOF_1
 		SCALE(MotionAction.SCALE),
-		ZOOM(MotionAction.ZOOM),
 		ZOOM_ON_ANCHOR(MotionAction.ZOOM_ON_ANCHOR),
 		TRANSLATE_X(MotionAction.TRANSLATE_X),
 		TRANSLATE_Y(MotionAction.TRANSLATE_Y),
@@ -578,7 +571,6 @@ public interface Constants {
 	public enum DOF6Action implements Action<MotionAction> {
 		// DOF_1
 		SCALE(MotionAction.SCALE),
-		ZOOM(MotionAction.ZOOM),
 		ZOOM_ON_ANCHOR(MotionAction.ZOOM_ON_ANCHOR),
 		TRANSLATE_X(MotionAction.TRANSLATE_X),
 		TRANSLATE_Y(MotionAction.TRANSLATE_Y),

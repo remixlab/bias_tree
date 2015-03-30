@@ -28,8 +28,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 
 	boolean										bypassNullEvent, need4Spin, drive, rotateMode;
 	float											dFriction;
-	InteractiveFrame					iFrame;
-	InteractiveEyeFrame				eyeFrame;
+	SceneFrame			  iFrame, eyeFrame;
 
 	protected boolean					needHandle;
 	/* protected */DOF2Event	spEvent;
@@ -95,10 +94,8 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	}
 
 	protected ActionGrabber<MotionAction> actionGrabber() {
-		if (inputGrabber() instanceof InteractiveEyeFrame)
-			return (InteractiveEyeFrame) inputGrabber();
 		if (inputGrabber() instanceof InteractiveFrame)
-			return (InteractiveFrame) inputGrabber();
+			return (InteractiveFrame) inputGrabber();		
 		return null;
 	}
 
@@ -126,56 +123,53 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		lastEvent = e;
 		if (pickingMode() == PickingMode.MOVE)
 			updateTrackedGrabber(lastEvent);
-
-		if (inputGrabber() instanceof InteractiveEyeFrame) {
-			moveEye(lastEvent);
+		
+		if (inputGrabber() instanceof InteractiveFrame) {
+			if( ((InteractiveFrame)inputGrabber()).isEyeFrame() )
+				moveEye(lastEvent);
+			else
+				moveFrame(lastEvent);
 		}
-		else if (inputGrabber() instanceof InteractiveFrame) {
-			moveFrame(lastEvent);
-		}
+		
 		handle(lastEvent);
 	}
 
 	protected void moveFrame(DOF2Event e) {
-		if (inputGrabber() instanceof InteractiveFrame) {
-			DOF2Action a = motionProfile().handle(lastEvent);
-			if (a != null) {
-				if (a == DOF2Action.ZOOM_ON_REGION)
-					return;
-				if (a == DOF2Action.SCREEN_ROTATE)
-					scene.setRotateVisualHint(true);
-				else
-					scene.setRotateVisualHint(false);
-				scene.setZoomVisualHint(false);
-			}
+		DOF2Action a = motionProfile().handle(lastEvent);
+		if (a != null) {
+			if (a == DOF2Action.ZOOM_ON_REGION)
+				return;
+			if (a == DOF2Action.SCREEN_ROTATE)
+				scene.setRotateVisualHint(true);
+			else
+				scene.setRotateVisualHint(false);
+			scene.setZoomVisualHint(false);
 		}
 	}
 
 	protected void moveEye(DOF2Event e) {
-		if (inputGrabber() instanceof InteractiveFrame || inputGrabber() instanceof InteractiveEyeFrame) {
-			DOF2Action a = motionProfile().handle(lastEvent);
-			if (a != null) {
-				if (a == DOF2Action.SCREEN_ROTATE)
-					scene.setRotateVisualHint(true);
-				else
-					scene.setRotateVisualHint(false);
+		DOF2Action a = motionProfile().handle(lastEvent);
+		if (a != null) {
+			if (a == DOF2Action.SCREEN_ROTATE)
+				scene.setRotateVisualHint(true);
+			else
+				scene.setRotateVisualHint(false);
 
-				if (a == DOF2Action.ZOOM_ON_REGION) {
-					scene.setZoomVisualHint(true);
-					spEvent = e.get();
-					spEvent.setPreviousEvent(pressEvent);
-					needHandle = true;
+			if (a == DOF2Action.ZOOM_ON_REGION) {
+				scene.setZoomVisualHint(true);
+				spEvent = e.get();
+				spEvent.setPreviousEvent(pressEvent);
+				needHandle = true;
+				return;
+			}
+			else {
+				scene.setZoomVisualHint(false);
+				pressEvent = e.get();
+				if (needHandle) {
+					inputHandler()
+							.enqueueEventTuple(new EventGrabberTuple(spEvent, actionGrabber(), DOF2Action.ZOOM_ON_REGION));
+					needHandle = false;
 					return;
-				}
-				else {
-					scene.setZoomVisualHint(false);
-					pressEvent = e.get();
-					if (needHandle) {
-						inputHandler()
-								.enqueueEventTuple(new EventGrabberTuple(spEvent, actionGrabber(), DOF2Action.ZOOM_ON_REGION));
-						needHandle = false;
-						return;
-					}
 				}
 			}
 		}
@@ -187,15 +181,12 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 */
 	protected void press(DOF2Event e) {
 		lastEvent = e;
-		pressEvent = lastEvent.get();
-		// if( inputGrabber() == null )
-		// return;
-		if (inputGrabber() instanceof InteractiveEyeFrame) {
-			pressEye(lastEvent);
-			return;
-		}
-		else if (inputGrabber() instanceof InteractiveFrame) {
-			pressFrame(lastEvent);
+		pressEvent = lastEvent.get();		
+		if (inputGrabber() instanceof InteractiveFrame) {
+			if( ((InteractiveFrame)inputGrabber()).isEyeFrame() )
+				pressEye(lastEvent);
+			else
+				pressFrame(lastEvent);
 			return;
 		}
 		else
@@ -207,7 +198,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 			((InteractiveFrame) inputGrabber()).stopSpinning();
 		iFrame = (InteractiveFrame) inputGrabber();
 		DOF2Action a = motionProfile().handle(lastEvent);
-		// Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle(lastEvent) :
+		// Action<?> a = (inputGrabber() instanceof InteractiveFrame) ? eyeProfile().handle(lastEvent) :
 		// frameProfile().handle(lastEvent);
 		if (a == null)
 			return;
@@ -241,23 +232,23 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 
 	protected void pressEye(DOF2Event e) {
 		if (need4Spin)
-			((InteractiveEyeFrame) inputGrabber()).stopSpinning();
-		eyeFrame = (InteractiveEyeFrame) inputGrabber();
+			((InteractiveFrame) inputGrabber()).stopSpinning();
+		eyeFrame = (InteractiveFrame) inputGrabber();
 		DOF2Action a = motionProfile().handle(lastEvent);
-		// Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle(lastEvent) :
+		// Action<?> a = (inputGrabber() instanceof InteractiveFrame) ? eyeProfile().handle(lastEvent) :
 		// frameProfile().handle(lastEvent);
 		if (a == null)
 			return;
 		MotionAction dA = (MotionAction) a.referenceAction();
 		if (dA == MotionAction.SCREEN_TRANSLATE)
-			((InteractiveEyeFrame) inputGrabber()).dirIsFixed = false;
+			((InteractiveFrame) inputGrabber()).dirIsFixed = false;
 		rotateMode = ((dA == MotionAction.ROTATE) || (dA == MotionAction.ROTATE_XYZ)
 				|| (dA == MotionAction.ROTATE_CAD)
 				|| (dA == MotionAction.SCREEN_ROTATE) || (dA == MotionAction.TRANSLATE_XYZ_ROTATE_XYZ));
 		if (rotateMode && scene.is3D())
 			scene.camera().cadRotationIsReversed = scene.camera().frame()
 					.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
-		need4Spin = (rotateMode && (((InteractiveEyeFrame) inputGrabber()).dampingFriction() == 0));
+		need4Spin = (rotateMode && (((InteractiveFrame) inputGrabber()).dampingFriction() == 0));
 		drive = (dA == MotionAction.DRIVE);
 		bypassNullEvent = (dA == MotionAction.MOVE_FORWARD) || (dA == MotionAction.MOVE_BACKWARD)
 				|| (drive) && scene.inputHandler().isAgentRegistered(this);
@@ -266,9 +257,9 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		if (bypassNullEvent || scene.zoomVisualHint() || scene.rotateVisualHint()) {
 			if (bypassNullEvent) {
 				// This is needed for first person:
-				((InteractiveEyeFrame) inputGrabber()).updateSceneUpVector();
-				dFriction = ((InteractiveEyeFrame) inputGrabber()).dampingFriction();
-				((InteractiveEyeFrame) inputGrabber()).setDampingFriction(0);
+				((InteractiveFrame) inputGrabber()).updateSceneUpVector();
+				dFriction = ((InteractiveFrame) inputGrabber()).dampingFriction();
+				((InteractiveFrame) inputGrabber()).setDampingFriction(0);
 				handler.eventTupleQueue().add(new EventGrabberTuple(lastEvent, actionGrabber(), a));
 			}
 		}
@@ -281,12 +272,11 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 */
 	protected void drag(DOF2Event e) {
 		lastEvent = e;
-		if (inputGrabber() instanceof InteractiveEyeFrame) {
-			dragEye(lastEvent);
-			return;
-		}
-		else if (inputGrabber() instanceof InteractiveFrame) {
-			dragFrame(lastEvent);
+		if (inputGrabber() instanceof InteractiveFrame) {
+			if( ((InteractiveFrame)inputGrabber()).isEyeFrame() )
+				dragEye(lastEvent);
+			else
+				dragFrame(lastEvent);
 			return;
 		}
 		else
@@ -299,7 +289,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 				((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f
 						* (lastEvent.y() - pressEvent.y()));
 			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-			// Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
+			// Action<?> a = (inputGrabber() instanceof InteractiveFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
 			// : frameProfile().handle((BogusEvent) lastEvent);
 			DOF2Action a = frameProfile().handle((BogusEvent) lastEvent);
 			if (a == null)
@@ -313,10 +303,10 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	protected void dragEye(DOF2Event e) {
 		if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
 			if (drive)
-				((InteractiveEyeFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f
+				((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f
 						* (lastEvent.y() - pressEvent.y()));
 			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-			// Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
+			// Action<?> a = (inputGrabber() instanceof InteractiveFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
 			// : frameProfile().handle((BogusEvent) lastEvent);
 			DOF2Action a = eyeProfile().handle((BogusEvent) lastEvent);
 			if (a == null)
@@ -333,12 +323,11 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	protected void release(DOF2Event e) {
 		prevEvent = lastDOF2Event().get();
 		lastEvent = e;
-		if (inputGrabber() instanceof InteractiveEyeFrame) {
-			releaseEye(lastEvent);
-			return;
-		}
-		else if (inputGrabber() instanceof InteractiveFrame) {
-			releaseFrame(lastEvent);
+		if (inputGrabber() instanceof InteractiveFrame) {
+			if( ((InteractiveFrame)inputGrabber()).isEyeFrame() )
+				releaseEye(lastEvent);
+			else
+				releaseFrame(lastEvent);
 			return;
 		}
 		else
@@ -373,8 +362,8 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 
 	protected void releaseEye(DOF2Event e) {
 		// note that the following two lines fail on event when need4Spin
-		if (need4Spin && (prevEvent.speed() >= ((InteractiveEyeFrame) inputGrabber()).spinningSensitivity()))
-			((InteractiveEyeFrame) inputGrabber()).startSpinning(prevEvent);
+		if (need4Spin && (prevEvent.speed() >= ((InteractiveFrame) inputGrabber()).spinningSensitivity()))
+			((InteractiveFrame) inputGrabber()).startSpinning(prevEvent);
 		if (scene.zoomVisualHint()) {
 			// at first glance this should work
 			// handle(event);
@@ -394,7 +383,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		}
 		// restore speed after drive action terminates:
 		if (drive)
-			((InteractiveEyeFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius());
+			((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius());
 	}
 
 	protected void wheel(DOF1Event wEvent) {
@@ -419,7 +408,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Shift + Center button -> SCREEN_TRANSLATE<br>
 	 * Shift + Right button -> SCREEN_ROTATE<br>
 	 * <p>
-	 * 2. <b>InteractiveEyeFrame bindings</b><br>
+	 * 2. <b>InteractiveFrame bindings</b><br>
 	 * Left button -> ROTATE<br>
 	 * Center button -> ZOOM<br>
 	 * Right button -> TRANSLATE<br>
@@ -431,8 +420,8 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * <p>
 	 * 2 left clicks -> ALIGN_FRAME<br>
 	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * 
 	 * @see #dragToFirstPerson()
 	 * @see #dragToThirdPerson()
@@ -442,7 +431,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		removeEyeBindings();
 		eyeProfile().setBinding(buttonModifiersFix(LEFT_ID), LEFT_ID, DOF2Action.ROTATE);
 		eyeProfile()
-				.setBinding(buttonModifiersFix(CENTER_ID), CENTER_ID, scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
+				.setBinding(buttonModifiersFix(CENTER_ID), CENTER_ID, scene.is3D() ? DOF2Action.TRANSLATE_Z : DOF2Action.SCALE);
 		eyeProfile().setBinding(buttonModifiersFix(RIGHT_ID), RIGHT_ID, DOF2Action.TRANSLATE);
 		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, LEFT_ID), LEFT_ID, DOF2Action.ZOOM_ON_REGION);
 		eyeProfile().setBinding(buttonModifiersFix(MotionEvent.SHIFT, CENTER_ID), CENTER_ID, DOF2Action.SCREEN_TRANSLATE);
@@ -465,7 +454,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Center button -> SCREEN_TRANSLATE<br>
 	 * Right button -> SCREEN_ROTATE<br>
 	 * <p>
-	 * 2. <b>InteractiveEyeFrame bindings</b><br>
+	 * 2. <b>InteractiveFrame bindings</b><br>
 	 * No-button -> ROTATE<br>
 	 * Shift + No-button -> ZOOM<br>
 	 * Ctrl + No-button -> TRANSLATE<br>
@@ -477,8 +466,8 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * <p>
 	 * 2 left clicks -> ALIGN_FRAME<br>
 	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * <p>
 	 * Note that Alt + No-button is bound to the null action.
 	 * 
@@ -490,7 +479,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		removeEyeBindings();
 		eyeProfile().setBinding(DOF2Action.ROTATE);
 		eyeProfile().setBinding(MotionEvent.SHIFT, MotionEvent.NO_ID,
-				scene.is3D() ? DOF2Action.ZOOM : DOF2Action.SCALE);
+				scene.is3D() ? DOF2Action.TRANSLATE_Z : DOF2Action.SCALE);
 		eyeProfile().setBinding(MotionEvent.CTRL, MotionEvent.NO_ID, DOF2Action.TRANSLATE);
 		eyeProfile().setBinding((MotionEvent.CTRL | MotionEvent.SHIFT), MotionEvent.NO_ID, DOF2Action.ZOOM_ON_REGION);
 		setButtonBinding(Target.EYE, CENTER_ID, DOF2Action.SCREEN_TRANSLATE);
@@ -515,7 +504,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Shift + Center button -> SCREEN_TRANSLATE<br>
 	 * Shift + Right button -> SCREEN_ROTATE<br>
 	 * <p>
-	 * 2. <b>InteractiveEyeFrame bindings</b><br>
+	 * 2. <b>InteractiveFrame bindings</b><br>
 	 * Left button -> MOVE_FORWARD<br>
 	 * Center button -> LOOK_AROUND<br>
 	 * Right button -> MOVE_BACKWARD<br>
@@ -528,8 +517,8 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * <p>
 	 * 2 left clicks -> ALIGN_FRAME<br>
 	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * 
 	 * @see #dragToArcball()
 	 * @see #dragToThirdPerson()
@@ -563,7 +552,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Center button -> SCREEN_TRANSLATE<br>
 	 * Right button -> SCREEN_ROTATE<br>
 	 * <p>
-	 * 2. <b>InteractiveEyeFrame bindings</b><br>
+	 * 2. <b>InteractiveFrame bindings</b><br>
 	 * Ctrl + No-button -> MOVE_FORWARD<br>
 	 * No-button -> LOOK_AROUND<br>
 	 * Shift + No-button -> MOVE_BACKWARD<br>
@@ -576,8 +565,8 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * <p>
 	 * 2 left clicks -> ALIGN_FRAME<br>
 	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * <p>
 	 * Note that Alt + No-button is bound to the null action.
 	 * <p>
@@ -585,8 +574,8 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * <p>
 	 * 2 left clicks -> ALIGN_FRAME<br>
 	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * 
 	 * @see #dragToArcball()
 	 * @see #dragToThirdPerson()
@@ -625,8 +614,8 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * <p>
 	 * 2 left clicks -> ALIGN_FRAME<br>
 	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * 
 	 * @see #dragToArcball()
 	 * @see #dragToFirstPerson()
@@ -657,8 +646,8 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * <p>
 	 * 2 left clicks -> ALIGN_FRAME<br>
 	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * <p>
 	 * Note that Alt + No-button is bound to the null action.
 	 * <p>
@@ -666,8 +655,8 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * <p>
 	 * 2 left clicks -> ALIGN_FRAME<br>
 	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * 
 	 * @see #dragToArcball()
 	 * @see #dragToFirstPerson()
@@ -701,8 +690,8 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * <p>
 	 * 2 left clicks -> ALIGN_FRAME<br>
 	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
+	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * <p>
 	 * which are used in {@link #dragToArcball()}, {@link #dragToFirstPerson()} and {@link #dragToThirdPerson()}
 	 */
@@ -711,7 +700,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		eyeClickProfile().setBinding(buttonModifiersFix(RIGHT_ID), RIGHT_ID, 2, ClickAction.CENTER_FRAME);
 		frameClickProfile().setBinding(buttonModifiersFix(LEFT_ID), LEFT_ID, 2, ClickAction.ALIGN_FRAME);
 		frameClickProfile().setBinding(buttonModifiersFix(RIGHT_ID), RIGHT_ID, 2, ClickAction.CENTER_FRAME);
-		this.setWheelBinding(Target.EYE, MotionEvent.NO_MODIFIER_MASK, scene.is3D() ? DOF1Action.ZOOM : DOF1Action.SCALE);
+		this.setWheelBinding(Target.EYE, MotionEvent.NO_MODIFIER_MASK, scene.is3D() ? DOF1Action.TRANSLATE_Z : DOF1Action.SCALE);
 		this.setWheelBinding(Target.FRAME, MotionEvent.NO_MODIFIER_MASK, DOF1Action.SCALE);
 	}
 

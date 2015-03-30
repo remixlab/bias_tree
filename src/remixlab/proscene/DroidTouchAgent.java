@@ -35,9 +35,9 @@ public class DroidTouchAgent extends MultiTouchAgent {
 		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_TWO_ID.id(), DOF6Action.TRANSLATE);
 		frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_TWO_ID.id(), DOF6Action.TRANSLATE);
 		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.PINCH_TWO_ID.id(),
-				scene.is3D() ? DOF6Action.ZOOM : DOF6Action.SCALE);
+				scene.is3D() ? DOF6Action.TRANSLATE_Z : DOF6Action.SCALE);
 		frameProfile().setBinding(DOF6Event.NO_MODIFIER_MASK, Gestures.PINCH_TWO_ID.id(),
-				scene.is3D() ? DOF6Action.ZOOM : DOF6Action.SCALE);
+				scene.is3D() ? DOF6Action.TRANSLATE_Z : DOF6Action.SCALE);
 		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.TURN_TWO_ID.id(), DOF6Action.ROTATE_Z);
 		frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.TURN_TWO_ID.id(), DOF6Action.ROTATE_Z);
 	}
@@ -101,7 +101,7 @@ public class DroidTouchAgent extends MultiTouchAgent {
 						MotionEvent.NO_MODIFIER_MASK,
 						gesture.id());
 
-				Action<?> a = (inputGrabber() instanceof InteractiveEyeFrame) ? eyeProfile().handle((BogusEvent) event)
+				Action<?> a = (inputGrabber() instanceof InteractiveFrame) ? eyeProfile().handle((BogusEvent) event)
 						: frameProfile().handle((BogusEvent) event);
 				if (a == null)
 					return;
@@ -156,7 +156,10 @@ public class DroidTouchAgent extends MultiTouchAgent {
 						break;
 					case TURN_TWO_ID:
 					case TURN_THREE_ID: // Rotate
-						turnOrientation = (inputGrabber() instanceof InteractiveEyeFrame) ? 1 : -1;
+						//TODO needs testing
+						turnOrientation = -1;
+						if(inputGrabber() instanceof InteractiveFrame)
+							turnOrientation = ((InteractiveFrame)inputGrabber()).isEyeFrame() ? -1 : 1;
 						event = new DOF6Event(prevEvent,
 								touchProcessor.getR() * turnOrientation,
 								0,

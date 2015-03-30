@@ -35,17 +35,41 @@ import remixlab.util.*;
  * <b>Note:</b> Once created, the InteractiveFrame is automatically added to the scene
  * {@link remixlab.bias.core.InputHandler#agents()} pool.
  */
-public class InteractiveFrame extends SceneFrame implements ActionGrabber<MotionAction>, Copyable, Constants {
+
+/**
+ * The InteractiveFrame class represents an InteractiveFrame with Eye specific gesture bindings.
+ * <p>
+ * An InteractiveFrame is a specialization of an InteractiveFrame that is designed to be set as the
+ * {@link Eye#frame()}. Some user gestures (those reduced as DOF2Events) are interpreted in a negated way (respect to
+ * those defined for the InteractiveFrame). For instance, with a move-to-the-right user gesture the InteractiveFrame
+ * has to go to the <i>left</i>, so that the <i>scene</i> seems to move to the right.
+ * <p>
+ * Depending on the Dandelion action an InteractiveFrame rotates either around the
+ * {@link remixlab.dandelion.core.Eye#anchor()} (e.g., ROTATE, HINGE), or its {@link #sceneUpVector()} (e.g.,
+ * ROTATE_CAD). In the latter case the {@link #sceneUpVector()} defines a 'vertical' direction around which the camera
+ * rotates. The camera can rotate left or right, around this axis. It can also be moved up or down to show the 'top' and
+ * 'bottom' views of the scene. As a result, the {@link #sceneUpVector()} will always appear vertical in the scene, and
+ * the horizon is preserved and stays projected along the camera's horizontal axis. Use
+ * {@link remixlab.dandelion.core.Camera#setUpVector(Vec)} to define the {@link #sceneUpVector()} and align the camera
+ * before starting a ROTATE_CAD action to ensure these invariants are preserved.
+ * <p>
+ * The possible actions that can interactively be performed by the InteractiveFrame are
+ * {@link remixlab.dandelion.core.Constants.ClickAction}, {@link remixlab.dandelion.core.Constants.DOF1Action},
+ * {@link remixlab.dandelion.core.Constants.DOF2Action}, {@link remixlab.dandelion.core.Constants.DOF3Action} and
+ * {@link remixlab.dandelion.core.Constants.DOF6Action}. The {@link remixlab.dandelion.core.AbstractScene#motionAgent()}
+ * provides high-level methods to handle some these actions, e.g., a {@link remixlab.dandelion.agent.WheeledMouseAgent}
+ * can handle up to {@link remixlab.dandelion.core.Constants.DOF2Action}s.
+ * <p>
+ * <b>Observation: </b> The InteractiveFrame is not added to the
+ * {@link remixlab.dandelion.core.AbstractScene#inputHandler()} {@link remixlab.bias.core.InputHandler#agents()} pool
+ * upon creation.
+ */
+public class InteractiveFrame extends SceneFrame implements ActionGrabber<MotionAction>, Copyable,
+		Constants {	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
 				appendSuper(super.hashCode()).
-				append(grabsInputThreshold).
-				append(adpThreshold).
-				append(eyeFrame).
-				// append(flyDisp).
-				// append(flySpd).
-				// append(scnUpVec).
 				append(action).
 				toHashCode();
 	}
@@ -62,22 +86,10 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 		InteractiveFrame other = (InteractiveFrame) obj;
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
-				.append(grabsInputThreshold, other.grabsInputThreshold)
-				.append(adpThreshold, other.adpThreshold)
-				.append(eyeFrame, other.eyeFrame)
-				.append(dampFriction, other.dampFriction)
-				// .append(flyDisp, other.flyDisp)
-				// .append(flySpd, other.flySpd)
-				// .append(scnUpVec, other.scnUpVec)
 				.append(action, other.action)
 				.isEquals();
 	}
-
-	private float			grabsInputThreshold;
-	private boolean		adpThreshold;
-
-	protected SceneFrame eyeFrame;
-
+	
 	/**
 	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
@@ -223,36 +235,11 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 	 * pool.
 	 */
 	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
+		//TODO merge with eye?
 		super(scn, referenceFrame, p, r, s);
-		scene.motionAgent().addGrabber(this);		
-		setGrabsInputThreshold(20);
-		// TODO future versions should go (except for iFrames in eyePath?):
-		// setGrabsInputThreshold(Math.round(scene.radius()/10f), true);
-
-		// scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
-		// flyDisp = new Vec(0.0f, 0.0f, 0.0f);
-
-		// if (!(this instanceof InteractiveEyeFrame))
-		setFlySpeed(0.01f * scene.radius());
+		scene.motionAgent().addGrabber(this);
 	}
-
-	protected InteractiveFrame(InteractiveFrame otherFrame) {
-		super(otherFrame);
-		if (scene.motionAgent().hasGrabber(otherFrame))
-			scene.motionAgent().addGrabber(this);
-
-		this.setAction(otherFrame.action());
-
-		// this.scnUpVec.set(otherFrame.sceneUpVector().get());
-		// this.flyDisp.set(otherFrame.flyDisp.get());
-		// this.setFlySpeed(otherFrame.flySpeed());
-	}
-
-	@Override
-	public InteractiveFrame get() {
-		return new InteractiveFrame(this);
-	}
-
+	
 	/**
 	 * Ad-hoc constructor needed to make editable an Eye path defined by a KeyFrameInterpolator.
 	 * <p>
@@ -266,21 +253,63 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 	 * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
 	 */
 	protected InteractiveFrame(AbstractScene scn, SceneFrame iFrame) {
-		super(scn, iFrame.translation().get(), iFrame.rotation().get(), iFrame.scaling());
+		super(scn, iFrame);
+	}
+	
+	//--
 
-		eyeFrame = iFrame;
-		setGrabsInputThreshold(20);
-		// TODO future versions should go (except for iFrames in eyePath?):
-		// setGrabsInputThreshold(Math.round(scene.radius()/10f), true);
+	/**
+	 * Default constructor.
+	 * <p>
+	 * {@link #flySpeed()} is set to 0.0 and {@link #sceneUpVector()} is set to the Y-axis. The
+	 * {@link remixlab.dandelion.core.Eye#anchor()} is set to 0.
+	 * <p>
+	 * <b>Attention:</b> Created object is removed from the {@link remixlab.dandelion.core.AbstractScene#inputHandler()}
+	 * {@link remixlab.bias.core.InputHandler#agents()} pool.
+	 */
+	public InteractiveFrame(Eye theEye) {
+		super(theEye);
+		
+	  //TODO merge with frame? Really depends on the next line
+		//scene.motionAgent().addGrabber(this);			
+	}
+	
+	protected InteractiveFrame(InteractiveFrame otherFrame) {
+		super(otherFrame);
+		
+	  // this.scnUpVec.set(otherFrame.sceneUpVector().get());
+		// this.flyDisp.set(otherFrame.flyDisp.get());
+		// this.setFlySpeed(otherFrame.flySpeed());
+		
+		if( !isEyeFrame() ) {
+			if (scene.motionAgent().hasGrabber(otherFrame))
+				scene.motionAgent().addGrabber(this);
 
-		// scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
+			this.setAction(otherFrame.action());
+		}
+	  // TODO don't think so: frame is added to the pool when setting the eye
+		//else {		  
+			// if( scene.motionAgent().eyeBranch().isInPool(otherFrame) )
+			// scene.motionAgent().eyeBranch().addInPool(this);
+		//}		
+	}
+
+	/*
+	protected InteractiveFrame(InteractiveFrame otherFrame) {
+		super(otherFrame.theeye);
+
+		
+	}
+	*/
+
+	@Override
+	public InteractiveFrame get() {
+		return new InteractiveFrame(this);
 	}
 
 	// grabber implementation
 
-	// TODO testing instantiation
-	// see here http://stackoverflow.com/questions/23056324/why-does-java-allow-null-value-to-be-assigned-to-an-enum
-	protected Action<MotionAction>	action	= DOF1Action.CUSTOM;
+	protected Action<MotionAction>	action;
 
 	public MotionAction referenceAction() {
 		return action != null ? action.referenceAction() : null;
@@ -295,6 +324,13 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 	public Action<MotionAction> action() {
 		return action;
 	}
+	
+	/**
+	 * Returns {@code true} when the InteractiveFrame is being manipulated with an agent.
+	 */
+	public boolean isInInteraction() {
+		return action != null;
+	}
 
 	/**
 	 * Check if this object is the {@link remixlab.bias.core.Agent#inputGrabber()}. Returns {@code true} if this object
@@ -302,39 +338,6 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 	 */
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
-	}
-
-	@Override
-	public boolean checkIfGrabsInput(BogusEvent event) {
-		if (event instanceof ClickEvent)
-			return checkIfGrabsInput((ClickEvent) event);
-		if (event instanceof DOF1Event)
-			return checkIfGrabsInput((DOF1Event) event);
-		if (event instanceof DOF2Event)
-			return checkIfGrabsInput((DOF2Event) event);
-		if (event instanceof DOF3Event)
-			return checkIfGrabsInput((DOF3Event) event);
-		if (event instanceof DOF6Event)
-			return checkIfGrabsInput((DOF6Event) event);
-		return false;
-	}
-
-	public boolean checkIfGrabsInput(ClickEvent event) {
-		return checkIfGrabsInput(new DOF2Event(event.x(), event.y()));
-	}
-
-	public boolean checkIfGrabsInput(DOF2Event event) {
-		Vec proj = scene.eye().projectedCoordinatesOf(position());
-		float halfThreshold = grabsInputThreshold() / 2;
-		return ((Math.abs(event.x() - proj.vec[0]) < halfThreshold) && (Math.abs(event.y() - proj.vec[1]) < halfThreshold));
-	}
-
-	public boolean checkIfGrabsInput(DOF3Event event) {
-		return checkIfGrabsInput(event.dof2Event());
-	}
-
-	public boolean checkIfGrabsInput(DOF6Event event) {
-		return checkIfGrabsInput(event.dof3Event().dof2Event());
 	}
 
 	@Override
@@ -353,18 +356,45 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 
 	public void performInteraction(ClickEvent event) {
 		switch (referenceAction()) {
-		case CENTER_FRAME:
-			center();
+		case CUSTOM:
+			performCustomAction(event);
 			break;
 		case ALIGN_FRAME:
 			align();
 			break;
-		case CUSTOM:
-			performCustomAction(event);
-			break;
 		case ANCHOR_FROM_PIXEL:
+			if(!isEyeFrame()) {
+				AbstractScene.showOnlyEyeWarning(referenceAction());
+				break;
+			}
+			if (eye().setAnchorFromPixel(new Point(event.x(), event.y()))) {
+				eye().anchorFlag = true;
+				eye().timerFx.runOnce(1000);
+			}
+			break;
+		case CENTER_FRAME:
+			center();
+			break;
 		case ZOOM_ON_PIXEL:
-			AbstractScene.showOnlyEyeWarning(referenceAction());
+			if(!isEyeFrame()) {
+				AbstractScene.showOnlyEyeWarning(referenceAction());
+				break;
+			}
+			if (scene.is2D()) {
+				eye().interpolateToZoomOnPixel(new Point(event.x(), event.y()));
+				eye().pupVec = eye().unprojectedCoordinatesOf(new Vec(event.x(), event.y(), 0.5f));
+				eye().pupFlag = true;
+				eye().timerFx.runOnce(1000);
+			}
+			else {
+				Vec pup = ((Camera) eye()).pointUnderPixel(new Point(event.x(), event.y()));
+				if (pup != null) {
+					((Camera) eye()).interpolateToZoomOnTarget(pup);
+					eye().pupVec = pup;
+					eye().pupFlag = true;
+					eye().timerFx.runOnce(1000);
+				}
+			}
 			break;
 		default:
 			break;
@@ -401,12 +431,6 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 
 	// 2D
 
-	/*
-	 * protected void execAction2D(ClickEvent event) {
-	 * 
-	 * }
-	 */
-
 	protected void execAction2D(DOF1Event event) {
 		execAction2D(event, false);
 	}
@@ -417,16 +441,10 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 			performCustomAction(event);
 			break;
 		case ROTATE_Z:
-			//TODO needs testing
-			Rot rt = new Rot((wheel ? wheelSensitivity() : rotationSensitivity()) * (scene.isRightHanded() ? computeAngle(event) : -computeAngle(event)) );
-			rotate(rt);
-			setSpinningRotation(rt);
+			gestureRotateZ(event,  wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case SCALE:
-			//TODO needs testing
-			float delta = delta1(event) * ( wheel ? wheelSensitivity() : translationSensitivity());
-			float s = 1 + Math.abs(delta) / (float) scene.height();
-			scale(delta >= 0 ? s : 1 / s);
+			scale(event, wheel ? wheelSensitivity() : translationSensitivity());			
 			break;
 		case TRANSLATE_X:
 			gestureTranslateX(event, wheel ? wheelSensitivity() : translationSensitivity());
@@ -434,78 +452,45 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 		case TRANSLATE_Y:
 			gestureTranslateY(event, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
-		case ROTATE_X:
-		case ROTATE_Y:
-		case TRANSLATE_Z:
-			AbstractScene.showDepthWarning(referenceAction());
-			break;
-		case ZOOM:
-		case ZOOM_ON_ANCHOR:
-			AbstractScene.showOnlyEyeWarning(referenceAction());
-			break;
 		default:
+			// TODO
+			// AbstractScene.showOnlyEyeWarning(a);
 			break;
 		}
 	}
 
 	protected void execAction2D(DOF2Event event) {
-		Vec trns;
 		switch (referenceAction()) {
 		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case MOVE_BACKWARD:
-			rotate(deformedBallRotation(event, scene.window().projectedCoordinatesOf(position())));
-			flyDisp.set(-flySpeed(), 0.0f, 0.0f);
-			trns = localInverseTransformOf(flyDisp);
-			translate(trns);
-			setTossingDirection(trns);
-			startTossing(event);
+			moveBackward(event);
 			break;
 		case MOVE_FORWARD:
-			rotate(deformedBallRotation(event, scene.window().projectedCoordinatesOf(position())));
-			flyDisp.set(flySpeed(), 0.0f, 0.0f);
-			trns = localInverseTransformOf(flyDisp);
-			//TODO new line, needs testing but seemed like a bug not to have it
-			translate(trns);
-			setTossingDirection(trns);
-			startTossing(event);
+			moveForward(event);
 			break;
 		case ROTATE:
 		case SCREEN_ROTATE:
-			Rotation rt = deformedBallRotation(event, scene.window().projectedCoordinatesOf(position()));
-			if (event.isRelative()) {
-				setSpinningRotation(rt);
-				if (Util.nonZero(dampingFriction()))
-					startSpinning(event);
-				else
-					spin();
-			} else
-				// absolute needs testing
-				rotate(rt);
+			arcball(event);
 			break;
 		case SCREEN_TRANSLATE:
-			//TODO needs testing!
-			/*
-			deltaX = (event.isRelative()) ? event.dx() : event.x();
-			if (event.isRelative())
-				deltaY = scene.isRightHanded() ? event.dy() : -event.dy();
-			else
-				deltaY = scene.isRightHanded() ? event.y() : -event.y();
-			int dir = originalDirection(event);
-			if (dir == 1)
-				screenTranslate(new Vec(deltaX, 0.0f, 0.0f));
-			else if (dir == -1)
-				screenTranslate(new Vec(0.0f, -deltaY, 0.0f));
-			*/
-			int dir = originalDirection(event);
-			if (dir == 1)
-				gestureTranslateX(event.dof1Event(true), translationSensitivity());
-			else if (dir == -1)
-				gestureTranslateY(event.dof1Event(false), translationSensitivity());
 			break;
 		case TRANSLATE:
 			gestureTranslateXY(event);
+			break;
+		case ZOOM_ON_REGION:
+			if (event.isAbsolute()) {
+				// TODO restore
+				// AbstractScene.showEventVariationWarning(a);
+				break;
+			}
+			int w = (int) Math.abs(event.dx());
+			int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
+			int h = (int) Math.abs(event.dy());
+			int tlY = (int) event.prevY() < (int) event.y() ? (int) event.prevY() : (int) event.y();
+			// viewWindow.fitScreenRegion( new Rectangle (tlX, tlY, w, h) );
+			eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
 			break;
 		case ROTATE_Z:
 		case TRANSLATE_X:
@@ -515,15 +500,9 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 		case TRANSLATE_Y:
 			execAction2D(event.dof1Event(false));
 			break;
-		case ZOOM:
-		case ZOOM_ON_ANCHOR:
-		case ROTATE_CAD:
-		case ZOOM_ON_REGION:
-			AbstractScene.showOnlyEyeWarning(referenceAction());
-			break;
-		// ROTATE_X: ROTATE_Y: TRANSLATE_Z: DRIVE: LOOK_AROUND:
 		default:
-			AbstractScene.showDepthWarning(referenceAction());
+			// TODO
+			// AbstractScene.showOnlyEyeWarning(a);
 			break;
 		}
 	}
@@ -544,173 +523,110 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 
 	// 3D
 
-	/*
-	 * protected void execAction3D(ClickEvent event) { }
-	 */
-
 	protected void execAction3D(DOF1Event event) {
 		execAction3D(event, false);
 	}
 
 	protected void execAction3D(DOF1Event event, boolean wheel) {
-		float delta;
+		Vec trns;
 		switch (referenceAction()) {
 		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case ROTATE_X:
-			//TODO needs testing
 			rotateAroundEyeAxes((wheel ? wheelSensitivity() : rotationSensitivity()) * computeAngle(event), 0, 0);
 			break;
 		case ROTATE_Y:
-		//TODO needs testing
 			rotateAroundEyeAxes(0, (wheel ? wheelSensitivity() : rotationSensitivity()) * -computeAngle(event), 0);
 			break;
 		case ROTATE_Z:
-		//TODO needs testing
 			rotateAroundEyeAxes(0, 0, (wheel ? wheelSensitivity() : rotationSensitivity()) * -computeAngle(event));
 			break;
 		case SCALE:
-			//TODO needs testing
-			delta = delta1(event) * ( wheel ? wheelSensitivity() : translationSensitivity() );
-			float s = 1 + Math.abs(delta) / (float) scene.height();
-			scale(delta >= 0 ? s : 1 / s);
+			scale(event, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case TRANSLATE_X:
 			gestureTranslateX(event, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
-		case TRANSLATE_Y:			
+		case TRANSLATE_Y:
 			gestureTranslateY(event, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case TRANSLATE_Z:
 			gestureTranslateZ(event, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
-		case ZOOM:
-			//TODO leave it as TRANSLATE_Z and remove translateFE
-			if (wheel) {
-				delta = event.x() * wheelSensitivity();
-				translateFE(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
-						/ scene.camera().screenHeight()), 1);
-			}
-			else {
-				delta = event.isAbsolute() ? event.x() : event.dx();
-				translateFE(new Vec(0.0f, 0.0f, Vec.subtract(scene.camera().position(), position()).magnitude() * delta
-						/ scene.camera().screenHeight()));
-			}
-			break;
 		case ZOOM_ON_ANCHOR:
-			AbstractScene.showOnlyEyeWarning(referenceAction());
+		  /*
+			trns = Vec.subtract(eye().anchor(), position());
+			trns = eye().eyeCoordinatesOf(trns);
+			trns.normalize();
+			trns.multiply(delta1(event));
+			Vec ineye = trns.get();
+			float mag = gesture2Eye(trns);
+			
+			translateFromEye(trns, wheel ? wheelSensitivity() : translationSensitivity());
+			//*/
+			///*
+			trns = Vec.subtract(eye().anchor(), position());
+			trns = eye().eyeCoordinatesOf(trns);
+			trns.normalize();
+			trns.multiply(delta1(event));
+			//translateFromGesture(trns, wheel ? wheelSensitivity() : translationSensitivity());
+			//TODO: broken once again!
+			//eyeTranslate(trns, wheel ? wheelSensitivity() : translationSensitivity());
+			//*/			
+			
+			/*
+			//TODO experimenting
+			scale2Fit(trns);
+			translateFromWorld(trns, wheel ? wheelSensitivity() : translationSensitivity());
+			//*/
+
+			//TODO only missing case
+			/*
+			if (wheel)
+				delta = event.x() * -wheelSensitivity() * wheelSensitivityCoef;
+			// TODO should absolute be divided by camera.screenHeight()?
+			else if (event.isAbsolute())
+				delta = -event.x() / eye().screenHeight();
+			else
+				delta = -event.dx() / eye().screenHeight();
+			trns = Vec.subtract(position(), scene.camera().anchor());
+			if (trns.magnitude() > 0.02f * scene.radius() || delta > 0.0f)
+				translate(Vec.multiply(trns, delta));
+			//*/
 			break;
 		default:
 			break;
 		}
 	}
-	
-	protected void translateFE(Vec trans) {
-		translateFE(trans, translationSensitivity());
-	}
-
-	protected void translateFE(Vec trans, float sens) {
-		// Transform from eye to world coordinate system.
-		trans = scene.is2D() ? scene.window().frame().inverseTransformOf(Vec.multiply(trans, sens))
-				: scene.camera().frame().orientation().rotate(Vec.multiply(trans, sens));
-
-		// And then down to frame
-		if (referenceFrame() != null)
-			trans = referenceFrame().transformOf(trans);
-		translate(trans);
-	}
 
 	protected void execAction3D(DOF2Event event) {
-		Quat rt;
-		Vec trns;
-		float angle;
 		switch (referenceAction()) {
 		case CUSTOM:
 			performCustomAction(event);
 			break;
 		case DRIVE:
-			rotate(turnQuaternion(event.dof1Event(), scene.camera()));
-			flyDisp.set(0.0f, 0.0f, flySpeed());
-			trns = rotation().rotate(flyDisp);
-			setTossingDirection(trns);
-			startTossing(event);
+			drive(event);
 			break;
 		case LOOK_AROUND:
 			rotate(rollPitchQuaternion(event, scene.camera()));
 			break;
 		case MOVE_BACKWARD:
-			rotate(rollPitchQuaternion(event, scene.camera()));
-			flyDisp.set(0.0f, 0.0f, flySpeed());
-			trns = rotation().rotate(flyDisp);
-			setTossingDirection(trns);
-			startTossing(event);
+			moveBackward(event);
 			break;
 		case MOVE_FORWARD:
-			rotate(rollPitchQuaternion(event, scene.camera()));
-			flyDisp.set(0.0f, 0.0f, -flySpeed());
-			trns = rotation().rotate(flyDisp);
-			setTossingDirection(trns);
-			startTossing(event);
+			moveForward(event);
 			break;
 		case ROTATE:
-			if (event.isAbsolute()) {
-				// TODO restore
-				// AbstractScene.showEventVariationWarning(a);
-				break;
-			}
-			trns = scene.camera().projectedCoordinatesOf(position());
-			rt = (Quat) deformedBallRotation(event, trns);
-			trns = rt.axis();
-			trns = scene.camera().frame().orientation().rotate(trns);
-			trns = transformOf(trns);
-			rt = new Quat(trns, -rt.angle());
-			setSpinningRotation(rt);
-			if (Util.nonZero(dampingFriction()))
-				startSpinning(event);
-			else
-				spin();
+			arcball(event);
+			break;
+		case ROTATE_CAD:
+			rotateCAD(event);
 			break;
 		case SCREEN_ROTATE:
-			if (event.isAbsolute()) {
-				// TODO
-				// AbstractScene.showEventVariationWarning(a);
-				break;
-			}
-			trns = scene.camera().projectedCoordinatesOf(position());
-			float prev_angle = (float) Math.atan2(event.prevY() - trns.vec[1], event.prevX() - trns.vec[0]);
-			angle = (float) Math.atan2(event.y() - trns.vec[1], event.x() - trns.vec[0]);
-			Vec axis = transformOf(scene.camera().frame().orientation().rotate(new Vec(0.0f, 0.0f, -1.0f)));
-			if (scene.isRightHanded())
-				rt = new Quat(axis, angle - prev_angle);
-			else
-				rt = new Quat(axis, prev_angle - angle);
-			setSpinningRotation(rt);
-			if (Util.nonZero(dampingFriction()))
-				startSpinning(event);
-			else
-				spin();
+			screenRotate(event);
 			break;
 		case SCREEN_TRANSLATE:
-			//TODO needs testing
-			/*
-			int dir = originalDirection(event);
-			trns = new Vec();
-			if (dir == 1)
-				if (event.isAbsolute())
-					trns.set(event.x(), 0.0f, 0.0f);
-				else
-					trns.set(event.dx(), 0.0f, 0.0f);
-			else if (dir == -1)
-				if (event.isAbsolute())
-					trns.set(0.0f, scene.isRightHanded() ? -event.y() : event.y(), 0.0f);
-				else
-					trns.set(0.0f, scene.isRightHanded() ? -event.dy() : event.dy(), 0.0f);
-		  //TODO experimenting
-			//scale2Fit(trns);
-			screenTranslate(trns);
-			*/
-			
 			int dir = originalDirection(event);
 			if (dir == 1)
 				gestureTranslateX(event.dof1Event(true), translationSensitivity());
@@ -720,12 +636,25 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 		case TRANSLATE:
 			gestureTranslateXY(event);
 			break;
+		case ZOOM_ON_REGION:
+			if (event.isAbsolute()) {
+				// TODO restore
+				// AbstractScene.showEventVariationWarning(a);
+				break;
+			}
+			int w = (int) Math.abs(event.dx());
+			int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
+			int h = (int) Math.abs(event.dy());
+			int tlY = (int) event.prevY() < (int) event.y() ? (int) event.prevY() : (int) event.y();
+			// camera.fitScreenRegion( new Rectangle (tlX, tlY, w, h) );
+			eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
+			break;
 		case ROTATE_Y:
 		case ROTATE_Z:
 		case TRANSLATE_X:
+		case ZOOM_ON_ANCHOR:
 			execAction3D(event.dof1Event(true), false);
 			break;
-		// ROTATE_CAD: ROTATE_X: SCALE: TRANSLATE_Y: TRANSLATE_Z: ZOOM: ZOOM_ON_ANCHOR: ZOOM_ON_REGION:
 		default:
 			execAction3D(event.dof1Event(false), false);
 			break;
@@ -746,7 +675,6 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 		case TRANSLATE_XYZ:
 			gestureTranslateXYZ(event);
 			break;
-		// ROTATE_CAD: ROTATE_X: SCALE: TRANSLATE_Y: TRANSLATE_Z: ZOOM: ZOOM_ON_ANCHOR: ZOOM_ON_REGION:
 		default:
 			execAction3D(event.dof2Event());
 			break;
@@ -757,6 +685,9 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 		switch (referenceAction()) {
 		case CUSTOM:
 			performCustomAction(event);
+			break;
+		case HINGE: 
+			hinge(event);
 			break;
 		case TRANSLATE_XYZ_ROTATE_XYZ:
 			// A. Translate the iFrame
@@ -793,79 +724,5 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 
 	public void performCustomAction(DOF6Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF6Event event)", this.getClass().getName());
-	}
-
-	/**
-	 * Returns {@code true} when the InteractiveFrame is being manipulated with an agent.
-	 */
-	public boolean isInInteraction() {
-		return action != null;
-	}
-
-	// --
-
-	/**
-	 * Returns {@code true} if the InteractiveFrame forms part of an Eye path and {@code false} otherwise.
-	 * 
-	 */
-	public boolean isInEyePath() {
-		return eyeFrame != null;
-	}
-
-	/**
-	 * Returns the grabs input threshold which is used by the interactive frame to {@link #checkIfGrabsInput(BogusEvent)}.
-	 * 
-	 * @see #setGrabsInputThreshold(float)
-	 */
-	public float grabsInputThreshold() {
-		if (adaptiveGrabsInputThreshold())
-			return grabsInputThreshold * scaling() * scene.eye().pixelToSceneRatio(position());
-		return grabsInputThreshold;
-	}
-
-	/**
-	 * Returns {@code true} if the {@link #checkIfGrabsInput(BogusEvent)} test is adaptive and {@code false} otherwise.
-	 * 
-	 * @see #setGrabsInputThreshold(float, boolean)
-	 */
-	public boolean adaptiveGrabsInputThreshold() {
-		return adpThreshold;
-	}
-
-	/**
-	 * Convenience function that simply calls {@code setGrabsInputThreshold(threshold, false)}.
-	 * 
-	 * @see #setGrabsInputThreshold(float, boolean)
-	 */
-	public void setGrabsInputThreshold(float threshold) {
-		setGrabsInputThreshold(threshold, false);
-	}
-
-	/**
-	 * Sets the length of the hint that defined the {@link #checkIfGrabsInput(BogusEvent)} condition used for frame
-	 * picking.
-	 * <p>
-	 * If {@code adaptive} is {@code false}, the {@code threshold} is expressed in pixels and directly defines the fixed
-	 * length of the {@link remixlab.dandelion.core.AbstractScene#drawShooterTarget(Vec, float)}, centered at the
-	 * projection of the frame origin onto the screen.
-	 * <p>
-	 * If {@code adaptive} is {@code true}, the {@code threshold} is expressed in object space (world units) and defines
-	 * the edge length of a squared bounding box that leads to an adaptive length of the
-	 * {@link remixlab.dandelion.core.AbstractScene#drawShooterTarget(Vec, float)}, centered at the projection of the
-	 * frame origin onto the screen. Use this version only if you have a good idea of the bounding box size of the object
-	 * you are attaching to the frame.
-	 * <p>
-	 * Default behavior is to set the {@link #grabsInputThreshold()} to 20 pixels length (in a non-adaptive manner).
-	 * <p>
-	 * Negative {@code threshold} values are silently ignored.
-	 * 
-	 * @see #grabsInputThreshold()
-	 * @see #checkIfGrabsInput(BogusEvent)
-	 */
-	public void setGrabsInputThreshold(float threshold, boolean adaptive) {
-		if (threshold >= 0) {
-			adpThreshold = adaptive;
-			grabsInputThreshold = threshold;
-		}
 	}
 }

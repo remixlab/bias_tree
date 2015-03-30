@@ -1538,8 +1538,8 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 			return;
 
 		eye().frame().stopSpinning();
-		if (avatar() instanceof InteractiveFrame)
-			((InteractiveFrame) (avatar())).stopSpinning();
+		if (avatar() instanceof SceneFrame)
+			((SceneFrame) (avatar())).stopSpinning();
 
 		// perform small animation ;)
 		if (eye().anyInterpolationStarted())
@@ -1549,8 +1549,9 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 		eyeFrameCopy.setMagnitude(avatar().eyeFrame().scaling());
 		eye().interpolateTo(eyeFrameCopy);
 
-		if ((avatar() instanceof InteractiveFrame) && !(avatar() instanceof InteractiveEyeFrame))
-			motionAgent().setDefaultGrabber((InteractiveFrame) avatar());
+		if (avatar() instanceof SceneFrame)
+			if( !((SceneFrame)avatar()).isEyeFrame() )
+			motionAgent().setDefaultGrabber((SceneFrame) avatar());
 		motionAgent().disableTracking();
 	}
 
@@ -1665,7 +1666,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	/**
 	 * Same as {@code eye().frame().setConstraint(constraint)}.
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveEyeFrame#setConstraint(Constraint)
+	 * @see remixlab.dandelion.core.InteractiveFrame#setConstraint(Constraint)
 	 */
 	public void setEyeConstraint(Constraint constraint) {
 		eye().frame().setConstraint(constraint);
@@ -2092,6 +2093,13 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	 */
 	static public void showOnlyEyeWarning(MotionAction action) {
 		showWarning(action.name() + " can only be performed by the eye (frame).");
+	}
+	
+	/**
+	 * Display a warning that the specified method is only available for a frame (but not an eye-frame).
+	 */
+	static public void showOnlyFrameWarning(String method) {
+		showWarning(method + "() is only meaningful for a frame (but not an eye-frame).");
 	}
 
 	/**

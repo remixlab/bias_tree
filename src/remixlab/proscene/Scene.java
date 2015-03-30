@@ -1774,10 +1774,10 @@ public class Scene extends AbstractScene implements PConstants {
 	public void drawPickingTargets(boolean keyFrame) {
 		pg().pushStyle();
 		for (Grabber mg : motionAgent().grabbers()) {
-			if (mg instanceof InteractiveFrame) {
-				InteractiveFrame iF = (InteractiveFrame) mg;// downcast needed
+			if (mg instanceof SceneFrame) {
+				SceneFrame iF = (SceneFrame) mg;// downcast needed
 				// frames
-				if (!(iF.isInEyePath() ^ keyFrame)) {
+				if (!(iF.isInEyePath() ^ keyFrame) && (!iF.isEyeFrame()) ) {
 					Vec center = projectedCoordinatesOf(iF.position());
 					// if (mg.grabsInput(motionAgent())) {
 					if (motionAgent().isInputGrabber(mg)) {
@@ -1926,12 +1926,11 @@ public class Scene extends AbstractScene implements PConstants {
 		float p1x = mouseAgent().lastDOF2Event().x() /*- originCorner().x()*/;
 		float p1y = mouseAgent().lastDOF2Event().y() /*- originCorner().y()*/;
 		Vec p2 = new Vec();
-		if (motionAgent().inputGrabber() instanceof InteractiveFrame
-				|| motionAgent().inputGrabber() instanceof InteractiveEyeFrame) {
-			if (motionAgent().inputGrabber() instanceof InteractiveEyeFrame)
+		if (motionAgent().inputGrabber() instanceof SceneFrame) {
+			if ( ((SceneFrame) motionAgent().inputGrabber()).isEyeFrame())
 				p2 = eye().projectedCoordinatesOf(anchor());
 			else
-				p2 = eye().projectedCoordinatesOf(((InteractiveFrame) mouseAgent().inputGrabber()).position());
+				p2 = eye().projectedCoordinatesOf(((SceneFrame) mouseAgent().inputGrabber()).position());
 		}
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);

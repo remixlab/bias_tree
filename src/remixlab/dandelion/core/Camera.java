@@ -1131,9 +1131,9 @@ public class Camera extends Eye implements Copyable {
 		// Small hack: attach a temporary frame to take advantage of lookAt without modifying frame
 		tempFrame = new SceneFrame(scene);
 		// TODO experimental
-		// InteractiveEyeFrame originalFrame = frame();
+		// InteractiveFrame originalFrame = frame();
 		SceneFrame originalFrame = frame();
-		// InteractiveEyeFrame originalFrame = (InteractiveEyeFrame)frame();
+		// InteractiveFrame originalFrame = (InteractiveFrame)frame();
 		tempFrame.setPosition(Vec.add(Vec.multiply(frame().position(), coef), Vec.multiply(target, (1.0f - coef))));
 		tempFrame.setOrientation(frame().orientation().get());
 		tempFrame.setMagnitude(frame().magnitude());

@@ -24,7 +24,7 @@ import remixlab.util.*;
  * An Eye defines some intrinsic parameters ({@link #position()}, {@link #viewDirection()}, {@link #upVector()}...) and
  * useful positioning tools that ease its placement ({@link #showEntireScene()}, {@link #fitBall(Vec, float)},
  * {@link #lookAt(Vec)}...). It exports its associated projection and view matrices and it can interactively be modified
- * using any interaction mechanism you can think of (see {@link remixlab.dandelion.core.InteractiveEyeFrame} class).
+ * using any interaction mechanism you can think of (see {@link remixlab.dandelion.core.InteractiveFrame} class).
  * <p>
  * An Eye holds a collection of paths ({@link #keyFrameInterpolator(int key)}) each of which can be interpolated (
  * {@link #playPath}). It also provides visibility routines ({@link #isPointVisible(Vec)},
@@ -32,7 +32,7 @@ import remixlab.util.*;
  * techniques can be implemented.
  * <p>
  * The {@link #position()} and {@link #orientation()} of the Eye are defined by an
- * {@link remixlab.dandelion.core.InteractiveEyeFrame} (retrieved using {@link #frame()}). These methods are just
+ * {@link remixlab.dandelion.core.InteractiveFrame} (retrieved using {@link #frame()}). These methods are just
  * convenient wrappers to the equivalent Frame methods. This also means that the Eye {@link #frame()} can be attached to
  * a {@link remixlab.dandelion.geom.Frame#referenceFrame()} which enables complex Eye setups. An Eye has its own
  * magnitude, different from that of the scene (i.e., {@link remixlab.dandelion.geom.Frame#magnitude()} doesn't
@@ -179,13 +179,13 @@ public abstract class Eye implements Copyable {
 				unSetTimerFlag();
 			}
 		};
-		this.scene.registerTimingTask(timerFx);
+		this.scene.registerTimingTask(timerFx);		
 
-		setFrame(new InteractiveEyeFrame(this));
-
+		setFrame(new InteractiveFrame(this));
 		setSceneRadius(100);
 		setSceneCenter(new Vec(0.0f, 0.0f, 0.0f));
 		setScreenWidthAndHeight(scene.width(), scene.height());
+		
 		viewMat = new Mat();
 		projectionMat = new Mat();
 		projectionMat.set(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -251,9 +251,9 @@ public abstract class Eye implements Copyable {
 	public abstract Eye get();
 
 	/**
-	 * Returns the InteractiveEyeFrame attached to the Eye.
+	 * Returns the InteractiveFrame attached to the Eye.
 	 * <p>
-	 * This InteractiveEyeFrame defines its {@link #position()}, {@link #orientation()} and can translate bogus events
+	 * This InteractiveFrame defines its {@link #position()}, {@link #orientation()} and can translate bogus events
 	 * into Eye displacement. Set using {@link #setFrame(SceneFrame)}.
 	 */
 	public SceneFrame frame() {
@@ -346,7 +346,7 @@ public abstract class Eye implements Copyable {
 	 * If you want to move the Eye, use {@link #setPosition(Vec)} and {@link #setOrientation(Rotation)} or one of the Eye
 	 * positioning methods ({@link #lookAt(Vec)}, {@link #fitBall(Vec, float)}, {@link #showEntireScene()}...) instead.
 	 * <p>
-	 * This method is actually mainly useful if you derive the InteractiveEyeFrame class and want to use an instance of
+	 * This method is actually mainly useful if you derive the InteractiveFrame class and want to use an instance of
 	 * your new class to move the Eye.
 	 * <p>
 	 * A {@code null} {@code icf} reference will silently be ignored.
@@ -544,9 +544,9 @@ public abstract class Eye implements Copyable {
 		scnRadius = radius;
 		setFlySpeed(0.01f * sceneRadius());
 		for (Grabber mg : scene.motionAgent().grabbers()) {
-			if (mg instanceof InteractiveFrame)
-				if (!((InteractiveFrame) mg).isInEyePath())
-					((InteractiveFrame) mg).setFlySpeed(0.01f * sceneRadius());
+			if (mg instanceof SceneFrame)
+				if (!((SceneFrame) mg).isInEyePath())
+					((SceneFrame) mg).setFlySpeed(0.01f * sceneRadius());
 		}
 	}
 
@@ -561,7 +561,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Returns the fly speed of the Eye.
 	 * <p>
-	 * Simply returns {@code frame().flySpeed()}. See the {@link remixlab.dandelion.core.InteractiveEyeFrame#flySpeed()}
+	 * Simply returns {@code frame().flySpeed()}. See the {@link remixlab.dandelion.core.InteractiveFrame#flySpeed()}
 	 * documentation. This value is only meaningful when the action binding is MOVE_FORWARD or is MOVE_BACKWARD.
 	 * <p>
 	 * Set to 0.5% of the {@link #sceneRadius()} by {@link #setSceneRadius(float)}.
@@ -1318,8 +1318,7 @@ public abstract class Eye implements Copyable {
 			if (keyFInterpolator.scene != scene) {
 				keyFInterpolator.scene = scene;
 				for (int i = 0; i < keyFInterpolator.numberOfKeyFrames(); ++i)
-					if (keyFInterpolator.keyFrame(i) instanceof InteractiveFrame)
-						((InteractiveFrame) keyFInterpolator.keyFrame(i)).scene = scene;
+					keyFInterpolator.keyFrame(i).scene = scene;
 			}
 			kfi.put(key, keyFInterpolator);
 			System.out.println("Path " + key + " set");
@@ -1697,9 +1696,9 @@ public abstract class Eye implements Copyable {
 		// Small hack: attach a temporary frame to take advantage of fitScreenRegion without modifying frame
 		tempFrame = new SceneFrame(scene);
 		// TODO experimental
-		// InteractiveEyeFrame originalFrame = frame();
+		// InteractiveFrame originalFrame = frame();
 		SceneFrame originalFrame = frame();
-		// InteractiveEyeFrame originalFrame = (InteractiveEyeFrame)frame();
+		// InteractiveFrame originalFrame = (InteractiveFrame)frame();
 		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
 		tempFrame.setOrientation(frame().orientation().get());
 		tempFrame.setMagnitude(frame().magnitude());
@@ -1730,9 +1729,9 @@ public abstract class Eye implements Copyable {
 		// Small hack: attach a temporary frame to take advantage of showEntireScene without modifying frame
 		tempFrame = new SceneFrame(scene);
 		// TODO experimental
-		// InteractiveEyeFrame originalFrame = frame();
+		// InteractiveFrame originalFrame = frame();
 		SceneFrame originalFrame = frame();
-		// InteractiveEyeFrame originalFrame = (InteractiveEyeFrame)frame();
+		// InteractiveFrame originalFrame = (InteractiveFrame)frame();
 		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
 		tempFrame.setOrientation(frame().orientation().get());
 		tempFrame.setMagnitude(frame().magnitude());

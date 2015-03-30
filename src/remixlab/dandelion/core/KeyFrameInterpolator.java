@@ -332,8 +332,7 @@ public class KeyFrameInterpolator implements Copyable {
 		for (KeyFrame element : otherKFI.keyFrameList) {
 			KeyFrame kf = (KeyFrame) element.get();
 			this.keyFrameList.add(kf);
-			if (kf.frame() instanceof InteractiveFrame)
-				scene.motionAgent().removeGrabber((InteractiveFrame) kf.frame());
+			scene.motionAgent().removeGrabber(kf.frame());
 		}
 
 		this.currentFrame0 = keyFrameList.listIterator(otherKFI.currentFrame0.nextIndex());
@@ -683,8 +682,7 @@ public class KeyFrameInterpolator implements Copyable {
 		if (interpolationStarted())
 			stopInterpolation();
 		KeyFrame kf = keyFrameList.remove(index);
-		if (kf.frm instanceof InteractiveFrame)
-			scene.motionAgent().removeGrabber((InteractiveFrame) kf.frm);
+		scene.motionAgent().removeGrabber(kf.frm);
 		setInterpolationTime(firstTime());
 	}
 
@@ -711,8 +709,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 */
 	public void removePathFromMotionAgent() {
 		for (int i = 0; i < keyFrameList.size(); ++i)
-			if (keyFrameList.get(i).frame() instanceof InteractiveFrame)
-				scene.motionAgent().removeGrabber((InteractiveFrame) keyFrameList.get(i).frame());
+			scene.motionAgent().removeGrabber(keyFrameList.get(i).frame());
 	}
 
 	/**
@@ -723,8 +720,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 */
 	public void addPathToMotionAgent() {
 		for (int i = 0; i < keyFrameList.size(); ++i)
-			if (keyFrameList.get(i).frame() instanceof InteractiveFrame)
-				scene.motionAgent().addGrabber((InteractiveFrame) keyFrameList.get(i).frame());
+			scene.motionAgent().addGrabber(keyFrameList.get(i).frame());
 	}
 
 	protected void updateModifiedFrameValues() {
