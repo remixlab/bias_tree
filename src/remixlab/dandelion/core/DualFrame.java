@@ -10,6 +10,7 @@
 
 package remixlab.dandelion.core;
 
+import remixlab.bias.core.Agent;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.core.Grabber;
 import remixlab.bias.event.*;
@@ -1823,5 +1824,13 @@ public class DualFrame extends Frame implements Grabber {
 			adpThreshold = adaptive;
 			grabsInputThreshold = threshold;
 		}
+	}
+	
+	/**
+	 * Check if this object is the {@link remixlab.bias.core.Agent#inputGrabber()}. Returns {@code true} if this object
+	 * grabs the agent and {@code false} otherwise.
+	 */
+	public boolean grabsInput(Agent agent) {
+		return agent.inputGrabber() == this;
 	}
 }

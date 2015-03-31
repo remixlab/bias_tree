@@ -331,14 +331,6 @@ public class InteractiveFrame extends DualFrame implements InteractiveGrabber<Mo
 		return action != null;
 	}
 
-	/**
-	 * Check if this object is the {@link remixlab.bias.core.Agent#inputGrabber()}. Returns {@code true} if this object
-	 * grabs the agent and {@code false} otherwise.
-	 */
-	public boolean grabsInput(Agent agent) {
-		return agent.inputGrabber() == this;
-	}
-
 	@Override
 	public void performInteraction(BogusEvent event) {
 		if (event instanceof ClickEvent)
