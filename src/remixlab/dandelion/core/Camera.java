@@ -1125,14 +1125,14 @@ public class Camera extends Eye implements Copyable {
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 		interpolationKfi.addKeyFrame(
-				new SceneFrame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame()
+				new DualFrame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame()
 						.orientation(), frame().magnitude()), 0.4f);
 
 		// Small hack: attach a temporary frame to take advantage of lookAt without modifying frame
-		tempFrame = new SceneFrame(scene);
+		tempFrame = new DualFrame(scene);
 		// TODO experimental
 		// InteractiveFrame originalFrame = frame();
-		SceneFrame originalFrame = frame();
+		DualFrame originalFrame = frame();
 		// InteractiveFrame originalFrame = (InteractiveFrame)frame();
 		tempFrame.setPosition(Vec.add(Vec.multiply(frame().position(), coef), Vec.multiply(target, (1.0f - coef))));
 		tempFrame.setOrientation(frame().orientation().get());

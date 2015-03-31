@@ -40,7 +40,7 @@ public class EventGrabberTuple {
 	 * @param a
 	 *          {@link remixlab.bias.core.Action}
 	 */
-	public <E extends Enum<E>> EventGrabberTuple(BogusEvent e, ActionGrabber<E> g, Action<E> a) {
+	public <E extends Enum<E>> EventGrabberTuple(BogusEvent e, InteractiveGrabber<E> g, Action<E> a) {
 		event = e;
 		grabber = g;
 		action = a;
@@ -54,8 +54,8 @@ public class EventGrabberTuple {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public boolean perform() {
 		if (grabber != null) {
-			if (grabber instanceof ActionGrabber) {
-				((ActionGrabber) grabber).setAction(action);
+			if (grabber instanceof InteractiveGrabber) {
+				((InteractiveGrabber) grabber).setAction(action);
 			}
 			grabber.performInteraction(event);
 			return true;

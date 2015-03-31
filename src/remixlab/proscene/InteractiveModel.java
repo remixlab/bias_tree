@@ -10,8 +10,8 @@
 
 package remixlab.proscene;
 
-import remixlab.bias.core.ActionGrabber;
+import remixlab.bias.core.InteractiveGrabber;
 
 //TODO should really think whether or not this interface is public
-public interface ActionModel<E extends Enum<E>> extends Model, ActionGrabber<E> {
+public interface InteractiveModel<E extends Enum<E>> extends Model, InteractiveGrabber<E> {
 }

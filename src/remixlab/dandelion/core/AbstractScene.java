@@ -41,7 +41,7 @@ import remixlab.fpstiming.*;
  * {@link remixlab.dandelion.core.MatrixStackHelper} or through a third party matrix stack (like it's done with
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>
  */
-public abstract class AbstractScene extends AnimatorObject implements ActionGrabber<SceneAction>, Constants {
+public abstract class AbstractScene extends AnimatorObject implements InteractiveGrabber<SceneAction>, Constants {
 	protected boolean					dottedGrid;
 
 	// O B J E C T S
@@ -1538,20 +1538,20 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 			return;
 
 		eye().frame().stopSpinning();
-		if (avatar() instanceof SceneFrame)
-			((SceneFrame) (avatar())).stopSpinning();
+		if (avatar() instanceof DualFrame)
+			((DualFrame) (avatar())).stopSpinning();
 
 		// perform small animation ;)
 		if (eye().anyInterpolationStarted())
 			eye().stopInterpolations();
 		// eye().interpolateTo(avatar().eyeFrame());//works only when eyeFrame scaling = magnitude
-		SceneFrame eyeFrameCopy = avatar().eyeFrame().get();
+		DualFrame eyeFrameCopy = avatar().eyeFrame().get();
 		eyeFrameCopy.setMagnitude(avatar().eyeFrame().scaling());
 		eye().interpolateTo(eyeFrameCopy);
 
-		if (avatar() instanceof SceneFrame)
-			if( !((SceneFrame)avatar()).isEyeFrame() )
-			motionAgent().setDefaultGrabber((SceneFrame) avatar());
+		if (avatar() instanceof DualFrame)
+			if (!((DualFrame) avatar()).isEyeFrame())
+				motionAgent().setDefaultGrabber((DualFrame) avatar());
 		motionAgent().disableTracking();
 	}
 
@@ -2094,7 +2094,7 @@ public abstract class AbstractScene extends AnimatorObject implements ActionGrab
 	static public void showOnlyEyeWarning(MotionAction action) {
 		showWarning(action.name() + " can only be performed by the eye (frame).");
 	}
-	
+
 	/**
 	 * Display a warning that the specified method is only available for a frame (but not an eye-frame).
 	 */

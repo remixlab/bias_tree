@@ -22,7 +22,7 @@ public class Agent {
 		Grabber				g;
 		Branch<?, ?>	b;
 
-		public <E extends Enum<E>> GrabberBranchTuple(ActionGrabber<E> _g, Branch<E, ?> _a) {
+		public <E extends Enum<E>> GrabberBranchTuple(InteractiveGrabber<E> _g, Branch<E, ?> _a) {
 			g = _g;
 			b = _a;
 		}
@@ -126,7 +126,7 @@ public class Agent {
 	public boolean addGrabber(Grabber grabber) {
 		if (grabber == null)
 			return false;
-		if (grabber instanceof ActionGrabber) {
+		if (grabber instanceof InteractiveGrabber) {
 			System.out.println("use addGrabber(G grabber, K actionAgent) instead");
 			return false;
 		}
@@ -137,15 +137,15 @@ public class Agent {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends Enum<E>> List<ActionGrabber<E>> grabbers(Branch<E, ?> branch) {
-		List<ActionGrabber<E>> list = new ArrayList<ActionGrabber<E>>();
+	public <E extends Enum<E>> List<InteractiveGrabber<E>> grabbers(Branch<E, ?> branch) {
+		List<InteractiveGrabber<E>> list = new ArrayList<InteractiveGrabber<E>>();
 		for (GrabberBranchTuple t : tuples)
 			if (t.b == branch)
-				list.add((ActionGrabber<E>) t.g);
+				list.add((InteractiveGrabber<E>) t.g);
 		return list;
 	}
 
-	public <E extends Enum<E>, K extends Branch<E, ?/* extends Action<E> */>, G extends ActionGrabber<E>> boolean
+	public <E extends Enum<E>, K extends Branch<E, ?/* extends Action<E> */>, G extends InteractiveGrabber<E>> boolean
 			addGrabber(G grabber, K branch) {
 		// Overkill but feels safer ;)
 		if (grabber == null || this.hasGrabber(grabber) || branch == null)
@@ -193,11 +193,11 @@ public class Agent {
 	}
 
 	public void resetBranches() {
-		if (defaultGrabber() instanceof ActionGrabber<?>)
+		if (defaultGrabber() instanceof InteractiveGrabber<?>)
 			setDefaultGrabber(null);
 		for (Iterator<GrabberBranchTuple> it = tuples.iterator(); it.hasNext();) {
 			GrabberBranchTuple t = it.next();
-			if (t.g instanceof ActionGrabber<?>)
+			if (t.g instanceof InteractiveGrabber<?>)
 				it.remove();
 		}
 	}
@@ -312,11 +312,11 @@ public class Agent {
 			((MotionEvent) event).modulate(sensitivities((MotionEvent) event));
 		Grabber inputGrabber = inputGrabber();
 		if (inputGrabber != null) {
-			if (inputGrabber instanceof ActionGrabber<?>) {
+			if (inputGrabber instanceof InteractiveGrabber<?>) {
 				GrabberBranchTuple t = trackedGrabber() != null ? trackedGrabber : defaultGrabber;
-				Action<E> action = (Action<E>) t.b.handle((ActionGrabber) inputGrabber, event);
+				Action<E> action = (Action<E>) t.b.handle((InteractiveGrabber) inputGrabber, event);
 				return action != null ? inputHandler().enqueueEventTuple(
-						new EventGrabberTuple(event, (ActionGrabber<E>) inputGrabber, action)) : false;
+						new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, action)) : false;
 			}
 			return inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber));
 		}

@@ -30,7 +30,7 @@ import remixlab.bias.core.*;
  * <li>Derive from the Branch above that best fits their needs and add it into an agent (
  * {@link remixlab.bias.core.Agent#appendBranch(Branch)}).</li>
  * <li>Configure its profiles.
- * <li>Add some grabbers into the branch ({@link remixlab.bias.core.Agent#addGrabber(ActionGrabber, Branch)}).</li>
+ * <li>Add some grabbers into the branch ({@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, Branch)}).</li>
  * </ul>.
  * 
  * @param <E>
@@ -90,9 +90,9 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 
 	/**
 	 * The {@link #profile()} is used to parse the event into an user-defined action which is then set into the grabber
-	 * (see {@link remixlab.bias.core.ActionGrabber#setAction(Action)}) and returned.
+	 * (see {@link remixlab.bias.core.InteractiveGrabber#setAction(Action)}) and returned.
 	 */
-	public Action<E> handle(ActionGrabber<E> grabber, BogusEvent event) {
+	public Action<E> handle(InteractiveGrabber<E> grabber, BogusEvent event) {
 		if (grabber == null || event == null)
 			return null;
 		Action<E> action = profile().handle(event);

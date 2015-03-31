@@ -86,44 +86,27 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	}
 
 	/*
-	public boolean addGrabber(InteractiveFrame frame) {
-		return super.addGrabber(frame, frameBranch);
-	}
+	 * public boolean addGrabber(InteractiveFrame frame) { return super.addGrabber(frame, frameBranch); }
+	 * 
+	 * public boolean addGrabber(InteractiveFrame frame) { // this.resetBranch(eyeBranch); return super.addGrabber(frame,
+	 * eyeBranch); }
+	 */
 
-	public boolean addGrabber(InteractiveFrame frame) {
-		// this.resetBranch(eyeBranch);
-		return super.addGrabber(frame, eyeBranch);
-	}
-	*/
-
-	public boolean addGrabber(SceneFrame frame) {
-		if(frame instanceof InteractiveFrame)
-			return addGrabber((InteractiveFrame)frame, frame.isEyeFrame() ? eyeBranch: frameBranch);
+	public boolean addGrabber(DualFrame frame) {
+		if (frame instanceof InteractiveFrame)
+			return addGrabber((InteractiveFrame) frame, frame.isEyeFrame() ? eyeBranch : frameBranch);
 		return super.addGrabber(frame);
 	}
 
 	/*
-	public boolean removeGrabber(InteractiveFrame frame) {
-		return super.removeGrabber(frame);
-	}
-
-	public boolean removeGrabber(InteractiveFrame frame) {
-		return super.removeGrabber(frame);
-	}
-
-	public boolean removeGrabber(SceneFrame frame) {
-		if (frame instanceof Grabber) {
-			if (frame instanceof InteractiveFrame) {
-				if( frame.isEyeFrame() )
-					return removeGrabber((InteractiveFrame) frame);
-				else
-					return removeGrabber((InteractiveFrame) frame);	
-			}
-			return removeGrabber((Grabber) frame);
-		}
-		return false;
-	}
-	*/
+	 * public boolean removeGrabber(InteractiveFrame frame) { return super.removeGrabber(frame); }
+	 * 
+	 * public boolean removeGrabber(InteractiveFrame frame) { return super.removeGrabber(frame); }
+	 * 
+	 * public boolean removeGrabber(SceneFrame frame) { if (frame instanceof Grabber) { if (frame instanceof
+	 * InteractiveFrame) { if( frame.isEyeFrame() ) return removeGrabber((InteractiveFrame) frame); else return
+	 * removeGrabber((InteractiveFrame) frame); } return removeGrabber((Grabber) frame); } return false; }
+	 */
 
 	@Override
 	public void resetDefaultGrabber() {
@@ -134,20 +117,13 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	}
 
 	/*
-	public boolean setDefaultGrabber(InteractiveFrame frame) {
-		return super.setDefaultGrabber(frame);
-	}
-
-	public boolean setDefaultGrabber(InteractiveFrame frame) {
-		return super.setDefaultGrabber(frame);
-	}
-
-	public boolean setDefaultGrabber(SceneFrame frame) {
-		if (frame instanceof Grabber)
-			return super.setDefaultGrabber((Grabber) frame);
-		return false;
-	}
-	*/
+	 * public boolean setDefaultGrabber(InteractiveFrame frame) { return super.setDefaultGrabber(frame); }
+	 * 
+	 * public boolean setDefaultGrabber(InteractiveFrame frame) { return super.setDefaultGrabber(frame); }
+	 * 
+	 * public boolean setDefaultGrabber(SceneFrame frame) { if (frame instanceof Grabber) return
+	 * super.setDefaultGrabber((Grabber) frame); return false; }
+	 */
 
 	public MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {
 		return eyeBranch;
@@ -159,7 +135,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 
 	protected MotionProfile<A> motionProfile() {
 		if (inputGrabber() instanceof InteractiveFrame)
-			if( ((InteractiveFrame)inputGrabber()).isEyeFrame() )
+			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
 				return eyeBranch.profile();
 			else
 				return frameBranch().profile();
@@ -168,7 +144,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 
 	protected ClickProfile<ClickAction> clickProfile() {
 		if (inputGrabber() instanceof InteractiveFrame)
-			if( ((InteractiveFrame)inputGrabber()).isEyeFrame() )
+			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
 				return eyeBranch.clickProfile();
 			else
 				return frameBranch.clickProfile();

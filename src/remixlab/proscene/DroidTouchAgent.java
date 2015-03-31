@@ -156,10 +156,10 @@ public class DroidTouchAgent extends MultiTouchAgent {
 						break;
 					case TURN_TWO_ID:
 					case TURN_THREE_ID: // Rotate
-						//TODO needs testing
+						// TODO needs testing
 						turnOrientation = -1;
-						if(inputGrabber() instanceof InteractiveFrame)
-							turnOrientation = ((InteractiveFrame)inputGrabber()).isEyeFrame() ? -1 : 1;
+						if (inputGrabber() instanceof InteractiveFrame)
+							turnOrientation = ((InteractiveFrame) inputGrabber()).isEyeFrame() ? -1 : 1;
 						event = new DOF6Event(prevEvent,
 								touchProcessor.getR() * turnOrientation,
 								0,

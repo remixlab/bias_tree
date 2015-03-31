@@ -28,7 +28,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 
 	boolean										bypassNullEvent, need4Spin, drive, rotateMode;
 	float											dFriction;
-	SceneFrame			  iFrame, eyeFrame;
+	DualFrame									iFrame, eyeFrame;
 
 	protected boolean					needHandle;
 	/* protected */DOF2Event	spEvent;
@@ -93,9 +93,9 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		return null;
 	}
 
-	protected ActionGrabber<MotionAction> actionGrabber() {
+	protected InteractiveGrabber<MotionAction> actionGrabber() {
 		if (inputGrabber() instanceof InteractiveFrame)
-			return (InteractiveFrame) inputGrabber();		
+			return (InteractiveFrame) inputGrabber();
 		return null;
 	}
 
@@ -123,14 +123,14 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		lastEvent = e;
 		if (pickingMode() == PickingMode.MOVE)
 			updateTrackedGrabber(lastEvent);
-		
+
 		if (inputGrabber() instanceof InteractiveFrame) {
-			if( ((InteractiveFrame)inputGrabber()).isEyeFrame() )
+			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
 				moveEye(lastEvent);
 			else
 				moveFrame(lastEvent);
 		}
-		
+
 		handle(lastEvent);
 	}
 
@@ -181,9 +181,9 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 */
 	protected void press(DOF2Event e) {
 		lastEvent = e;
-		pressEvent = lastEvent.get();		
+		pressEvent = lastEvent.get();
 		if (inputGrabber() instanceof InteractiveFrame) {
-			if( ((InteractiveFrame)inputGrabber()).isEyeFrame() )
+			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
 				pressEye(lastEvent);
 			else
 				pressFrame(lastEvent);
@@ -202,7 +202,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		// frameProfile().handle(lastEvent);
 		if (a == null)
 			return;
-		MotionAction dA = (MotionAction) a.referenceAction();
+		MotionAction dA = a.referenceAction();
 		if (dA == MotionAction.SCREEN_TRANSLATE)
 			((InteractiveFrame) inputGrabber()).dirIsFixed = false;
 		rotateMode = ((dA == MotionAction.ROTATE) || (dA == MotionAction.ROTATE_XYZ)
@@ -239,7 +239,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		// frameProfile().handle(lastEvent);
 		if (a == null)
 			return;
-		MotionAction dA = (MotionAction) a.referenceAction();
+		MotionAction dA = a.referenceAction();
 		if (dA == MotionAction.SCREEN_TRANSLATE)
 			((InteractiveFrame) inputGrabber()).dirIsFixed = false;
 		rotateMode = ((dA == MotionAction.ROTATE) || (dA == MotionAction.ROTATE_XYZ)
@@ -273,7 +273,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	protected void drag(DOF2Event e) {
 		lastEvent = e;
 		if (inputGrabber() instanceof InteractiveFrame) {
-			if( ((InteractiveFrame)inputGrabber()).isEyeFrame() )
+			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
 				dragEye(lastEvent);
 			else
 				dragFrame(lastEvent);
@@ -294,7 +294,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 			DOF2Action a = frameProfile().handle((BogusEvent) lastEvent);
 			if (a == null)
 				return;
-			MotionAction dA = (MotionAction) a.referenceAction();
+			MotionAction dA = a.referenceAction();
 			if (dA != MotionAction.ZOOM_ON_REGION)
 				handle(lastEvent);
 		}
@@ -311,7 +311,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 			DOF2Action a = eyeProfile().handle((BogusEvent) lastEvent);
 			if (a == null)
 				return;
-			MotionAction dA = (MotionAction) a.referenceAction();
+			MotionAction dA = a.referenceAction();
 			if (dA != MotionAction.ZOOM_ON_REGION)
 				handle(lastEvent);
 		}
@@ -324,7 +324,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		prevEvent = lastDOF2Event().get();
 		lastEvent = e;
 		if (inputGrabber() instanceof InteractiveFrame) {
-			if( ((InteractiveFrame)inputGrabber()).isEyeFrame() )
+			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
 				releaseEye(lastEvent);
 			else
 				releaseFrame(lastEvent);
@@ -700,7 +700,8 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		eyeClickProfile().setBinding(buttonModifiersFix(RIGHT_ID), RIGHT_ID, 2, ClickAction.CENTER_FRAME);
 		frameClickProfile().setBinding(buttonModifiersFix(LEFT_ID), LEFT_ID, 2, ClickAction.ALIGN_FRAME);
 		frameClickProfile().setBinding(buttonModifiersFix(RIGHT_ID), RIGHT_ID, 2, ClickAction.CENTER_FRAME);
-		this.setWheelBinding(Target.EYE, MotionEvent.NO_MODIFIER_MASK, scene.is3D() ? DOF1Action.TRANSLATE_Z : DOF1Action.SCALE);
+		this.setWheelBinding(Target.EYE, MotionEvent.NO_MODIFIER_MASK, scene.is3D() ? DOF1Action.TRANSLATE_Z
+				: DOF1Action.SCALE);
 		this.setWheelBinding(Target.FRAME, MotionEvent.NO_MODIFIER_MASK, DOF1Action.SCALE);
 	}
 

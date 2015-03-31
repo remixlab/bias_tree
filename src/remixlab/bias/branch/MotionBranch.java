@@ -92,7 +92,7 @@ public class MotionBranch<E extends Enum<E>, M extends MotionProfile<? extends A
 	}
 
 	@Override
-	public Action<E> handle(ActionGrabber<E> grabber, BogusEvent event) {
+	public Action<E> handle(InteractiveGrabber<E> grabber, BogusEvent event) {
 		if (grabber == null || event == null)
 			return null;
 		Action<E> action = null;

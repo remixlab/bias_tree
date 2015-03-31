@@ -39,10 +39,10 @@ import remixlab.util.*;
 /**
  * The InteractiveFrame class represents an InteractiveFrame with Eye specific gesture bindings.
  * <p>
- * An InteractiveFrame is a specialization of an InteractiveFrame that is designed to be set as the
- * {@link Eye#frame()}. Some user gestures (those reduced as DOF2Events) are interpreted in a negated way (respect to
- * those defined for the InteractiveFrame). For instance, with a move-to-the-right user gesture the InteractiveFrame
- * has to go to the <i>left</i>, so that the <i>scene</i> seems to move to the right.
+ * An InteractiveFrame is a specialization of an InteractiveFrame that is designed to be set as the {@link Eye#frame()}.
+ * Some user gestures (those reduced as DOF2Events) are interpreted in a negated way (respect to those defined for the
+ * InteractiveFrame). For instance, with a move-to-the-right user gesture the InteractiveFrame has to go to the
+ * <i>left</i>, so that the <i>scene</i> seems to move to the right.
  * <p>
  * Depending on the Dandelion action an InteractiveFrame rotates either around the
  * {@link remixlab.dandelion.core.Eye#anchor()} (e.g., ROTATE, HINGE), or its {@link #sceneUpVector()} (e.g.,
@@ -64,8 +64,8 @@ import remixlab.util.*;
  * {@link remixlab.dandelion.core.AbstractScene#inputHandler()} {@link remixlab.bias.core.InputHandler#agents()} pool
  * upon creation.
  */
-public class InteractiveFrame extends SceneFrame implements ActionGrabber<MotionAction>, Copyable,
-		Constants {	
+public class InteractiveFrame extends DualFrame implements InteractiveGrabber<MotionAction>, Copyable,
+		Constants {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -89,7 +89,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 				.append(action, other.action)
 				.isEquals();
 	}
-	
+
 	/**
 	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
@@ -235,11 +235,11 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 	 * pool.
 	 */
 	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
-		//TODO merge with eye?
+		// TODO merge with eye?
 		super(scn, referenceFrame, p, r, s);
 		scene.motionAgent().addGrabber(this);
 	}
-	
+
 	/**
 	 * Ad-hoc constructor needed to make editable an Eye path defined by a KeyFrameInterpolator.
 	 * <p>
@@ -252,11 +252,11 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 	 * 
 	 * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
 	 */
-	protected InteractiveFrame(AbstractScene scn, SceneFrame iFrame) {
+	protected InteractiveFrame(AbstractScene scn, DualFrame iFrame) {
 		super(scn, iFrame);
 	}
-	
-	//--
+
+	// --
 
 	/**
 	 * Default constructor.
@@ -269,38 +269,37 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 	 */
 	public InteractiveFrame(Eye theEye) {
 		super(theEye);
-		
-	  //TODO merge with frame? Really depends on the next line
-		//scene.motionAgent().addGrabber(this);			
+
+		// TODO merge with frame? Really depends on the next line
+		// scene.motionAgent().addGrabber(this);
 	}
-	
+
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
-		
-	  // this.scnUpVec.set(otherFrame.sceneUpVector().get());
+
+		// this.scnUpVec.set(otherFrame.sceneUpVector().get());
 		// this.flyDisp.set(otherFrame.flyDisp.get());
 		// this.setFlySpeed(otherFrame.flySpeed());
-		
-		if( !isEyeFrame() ) {
+
+		if (!isEyeFrame()) {
 			if (scene.motionAgent().hasGrabber(otherFrame))
 				scene.motionAgent().addGrabber(this);
 
 			this.setAction(otherFrame.action());
 		}
-	  // TODO don't think so: frame is added to the pool when setting the eye
-		//else {		  
-			// if( scene.motionAgent().eyeBranch().isInPool(otherFrame) )
-			// scene.motionAgent().eyeBranch().addInPool(this);
-		//}		
+		// TODO don't think so: frame is added to the pool when setting the eye
+		// else {
+		// if( scene.motionAgent().eyeBranch().isInPool(otherFrame) )
+		// scene.motionAgent().eyeBranch().addInPool(this);
+		// }
 	}
 
 	/*
-	protected InteractiveFrame(InteractiveFrame otherFrame) {
-		super(otherFrame.theeye);
-
-		
-	}
-	*/
+	 * protected InteractiveFrame(InteractiveFrame otherFrame) { super(otherFrame.theeye);
+	 * 
+	 * 
+	 * }
+	 */
 
 	@Override
 	public InteractiveFrame get() {
@@ -324,7 +323,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 	public Action<MotionAction> action() {
 		return action;
 	}
-	
+
 	/**
 	 * Returns {@code true} when the InteractiveFrame is being manipulated with an agent.
 	 */
@@ -363,7 +362,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 			align();
 			break;
 		case ANCHOR_FROM_PIXEL:
-			if(!isEyeFrame()) {
+			if (!isEyeFrame()) {
 				AbstractScene.showOnlyEyeWarning(referenceAction());
 				break;
 			}
@@ -376,7 +375,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 			center();
 			break;
 		case ZOOM_ON_PIXEL:
-			if(!isEyeFrame()) {
+			if (!isEyeFrame()) {
 				AbstractScene.showOnlyEyeWarning(referenceAction());
 				break;
 			}
@@ -441,10 +440,10 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 			performCustomAction(event);
 			break;
 		case ROTATE_Z:
-			gestureRotateZ(event,  wheel ? wheelSensitivity() : translationSensitivity());
+			gestureRotateZ(event, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case SCALE:
-			scale(event, wheel ? wheelSensitivity() : translationSensitivity());			
+			scale(event, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case TRANSLATE_X:
 			gestureTranslateX(event, wheel ? wheelSensitivity() : translationSensitivity());
@@ -555,45 +554,34 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 			gestureTranslateZ(event, wheel ? wheelSensitivity() : translationSensitivity());
 			break;
 		case ZOOM_ON_ANCHOR:
-		  /*
-			trns = Vec.subtract(eye().anchor(), position());
-			trns = eye().eyeCoordinatesOf(trns);
-			trns.normalize();
-			trns.multiply(delta1(event));
-			Vec ineye = trns.get();
-			float mag = gesture2Eye(trns);
-			
-			translateFromEye(trns, wheel ? wheelSensitivity() : translationSensitivity());
-			//*/
-			///*
-			trns = Vec.subtract(eye().anchor(), position());
-			trns = eye().eyeCoordinatesOf(trns);
-			trns.normalize();
-			trns.multiply(delta1(event));
-			//translateFromGesture(trns, wheel ? wheelSensitivity() : translationSensitivity());
-			//TODO: broken once again!
-			//eyeTranslate(trns, wheel ? wheelSensitivity() : translationSensitivity());
-			//*/			
-			
 			/*
-			//TODO experimenting
-			scale2Fit(trns);
-			translateFromWorld(trns, wheel ? wheelSensitivity() : translationSensitivity());
-			//*/
+			 * trns = Vec.subtract(eye().anchor(), position()); trns = eye().eyeCoordinatesOf(trns); trns.normalize();
+			 * trns.multiply(delta1(event)); Vec ineye = trns.get(); float mag = gesture2Eye(trns);
+			 * 
+			 * translateFromEye(trns, wheel ? wheelSensitivity() : translationSensitivity()); //
+			 */
+			// /*
+			trns = Vec.subtract(eye().anchor(), position());
+			trns = eye().eyeCoordinatesOf(trns);
+			trns.normalize();
+			trns.multiply(delta1(event));
+			// translateFromGesture(trns, wheel ? wheelSensitivity() : translationSensitivity());
+			// TODO: broken once again!
+			// eyeTranslate(trns, wheel ? wheelSensitivity() : translationSensitivity());
+			// */
 
-			//TODO only missing case
 			/*
-			if (wheel)
-				delta = event.x() * -wheelSensitivity() * wheelSensitivityCoef;
-			// TODO should absolute be divided by camera.screenHeight()?
-			else if (event.isAbsolute())
-				delta = -event.x() / eye().screenHeight();
-			else
-				delta = -event.dx() / eye().screenHeight();
-			trns = Vec.subtract(position(), scene.camera().anchor());
-			if (trns.magnitude() > 0.02f * scene.radius() || delta > 0.0f)
-				translate(Vec.multiply(trns, delta));
-			//*/
+			 * //TODO experimenting scale2Fit(trns); translateFromWorld(trns, wheel ? wheelSensitivity() :
+			 * translationSensitivity()); //
+			 */
+
+			// TODO only missing case
+			/*
+			 * if (wheel) delta = event.x() * -wheelSensitivity() * wheelSensitivityCoef; // TODO should absolute be divided
+			 * by camera.screenHeight()? else if (event.isAbsolute()) delta = -event.x() / eye().screenHeight(); else delta =
+			 * -event.dx() / eye().screenHeight(); trns = Vec.subtract(position(), scene.camera().anchor()); if
+			 * (trns.magnitude() > 0.02f * scene.radius() || delta > 0.0f) translate(Vec.multiply(trns, delta)); //
+			 */
 			break;
 		default:
 			break;
@@ -686,7 +674,7 @@ public class InteractiveFrame extends SceneFrame implements ActionGrabber<Motion
 		case CUSTOM:
 			performCustomAction(event);
 			break;
-		case HINGE: 
+		case HINGE:
 			hinge(event);
 			break;
 		case TRANSLATE_XYZ_ROTATE_XYZ:

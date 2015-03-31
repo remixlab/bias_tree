@@ -16,7 +16,7 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.AbstractScene;
 
-public abstract class ActionModelObject<E extends Enum<E>> implements ActionModel<E> {
+public abstract class InteractiveModelObject<E extends Enum<E>> implements InteractiveModel<E> {
 	Action<E>					action;
 	protected Scene		scene;
 	// protected Agent agent;
@@ -24,7 +24,8 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 	protected PShape	pshape;
 
 	// public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent, PShape ps) {
-	public <K extends Branch<E, ?/* extends Action<E> */>> ActionModelObject(Scene scn, Agent a, K actionAgent, PShape ps) {
+	public <K extends Branch<E, ?/* extends Action<E> */>> InteractiveModelObject(Scene scn, Agent a, K actionAgent,
+			PShape ps) {
 		scene = scn;
 		pshape = ps;
 		if (scene.addModel(this))
@@ -32,7 +33,7 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 		id = ++Scene.modelCount;
 	}
 
-	public <K extends Branch<E, ?/* extends Action<E> */>> ActionModelObject(Scene scn, Agent a, K actionAgent) {
+	public <K extends Branch<E, ?/* extends Action<E> */>> InteractiveModelObject(Scene scn, Agent a, K actionAgent) {
 		// public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent) {
 		scene = scn;
 		if (scene.addModel(this))
@@ -40,7 +41,7 @@ public abstract class ActionModelObject<E extends Enum<E>> implements ActionMode
 		id = ++Scene.modelCount;
 	}
 
-	public ActionModelObject(Scene scn) {
+	public InteractiveModelObject(Scene scn) {
 		scene = scn;
 		if (scene.addModel(this))
 			id = ++Scene.modelCount;
