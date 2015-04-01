@@ -935,6 +935,9 @@ public class Camera extends Eye implements Copyable {
 		float newDist = distanceToAnchor();
 		if ((Util.nonZero(prevDist)) && (Util.nonZero(newDist)))
 			rapK *= prevDist / newDist;
+		//new animation
+		anchorFlag = true;
+		timerFx.runOnce(1000);
 	}
 
 	@Override
@@ -1111,6 +1114,11 @@ public class Camera extends Eye implements Copyable {
 		}
 
 		interpolateToZoomOnTarget(target);
+		
+	  //draw hint
+		pupVec = target;
+		pupFlag = true;
+		timerFx.runOnce(1000);
 	}
 
 	protected void interpolateToZoomOnTarget(Vec target) {

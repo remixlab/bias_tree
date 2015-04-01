@@ -2087,19 +2087,33 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	static public void showEventVariationWarning(MotionAction action) {
 		showWarning(action.name() + " can only be performed using a relative event.");
 	}
+	
+	static public void showOnlyEyeWarning(MotionAction action) {
+		showOnlyEyeWarning(action, true);
+	}
 
 	/**
 	 * Display a warning that the specified Action is only available for the Eye frame.
 	 */
-	static public void showOnlyEyeWarning(MotionAction action) {
-		showWarning(action.name() + " can only be performed by the eye (frame).");
+	static public void showOnlyEyeWarning(MotionAction action, boolean eye) {
+		if(eye)
+			showWarning(action.name() + " can only be performed when dualframe is in eye mode.");
+		else
+			showWarning(action.name() + " can only be performed when dualframe is in frame mode.");
+	}
+	
+	static public void showOnlyEyeWarning(String method) {
+		showOnlyEyeWarning(method, true);
 	}
 
 	/**
 	 * Display a warning that the specified method is only available for a frame (but not an eye-frame).
 	 */
-	static public void showOnlyFrameWarning(String method) {
-		showWarning(method + "() is only meaningful for a frame (but not an eye-frame).");
+	static public void showOnlyEyeWarning(String method, boolean eye) {
+		if(eye)
+			showWarning(method + "() can only be performed when dualframe is in eye mode.");
+		else
+			showWarning(method + "() can only be performed when dualframe is in frame mode.");
 	}
 
 	/**

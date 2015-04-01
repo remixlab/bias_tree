@@ -1760,7 +1760,7 @@ public class DualFrame extends Frame implements Grabber {
 	 */
 	public float grabsInputThreshold() {
 		if (isEyeFrame()) {
-			AbstractScene.showOnlyFrameWarning("grabsInputThreshold");
+			AbstractScene.showOnlyEyeWarning("grabsInputThreshold", false);
 			return 0;
 		}
 		if (adaptiveGrabsInputThreshold())
@@ -1775,7 +1775,7 @@ public class DualFrame extends Frame implements Grabber {
 	 */
 	public boolean adaptiveGrabsInputThreshold() {
 		if (isEyeFrame()) {
-			AbstractScene.showOnlyFrameWarning("adaptiveGrabsInputThreshold");
+			AbstractScene.showOnlyEyeWarning("adaptiveGrabsInputThreshold", false);
 			return false;
 		}
 		return adpThreshold;
@@ -1788,7 +1788,7 @@ public class DualFrame extends Frame implements Grabber {
 	 */
 	public void setGrabsInputThreshold(float threshold) {
 		if (isEyeFrame()) {
-			AbstractScene.showOnlyFrameWarning("setGrabsInputThreshold");
+			AbstractScene.showOnlyEyeWarning("setGrabsInputThreshold", false);
 			return;
 		}
 		setGrabsInputThreshold(threshold, false);
@@ -1817,7 +1817,7 @@ public class DualFrame extends Frame implements Grabber {
 	 */
 	public void setGrabsInputThreshold(float threshold, boolean adaptive) {
 		if (isEyeFrame()) {
-			AbstractScene.showOnlyFrameWarning("setGrabsInputThreshold");
+			AbstractScene.showOnlyEyeWarning("setGrabsInputThreshold", false);
 			return;
 		}
 		if (threshold >= 0) {

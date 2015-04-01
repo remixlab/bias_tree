@@ -313,6 +313,10 @@ public class Window extends Eye implements Copyable {
 		float cY = (float) pixel.y() - winH / 2;
 		Rect rect = new Rect((int) cX, (int) cY, (int) winW, (int) winH);
 		this.interpolateToZoomOnRegion(rect);
+		//draw hint
+		pupVec = unprojectedCoordinatesOf(new Vec(pixel.x(), pixel.y(), 0.5f));
+		pupFlag = true;
+		timerFx.runOnce(1000);
 	}
 
 	@Override

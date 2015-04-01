@@ -635,6 +635,9 @@ public abstract class Eye implements Copyable {
 		anchorPnt = refP;
 		if (scene.is2D())
 			anchorPnt.setZ(0);
+	  //new (called from 2d)
+		anchorFlag = true;
+		timerFx.runOnce(1000);
 	}
 
 	/**

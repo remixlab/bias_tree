@@ -330,7 +330,18 @@ public class InteractiveFrame extends DualFrame implements InteractiveGrabber<Mo
 	public boolean isInInteraction() {
 		return action != null;
 	}
+	
+	/*
+	@Override
+	public void performInteraction(BogusEvent event) {
+		if (event instanceof ClickEvent)
+			performInteraction((ClickEvent) event);
+		if (event instanceof MotionEvent)
+			performInteraction((MotionEvent) event);
+	}
+	*/
 
+	//TODO replace with above
 	@Override
 	public void performInteraction(BogusEvent event) {
 		if (event instanceof ClickEvent)
@@ -358,10 +369,7 @@ public class InteractiveFrame extends DualFrame implements InteractiveGrabber<Mo
 				AbstractScene.showOnlyEyeWarning(referenceAction());
 				break;
 			}
-			if (eye().setAnchorFromPixel(new Point(event.x(), event.y()))) {
-				eye().anchorFlag = true;
-				eye().timerFx.runOnce(1000);
-			}
+			eye().setAnchorFromPixel(new Point(event.x(), event.y()));
 			break;
 		case CENTER_FRAME:
 			center();
@@ -371,21 +379,7 @@ public class InteractiveFrame extends DualFrame implements InteractiveGrabber<Mo
 				AbstractScene.showOnlyEyeWarning(referenceAction());
 				break;
 			}
-			if (scene.is2D()) {
-				eye().interpolateToZoomOnPixel(new Point(event.x(), event.y()));
-				eye().pupVec = eye().unprojectedCoordinatesOf(new Vec(event.x(), event.y(), 0.5f));
-				eye().pupFlag = true;
-				eye().timerFx.runOnce(1000);
-			}
-			else {
-				Vec pup = ((Camera) eye()).pointUnderPixel(new Point(event.x(), event.y()));
-				if (pup != null) {
-					((Camera) eye()).interpolateToZoomOnTarget(pup);
-					eye().pupVec = pup;
-					eye().pupFlag = true;
-					eye().timerFx.runOnce(1000);
-				}
-			}
+			eye().interpolateToZoomOnPixel(new Point(event.x(), event.y()));
 			break;
 		default:
 			break;
