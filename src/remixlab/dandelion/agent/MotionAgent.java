@@ -92,7 +92,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	 * eyeBranch); }
 	 */
 
-	public boolean addGrabber(DualFrame frame) {
+	public boolean addGrabber(GrabberFrame frame) {
 		if (frame instanceof InteractiveFrame)
 			return addGrabber((InteractiveFrame) frame, frame.isEyeFrame() ? eyeBranch : frameBranch);
 		return super.addGrabber(frame);

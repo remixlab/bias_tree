@@ -844,6 +844,9 @@ public class Camera extends Eye implements Copyable {
 		Vec pup = pointUnderPixel(pixel);
 		if (pup != null) {
 			setAnchor(pup);
+			// new animation
+			anchorFlag = true;
+			timerFx.runOnce(1000);
 			return true;
 		}
 		return false;
@@ -935,9 +938,6 @@ public class Camera extends Eye implements Copyable {
 		float newDist = distanceToAnchor();
 		if ((Util.nonZero(prevDist)) && (Util.nonZero(newDist)))
 			rapK *= prevDist / newDist;
-		//new animation
-		anchorFlag = true;
-		timerFx.runOnce(1000);
 	}
 
 	@Override
@@ -1114,8 +1114,8 @@ public class Camera extends Eye implements Copyable {
 		}
 
 		interpolateToZoomOnTarget(target);
-		
-	  //draw hint
+
+		// draw hint
 		pupVec = target;
 		pupFlag = true;
 		timerFx.runOnce(1000);
@@ -1133,14 +1133,14 @@ public class Camera extends Eye implements Copyable {
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 		interpolationKfi.addKeyFrame(
-				new DualFrame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame()
+				new GrabberFrame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame()
 						.orientation(), frame().magnitude()), 0.4f);
 
 		// Small hack: attach a temporary frame to take advantage of lookAt without modifying frame
-		tempFrame = new DualFrame(scene);
+		tempFrame = new GrabberFrame(scene);
 		// TODO experimental
 		// InteractiveFrame originalFrame = frame();
-		DualFrame originalFrame = frame();
+		GrabberFrame originalFrame = frame();
 		// InteractiveFrame originalFrame = (InteractiveFrame)frame();
 		tempFrame.setPosition(Vec.add(Vec.multiply(frame().position(), coef), Vec.multiply(target, (1.0f - coef))));
 		tempFrame.setOrientation(frame().orientation().get());

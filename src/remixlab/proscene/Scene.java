@@ -1576,10 +1576,10 @@ public class Scene extends AbstractScene implements PConstants {
 			pg().strokeWeight(2 * pg().strokeWeight);
 			pg().noFill();
 
-			List<DualFrame> path = kfi.path();
+			List<GrabberFrame> path = kfi.path();
 			if (((mask & 1) != 0) && path.size() > 1) {
 				pg().beginShape();
-				for (DualFrame myFr : path)
+				for (GrabberFrame myFr : path)
 					vertex(myFr.position().x(), myFr.position().y(), myFr.position().z());
 				pg().endShape();
 			}
@@ -1589,7 +1589,7 @@ public class Scene extends AbstractScene implements PConstants {
 					nbFrames = nbSteps;
 				float goal = 0.0f;
 
-				for (DualFrame myFr : path)
+				for (GrabberFrame myFr : path)
 					if ((count++) >= goal) {
 						goal += nbSteps / (float) nbFrames;
 						pushModelView();
@@ -1774,12 +1774,12 @@ public class Scene extends AbstractScene implements PConstants {
 	public void drawPickingTargets(boolean keyFrame) {
 		pg().pushStyle();
 		for (Grabber mg : motionAgent().grabbers()) {
-			if (mg instanceof DualFrame) {
-				DualFrame iF = (DualFrame) mg;// downcast needed
+			if (mg instanceof GrabberFrame) {
+				GrabberFrame iF = (GrabberFrame) mg;// downcast needed
 				// frames
 				if (!(iF.isInEyePath() ^ keyFrame) && (!iF.isEyeFrame())) {
 					Vec center = projectedCoordinatesOf(iF.position());
-					// if (mg.grabsInput(motionAgent())) {
+					// if (iF.grabsInput(motionAgent())) {
 					if (motionAgent().isInputGrabber(mg)) {
 						pg().pushStyle();
 						pg().strokeWeight(2 * pg().strokeWeight);
@@ -1926,11 +1926,11 @@ public class Scene extends AbstractScene implements PConstants {
 		float p1x = mouseAgent().lastDOF2Event().x() /*- originCorner().x()*/;
 		float p1y = mouseAgent().lastDOF2Event().y() /*- originCorner().y()*/;
 		Vec p2 = new Vec();
-		if (motionAgent().inputGrabber() instanceof DualFrame) {
-			if (((DualFrame) motionAgent().inputGrabber()).isEyeFrame())
+		if (motionAgent().inputGrabber() instanceof GrabberFrame) {
+			if (((GrabberFrame) motionAgent().inputGrabber()).isEyeFrame())
 				p2 = eye().projectedCoordinatesOf(anchor());
 			else
-				p2 = eye().projectedCoordinatesOf(((DualFrame) mouseAgent().inputGrabber()).position());
+				p2 = eye().projectedCoordinatesOf(((GrabberFrame) mouseAgent().inputGrabber()).position());
 		}
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);

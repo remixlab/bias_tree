@@ -22,12 +22,12 @@ import remixlab.util.*;
  * The frame is loosely-coupled with the scene object used to instantiate it, i.e., the transformation it represents may
  * be applied to a different scene. See {@link #applyTransformation()} and {@link #applyTransformation(AbstractScene)}.
  * <p>
- * Two frames can be synced together ({@link #sync(DualFrame, DualFrame)}), meaning that they will share their global
- * parameters (position, orientation and magnitude) taken the one that has been most recently updated. Syncing can be
- * useful to share frames among different off-screen scenes (see ProScene's CameraCrane and the AuxiliarViewer
+ * Two frames can be synced together ({@link #sync(GrabberFrame, GrabberFrame)}), meaning that they will share their
+ * global parameters (position, orientation and magnitude) taken the one that has been most recently updated. Syncing
+ * can be useful to share frames among different off-screen scenes (see ProScene's CameraCrane and the AuxiliarViewer
  * examples).
  */
-public class DualFrame extends Frame implements Grabber {
+public class GrabberFrame extends Frame implements Grabber {
 	// Sens
 	private float								rotSensitivity;
 	private float								transSensitivity;
@@ -60,7 +60,7 @@ public class DualFrame extends Frame implements Grabber {
 
 	private float								grabsInputThreshold;
 	private boolean							adpThreshold;
-	protected DualFrame					eyeFrame;
+	protected GrabberFrame			eyeFrame;
 
 	@Override
 	public int hashCode() {
@@ -92,7 +92,7 @@ public class DualFrame extends Frame implements Grabber {
 		if (obj.getClass() != getClass())
 			return false;
 
-		DualFrame other = (DualFrame) obj;
+		GrabberFrame other = (GrabberFrame) obj;
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(grabsInputThreshold, other.grabsInputThreshold)
@@ -124,7 +124,7 @@ public class DualFrame extends Frame implements Grabber {
 	 * 
 	 * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
 	 */
-	protected DualFrame(AbstractScene scn, DualFrame iFrame) {
+	protected GrabberFrame(AbstractScene scn, GrabberFrame iFrame) {
 		this(scn, iFrame.translation().get(), iFrame.rotation().get(), iFrame.scaling());
 		eyeFrame = iFrame;
 	}
@@ -132,13 +132,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn) {
+	public GrabberFrame(AbstractScene scn) {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
-	public DualFrame(Eye eye) {
+	public GrabberFrame(Eye eye) {
 		this(eye.scene());
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -147,13 +147,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Vec p) {
+	public GrabberFrame(AbstractScene scn, Vec p) {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
-	public DualFrame(Eye eye, Vec p) {
+	public GrabberFrame(Eye eye, Vec p) {
 		this(eye.scene(), p);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -162,13 +162,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, null, new Vec(), r, 1)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Rotation r) {
+	public GrabberFrame(AbstractScene scn, Rotation r) {
 		this(scn, null, new Vec(), r, 1);
 	}
 
-	public DualFrame(Eye eye, Rotation r) {
+	public GrabberFrame(Eye eye, Rotation r) {
 		this(eye.scene(), r);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -177,13 +177,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, float s) {
+	public GrabberFrame(AbstractScene scn, float s) {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
-	public DualFrame(Eye eye, float s) {
+	public GrabberFrame(Eye eye, float s) {
 		this(eye.scene(), s);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -192,13 +192,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Vec p, float s) {
+	public GrabberFrame(AbstractScene scn, Vec p, float s) {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
-	public DualFrame(Eye eye, Vec p, float s) {
+	public GrabberFrame(Eye eye, Vec p, float s) {
 		this(eye.scene(), p, s);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -207,13 +207,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, null, p, r, 1)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Vec p, Rotation r) {
+	public GrabberFrame(AbstractScene scn, Vec p, Rotation r) {
 		this(scn, null, p, r, 1);
 	}
 
-	public DualFrame(Eye eye, Vec p, Rotation r) {
+	public GrabberFrame(Eye eye, Vec p, Rotation r) {
 		this(eye.scene(), p, r);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -222,13 +222,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, null, new Vec(), r, s)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Rotation r, float s) {
+	public GrabberFrame(AbstractScene scn, Rotation r, float s) {
 		this(scn, null, new Vec(), r, s);
 	}
 
-	public DualFrame(Eye eye, Rotation r, float s) {
+	public GrabberFrame(Eye eye, Rotation r, float s) {
 		this(eye.scene(), r, s);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -237,13 +237,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, null, p, r, s)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Vec p, Rotation r, float s) {
+	public GrabberFrame(AbstractScene scn, Vec p, Rotation r, float s) {
 		this(scn, null, p, r, s);
 	}
 
-	public DualFrame(Eye eye, Vec p, Rotation r, float s) {
+	public GrabberFrame(Eye eye, Vec p, Rotation r, float s) {
 		this(eye.scene(), p, r, s);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -252,13 +252,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Frame referenceFrame) {
+	public GrabberFrame(AbstractScene scn, Frame referenceFrame) {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
-	public DualFrame(Eye eye, Frame referenceFrame) {
+	public GrabberFrame(Eye eye, Frame referenceFrame) {
 		this(eye.scene(), referenceFrame);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -267,13 +267,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Frame referenceFrame, Vec p) {
+	public GrabberFrame(AbstractScene scn, Frame referenceFrame, Vec p) {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
-	public DualFrame(Eye eye, Frame referenceFrame, Vec p) {
+	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p) {
 		this(eye.scene(), referenceFrame, p);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -282,13 +282,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), r, 1)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Frame referenceFrame, Rotation r) {
+	public GrabberFrame(AbstractScene scn, Frame referenceFrame, Rotation r) {
 		this(scn, referenceFrame, new Vec(), r, 1);
 	}
 
-	public DualFrame(Eye eye, Frame referenceFrame, Rotation r) {
+	public GrabberFrame(Eye eye, Frame referenceFrame, Rotation r) {
 		this(eye.scene(), referenceFrame, r);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -297,13 +297,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Frame referenceFrame, float s) {
+	public GrabberFrame(AbstractScene scn, Frame referenceFrame, float s) {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
-	public DualFrame(Eye eye, Frame referenceFrame, float s) {
+	public GrabberFrame(Eye eye, Frame referenceFrame, float s) {
 		this(eye.scene(), referenceFrame, s);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -312,13 +312,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Frame referenceFrame, Vec p, float s) {
+	public GrabberFrame(AbstractScene scn, Frame referenceFrame, Vec p, float s) {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
-	public DualFrame(Eye eye, Frame referenceFrame, Vec p, float s) {
+	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, float s) {
 		this(eye.scene(), referenceFrame, p, s);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -327,13 +327,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, r, 1)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r) {
+	public GrabberFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r) {
 		this(scn, referenceFrame, p, r, 1);
 	}
 
-	public DualFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r) {
+	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r) {
 		this(eye.scene(), referenceFrame, p, r);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -342,13 +342,13 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), r, s)}.
 	 * 
-	 * @see #SceneFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public DualFrame(AbstractScene scn, Frame referenceFrame, Rotation r, float s) {
+	public GrabberFrame(AbstractScene scn, Frame referenceFrame, Rotation r, float s) {
 		this(scn, referenceFrame, new Vec(), r, s);
 	}
 
-	public DualFrame(Eye eye, Frame referenceFrame, Rotation r, float s) {
+	public GrabberFrame(Eye eye, Frame referenceFrame, Rotation r, float s) {
 		this(eye.scene(), referenceFrame, r, s);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
@@ -359,7 +359,7 @@ public class DualFrame extends Frame implements Grabber {
 	 * {@code r} and {@code s} as the frame {@link #translation()}, {@link #rotation()} and {@link #scaling()},
 	 * respectively.
 	 */
-	public DualFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
+	public GrabberFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(referenceFrame, p, r, s);
 		scene = scn;
 
@@ -396,13 +396,13 @@ public class DualFrame extends Frame implements Grabber {
 			setFlySpeed(0.01f * scene.eye().sceneRadius());
 	}
 
-	public DualFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
+	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
 		this(eye.scene(), referenceFrame, p, r, s);
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
 	}
 
-	protected DualFrame(DualFrame otherFrame) {
+	protected GrabberFrame(GrabberFrame otherFrame) {
 		super(otherFrame);
 		this.scene = otherFrame.scene;
 		this.theeye = otherFrame.theeye;
@@ -467,8 +467,8 @@ public class DualFrame extends Frame implements Grabber {
 	}
 
 	@Override
-	public DualFrame get() {
-		return new DualFrame(this);
+	public GrabberFrame get() {
+		return new GrabberFrame(this);
 	}
 
 	/**
@@ -607,9 +607,9 @@ public class DualFrame extends Frame implements Grabber {
 	/**
 	 * Same as {@code sync(this, otherFrame)}.
 	 * 
-	 * @see #sync(DualFrame, DualFrame)
+	 * @see #sync(GrabberFrame, GrabberFrame)
 	 */
-	public void sync(DualFrame otherFrame) {
+	public void sync(GrabberFrame otherFrame) {
 		sync(this, otherFrame);
 	}
 
@@ -623,11 +623,11 @@ public class DualFrame extends Frame implements Grabber {
 	 * 
 	 * @see #fromFrame(Frame)
 	 */
-	public static void sync(DualFrame f1, DualFrame f2) {
+	public static void sync(GrabberFrame f1, GrabberFrame f2) {
 		if (f1.lastGlobalUpdate() == f2.lastGlobalUpdate())
 			return;
-		DualFrame source = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f1 : f2;
-		DualFrame target = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f2 : f1;
+		GrabberFrame source = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f1 : f2;
+		GrabberFrame target = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f2 : f1;
 		target.fromFrame(source);
 	}
 
@@ -1430,7 +1430,7 @@ public class DualFrame extends Frame implements Grabber {
 		Vec pos = position();
 		Quat o = (Quat) orientation();
 		Frame oldRef = referenceFrame();
-		DualFrame rFrame = new DualFrame(scene);
+		GrabberFrame rFrame = new GrabberFrame(scene);
 		rFrame.setPosition(eye().anchor());
 		rFrame.setZAxis(Vec.subtract(pos, eye().anchor()));
 		rFrame.setXAxis(xAxis());
@@ -1825,7 +1825,7 @@ public class DualFrame extends Frame implements Grabber {
 			grabsInputThreshold = threshold;
 		}
 	}
-	
+
 	/**
 	 * Check if this object is the {@link remixlab.bias.core.Agent#inputGrabber()}. Returns {@code true} if this object
 	 * grabs the agent and {@code false} otherwise.

@@ -1538,20 +1538,20 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			return;
 
 		eye().frame().stopSpinning();
-		if (avatar() instanceof DualFrame)
-			((DualFrame) (avatar())).stopSpinning();
+		if (avatar() instanceof GrabberFrame)
+			((GrabberFrame) (avatar())).stopSpinning();
 
 		// perform small animation ;)
 		if (eye().anyInterpolationStarted())
 			eye().stopInterpolations();
 		// eye().interpolateTo(avatar().eyeFrame());//works only when eyeFrame scaling = magnitude
-		DualFrame eyeFrameCopy = avatar().eyeFrame().get();
+		GrabberFrame eyeFrameCopy = avatar().eyeFrame().get();
 		eyeFrameCopy.setMagnitude(avatar().eyeFrame().scaling());
 		eye().interpolateTo(eyeFrameCopy);
 
-		if (avatar() instanceof DualFrame)
-			if (!((DualFrame) avatar()).isEyeFrame())
-				motionAgent().setDefaultGrabber((DualFrame) avatar());
+		if (avatar() instanceof GrabberFrame)
+			if (!((GrabberFrame) avatar()).isEyeFrame())
+				motionAgent().setDefaultGrabber((GrabberFrame) avatar());
 		motionAgent().disableTracking();
 	}
 
@@ -2087,7 +2087,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	static public void showEventVariationWarning(MotionAction action) {
 		showWarning(action.name() + " can only be performed using a relative event.");
 	}
-	
+
 	static public void showOnlyEyeWarning(MotionAction action) {
 		showOnlyEyeWarning(action, true);
 	}
@@ -2096,12 +2096,12 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * Display a warning that the specified Action is only available for the Eye frame.
 	 */
 	static public void showOnlyEyeWarning(MotionAction action, boolean eye) {
-		if(eye)
+		if (eye)
 			showWarning(action.name() + " can only be performed when dualframe is in eye mode.");
 		else
 			showWarning(action.name() + " can only be performed when dualframe is in frame mode.");
 	}
-	
+
 	static public void showOnlyEyeWarning(String method) {
 		showOnlyEyeWarning(method, true);
 	}
@@ -2110,7 +2110,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * Display a warning that the specified method is only available for a frame (but not an eye-frame).
 	 */
 	static public void showOnlyEyeWarning(String method, boolean eye) {
-		if(eye)
+		if (eye)
 			showWarning(method + "() can only be performed when dualframe is in eye mode.");
 		else
 			showWarning(method + "() can only be performed when dualframe is in frame mode.");

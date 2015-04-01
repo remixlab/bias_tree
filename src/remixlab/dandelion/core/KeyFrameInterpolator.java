@@ -135,11 +135,11 @@ public class KeyFrameInterpolator implements Copyable {
 					.isEquals();
 		}
 
-		protected Vec				tgPVec;
-		protected float			tm;
-		protected DualFrame	frm;
+		protected Vec						tgPVec;
+		protected float					tm;
+		protected GrabberFrame	frm;
 
-		KeyFrame(DualFrame fr, float t) {
+		KeyFrame(GrabberFrame fr, float t) {
 			tm = t;
 			frm = fr;
 		}
@@ -165,7 +165,7 @@ public class KeyFrameInterpolator implements Copyable {
 			return tm;
 		}
 
-		DualFrame frame() {
+		GrabberFrame frame() {
 			return frm;
 		}
 
@@ -182,7 +182,7 @@ public class KeyFrameInterpolator implements Copyable {
 	protected class KeyFrame3D extends KeyFrame {
 		protected Quat	tgQuat;
 
-		KeyFrame3D(DualFrame fr, float t) {
+		KeyFrame3D(GrabberFrame fr, float t) {
 			super(fr, t);
 		}
 
@@ -210,7 +210,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * 2D KeyFrame internal class.
 	 */
 	protected class KeyFrame2D extends KeyFrame {
-		KeyFrame2D(DualFrame fr, float t) {
+		KeyFrame2D(GrabberFrame fr, float t) {
 			super(fr, t);
 		}
 
@@ -235,9 +235,9 @@ public class KeyFrameInterpolator implements Copyable {
 	private ListIterator<KeyFrame>	currentFrame1;
 	private ListIterator<KeyFrame>	currentFrame2;
 	private ListIterator<KeyFrame>	currentFrame3;
-	protected List<DualFrame>				path;
+	protected List<GrabberFrame>		path;
 	// A s s o c i a t e d f r a m e
-	private DualFrame								mainFrame;
+	private GrabberFrame						mainFrame;
 
 	// R h y t h m
 	private TimingTask							interpolationTimerTask;
@@ -266,24 +266,24 @@ public class KeyFrameInterpolator implements Copyable {
 	 * <p>
 	 * Creates an anonymous {@link #frame()} to be interpolated by this KeyFrameInterpolator.
 	 * 
-	 * @see #KeyFrameInterpolator(AbstractScene, DualFrame)
+	 * @see #KeyFrameInterpolator(AbstractScene, GrabberFrame)
 	 */
 	public KeyFrameInterpolator(AbstractScene scn) {
-		this(scn, new DualFrame(scn));
+		this(scn, new GrabberFrame(scn));
 	}
 
 	/**
 	 * Creates a KeyFrameInterpolator, with {@code frame} as associated {@link #frame()}.
 	 * <p>
-	 * The {@link #frame()} can be set or changed using {@link #setFrame(DualFrame)}.
+	 * The {@link #frame()} can be set or changed using {@link #setFrame(GrabberFrame)}.
 	 * <p>
 	 * {@link #interpolationTime()}, {@link #interpolationSpeed()} and {@link #interpolationPeriod()} are set to their
 	 * default values.
 	 */
-	public KeyFrameInterpolator(AbstractScene scn, DualFrame frame) {
+	public KeyFrameInterpolator(AbstractScene scn, GrabberFrame frame) {
 		scene = scn;
 		keyFrameList = new ArrayList<KeyFrame>();
-		path = new ArrayList<DualFrame>();
+		path = new ArrayList<GrabberFrame>();
 		mainFrame = null;
 		period = 40;
 		interpolationTm = 0.0f;
@@ -310,8 +310,8 @@ public class KeyFrameInterpolator implements Copyable {
 
 	protected KeyFrameInterpolator(KeyFrameInterpolator otherKFI) {
 		this.scene = otherKFI.scene;
-		this.path = new ArrayList<DualFrame>();
-		ListIterator<DualFrame> frameIt = otherKFI.path.listIterator();
+		this.path = new ArrayList<GrabberFrame>();
+		ListIterator<GrabberFrame> frameIt = otherKFI.path.listIterator();
 		while (frameIt.hasNext()) {
 			this.path.add(frameIt.next().get());
 		}
@@ -379,7 +379,7 @@ public class KeyFrameInterpolator implements Copyable {
 	/**
 	 * Sets the {@link #frame()} associated to the KeyFrameInterpolator.
 	 */
-	public void setFrame(DualFrame f) {
+	public void setFrame(GrabberFrame f) {
 		mainFrame = f;
 	}
 
@@ -389,14 +389,14 @@ public class KeyFrameInterpolator implements Copyable {
 	 * When {@link #interpolationStarted()}, this Frame's position, orientation and magnitude will regularly be updated by
 	 * a timer, so that they follow the KeyFrameInterpolator path.
 	 * <p>
-	 * Set using {@link #setFrame(DualFrame)} or with the KeyFrameInterpolator constructor.
+	 * Set using {@link #setFrame(GrabberFrame)} or with the KeyFrameInterpolator constructor.
 	 */
-	public DualFrame frame() {
+	public GrabberFrame frame() {
 		return mainFrame;
 	}
 
 	/**
-	 * Returns the number of keyFrames used by the interpolation. Use {@link #addKeyFrame(DualFrame)} to add new
+	 * Returns the number of keyFrames used by the interpolation. Use {@link #addKeyFrame(GrabberFrame)} to add new
 	 * keyFrames.
 	 */
 	public int numberOfKeyFrames() {
@@ -580,7 +580,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * Use {@link #setInterpolationTime(float)} before calling this method to change the starting
 	 * {@link #interpolationTime()}.
 	 * <p>
-	 * <b>Attention:</b> The keyFrames must be defined (see {@link #addKeyFrame(DualFrame, float)}) before you
+	 * <b>Attention:</b> The keyFrames must be defined (see {@link #addKeyFrame(GrabberFrame, float)}) before you
 	 * startInterpolation(), or else the interpolation will naturally immediately stop.
 	 */
 	public void startInterpolation(int myPeriod) {
@@ -622,10 +622,10 @@ public class KeyFrameInterpolator implements Copyable {
 	/**
 	 * Appends a new keyFrame to the path.
 	 * <p>
-	 * Same as {@link #addKeyFrame(DualFrame, float)}, except that the {@link #keyFrameTime(int)} is set to the previous
-	 * {@link #keyFrameTime(int)} plus one second (or 0.0 if there is no previous keyFrame).
+	 * Same as {@link #addKeyFrame(GrabberFrame, float)}, except that the {@link #keyFrameTime(int)} is set to the
+	 * previous {@link #keyFrameTime(int)} plus one second (or 0.0 if there is no previous keyFrame).
 	 */
-	public void addKeyFrame(DualFrame frame) {
+	public void addKeyFrame(GrabberFrame frame) {
 		float time;
 
 		if (keyFrameList.isEmpty())
@@ -647,7 +647,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * allows for dynamic paths, where keyFrame can be edited, even during the interpolation. {@code null} frame
 	 * references are silently ignored. The {@link #keyFrameTime(int)} has to be monotonously increasing over keyFrames.
 	 */
-	public void addKeyFrame(DualFrame frame, float time) {
+	public void addKeyFrame(GrabberFrame frame, float time) {
 		if (frame == null)
 			return;
 
@@ -749,7 +749,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * 
 	 * @see remixlab.dandelion.core.AbstractScene#drawPath(KeyFrameInterpolator, int, int, float)
 	 */
-	public List<DualFrame> path() {
+	public List<GrabberFrame> path() {
 		updatePath();
 		return path;
 	}
@@ -770,9 +770,10 @@ public class KeyFrameInterpolator implements Copyable {
 				updateModifiedFrameValues();
 
 			if (keyFrameList.get(0) == keyFrameList.get(keyFrameList.size() - 1))
-				path.add(new DualFrame(scene, keyFrameList.get(0).position(), keyFrameList.get(0).orientation(), keyFrameList
-						.get(0)
-						.magnitude()));
+				path.add(new GrabberFrame(scene, keyFrameList.get(0).position(), keyFrameList.get(0).orientation(),
+						keyFrameList
+								.get(0)
+								.magnitude()));
 			else {
 				KeyFrame[] kf = new KeyFrame[4];
 				kf[0] = keyFrameList.get(0);
@@ -791,7 +792,7 @@ public class KeyFrameInterpolator implements Copyable {
 					pvec2 = Vec.add(pvec2, kf[2].tgP());
 
 					for (int step = 0; step < nbSteps; ++step) {
-						DualFrame frame = new DualFrame(scene);
+						GrabberFrame frame = new GrabberFrame(scene);
 						float alpha = step / (float) nbSteps;
 						frame.setPosition(Vec.add(kf[1].position(), Vec.multiply(
 								Vec.add(kf[1].tgP(), Vec.multiply(Vec.add(pvec1, Vec.multiply(pvec2, alpha)), alpha)), alpha)));
@@ -818,7 +819,7 @@ public class KeyFrameInterpolator implements Copyable {
 					kf[3] = (index < keyFrameList.size()) ? keyFrameList.get(index) : null;
 				}
 				// Add last KeyFrame
-				path.add(new DualFrame(scene, kf[1].position(), kf[1].orientation(), kf[1].magnitude()));
+				path.add(new GrabberFrame(scene, kf[1].position(), kf[1].orientation(), kf[1].magnitude()));
 			}
 			pathIsValid = true;
 		}
@@ -846,10 +847,10 @@ public class KeyFrameInterpolator implements Copyable {
 	 * <p>
 	 * See also {@link #keyFrameTime(int)}. {@code index} has to be in the range 0..{@link #numberOfKeyFrames()}-1.
 	 * <p>
-	 * <b>Note:</b> If this keyFrame was defined using a reference to a Frame (see {@link #addKeyFrame(DualFrame, float)}
-	 * the current referenced Frame state is returned.
+	 * <b>Note:</b> If this keyFrame was defined using a reference to a Frame (see
+	 * {@link #addKeyFrame(GrabberFrame, float)} the current referenced Frame state is returned.
 	 */
-	public DualFrame keyFrame(int index) {
+	public GrabberFrame keyFrame(int index) {
 		/**
 		 * AbstractKeyFrame kf = keyFr.get(index); return new Frame(kf.orientation(), kf.position(), kf.magnitude());
 		 */

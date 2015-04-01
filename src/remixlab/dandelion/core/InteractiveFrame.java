@@ -64,7 +64,7 @@ import remixlab.util.*;
  * {@link remixlab.dandelion.core.AbstractScene#inputHandler()} {@link remixlab.bias.core.InputHandler#agents()} pool
  * upon creation.
  */
-public class InteractiveFrame extends DualFrame implements InteractiveGrabber<MotionAction>, Copyable,
+public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber<MotionAction>, Copyable,
 		Constants {
 	@Override
 	public int hashCode() {
@@ -252,7 +252,7 @@ public class InteractiveFrame extends DualFrame implements InteractiveGrabber<Mo
 	 * 
 	 * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
 	 */
-	protected InteractiveFrame(AbstractScene scn, DualFrame iFrame) {
+	protected InteractiveFrame(AbstractScene scn, GrabberFrame iFrame) {
 		super(scn, iFrame);
 	}
 
@@ -330,18 +330,14 @@ public class InteractiveFrame extends DualFrame implements InteractiveGrabber<Mo
 	public boolean isInInteraction() {
 		return action != null;
 	}
-	
-	/*
-	@Override
-	public void performInteraction(BogusEvent event) {
-		if (event instanceof ClickEvent)
-			performInteraction((ClickEvent) event);
-		if (event instanceof MotionEvent)
-			performInteraction((MotionEvent) event);
-	}
-	*/
 
-	//TODO replace with above
+	/*
+	 * @Override public void performInteraction(BogusEvent event) { if (event instanceof ClickEvent)
+	 * performInteraction((ClickEvent) event); if (event instanceof MotionEvent) performInteraction((MotionEvent) event);
+	 * }
+	 */
+
+	// TODO replace with above
 	@Override
 	public void performInteraction(BogusEvent event) {
 		if (event instanceof ClickEvent)

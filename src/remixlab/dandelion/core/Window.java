@@ -302,6 +302,9 @@ public class Window extends Eye implements Copyable {
 	@Override
 	public boolean setAnchorFromPixel(Point pixel) {
 		setAnchor(unprojectedCoordinatesOf(new Vec((float) pixel.x(), (float) pixel.y(), 0.5f)));
+		// new
+		anchorFlag = true;
+		timerFx.runOnce(1000);
 		return true;
 	}
 
@@ -313,7 +316,7 @@ public class Window extends Eye implements Copyable {
 		float cY = (float) pixel.y() - winH / 2;
 		Rect rect = new Rect((int) cX, (int) cY, (int) winW, (int) winH);
 		this.interpolateToZoomOnRegion(rect);
-		//draw hint
+		// draw hint
 		pupVec = unprojectedCoordinatesOf(new Vec(pixel.x(), pixel.y(), 0.5f));
 		pupFlag = true;
 		timerFx.runOnce(1000);

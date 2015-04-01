@@ -28,7 +28,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 
 	boolean										bypassNullEvent, need4Spin, drive, rotateMode;
 	float											dFriction;
-	DualFrame									iFrame, eyeFrame;
+	GrabberFrame							iFrame, eyeFrame;
 
 	protected boolean					needHandle;
 	/* protected */DOF2Event	spEvent;

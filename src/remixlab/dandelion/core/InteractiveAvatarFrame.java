@@ -47,10 +47,10 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 				.isEquals();
 	}
 
-	protected DualFrame	eFrame;
+	protected GrabberFrame	eFrame;
 
-	private Rotation		q;
-	private float				trackingDist;
+	private Rotation				q;
+	private float						trackingDist;
 
 	/**
 	 * Constructs an InteractiveAvatarFrame and sets its {@link #trackingDistance()} to
@@ -60,7 +60,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 	 */
 	public InteractiveAvatarFrame(AbstractScene scn) {
 		super(scn);
-		eFrame = new DualFrame(scene);
+		eFrame = new GrabberFrame(scene);
 		q = scene.is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
 		eFrame.setReferenceFrame(this);
 		setTrackingDistance(scene.radius() / 5);
@@ -193,7 +193,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 	 * position computed in {@link #updateEyeFrame()}.
 	 */
 	@Override
-	public DualFrame eyeFrame() {
+	public GrabberFrame eyeFrame() {
 		return eFrame;
 	}
 }
