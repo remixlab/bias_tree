@@ -156,6 +156,15 @@ public class Agent {
 		return true;
 	}
 
+	public Branch<?, ?> branch(Grabber g) {
+		if (g instanceof InteractiveGrabber) {
+			for (GrabberBranchTuple t : tuples)
+				if (t.g == g)
+					return t.b;
+		}
+		return null;
+	}
+
 	public List<Branch<?, ?>> branches() {
 		return brnchs;
 	}

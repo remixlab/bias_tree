@@ -256,8 +256,6 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		super(scn, iFrame);
 	}
 
-	// --
-
 	/**
 	 * Default constructor.
 	 * <p>
@@ -269,37 +267,12 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	 */
 	public InteractiveFrame(Eye theEye) {
 		super(theEye);
-
-		// TODO merge with frame? Really depends on the next line
-		// scene.motionAgent().addGrabber(this);
 	}
 
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
-
-		// this.scnUpVec.set(otherFrame.sceneUpVector().get());
-		// this.flyDisp.set(otherFrame.flyDisp.get());
-		// this.setFlySpeed(otherFrame.flySpeed());
-
-		if (!isEyeFrame()) {
-			if (scene.motionAgent().hasGrabber(otherFrame))
-				scene.motionAgent().addGrabber(this);
-
-			this.setAction(otherFrame.action());
-		}
-		// TODO don't think so: frame is added to the pool when setting the eye
-		// else {
-		// if( scene.motionAgent().eyeBranch().isInPool(otherFrame) )
-		// scene.motionAgent().eyeBranch().addInPool(this);
-		// }
+		this.setAction(otherFrame.action());
 	}
-
-	/*
-	 * protected InteractiveFrame(InteractiveFrame otherFrame) { super(otherFrame.theeye);
-	 * 
-	 * 
-	 * }
-	 */
 
 	@Override
 	public InteractiveFrame get() {
@@ -331,27 +304,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		return action != null;
 	}
 
-	/*
-	 * @Override public void performInteraction(BogusEvent event) { if (event instanceof ClickEvent)
-	 * performInteraction((ClickEvent) event); if (event instanceof MotionEvent) performInteraction((MotionEvent) event);
-	 * }
-	 */
-
-	// TODO replace with above
 	@Override
-	public void performInteraction(BogusEvent event) {
-		if (event instanceof ClickEvent)
-			performInteraction((ClickEvent) event);
-		if (event instanceof DOF1Event)
-			performInteraction((DOF1Event) event);
-		if (event instanceof DOF2Event)
-			performInteraction((DOF2Event) event);
-		if (event instanceof DOF3Event)
-			performInteraction((DOF3Event) event);
-		if (event instanceof DOF6Event)
-			performInteraction((DOF6Event) event);
-	}
-
 	public void performInteraction(ClickEvent event) {
 		switch (referenceAction()) {
 		case CUSTOM:
@@ -378,199 +331,13 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			eye().interpolateToZoomOnPixel(new Point(event.x(), event.y()));
 			break;
 		default:
+			AbstractScene.showOnlyClickWarning(referenceAction());
 			break;
 		}
 	}
 
-	public void performInteraction(DOF1Event event) {
-		if (scene.is2D())
-			execAction2D(event, true);
-		else
-			execAction3D(event, true);
-	}
-
-	public void performInteraction(DOF2Event event) {
-		if (scene.is2D())
-			execAction2D(event);
-		else
-			execAction3D(event);
-	}
-
-	public void performInteraction(DOF3Event event) {
-		if (scene.is2D())
-			execAction2D(event);
-		else
-			execAction3D(event);
-	}
-
-	public void performInteraction(DOF6Event event) {
-		if (scene.is2D())
-			execAction2D(event);
-		else
-			execAction3D(event);
-	}
-
-	// 2D
-
-	protected void execAction2D(DOF1Event event) {
-		execAction2D(event, false);
-	}
-
-	protected void execAction2D(DOF1Event event, boolean wheel) {
-		switch (referenceAction()) {
-		case CUSTOM:
-			performCustomAction(event);
-			break;
-		case ROTATE_Z:
-			gestureRotateZ(event, wheel ? wheelSensitivity() : translationSensitivity());
-			break;
-		case SCALE:
-			scale(event, wheel ? wheelSensitivity() : translationSensitivity());
-			break;
-		case TRANSLATE_X:
-			gestureTranslateX(event, wheel ? wheelSensitivity() : translationSensitivity());
-			break;
-		case TRANSLATE_Y:
-			gestureTranslateY(event, wheel ? wheelSensitivity() : translationSensitivity());
-			break;
-		default:
-			// TODO
-			// AbstractScene.showOnlyEyeWarning(a);
-			break;
-		}
-	}
-
-	protected void execAction2D(DOF2Event event) {
-		switch (referenceAction()) {
-		case CUSTOM:
-			performCustomAction(event);
-			break;
-		case MOVE_BACKWARD:
-			moveBackward(event);
-			break;
-		case MOVE_FORWARD:
-			moveForward(event);
-			break;
-		case ROTATE:
-		case SCREEN_ROTATE:
-			arcball(event);
-			break;
-		case SCREEN_TRANSLATE:
-			break;
-		case TRANSLATE:
-			gestureTranslateXY(event);
-			break;
-		case ZOOM_ON_REGION:
-			if (event.isAbsolute()) {
-				// TODO restore
-				// AbstractScene.showEventVariationWarning(a);
-				break;
-			}
-			int w = (int) Math.abs(event.dx());
-			int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
-			int h = (int) Math.abs(event.dy());
-			int tlY = (int) event.prevY() < (int) event.y() ? (int) event.prevY() : (int) event.y();
-			// viewWindow.fitScreenRegion( new Rectangle (tlX, tlY, w, h) );
-			eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
-			break;
-		case ROTATE_Z:
-		case TRANSLATE_X:
-			execAction2D(event.dof1Event(true));
-			break;
-		case SCALE:
-		case TRANSLATE_Y:
-			execAction2D(event.dof1Event(false));
-			break;
-		default:
-			// TODO
-			// AbstractScene.showOnlyEyeWarning(a);
-			break;
-		}
-	}
-
-	protected void execAction2D(DOF3Event event) {
-		if (referenceAction() == MotionAction.CUSTOM)
-			performCustomAction(event);
-		else
-			execAction2D(event.dof2Event());
-	}
-
-	protected void execAction2D(DOF6Event event) {
-		if (referenceAction() == MotionAction.CUSTOM)
-			performCustomAction(event);
-		else
-			execAction2D(event.dof3Event());
-	}
-
-	// 3D
-
-	protected void execAction3D(DOF1Event event) {
-		execAction3D(event, false);
-	}
-
-	protected void execAction3D(DOF1Event event, boolean wheel) {
-		Vec trns;
-		switch (referenceAction()) {
-		case CUSTOM:
-			performCustomAction(event);
-			break;
-		case ROTATE_X:
-			rotateAroundEyeAxes((wheel ? wheelSensitivity() : rotationSensitivity()) * computeAngle(event), 0, 0);
-			break;
-		case ROTATE_Y:
-			rotateAroundEyeAxes(0, (wheel ? wheelSensitivity() : rotationSensitivity()) * -computeAngle(event), 0);
-			break;
-		case ROTATE_Z:
-			rotateAroundEyeAxes(0, 0, (wheel ? wheelSensitivity() : rotationSensitivity()) * -computeAngle(event));
-			break;
-		case SCALE:
-			scale(event, wheel ? wheelSensitivity() : translationSensitivity());
-			break;
-		case TRANSLATE_X:
-			gestureTranslateX(event, wheel ? wheelSensitivity() : translationSensitivity());
-			break;
-		case TRANSLATE_Y:
-			gestureTranslateY(event, wheel ? wheelSensitivity() : translationSensitivity());
-			break;
-		case TRANSLATE_Z:
-			gestureTranslateZ(event, wheel ? wheelSensitivity() : translationSensitivity());
-			break;
-		case ZOOM_ON_ANCHOR:
-			/*
-			 * trns = Vec.subtract(eye().anchor(), position()); trns = eye().eyeCoordinatesOf(trns); trns.normalize();
-			 * trns.multiply(delta1(event)); Vec ineye = trns.get(); float mag = gesture2Eye(trns);
-			 * 
-			 * translateFromEye(trns, wheel ? wheelSensitivity() : translationSensitivity()); //
-			 */
-			// /*
-			trns = Vec.subtract(eye().anchor(), position());
-			trns = eye().eyeCoordinatesOf(trns);
-			trns.normalize();
-			trns.multiply(delta1(event));
-			// translateFromGesture(trns, wheel ? wheelSensitivity() : translationSensitivity());
-			// TODO: broken once again!
-			// eyeTranslate(trns, wheel ? wheelSensitivity() : translationSensitivity());
-			// */
-
-			/*
-			 * //TODO experimenting scale2Fit(trns); translateFromWorld(trns, wheel ? wheelSensitivity() :
-			 * translationSensitivity()); //
-			 */
-
-			// TODO only missing case
-			/*
-			 * if (wheel) delta = event.x() * -wheelSensitivity() * wheelSensitivityCoef; // TODO should absolute be divided
-			 * by camera.screenHeight()? else if (event.isAbsolute()) delta = -event.x() / eye().screenHeight(); else delta =
-			 * -event.dx() / eye().screenHeight(); trns = Vec.subtract(position(), scene.camera().anchor()); if
-			 * (trns.magnitude() > 0.02f * scene.radius() || delta > 0.0f) translate(Vec.multiply(trns, delta)); //
-			 */
-			break;
-		default:
-			break;
-		}
-	}
-
-	protected void execAction3D(DOF2Event event) {
+	@Override
+	public void performInteraction(MotionEvent event) {
 		switch (referenceAction()) {
 		case CUSTOM:
 			performCustomAction(event);
@@ -578,98 +345,80 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		case DRIVE:
 			drive(event);
 			break;
+		case HINGE:
+			hinge(event);
+			break;
 		case LOOK_AROUND:
 			rotate(rollPitchQuaternion(event, scene.camera()));
 			break;
 		case MOVE_BACKWARD:
-			moveBackward(event);
+			moveForward(event, false);
 			break;
 		case MOVE_FORWARD:
-			moveForward(event);
+			moveForward(event, true);
 			break;
 		case ROTATE:
 			arcball(event);
 			break;
 		case ROTATE_CAD:
-			rotateCAD(event);
+			break;
+		case ROTATE_X:
+			gestureRotateX(event);
+			break;
+		case ROTATE_XYZ:
+			break;
+		case ROTATE_Y:
+			gestureRotateY(event);
+			break;
+		case ROTATE_Z:
+			gestureRotateZ(event);
+			break;
+		case SCALE:
+			gestureScale(event);
 			break;
 		case SCREEN_ROTATE:
-			screenRotate(event);
 			break;
 		case SCREEN_TRANSLATE:
-			int dir = originalDirection(event);
-			if (dir == 1)
-				gestureTranslateX(event.dof1Event(true), translationSensitivity());
-			else if (dir == -1)
-				gestureTranslateY(event.dof1Event(false), translationSensitivity());
 			break;
 		case TRANSLATE:
 			gestureTranslateXY(event);
 			break;
-		case ZOOM_ON_REGION:
-			if (event.isAbsolute()) {
-				// TODO restore
-				// AbstractScene.showEventVariationWarning(a);
-				break;
-			}
-			int w = (int) Math.abs(event.dx());
-			int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
-			int h = (int) Math.abs(event.dy());
-			int tlY = (int) event.prevY() < (int) event.y() ? (int) event.prevY() : (int) event.y();
-			// camera.fitScreenRegion( new Rectangle (tlX, tlY, w, h) );
-			eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
-			break;
-		case ROTATE_Y:
-		case ROTATE_Z:
 		case TRANSLATE_X:
-		case ZOOM_ON_ANCHOR:
-			execAction3D(event.dof1Event(true), false);
-			break;
-		default:
-			execAction3D(event.dof1Event(false), false);
-			break;
-		}
-	}
-
-	protected void execAction3D(DOF3Event event) {
-		switch (referenceAction()) {
-		case CUSTOM:
-			performCustomAction(event);
-			break;
-		case ROTATE_XYZ:
-			if (event.isAbsolute())
-				rotateAroundEyeAxes(event.x(), -event.y(), -event.z());
-			else
-				rotateAroundEyeAxes(event.dx(), -event.dy(), -event.dz());
+			gestureTranslateX(event);
 			break;
 		case TRANSLATE_XYZ:
-			gestureTranslateXYZ(event);
-			break;
-		default:
-			execAction3D(event.dof2Event());
-			break;
-		}
-	}
-
-	protected void execAction3D(DOF6Event event) {
-		switch (referenceAction()) {
-		case CUSTOM:
-			performCustomAction(event);
-			break;
-		case HINGE:
-			hinge(event);
 			break;
 		case TRANSLATE_XYZ_ROTATE_XYZ:
-			// A. Translate the iFrame
-			gestureTranslateXYZ(event);
-			// B. Rotate the iFrame
-			if (event.isAbsolute())
-				rotateAroundEyeAxes(event.roll(), -event.pitch(), -event.yaw());
-			else
-				rotateAroundEyeAxes(event.drx(), -event.dry(), -event.drz());
+			break;
+		case TRANSLATE_Y:
+			gestureTranslateY(event);
+			break;
+		case TRANSLATE_Z:
+			gestureTranslateZ(event);
+			break;
+		case ZOOM_ON_ANCHOR:
+			break;
+		case ZOOM_ON_REGION:
+			if (!isEyeFrame()) {
+				AbstractScene.showOnlyEyeWarning(referenceAction());
+			}
+			if (event.isAbsolute()) {
+				AbstractScene.showEventVariationWarning(referenceAction());
+				break;
+			}
+			DOF2Event dof2 = MotionEvent.dof2Event(event);
+			if (dof2 == null) {
+				AbstractScene.showMinDOFsWarning("moveForward", 2);
+				break;
+			}
+			int w = (int) Math.abs(dof2.dx());
+			int tlX = (int) dof2.prevX() < (int) dof2.x() ? (int) dof2.prevX() : (int) dof2.x();
+			int h = (int) Math.abs(dof2.dy());
+			int tlY = (int) dof2.prevY() < (int) dof2.y() ? (int) dof2.prevY() : (int) dof2.y();
+			eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
 			break;
 		default:
-			execAction3D(event.dof3Event());
+			AbstractScene.showOnlyMotionWarning(referenceAction());
 			break;
 		}
 	}
@@ -678,6 +427,17 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	public void performCustomAction(ClickEvent event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(ClickEvent event)", this.getClass().getName());
+	}
+
+	protected void performCustomAction(MotionEvent event) {
+		if (event instanceof DOF1Event)
+			performCustomAction((DOF1Event) event);
+		if (event instanceof DOF2Event)
+			performCustomAction((DOF2Event) event);
+		if (event instanceof DOF3Event)
+			performCustomAction((DOF3Event) event);
+		if (event instanceof DOF6Event)
+			performCustomAction((DOF6Event) event);
 	}
 
 	public void performCustomAction(DOF1Event event) {

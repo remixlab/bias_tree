@@ -1598,7 +1598,8 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		vp.setScreenWidthAndHeight(width(), height());
 
 		eye = vp;
-		motionAgent().resetDefaultGrabber();
+		motionAgent().addGrabber(eye().frame());
+		motionAgent().setDefaultGrabber(eye().frame());
 
 		showAll();
 	}
@@ -2038,23 +2039,13 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	/**
-	 * Same as {@code showDepthWarning(method, true)}.
-	 * 
-	 * @see #showDepthWarning(String, boolean)
-	 */
-	static public void showDepthWarning(String method) {
-		showDepthWarning(method, true);
-	}
-
-	/**
-	 * Display a warning that the specified method is only available with 3D (or with 2D if {@code twod} is false).
+	 * Display a warning that the specified method is only available in 3D.
 	 * 
 	 * @param method
 	 *          The method name (no parentheses)
 	 */
-	static public void showDepthWarning(String method, boolean twod) {
-		String dim = twod ? "2D." : "3D.";
-		showWarning(method + "() is not available in " + dim);
+	static public void showDepthWarning(String method) {
+		showWarning(method + "() is not available in 2d");
 	}
 
 	/**
@@ -2097,9 +2088,9 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 */
 	static public void showOnlyEyeWarning(MotionAction action, boolean eye) {
 		if (eye)
-			showWarning(action.name() + " can only be performed when dualframe is in eye mode.");
+			showWarning(action.name() + " can only be performed when frame is attached to an eye.");
 		else
-			showWarning(action.name() + " can only be performed when dualframe is in frame mode.");
+			showWarning(action.name() + " can only be performed when frame is detached from an eye.");
 	}
 
 	static public void showOnlyEyeWarning(String method) {
@@ -2111,9 +2102,9 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 */
 	static public void showOnlyEyeWarning(String method, boolean eye) {
 		if (eye)
-			showWarning(method + "() can only be performed when dualframe is in eye mode.");
+			showWarning(method + "() can only be performed when frame is attached to an eye.");
 		else
-			showWarning(method + "() can only be performed when dualframe is in frame mode.");
+			showWarning(method + "() can only be performed when frame detached from an eye.");
 	}
 
 	/**
@@ -2121,6 +2112,18 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 */
 	static public void showPlatformVariationWarning(String themethod, Platform platform) {
 		showWarning(themethod + " is not available under the " + platform + " platform.");
+	}
+
+	static public void showOnlyClickWarning(MotionAction action) {
+		showWarning(action.name() + " can only be performed from a ClickEvent.");
+	}
+
+	static public void showOnlyMotionWarning(MotionAction action) {
+		showWarning(action.name() + " can only be performed from a MotionEvent.");
+	}
+
+	static public void showMinDOFsWarning(String themethod, int dofs) {
+		showWarning(themethod + "() requires at least a " + dofs + " dofs.");
 	}
 
 	// NICE STUFF

@@ -251,10 +251,10 @@ public abstract class Eye implements Copyable {
 	public abstract Eye get();
 
 	/**
-	 * Returns the InteractiveFrame attached to the Eye.
+	 * Returns the GrabberFrame attached to the Eye.
 	 * <p>
-	 * This InteractiveFrame defines its {@link #position()}, {@link #orientation()} and can translate bogus events into
-	 * Eye displacement. Set using {@link #setFrame(GrabberFrame)}.
+	 * This GrabberFrame defines its {@link #position()}, {@link #orientation()} and can translate bogus events into Eye
+	 * displacement. Set using {@link #setFrame(GrabberFrame)}.
 	 */
 	public GrabberFrame frame() {
 		return frm;
@@ -346,8 +346,8 @@ public abstract class Eye implements Copyable {
 	 * If you want to move the Eye, use {@link #setPosition(Vec)} and {@link #setOrientation(Rotation)} or one of the Eye
 	 * positioning methods ({@link #lookAt(Vec)}, {@link #fitBall(Vec, float)}, {@link #showEntireScene()}...) instead.
 	 * <p>
-	 * This method is actually mainly useful if you derive the InteractiveFrame class and want to use an instance of your
-	 * new class to move the Eye.
+	 * This method is actually mainly useful if you derive the GrabberFrame class and want to use an instance of your new
+	 * class to move the Eye.
 	 * <p>
 	 * A {@code null} {@code icf} reference will silently be ignored.
 	 */
@@ -355,14 +355,20 @@ public abstract class Eye implements Copyable {
 		if (icf == null)
 			return;
 
-		scene.motionAgent().removeGrabber(frame());
-		if (frame() != null)// TODO: really needs thorough testing
-			frame().theeye = null;
+		// scene.motionAgent().removeGrabber(frame());
+		// if (frame() != null)// TODO: really needs thorough testing
+		// frame().theeye = null;
 
 		frm = icf;
 		frm.theeye = this;
-		interpolationKfi.setFrame(frame());
-
+		scene.motionAgent().addGrabber(frm);
+		interpolationKfi.setFrame(frm);
+		//
+		Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
+		while (itr.hasNext()) {
+			itr.next().setFrame(frm);
+		}
+		//
 		if (this == scene.eye())
 			scene.motionAgent().resetDefaultGrabber();
 	}
@@ -386,7 +392,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience wrapper function that simply returns {@code frame().spinningSensitivity()}
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveFrame#spinningSensitivity()
+	 * @see remixlab.dandelion.core.GrabberFrame#spinningSensitivity()
 	 */
 	public final float spinningSensitivity() {
 		return frame().spinningSensitivity();
@@ -395,7 +401,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience wrapper function that simply calls {@code frame().setSpinningSensitivity(sensitivity)}
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveFrame#setSpinningSensitivity(float)
+	 * @see remixlab.dandelion.core.GrabberFrame#setSpinningSensitivity(float)
 	 */
 	public final void setSpinningSensitivity(float sensitivity) {
 		frame().setSpinningSensitivity(sensitivity);
@@ -404,7 +410,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience wrapper function that simply returns {@code frame().rotationSensitivity()}
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveFrame#rotationSensitivity()
+	 * @see remixlab.dandelion.core.GrabberFrame#rotationSensitivity()
 	 */
 	public final float rotationSensitivity() {
 		return frame().rotationSensitivity();
@@ -413,7 +419,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience wrapper function that simply calls {@code frame().setRotationSensitivity(sensitivity)}
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveFrame#setRotationSensitivity(float)
+	 * @see remixlab.dandelion.core.GrabberFrame#setRotationSensitivity(float)
 	 */
 	public final void setRotationSensitivity(float sensitivity) {
 		frame().setRotationSensitivity(sensitivity);
@@ -422,7 +428,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience wrapper function that simply returns {@code frame().translationSensitivity()}
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveFrame#translationSensitivity()
+	 * @see remixlab.dandelion.core.GrabberFrame#translationSensitivity()
 	 */
 	public final float translationSensitivity() {
 		return frame().translationSensitivity();
@@ -431,7 +437,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Convenience wrapper function that simply calls {@code frame().setTranslationSensitivity(sensitivity)}
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveFrame#setTranslationSensitivity(float)
+	 * @see remixlab.dandelion.core.GrabberFrame#setTranslationSensitivity(float)
 	 */
 	public final void setTranslationSensitivity(float sensitivity) {
 		frame().setTranslationSensitivity(sensitivity);
@@ -561,7 +567,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Returns the fly speed of the Eye.
 	 * <p>
-	 * Simply returns {@code frame().flySpeed()}. See the {@link remixlab.dandelion.core.InteractiveFrame#flySpeed()}
+	 * Simply returns {@code frame().flySpeed()}. See the {@link remixlab.dandelion.core.GrabberFrame#flySpeed()}
 	 * documentation. This value is only meaningful when the action binding is MOVE_FORWARD or is MOVE_BACKWARD.
 	 * <p>
 	 * Set to 0.5% of the {@link #sceneRadius()} by {@link #setSceneRadius(float)}.
@@ -1329,10 +1335,10 @@ public abstract class Eye implements Copyable {
 
 	/**
 	 * Adds the current Eye {@link #position()} and {@link #orientation()} as a keyFrame to path {@code key}. If
-	 * {@code editablePath} is {@code true}, builds an InteractiveFrame (from the current Eye {@link #position()} and
+	 * {@code editablePath} is {@code true}, builds a GrabberFrame (from the current Eye {@link #position()} and
 	 * {@link #orientation()}) before adding it (see
-	 * {@link remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene, GrabberFrame)} ). In the latter
-	 * mode the resulting created path will be editable.
+	 * {@link remixlab.dandelion.core.GrabberFrame#GrabberFrame(AbstractScene, GrabberFrame)} ). In the latter mode the
+	 * resulting created path will be editable.
 	 * <p>
 	 * This method can also be used if you simply want to save an Eye point of view (a path made of a single keyFrame).
 	 * Use {@link #playPath(int)} to make the Eye play the keyFrame path (resp. restore the point of view). Use
@@ -1351,10 +1357,26 @@ public abstract class Eye implements Copyable {
 		}
 
 		kfi.get(key).addKeyFrame(new InteractiveFrame(scene, frame()));
+		/*
+		 * //TODO experimental GrabberFrame gF = inEyePath(); if(gF.isEyeFrame()) System.out.println("is eyeFrame :("); else
+		 * System.out.println("is NOT eyeFrame :)");
+		 * 
+		 * kfi.get(key).addKeyFrame(gF); //
+		 */
 
 		if (info)
 			System.out.println("Path " + key + ", position " + kfi.get(key).numberOfKeyFrames() + " added");
 	}
+
+	/*
+	 * //TODO add me as protected so that other can easily override me protected GrabberFrame inEyePath() { //GrabberFrame
+	 * gFrame = frame().get(); //gFrame.theeye = null; //gFrame.eyeFrame = frame(); //return gFrame;
+	 * 
+	 * //TODO really needs more thought specially because of the prev. case: addKeyFrameToPath //best part is that it
+	 * doesn't required ad-hoc constructors //worst part: it requires derived classes to override get() as in
+	 * CustomEyeFrame2 frame().theeye = null; GrabberFrame gFrame = frame().get(); gFrame.eyeFrame = frame();
+	 * frame().theeye = this; return gFrame; }
+	 */
 
 	/**
 	 * Makes the Eye follow the path of keyFrameInterpolator() number {@code key}.
@@ -1691,7 +1713,11 @@ public abstract class Eye implements Copyable {
 			stopInterpolations();
 
 		interpolationKfi.deletePath();
-		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
+		interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
+		// TODO experimental
+		// GrabberFrame gFrame = inEyePath();
+		// scene.motionAgent().removeGrabber(gFrame);
+		// interpolationKfi.addKeyFrame(gFrame);
 
 		// Small hack: attach a temporary frame to take advantage of fitScreenRegion without modifying frame
 		tempFrame = new GrabberFrame(scene);
@@ -1724,7 +1750,15 @@ public abstract class Eye implements Copyable {
 			stopInterpolations();
 
 		interpolationKfi.deletePath();
-		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
+		// interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
+		// interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
+		// TODO testing
+		interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
+		// TODO experimental
+		/*
+		 * GrabberFrame gFrame = inEyePath(); scene.motionAgent().removeGrabber(gFrame);
+		 * interpolationKfi.addKeyFrame(gFrame); //
+		 */
 
 		// Small hack: attach a temporary frame to take advantage of showEntireScene without modifying frame
 		tempFrame = new GrabberFrame(scene);
@@ -1768,7 +1802,13 @@ public abstract class Eye implements Copyable {
 			stopInterpolations();
 
 		interpolationKfi.deletePath();
-		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
+		interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
+		// TODO experimental
+		/*
+		 * GrabberFrame gFrame = inEyePath(); scene.motionAgent().removeGrabber(gFrame);
+		 * interpolationKfi.addKeyFrame(gFrame);
+		 */
+
 		interpolationKfi.addKeyFrame(fr, duration);
 
 		interpolationKfi.startInterpolation();

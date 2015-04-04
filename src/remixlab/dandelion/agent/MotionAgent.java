@@ -92,10 +92,25 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	 * eyeBranch); }
 	 */
 
+	/*
+	 * @Override public boolean addGrabber(Grabber grabber) { if( grabber instanceof GrabberFrame) { GrabberFrame frame =
+	 * (GrabberFrame) grabber; if (frame instanceof InteractiveFrame) return addGrabber((InteractiveFrame) frame,
+	 * frame.isEyeFrame() ? eyeBranch : frameBranch); } return super.addGrabber(grabber); }
+	 */
+
 	public boolean addGrabber(GrabberFrame frame) {
-		if (frame instanceof InteractiveFrame)
+		System.out.println("addGrabber called!!!");
+		if (frame instanceof InteractiveFrame) {
+			System.out.println("adding InteractiveFrame to the pool!");
 			return addGrabber((InteractiveFrame) frame, frame.isEyeFrame() ? eyeBranch : frameBranch);
-		return super.addGrabber(frame);
+		}
+		if (!(frame instanceof InteractiveGrabber)) {
+			System.out.println("frame not instanceof InteractiveGrabber!!!");
+			return super.addGrabber(frame);
+		}
+		// TODO testing
+		System.out.println("frame is Interactive but is not instance of InteractiveFrame");
+		return false;
 	}
 
 	/*
@@ -111,7 +126,8 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	@Override
 	public void resetDefaultGrabber() {
 		// if (scene.eye().frame() instanceof InteractiveFrame) {
-		addGrabber(scene.eye().frame());
+		System.out.println("reset def grabber called!");
+		// addGrabber(scene.eye().frame());
 		setDefaultGrabber(scene.eye().frame());
 		// }
 	}

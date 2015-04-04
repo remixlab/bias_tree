@@ -175,4 +175,58 @@ public class MotionEvent extends BogusEvent {
 				speed = distance / (float) delay;
 		}
 	}
+
+	public static DOF1Event dof1Event(MotionEvent event) {
+		return dof1Event(event, true);
+	}
+
+	public static DOF1Event dof1Event(MotionEvent event, boolean fromX) {
+		if (event instanceof DOF1Event)
+			return (DOF1Event) event;
+		if (event instanceof DOF2Event)
+			return ((DOF2Event) event).dof1Event(fromX);
+		if (event instanceof DOF3Event)
+			return ((DOF3Event) event).dof2Event().dof1Event(fromX);
+		if (event instanceof DOF6Event)
+			return ((DOF6Event) event).dof3Event(fromX).dof2Event().dof1Event(fromX);
+		return null;
+	}
+
+	public static DOF2Event dof2Event(MotionEvent event) {
+		return dof2Event(event, true);
+	}
+
+	public static DOF2Event dof2Event(MotionEvent event, boolean fromX) {
+		if (event instanceof DOF1Event)
+			return null;
+		if (event instanceof DOF2Event)
+			return (DOF2Event) event;
+		if (event instanceof DOF3Event)
+			return ((DOF3Event) event).dof2Event();
+		if (event instanceof DOF6Event)
+			return ((DOF6Event) event).dof3Event(fromX).dof2Event();
+		return null;
+	}
+
+	public static DOF3Event dof3Event(MotionEvent event) {
+		return dof3Event(event, true);
+	}
+
+	public static DOF3Event dof3Event(MotionEvent event, boolean fromX) {
+		if (event instanceof DOF1Event)
+			return null;
+		if (event instanceof DOF2Event)
+			return null;
+		if (event instanceof DOF3Event)
+			return (DOF3Event) event;
+		if (event instanceof DOF6Event)
+			return ((DOF6Event) event).dof3Event(fromX);
+		return null;
+	}
+
+	public static DOF6Event dof6Event(MotionEvent event) {
+		if (event instanceof DOF6Event)
+			return (DOF6Event) event;
+		return null;
+	}
 }
