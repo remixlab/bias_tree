@@ -392,6 +392,9 @@ public class GrabberFrame extends Frame implements Grabber {
 
 		if (scene.eye() != null)
 			setFlySpeed(0.01f * scene.eye().sceneRadius());
+		
+		//TODO experimenting
+		scene.motionAgent().addGrabber(this);
 	}
 
 	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
