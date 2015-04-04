@@ -1576,10 +1576,10 @@ public class Scene extends AbstractScene implements PConstants {
 			pg().strokeWeight(2 * pg().strokeWeight);
 			pg().noFill();
 
-			List<GrabberFrame> path = kfi.path();
+			List<Frame> path = kfi.path();
 			if (((mask & 1) != 0) && path.size() > 1) {
 				pg().beginShape();
-				for (GrabberFrame myFr : path)
+				for (Frame myFr : path)
 					vertex(myFr.position().x(), myFr.position().y(), myFr.position().z());
 				pg().endShape();
 			}
@@ -1589,7 +1589,7 @@ public class Scene extends AbstractScene implements PConstants {
 					nbFrames = nbSteps;
 				float goal = 0.0f;
 
-				for (GrabberFrame myFr : path)
+				for (Frame myFr : path)
 					if ((count++) >= goal) {
 						goal += nbSteps / (float) nbFrames;
 						pushModelView();

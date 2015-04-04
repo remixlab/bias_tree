@@ -57,7 +57,7 @@ public void setup() {
 public void draw() {
   background(0);
   pushMatrix();
-  kfi.frame().applyTransformation(scene);
+  scene.applyTransformation(kfi.frame());
   scene.drawAxes(30);
   popMatrix();
 

@@ -58,7 +58,7 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	private float								grabsInputThreshold;
 	private boolean							adpThreshold;
-	protected GrabberFrame			eyeFrame;
+	protected boolean			eyeFrame;
 
 	@Override
 	public int hashCode() {
@@ -124,7 +124,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 */
 	protected GrabberFrame(AbstractScene scn, GrabberFrame iFrame) {
 		this(scn, iFrame.translation().get(), iFrame.rotation().get(), iFrame.scaling());
-		eyeFrame = iFrame;
+		eyeFrame = true;
 	}
 
 	/**
@@ -476,6 +476,29 @@ public class GrabberFrame extends Frame implements Grabber {
 	@Override
 	public GrabberFrame get() {
 		return new GrabberFrame(this);
+	}
+	
+	/*
+	 * //TODO add me as protected so that other can easily override me protected GrabberFrame inEyePath() { //GrabberFrame
+	 * gFrame = frame().get(); //gFrame.theeye = null; //gFrame.eyeFrame = frame(); //return gFrame;
+	 * 
+	 * //TODO really needs more thought specially because of the prev. case: addKeyFrameToPath //best part is that it
+	 * doesn't required ad-hoc constructors //worst part: it requires derived classes to override get() as in
+	 * CustomEyeFrame2 frame().theeye = null; GrabberFrame gFrame = frame().get(); gFrame.eyeFrame = frame();
+	 * frame().theeye = this; return gFrame; }
+	 */
+	protected GrabberFrame getDetachFromEye() {
+		GrabberFrame gFrame = this.get();
+		gFrame.theeye = null;
+		scene.motionAgent().removeGrabber(gFrame);
+		return gFrame;
+	}
+	
+	protected GrabberFrame getIntoEyePath() {
+		GrabberFrame gFrame = this.get();
+		gFrame.theeye = null;
+		gFrame.eyeFrame = true;
+		return gFrame;
 	}
 
 	/**
@@ -1866,7 +1889,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * 
 	 */
 	public boolean isInEyePath() {
-		return eyeFrame != null;
+		return eyeFrame;
 	}
 
 	/**

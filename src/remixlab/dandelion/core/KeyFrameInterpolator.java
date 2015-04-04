@@ -235,9 +235,9 @@ public class KeyFrameInterpolator implements Copyable {
 	private ListIterator<KeyFrame>	currentFrame1;
 	private ListIterator<KeyFrame>	currentFrame2;
 	private ListIterator<KeyFrame>	currentFrame3;
-	protected List<GrabberFrame>		path;
+	protected List<Frame>		path;
 	// A s s o c i a t e d f r a m e
-	private GrabberFrame						mainFrame;
+	private Frame						mainFrame;
 
 	// R h y t h m
 	private TimingTask							interpolationTimerTask;
@@ -269,7 +269,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * @see #KeyFrameInterpolator(AbstractScene, GrabberFrame)
 	 */
 	public KeyFrameInterpolator(AbstractScene scn) {
-		this(scn, new GrabberFrame(scn));
+		this(scn, new Frame());
 	}
 
 	/**
@@ -280,10 +280,10 @@ public class KeyFrameInterpolator implements Copyable {
 	 * {@link #interpolationTime()}, {@link #interpolationSpeed()} and {@link #interpolationPeriod()} are set to their
 	 * default values.
 	 */
-	public KeyFrameInterpolator(AbstractScene scn, GrabberFrame frame) {
+	public KeyFrameInterpolator(AbstractScene scn, Frame frame) {
 		scene = scn;
 		keyFrameList = new ArrayList<KeyFrame>();
-		path = new ArrayList<GrabberFrame>();
+		path = new ArrayList<Frame>();
 		mainFrame = null;
 		period = 40;
 		interpolationTm = 0.0f;
@@ -310,8 +310,8 @@ public class KeyFrameInterpolator implements Copyable {
 
 	protected KeyFrameInterpolator(KeyFrameInterpolator otherKFI) {
 		this.scene = otherKFI.scene;
-		this.path = new ArrayList<GrabberFrame>();
-		ListIterator<GrabberFrame> frameIt = otherKFI.path.listIterator();
+		this.path = new ArrayList<Frame>();
+		ListIterator<Frame> frameIt = otherKFI.path.listIterator();
 		while (frameIt.hasNext()) {
 			this.path.add(frameIt.next().get());
 		}
@@ -379,7 +379,7 @@ public class KeyFrameInterpolator implements Copyable {
 	/**
 	 * Sets the {@link #frame()} associated to the KeyFrameInterpolator.
 	 */
-	public void setFrame(GrabberFrame f) {
+	public void setFrame(Frame f) {
 		mainFrame = f;
 	}
 
@@ -391,7 +391,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * <p>
 	 * Set using {@link #setFrame(GrabberFrame)} or with the KeyFrameInterpolator constructor.
 	 */
-	public GrabberFrame frame() {
+	public Frame frame() {
 		return mainFrame;
 	}
 
@@ -749,7 +749,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * 
 	 * @see remixlab.dandelion.core.AbstractScene#drawPath(KeyFrameInterpolator, int, int, float)
 	 */
-	public List<GrabberFrame> path() {
+	public List<Frame> path() {
 		updatePath();
 		return path;
 	}
@@ -770,7 +770,8 @@ public class KeyFrameInterpolator implements Copyable {
 				updateModifiedFrameValues();
 
 			if (keyFrameList.get(0) == keyFrameList.get(keyFrameList.size() - 1))
-				path.add(new GrabberFrame(scene, keyFrameList.get(0).position(), keyFrameList.get(0).orientation(),
+				//TODO experimenting really
+				path.add(new Frame(keyFrameList.get(0).position(), keyFrameList.get(0).orientation(),
 						keyFrameList
 								.get(0)
 								.magnitude()));
@@ -792,7 +793,7 @@ public class KeyFrameInterpolator implements Copyable {
 					pvec2 = Vec.add(pvec2, kf[2].tgP());
 
 					for (int step = 0; step < nbSteps; ++step) {
-						GrabberFrame frame = new GrabberFrame(scene);
+						Frame frame = new Frame();
 						float alpha = step / (float) nbSteps;
 						frame.setPosition(Vec.add(kf[1].position(), Vec.multiply(
 								Vec.add(kf[1].tgP(), Vec.multiply(Vec.add(pvec1, Vec.multiply(pvec2, alpha)), alpha)), alpha)));
@@ -819,7 +820,7 @@ public class KeyFrameInterpolator implements Copyable {
 					kf[3] = (index < keyFrameList.size()) ? keyFrameList.get(index) : null;
 				}
 				// Add last KeyFrame
-				path.add(new GrabberFrame(scene, kf[1].position(), kf[1].orientation(), kf[1].magnitude()));
+				path.add(new Frame(kf[1].position(), kf[1].orientation(), kf[1].magnitude()));
 			}
 			pathIsValid = true;
 		}

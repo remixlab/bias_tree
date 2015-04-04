@@ -1356,6 +1356,7 @@ public abstract class Eye implements Copyable {
 			info = false;
 		}
 
+		//kfi.get(key).addKeyFrame(frame().getIntoEyePath());
 		kfi.get(key).addKeyFrame(new InteractiveFrame(scene, frame()));
 		/*
 		 * //TODO experimental GrabberFrame gF = inEyePath(); if(gF.isEyeFrame()) System.out.println("is eyeFrame :("); else
@@ -1367,16 +1368,6 @@ public abstract class Eye implements Copyable {
 		if (info)
 			System.out.println("Path " + key + ", position " + kfi.get(key).numberOfKeyFrames() + " added");
 	}
-
-	/*
-	 * //TODO add me as protected so that other can easily override me protected GrabberFrame inEyePath() { //GrabberFrame
-	 * gFrame = frame().get(); //gFrame.theeye = null; //gFrame.eyeFrame = frame(); //return gFrame;
-	 * 
-	 * //TODO really needs more thought specially because of the prev. case: addKeyFrameToPath //best part is that it
-	 * doesn't required ad-hoc constructors //worst part: it requires derived classes to override get() as in
-	 * CustomEyeFrame2 frame().theeye = null; GrabberFrame gFrame = frame().get(); gFrame.eyeFrame = frame();
-	 * frame().theeye = this; return gFrame; }
-	 */
 
 	/**
 	 * Makes the Eye follow the path of keyFrameInterpolator() number {@code key}.
@@ -1713,7 +1704,8 @@ public abstract class Eye implements Copyable {
 			stopInterpolations();
 
 		interpolationKfi.deletePath();
-		interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
+		interpolationKfi.addKeyFrame(new GrabberFrame(frame().getDetachFromEye()));
+		//interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
 		// TODO experimental
 		// GrabberFrame gFrame = inEyePath();
 		// scene.motionAgent().removeGrabber(gFrame);
@@ -1753,7 +1745,8 @@ public abstract class Eye implements Copyable {
 		// interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 		// interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
 		// TODO testing
-		interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
+		interpolationKfi.addKeyFrame(new GrabberFrame(frame().getDetachFromEye()));
+		//interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
 		// TODO experimental
 		/*
 		 * GrabberFrame gFrame = inEyePath(); scene.motionAgent().removeGrabber(gFrame);
@@ -1802,7 +1795,8 @@ public abstract class Eye implements Copyable {
 			stopInterpolations();
 
 		interpolationKfi.deletePath();
-		interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
+		interpolationKfi.addKeyFrame(new GrabberFrame(frame().getDetachFromEye()));
+		//interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
 		// TODO experimental
 		/*
 		 * GrabberFrame gFrame = inEyePath(); scene.motionAgent().removeGrabber(gFrame);
