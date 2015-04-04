@@ -58,7 +58,7 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	private float								grabsInputThreshold;
 	private boolean							adpThreshold;
-	protected boolean			eyeFrame;
+	protected boolean						eyeFrame;
 
 	@Override
 	public int hashCode() {
@@ -392,8 +392,8 @@ public class GrabberFrame extends Frame implements Grabber {
 
 		if (scene.eye() != null)
 			setFlySpeed(0.01f * scene.eye().sceneRadius());
-		
-		//TODO experimenting
+
+		// TODO experimenting
 		scene.motionAgent().addGrabber(this);
 	}
 
@@ -477,7 +477,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	public GrabberFrame get() {
 		return new GrabberFrame(this);
 	}
-	
+
 	/*
 	 * //TODO add me as protected so that other can easily override me protected GrabberFrame inEyePath() { //GrabberFrame
 	 * gFrame = frame().get(); //gFrame.theeye = null; //gFrame.eyeFrame = frame(); //return gFrame;
@@ -487,13 +487,13 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * CustomEyeFrame2 frame().theeye = null; GrabberFrame gFrame = frame().get(); gFrame.eyeFrame = frame();
 	 * frame().theeye = this; return gFrame; }
 	 */
-	protected GrabberFrame getDetachFromEye() {
+	protected GrabberFrame getDetachedFromEye() {
 		GrabberFrame gFrame = this.get();
 		gFrame.theeye = null;
 		scene.motionAgent().removeGrabber(gFrame);
 		return gFrame;
 	}
-	
+
 	protected GrabberFrame getIntoEyePath() {
 		GrabberFrame gFrame = this.get();
 		gFrame.theeye = null;

@@ -235,9 +235,9 @@ public class KeyFrameInterpolator implements Copyable {
 	private ListIterator<KeyFrame>	currentFrame1;
 	private ListIterator<KeyFrame>	currentFrame2;
 	private ListIterator<KeyFrame>	currentFrame3;
-	protected List<Frame>		path;
+	protected List<Frame>						path;
 	// A s s o c i a t e d f r a m e
-	private Frame						mainFrame;
+	private Frame										mainFrame;
 
 	// R h y t h m
 	private TimingTask							interpolationTimerTask;
@@ -266,7 +266,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * <p>
 	 * Creates an anonymous {@link #frame()} to be interpolated by this KeyFrameInterpolator.
 	 * 
-	 * @see #KeyFrameInterpolator(AbstractScene, GrabberFrame)
+	 * @see #KeyFrameInterpolator(AbstractScene, Frame)
 	 */
 	public KeyFrameInterpolator(AbstractScene scn) {
 		this(scn, new Frame());
@@ -275,7 +275,7 @@ public class KeyFrameInterpolator implements Copyable {
 	/**
 	 * Creates a KeyFrameInterpolator, with {@code frame} as associated {@link #frame()}.
 	 * <p>
-	 * The {@link #frame()} can be set or changed using {@link #setFrame(GrabberFrame)}.
+	 * The {@link #frame()} can be set or changed using {@link #setFrame(Frame)}.
 	 * <p>
 	 * {@link #interpolationTime()}, {@link #interpolationSpeed()} and {@link #interpolationPeriod()} are set to their
 	 * default values.
@@ -389,7 +389,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * When {@link #interpolationStarted()}, this Frame's position, orientation and magnitude will regularly be updated by
 	 * a timer, so that they follow the KeyFrameInterpolator path.
 	 * <p>
-	 * Set using {@link #setFrame(GrabberFrame)} or with the KeyFrameInterpolator constructor.
+	 * Set using {@link #setFrame(Frame)} or with the KeyFrameInterpolator constructor.
 	 */
 	public Frame frame() {
 		return mainFrame;
@@ -770,7 +770,7 @@ public class KeyFrameInterpolator implements Copyable {
 				updateModifiedFrameValues();
 
 			if (keyFrameList.get(0) == keyFrameList.get(keyFrameList.size() - 1))
-				//TODO experimenting really
+				// TODO experimenting really
 				path.add(new Frame(keyFrameList.get(0).position(), keyFrameList.get(0).orientation(),
 						keyFrameList
 								.get(0)

@@ -1356,14 +1356,8 @@ public abstract class Eye implements Copyable {
 			info = false;
 		}
 
-		//kfi.get(key).addKeyFrame(frame().getIntoEyePath());
+		// kfi.get(key).addKeyFrame(frame().getIntoEyePath());
 		kfi.get(key).addKeyFrame(new InteractiveFrame(scene, frame()));
-		/*
-		 * //TODO experimental GrabberFrame gF = inEyePath(); if(gF.isEyeFrame()) System.out.println("is eyeFrame :("); else
-		 * System.out.println("is NOT eyeFrame :)");
-		 * 
-		 * kfi.get(key).addKeyFrame(gF); //
-		 */
 
 		if (info)
 			System.out.println("Path " + key + ", position " + kfi.get(key).numberOfKeyFrames() + " added");
@@ -1704,26 +1698,16 @@ public abstract class Eye implements Copyable {
 			stopInterpolations();
 
 		interpolationKfi.deletePath();
-		interpolationKfi.addKeyFrame(new GrabberFrame(frame().getDetachFromEye()));
-		//interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
-		// TODO experimental
-		// GrabberFrame gFrame = inEyePath();
-		// scene.motionAgent().removeGrabber(gFrame);
-		// interpolationKfi.addKeyFrame(gFrame);
-
+		interpolationKfi.addKeyFrame(new GrabberFrame(frame().getDetachedFromEye()));
 		// Small hack: attach a temporary frame to take advantage of fitScreenRegion without modifying frame
 		tempFrame = new GrabberFrame(scene);
-		// TODO experimental
-		// InteractiveFrame originalFrame = frame();
 		GrabberFrame originalFrame = frame();
-		// InteractiveFrame originalFrame = (InteractiveFrame)frame();
 		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
 		tempFrame.setOrientation(frame().orientation().get());
 		tempFrame.setMagnitude(frame().magnitude());
 		setFrame(tempFrame);
 		fitScreenRegion(rectangle);
 		setFrame(originalFrame);
-
 		interpolationKfi.addKeyFrame(tempFrame);
 		interpolationKfi.startInterpolation();
 	}
@@ -1742,23 +1726,10 @@ public abstract class Eye implements Copyable {
 			stopInterpolations();
 
 		interpolationKfi.deletePath();
-		// interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
-		// interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
-		// TODO testing
-		interpolationKfi.addKeyFrame(new GrabberFrame(frame().getDetachFromEye()));
-		//interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
-		// TODO experimental
-		/*
-		 * GrabberFrame gFrame = inEyePath(); scene.motionAgent().removeGrabber(gFrame);
-		 * interpolationKfi.addKeyFrame(gFrame); //
-		 */
-
+		interpolationKfi.addKeyFrame(new GrabberFrame(frame().getDetachedFromEye()));
 		// Small hack: attach a temporary frame to take advantage of showEntireScene without modifying frame
 		tempFrame = new GrabberFrame(scene);
-		// TODO experimental
-		// InteractiveFrame originalFrame = frame();
 		GrabberFrame originalFrame = frame();
-		// InteractiveFrame originalFrame = (InteractiveFrame)frame();
 		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
 		tempFrame.setOrientation(frame().orientation().get());
 		tempFrame.setMagnitude(frame().magnitude());
@@ -1789,22 +1760,12 @@ public abstract class Eye implements Copyable {
 	 * @see #interpolateToZoomOnPixel(Point)
 	 */
 	public void interpolateTo(GrabberFrame fr, float duration) {
-		// if (interpolationKfi.interpolationIsStarted())
-		// interpolationKfi.stopInterpolation();
 		if (anyInterpolationStarted())
 			stopInterpolations();
 
 		interpolationKfi.deletePath();
-		interpolationKfi.addKeyFrame(new GrabberFrame(frame().getDetachFromEye()));
-		//interpolationKfi.addKeyFrame(new GrabberFrame(scene, frame()));
-		// TODO experimental
-		/*
-		 * GrabberFrame gFrame = inEyePath(); scene.motionAgent().removeGrabber(gFrame);
-		 * interpolationKfi.addKeyFrame(gFrame);
-		 */
-
+		interpolationKfi.addKeyFrame(new GrabberFrame(frame().getDetachedFromEye()));
 		interpolationKfi.addKeyFrame(fr, duration);
-
 		interpolationKfi.startInterpolation();
 	}
 

@@ -278,16 +278,11 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	public InteractiveFrame get() {
 		return new InteractiveFrame(this);
 	}
-	
+
 	/*
-	@Override
-	protected InteractiveFrame getIntoEyePath() {
-		InteractiveFrame iFrame = this.get();
-		iFrame.theeye = null;
-		iFrame.eyeFrame = true;
-		return iFrame;
-	}
-	*/
+	 * @Override protected InteractiveFrame getIntoEyePath() { InteractiveFrame iFrame = this.get(); iFrame.theeye = null;
+	 * iFrame.eyeFrame = true; return iFrame; }
+	 */
 
 	// grabber implementation
 
