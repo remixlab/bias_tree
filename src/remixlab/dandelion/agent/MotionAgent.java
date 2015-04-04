@@ -85,61 +85,19 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		}
 	}
 
-	/*
-	 * public boolean addGrabber(InteractiveFrame frame) { return super.addGrabber(frame, frameBranch); }
-	 * 
-	 * public boolean addGrabber(InteractiveFrame frame) { // this.resetBranch(eyeBranch); return super.addGrabber(frame,
-	 * eyeBranch); }
-	 */
-
-	/*
-	 * @Override public boolean addGrabber(Grabber grabber) { if( grabber instanceof GrabberFrame) { GrabberFrame frame =
-	 * (GrabberFrame) grabber; if (frame instanceof InteractiveFrame) return addGrabber((InteractiveFrame) frame,
-	 * frame.isEyeFrame() ? eyeBranch : frameBranch); } return super.addGrabber(grabber); }
-	 */
-
-	public boolean addGrabber(GrabberFrame frame) {
-		System.out.println("addGrabber called!!!");
-		if (frame instanceof InteractiveFrame) {
-			System.out.println("adding InteractiveFrame to the pool!");
-			return addGrabber((InteractiveFrame) frame, frame.isEyeFrame() ? eyeBranch : frameBranch);
-		}
-		if (!(frame instanceof InteractiveGrabber)) {
-			System.out.println("frame not instanceof InteractiveGrabber!!!");
+	@Override
+	public boolean addGrabber(Grabber frame) {
+		if (frame instanceof InteractiveFrame)
+			return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? eyeBranch : frameBranch);
+		if (!(frame instanceof InteractiveGrabber))
 			return super.addGrabber(frame);
-		}
-		// TODO testing
-		System.out.println("frame is Interactive but is not instance of InteractiveFrame");
 		return false;
 	}
 
-	/*
-	 * public boolean removeGrabber(InteractiveFrame frame) { return super.removeGrabber(frame); }
-	 * 
-	 * public boolean removeGrabber(InteractiveFrame frame) { return super.removeGrabber(frame); }
-	 * 
-	 * public boolean removeGrabber(SceneFrame frame) { if (frame instanceof Grabber) { if (frame instanceof
-	 * InteractiveFrame) { if( frame.isEyeFrame() ) return removeGrabber((InteractiveFrame) frame); else return
-	 * removeGrabber((InteractiveFrame) frame); } return removeGrabber((Grabber) frame); } return false; }
-	 */
-
 	@Override
 	public void resetDefaultGrabber() {
-		// if (scene.eye().frame() instanceof InteractiveFrame) {
-		System.out.println("reset def grabber called!");
-		// addGrabber(scene.eye().frame());
 		setDefaultGrabber(scene.eye().frame());
-		// }
 	}
-
-	/*
-	 * public boolean setDefaultGrabber(InteractiveFrame frame) { return super.setDefaultGrabber(frame); }
-	 * 
-	 * public boolean setDefaultGrabber(InteractiveFrame frame) { return super.setDefaultGrabber(frame); }
-	 * 
-	 * public boolean setDefaultGrabber(SceneFrame frame) { if (frame instanceof Grabber) return
-	 * super.setDefaultGrabber((Grabber) frame); return false; }
-	 */
 
 	public MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {
 		return eyeBranch;
