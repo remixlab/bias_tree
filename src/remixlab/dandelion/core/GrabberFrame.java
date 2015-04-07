@@ -520,6 +520,8 @@ public class GrabberFrame extends Frame implements Grabber {
 	public boolean checkIfGrabsInput(BogusEvent event) {
 		if (isEyeFrame())
 			return false;
+		if (event instanceof KeyboardEvent)
+			return checkIfGrabsInput((KeyboardEvent) event);
 		if (event instanceof ClickEvent)
 			return checkIfGrabsInput((ClickEvent) event);
 		if (event instanceof DOF1Event)
@@ -533,8 +535,19 @@ public class GrabberFrame extends Frame implements Grabber {
 		return false;
 	}
 
+	public boolean checkIfGrabsInput(KeyboardEvent event) {
+		System.out
+				.println("Grabbing a grabber frame with a KeyboardEvent should be implemented by a GrabberFrame derived class ");
+		return false;
+	}
+
 	public boolean checkIfGrabsInput(ClickEvent event) {
 		return checkIfGrabsInput(new DOF2Event(event.x(), event.y()));
+	}
+
+	public boolean checkIfGrabsInput(DOF1Event event) {
+		System.err.println("Grabbing a grabber frame with a DOF1Event is not possible");
+		return false;
 	}
 
 	public boolean checkIfGrabsInput(DOF2Event event) {

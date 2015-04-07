@@ -16,7 +16,6 @@
 package remixlab.proscene;
 
 import processing.core.*;
-import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
@@ -114,25 +113,10 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	}
 
 	@Override
-	public boolean checkIfGrabsInput(BogusEvent event) {
-		DOF2Event event2 = null;
-
-		if (((event instanceof KeyboardEvent)) || (event instanceof DOF1Event))
-			throw new RuntimeException("Grabbing an interactive frame is not possible with a "
-					+ ((event instanceof KeyboardEvent) ? "Keyboard" : "DOF1") + "Event");
-
-		if (event instanceof DOF2Event)
-			event2 = ((DOF2Event) event).get();
-		else if (event instanceof DOF3Event)
-			event2 = ((DOF3Event) event).dof2Event();
-		else if (event instanceof DOF6Event)
-			event2 = ((DOF6Event) event).dof3Event().dof2Event();
-		else if (event instanceof ClickEvent)
-			event2 = new DOF2Event(((ClickEvent) event).x(), ((ClickEvent) event).y());
-
+	public boolean checkIfGrabsInput(DOF2Event event) {
 		((Scene) scene).pickingBuffer().pushStyle();
 		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
-		int index = (int) event2.y() * scene.width() + (int) event2.x();
+		int index = (int) event.y() * scene.width() + (int) event.x();
 		if ((0 <= index) && (index < ((Scene) scene).pickingBuffer().pixels.length))
 			return ((Scene) scene).pickingBuffer().pixels[index] == getColor();
 		((Scene) scene).pickingBuffer().popStyle();
