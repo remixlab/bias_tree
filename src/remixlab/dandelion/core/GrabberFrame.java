@@ -534,19 +534,18 @@ public class GrabberFrame extends Frame implements Grabber {
 			return checkIfGrabsInput((DOF6Event) event);
 		return false;
 	}
-
-	public boolean checkIfGrabsInput(KeyboardEvent event) {
-		System.out
-				.println("Grabbing a grabber frame with a KeyboardEvent should be implemented by a GrabberFrame derived class ");
-		return false;
-	}
-
+	
 	public boolean checkIfGrabsInput(ClickEvent event) {
 		return checkIfGrabsInput(new DOF2Event(event.x(), event.y()));
 	}
+	
+	public boolean checkIfGrabsInput(KeyboardEvent event) {
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
+		return false;
+	}
 
 	public boolean checkIfGrabsInput(DOF1Event event) {
-		System.err.println("Grabbing a grabber frame with a DOF1Event is not possible");
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
 

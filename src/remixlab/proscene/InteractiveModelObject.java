@@ -96,41 +96,54 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 			shape().enableStyle();
 		pg.popStyle();
 	}
-
+	
 	@Override
 	public boolean checkIfGrabsInput(BogusEvent event) {
-		DOF2Event event2 = null;
-
 		if (event instanceof KeyboardEvent)
 			return checkIfGrabsInput((KeyboardEvent) event);
-		else if (event instanceof DOF1Event)
+		if (event instanceof ClickEvent)
+			return checkIfGrabsInput((ClickEvent) event);
+		if (event instanceof DOF1Event)
 			return checkIfGrabsInput((DOF1Event) event);
-		else if (event instanceof DOF2Event)
-			event2 = ((DOF2Event) event).get();
-		else if (event instanceof DOF3Event)
-			event2 = ((DOF3Event) event).dof2Event();
-		else if (event instanceof DOF6Event)
-			event2 = ((DOF6Event) event).dof3Event().dof2Event();
-		else if (event instanceof ClickEvent)
-			event2 = new DOF2Event(((ClickEvent) event).x(), ((ClickEvent) event).y());
-
-		scene.pickingBuffer().pushStyle();
-		scene.pickingBuffer().colorMode(PApplet.RGB, 255);
-		int index = (int) event2.y() * scene.width() + (int) event2.x();
-		if ((0 <= index) && (index < scene.pickingBuffer().pixels.length))
-			return scene.pickingBuffer().pixels[index] == getColor();
-		scene.pickingBuffer().popStyle();
+		if (event instanceof DOF2Event)
+			return checkIfGrabsInput((DOF2Event) event);
+		if (event instanceof DOF3Event)
+			return checkIfGrabsInput((DOF3Event) event);
+		if (event instanceof DOF6Event)
+			return checkIfGrabsInput((DOF6Event) event);
 		return false;
 	}
-
+	
+	public boolean checkIfGrabsInput(ClickEvent event) {
+		return checkIfGrabsInput(new DOF2Event(event.x(), event.y()));
+	}
+	
 	public boolean checkIfGrabsInput(KeyboardEvent event) {
-		Scene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
 		return false;
 	}
 
 	public boolean checkIfGrabsInput(DOF1Event event) {
-		Scene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
+	}
+	
+	public boolean checkIfGrabsInput(DOF2Event event) {
+		((Scene) scene).pickingBuffer().pushStyle();
+		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
+		int index = (int) event.y() * scene.width() + (int) event.x();
+		if ((0 <= index) && (index < ((Scene) scene).pickingBuffer().pixels.length))
+			return ((Scene) scene).pickingBuffer().pixels[index] == getColor();
+		((Scene) scene).pickingBuffer().popStyle();
+		return false;
+	}
+	
+	public boolean checkIfGrabsInput(DOF3Event event) {
+		return checkIfGrabsInput(event.dof2Event());
+	}
+
+	public boolean checkIfGrabsInput(DOF6Event event) {
+		return checkIfGrabsInput(event.dof3Event().dof2Event());
 	}
 
 	public boolean grabsInput(Agent agent) {

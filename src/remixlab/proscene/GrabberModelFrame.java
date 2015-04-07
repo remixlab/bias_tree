@@ -2,6 +2,7 @@
 package remixlab.proscene;
 
 import processing.core.*;
+import remixlab.bias.core.Agent;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
@@ -83,5 +84,9 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 	protected int getColor() {
 		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
 		return ((Scene) scene).pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
+	}
+	
+	public boolean grabsInput(Agent agent) {
+		return agent.inputGrabber() == this;
 	}
 }
