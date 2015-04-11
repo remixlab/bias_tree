@@ -207,12 +207,12 @@ public class MotionEvent extends BogusEvent {
 			return ((DOF6Event) event).dof3Event(fromX).dof2Event();
 		return null;
 	}
-
+	
 	public static DOF3Event dof3Event(MotionEvent event) {
 		return dof3Event(event, true);
 	}
 
-	public static DOF3Event dof3Event(MotionEvent event, boolean fromX) {
+	public static DOF3Event dof3Event(MotionEvent event, boolean fromTranslation) {
 		if (event instanceof DOF1Event)
 			return null;
 		if (event instanceof DOF2Event)
@@ -220,7 +220,7 @@ public class MotionEvent extends BogusEvent {
 		if (event instanceof DOF3Event)
 			return (DOF3Event) event;
 		if (event instanceof DOF6Event)
-			return ((DOF6Event) event).dof3Event(fromX);
+			return ((DOF6Event) event).dof3Event(fromTranslation);
 		return null;
 	}
 

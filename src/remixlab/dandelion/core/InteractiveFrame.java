@@ -348,29 +348,32 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			performCustomAction(event);
 			break;
 		case DRIVE:
-			drive(event);
+			gestureDrive(event);
 			break;
 		case HINGE:
-			hinge(event);
+			gestureHinge(event);
 			break;
 		case LOOK_AROUND:
 			rotate(rollPitchQuaternion(event, scene.camera()));
 			break;
 		case MOVE_BACKWARD:
-			moveForward(event, false);
+			gestureMoveForward(event, false);
 			break;
 		case MOVE_FORWARD:
-			moveForward(event, true);
+			gestureMoveForward(event, true);
 			break;
 		case ROTATE:
-			arcball(event);
+			gestureRotatetXY(event);
 			break;
 		case ROTATE_CAD:
+			//TODO study merge with previous
+			gestureRotateCAD(event);
 			break;
 		case ROTATE_X:
 			gestureRotateX(event);
 			break;
 		case ROTATE_XYZ:
+			gestureRotateXYZ(event);
 			break;
 		case ROTATE_Y:
 			gestureRotateY(event);
@@ -382,24 +385,36 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			gestureScale(event);
 			break;
 		case SCREEN_ROTATE:
+			screenRotate(event);
 			break;
 		case SCREEN_TRANSLATE:
+			int dir = originalDirection(event);
+			//TODO try to simplify second argument
+			if (dir == 1)
+				gestureTranslateX(event, true);
+			else if (dir == -1)
+				gestureTranslateY(event, true);
 			break;
 		case TRANSLATE:
-			gestureTranslateXY(event);
+			gestureTranslateXY(event, true);
 			break;
 		case TRANSLATE_X:
-			gestureTranslateX(event);
+			gestureTranslateX(event, true);
 			break;
 		case TRANSLATE_XYZ:
+			gestureTranslateXYZ(event);
 			break;
 		case TRANSLATE_XYZ_ROTATE_XYZ:
+			// A. Translate the iFrame
+			gestureTranslateXYZ(event);
+		  // B. Rotate the iFrame
+			gestureRotateXYZ(event);
 			break;
 		case TRANSLATE_Y:
-			gestureTranslateY(event);
+			gestureTranslateY(event, true);
 			break;
 		case TRANSLATE_Z:
-			gestureTranslateZ(event);
+			gestureTranslateZ(event, true);
 			break;
 		case ZOOM_ON_ANCHOR:
 			break;
