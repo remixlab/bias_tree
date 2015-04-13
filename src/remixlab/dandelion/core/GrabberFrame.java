@@ -956,7 +956,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (updateInterval > 0)
 			spinningTimerTask.run(updateInterval);
 	}
-
+	
 	/**
 	 * Rotates the scene-frame by its {@link #spinningRotation()} or around the
 	 * {@link remixlab.dandelion.core.Eye#anchor()} when this scene-frame is the
@@ -968,7 +968,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * @see #dampingFriction()
 	 * @see #toss()
 	 */
-	public void spin() {
+	protected void spin() {
 		if (Util.nonZero(dampingFriction())) {
 			if (eventSpeed == 0) {
 				stopSpinning();
@@ -1003,10 +1003,6 @@ public class GrabberFrame extends Frame implements Grabber {
 					* (eventSpeed / prevSpeed));
 		else
 			this.setSpinningRotation(new Rot(spinningRotation().angle() * (eventSpeed / prevSpeed)));
-	}
-
-	protected boolean filterGesture(MotionEvent event, boolean twod_threed, boolean frame_eye, boolean fromX, int dofs) {
-		return false;
 	}
 	
 	protected int originalDirection(MotionEvent event) {
@@ -1344,8 +1340,14 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (isEyeFrame()) {
 			if (is2D()) {
 				Rot rt = new Rot(sens * (scene.isRightHanded() ? computeAngle(event) : -computeAngle(event)));
-				rotate(rt);
-				setSpinningRotation(rt);
+				//rotate(rt);
+				//setSpinningRotation(rt);
+				//new
+				setSpinningRotation(rt);		
+				if (Util.nonZero(dampingFriction()))
+					startSpinning(event);
+				else
+					spin();
 			}
 			else
 				// TODO see if it can handle 2d case <-> Check where to handle sens!
@@ -1354,8 +1356,13 @@ public class GrabberFrame extends Frame implements Grabber {
 		else {
 			if (is2D()) {
 				Rot rt = new Rot(sens * (scene.isRightHanded() ? computeAngle(event) : -computeAngle(event)));
-				rotate(rt);
-				setSpinningRotation(rt);
+				//rotate(rt);
+				//setSpinningRotation(rt);				
+				setSpinningRotation(rt);		
+				if (Util.nonZero(dampingFriction()))
+					startSpinning(event);
+				else
+					spin();
 			}
 			else
 				rotateAroundAxes(0, 0, sens * -computeAngle(event));
@@ -1775,10 +1782,14 @@ public class GrabberFrame extends Frame implements Grabber {
 		eyeTranslate(Vec.multiply(screen2Eye(trns), sens));
 	}
 	
+	
+	// TODO maybe private and same level as rotateAroundAxes
 	public void eyeTranslate(Vec trns) {
 		// Transform from eye to world coordinate system.
-		trns = scene.eye().frame().inverseTransformOf(trns);
+		//trns = scene.eye().frame().inverseTransformOf(trns);
 
+		//TODO is there an anti-example for this?
+		/*
 		if (!isEyeFrame()) {
 			if (referenceFrame() != null)
 				trns = referenceFrame().transformOf(trns);
@@ -1786,6 +1797,26 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 		else
 			translate(trns);
+			//*/
+		
+		// ... but really prefer as dead simple as in here:
+		/*
+		if (referenceFrame() != null)
+			trns = referenceFrame().transformOf(trns);
+		translate(trns);
+		//*/
+		
+		/*
+		if( !this.respectToEye() ) {
+		  translate(inverseTransformOf(trns));
+		}
+		*/
+		
+		GrabberFrame gFrame = isEyeFrame() ? this : respectToEye() ? scene.eye().frame() : this;
+		trns = gFrame.inverseTransformOf(trns);
+		if (referenceFrame() != null)
+			trns = referenceFrame().transformOf(trns);
+		translate(trns);
 	}
 	//*/
 
@@ -1949,7 +1980,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * 
 	 * @see #spin()
 	 */
-	public void toss() {
+	protected void toss() {
 		if (Util.nonZero(dampingFriction())) {
 			if (eventSpeed == 0) {
 				stopTossing();
