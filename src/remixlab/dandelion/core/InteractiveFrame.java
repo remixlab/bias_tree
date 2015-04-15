@@ -237,7 +237,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		// TODO merge with eye?
 		super(scn, referenceFrame, p, r, s);
-		scene.motionAgent().addGrabber(this);
+		//scene.motionAgent().addGrabber(this);
 	}
 
 	/**
@@ -442,8 +442,62 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			break;
 		}
 	}
+	
+	@Override
+	public void performInteraction(KeyboardEvent event) {	
+		switch (referenceAction()) {
+		case ALIGN_FRAME:
+			align();
+			break;		
+		case CENTER_FRAME:
+			center();
+			break;
+		case CUSTOM:
+			performCustomAction(event);
+			break;
+		case SCALE_UP:
+			break;
+		case SCALE_DOWN:
+			break;
+		case ZOOM_IN_ON_ANCHOR:
+			break;
+		case ZOOM_OUT_ON_ANCHOR:
+			break;
+		case TRANSLATE_UP_X:
+			break;
+		case TRANSLATE_DOWN_X:
+			break;
+		case TRANSLATE_UP_Y:
+			break;
+		case TRANSLATE_DOWN_Y:
+			break;
+		case TRANSLATE_UP_Z:
+			break;
+		case TRANSLATE_DOWN_Z:
+			break;
+		case ROTATE_UP_X:
+			break;
+		case ROTATE_DOWN_X:
+			break;
+		case ROTATE_UP_Y:
+			break;
+		case ROTATE_DOWN_Y:
+			break;
+		case ROTATE_UP_Z:
+			break;
+		case ROTATE_DOWN_Z:
+			break;
+		default:
+			AbstractScene.showOnlyKeyboardWarning(referenceAction());
+			break;
+		}
+	}
 
 	// Custom
+	
+	public void performCustomAction(KeyboardEvent event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass().getName());
+	}
 
 	public void performCustomAction(ClickEvent event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(ClickEvent event)", this.getClass().getName());

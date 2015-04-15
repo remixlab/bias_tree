@@ -401,6 +401,7 @@ public class GrabberFrame extends Frame implements Grabber {
 
 		// TODO experimenting
 		scene.motionAgent().addGrabber(this);
+		scene.keyboardAgent().addGrabber(this);
 	}
 
 	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
@@ -480,6 +481,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (scene.motionAgent().hasGrabber(otherFrame)) {
 			scene.motionAgent().addGrabber(this);
 		}
+		if (scene.keyboardAgent().hasGrabber(otherFrame)) {
+			scene.keyboardAgent().addGrabber(this);
+		}
 	}
 
 	@Override
@@ -506,17 +510,30 @@ public class GrabberFrame extends Frame implements Grabber {
 	 */
 	protected GrabberFrame getDetachedFromEye() {
 		GrabberFrame gFrame = this.get();
-		gFrame.theeye = null;
 		scene.motionAgent().removeGrabber(gFrame);
+		scene.keyboardAgent().removeGrabber(gFrame);
+		gFrame.theeye = null;
 		return gFrame;
 	}
+	
+	protected void detachFromEye() {
+		scene.motionAgent().removeGrabber(this);
+		scene.keyboardAgent().removeGrabber(this);
+		theeye = null;
+		scene.motionAgent().addGrabber(this);
+		scene.keyboardAgent().addGrabber(this);
+	}
+	
+	//TODO pending attoToEye
 
+	/*
 	protected GrabberFrame getIntoEyePath() {
 		GrabberFrame gFrame = this.get();
 		gFrame.theeye = null;
 		gFrame.eyeFrame = true;
 		return gFrame;
 	}
+	*/
 
 	/**
 	 * Returns the scene this object belongs to
@@ -587,7 +604,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (event instanceof MotionEvent)
 			performInteraction((MotionEvent) event);
 		if (event instanceof KeyboardEvent)
-			performInteraction((MotionEvent) event);
+			performInteraction((KeyboardEvent) event);
 	}
 
 	public void performInteraction(MotionEvent event) {

@@ -30,6 +30,73 @@ public interface Constants {
 		 * Align frame with world
 		 */
 		ALIGN_FRAME("Align frame with world", true),
+		
+		// only keyboard
+		
+		/**
+		 * Scale up frame
+		 */
+		SCALE_UP("Scale up frame",true),
+		/**
+		 * Scale down frame
+		 */
+		SCALE_DOWN("Scale down frame",true),
+		/**
+		 * Zoom in eye on anchor
+		 */
+		ZOOM_IN_ON_ANCHOR("Zoom in eye on anchor", false),
+		/**
+		 * Zoom out eye on anchor
+		 */
+		ZOOM_OUT_ON_ANCHOR("Zoom out eye on anchor", false),
+		/**
+		 * Translate frame up along X axis
+		 */
+		TRANSLATE_UP_X("Translate frame up along X axis", true),
+		/**
+		 * Translate frame down along X axis
+		 */
+		TRANSLATE_DOWN_X("Translate frame down along X axis", true),
+		/**
+		 * Translate frame up along Y axis
+		 */
+		TRANSLATE_UP_Y("Translate frame up along Y axis", true),
+		/**
+		 * Translate frame down along Y axis
+		 */
+		TRANSLATE_DOWN_Y("Translate frame down along Y axis", true),
+		/**
+		 * Translate frame up along Z axis
+		 */
+		TRANSLATE_UP_Z("Translate frame up along Z axis", false),
+		/**
+		 * Translate frame down along Z axis
+		 */
+		TRANSLATE_DOWN_Z("Translate frame down along Z axis", false),
+		/**
+		 * Rotate frame up X axis
+		 */
+		ROTATE_UP_X("Rotate frame up X axis", false),
+		/**
+		 * Rotate frame down X axis
+		 */
+		ROTATE_DOWN_X("Rotate frame down X axis", false),
+		/**
+		 * Rotate frame up Y axis
+		 */
+		ROTATE_UP_Y("Rotate frame up Y axis", false),
+		/**
+		 * Rotate frame down Y axis
+		 */
+		ROTATE_DOWN_Y("Rotate frame down Y axis", false),
+		/**
+		 * Rotate frame up Z axis
+		 */
+		ROTATE_UP_Z("Rotate frame up Z axis", true),
+		/**
+		 * Rotate frame down Z axis
+		 */
+		ROTATE_DOWN_Z("Rotate frame down Z axis", true),
 
 		// Click actions require cursor pos:
 		/**
@@ -656,13 +723,72 @@ public interface Constants {
 			act = a;
 		}
 	}
+	
+	public enum KeyboardMotionAction implements Action<MotionAction> {
+		CENTER_FRAME(MotionAction.CENTER_FRAME),
+		ALIGN_FRAME(MotionAction.ALIGN_FRAME),
+	  // DOF_1
+		SCALE_UP(MotionAction.SCALE_UP),
+		SCALE_DOWN(MotionAction.SCALE_DOWN),
+		ZOOM_IN_ON_ANCHOR(MotionAction.ZOOM_IN_ON_ANCHOR),
+		ZOOM_OUT_ON_ANCHOR(MotionAction.ZOOM_OUT_ON_ANCHOR),
+		TRANSLATE_UP_X(MotionAction.TRANSLATE_UP_X),
+		TRANSLATE_UP_Y(MotionAction.TRANSLATE_UP_Y),
+		TRANSLATE_UP_Z(MotionAction.TRANSLATE_UP_Z),
+		TRANSLATE_DOWN_X(MotionAction.TRANSLATE_DOWN_X),
+		TRANSLATE_DOWN_Y(MotionAction.TRANSLATE_DOWN_Y),
+		TRANSLATE_DOWN_Z(MotionAction.TRANSLATE_DOWN_Z),
+		ROTATE_UP_X(MotionAction.ROTATE_UP_X),
+		ROTATE_DOWN_X(MotionAction.ROTATE_DOWN_X),
+		ROTATE_UP_Y(MotionAction.ROTATE_UP_Y),
+		ROTATE_DOWN_Y(MotionAction.ROTATE_DOWN_Y),
+		ROTATE_UP_Z(MotionAction.ROTATE_UP_Z),
+		ROTATE_DOWN_Z(MotionAction.ROTATE_DOWN_Z),
+
+		CUSTOM(MotionAction.CUSTOM);
+
+		@Override
+		public MotionAction referenceAction() {
+			return act;
+		}
+
+		@Override
+		public String description() {
+			return this.referenceAction().description();
+		}
+
+		/**
+		 * Whether or not this action item is available in 2D. All actions are available in 3D.
+		 */
+		public boolean is2D() {
+			return act.is2D();
+		}
+
+		public DOF2Action dof2Action() {
+			return DOF2Action.valueOf(this.toString());
+		}
+
+		public DOF3Action dof3Action() {
+			return DOF3Action.valueOf(this.toString());
+		}
+
+		public DOF6Action dof6Action() {
+			return DOF6Action.valueOf(this.toString());
+		}
+
+		MotionAction	act;
+
+		KeyboardMotionAction(MotionAction a) {
+			act = a;
+		}
+	}
 
 	// Scene
 
 	/**
 	 * Keyboard action sub-group.
 	 */
-	public enum KeyboardAction implements Action<SceneAction> {
+	public enum KeyboardSceneAction implements Action<SceneAction> {
 		// KEYfRAMES
 		ADD_KEYFRAME_TO_PATH_1(SceneAction.ADD_KEYFRAME_TO_PATH_1),
 		PLAY_PATH_1(SceneAction.PLAY_PATH_1),
@@ -718,7 +844,7 @@ public interface Constants {
 
 		SceneAction	act;
 
-		KeyboardAction(SceneAction a) {
+		KeyboardSceneAction(SceneAction a) {
 			act = a;
 		}
 	}

@@ -14,7 +14,7 @@ import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.AbstractScene;
-import remixlab.dandelion.core.Constants.KeyboardAction;
+import remixlab.dandelion.core.Constants.KeyboardSceneAction;
 
 public class KeyAgent extends KeyboardAgent {
 	public KeyAgent(AbstractScene scn, String n) {
@@ -64,25 +64,25 @@ public class KeyAgent extends KeyboardAgent {
 		// VK values here: http://docs.oracle.com/javase/7/docs/api/constant-values.html
 		super.setDefaultShortcuts();
 		// VK_LEFT : 37
-		keyboardProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 37, KeyboardAction.MOVE_LEFT);
+		sceneProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 37, KeyboardSceneAction.MOVE_LEFT);
 		// VK_UP : 38
-		keyboardProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 38, KeyboardAction.MOVE_UP);
+		sceneProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 38, KeyboardSceneAction.MOVE_UP);
 		// VK_RIGHT : 39
-		keyboardProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 39, KeyboardAction.MOVE_RIGHT);
+		sceneProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 39, KeyboardSceneAction.MOVE_RIGHT);
 		// VK_DOWN : 40
-		keyboardProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 40, KeyboardAction.MOVE_DOWN);
+		sceneProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 40, KeyboardSceneAction.MOVE_DOWN);
 
 		// VK_1 : 49
-		keyboardProfile().setBinding(BogusEvent.CTRL, 49, KeyboardAction.ADD_KEYFRAME_TO_PATH_1);
-		keyboardProfile().setBinding(BogusEvent.ALT, 49, KeyboardAction.DELETE_PATH_1);
+		sceneProfile().setBinding(BogusEvent.CTRL, 49, KeyboardSceneAction.ADD_KEYFRAME_TO_PATH_1);
+		sceneProfile().setBinding(BogusEvent.ALT, 49, KeyboardSceneAction.DELETE_PATH_1);
 		setKeyCodeToPlayPath(49, 1);
 		// VK_2 : 50
-		keyboardProfile().setBinding(BogusEvent.CTRL, 50, KeyboardAction.ADD_KEYFRAME_TO_PATH_2);
-		keyboardProfile().setBinding(BogusEvent.ALT, 50, KeyboardAction.DELETE_PATH_2);
+		sceneProfile().setBinding(BogusEvent.CTRL, 50, KeyboardSceneAction.ADD_KEYFRAME_TO_PATH_2);
+		sceneProfile().setBinding(BogusEvent.ALT, 50, KeyboardSceneAction.DELETE_PATH_2);
 		setKeyCodeToPlayPath(50, 2);
 		// VK_3 : 51
-		keyboardProfile().setBinding(BogusEvent.CTRL, 51, KeyboardAction.ADD_KEYFRAME_TO_PATH_3);
-		keyboardProfile().setBinding(BogusEvent.ALT, 51, KeyboardAction.DELETE_PATH_3);
+		sceneProfile().setBinding(BogusEvent.CTRL, 51, KeyboardSceneAction.ADD_KEYFRAME_TO_PATH_3);
+		sceneProfile().setBinding(BogusEvent.ALT, 51, KeyboardSceneAction.DELETE_PATH_3);
 		setKeyCodeToPlayPath(51, 3);
 	}
 }

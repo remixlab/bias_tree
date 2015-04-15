@@ -85,6 +85,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		}
 	}
 
+	/*
 	@Override
 	public boolean addGrabber(Grabber frame) {
 		if (frame instanceof InteractiveFrame)
@@ -93,9 +94,26 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 			return super.addGrabber(frame);
 		return false;
 	}
+	*/
+	
+  //TODO debug
+	@Override
+	public boolean addGrabber(Grabber frame) {
+		if (frame instanceof InteractiveFrame) {
+			if(((InteractiveFrame) frame).isEyeFrame())
+				System.out.println("adding EYE frame in motion");
+			else
+				System.out.println("adding FRAME frame in motion");
+			return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? eyeBranch : frameBranch);
+		}
+		if (!(frame instanceof InteractiveGrabber))
+			return super.addGrabber(frame);
+		return false;
+	}
 
 	@Override
 	public void resetDefaultGrabber() {
+		addGrabber(scene.eye().frame());
 		setDefaultGrabber(scene.eye().frame());
 	}
 
@@ -110,18 +128,18 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	protected MotionProfile<A> motionProfile() {
 		if (inputGrabber() instanceof InteractiveFrame)
 			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
-				return eyeBranch.profile();
+				return eyeProfile();
 			else
-				return frameBranch().profile();
+				return frameProfile();
 		return null;
 	}
 
 	protected ClickProfile<ClickAction> clickProfile() {
 		if (inputGrabber() instanceof InteractiveFrame)
 			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
-				return eyeBranch.clickProfile();
+				return eyeClickProfile();
 			else
-				return frameBranch.clickProfile();
+				return frameClickProfile();
 		return null;
 	}
 
@@ -131,14 +149,14 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
 	 */
 	public MotionProfile<A> eyeProfile() {
-		return eyeBranch.profile();
+		return eyeBranch().profile();
 	}
 
 	/**
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
 	 */
 	public MotionProfile<A> frameProfile() {
-		return frameBranch.profile();
+		return frameBranch().profile();
 	}
 
 	/**

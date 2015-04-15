@@ -55,8 +55,8 @@ import java.nio.FloatBuffer;
  * {@link #motionAgent()} (which in the desktop version of proscene defaults to a {@link #mouseAgent()}):
  * <ol>
  * <li><b>The default keyboard agent</b> provides shortcuts to Dandelion keyboard actions such as {@link #drawGrid()} or
- * {@link #drawAxes()}. See {@link #setKeyboardShortcut(Character, remixlab.dandelion.core.Constants.KeyboardAction)}
- * and {@link #setKeyboardShortcut(int, int, remixlab.dandelion.core.Constants.KeyboardAction)}.
+ * {@link #drawAxes()}. See {@link #setKeyboardShortcut(Character, remixlab.dandelion.core.Constants.KeyboardSceneAction)}
+ * and {@link #setKeyboardShortcut(int, int, remixlab.dandelion.core.Constants.KeyboardSceneAction)}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame motion actions. Please refer
  * to the different {@code setMouseButtonBinding()}, {@code setMouseClickBinding()}, {@code setMouseWheelBinding()}
  * methods.
@@ -457,14 +457,14 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
-	public void setKeyboardShortcut(Character key, KeyboardAction action) {
+	public void setKeyboardShortcut(Character key, KeyboardSceneAction action) {
 		keyboardAgent().setShortcut(key, action);
 	}
 
 	/**
 	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
 	 */
-	public void setKeyboardShortcut(int mask, int vKey, KeyboardAction action) {
+	public void setKeyboardShortcut(int mask, int vKey, KeyboardSceneAction action) {
 		keyboardAgent().setShortcut(mask, vKey, action);
 	}
 
@@ -506,7 +506,7 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Returns {@code true} if the keyboard action is bound.
 	 */
-	public boolean isKeyboardActionBound(KeyboardAction action) {
+	public boolean isKeyboardActionBound(KeyboardSceneAction action) {
 		return keyboardAgent().isActionBound(action);
 	}
 
@@ -514,7 +514,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
 	 * is bound to the given shortcut.
 	 */
-	public KeyboardAction keyboardAction(Character key) {
+	public KeyboardSceneAction keyboardAction(Character key) {
 		return keyboardAgent().action(key);
 	}
 
@@ -522,7 +522,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns the (Keyboard) dandelion action that is bound to the given mask-vKey (virtual key) shortcut. Returns
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
-	public KeyboardAction keyboardAction(int mask, int vKey) {
+	public KeyboardSceneAction keyboardAction(int mask, int vKey) {
 		return keyboardAgent().action(mask, vKey);
 	}
 

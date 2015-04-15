@@ -1589,8 +1589,11 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		if (vp == null)
 			return;
 
-		if (eye() != null)
+		boolean isKeyGrabber = eye().frame() == keyboardAgent().inputGrabber();
+		if (eye() != null) {
 			motionAgent().removeGrabber(eye().frame());
+			keyboardAgent().removeGrabber(eye().frame());
+		}
 
 		vp.setSceneRadius(radius());
 		vp.setSceneCenter(center());
@@ -1600,6 +1603,8 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		eye = vp;
 		motionAgent().addGrabber(eye().frame());
 		motionAgent().setDefaultGrabber(eye().frame());
+		keyboardAgent().addGrabber(eye().frame());
+		if(isKeyGrabber) keyboardAgent().setDefaultGrabber(eye().frame());
 
 		showAll();
 	}
@@ -2120,6 +2125,10 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 
 	static public void showOnlyMotionWarning(MotionAction action) {
 		showWarning(action.name() + " can only be performed from a MotionEvent.");
+	}
+	
+	static public void showOnlyKeyboardWarning(MotionAction action) {
+		showWarning(action.name() + " can only be performed from a KeyboardEvent.");
 	}
 
 	static public void showMinDOFsWarning(String themethod, int dofs) {
