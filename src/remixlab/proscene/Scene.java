@@ -55,8 +55,9 @@ import java.nio.FloatBuffer;
  * {@link #motionAgent()} (which in the desktop version of proscene defaults to a {@link #mouseAgent()}):
  * <ol>
  * <li><b>The default keyboard agent</b> provides shortcuts to Dandelion keyboard actions such as {@link #drawGrid()} or
- * {@link #drawAxes()}. See {@link #setKeyboardShortcut(Character, remixlab.dandelion.core.Constants.KeyboardSceneAction)}
- * and {@link #setKeyboardShortcut(int, int, remixlab.dandelion.core.Constants.KeyboardSceneAction)}.
+ * {@link #drawAxes()}. See
+ * {@link #setKeyboardShortcut(Character, remixlab.dandelion.core.Constants.KeyboardSceneAction)} and
+ * {@link #setKeyboardShortcut(int, int, remixlab.dandelion.core.Constants.KeyboardSceneAction)}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame motion actions. Please refer
  * to the different {@code setMouseButtonBinding()}, {@code setMouseClickBinding()}, {@code setMouseWheelBinding()}
  * methods.

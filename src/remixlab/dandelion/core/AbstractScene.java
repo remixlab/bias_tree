@@ -1601,10 +1601,12 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		vp.setScreenWidthAndHeight(width(), height());
 
 		eye = vp;
+		// TODO really pending
 		motionAgent().addGrabber(eye().frame());
 		motionAgent().setDefaultGrabber(eye().frame());
 		keyboardAgent().addGrabber(eye().frame());
-		if(isKeyGrabber) keyboardAgent().setDefaultGrabber(eye().frame());
+		if (isKeyGrabber)
+			keyboardAgent().setDefaultGrabber(eye().frame());
 
 		showAll();
 	}
@@ -2126,7 +2128,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	static public void showOnlyMotionWarning(MotionAction action) {
 		showWarning(action.name() + " can only be performed from a MotionEvent.");
 	}
-	
+
 	static public void showOnlyKeyboardWarning(MotionAction action) {
 		showWarning(action.name() + " can only be performed from a KeyboardEvent.");
 	}

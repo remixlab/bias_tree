@@ -86,21 +86,16 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	}
 
 	/*
-	@Override
-	public boolean addGrabber(Grabber frame) {
-		if (frame instanceof InteractiveFrame)
-			return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? eyeBranch : frameBranch);
-		if (!(frame instanceof InteractiveGrabber))
-			return super.addGrabber(frame);
-		return false;
-	}
-	*/
-	
-  //TODO debug
+	 * @Override public boolean addGrabber(Grabber frame) { if (frame instanceof InteractiveFrame) return
+	 * addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? eyeBranch : frameBranch); if
+	 * (!(frame instanceof InteractiveGrabber)) return super.addGrabber(frame); return false; }
+	 */
+
+	// TODO debug
 	@Override
 	public boolean addGrabber(Grabber frame) {
 		if (frame instanceof InteractiveFrame) {
-			if(((InteractiveFrame) frame).isEyeFrame())
+			if (((InteractiveFrame) frame).isEyeFrame())
 				System.out.println("adding EYE frame in motion");
 			else
 				System.out.println("adding FRAME frame in motion");

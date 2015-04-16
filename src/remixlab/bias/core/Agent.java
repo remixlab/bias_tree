@@ -76,7 +76,7 @@ public class Agent {
 	 * See {@link #addGrabber(Grabber)} for details. Removing a grabber that is not in {@link #grabbers()} has no effect.
 	 */
 	public boolean removeGrabber(Grabber grabber) {
-		//TODO testing
+		// TODO testing
 		System.out.println("removing grabber pierre! " + this.name());
 		for (Iterator<GrabberBranchTuple> it = tuples.iterator(); it.hasNext();) {
 			GrabberBranchTuple t = it.next();

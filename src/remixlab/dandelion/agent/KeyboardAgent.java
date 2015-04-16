@@ -18,54 +18,52 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 public class KeyboardAgent extends Agent {
-	protected AbstractScene																									scene;
+	protected AbstractScene																											scene;
 	protected KeyboardBranch<SceneAction, KeyboardProfile<KeyboardSceneAction>>	keySceneBranch;
 	protected KeyboardBranch<MotionAction, KeyboardProfile<KeyboardMotionAction>>	keyFrameBranch, keyEyeBranch;
 
 	public KeyboardAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		keySceneBranch = new KeyboardBranch<SceneAction, KeyboardProfile<KeyboardSceneAction>>(new KeyboardProfile<KeyboardSceneAction>(),
+		keySceneBranch = new KeyboardBranch<SceneAction, KeyboardProfile<KeyboardSceneAction>>(
+				new KeyboardProfile<KeyboardSceneAction>(),
 				this,
 				"scene_keyboard_branch");
-		keyFrameBranch = new KeyboardBranch<MotionAction, KeyboardProfile<KeyboardMotionAction>>(new KeyboardProfile<KeyboardMotionAction>(),
+		keyFrameBranch = new KeyboardBranch<MotionAction, KeyboardProfile<KeyboardMotionAction>>(
+				new KeyboardProfile<KeyboardMotionAction>(),
 				this,
 				"frame_keyboard_branch");
-		keyEyeBranch = new KeyboardBranch<MotionAction, KeyboardProfile<KeyboardMotionAction>>(new KeyboardProfile<KeyboardMotionAction>(),
+		keyEyeBranch = new KeyboardBranch<MotionAction, KeyboardProfile<KeyboardMotionAction>>(
+				new KeyboardProfile<KeyboardMotionAction>(),
 				this,
 				"eye_keyboard_branch");
 		// new, mimics eye -> motionAgent -> scene -> keyAgent
-		//addGrabber(scene);
-		//addGrabber(scene.eye().frame());
+		// addGrabber(scene);
+		// addGrabber(scene.eye().frame());
 		resetDefaultGrabber();
 		setDefaultGrabber(scene);
 		setDefaultShortcuts();
 	}
-	
+
 	/*
+	 * @Override public boolean addGrabber(Grabber frame) { if(frame instanceof AbstractScene) return addGrabber(scene,
+	 * keySceneBranch); if (frame instanceof InteractiveFrame) return addGrabber((InteractiveFrame) frame,
+	 * ((InteractiveFrame) frame).isEyeFrame() ? keyEyeBranch : keyFrameBranch); if (!(frame instanceof
+	 * InteractiveGrabber)) return super.addGrabber(frame); return false; }
+	 */
+
+	// TODO debug
 	@Override
 	public boolean addGrabber(Grabber frame) {
-		if(frame instanceof AbstractScene)
-			return addGrabber(scene, keySceneBranch);
-		if (frame instanceof InteractiveFrame)
-			return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? keyEyeBranch : keyFrameBranch);
-		if (!(frame instanceof InteractiveGrabber))
-			return super.addGrabber(frame);
-		return false;
-	}
-	*/
-	
-	//TODO debug
-	@Override
-	public boolean addGrabber(Grabber frame) {
-		if(frame instanceof AbstractScene)
+		if (frame instanceof AbstractScene)
 			return addGrabber(scene, keySceneBranch);
 		if (frame instanceof InteractiveFrame) {
-			if(((InteractiveFrame) frame).isEyeFrame())
+			if (((InteractiveFrame) frame).isEyeFrame())
 				System.out.println("adding EYE frame in keyboard");
 			else
 				System.out.println("adding FRAME frame in keyboard");
-			return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? keyEyeBranch : keyFrameBranch);
+			return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? keyEyeBranch
+					: keyFrameBranch);
 		}
 		if (!(frame instanceof InteractiveGrabber))
 			return super.addGrabber(frame);
@@ -88,7 +86,7 @@ public class KeyboardAgent extends Agent {
 	public KeyboardBranch<SceneAction, KeyboardProfile<KeyboardSceneAction>> sceneBranch() {
 		return keySceneBranch;
 	}
-	
+
 	public KeyboardBranch<MotionAction, KeyboardProfile<KeyboardMotionAction>> eyeBranch() {
 		return keyEyeBranch;
 	}
@@ -115,15 +113,15 @@ public class KeyboardAgent extends Agent {
 	protected KeyboardProfile<KeyboardSceneAction> sceneProfile() {
 		return sceneBranch().keyboardProfile();
 	}
-	
+
 	protected KeyboardProfile<KeyboardMotionAction> eyeProfile() {
 		return eyeBranch().keyboardProfile();
 	}
-	
+
 	protected KeyboardProfile<KeyboardMotionAction> frameProfile() {
 		return frameBranch().keyboardProfile();
 	}
-	
+
 	protected KeyboardProfile<KeyboardMotionAction> motionProfile(Target target) {
 		return target == Target.EYE ? eyeProfile() : frameProfile();
 	}
@@ -154,8 +152,8 @@ public class KeyboardAgent extends Agent {
 
 		sceneProfile().setBinding('s', KeyboardSceneAction.INTERPOLATE_TO_FIT);
 		sceneProfile().setBinding('S', KeyboardSceneAction.SHOW_ALL);
-		
-		//TODO add some eye and frame defs
+
+		// TODO add some eye and frame defs
 		removeShortcuts(Target.EYE);
 		removeShortcuts(Target.FRAME);
 		setShortcut(Target.EYE, 'c', KeyboardMotionAction.ALIGN_FRAME);
@@ -254,10 +252,10 @@ public class KeyboardAgent extends Agent {
 	public KeyboardSceneAction action(int mask, int vKey) {
 		return (KeyboardSceneAction) sceneProfile().action(mask, vKey);
 	}
-	
+
 	// FRAMEs
-	//TODO DOCs are broken (since they were copied/pasted from above)
-	
+	// TODO DOCs are broken (since they were copied/pasted from above)
+
 	/**
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */

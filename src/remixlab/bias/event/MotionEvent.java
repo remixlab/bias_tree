@@ -207,7 +207,7 @@ public class MotionEvent extends BogusEvent {
 			return ((DOF6Event) event).dof3Event(fromX).dof2Event();
 		return null;
 	}
-	
+
 	public static DOF3Event dof3Event(MotionEvent event) {
 		return dof3Event(event, true);
 	}

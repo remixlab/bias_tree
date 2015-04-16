@@ -237,7 +237,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		// TODO merge with eye?
 		super(scn, referenceFrame, p, r, s);
-		//scene.motionAgent().addGrabber(this);
+		// scene.motionAgent().addGrabber(this);
 	}
 
 	/**
@@ -366,7 +366,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			gestureRotatetXY(event);
 			break;
 		case ROTATE_CAD:
-			//TODO study merge with previous
+			// TODO study merge with previous
 			gestureRotateCAD(event);
 			break;
 		case ROTATE_X:
@@ -389,7 +389,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			break;
 		case SCREEN_TRANSLATE:
 			int dir = originalDirection(event);
-			//TODO try to simplify second argument
+			// TODO try to simplify second argument
 			if (dir == 1)
 				gestureTranslateX(event, true);
 			else if (dir == -1)
@@ -407,7 +407,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		case TRANSLATE_XYZ_ROTATE_XYZ:
 			// A. Translate the iFrame
 			gestureTranslateXYZ(event);
-		  // B. Rotate the iFrame
+			// B. Rotate the iFrame
 			gestureRotateXYZ(event);
 			break;
 		case TRANSLATE_Y:
@@ -442,13 +442,13 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			break;
 		}
 	}
-	
+
 	@Override
-	public void performInteraction(KeyboardEvent event) {	
+	public void performInteraction(KeyboardEvent event) {
 		switch (referenceAction()) {
 		case ALIGN_FRAME:
 			align();
-			break;		
+			break;
 		case CENTER_FRAME:
 			center();
 			break;
@@ -494,9 +494,10 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 
 	// Custom
-	
+
 	public void performCustomAction(KeyboardEvent event) {
-		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass()
+				.getName());
 	}
 
 	public void performCustomAction(ClickEvent event) {

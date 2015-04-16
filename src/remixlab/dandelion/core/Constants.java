@@ -30,17 +30,17 @@ public interface Constants {
 		 * Align frame with world
 		 */
 		ALIGN_FRAME("Align frame with world", true),
-		
+
 		// only keyboard
-		
+
 		/**
 		 * Scale up frame
 		 */
-		SCALE_UP("Scale up frame",true),
+		SCALE_UP("Scale up frame", true),
 		/**
 		 * Scale down frame
 		 */
-		SCALE_DOWN("Scale down frame",true),
+		SCALE_DOWN("Scale down frame", true),
 		/**
 		 * Zoom in eye on anchor
 		 */
@@ -723,11 +723,11 @@ public interface Constants {
 			act = a;
 		}
 	}
-	
+
 	public enum KeyboardMotionAction implements Action<MotionAction> {
 		CENTER_FRAME(MotionAction.CENTER_FRAME),
 		ALIGN_FRAME(MotionAction.ALIGN_FRAME),
-	  // DOF_1
+		// DOF_1
 		SCALE_UP(MotionAction.SCALE_UP),
 		SCALE_DOWN(MotionAction.SCALE_DOWN),
 		ZOOM_IN_ON_ANCHOR(MotionAction.ZOOM_IN_ON_ANCHOR),

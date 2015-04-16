@@ -96,7 +96,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 			shape().enableStyle();
 		pg.popStyle();
 	}
-	
+
 	@Override
 	public boolean checkIfGrabsInput(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
@@ -113,11 +113,11 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 			return checkIfGrabsInput((DOF6Event) event);
 		return false;
 	}
-	
+
 	public boolean checkIfGrabsInput(ClickEvent event) {
 		return checkIfGrabsInput(new DOF2Event(event.x(), event.y()));
 	}
-	
+
 	public boolean checkIfGrabsInput(KeyboardEvent event) {
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
 		return false;
@@ -127,7 +127,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
-	
+
 	public boolean checkIfGrabsInput(DOF2Event event) {
 		((Scene) scene).pickingBuffer().pushStyle();
 		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
@@ -137,7 +137,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		((Scene) scene).pickingBuffer().popStyle();
 		return false;
 	}
-	
+
 	public boolean checkIfGrabsInput(DOF3Event event) {
 		return checkIfGrabsInput(event.dof2Event());
 	}
