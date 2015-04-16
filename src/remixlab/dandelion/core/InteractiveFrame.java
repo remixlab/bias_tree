@@ -456,36 +456,50 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			performCustomAction(event);
 			break;
 		case SCALE_UP:
+			gestureScale(event, true);
 			break;
 		case SCALE_DOWN:
+			gestureScale(event, false);
 			break;
 		case ZOOM_IN_ON_ANCHOR:
 			break;
 		case ZOOM_OUT_ON_ANCHOR:
 			break;
-		case TRANSLATE_UP_X:
-			break;
-		case TRANSLATE_DOWN_X:
-			break;
-		case TRANSLATE_UP_Y:
-			break;
-		case TRANSLATE_DOWN_Y:
-			break;
-		case TRANSLATE_UP_Z:
-			break;
-		case TRANSLATE_DOWN_Z:
-			break;
 		case ROTATE_UP_X:
+			gestureRotateX(event, true);
 			break;
 		case ROTATE_DOWN_X:
+			gestureRotateX(event, false);
 			break;
 		case ROTATE_UP_Y:
+			gestureRotateY(event, true);
 			break;
 		case ROTATE_DOWN_Y:
+			gestureRotateY(event, false);
 			break;
 		case ROTATE_UP_Z:
+			gestureRotateZ(event, true);
 			break;
 		case ROTATE_DOWN_Z:
+			gestureRotateZ(event, false);
+			break;
+		case TRANSLATE_UP_X:
+			gestureTranslateX(event, true);
+			break;
+		case TRANSLATE_DOWN_X:
+			gestureTranslateX(event, false);
+			break;
+		case TRANSLATE_UP_Y:
+			gestureTranslateY(event, true);
+			break;
+		case TRANSLATE_DOWN_Y:
+			gestureTranslateY(event, false);
+			break;
+		case TRANSLATE_UP_Z:
+			gestureTranslateZ(event, true);
+			break;
+		case TRANSLATE_DOWN_Z:
+			gestureTranslateZ(event, false);
 			break;
 		default:
 			AbstractScene.showOnlyKeyboardWarning(referenceAction());

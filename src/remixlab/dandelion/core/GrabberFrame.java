@@ -31,6 +31,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	private float								transSensitivity;
 	private float								sclSensitivity;
 	private float								wheelSensitivity;
+	private float								keySensitivity;
 
 	// spinning stuff:
 	private float								spngSensitivity;
@@ -80,6 +81,7 @@ public class GrabberFrame extends Frame implements Grabber {
 				append(dampFriction).
 				append(sFriction).
 				append(wheelSensitivity).
+				append(keySensitivity).
 				append(flyDisp).
 				append(flySpd).
 				append(scnUpVec).
@@ -111,6 +113,7 @@ public class GrabberFrame extends Frame implements Grabber {
 				.append(spngRotation, other.spngRotation)
 				.append(spngSensitivity, other.spngSensitivity)
 				.append(wheelSensitivity, other.wheelSensitivity)
+				.append(keySensitivity, other.keySensitivity)
 				.append(flyDisp, other.flyDisp)
 				.append(flySpd, other.flySpd)
 				.append(scnUpVec, other.scnUpVec)
@@ -372,7 +375,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		setRotationSensitivity(1.0f);
 		setScalingSensitivity(1.0f);
 		setTranslationSensitivity(1.0f);
+		//TODO normalize
 		setWheelSensitivity(5.0f);
+		setKeyboardSensitivity(1.0f);
 		setSpinningSensitivity(0.3f);
 		setDampingFriction(0.5f);
 
@@ -454,6 +459,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		this.setScalingSensitivity(otherFrame.scalingSensitivity());
 		this.setTranslationSensitivity(otherFrame.translationSensitivity());
 		this.setWheelSensitivity(otherFrame.wheelSensitivity());
+		this.setKeyboardSensitivity(otherFrame.keyboardSensitivity());
 		//
 		this.setSpinningSensitivity(otherFrame.spinningSensitivity());
 		this.setDampingFriction(otherFrame.dampingFriction());
@@ -815,6 +821,13 @@ public class GrabberFrame extends Frame implements Grabber {
 	public final void setWheelSensitivity(float sensitivity) {
 		wheelSensitivity = sensitivity;
 	}
+	
+	/**
+	 * Defines the {@link #wheelSensitivity()}.
+	 */
+	public final void setKeyboardSensitivity(float sensitivity) {
+		keySensitivity = sensitivity;
+	}
 
 	/**
 	 * Returns the influence of a gesture displacement on the InteractiveFrame rotation.
@@ -898,6 +911,10 @@ public class GrabberFrame extends Frame implements Grabber {
 	 */
 	public float wheelSensitivity() {
 		return wheelSensitivity;
+	}
+	
+	public float keyboardSensitivity() {
+		return keySensitivity;
 	}
 
 	/**
@@ -1161,6 +1178,10 @@ public class GrabberFrame extends Frame implements Grabber {
 		// if( isEyeFrame() )
 		return eyeVec;
 	}
+	
+	protected float computeAngle(KeyboardEvent e1) {
+		return (float) Math.PI / scene.eye().screenWidth();
+	}
 
 	protected float computeAngle(DOF1Event e1) {
 		return delta1(e1) * (float) Math.PI / scene.eye().screenWidth();
@@ -1189,24 +1210,28 @@ public class GrabberFrame extends Frame implements Grabber {
 			projectOnLine(scene.eye().position(), scene.eye().viewDirection());
 	}
 
-	public void gestureTranslateX(MotionEvent event) {
+	protected void gestureTranslateX(MotionEvent event) {
 		gestureTranslateX(event, true);
 	}
 
-	public void gestureTranslateX(MotionEvent event, boolean fromX) {
+	protected void gestureTranslateX(MotionEvent event, boolean fromX) {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			gestureTranslateX(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
 
-	public void gestureTranslateX(DOF1Event event, float sens) {
+	protected void gestureTranslateX(DOF1Event event, float sens) {
 		if (isEyeFrame())
 			screenTranslate(new Vec(-delta1(event), 0), sens);
 		else
 			screenTranslate(new Vec(delta1(event), 0), sens);
 	}
+	
+	protected void gestureTranslateX(KeyboardEvent event, boolean up) {
+		screenTranslate(new Vec(-1, 0), keyboardSensitivity());
+	}
 
-	public void gestureTranslateY(MotionEvent event) {
+	protected void gestureTranslateY(MotionEvent event) {
 		gestureTranslateY(event, true);
 	}
 
@@ -1216,18 +1241,22 @@ public class GrabberFrame extends Frame implements Grabber {
 			gestureTranslateY(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
 
-	public void gestureTranslateY(DOF1Event event, float sens) {
+	protected void gestureTranslateY(DOF1Event event, float sens) {
 		if (isEyeFrame())
 			screenTranslate(new Vec(0, scene.isRightHanded() ? delta1(event) : -delta1(event)), sens);
 		else
 			screenTranslate(new Vec(0, scene.isRightHanded() ? -delta1(event) : delta1(event)), sens);
 	}
+	
+	protected void gestureTranslateY(KeyboardEvent event, boolean up) {
+		screenTranslate(new Vec(0, scene.isRightHanded() ? 1 : -1), this.keyboardSensitivity());
+	}
 
-	public void gestureTranslateZ(MotionEvent event) {
+	protected void gestureTranslateZ(MotionEvent event) {
 		gestureTranslateZ(event, true);
 	}
 
-	public void gestureTranslateZ(MotionEvent event, boolean fromX) {
+	protected void gestureTranslateZ(MotionEvent event, boolean fromX) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureTranslateZ");
 			return;
@@ -1243,12 +1272,20 @@ public class GrabberFrame extends Frame implements Grabber {
 		else
 			screenTranslate(new Vec(0.0f, 0.0f, delta1(event)), sens);
 	}
+	
+	protected void gestureTranslateZ(KeyboardEvent event, boolean up) {
+		if (scene.is2D()) {
+			AbstractScene.showDepthWarning("gestureTranslateZ");
+			return;
+		}
+		screenTranslate(new Vec(0.0f, 0.0f, -1), this.keyboardSensitivity());
+	}
 
-	public void gestureTranslateXY(MotionEvent event) {
+	protected void gestureTranslateXY(MotionEvent event) {
 		gestureTranslateXY(event, true);
 	}
 
-	public void gestureTranslateXY(MotionEvent event, boolean fromX) {
+	protected void gestureTranslateXY(MotionEvent event, boolean fromX) {
 		DOF2Event dof2Event = MotionEvent.dof2Event(event, fromX);
 		if (dof2Event != null)
 			gestureTranslateXY(dof2Event);
@@ -1323,6 +1360,14 @@ public class GrabberFrame extends Frame implements Grabber {
 			rotateAroundAxes(sens * -computeAngle(event), 0, 0);
 		}
 	}
+	
+	protected void gestureRotateX(KeyboardEvent event, boolean up) {
+		if (scene.is2D()) {
+			AbstractScene.showDepthWarning("gestureRotateX");
+			return;
+		}
+		rotateAroundAxes(keyboardSensitivity() * -computeAngle(event), 0, 0);
+	}
 
 	protected void gestureRotateY(MotionEvent event) {
 		if (scene.is2D()) {
@@ -1345,6 +1390,14 @@ public class GrabberFrame extends Frame implements Grabber {
 		else {
 			rotateAroundAxes(0, sens * -computeAngle(event), 0);
 		}
+	}
+	
+	protected void gestureRotateY(KeyboardEvent event, boolean up) {
+		if (scene.is2D()) {
+			AbstractScene.showDepthWarning("gestureRotateY");
+			return;
+		}
+		rotateAroundAxes(0, keyboardSensitivity() * -computeAngle(event), 0);
 	}
 
 	protected void gestureRotateZ(MotionEvent event) {
@@ -1384,6 +1437,10 @@ public class GrabberFrame extends Frame implements Grabber {
 			else
 				rotateAroundAxes(0, 0, sens * -computeAngle(event));
 		}
+	}
+	
+	protected void gestureRotateZ(KeyboardEvent event, boolean up) {
+		rotateAroundAxes(0, 0, this.keyboardSensitivity() * -computeAngle(event));
 	}
 
 	protected void gestureRotateXYZ(MotionEvent event) {
@@ -1592,6 +1649,11 @@ public class GrabberFrame extends Frame implements Grabber {
 			float s = 1 + Math.abs(delta) / (float) scene.height();
 			scale(delta >= 0 ? s : 1 / s);
 		}
+	}
+	
+	protected void gestureScale(KeyboardEvent event, boolean up) {
+		float s = 1 + Math.abs(keyboardSensitivity()) / (isEyeFrame() ? (float) -scene.height() : (float) scene.height()); 
+		scale(up?s:1/s);
 	}
 
 	protected void gestureMoveForward(MotionEvent event) {

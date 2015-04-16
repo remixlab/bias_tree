@@ -156,8 +156,8 @@ public class KeyboardAgent extends Agent {
 		// TODO add some eye and frame defs
 		removeShortcuts(Target.EYE);
 		removeShortcuts(Target.FRAME);
-		setShortcut(Target.EYE, 'c', KeyboardMotionAction.ALIGN_FRAME);
-		setShortcut(Target.EYE, 'a', KeyboardMotionAction.CENTER_FRAME);
+		setShortcut(Target.EYE, 'a', KeyboardMotionAction.ALIGN_FRAME);
+		setShortcut(Target.EYE, 'c', KeyboardMotionAction.CENTER_FRAME);
 		setShortcut(Target.FRAME, 'a', KeyboardMotionAction.ALIGN_FRAME);
 		setShortcut(Target.FRAME, 'c', KeyboardMotionAction.CENTER_FRAME);
 	}
