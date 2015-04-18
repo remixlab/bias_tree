@@ -363,10 +363,11 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			gestureMoveForward(event, true);
 			break;
 		case ROTATE:
-			gestureRotatetXY(event);
+			gestureArcball(event);
 			break;
 		case ROTATE_CAD:
 			// TODO study merge with previous
+			// gestureArcball + gestureRotateCAD = gestureRotateDOF2?
 			gestureRotateCAD(event);
 			break;
 		case ROTATE_X:
@@ -385,7 +386,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			gestureScale(event);
 			break;
 		case SCREEN_ROTATE:
-			screenRotate(event);
+			gestureScreenRotate(event);
 			break;
 		case SCREEN_TRANSLATE:
 			int dir = originalDirection(event);

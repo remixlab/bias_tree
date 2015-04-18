@@ -45,14 +45,14 @@ public class GrabberFrame extends Frame implements Grabber {
 	public boolean							dirIsFixed;
 	private boolean							horiz								= true; // Two simultaneous frames require two mice!
 
-	// TODO decide whether to include this:
 	protected float							eventSpeed;								// spnning and tossing
 	protected Vec								tDir;
+  //TODO handle flyspeed
 	protected float							flySpd;
 	protected TimingTask				flyTimerTask;
 	protected Vec								scnUpVec;
 	protected Vec								flyDisp;
-	protected static final long	FLY_UPDATE_PERDIOD	= 10;
+	protected static final long	FLY_UPDATE_PERDIOD	= 20;
 
 	protected long							lastUpdate;
 	protected AbstractScene			scene;
@@ -61,8 +61,9 @@ public class GrabberFrame extends Frame implements Grabber {
 	private float								grabsInputThreshold;
 	private boolean							adpThreshold;
 	protected boolean						eyeFrame;
+	//TODO decide this mode vs constraint! seems overkill
 	protected boolean						rspct2Frame;
-	protected Frame							gFrame;
+	//protected Frame							gFrame;
 
 	@Override
 	public int hashCode() {
@@ -72,7 +73,7 @@ public class GrabberFrame extends Frame implements Grabber {
 				append(adpThreshold).
 				append(eyeFrame).
 				append(rspct2Frame).
-				append(gFrame).
+				//append(gFrame).
 				append(rotSensitivity).
 				append(transSensitivity).
 				append(sclSensitivity).
@@ -105,7 +106,7 @@ public class GrabberFrame extends Frame implements Grabber {
 				.append(adpThreshold, other.adpThreshold)
 				.append(eyeFrame, other.eyeFrame)
 				.append(rspct2Frame, other.rspct2Frame)
-				.append(gFrame, other.gFrame)
+				//.append(gFrame, other.gFrame)
 				.append(dampFriction, other.dampFriction)
 				.append(sFriction, other.sFriction)
 				.append(rotSensitivity, other.rotSensitivity)
@@ -376,7 +377,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		setScalingSensitivity(1.0f);
 		setTranslationSensitivity(1.0f);
 		//TODO normalize
-		setWheelSensitivity(5.0f);
+		setWheelSensitivity(15f);
 		setKeyboardSensitivity(1.0f);
 		setSpinningSensitivity(0.3f);
 		setDampingFriction(0.5f);
@@ -424,7 +425,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		this.theeye = otherFrame.theeye;
 		this.eyeFrame = otherFrame.eyeFrame;
 		this.rspct2Frame = otherFrame.rspct2Frame;
-		this.gFrame = otherFrame.gFrame;
+		//this.gFrame = otherFrame.gFrame;
 
 		this.spinningTimerTask = new TimingTask() {
 			public void execute() {
@@ -984,11 +985,46 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * @see #dampingFriction()
 	 * @see #toss()
 	 */
+	/*
 	public void startSpinning(MotionEvent e) {
 		eventSpeed = e.speed();
 		int updateInterval = (int) e.delay();
 		if (updateInterval > 0)
 			spinningTimerTask.run(updateInterval);
+	}
+	*/
+
+/*
+	public void startSpinning(Rotation rt, float speed) {
+		startSpinning(rt, speed, FLY_UPDATE_PERDIOD);
+	}
+	*/
+	
+	public void startSpinning(Rotation rt, float speed, long delay) {
+		setSpinningRotation(rt);
+		//startSpinning(speed);
+		
+		///*
+		if (Util.nonZero(dampingFriction()))
+			startSpinning(speed, delay);
+		else
+			spin();
+			//*/
+	}
+	
+	public boolean startSpinning(float speed) {
+		return startSpinning(speed, FLY_UPDATE_PERDIOD);
+	}
+		
+	public boolean startSpinning(float speed, long delay) {
+		eventSpeed = speed;
+		if(this.spinningRotation() == null)
+			return false;
+		if(delay > 0) {
+			spinningTimerTask.run(delay);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -1079,15 +1115,15 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	/**
 	 * Returns a Rotation computed according to the mouse motion. Mouse positions are projected on a deformed ball,
-	 * centered on ({@code trns.x()}, {@code trns.y()}).
+	 * centered on ({@code center.x()}, {@code center.y()}).
 	 */
-	public Rotation deformedBallRotation(DOF2Event event, Vec trns) {
+	public Rotation deformedBallRotation(DOF2Event event, Vec center) {
 		if (scene.is2D()) {
 			Rot rt;
 			if (event.isRelative()) {
 				Point prevPos = new Point(event.prevX(), event.prevY());
 				Point curPos = new Point(event.x(), event.y());
-				rt = new Rot(new Point(trns.x(), trns.y()), prevPos, curPos);
+				rt = new Rot(new Point(center.x(), center.y()), prevPos, curPos);
 				rt = new Rot(rt.angle() * rotationSensitivity());
 			}
 			else
@@ -1098,8 +1134,8 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 		else {
 			// TODO absolute events!?
-			float cx = trns.x();
-			float cy = trns.y();
+			float cx = center.x();
+			float cy = center.y();
 			float x = event.x();
 			float y = event.y();
 			float prevX = event.prevX();
@@ -1136,65 +1172,29 @@ public class GrabberFrame extends Frame implements Grabber {
 		return d < size_limit ? (float) Math.sqrt(size2 - d) : size_limit / (float) Math.sqrt(d);
 	}
 
-	// micro-actions procedures
+	// macro's
 
-	public Vec screen2Eye(Vec trns) {
-		Vec eyeVec = trns.get();
-		// Scale to fit the screen relative event displacement
-		if (scene.is2D())
-			// Quite excited to see how simple it's in 2d:
-			return eyeVec;
-		// ... and amazed as to how dirty it's in 3d:
-		switch (scene.camera().type()) {
-		case PERSPECTIVE:
-			float k = (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
-					* Math.abs(scene.camera().frame().coordinatesOf(isEyeFrame() ? eye().anchor() : position()).vec[2]
-							* scene.eye().frame().magnitude());
-			// * Math.abs(scene.camera().frame().coordinatesOf(isEyeFrame() ? scene.eye().anchor() : position()).vec[2]);
-			eyeVec.vec[0] *= 2.0 * k / scene.eye().screenHeight();
-			eyeVec.vec[1] *= 2.0 * k / scene.eye().screenHeight();
-			break;
-		case ORTHOGRAPHIC:
-			float[] wh = scene.eye().getBoundaryWidthHeight();
-			// float[] wh = scene.camera().getOrthoWidthHeight();
-			eyeVec.vec[0] *= 2.0 * wh[0] / scene.eye().screenWidth();
-			eyeVec.vec[1] *= 2.0 * wh[1] / scene.eye().screenHeight();
-			break;
-		}
-		float coef;
-		if (isEyeFrame()) {
-			// float coef = 8E-4f;
-			coef = Math.max(Math.abs((coordinatesOf(eye().anchor())).vec[2] * magnitude()), 0.2f * eye().sceneRadius());
-			eyeVec.vec[2] *= coef / eye().screenHeight();
-			// TODO eye wheel seems different
-			// trns.vec[2] *= coef * 8E-4f;
-			eyeVec.divide(eye().frame().magnitude());
-		}
-		else {
-			coef = Vec.subtract(scene.camera().position(), position()).magnitude();
-			eyeVec.vec[2] *= coef / scene.camera().screenHeight();
-			eyeVec.divide(scene.eye().frame().magnitude());
-		}
-		// if( isEyeFrame() )
-		return eyeVec;
+	protected float computeAngle(DOF1Event e1) {
+		return computeAngle(delta1(e1));
 	}
 	
 	protected float computeAngle(KeyboardEvent e1) {
-		return (float) Math.PI / scene.eye().screenWidth();
+		return computeAngle(1);
 	}
-
-	protected float computeAngle(DOF1Event e1) {
-		return delta1(e1) * (float) Math.PI / scene.eye().screenWidth();
+	
+	protected float computeAngle(float dx) {
+		return dx * (float) Math.PI / scene.eye().screenWidth();
 	}
 
 	protected float delta1(DOF1Event e1) {
 		return e1.isAbsolute() ? e1.x() : e1.dx();
 	}
+	
+	protected boolean wheel(MotionEvent event) {
+		return event instanceof DOF1Event;
+	}
 
-	// TODO: decide
-	// public void gestureTranslateX(MotionEvent event, float sens) {
-
-	// }
+	//
 
 	public void align() {
 		if (isEyeFrame())
@@ -1209,6 +1209,8 @@ public class GrabberFrame extends Frame implements Grabber {
 		else
 			projectOnLine(scene.eye().position(), scene.eye().viewDirection());
 	}
+	
+	//
 
 	protected void gestureTranslateX(MotionEvent event) {
 		gestureTranslateX(event, true);
@@ -1221,35 +1223,41 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureTranslateX(DOF1Event event, float sens) {
+		Vec t;
 		if (isEyeFrame())
-			screenTranslate(new Vec(-delta1(event), 0), sens);
+			t = screenToVec(Vec.multiply(new Vec(-delta1(event), 0), sens));
 		else
-			screenTranslate(new Vec(delta1(event), 0), sens);
+			t = screenToVec(Vec.multiply(new Vec(delta1(event), 0), sens));
+		translate(t);
 	}
 	
 	protected void gestureTranslateX(KeyboardEvent event, boolean up) {
-		screenTranslate(new Vec(-1, 0), keyboardSensitivity());
+		Vec t = screenToVec(Vec.multiply(new Vec(-1, 0), keyboardSensitivity()));
+		translate(t);
 	}
 
 	protected void gestureTranslateY(MotionEvent event) {
 		gestureTranslateY(event, true);
 	}
 
-	public void gestureTranslateY(MotionEvent event, boolean fromX) {
+	protected void gestureTranslateY(MotionEvent event, boolean fromX) {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			gestureTranslateY(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
 
 	protected void gestureTranslateY(DOF1Event event, float sens) {
+		Vec t;
 		if (isEyeFrame())
-			screenTranslate(new Vec(0, scene.isRightHanded() ? delta1(event) : -delta1(event)), sens);
+			t = screenToVec(Vec.multiply(new Vec(0, scene.isRightHanded() ? delta1(event) : -delta1(event)), sens));
 		else
-			screenTranslate(new Vec(0, scene.isRightHanded() ? -delta1(event) : delta1(event)), sens);
+			t = screenToVec(Vec.multiply(new Vec(0, scene.isRightHanded() ? -delta1(event) : delta1(event)), sens));
+		translate(t);
 	}
 	
 	protected void gestureTranslateY(KeyboardEvent event, boolean up) {
-		screenTranslate(new Vec(0, scene.isRightHanded() ? 1 : -1), this.keyboardSensitivity());
+		Vec t = screenToVec(Vec.multiply(new Vec(0, scene.isRightHanded() ? 1 : -1), this.keyboardSensitivity()));
+		translate(t);
 	}
 
 	protected void gestureTranslateZ(MotionEvent event) {
@@ -1267,10 +1275,12 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureTranslateZ(DOF1Event event, float sens) {
+		Vec t;
 		if (isEyeFrame())
-			screenTranslate(new Vec(0.0f, 0.0f, -delta1(event)), sens);
+			t = screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, -delta1(event)), sens));
 		else
-			screenTranslate(new Vec(0.0f, 0.0f, delta1(event)), sens);
+			t = screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, delta1(event)), sens));
+		translate(t);
 	}
 	
 	protected void gestureTranslateZ(KeyboardEvent event, boolean up) {
@@ -1278,7 +1288,8 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showDepthWarning("gestureTranslateZ");
 			return;
 		}
-		screenTranslate(new Vec(0.0f, 0.0f, -1), this.keyboardSensitivity());
+		Vec t = screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, -1), this.keyboardSensitivity()));
+		translate(t);
 	}
 
 	protected void gestureTranslateXY(MotionEvent event) {
@@ -1294,7 +1305,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureTranslateXY(DOF2Event event) {
-		Vec trns = new Vec();
+		Vec trns;
 		if (isEyeFrame()) {
 			if (event.isRelative())
 				trns = new Vec(-event.dx(), scene.isRightHanded() ? event.dy() : -event.dy(), 0.0f);
@@ -1306,7 +1317,8 @@ public class GrabberFrame extends Frame implements Grabber {
 			else
 				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), 0.0f);
 		}
-		screenTranslate(trns);
+		Vec t = screenToVec(Vec.multiply(trns, this.translationSensitivity()));
+		translate(t);
 	}
 
 	protected void gestureTranslateXYZ(MotionEvent event) {
@@ -1322,7 +1334,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureTranslateXYZ(DOF3Event event) {
-		Vec trns = new Vec();
+		Vec trns;
 		if (isEyeFrame()) {
 			if (event.isRelative())
 				trns = new Vec(-event.dx(), scene.isRightHanded() ? event.dy() : -event.dy(), -event.dz());
@@ -1335,11 +1347,8 @@ public class GrabberFrame extends Frame implements Grabber {
 			else
 				trns = new Vec(event.x(), scene.isRightHanded() ? -event.y() : event.y(), event.z());
 		}
-		screenTranslate(trns);
-	}
-
-	protected boolean wheel(MotionEvent event) {
-		return event instanceof DOF1Event;
+		Vec t = screenToVec(Vec.multiply(trns, this.translationSensitivity()));
+		translate(t);
 	}
 
 	protected void gestureRotateX(MotionEvent event) {
@@ -1349,16 +1358,22 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 		DOF1Event dof1Event = MotionEvent.dof1Event(event);
 		if (dof1Event != null)
-			gestureRotateX(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
+			gestureRotateX(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
 	}
 
 	protected void gestureRotateX(DOF1Event event, float sens) {
+		if (scene.is2D()) {
+			AbstractScene.showDepthWarning("gestureRotateX");
+			return;
+		}
+		Rotation rt;
 		if (isEyeFrame()) {
-			rotateAroundAxes(sens * -computeAngle(event), 0, 0);
+			rt = screenToQuat(sens * -computeAngle(event), 0, 0);
 		}
 		else {
-			rotateAroundAxes(sens * -computeAngle(event), 0, 0);
+			rt = screenToQuat(sens * -computeAngle(event), 0, 0);
 		}
+		startSpinning(rt, event.speed(), event.delay());
 	}
 	
 	protected void gestureRotateX(KeyboardEvent event, boolean up) {
@@ -1366,7 +1381,8 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showDepthWarning("gestureRotateX");
 			return;
 		}
-		rotateAroundAxes(keyboardSensitivity() * -computeAngle(event), 0, 0);
+		Rotation rt =	screenToQuat(computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0, 0);
+		rotate(rt);
 	}
 
 	protected void gestureRotateY(MotionEvent event) {
@@ -1376,7 +1392,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 		DOF1Event dof1Event = MotionEvent.dof1Event(event);
 		if (dof1Event != null)
-			gestureRotateY(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
+			gestureRotateY(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
 	}
 
 	protected void gestureRotateY(DOF1Event event, float sens) {
@@ -1384,12 +1400,14 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showDepthWarning("gestureRotateY");
 			return;
 		}
+		Rotation rt;
 		if (isEyeFrame()) {
-			rotateAroundAxes(0, sens * -computeAngle(event), 0);
+			rt = screenToQuat(0, sens * -computeAngle(event), 0);
 		}
 		else {
-			rotateAroundAxes(0, sens * -computeAngle(event), 0);
+			rt = screenToQuat(0, sens * -computeAngle(event), 0);
 		}
+		startSpinning(rt, event.speed(), event.delay());
 	}
 	
 	protected void gestureRotateY(KeyboardEvent event, boolean up) {
@@ -1397,50 +1415,38 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showDepthWarning("gestureRotateY");
 			return;
 		}
-		rotateAroundAxes(0, keyboardSensitivity() * -computeAngle(event), 0);
+		Rotation rt = screenToQuat(0, computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0);
+		rotate(rt);
 	}
 
 	protected void gestureRotateZ(MotionEvent event) {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event);
 		if (dof1Event != null)
-			gestureRotateZ(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
+			gestureRotateZ(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
 	}
 
 	protected void gestureRotateZ(DOF1Event event, float sens) {
-		if (isEyeFrame()) {
-			if (is2D()) {
-				Rot rt = new Rot(sens * (scene.isRightHanded() ? computeAngle(event) : -computeAngle(event)));
-				// rotate(rt);
-				// setSpinningRotation(rt);
-				// new
-				setSpinningRotation(rt);
-				if (Util.nonZero(dampingFriction()))
-					startSpinning(event);
-				else
-					spin();
-			}
+		Rotation rt;
+		if (isEyeFrame())
+			if (is2D())
+				rt = new Rot(sens * (scene.isRightHanded() ? computeAngle(event) : -computeAngle(event)));
 			else
-				// TODO see if it can handle 2d case <-> Check where to handle sens!
-				rotateAroundAxes(0, 0, sens * -computeAngle(event));
-		}
-		else {
-			if (is2D()) {
-				Rot rt = new Rot(sens * (scene.isRightHanded() ? computeAngle(event) : -computeAngle(event)));
-				// rotate(rt);
-				// setSpinningRotation(rt);
-				setSpinningRotation(rt);
-				if (Util.nonZero(dampingFriction()))
-					startSpinning(event);
-				else
-					spin();
-			}
+				rt = screenToQuat(0, 0, sens * -computeAngle(event));
+		else
+			if (is2D())
+				rt = new Rot(sens * (scene.isRightHanded() ? computeAngle(event) : -computeAngle(event)));
 			else
-				rotateAroundAxes(0, 0, sens * -computeAngle(event));
-		}
+				rt = screenToQuat(0, 0, sens * -computeAngle(event));
+		startSpinning(rt, event.speed(), event.delay());
 	}
 	
 	protected void gestureRotateZ(KeyboardEvent event, boolean up) {
-		rotateAroundAxes(0, 0, this.keyboardSensitivity() * -computeAngle(event));
+		Rotation rt;
+		if (is2D())
+			rt = new Rot(computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()));
+		else
+			rt = screenToQuat(0, 0, computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()));
+		rotate(rt);
 	}
 
 	protected void gestureRotateXYZ(MotionEvent event) {
@@ -1455,120 +1461,43 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("gestureRotateXYZ", 2);
 	}
 
+	//TODO compute angle is missed here, set it when fixing space-navigator
 	protected void gestureRotateXYZ(DOF3Event event) {
+		Vec t;
 		if (isEyeFrame()) {
 			if (event.isRelative())
-				rotateAroundAxes(event.dx(), -event.dy(), -event.dz());
+				t = new Vec(event.dx(), -event.dy(), -event.dz());
 			else
-				rotateAroundAxes(event.x(), -event.y(), -event.z());
+				t = new Vec(event.x(), -event.y(), -event.z());
 		}
 		else {
 			if (event.isRelative())
-				rotateAroundAxes(event.dx(), -event.dy(), -event.dz());
+				t = new Vec(event.dx(), -event.dy(), -event.dz());
 			else
-				rotateAroundAxes(event.x(), -event.y(), -event.z());
+				t = new Vec(event.x(), -event.y(), -event.z());
 		}
+		Rotation rt = screenToQuat(Vec.multiply(t, rotationSensitivity()));
+		rotate(rt);
 	}
 
-	/**
-	 * <a href="http://en.wikipedia.org/wiki/Euler_angles#Extrinsic_rotations">Extrinsic rotation</a> about the
-	 * {@link remixlab.dandelion.core.AbstractScene#eye()} {@link remixlab.dandelion.core.InteractiveFrame} axes.
-	 * 
-	 * @param roll
-	 *          Rotation angle in radians around the Eye x-Axis
-	 * @param pitch
-	 *          Rotation angle in radians around the Eye y-Axis
-	 * @param yaw
-	 *          Rotation angle in radians around the Eye z-Axis
-	 * 
-	 * @see remixlab.dandelion.geom.Quat#fromEulerAngles(float, float, float)
-	 */
-	public void rotateAroundAxes(float roll, float pitch, float yaw) {
-		if (scene.is2D()) {
-			AbstractScene.showDepthWarning("rotateAroundAxes");
-			return;
-		}
-		if (gFrame != null) {
-			Frame ref = gFrame.get();
-			if (ref instanceof Grabber) {
-				scene.motionAgent().removeGrabber((Grabber) ref);
-				scene.keyboardAgent().removeGrabber((Grabber) ref);
-			}
-			GrabberFrame copy = get();
-			scene.motionAgent().removeGrabber((Grabber) copy);
-			scene.keyboardAgent().removeGrabber((Grabber) copy);
-			copy.setReferenceFrame(ref);
-			copy.fromFrame(this);
-			ref.rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));
-			fromFrame(copy);
-			return;
-		}
-
-		// don't really need to differentiate among the two cases, but eyeFrame can be speeded up
-		if (isEyeFrame() || (!isEyeFrame() && !this.respectToEye())) {
-			rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));
-		}
-		else {
-			Vec trns = new Vec();
-			Quat q = new Quat(scene.isLeftHanded() ? roll : -roll, -pitch, scene.isLeftHanded() ? yaw : -yaw);
-			trns.set(-q.x(), -q.y(), -q.z());
-			trns = scene.camera().frame().orientation().rotate(trns);
-			trns = transformOf(trns);
-			q.setX(trns.x());
-			q.setY(trns.y());
-			q.setZ(trns.z());
-			rotate(q);
-		}
-	}
-
-	public void setGFrame(Frame frame) {
-		gFrame = frame;
-	}
-
-	public Frame gFrame() {
-		return gFrame;
-	}
-
-	public void unsetGFrame() {
-		gFrame = null;
-	}
-
-	/*
-	 * public void rotateAroundFrameAxes(float roll, float pitch, float yaw) { if(gFrame != null)
-	 * rotateAroundFrameAxes(roll, pitch, yaw, gFrame); }
-	 * 
-	 * public void rotateAroundFrameAxes(float roll, float pitch, float yaw, Frame frame) { if (scene.is2D()) {
-	 * AbstractScene.showDepthWarning("rotateAroundFrameAxes"); return; }
-	 * 
-	 * Frame ref = frame.get(); if(ref instanceof Grabber) { scene.motionAgent().removeGrabber((Grabber)ref);
-	 * scene.keyboardAgent().removeGrabber((Grabber)ref); } GrabberFrame copy = get();
-	 * scene.motionAgent().removeGrabber((Grabber)copy); scene.keyboardAgent().removeGrabber((Grabber)copy);
-	 * copy.setReferenceFrame(ref); copy.fromFrame(this); ref.rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch,
-	 * scene.isLeftHanded() ? -yaw : yaw)); fromFrame(copy); }
-	 */
-
-	protected void gestureRotatetXY(MotionEvent event) {
+	protected void gestureArcball(MotionEvent event) {
 		DOF2Event dof2Event = MotionEvent.dof2Event(event);
 		if (dof2Event != null)
 			gestureArcball(dof2Event);
 		else
 			AbstractScene.showMinDOFsWarning("arcball", 2);
 	}
-
-	// TODO compare ROTATE_Z and arcball in 2d case -> idea: discard arcball2d
+	
 	protected void gestureArcball(DOF2Event event) {
 		Rotation rt;
 		Vec trns;
 		if (isEyeFrame()) {
-			if (is2D()) {// TODO same as 3D case
-				rt = deformedBallRotation(event, eye().projectedCoordinatesOf(eye().anchor()));
+			rt = deformedBallRotation(event, eye().projectedCoordinatesOf(eye().anchor()));
+			if (is2D()) {// TODO same as 3D case				
 				if (event.isRelative()) {
-					setSpinningRotation(rt);
-					if (Util.nonZero(dampingFriction()))
-						startSpinning(event);
-					else
-						spin();
+					startSpinning(rt, event.speed(), event.delay());
 				} else {
+					//TODO
 					// absolute needs testing
 					rotate(rt);
 				}
@@ -1576,11 +1505,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			else {
 				rt = deformedBallRotation(event, eye().projectedCoordinatesOf(eye().anchor()));
 				if (event.isRelative()) {
-					setSpinningRotation(rt);
-					if (Util.nonZero(dampingFriction()))
-						startSpinning(event);
-					else
-						spin();
+					startSpinning(rt, event.speed(), event.delay());
 				}
 				else {
 					rotate(rt);
@@ -1595,11 +1520,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			if (is2D()) {
 				rt = deformedBallRotation(event, scene.window().projectedCoordinatesOf(position()));
 				if (event.isRelative()) {
-					setSpinningRotation(rt);
-					if (Util.nonZero(dampingFriction()))
-						startSpinning(event);
-					else
-						spin();
+					startSpinning(rt, event.speed(), event.delay());
 				} else {
 					// absolute needs testing
 					rotate(rt);
@@ -1613,11 +1534,7 @@ public class GrabberFrame extends Frame implements Grabber {
 					trns = scene.camera().frame().orientation().rotate(trns);
 					trns = transformOf(trns);
 					rt = new Quat(trns, -rt.angle());
-					setSpinningRotation(rt);
-					if (Util.nonZero(dampingFriction()))
-						startSpinning(event);
-					else
-						spin();
+					startSpinning(rt, event.speed(), event.delay());
 				}
 				else {
 					// TODO restore
@@ -1628,11 +1545,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 	}
 
-	// TODO rotate_cad is missing
-
-	// TODO sensitivities are missing
-
-	public void gestureScale(MotionEvent event) {
+	protected void gestureScale(MotionEvent event) {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event);
 		if (dof1Event != null)
 			gestureScale(dof1Event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
@@ -1764,11 +1677,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (scene.isRightHanded())
 			dy = -dy;
 		Vec verticalAxis = transformOf(sceneUpVector());
-		setSpinningRotation(Quat.multiply(new Quat(verticalAxis, dx), new Quat(new Vec(1.0f, 0.0f, 0.0f), dy)));
-		if (Util.nonZero(dampingFriction()))
-			startSpinning(event);
-		else
-			spin();
+		startSpinning(Quat.multiply(new Quat(verticalAxis, dx), new Quat(new Vec(1.0f, 0.0f, 0.0f), dy)), event.speed(), event.delay());
 	}
 
 	protected void gestureHinge(MotionEvent event) {
@@ -1804,7 +1713,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		// 2. Translate the refFrame along its Z-axis:
 		float deltaZ = event.isRelative() ? event.dz() : event.z();
 		trns = new Vec(0, scene.isRightHanded() ? -deltaZ : deltaZ, 0);
-		screen2Eye(trns);
+		screenToEye(trns);
 		float pmag = trns.magnitude();
 		translate(0, 0, (deltaZ > 0) ? pmag : -pmag);
 		// 3. Rotate the refFrame around its X-axis -> translate forward-backward the frame on the sphere surface
@@ -1828,16 +1737,15 @@ public class GrabberFrame extends Frame implements Grabber {
 		setOrientation(o);
 	}
 
-	// TODO is this the same as another rotation
-	public void screenRotate(MotionEvent event) {
+	protected void gestureScreenRotate(MotionEvent event) {
 		DOF2Event dof2Event = MotionEvent.dof2Event(event);
 		if (dof2Event != null)
-			screenRotate(dof2Event);
+			gestureScreenRotate(dof2Event);
 		else
 			AbstractScene.showMinDOFsWarning("screenRotate", 2);
 	}
 
-	public void screenRotate(DOF2Event event) {
+	protected void gestureScreenRotate(DOF2Event event) {
 		if (this.is2D()) {
 			gestureArcball(event);
 			return;
@@ -1857,11 +1765,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			if (scene.isLeftHanded())
 				angle = -angle;
 			rt = new Quat(new Vec(0.0f, 0.0f, 1.0f), angle);
-			setSpinningRotation(rt);
-			if (Util.nonZero(dampingFriction()))
-				startSpinning(event);
-			else
-				spin();
+			startSpinning(rt, event.speed(), event.delay());
 			updateSceneUpVector();
 		}
 		else {
@@ -1878,72 +1782,149 @@ public class GrabberFrame extends Frame implements Grabber {
 				rt = new Quat(axis, angle - prev_angle);
 			else
 				rt = new Quat(axis, prev_angle - angle);
-			setSpinningRotation(rt);
-			if (Util.nonZero(dampingFriction()))
-				startSpinning(event);
-			else
-				spin();
+			startSpinning(rt, event.speed(), event.delay());
 		}
 	}
 
-	// TODO pending gestureRotate siblings!
-
-	// TODO find better names for this private methods
-	// TODO make me public
-
-	// /*
-
-	private void screenTranslate(Vec trns) {
-		screenTranslate(trns, translationSensitivity());
+	//Quite nice
+	
+	public Vec screenToVec(float x, float y, float z) {
+		return screenToVec(new Vec(x,y,z));
+	}
+	
+	public Vec screenToVec(Vec trns) {
+		return eyeToReferenceFrame(screenToEye(trns));
+	}
+	
+	public Vec eyeToReferenceFrame(float x, float y, float z) {
+		return eyeToReferenceFrame(new Vec(x,y,z));
 	}
 
-	private void screenTranslate(Vec trns, float sens) {
-		// if( scene.is3D() ) gesture2Eye(trns);
-		eyeTranslate(Vec.multiply(screen2Eye(trns), sens));
-	}
-
-	// TODO maybe private and same level as rotateAroundAxes
-	public void eyeTranslate(Vec trns) {
-		// Transform from eye to world coordinate system.
-		// trns = scene.eye().frame().inverseTransformOf(trns);
-
-		// TODO is there an anti-example for this?
-		/*
-		 * if (!isEyeFrame()) { if (referenceFrame() != null) trns = referenceFrame().transformOf(trns); translate(trns); }
-		 * else translate(trns); //
-		 */
-
-		// ... but really prefer as dead simple as in here:
-		/*
-		 * if (referenceFrame() != null) trns = referenceFrame().transformOf(trns); translate(trns); //
-		 */
-
-		/*
-		 * if( !this.respectToEye() ) { translate(inverseTransformOf(trns)); }
-		 */
-
+	public Vec eyeToReferenceFrame(Vec trns) {
 		GrabberFrame gFrame = isEyeFrame() ? this : respectToEye() ? scene.eye().frame() : this;
-		trns = gFrame.inverseTransformOf(trns);
+		Vec t = gFrame.inverseTransformOf(trns);
 		if (referenceFrame() != null)
-			trns = referenceFrame().transformOf(trns);
-		translate(trns);
+			t = referenceFrame().transformOf(t);
+		return t;
+	}
+	
+	public Vec screenToEye(float x, float y, float z) {
+		return screenToEye(new Vec(x,y,z));
+	}
+	
+	public Vec screenToEye(Vec trns) {
+		Vec eyeVec = trns.get();
+		// Scale to fit the screen relative event displacement
+		if (scene.is2D())
+			// Quite excited to see how simple it's in 2d:
+			return eyeVec;
+		// ... and amazed as to how dirty it's in 3d:
+		switch (scene.camera().type()) {
+		case PERSPECTIVE:
+			float k = (float) Math.tan(scene.camera().fieldOfView() / 2.0f)
+					* Math.abs(scene.camera().frame().coordinatesOf(isEyeFrame() ? eye().anchor() : position()).vec[2]
+							* scene.eye().frame().magnitude());
+			// * Math.abs(scene.camera().frame().coordinatesOf(isEyeFrame() ? scene.eye().anchor() : position()).vec[2]);
+			eyeVec.vec[0] *= 2.0 * k / scene.eye().screenHeight();
+			eyeVec.vec[1] *= 2.0 * k / scene.eye().screenHeight();
+			break;
+		case ORTHOGRAPHIC:
+			float[] wh = scene.eye().getBoundaryWidthHeight();
+			// float[] wh = scene.camera().getOrthoWidthHeight();
+			eyeVec.vec[0] *= 2.0 * wh[0] / scene.eye().screenWidth();
+			eyeVec.vec[1] *= 2.0 * wh[1] / scene.eye().screenHeight();
+			break;
+		}
+		float coef;
+		if (isEyeFrame()) {
+			// float coef = 8E-4f;
+			coef = Math.max(Math.abs((coordinatesOf(eye().anchor())).vec[2] * magnitude()), 0.2f * eye().sceneRadius());
+			eyeVec.vec[2] *= coef / eye().screenHeight();
+			// TODO eye wheel seems different
+			// trns.vec[2] *= coef * 8E-4f;
+			eyeVec.divide(eye().frame().magnitude());
+		}
+		else {
+			coef = Vec.subtract(scene.camera().position(), position()).magnitude();
+			eyeVec.vec[2] *= coef / scene.camera().screenHeight();
+			eyeVec.divide(scene.eye().frame().magnitude());
+		}
+		// if( isEyeFrame() )
+		return eyeVec;
+	}
+	
+	/*
+	public void setGFrame(Frame frame) {
+		gFrame = frame;
 	}
 
-	// */
+	public Frame gFrame() {
+		return gFrame;
+	}
 
-	// TODO make me public
-	/*
-	 * private void screenTranslate(Vec trns) { screenTranslate(trns, translationSensitivity()); }
+	public void unsetGFrame() {
+		gFrame = null;
+	}
+	*/
+	
+	public Quat screenToQuat(Vec angles) {
+		return screenToQuat(angles.vec[0], angles.vec[1], angles.vec[2]);
+	}
+
+	/**
+	 * <a href="http://en.wikipedia.org/wiki/Euler_angles#Extrinsic_rotations">Extrinsic rotation</a> about the
+	 * {@link remixlab.dandelion.core.AbstractScene#eye()} {@link remixlab.dandelion.core.InteractiveFrame} axes.
 	 * 
-	 * private void screenTranslate(Vec trns, float sens) { // if( scene.is3D() ) gesture2Eye(trns);
-	 * eyeTranslate(screen2Eye(trns), sens); }
+	 * @param roll
+	 *          Rotation angle in radians around the Eye x-Axis
+	 * @param pitch
+	 *          Rotation angle in radians around the Eye y-Axis
+	 * @param yaw
+	 *          Rotation angle in radians around the Eye z-Axis
 	 * 
-	 * // TODO make me public private void eyeTranslate(Vec trns, float sens) { // Transform from eye to world coordinate
-	 * system. trns = scene.eye().frame().inverseTransformOf(Vec.multiply(trns, sens));
-	 * 
-	 * if (!isEyeFrame()) { if (referenceFrame() != null) trns = referenceFrame().transformOf(trns); translate(trns); }
-	 * else translate(trns); }
+	 * @see remixlab.dandelion.geom.Quat#fromEulerAngles(float, float, float)
 	 */
+	public Quat screenToQuat(float roll, float pitch, float yaw) {
+		if (scene.is2D()) {
+			AbstractScene.showDepthWarning("gestureToQuat");
+			return null;
+		}
+
+		// don't really need to differentiate among the two cases, but eyeFrame can be speeded up
+		if (isEyeFrame() || (!isEyeFrame() && !this.respectToEye())) {
+			return new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw);
+		}
+		else {
+			Vec trns = new Vec();
+			Quat q = new Quat(scene.isLeftHanded() ? roll : -roll, -pitch, scene.isLeftHanded() ? yaw : -yaw);
+			trns.set(-q.x(), -q.y(), -q.z());
+			trns = scene.camera().frame().orientation().rotate(trns);
+			trns = transformOf(trns);
+			q.setX(trns.x());
+			q.setY(trns.y());
+			q.setZ(trns.z());
+			return q;
+		}
+	}
+	
+	//TODO better pattern (currently is just a procedure), example, handling frame param?
+	public void orbitAroundFrame(Frame frame, float roll, float pitch, float yaw) {
+		if (frame != null) {
+			Frame ref = frame.get();
+			if (ref instanceof Grabber) {
+				scene.motionAgent().removeGrabber((Grabber) ref);
+				scene.keyboardAgent().removeGrabber((Grabber) ref);
+			}
+			GrabberFrame copy = get();
+			scene.motionAgent().removeGrabber((Grabber) copy);
+			scene.keyboardAgent().removeGrabber((Grabber) copy);
+			copy.setReferenceFrame(ref);
+			copy.fromFrame(this);
+			ref.rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));
+			fromFrame(copy);
+			return;
+		}
+	}
 
 	// TODO decide whether to include this:
 
@@ -2154,7 +2135,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	// drive:
 
 	/**
-	 * Returns a Quaternion that is a rotation around current camera Y, proportional to the horizontal mouse position.
+	 * Returns a Quaternion that is a rotation around Y-axis, proportional to the horizontal event X-displacement.
 	 */
 	public Quat turnQuaternion(DOF1Event event, Camera camera) {
 		float deltaX = event.isAbsolute() ? event.x() : event.dx();

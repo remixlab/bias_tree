@@ -337,7 +337,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	protected void releaseFrame(DOF2Event e) {
 		// note that the following two lines fail on event when need4Spin
 		if (need4Spin && (prevEvent.speed() >= ((InteractiveFrame) inputGrabber()).spinningSensitivity()))
-			((InteractiveFrame) inputGrabber()).startSpinning(prevEvent);
+			((InteractiveFrame) inputGrabber()).startSpinning(prevEvent.speed(), prevEvent.delay());
 		if (scene.zoomVisualHint()) {
 			// at first glance this should work
 			// handle(event);
@@ -363,7 +363,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	protected void releaseEye(DOF2Event e) {
 		// note that the following two lines fail on event when need4Spin
 		if (need4Spin && (prevEvent.speed() >= ((InteractiveFrame) inputGrabber()).spinningSensitivity()))
-			((InteractiveFrame) inputGrabber()).startSpinning(prevEvent);
+			((InteractiveFrame) inputGrabber()).startSpinning(prevEvent.speed(), prevEvent.delay());
 		if (scene.zoomVisualHint()) {
 			// at first glance this should work
 			// handle(event);
