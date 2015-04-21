@@ -127,11 +127,19 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
-
+	
 	public boolean checkIfGrabsInput(DOF2Event event) {
+		if(event.isAbsolute()) {
+			System.out.println("Grabbing a gFrame is only possible from a relative MotionEvent or from a ClickEvent");
+			return false;
+		}
+		return checkIfGrabsInput(event.x(), event.y());
+	}
+	
+	protected boolean checkIfGrabsInput(float x, float y) {
 		((Scene) scene).pickingBuffer().pushStyle();
 		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
-		int index = (int) event.y() * scene.width() + (int) event.x();
+		int index = (int) y * scene.width() + (int) x;
 		if ((0 <= index) && (index < ((Scene) scene).pickingBuffer().pixels.length))
 			return ((Scene) scene).pickingBuffer().pixels[index] == getColor();
 		((Scene) scene).pickingBuffer().popStyle();

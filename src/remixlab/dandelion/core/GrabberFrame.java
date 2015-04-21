@@ -589,11 +589,19 @@ public class GrabberFrame extends Frame implements Grabber {
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
-
+	
 	public boolean checkIfGrabsInput(DOF2Event event) {
+		if(event.isAbsolute()) {
+			System.out.println("Grabbing a gFrame is only possible from a relative MotionEvent or from a ClickEvent");
+			return false;
+		}
+		return checkIfGrabsInput(event.x(), event.y());
+	}
+	
+	protected boolean checkIfGrabsInput(float x, float y) {
 		Vec proj = scene.eye().projectedCoordinatesOf(position());
 		float halfThreshold = grabsInputThreshold() / 2;
-		return ((Math.abs(event.x() - proj.vec[0]) < halfThreshold) && (Math.abs(event.y() - proj.vec[1]) < halfThreshold));
+		return ((Math.abs(x - proj.vec[0]) < halfThreshold) && (Math.abs(y - proj.vec[1]) < halfThreshold));
 	}
 
 	public boolean checkIfGrabsInput(DOF3Event event) {

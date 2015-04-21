@@ -16,8 +16,7 @@
 package remixlab.proscene;
 
 import processing.core.*;
-import remixlab.bias.core.Agent;
-import remixlab.bias.event.*;
+import remixlab.bias.core.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
@@ -114,10 +113,10 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	}
 
 	@Override
-	public boolean checkIfGrabsInput(DOF2Event event) {
+	protected boolean checkIfGrabsInput(float x, float y) {
 		((Scene) scene).pickingBuffer().pushStyle();
 		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
-		int index = (int) event.y() * scene.width() + (int) event.x();
+		int index = (int) y * scene.width() + (int) x;
 		if ((0 <= index) && (index < ((Scene) scene).pickingBuffer().pixels.length))
 			return ((Scene) scene).pickingBuffer().pixels[index] == getColor();
 		((Scene) scene).pickingBuffer().popStyle();
