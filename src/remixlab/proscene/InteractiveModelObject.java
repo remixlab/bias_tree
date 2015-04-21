@@ -136,7 +136,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		return checkIfGrabsInput(event.x(), event.y());
 	}
 	
-	protected boolean checkIfGrabsInput(float x, float y) {
+	protected final boolean checkIfGrabsInput(float x, float y) {
 		((Scene) scene).pickingBuffer().pushStyle();
 		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
 		int index = (int) y * scene.width() + (int) x;
