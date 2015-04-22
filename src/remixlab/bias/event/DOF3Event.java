@@ -232,9 +232,9 @@ public class DOF3Event extends MotionEvent {
 	public void modulate(float[] sens) {
 		if (sens != null)
 			if (sens.length >= 3 && this.isAbsolute()) {
-				x = x * sens[0];
-				y = y * sens[1];
-				z = z * sens[2];
+				dx = dx * sens[0];
+				dy = dy * sens[1];
+				dz = dz * sens[2];
 			}
 	}
 

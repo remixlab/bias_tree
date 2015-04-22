@@ -369,12 +369,12 @@ public class DOF6Event extends MotionEvent {
 	public void modulate(float[] sens) {
 		if (sens != null)
 			if (sens.length >= 6 && this.isAbsolute()) {
-				x = x * sens[0];
-				y = y * sens[1];
-				z = z * sens[2];
-				rx = rx * sens[3];
-				ry = ry * sens[4];
-				rz = rz * sens[5];
+				dx = dx * sens[0];
+				dy = dy * sens[1];
+				dz = dz * sens[2];
+				drx = drx * sens[3];
+				dry = dry * sens[4];
+				drz = drz * sens[5];
 			}
 	}
 

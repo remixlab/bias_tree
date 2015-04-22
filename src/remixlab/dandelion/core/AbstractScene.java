@@ -2085,6 +2085,13 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	static public void showEventVariationWarning(MotionAction action) {
 		showWarning(action.name() + " can only be performed using a relative event.");
 	}
+	
+	/**
+	 * Display a warning that the specified method can only be implemented from a relative bogus event.
+	 */
+	static public void showEventVariationWarning(String method) {
+		showWarning(method + " can only be performed using a relative event.");
+	}
 
 	static public void showOnlyEyeWarning(MotionAction action) {
 		showOnlyEyeWarning(action, true);

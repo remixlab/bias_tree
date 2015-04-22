@@ -105,7 +105,7 @@ public class MotionEvent extends BogusEvent {
 	}
 
 	/**
-	 * Modulate the event dofs according to {@code sens}.
+	 * Modulate the event dofs according to {@code sens}. Only meaningful if the event {@link #isAbsolute()}.
 	 */
 	public void modulate(float[] sens) {
 	}
