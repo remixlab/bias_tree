@@ -60,8 +60,8 @@ public class DOF2Event extends MotionEvent {
 	 */
 	public DOF2Event(float x, float y, int modifiers, int button) {
 		super(modifiers, button);
-		this.x = x;
-		this.y = y;
+		this.dx = x;
+		this.dy = y;
 	}
 
 	/**
@@ -74,7 +74,9 @@ public class DOF2Event extends MotionEvent {
 	 * @param button
 	 */
 	public DOF2Event(DOF2Event prevEvent, float x, float y, int modifiers, int button) {
-		this(x, y, modifiers, button);
+		super(modifiers, button);
+		this.x = x;
+		this.y = y;
 		setPreviousEvent(prevEvent);
 	}
 
@@ -86,8 +88,8 @@ public class DOF2Event extends MotionEvent {
 	 */
 	public DOF2Event(float x, float y) {
 		super();
-		this.x = x;
-		this.y = y;
+		this.dx = x;
+		this.dy = y;
 	}
 
 	/**
@@ -192,9 +194,7 @@ public class DOF2Event extends MotionEvent {
 
 	@Override
 	public boolean isNull() {
-		if (isRelative() && Util.zero(dx()) && Util.zero(dy()))
-			return true;
-		if (isAbsolute() && Util.zero(x()) && Util.zero(y()))
+		if (Util.zero(dx()) && Util.zero(dy()))
 			return true;
 		return false;
 	}
@@ -222,14 +222,14 @@ public class DOF2Event extends MotionEvent {
 				pe1 = new DOF1Event(prevX(), modifiers(), id());
 				e1 = new DOF1Event(pe1, x(), modifiers(), id());
 			} else {
-				e1 = new DOF1Event(x(), modifiers(), id());
+				e1 = new DOF1Event(dx(), modifiers(), id());
 			}
 		} else {
 			if (isRelative()) {
 				pe1 = new DOF1Event(prevY(), modifiers(), id());
 				e1 = new DOF1Event(pe1, y(), modifiers(), id());
 			} else {
-				e1 = new DOF1Event(y(), modifiers(), id());
+				e1 = new DOF1Event(dy(), modifiers(), id());
 			}
 		}
 		e1.modifiedTimestamp(this.timestamp());

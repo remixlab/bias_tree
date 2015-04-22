@@ -83,12 +83,12 @@ public class DOF6Event extends MotionEvent {
 	 */
 	public DOF6Event(float x, float y, float z, float rx, float ry, float rz, int modifiers, int button) {
 		super(modifiers, button);
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.rx = rx;
-		this.ry = ry;
-		this.rz = rz;
+		this.dx = x;
+		this.dy = y;
+		this.dz = z;
+		this.drx = rx;
+		this.dry = ry;
+		this.drz = rz;
 	}
 
 	/**
@@ -107,7 +107,13 @@ public class DOF6Event extends MotionEvent {
 	public DOF6Event(DOF6Event prevEvent,
 			float x, float y, float z, float rx,
 			float ry, float rz, int modifiers, int button) {
-		this(x, y, z, rx, ry, rz, modifiers, button);
+		super(modifiers, button);
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.rx = rx;
+		this.ry = ry;
+		this.rz = rz;
 		setPreviousEvent(prevEvent);
 	}
 
@@ -123,12 +129,12 @@ public class DOF6Event extends MotionEvent {
 	 */
 	public DOF6Event(float x, float y, float z, float rx, float ry, float rz) {
 		super();
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.rx = rx;
-		this.ry = ry;
-		this.rz = rz;
+		this.dx = x;
+		this.dy = y;
+		this.dz = z;
+		this.drx = rx;
+		this.dry = ry;
+		this.drz = rz;
 	}
 
 	/**
@@ -374,13 +380,9 @@ public class DOF6Event extends MotionEvent {
 
 	@Override
 	public boolean isNull() {
-		if (isRelative() && Util.zero(dx()) && Util.zero(dy())
+		if (Util.zero(dx()) && Util.zero(dy())
 				&& Util.zero(dz()) && Util.zero(drx())
 				&& Util.zero(dry()) && Util.zero(drz()))
-			return true;
-		if (isAbsolute() && Util.zero(x()) && Util.zero(y())
-				&& Util.zero(z()) && Util.zero(rx())
-				&& Util.zero(ry()) && Util.zero(rz()))
 			return true;
 		return false;
 	}
@@ -413,10 +415,10 @@ public class DOF6Event extends MotionEvent {
 			}
 		} else {
 			if (fromTranslation) {
-				e3 = new DOF3Event(x(), y(), z(), modifiers(), id());
+				e3 = new DOF3Event(dx(), dy(), dz(), modifiers(), id());
 			}
 			else {
-				e3 = new DOF3Event(rx(), ry(), rz(), modifiers(), id());
+				e3 = new DOF3Event(drx(), dry(), drz(), modifiers(), id());
 			}
 		}
 		e3.modifiedTimestamp(this.timestamp());

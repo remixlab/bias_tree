@@ -66,9 +66,9 @@ public class DOF3Event extends MotionEvent {
 	 */
 	public DOF3Event(float x, float y, float z, int modifiers, int button) {
 		super(modifiers, button);
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.dx = x;
+		this.dy = y;
+		this.dz = z;
 	}
 
 	/**
@@ -82,7 +82,10 @@ public class DOF3Event extends MotionEvent {
 	 * @param button
 	 */
 	public DOF3Event(DOF3Event prevEvent, float x, float y, float z, int modifiers, int button) {
-		this(x, y, z, modifiers, button);
+		super(modifiers, button);
+		this.x = x;
+		this.y = y;
+		this.z = z;
 		setPreviousEvent(prevEvent);
 	}
 
@@ -95,9 +98,9 @@ public class DOF3Event extends MotionEvent {
 	 */
 	public DOF3Event(float x, float y, float z) {
 		super();
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.dx = x;
+		this.dy = y;
+		this.dz = z;
 	}
 
 	/**
@@ -237,9 +240,7 @@ public class DOF3Event extends MotionEvent {
 
 	@Override
 	public boolean isNull() {
-		if (isRelative() && Util.zero(dx()) && Util.zero(dy()) && Util.zero(dz()))
-			return true;
-		if (isAbsolute() && Util.zero(x()) && Util.zero(y()) && Util.zero(z()))
+		if (Util.zero(dx()) && Util.zero(dy()) && Util.zero(dz()))
 			return true;
 		return false;
 	}
@@ -255,7 +256,7 @@ public class DOF3Event extends MotionEvent {
 			pe2 = new DOF2Event(prevX(), prevY(), modifiers(), id());
 			e2 = new DOF2Event(pe2, x(), y(), modifiers(), id());
 		} else {
-			e2 = new DOF2Event(x(), y(), modifiers(), id());
+			e2 = new DOF2Event(dx(), dy(), modifiers(), id());
 		}
 		e2.modifiedTimestamp(this.timestamp());
 		e2.delay = this.delay();

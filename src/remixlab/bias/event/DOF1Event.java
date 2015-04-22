@@ -56,7 +56,7 @@ public class DOF1Event extends MotionEvent {
 	 */
 	public DOF1Event(float x, int modifiers, int button) {
 		super(modifiers, button);
-		this.x = x;
+		this.dx = x;
 	}
 
 	/**
@@ -71,7 +71,8 @@ public class DOF1Event extends MotionEvent {
 	 *          ButtonShortcut button
 	 */
 	public DOF1Event(DOF1Event prevEvent, float x, int modifiers, int button) {
-		this(x, modifiers, button);
+		super(modifiers, button);
+		this.x = x;
 		setPreviousEvent(prevEvent);
 	}
 
@@ -160,9 +161,7 @@ public class DOF1Event extends MotionEvent {
 
 	@Override
 	public boolean isNull() {
-		if (isRelative() && Util.zero(dx()))
-			return true;
-		if (isAbsolute() && Util.zero(x()))
+		if (Util.zero(dx()))
 			return true;
 		return false;
 	}
