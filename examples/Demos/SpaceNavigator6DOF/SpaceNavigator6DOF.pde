@@ -94,12 +94,9 @@ void draw() {
   background(0);
   // the hidAgent sensitivities should not vary when its input grabber is the model:
   if ( hidAgent.inputGrabber() == model )
+    hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.1, 0.1, 0.1);
+  else
     hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.01, 0.01, 0.01);
-  else if ( hidAgent.inputGrabber() == scene.eye().frame() )
-    if (hidAgent.eyeProfile().isActionBound(DOF6Action.HINGE))
-      hidAgent.setSensitivities(0.0001, 0.0001, -0.01, 0.01, 0.01, 0.01);
-    else
-      hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.01, 0.01, 0.01);
   renderGlobe();
   model.draw();
 }
@@ -109,12 +106,10 @@ void keyPressed() {
   if (key == ' ')
     if ( hidAgent.eyeProfile().isActionBound(DOF6Action.HINGE) ) {
       hidAgent.eyeProfile().setBinding(DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
-      hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
       scene.eye().lookAt(scene.center());
       scene.showAll();
     } else {
-      hidAgent.eyeProfile().setBinding(DOF6Action.HINGE);
-      hidAgent.setSensitivities(0.0001, 0.0001, -0.01, 0.0001, 0.0001, 0.0001); 
+      hidAgent.eyeProfile().setBinding(DOF6Action.HINGE); 
       Vec t = new Vec(0, 0, 0.7*globeRadius);
       float a = TWO_PI - 2;      
       //Vec tr = scene.camera().frame().rotation().rotate(t);

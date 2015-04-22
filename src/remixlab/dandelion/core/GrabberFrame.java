@@ -26,6 +26,12 @@ import remixlab.util.*;
  * examples).
  */
 public class GrabberFrame extends Frame implements Grabber {
+	// according to space-nav fine tuning it turned out that the space-nav is right handed
+	// we thus define our gesture physical space as right-handed as follows:
+	// hid.sens should be non-negative for the space-nav to behave as expected from the physical interface
+	// TODO: really need to check the second part above. For a fact it's known
+	// 1. from the space-bav pov LH vs RH works the same way
+	// 2. all space-nav sens are positive
 	// Sens
 	private float								rotSensitivity;
 	private float								transSensitivity;
@@ -1331,15 +1337,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureTranslateXYZ(DOF3Event event) {
-		Vec trns;
-		if (isEyeFrame()) {
-			trns = new Vec(-event.dx(), scene.isRightHanded() ? event.dy() : -event.dy(), -event.dz());
-		}
-		else {
-			trns = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), event.dz());
-		}
-		Vec t = screenToVec(Vec.multiply(trns, this.translationSensitivity()));
-		translate(t);
+		translate(screenToVec(Vec.multiply(new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), -event.dz()), this.translationSensitivity())));
 	}
 
 	protected void gestureRotateX(MotionEvent event) {
@@ -1454,15 +1452,7 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	//TODO compute angle is missed here, set it when fixing space-navigator
 	protected void gestureRotateXYZ(DOF3Event event) {
-		Vec t;
-		if (isEyeFrame()) {
-			t = new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz()));		
-		}
-		else {
-			t = new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz()));			
-		}
-		Rotation rt = screenToQuat(Vec.multiply(t, rotationSensitivity()));
-		rotate(rt);
+		rotate(screenToQuat(Vec.multiply(new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz())), rotationSensitivity())));
 	}
 
 	protected void gestureArcball(MotionEvent event) {
@@ -1647,7 +1637,6 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("hinge", 6);
 	}
 
-	//TODO compute angles also here
 	protected void gestureHinge(DOF6Event event) {
 		// aka google earth navigation
 		// 1. Relate the eye reference frame:
@@ -1664,21 +1653,21 @@ public class GrabberFrame extends Frame implements Grabber {
 		setOrientation(o);
 		// 2. Translate the refFrame along its Z-axis:
 		float deltaZ = event.dz();
-		trns = new Vec(0, scene.isRightHanded() ? -deltaZ : deltaZ, 0);
+		trns = new Vec(0, deltaZ, 0);
 		screenToEye(trns);
 		float pmag = trns.magnitude();
-		translate(0, 0, (deltaZ > 0) ? pmag : -pmag);
+		translate(0, 0, (deltaZ > 0) ? -pmag : pmag);
 		// 3. Rotate the refFrame around its X-axis -> translate forward-backward the frame on the sphere surface
-		float deltaY = event.dy();
+		float deltaY = computeAngle(event.dy());
 		rFrame.rotate(new Quat(new Vec(1, 0, 0), scene.isRightHanded() ? deltaY : -deltaY));
 		// 4. Rotate the refFrame around its Y-axis -> translate left-right the frame on the sphere surface
-		float deltaX = event.dx();
+		float deltaX = computeAngle(event.dx());
 		rFrame.rotate(new Quat(new Vec(0, 1, 0), deltaX));
 		// 5. Rotate the refFrame around its Z-axis -> look around
-		float rZ = event.drz();
+		float rZ = computeAngle(event.drz());
 		rFrame.rotate(new Quat(new Vec(0, 0, 1), scene.isRightHanded() ? -rZ : rZ));
 		// 6. Rotate the frame around x-axis -> move head up and down :P
-		float rX = event.drx();
+		float rX = computeAngle(event.drx());
 		Quat q = new Quat(new Vec(1, 0, 0), scene.isRightHanded() ? rX : -rX);
 		rotate(q);
 		// 7. Unrelate the frame and restore state:
