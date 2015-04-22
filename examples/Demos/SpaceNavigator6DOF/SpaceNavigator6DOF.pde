@@ -85,7 +85,7 @@ void setup() {
   hidAgent.addGrabber(scene.eye().frame());
   hidAgent.setDefaultGrabber(scene.eye().frame());
   //declare some sensitivities for the space navigator device
-  hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
+  hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.01, 0.01, 0.01);
 
   smooth();
 }
@@ -94,12 +94,12 @@ void draw() {
   background(0);
   // the hidAgent sensitivities should not vary when its input grabber is the model:
   if ( hidAgent.inputGrabber() == model )
-    hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.001, 0.001, 0.001);
+    hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.01, 0.01, 0.01);
   else if ( hidAgent.inputGrabber() == scene.eye().frame() )
     if (hidAgent.eyeProfile().isActionBound(DOF6Action.HINGE))
-      hidAgent.setSensitivities(0.0001, 0.0001, -0.01, 0.0001, 0.0001, 0.0001);
+      hidAgent.setSensitivities(0.0001, 0.0001, -0.01, 0.01, 0.01, 0.01);
     else
-      hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.0001, 0.0001, 0.0001);
+      hidAgent.setSensitivities(0.01, 0.01, -0.01, 0.01, 0.01, 0.01);
   renderGlobe();
   model.draw();
 }

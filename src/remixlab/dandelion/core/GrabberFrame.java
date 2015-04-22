@@ -1456,10 +1456,10 @@ public class GrabberFrame extends Frame implements Grabber {
 	protected void gestureRotateXYZ(DOF3Event event) {
 		Vec t;
 		if (isEyeFrame()) {
-			t = new Vec(event.dx(), -event.dy(), -event.dz());		
+			t = new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz()));		
 		}
 		else {
-			t = new Vec(event.dx(), -event.dy(), -event.dz());			
+			t = new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz()));			
 		}
 		Rotation rt = screenToQuat(Vec.multiply(t, rotationSensitivity()));
 		rotate(rt);
@@ -1647,6 +1647,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("hinge", 6);
 	}
 
+	//TODO compute angles also here
 	protected void gestureHinge(DOF6Event event) {
 		// aka google earth navigation
 		// 1. Relate the eye reference frame:
