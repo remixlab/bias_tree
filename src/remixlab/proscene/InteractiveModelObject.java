@@ -137,12 +137,12 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	}
 	
 	protected final boolean checkIfGrabsInput(float x, float y) {
-		((Scene) scene).pickingBuffer().pushStyle();
-		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
+		scene.pickingBuffer().pushStyle();
+		scene.pickingBuffer().colorMode(PApplet.RGB, 255);
 		int index = (int) y * scene.width() + (int) x;
-		if ((0 <= index) && (index < ((Scene) scene).pickingBuffer().pixels.length))
-			return ((Scene) scene).pickingBuffer().pixels[index] == getColor();
-		((Scene) scene).pickingBuffer().popStyle();
+		if ((0 <= index) && (index < scene.pickingBuffer().pixels.length))
+			return scene.pickingBuffer().pixels[index] == getColor();
+		scene.pickingBuffer().popStyle();
 		return false;
 	}
 
