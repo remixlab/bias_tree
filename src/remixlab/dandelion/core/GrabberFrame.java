@@ -1022,10 +1022,10 @@ public class GrabberFrame extends Frame implements Grabber {
 		//startSpinning(speed);
 		
 		///*
-		if (Util.nonZero(dampingFriction()))
+		if (Util.nonZero(dampingFriction())) // same as damping:
 			startSpinning(speed, delay);
 		else
-			spin();
+			spin();// same as rotate, but try to spin at the end
 			//*/
 	}
 	
@@ -1037,6 +1037,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		eventSpeed = speed;
 		if(this.spinningRotation() == null)
 			return false;
+		
+		if(Util.zero(dampingFriction()))			
+			if( eventSpeed < this.spinningSensitivity())
+				return false;
+			
 		if(delay > 0) {
 			spinningTimerTask.run(delay);
 			return true;
@@ -1467,7 +1472,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		if(event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("deformedBallRotation");
 			return;
-	  }		
+	  }
 		Rotation rt;
 		Vec trns;
 		if (isEyeFrame())
