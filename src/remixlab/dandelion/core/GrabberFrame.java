@@ -1847,8 +1847,8 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 	}
 	
-	//TODO better pattern (currently is just a procedure), example, handling frame param?
-	public void orbitAroundFrame(Frame frame, float roll, float pitch, float yaw) {
+	@Override
+	public void rotateAroundFrame(float roll, float pitch, float yaw, Frame frame) {
 		if (frame != null) {
 			Frame ref = frame.get();
 			if (ref instanceof Grabber) {
@@ -1860,7 +1860,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			scene.keyboardAgent().removeGrabber((Grabber) copy);
 			copy.setReferenceFrame(ref);
 			copy.fromFrame(this);
-			ref.rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));
+			ref.rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));			
 			fromFrame(copy);
 			return;
 		}

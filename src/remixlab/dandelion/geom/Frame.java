@@ -635,27 +635,25 @@ public class Frame implements Copyable {
 			translate(t);
 	}
 	
-	public void rotateAroundFrame(Frame frame, float roll, float pitch, float yaw) {
+	//TODO this one needs testing, specially 2d case
+	public void rotateAroundFrame(Rotation rotation, Frame frame) {
+		if(is3D()) {
+			Vec euler = ((Quat)rotation).eulerAngles();
+			rotateAroundFrame(euler.x(), euler.y(), euler.z(), frame);
+		}
+		else
+			rotateAroundFrame(0, 0, rotation.angle(), frame);
+	}
+	
+	public void rotateAroundFrame(float roll, float pitch, float yaw, Frame frame) {
 		if (frame != null) {
-			Rotation rotation;
-			if (is3D())
-				rotation = new Quat(roll, pitch, yaw);
-			else
-				rotation = new Rot(yaw);
-			
-			if (constraint() != null)
-				rotation = constraint().constrainRotation(rotation, this);
-
-			this.rotation().compose(rotation);
-			if (is3D())
-				this.rotation().normalize(); // Prevents numerical drift
-			Vec point = frame.position();
-			Vec t = Vec.add(point, rotation.rotate(Vec.subtract(position(), point)));
-			t.subtract(translation());
-			if (constraint() != null)
-				translate(constraint().constrainTranslation(t, this));
-			else
-				translate(t);
+			Frame ref = frame.get();
+		  Frame copy = get();
+			copy.setReferenceFrame(ref);
+			copy.fromFrame(this);
+			ref.rotate(new Quat(roll, pitch, yaw));
+			fromFrame(copy);
+			return;
 		}
 	}
 
