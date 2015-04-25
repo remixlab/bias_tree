@@ -52,6 +52,7 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 		parent.appendBranch(this);
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected Branch(Branch<E, P> other) {
 		name = other.name() + "_deep-copy";
 		profile = (P) other.profile().get();

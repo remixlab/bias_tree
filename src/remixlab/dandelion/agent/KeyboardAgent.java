@@ -160,6 +160,18 @@ public class KeyboardAgent extends Agent {
 		setShortcut(Target.EYE, 'c', KeyboardMotionAction.CENTER_FRAME);
 		setShortcut(Target.FRAME, 'a', KeyboardMotionAction.ALIGN_FRAME);
 		setShortcut(Target.FRAME, 'c', KeyboardMotionAction.CENTER_FRAME);
+		setShortcut(Target.FRAME, 'x', KeyboardMotionAction.TRANSLATE_DOWN_X);
+		setShortcut(Target.FRAME, 'X', KeyboardMotionAction.TRANSLATE_UP_X);
+		setShortcut(Target.FRAME, 'y', KeyboardMotionAction.TRANSLATE_DOWN_Y);
+		setShortcut(Target.FRAME, 'Y', KeyboardMotionAction.TRANSLATE_UP_Y);
+		setShortcut(Target.FRAME, 'z', KeyboardMotionAction.ROTATE_DOWN_Z);
+		setShortcut(Target.FRAME, 'Z', KeyboardMotionAction.ROTATE_UP_Z);
+		setShortcut(Target.EYE, 'x', KeyboardMotionAction.TRANSLATE_DOWN_X);
+		setShortcut(Target.EYE, 'X', KeyboardMotionAction.TRANSLATE_UP_X);
+		setShortcut(Target.EYE, 'y', KeyboardMotionAction.TRANSLATE_DOWN_Y);
+		setShortcut(Target.EYE, 'Y', KeyboardMotionAction.TRANSLATE_UP_Y);
+		setShortcut(Target.EYE, 'z', KeyboardMotionAction.ROTATE_DOWN_Z);
+		setShortcut(Target.EYE, 'Z', KeyboardMotionAction.ROTATE_UP_Z);
 	}
 
 	/**

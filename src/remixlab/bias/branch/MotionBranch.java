@@ -47,6 +47,7 @@ public class MotionBranch<E extends Enum<E>, M extends MotionProfile<? extends A
 		clickProfile = c;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected MotionBranch(MotionBranch<E,M,C> other) {
 		super(other);
 		clickProfile = (C) other.clickProfile().get();
