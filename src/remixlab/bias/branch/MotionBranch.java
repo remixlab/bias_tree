@@ -46,6 +46,16 @@ public class MotionBranch<E extends Enum<E>, M extends MotionProfile<? extends A
 		super(p, a, n);
 		clickProfile = c;
 	}
+	
+	protected MotionBranch(MotionBranch<E,M,C> other) {
+		super(other);
+		clickProfile = (C) other.clickProfile().get();
+	}
+	
+	@Override
+	public MotionBranch<E,M,C> get() {
+		return new MotionBranch<E,M,C>(this);
+	}
 
 	/**
 	 * Alias for {@link #profile()}.

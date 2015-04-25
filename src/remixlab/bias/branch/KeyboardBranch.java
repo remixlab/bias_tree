@@ -25,6 +25,15 @@ public class KeyboardBranch<E extends Enum<E>, K extends KeyboardProfile<? exten
 	public KeyboardBranch(K k, Agent pnt, String n) {
 		super(k, pnt, n);
 	}
+	
+	protected KeyboardBranch(KeyboardBranch<E,K> other) {
+		super(other);
+	}
+	
+	@Override
+	public KeyboardBranch<E,K> get() {
+		return new KeyboardBranch<E,K>(this);
+	}
 
 	/**
 	 * @return The {@link remixlab.bias.branch.profile.KeyboardProfile}

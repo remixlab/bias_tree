@@ -22,6 +22,22 @@ import remixlab.bias.event.shortcut.*;
  *          {@link remixlab.bias.core.Action} : User-defined action.
  */
 public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, A> {
+	public MotionProfile() {
+		super();
+	}
+	
+	protected MotionProfile(MotionProfile<A> other) {
+		super(other);
+	}
+	
+	/**
+	 * Returns a deep-copy of this profile.
+	 */
+	@Override
+	public MotionProfile<A> get() {
+		return new MotionProfile<A>(this);
+	}
+	
 	/**
 	 * Returns true if the given binding binds an action.
 	 */

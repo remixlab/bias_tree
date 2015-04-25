@@ -74,7 +74,7 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	}
 
 	/**
-	 * Returns a copy of this profile.
+	 * Returns a deep-copy of this profile.
 	 */
 	@Override
 	public Profile<K, A> get() {

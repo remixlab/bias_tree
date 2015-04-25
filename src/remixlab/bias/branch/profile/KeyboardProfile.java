@@ -21,6 +21,22 @@ import remixlab.bias.event.shortcut.KeyboardShortcut;
  *          {@link remixlab.bias.core.Action} : User-defined action.
  */
 public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortcut, A> {
+	public KeyboardProfile() {
+		super();
+	}
+	
+	protected KeyboardProfile(KeyboardProfile<A> other) {
+		super(other);
+	}
+	
+	/**
+	 * Returns a deep-copy of this profile.
+	 */
+	@Override
+	public KeyboardProfile<A> get() {
+		return new KeyboardProfile<A>(this);
+	}
+	
 	/**
 	 * Defines a keyboard shortcut to bind the given action.
 	 * 

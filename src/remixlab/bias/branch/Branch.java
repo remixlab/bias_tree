@@ -12,6 +12,7 @@ package remixlab.bias.branch;
 
 import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
+import remixlab.util.Copyable;
 
 /**
  * A branch holds some {@link remixlab.bias.branch.profile.Profile}s relating the same reference action set (defined by
@@ -39,7 +40,7 @@ import remixlab.bias.core.*;
  * @param <P>
  *          {@link remixlab.bias.branch.profile.Profile} to parameterize the Agent with.
  */
-public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>> {
+public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>> implements Copyable {
 	protected P				profile;
 	protected Agent		parent;
 	protected String	name;
@@ -49,6 +50,18 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 		profile = p;
 		parent = pnt;
 		parent.appendBranch(this);
+	}
+	
+	protected Branch(Branch<E, P> other) {
+		name = other.name() + "_deep-copy";
+		profile = (P) other.profile().get();
+		parent = other.agent();
+		parent.appendBranch(this);
+	}
+	
+	@Override
+	public Branch<E,P> get() {
+		return new Branch<E,P>(this);
 	}
 
 	public String name() {
