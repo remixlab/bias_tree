@@ -412,7 +412,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			gestureRotateXYZ(event);
 			break;
 		case TRANSLATE_Y:
-			gestureTranslateY(event, true);
+			gestureTranslateY(event, false);
 			break;
 		case TRANSLATE_Z:
 			gestureTranslateZ(event, true);

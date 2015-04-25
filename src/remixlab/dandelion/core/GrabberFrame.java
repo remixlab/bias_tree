@@ -1236,21 +1236,15 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureTranslateX(DOF1Event event, float sens) {
-		Vec t;
-		if (isEyeFrame())
-			t = screenToVec(Vec.multiply(new Vec(-event.dx(), 0, 0), sens));
-		else
-			t = screenToVec(Vec.multiply(new Vec(event.dx(), 0, 0), sens));
-		translate(t);
+		translate(screenToVec(Vec.multiply(new Vec(isEyeFrame() ? -event.dx() : event.dx(), 0, 0), sens)) );
 	}
 	
 	protected void gestureTranslateX(KeyboardEvent event, boolean up) {
-		Vec t = screenToVec(Vec.multiply(new Vec(-1, 0), keyboardSensitivity()));
-		translate(t);
+		translate(screenToVec(Vec.multiply(new Vec(1, 0), (up ^ this.isEyeFrame()) ? keyboardSensitivity() : -keyboardSensitivity())));
 	}
 
 	protected void gestureTranslateY(MotionEvent event) {
-		gestureTranslateY(event, true);
+		gestureTranslateY(event, false);
 	}
 
 	protected void gestureTranslateY(MotionEvent event, boolean fromX) {
@@ -1260,17 +1254,11 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureTranslateY(DOF1Event event, float sens) {
-		Vec t;
-		if (isEyeFrame())
-			t = screenToVec(Vec.multiply(new Vec(0, scene.isRightHanded() ? event.dx() : -event.dx()), sens));
-		else
-			t = screenToVec(Vec.multiply(new Vec(0, scene.isRightHanded() ? -event.dx() : event.dx()), sens));
-		translate(t);
+		translate(screenToVec(Vec.multiply(new Vec(0, isEyeFrame() ^ scene.isRightHanded() ? -event.dx() : event.dx()), sens)));
 	}
 	
 	protected void gestureTranslateY(KeyboardEvent event, boolean up) {
-		Vec t = screenToVec(Vec.multiply(new Vec(0, scene.isRightHanded() ? 1 : -1), this.keyboardSensitivity()));
-		translate(t);
+		translate(screenToVec(Vec.multiply(new Vec(0, (up ^ this.isEyeFrame() ^ scene.isLeftHanded()) ? 1 : -1), this.keyboardSensitivity())));
 	}
 
 	protected void gestureTranslateZ(MotionEvent event) {
@@ -1288,12 +1276,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureTranslateZ(DOF1Event event, float sens) {
-		Vec t;
-		if (isEyeFrame())
-			t = screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, -event.dx()), sens));
-		else
-			t = screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, event.dx()), sens));
-		translate(t);
+		translate(screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, isEyeFrame() ? -event.dx() : event.dx()), sens)));
 	}
 	
 	protected void gestureTranslateZ(KeyboardEvent event, boolean up) {
@@ -1301,8 +1284,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showDepthWarning("gestureTranslateZ");
 			return;
 		}
-		Vec t = screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, -1), this.keyboardSensitivity()));
-		translate(t);
+		translate(screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, 1), (up ^ this.isEyeFrame()) ? -keyboardSensitivity() : keyboardSensitivity())));
 	}
 
 	protected void gestureTranslateXY(MotionEvent event) {
@@ -1317,16 +1299,8 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("gestureTranslateXY", 2);
 	}
 
-	protected void gestureTranslateXY(DOF2Event event) {
-		Vec trns;
-		if (isEyeFrame()) {
-			trns = new Vec(-event.dx(), scene.isRightHanded() ? event.dy() : -event.dy(), 0.0f);
-		}
-		else {
-			trns = new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), 0.0f);		
-		}
-		Vec t = screenToVec(Vec.multiply(trns, this.translationSensitivity()));
-		translate(t);
+	protected void gestureTranslateXY(DOF2Event event) {		
+		translate(screenToVec(Vec.multiply(new Vec(isEyeFrame() ? -event.dx() : event.dx(), (scene.isRightHanded() ^ isEyeFrame()) ? -event.dy() : event.dy(), 0.0f), this.translationSensitivity())));
 	}
 
 	protected void gestureTranslateXYZ(MotionEvent event) {
@@ -1344,13 +1318,17 @@ public class GrabberFrame extends Frame implements Grabber {
 	protected void gestureTranslateXYZ(DOF3Event event) {
 		translate(screenToVec(Vec.multiply(new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), -event.dz()), this.translationSensitivity())));
 	}
-
+	
 	protected void gestureRotateX(MotionEvent event) {
+		gestureRotateX(event, false);
+	}
+
+	protected void gestureRotateX(MotionEvent event, boolean fromX) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateX");
 			return;
 		}
-		DOF1Event dof1Event = MotionEvent.dof1Event(event);
+		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			gestureRotateX(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
 	}
@@ -1360,14 +1338,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showDepthWarning("gestureRotateX");
 			return;
 		}
-		Rotation rt;
-		if (isEyeFrame()) {
-			rt = screenToQuat(sens * -computeAngle(event), 0, 0);
-		}
-		else {
-			rt = screenToQuat(sens * -computeAngle(event), 0, 0);
-		}
-		startSpinning(rt, event.speed(), event.delay());
+		startSpinning(screenToQuat(computeAngle(event) * (isEyeFrame() ? -sens : sens), 0, 0), event.speed(), event.delay());
 	}
 	
 	protected void gestureRotateX(KeyboardEvent event, boolean up) {
@@ -1375,16 +1346,19 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showDepthWarning("gestureRotateX");
 			return;
 		}
-		Rotation rt =	screenToQuat(computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0, 0);
-		rotate(rt);
+		rotate(screenToQuat(computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0, 0));
+	}
+	
+	protected void gestureRotateY(MotionEvent event) {
+		gestureRotateY(event, true);
 	}
 
-	protected void gestureRotateY(MotionEvent event) {
+	protected void gestureRotateY(MotionEvent event, boolean fromX) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateY");
 			return;
 		}
-		DOF1Event dof1Event = MotionEvent.dof1Event(event);
+		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			gestureRotateY(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
 	}
@@ -1394,14 +1368,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showDepthWarning("gestureRotateY");
 			return;
 		}
-		Rotation rt;
-		if (isEyeFrame()) {
-			rt = screenToQuat(0, sens * -computeAngle(event), 0);
-		}
-		else {
-			rt = screenToQuat(0, sens * -computeAngle(event), 0);
-		}
-		startSpinning(rt, event.speed(), event.delay());
+		startSpinning(screenToQuat(0, computeAngle(event) * (isEyeFrame() ? - sens : sens), 0), event.speed(), event.delay());
 	}
 	
 	protected void gestureRotateY(KeyboardEvent event, boolean up) {
@@ -1412,8 +1379,12 @@ public class GrabberFrame extends Frame implements Grabber {
 		Rotation rt = screenToQuat(0, computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0);
 		rotate(rt);
 	}
-
+	
 	protected void gestureRotateZ(MotionEvent event) {
+		gestureRotateZ(event, false);
+	}
+
+	protected void gestureRotateZ(MotionEvent event, boolean fromX) {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event);
 		if (dof1Event != null)
 			gestureRotateZ(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
@@ -1428,9 +1399,9 @@ public class GrabberFrame extends Frame implements Grabber {
 				rt = screenToQuat(0, 0, sens * -computeAngle(event));
 		else
 			if (is2D())
-				rt = new Rot(sens * (scene.isRightHanded() ? computeAngle(event) : -computeAngle(event)));
+				rt = new Rot(sens * (scene.isRightHanded() ? -computeAngle(event) : computeAngle(event)));
 			else
-				rt = screenToQuat(0, 0, sens * -computeAngle(event));
+				rt = screenToQuat(0, 0, sens * computeAngle(event));
 		startSpinning(rt, event.speed(), event.delay());
 	}
 	
@@ -1455,7 +1426,6 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("gestureRotateXYZ", 2);
 	}
 
-	//TODO compute angle is missed here, set it when fixing space-navigator
 	protected void gestureRotateXYZ(DOF3Event event) {
 		rotate(screenToQuat(Vec.multiply(new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz())), rotationSensitivity())));
 	}
