@@ -407,10 +407,10 @@ public class DOF6Event extends MotionEvent {
 		DOF3Event e3;
 		if (isRelative()) {
 			if (fromTranslation) {
-				pe3 = new DOF3Event(prevX(), prevY(), prevZ(), modifiers(), id());
+				pe3 = new DOF3Event(null, prevX(), prevY(), prevZ(), modifiers(), id());
 				e3 = new DOF3Event(pe3, x(), y(), z(), modifiers(), id());
 			} else {
-				pe3 = new DOF3Event(prevRX(), prevRY(), prevRZ(), modifiers(), id());
+				pe3 = new DOF3Event(null, prevRX(), prevRY(), prevRZ(), modifiers(), id());
 				e3 = new DOF3Event(pe3, rx(), ry(), rz(), modifiers(), id());
 			}
 		} else {

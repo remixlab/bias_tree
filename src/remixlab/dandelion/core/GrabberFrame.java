@@ -1238,9 +1238,9 @@ public class GrabberFrame extends Frame implements Grabber {
 	protected void gestureTranslateX(DOF1Event event, float sens) {
 		Vec t;
 		if (isEyeFrame())
-			t = screenToVec(Vec.multiply(new Vec(-event.dx(), 0), sens));
+			t = screenToVec(Vec.multiply(new Vec(-event.dx(), 0, 0), sens));
 		else
-			t = screenToVec(Vec.multiply(new Vec(event.dx(), 0), sens));
+			t = screenToVec(Vec.multiply(new Vec(event.dx(), 0, 0), sens));
 		translate(t);
 	}
 	

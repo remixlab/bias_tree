@@ -253,7 +253,7 @@ public class DOF3Event extends MotionEvent {
 		DOF2Event pe2;
 		DOF2Event e2;
 		if (isRelative()) {
-			pe2 = new DOF2Event(prevX(), prevY(), modifiers(), id());
+			pe2 = new DOF2Event(null, prevX(), prevY(), modifiers(), id());
 			e2 = new DOF2Event(pe2, x(), y(), modifiers(), id());
 		} else {
 			e2 = new DOF2Event(dx(), dy(), modifiers(), id());

@@ -219,14 +219,14 @@ public class DOF2Event extends MotionEvent {
 		DOF1Event e1;
 		if (fromX) {
 			if (isRelative()) {
-				pe1 = new DOF1Event(prevX(), modifiers(), id());
+				pe1 = new DOF1Event(null, prevX(), modifiers(), id());
 				e1 = new DOF1Event(pe1, x(), modifiers(), id());
 			} else {
 				e1 = new DOF1Event(dx(), modifiers(), id());
 			}
 		} else {
 			if (isRelative()) {
-				pe1 = new DOF1Event(prevY(), modifiers(), id());
+				pe1 = new DOF1Event(null, prevY(), modifiers(), id());
 				e1 = new DOF1Event(pe1, y(), modifiers(), id());
 			} else {
 				e1 = new DOF1Event(dy(), modifiers(), id());
