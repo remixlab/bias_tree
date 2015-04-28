@@ -25,7 +25,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 
 	public enum PickingMode {
 		MOVE, CLICK
-	};
+	}; // TODO this actually affect all grabbers!
 
 	protected float	wSens	= 1f;
 
@@ -136,6 +136,97 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 			else
 				return frameClickProfile();
 		return null;
+	}
+	
+	// two tempi actions workflow divert from 'normal' (single tempi) actions which just require
+	// either updateTrackeGrabber(event) or handle(event).
+	
+	private MotionAction twotempi;
+	private A a;
+	private boolean need4Spin, drive, bypassNullEvent;
+	//private DOF2Event lastEvent;
+	private BogusEvent initEvent;
+	//private float dFriction;
+  //private GrabberFrame							iFrame;
+	
+	protected InteractiveGrabber<MotionAction> actionGrabber() {
+		if (inputGrabber() instanceof InteractiveFrame)
+			return (InteractiveFrame) inputGrabber();
+		return null;
+	}
+	
+	protected boolean initAction(BogusEvent event) {
+		initEvent = event;
+		//if (inputGrabber() instanceof GrabberFrame)	((GrabberFrame) inputGrabber()).stopSpinning();
+		if(motionProfile() != null) { // means: inputGrabber() instanceof GrabberFrame
+			GrabberFrame gFrame = (GrabberFrame) inputGrabber();
+			boolean isEye = gFrame.isEyeFrame();
+			gFrame.stopSpinning();
+			a = motionProfile().handle(event);
+			twotempi = a.referenceAction();
+			if (twotempi == MotionAction.SCREEN_TRANSLATE)
+				((InteractiveFrame) inputGrabber()).dirIsFixed = false;
+			boolean rotateMode = ((twotempi == MotionAction.ROTATE) || (twotempi == MotionAction.ROTATE_XYZ)
+					|| (twotempi == MotionAction.ROTATE_CAD)
+					|| (twotempi == MotionAction.SCREEN_ROTATE) || (twotempi == MotionAction.TRANSLATE_XYZ_ROTATE_XYZ));
+			if (rotateMode && scene.is3D())
+				scene.camera().cadRotationIsReversed = scene.camera().frame()
+						.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
+			need4Spin = (rotateMode && (((InteractiveFrame) inputGrabber()).dampingFriction() == 0));
+			drive = (twotempi == MotionAction.DRIVE);
+			bypassNullEvent = (twotempi == MotionAction.MOVE_FORWARD) || (twotempi == MotionAction.MOVE_BACKWARD)
+					|| (drive) && scene.inputHandler().isAgentRegistered(this);
+			scene.setRotateVisualHint(twotempi == MotionAction.SCREEN_ROTATE && inputGrabber() instanceof InteractiveFrame
+					&& scene.inputHandler().isAgentRegistered(this));
+			if(isEye)
+				scene.setZoomVisualHint(twotempi == MotionAction.ZOOM_ON_REGION && scene.inputHandler().isAgentRegistered(this));
+			if (bypassNullEvent || scene.zoomVisualHint() || scene.rotateVisualHint()) {
+				if (bypassNullEvent) {
+					// This is needed for first person:
+					((InteractiveFrame) inputGrabber()).updateSceneUpVector();
+					//dFriction = ((InteractiveFrame) inputGrabber()).dampingFriction();
+					//((InteractiveFrame) inputGrabber()).setDampingFriction(0);
+					handler.eventTupleQueue().add(new EventGrabberTuple(event, actionGrabber(), a));
+					return false;
+				}
+				return true;// i.e., only when zoom_on_region and rotate!?
+			}
+		}
+		return true;
+	}
+	
+	protected void endAction(BogusEvent event) {
+		twotempi = null;
+		MotionEvent mEvent = null;
+		if(event instanceof MotionEvent)
+		mEvent = (MotionEvent) event;
+		if(mEvent != null) {
+			if (need4Spin) {
+				System.out.println("need$Spin called at end-action " + mEvent.speed() + " " + mEvent.delay());
+				((InteractiveFrame) inputGrabber()).startSpinning(mEvent.speed(), mEvent.delay());
+			}
+			if (scene.zoomVisualHint()) {
+				// at first glance this should work
+				// handle(event);
+				// but the problem is that depending on the order the button and the modifiers are released,
+				// different actions maybe triggered, so we go for sure ;) :
+				//TODO hack! fix me
+				((DOF2Event)mEvent).setPreviousEvent((DOF2Event)initEvent);
+				inputHandler().enqueueEventTuple(new EventGrabberTuple(event, actionGrabber(), DOF2Action.ZOOM_ON_REGION));
+				scene.setZoomVisualHint(false);
+			}
+			if (scene.rotateVisualHint())
+				scene.setRotateVisualHint(false);
+			if (pickingMode() == PickingMode.MOVE)
+				updateTrackedGrabber(event);
+			if (bypassNullEvent) {
+				//iFrame.setDampingFriction(dFriction);
+				bypassNullEvent = !bypassNullEvent;
+			}
+			// restore speed after drive action terminates:
+			if (drive)
+				((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius());
+		}
 	}
 
 	// TODO test all protected down here in stable before going on

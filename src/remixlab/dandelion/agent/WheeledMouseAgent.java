@@ -23,12 +23,11 @@ import remixlab.dandelion.core.Constants.*;
 public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	protected DOF2Event				pressEvent;
 	protected DOF2Event				lastEvent;
-	protected DOF2Event				prevEvent;
 	public static int					LEFT_ID	= 1, CENTER_ID = 2, RIGHT_ID = 3, WHEEL_ID = 4;
 
 	boolean										bypassNullEvent, need4Spin, drive, rotateMode;
-	float											dFriction;
-	GrabberFrame							iFrame, eyeFrame;
+	//float											dFriction;
+	//GrabberFrame							iFrame, eyeFrame;
 
 	protected boolean					needHandle;
 	/* protected */DOF2Event	spEvent;
@@ -93,17 +92,20 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		return null;
 	}
 
+	/*
 	protected InteractiveGrabber<MotionAction> actionGrabber() {
 		if (inputGrabber() instanceof InteractiveFrame)
 			return (InteractiveFrame) inputGrabber();
 		return null;
 	}
+	*/
 
 	// low-level
 
 	/**
 	 * Return the last event processed by the agent. Internal use, needed by scene visual hints.
 	 */
+	//TODO should go in motion agent, just adding here a cast
 	public DOF2Event lastDOF2Event() {
 		return lastEvent;
 	}
@@ -182,6 +184,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	protected void press(DOF2Event e) {
 		lastEvent = e;
 		pressEvent = lastEvent.get();
+		/*
 		if (inputGrabber() instanceof InteractiveFrame) {
 			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
 				pressEye(lastEvent);
@@ -189,79 +192,11 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 				pressFrame(lastEvent);
 			return;
 		}
-		else
-			handle(lastEvent);
-	}
-
-	protected void pressFrame(DOF2Event e) {
-		if (need4Spin)
-			((InteractiveFrame) inputGrabber()).stopSpinning();
-		iFrame = (InteractiveFrame) inputGrabber();
-		DOF2Action a = motionProfile().handle(lastEvent);
-		// Action<?> a = (inputGrabber() instanceof InteractiveFrame) ? eyeProfile().handle(lastEvent) :
-		// frameProfile().handle(lastEvent);
-		if (a == null)
+		*/
+		if (inputGrabber() instanceof InteractiveFrame) {
+			if(!initAction(e))
+				handle(e);
 			return;
-		MotionAction dA = a.referenceAction();
-		if (dA == MotionAction.SCREEN_TRANSLATE)
-			((InteractiveFrame) inputGrabber()).dirIsFixed = false;
-		rotateMode = ((dA == MotionAction.ROTATE) || (dA == MotionAction.ROTATE_XYZ)
-				|| (dA == MotionAction.ROTATE_CAD)
-				|| (dA == MotionAction.SCREEN_ROTATE) || (dA == MotionAction.TRANSLATE_XYZ_ROTATE_XYZ));
-		if (rotateMode && scene.is3D())
-			scene.camera().cadRotationIsReversed = scene.camera().frame()
-					.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
-		need4Spin = (rotateMode && (((InteractiveFrame) inputGrabber()).dampingFriction() == 0));
-		drive = (dA == MotionAction.DRIVE);
-		bypassNullEvent = (dA == MotionAction.MOVE_FORWARD) || (dA == MotionAction.MOVE_BACKWARD)
-				|| (drive) && scene.inputHandler().isAgentRegistered(this);
-		scene.setRotateVisualHint(dA == MotionAction.SCREEN_ROTATE && inputGrabber() instanceof InteractiveFrame
-				&& scene.inputHandler().isAgentRegistered(this));
-		if (bypassNullEvent || scene.zoomVisualHint() || scene.rotateVisualHint()) {
-			if (bypassNullEvent) {
-				// This is needed for first person:
-				((InteractiveFrame) inputGrabber()).updateSceneUpVector();
-				dFriction = ((InteractiveFrame) inputGrabber()).dampingFriction();
-				((InteractiveFrame) inputGrabber()).setDampingFriction(0);
-				handler.eventTupleQueue().add(new EventGrabberTuple(lastEvent, actionGrabber(), a));
-			}
-		}
-		else
-			handle(lastEvent);
-	}
-
-	protected void pressEye(DOF2Event e) {
-		if (need4Spin)
-			((InteractiveFrame) inputGrabber()).stopSpinning();
-		eyeFrame = (InteractiveFrame) inputGrabber();
-		DOF2Action a = motionProfile().handle(lastEvent);
-		// Action<?> a = (inputGrabber() instanceof InteractiveFrame) ? eyeProfile().handle(lastEvent) :
-		// frameProfile().handle(lastEvent);
-		if (a == null)
-			return;
-		MotionAction dA = a.referenceAction();
-		if (dA == MotionAction.SCREEN_TRANSLATE)
-			((InteractiveFrame) inputGrabber()).dirIsFixed = false;
-		rotateMode = ((dA == MotionAction.ROTATE) || (dA == MotionAction.ROTATE_XYZ)
-				|| (dA == MotionAction.ROTATE_CAD)
-				|| (dA == MotionAction.SCREEN_ROTATE) || (dA == MotionAction.TRANSLATE_XYZ_ROTATE_XYZ));
-		if (rotateMode && scene.is3D())
-			scene.camera().cadRotationIsReversed = scene.camera().frame()
-					.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
-		need4Spin = (rotateMode && (((InteractiveFrame) inputGrabber()).dampingFriction() == 0));
-		drive = (dA == MotionAction.DRIVE);
-		bypassNullEvent = (dA == MotionAction.MOVE_FORWARD) || (dA == MotionAction.MOVE_BACKWARD)
-				|| (drive) && scene.inputHandler().isAgentRegistered(this);
-		scene.setZoomVisualHint(dA == MotionAction.ZOOM_ON_REGION && scene.inputHandler().isAgentRegistered(this));
-		scene.setRotateVisualHint(dA == MotionAction.SCREEN_ROTATE && scene.inputHandler().isAgentRegistered(this));
-		if (bypassNullEvent || scene.zoomVisualHint() || scene.rotateVisualHint()) {
-			if (bypassNullEvent) {
-				// This is needed for first person:
-				((InteractiveFrame) inputGrabber()).updateSceneUpVector();
-				dFriction = ((InteractiveFrame) inputGrabber()).dampingFriction();
-				((InteractiveFrame) inputGrabber()).setDampingFriction(0);
-				handler.eventTupleQueue().add(new EventGrabberTuple(lastEvent, actionGrabber(), a));
-			}
 		}
 		else
 			handle(lastEvent);
@@ -273,10 +208,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	protected void drag(DOF2Event e) {
 		lastEvent = e;
 		if (inputGrabber() instanceof InteractiveFrame) {
-			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
-				dragEye(lastEvent);
-			else
-				dragFrame(lastEvent);
+			dragFrame(lastEvent);
 			return;
 		}
 		else
@@ -291,24 +223,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
 			// Action<?> a = (inputGrabber() instanceof InteractiveFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
 			// : frameProfile().handle((BogusEvent) lastEvent);
-			DOF2Action a = frameProfile().handle((BogusEvent) lastEvent);
-			if (a == null)
-				return;
-			MotionAction dA = a.referenceAction();
-			if (dA != MotionAction.ZOOM_ON_REGION)
-				handle(lastEvent);
-		}
-	}
-
-	protected void dragEye(DOF2Event e) {
-		if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
-			if (drive)
-				((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f
-						* (lastEvent.y() - pressEvent.y()));
-			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-			// Action<?> a = (inputGrabber() instanceof InteractiveFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
-			// : frameProfile().handle((BogusEvent) lastEvent);
-			DOF2Action a = eyeProfile().handle((BogusEvent) lastEvent);
+			DOF2Action a = motionProfile().handle((BogusEvent) lastEvent);
 			if (a == null)
 				return;
 			MotionAction dA = a.referenceAction();
@@ -321,69 +236,24 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Ends interaction and calls {@link #updateTrackedGrabber(BogusEvent)} on the given event.
 	 */
 	protected void release(DOF2Event e) {
-		prevEvent = lastDOF2Event().get();
+		//previously:
+		//prevEvent = lastDOF2Event().get();
+		//lastEvent = e;
+		DOF2Event i = lastEvent.get();
 		lastEvent = e;
+	  //TODO testing		
+		System.out.print("prevEvent is " + (i.isRelative() ? "relative" : "absolute")  + " speed " + i.speed() + " delay: " + i.delay());
+		System.out.println(" prevX: " + i.prevX() + " x " + i.x() + " deltaX " + i.dx() + 
+				               " prevY: " + i.prevY() + " y " + i.y() + " deltaY " + i.dy());
+		System.out.print("current is " + (e.isRelative() ? "relative" : "absolute")  + " speed " + e.speed() + " delay: " + e.delay());
+		System.out.println(" prevX: " + e.prevX() + " x " + e.x() + " deltaX " + e.dx() + 
+                       " prevY: " + e.prevY() + " y " + e.y() + " deltaY " + e.dy());
 		if (inputGrabber() instanceof InteractiveFrame) {
-			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
-				releaseEye(lastEvent);
-			else
-				releaseFrame(lastEvent);
+			endAction(e);
 			return;
 		}
 		else
 			updateTrackedGrabber(lastEvent);
-	}
-
-	protected void releaseFrame(DOF2Event e) {
-		// note that the following two lines fail on event when need4Spin
-		if (need4Spin)
-			((InteractiveFrame) inputGrabber()).startSpinning(prevEvent.speed(), prevEvent.delay());
-		if (scene.zoomVisualHint()) {
-			// at first glance this should work
-			// handle(event);
-			// but the problem is that depending on the order the button and the modifiers are released,
-			// different actions maybe triggered, so we go for sure ;) :
-			lastEvent.setPreviousEvent(pressEvent);
-			inputHandler().enqueueEventTuple(new EventGrabberTuple(lastEvent, actionGrabber(), DOF2Action.ZOOM_ON_REGION));
-			scene.setZoomVisualHint(false);
-		}
-		if (scene.rotateVisualHint())
-			scene.setRotateVisualHint(false);
-		if (pickingMode() == PickingMode.MOVE)
-			updateTrackedGrabber(lastEvent);
-		if (bypassNullEvent) {
-			iFrame.setDampingFriction(dFriction);
-			bypassNullEvent = !bypassNullEvent;
-		}
-		// restore speed after drive action terminates:
-		if (drive)
-			((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius());
-	}
-
-	protected void releaseEye(DOF2Event e) {
-		// note that the following two lines fail on event when need4Spin
-		if (need4Spin)
-			((InteractiveFrame) inputGrabber()).startSpinning(prevEvent.speed(), prevEvent.delay());
-		if (scene.zoomVisualHint()) {
-			// at first glance this should work
-			// handle(event);
-			// but the problem is that depending on the order the button and the modifiers are released,
-			// different actions maybe triggered, so we go for sure ;) :
-			lastEvent.setPreviousEvent(pressEvent);
-			inputHandler().enqueueEventTuple(new EventGrabberTuple(lastEvent, actionGrabber(), DOF2Action.ZOOM_ON_REGION));
-			scene.setZoomVisualHint(false);
-		}
-		if (scene.rotateVisualHint())
-			scene.setRotateVisualHint(false);
-		if (pickingMode() == PickingMode.MOVE)
-			updateTrackedGrabber(lastEvent);
-		if (bypassNullEvent) {
-			eyeFrame.setDampingFriction(dFriction);
-			bypassNullEvent = !bypassNullEvent;
-		}
-		// restore speed after drive action terminates:
-		if (drive)
-			((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius());
 	}
 
 	protected void wheel(DOF1Event wEvent) {
