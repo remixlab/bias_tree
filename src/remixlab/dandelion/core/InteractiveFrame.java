@@ -310,7 +310,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 
 	@Override
-	public void performInteraction(ClickEvent event) {
+	protected void performInteraction(ClickEvent event) {
 		switch (referenceAction()) {
 		case CUSTOM:
 			performCustomAction(event);
@@ -342,7 +342,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 
 	@Override
-	public void performInteraction(MotionEvent event) {
+	protected void performInteraction(MotionEvent event) {
 		switch (referenceAction()) {
 		case CUSTOM:
 			performCustomAction(event);
@@ -445,7 +445,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 
 	@Override
-	public void performInteraction(KeyboardEvent event) {
+	protected void performInteraction(KeyboardEvent event) {
 		switch (referenceAction()) {
 		case ALIGN_FRAME:
 			align();
@@ -510,12 +510,12 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	// Custom
 
-	public void performCustomAction(KeyboardEvent event) {
+	protected void performCustomAction(KeyboardEvent event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass()
 				.getName());
 	}
 
-	public void performCustomAction(ClickEvent event) {
+	protected void performCustomAction(ClickEvent event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(ClickEvent event)", this.getClass().getName());
 	}
 
@@ -530,19 +530,19 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			performCustomAction((DOF6Event) event);
 	}
 
-	public void performCustomAction(DOF1Event event) {
+	protected void performCustomAction(DOF1Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF1Event event)", this.getClass().getName());
 	}
 
-	public void performCustomAction(DOF2Event event) {
+	protected void performCustomAction(DOF2Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF2Event event)", this.getClass().getName());
 	}
 
-	public void performCustomAction(DOF3Event event) {
+	protected void performCustomAction(DOF3Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF3Event event)", this.getClass().getName());
 	}
 
-	public void performCustomAction(DOF6Event event) {
+	protected void performCustomAction(DOF6Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF6Event event)", this.getClass().getName());
 	}
 }

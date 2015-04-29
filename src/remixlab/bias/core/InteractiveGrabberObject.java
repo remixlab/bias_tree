@@ -74,29 +74,29 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	}
 
 	// TODO : deal with warnings
-	public void performInteraction(KeyboardEvent event) {
+	protected void performInteraction(KeyboardEvent event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(KeyboardEvent event)",
 		// this.getClass().getName());
 	}
 
-	public void performInteraction(ClickEvent event) {
+	protected void performInteraction(ClickEvent event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)",
 		// this.getClass().getName());
 	}
 
-	public void performInteraction(DOF1Event event) {
+	protected void performInteraction(DOF1Event event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
 	}
 
-	public void performInteraction(DOF2Event event) {
+	protected void performInteraction(DOF2Event event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
 	}
 
-	public void performInteraction(DOF3Event event) {
+	protected void performInteraction(DOF3Event event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
 	}
 
-	public void performInteraction(DOF6Event event) {
+	protected void performInteraction(DOF6Event event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
 	}
 
@@ -117,33 +117,33 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		return false;
 	}
 
-	public boolean checkIfGrabsInput(KeyboardEvent event) {
+	protected boolean checkIfGrabsInput(KeyboardEvent event) {
 		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)",
 		// this.getClass().getName());
 		return false;
 	}
 
-	public boolean checkIfGrabsInput(ClickEvent event) {
+	protected boolean checkIfGrabsInput(ClickEvent event) {
 		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
 
-	public boolean checkIfGrabsInput(DOF1Event event) {
+	protected boolean checkIfGrabsInput(DOF1Event event) {
 		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
 
-	public boolean checkIfGrabsInput(DOF2Event event) {
+	protected boolean checkIfGrabsInput(DOF2Event event) {
 		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF2Event event)", this.getClass().getName());
 		return false;
 	}
 
-	public boolean checkIfGrabsInput(DOF3Event event) {
+	protected boolean checkIfGrabsInput(DOF3Event event) {
 		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF3Event event)", this.getClass().getName());
 		return false;
 	}
 
-	public boolean checkIfGrabsInput(DOF6Event event) {
+	protected boolean checkIfGrabsInput(DOF6Event event) {
 		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF6Event event)", this.getClass().getName());
 		return false;
 	}

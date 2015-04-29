@@ -114,21 +114,21 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		return false;
 	}
 
-	public boolean checkIfGrabsInput(ClickEvent event) {
+	protected boolean checkIfGrabsInput(ClickEvent event) {
 		return checkIfGrabsInput(new DOF2Event(event.x(), event.y()));
 	}
 
-	public boolean checkIfGrabsInput(KeyboardEvent event) {
+	protected boolean checkIfGrabsInput(KeyboardEvent event) {
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
 		return false;
 	}
 
-	public boolean checkIfGrabsInput(DOF1Event event) {
+	protected boolean checkIfGrabsInput(DOF1Event event) {
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
 	
-	public boolean checkIfGrabsInput(DOF2Event event) {
+	protected boolean checkIfGrabsInput(DOF2Event event) {
 		if(event.isAbsolute()) {
 			System.out.println("Grabbing a gFrame is only possible from a relative MotionEvent or from a ClickEvent");
 			return false;
@@ -146,11 +146,11 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		return false;
 	}
 
-	public boolean checkIfGrabsInput(DOF3Event event) {
+	protected boolean checkIfGrabsInput(DOF3Event event) {
 		return checkIfGrabsInput(event.dof2Event());
 	}
 
-	public boolean checkIfGrabsInput(DOF6Event event) {
+	protected boolean checkIfGrabsInput(DOF6Event event) {
 		return checkIfGrabsInput(event.dof3Event().dof2Event());
 	}
 
@@ -174,28 +174,28 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 			performInteraction((DOF6Event) event);
 	}
 
-	public void performInteraction(KeyboardEvent event) {
+	protected void performInteraction(KeyboardEvent event) {
 		AbstractScene
 				.showMissingImplementationWarning("performInteraction(KeyboardEvent event)", this.getClass().getName());
 	}
 
-	public void performInteraction(ClickEvent event) {
+	protected void performInteraction(ClickEvent event) {
 		AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
 	}
 
-	public void performInteraction(DOF1Event event) {
+	protected void performInteraction(DOF1Event event) {
 		AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
 	}
 
-	public void performInteraction(DOF2Event event) {
+	protected void performInteraction(DOF2Event event) {
 		AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
 	}
 
-	public void performInteraction(DOF3Event event) {
+	protected void performInteraction(DOF3Event event) {
 		AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
 	}
 
-	public void performInteraction(DOF6Event event) {
+	protected void performInteraction(DOF6Event event) {
 		AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
 	}
 

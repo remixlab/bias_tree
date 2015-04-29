@@ -270,7 +270,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		}
 	}
 
-	public void performCustomAction(KeyboardEvent event) {
+	protected void performCustomAction(KeyboardEvent event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass()
 				.getName());
 	}
@@ -282,7 +282,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		return false;
 	}
 
-	public boolean checkIfGrabsInput(KeyboardEvent event) {
+	protected boolean checkIfGrabsInput(KeyboardEvent event) {
 		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)",
 		// this.getClass().getName());
 		return false;

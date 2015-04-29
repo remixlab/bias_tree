@@ -21,16 +21,16 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
-	protected DOF2Event				pressEvent;
-	protected DOF2Event				lastEvent;
+	//protected DOF2Event				pressEvent, lastEvent;
 	public static int					LEFT_ID	= 1, CENTER_ID = 2, RIGHT_ID = 3, WHEEL_ID = 4;
 
-	boolean										bypassNullEvent, need4Spin, drive, rotateMode;
+	//boolean										bypassNullEvent, need4Spin, drive, rotateMode;
 	//float											dFriction;
 	//GrabberFrame							iFrame, eyeFrame;
 
-	protected boolean					needHandle;
-	/* protected */DOF2Event	spEvent;
+	//TODO these two must be gone
+	boolean					needHandle;
+	DOF2Event	spEvent;
 
 	protected float						xSens		= 1f;
 	protected float						ySens		= 1f;
@@ -92,52 +92,44 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		return null;
 	}
 
-	/*
-	protected InteractiveGrabber<MotionAction> actionGrabber() {
-		if (inputGrabber() instanceof InteractiveFrame)
-			return (InteractiveFrame) inputGrabber();
-		return null;
-	}
-	*/
-
 	// low-level
 
 	/**
 	 * Return the last event processed by the agent. Internal use, needed by scene visual hints.
 	 */
-	//TODO should go in motion agent, just adding here a cast
-	public DOF2Event lastDOF2Event() {
-		return lastEvent;
+	@Override
+	public DOF2Event currentEvent() {
+		return (DOF2Event) currEvent;
 	}
 
 	/**
 	 * Return the last press event processed by the agent. Internal use, needed by scene visual hints.
 	 */
-	// TODO visibility and name
-	public DOF2Event pressEvent() {
-		return pressEvent;
+	@Override
+	public DOF2Event initEvent() {
+		return (DOF2Event) initEvent;
 	}
 
 	/**
 	 * Call {@link #updateTrackedGrabber(BogusEvent)} on the given event.
 	 */
 	protected void move(DOF2Event e) {
-		lastEvent = e;
+		currEvent = e;//TODO pending call in MotionEvent
 		if (pickingMode() == PickingMode.MOVE)
-			updateTrackedGrabber(lastEvent);
+			updateTrackedGrabber(currentEvent());
 
 		if (inputGrabber() instanceof InteractiveFrame) {
 			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
-				moveEye(lastEvent);
+				moveEye(currentEvent());
 			else
-				moveFrame(lastEvent);
+				moveFrame(currentEvent());
 		}
 
-		handle(lastEvent);
+		handle(currentEvent());
 	}
 
 	protected void moveFrame(DOF2Event e) {
-		DOF2Action a = motionProfile().handle(lastEvent);
+		DOF2Action a = motionProfile().handle(currentEvent());
 		if (a != null) {
 			if (a == DOF2Action.ZOOM_ON_REGION)
 				return;
@@ -150,26 +142,26 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	}
 
 	protected void moveEye(DOF2Event e) {
-		DOF2Action a = motionProfile().handle(lastEvent);
+		DOF2Action a = motionProfile().handle(currentEvent());
 		if (a != null) {
 			if (a == DOF2Action.SCREEN_ROTATE)
 				scene.setRotateVisualHint(true);
 			else
 				scene.setRotateVisualHint(false);
 
-			if (a == DOF2Action.ZOOM_ON_REGION) {
+			if (a == DOF2Action.ZOOM_ON_REGION) {//TODO ugly, better discard me (includes needHandle and spEvent)
 				scene.setZoomVisualHint(true);
 				spEvent = e.get();
-				spEvent.setPreviousEvent(pressEvent);
+				spEvent.setPreviousEvent(currentEvent());
 				needHandle = true;
 				return;
 			}
 			else {
 				scene.setZoomVisualHint(false);
-				pressEvent = e.get();
+				initEvent = e.get();
 				if (needHandle) {
 					inputHandler()
-							.enqueueEventTuple(new EventGrabberTuple(spEvent, actionGrabber(), DOF2Action.ZOOM_ON_REGION));
+							.enqueueEventTuple(new EventGrabberTuple(spEvent, interactiveFrame(), DOF2Action.ZOOM_ON_REGION));
 					needHandle = false;
 					return;
 				}
@@ -182,53 +174,29 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * .
 	 */
 	protected void press(DOF2Event e) {
-		lastEvent = e;
-		pressEvent = lastEvent.get();
-		/*
-		if (inputGrabber() instanceof InteractiveFrame) {
-			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
-				pressEye(lastEvent);
-			else
-				pressFrame(lastEvent);
-			return;
-		}
-		*/
 		if (inputGrabber() instanceof InteractiveFrame) {
 			if(!initAction(e))
-				handle(e);
+				handle(currentEvent());
 			return;
 		}
-		else
-			handle(lastEvent);
+		else {
+			currEvent = e;
+			handle(currentEvent());
+		}
 	}
 
 	/**
 	 * Call {@link #handle(BogusEvent)} on the given event.
 	 */
-	protected void drag(DOF2Event e) {
-		lastEvent = e;
+	protected void drag(DOF2Event e) {		
 		if (inputGrabber() instanceof InteractiveFrame) {
-			dragFrame(lastEvent);
+			if(!execAction(e))
+				handle(currentEvent());
 			return;
 		}
-		else
-			handle(lastEvent);
-	}
-
-	protected void dragFrame(DOF2Event e) {
-		if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
-			if (drive)
-				((InteractiveFrame) inputGrabber()).setFlySpeed(0.01f * scene.radius() * 0.01f
-						* (lastEvent.y() - pressEvent.y()));
-			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-			// Action<?> a = (inputGrabber() instanceof InteractiveFrame) ? eyeProfile().handle((BogusEvent) lastEvent)
-			// : frameProfile().handle((BogusEvent) lastEvent);
-			DOF2Action a = motionProfile().handle((BogusEvent) lastEvent);
-			if (a == null)
-				return;
-			MotionAction dA = a.referenceAction();
-			if (dA != MotionAction.ZOOM_ON_REGION)
-				handle(lastEvent);
+		else {
+			currEvent = e;
+			handle(currentEvent());
 		}
 	}
 
@@ -236,24 +204,13 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Ends interaction and calls {@link #updateTrackedGrabber(BogusEvent)} on the given event.
 	 */
 	protected void release(DOF2Event e) {
-		//previously:
-		//prevEvent = lastDOF2Event().get();
-		//lastEvent = e;
-		DOF2Event i = lastEvent.get();
-		lastEvent = e;
-	  //TODO testing		
-		System.out.print("prevEvent is " + (i.isRelative() ? "relative" : "absolute")  + " speed " + i.speed() + " delay: " + i.delay());
-		System.out.println(" prevX: " + i.prevX() + " x " + i.x() + " deltaX " + i.dx() + 
-				               " prevY: " + i.prevY() + " y " + i.y() + " deltaY " + i.dy());
-		System.out.print("current is " + (e.isRelative() ? "relative" : "absolute")  + " speed " + e.speed() + " delay: " + e.delay());
-		System.out.println(" prevX: " + e.prevX() + " x " + e.x() + " deltaX " + e.dx() + 
-                       " prevY: " + e.prevY() + " y " + e.y() + " deltaY " + e.dy());
 		if (inputGrabber() instanceof InteractiveFrame) {
 			endAction(e);
 			return;
 		}
 		else
-			updateTrackedGrabber(lastEvent);
+			if (pickingMode() == PickingMode.MOVE)
+				updateTrackedGrabber(currentEvent());
 	}
 
 	protected void wheel(DOF1Event wEvent) {

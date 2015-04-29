@@ -56,19 +56,19 @@ public class MouseAgent extends WheeledMouseAgent {
 	 */
 	public void mouseEvent(processing.event.MouseEvent e) {
 		if (e.getAction() == processing.event.MouseEvent.MOVE) {
-			move(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
+			move(new DOF2Event(currentEvent(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
 					e.getModifiers(), MotionEvent.NO_ID));
 		}
 		if (e.getAction() == processing.event.MouseEvent.PRESS) {
-			press(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(),
+			press(new DOF2Event(currentEvent(), e.getX() - scene.originCorner().x(),
 					e.getY() - scene.originCorner().y(), e.getModifiers(), e.getButton()));
 		}
 		if (e.getAction() == processing.event.MouseEvent.DRAG) {
-			drag(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
+			drag(new DOF2Event(currentEvent(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
 					e.getModifiers(), e.getButton()));
 		}
 		if (e.getAction() == processing.event.MouseEvent.RELEASE) {
-			release(new DOF2Event(lastDOF2Event(), e.getX() - scene.originCorner().x(), e.getY()
+			release(new DOF2Event(currentEvent(), e.getX() - scene.originCorner().x(), e.getY()
 					- scene.originCorner().y(), e.getModifiers(), e.getButton()));
 		}
 		if (e.getAction() == processing.event.MouseEvent.WHEEL) {// e.getAction() = MouseEvent.WHEEL = 8

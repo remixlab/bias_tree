@@ -585,21 +585,21 @@ public class GrabberFrame extends Frame implements Grabber {
 		return false;
 	}
 
-	public boolean checkIfGrabsInput(ClickEvent event) {
+	protected boolean checkIfGrabsInput(ClickEvent event) {
 		return checkIfGrabsInput(new DOF2Event(event.x(), event.y()));
 	}
 
-	public boolean checkIfGrabsInput(KeyboardEvent event) {
+	protected boolean checkIfGrabsInput(KeyboardEvent event) {
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
 		return false;
 	}
 
-	public boolean checkIfGrabsInput(DOF1Event event) {
+	protected boolean checkIfGrabsInput(DOF1Event event) {
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
 	
-	public boolean checkIfGrabsInput(DOF2Event event) {
+	protected boolean checkIfGrabsInput(DOF2Event event) {
 		if(event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("checkIfGrabsInput");
 			return false;
@@ -613,11 +613,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		return ((Math.abs(x - proj.vec[0]) < halfThreshold) && (Math.abs(y - proj.vec[1]) < halfThreshold));
 	}
 
-	public boolean checkIfGrabsInput(DOF3Event event) {
+	protected boolean checkIfGrabsInput(DOF3Event event) {
 		return checkIfGrabsInput(event.dof2Event());
 	}
 
-	public boolean checkIfGrabsInput(DOF6Event event) {
+	protected boolean checkIfGrabsInput(DOF6Event event) {
 		return checkIfGrabsInput(event.dof3Event().dof2Event());
 	}
 
@@ -631,7 +631,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			performInteraction((KeyboardEvent) event);
 	}
 
-	public void performInteraction(MotionEvent event) {
+	protected void performInteraction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			performInteraction((DOF1Event) event);
 		if (event instanceof DOF2Event)
@@ -642,22 +642,22 @@ public class GrabberFrame extends Frame implements Grabber {
 			performInteraction((DOF6Event) event);
 	}
 
-	public void performInteraction(DOF1Event event) {
+	protected void performInteraction(DOF1Event event) {
 	}
 
-	public void performInteraction(DOF2Event event) {
+	protected void performInteraction(DOF2Event event) {
 	}
 
-	public void performInteraction(DOF3Event event) {
+	protected void performInteraction(DOF3Event event) {
 	}
 
-	public void performInteraction(DOF6Event event) {
+	protected void performInteraction(DOF6Event event) {
 	}
 
-	public void performInteraction(ClickEvent event) {
+	protected void performInteraction(ClickEvent event) {
 	}
 
-	public void performInteraction(KeyboardEvent event) {
+	protected void performInteraction(KeyboardEvent event) {
 	}
 
 	// APPLY TRANSFORMATION
@@ -1299,7 +1299,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("gestureTranslateXY", 2);
 	}
 
-	protected void gestureTranslateXY(DOF2Event event) {		
+	protected void gestureTranslateXY(DOF2Event event) {
 		translate(screenToVec(Vec.multiply(new Vec(isEyeFrame() ? -event.dx() : event.dx(), (scene.isRightHanded() ^ isEyeFrame()) ? -event.dy() : event.dy(), 0.0f), this.translationSensitivity())));
 	}
 
@@ -1971,6 +1971,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * @see #spin()
 	 */
 	protected void toss() {
+		/*
 		if (Util.nonZero(dampingFriction())) {
 			if (eventSpeed == 0) {
 				stopTossing();
@@ -1980,6 +1981,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			recomputeTossingDirection();
 		}
 		else
+		*/
 			translate(tossingDirection());
 	}
 
