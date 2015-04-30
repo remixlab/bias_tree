@@ -120,6 +120,9 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		return frameBranch;
 	}
 
+	// TODO these two are ambiguous (e.g., other profile branches
+	// than the eyeBranch().profile() --eyeProfile()-- can produce MotionAction's) and should be discarded
+	// which means action init/end logic should be handled in gFrame
 	protected MotionProfile<A> motionProfile() {
 		if (inputGrabber() instanceof InteractiveFrame)
 			if (((InteractiveFrame) inputGrabber()).isEyeFrame())

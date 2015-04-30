@@ -1971,6 +1971,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * @see #spin()
 	 */
 	protected void toss() {
+		//TODO fix me! with new timing logic
 		/*
 		if (Util.nonZero(dampingFriction())) {
 			if (eventSpeed == 0) {

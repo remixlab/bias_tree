@@ -168,7 +168,7 @@ public class MultiTouchAgent extends HIDAgent {
 	 * FRAME).
 	 */
 	public void setTapBinding(Target target, Gestures gesture, ClickAction action) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? clickProfile() : frameClickProfile();
+		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 		profile.setBinding(gesture.id, action);
 	}
 
@@ -176,7 +176,7 @@ public class MultiTouchAgent extends HIDAgent {
 	 * Removes the gesture click-shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeTapBinding(Target target, Gestures gesture) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? clickProfile() : frameClickProfile();
+		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 		profile.removeBinding(gesture.id);
 	}
 
@@ -184,7 +184,7 @@ public class MultiTouchAgent extends HIDAgent {
 	 * Returns {@code true} if the tap gesture shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasTapBinding(Target target, Gestures gesture) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? clickProfile() : frameClickProfile();
+		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 		return profile.hasBinding(gesture.id);
 	}
 
@@ -192,7 +192,7 @@ public class MultiTouchAgent extends HIDAgent {
 	 * Returns {@code true} if the tap action is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean isTapActionBound(Target target, ClickAction action) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? clickProfile() : frameClickProfile();
+		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 		return profile.isActionBound(action);
 	}
 
@@ -201,7 +201,7 @@ public class MultiTouchAgent extends HIDAgent {
 	 * the given tap gesture shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public ClickAction tapAction(Target target, Gestures gesture) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? clickProfile() : frameClickProfile();
+		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 		return (ClickAction) profile.action(gesture.id);
 	}
 
