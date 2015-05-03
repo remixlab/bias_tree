@@ -34,7 +34,7 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 	}
 	
 	@Override
-	protected boolean checkIfGrabsInput(float x, float y) {
+	public boolean checkIfGrabsInput(float x, float y) {
 		((Scene) scene).pickingBuffer().pushStyle();
 		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
 		int index = (int) y * scene.width() + (int) x;

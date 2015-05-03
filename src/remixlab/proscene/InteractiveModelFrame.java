@@ -113,7 +113,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	}
 
 	@Override
-	protected final boolean checkIfGrabsInput(float x, float y) {
+	public final boolean checkIfGrabsInput(float x, float y) {
 		((Scene) scene).pickingBuffer().pushStyle();
 		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
 		int index = (int) y * scene.width() + (int) x;

@@ -77,7 +77,7 @@ public class Agent {
 	 */
 	public boolean removeGrabber(Grabber grabber) {
 		// TODO testing
-		System.out.println("removing grabber pierre! " + this.name());
+		//System.out.println("removing grabber pierre! " + this.name());
 		for (Iterator<GrabberBranchTuple> it = tuples.iterator(); it.hasNext();) {
 			GrabberBranchTuple t = it.next();
 			if (t.g == grabber) {

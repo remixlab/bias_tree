@@ -607,7 +607,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		return checkIfGrabsInput(event.x(), event.y());
 	}
 	
-	protected boolean checkIfGrabsInput(float x, float y) {
+	public boolean checkIfGrabsInput(float x, float y) {
 		Vec proj = scene.eye().projectedCoordinatesOf(position());
 		float halfThreshold = grabsInputThreshold() / 2;
 		return ((Math.abs(x - proj.vec[0]) < halfThreshold) && (Math.abs(y - proj.vec[1]) < halfThreshold));

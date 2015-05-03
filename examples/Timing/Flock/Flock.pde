@@ -42,7 +42,7 @@ int flockWidth = 1280;
 int flockHeight = 720;
 int flockDepth = 600;
 int initBoidNum = 300; // amount of boids to start the program with
-ArrayList flock;
+ArrayList<Boid> flock;
 boolean smoothEdges = false;
 boolean avoidWalls = true;
 float hue = 255;
@@ -53,6 +53,7 @@ boolean changedMode;
 void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
+  scene.motionAgent().setPickingMode(MouseAgent.PickingMode.CLICK);
   scene.setAxesVisualHint(false);
   scene.setGridVisualHint(false);
   scene.setBoundingBox(new Vec(0, 0, 0), new Vec(flockWidth, flockHeight, flockDepth));
@@ -60,7 +61,7 @@ void setup() {
   // create and fill the list of boids
   flock = new ArrayList();
   for (int i = 0; i < initBoidNum; i++)
-    flock.add(new Boid(new PVector(flockWidth/2, flockHeight/2, flockDepth/2 )));
+    flock.add(new Boid(scene, new PVector(flockWidth/2, flockHeight/2, flockDepth/2 )));
   scene.startAnimation();
   if (smoothEdges)
     smooth();
@@ -69,12 +70,11 @@ void setup() {
 }
 
 void draw() {
-  background(0); 
+  background(0);
   if (inThirdPerson && scene.avatar()==null) {
     inThirdPerson = false;
     adjustFrameRate();
-  }
-  else if (!inThirdPerson && scene.avatar()!=null) {
+  } else if (!inThirdPerson && scene.avatar()!=null) {
     inThirdPerson = true;
     adjustFrameRate();
   }
@@ -99,12 +99,11 @@ void draw() {
   line(flockWidth, flockHeight, 0, flockWidth, flockHeight, flockDepth);
 
   triggered = scene.timer().trigggered();
-  for (int i = 0; i < flock.size(); i++) {
-    // create a temporary boid to process and make it the current boid in the list
-    Boid tempBoid = (Boid) flock.get(i);
+
+  for (Boid boid : flock) {
     if (triggered)
-      tempBoid.run(flock); // tell the temporary boid to execute its run method
-    tempBoid.render(); // tell the temporary boid to execute its render method
+      boid.run(flock);
+    boid.render();
   }
 }
 
@@ -145,16 +144,15 @@ void keyPressed() {
   case ' ':
     if ( scene.avatar() == null && previousAvatar != null) {
       scene.setAvatar(previousAvatar);
-      scene.mouseAgent().dragToThirdPerson();
-      scene.motionAgent().setDefaultGrabber(previousAvatar);
-      scene.motionAgent().disableTracking();
-    }
-    else {
+      //scene.setMouseAsThirdPerson();
+      scene.mouseAgent().setDefaultGrabber(previousAvatar);
+      scene.mouseAgent().disableTracking();
+    } else {
       previousAvatar = (InteractiveAvatarFrame)scene.avatar();
       scene.unsetAvatar(); //simply sets avatar as null      
-      scene.mouseAgent().dragToArcball();
-      scene.motionAgent().setDefaultGrabber(scene.eye().frame());
-      scene.motionAgent().enableTracking();
+      //scene.mouseAgent().setAsArcball();
+      scene.mouseAgent().setDefaultGrabber(scene.eye().frame());
+      scene.mouseAgent().enableTracking();
       scene.camera().interpolateToFitScene();
     }
     break;

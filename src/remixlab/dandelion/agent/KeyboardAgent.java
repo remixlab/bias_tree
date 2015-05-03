@@ -45,13 +45,18 @@ public class KeyboardAgent extends Agent {
 		setDefaultShortcuts();
 	}
 
-	/*
-	 * @Override public boolean addGrabber(Grabber frame) { if(frame instanceof AbstractScene) return addGrabber(scene,
-	 * keySceneBranch); if (frame instanceof InteractiveFrame) return addGrabber((InteractiveFrame) frame,
-	 * ((InteractiveFrame) frame).isEyeFrame() ? keyEyeBranch : keyFrameBranch); if (!(frame instanceof
-	 * InteractiveGrabber)) return super.addGrabber(frame); return false; }
-	 */
+  @Override
+  public boolean addGrabber(Grabber frame) {
+  	if(frame instanceof AbstractScene)
+  		return addGrabber(scene, keySceneBranch);
+  	if (frame instanceof InteractiveFrame)
+  		return addGrabber((InteractiveFrame) frame,	((InteractiveFrame) frame).isEyeFrame() ? keyEyeBranch : keyFrameBranch);
+  	if (!(frame instanceof InteractiveGrabber))
+  		return super.addGrabber(frame);
+  	return false;
+  }
 
+	/*
 	// TODO debug
 	@Override
 	public boolean addGrabber(Grabber frame) {
@@ -69,6 +74,7 @@ public class KeyboardAgent extends Agent {
 			return super.addGrabber(frame);
 		return false;
 	}
+	*/
 
 	/**
 	 * Returns the scene this object belongs to

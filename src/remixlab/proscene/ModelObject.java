@@ -119,7 +119,7 @@ public abstract class ModelObject implements Model {
 		return checkIfGrabsInput(event.x(), event.y());
 	}
 	
-	protected final boolean checkIfGrabsInput(float x, float y) {
+	public final boolean checkIfGrabsInput(float x, float y) {
 		scene.pickingBuffer().pushStyle();
 		scene.pickingBuffer().colorMode(PApplet.RGB, 255);
 		int index = (int) y * scene.width() + (int) x;

@@ -85,12 +85,16 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		}
 	}
 
-	/*
-	 * @Override public boolean addGrabber(Grabber frame) { if (frame instanceof InteractiveFrame) return
-	 * addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? eyeBranch : frameBranch); if
-	 * (!(frame instanceof InteractiveGrabber)) return super.addGrabber(frame); return false; }
-	 */
+	 @Override 
+	 public boolean addGrabber(Grabber frame) {
+		 if (frame instanceof InteractiveFrame)
+			 return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? eyeBranch : frameBranch);
+		 if(!(frame instanceof InteractiveGrabber))
+			 return super.addGrabber(frame);
+		 return false;
+		}
 
+	 /*
 	// TODO debug
 	@Override
 	public boolean addGrabber(Grabber frame) {
@@ -105,6 +109,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 			return super.addGrabber(frame);
 		return false;
 	}
+	*/
 
 	@Override
 	public void resetDefaultGrabber() {
