@@ -14,23 +14,13 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import remixlab.bias.branch.profile.*;
-import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.bias.event.shortcut.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
-	//protected DOF2Event				pressEvent, lastEvent;
 	public static int					LEFT_ID	= 1, CENTER_ID = 2, RIGHT_ID = 3, WHEEL_ID = 4;
-
-	//boolean										bypassNullEvent, need4Spin, drive, rotateMode;
-	//float											dFriction;
-	//GrabberFrame							iFrame, eyeFrame;
-
-	//TODO these two must be gone
-	boolean					needHandle;
-	DOF2Event	spEvent;
 
 	protected float						xSens		= 1f;
 	protected float						ySens		= 1f;
@@ -90,137 +80,6 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	@Override
 	public DOF2Event feed() {
 		return null;
-	}
-
-	// low-level
-
-	/**
-	 * Return the last event processed by the agent. Internal use, needed by scene visual hints.
-	 */
-	@Override
-	public DOF2Event currentEvent() {
-		return (DOF2Event) currEvent;
-	}
-
-	/**
-	 * Return the last press event processed by the agent. Internal use, needed by scene visual hints.
-	 */
-	@Override
-	public DOF2Event initEvent() {
-		return (DOF2Event) initEvent;
-	}
-
-	/**
-	 * Call {@link #updateTrackedGrabber(BogusEvent)} on the given event.
-	 */
-	protected void move(DOF2Event e) {
-		currEvent = e;//TODO pending call in MotionEvent
-		if (pickingMode() == PickingMode.MOVE)
-			updateTrackedGrabber(currentEvent());
-
-		if (inputGrabber() instanceof InteractiveFrame) {
-			if (((InteractiveFrame) inputGrabber()).isEyeFrame())
-				moveEye(currentEvent());
-			else
-				moveFrame(currentEvent());
-		}
-
-		handle(currentEvent());
-	}
-
-	protected void moveFrame(DOF2Event e) {
-		DOF2Action a = motionProfile().handle(currentEvent());
-		if (a != null) {
-			if (a == DOF2Action.ZOOM_ON_REGION)
-				return;
-			if (a == DOF2Action.SCREEN_ROTATE)
-				scene.setRotateVisualHint(true);
-			else
-				scene.setRotateVisualHint(false);
-			scene.setZoomVisualHint(false);
-		}
-	}
-
-	protected void moveEye(DOF2Event e) {
-		DOF2Action a = motionProfile().handle(currentEvent());
-		if (a != null) {
-			if (a == DOF2Action.SCREEN_ROTATE)
-				scene.setRotateVisualHint(true);
-			else
-				scene.setRotateVisualHint(false);
-
-			if (a == DOF2Action.ZOOM_ON_REGION) {//TODO ugly, better discard me (includes needHandle and spEvent)
-				scene.setZoomVisualHint(true);
-				spEvent = e.get();
-				spEvent.setPreviousEvent(currentEvent());
-				needHandle = true;
-				return;
-			}
-			else {
-				scene.setZoomVisualHint(false);
-				initEvent = e.get();
-				if (needHandle) {
-					inputHandler()
-							.enqueueEventTuple(new EventGrabberTuple(spEvent, interactiveFrame(), DOF2Action.ZOOM_ON_REGION));
-					needHandle = false;
-					return;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Begin interaction and call {@link #handle(BogusEvent)} on the given event. Keeps track of the {@link #pressEvent()}
-	 * .
-	 */
-	protected void press(DOF2Event e) {
-		if (inputGrabber() instanceof InteractiveFrame) {
-			if(!initAction(e))
-				handle(currentEvent());
-			return;
-		}
-		else {
-			currEvent = e;
-			handle(currentEvent());
-		}
-	}
-
-	/**
-	 * Call {@link #handle(BogusEvent)} on the given event.
-	 */
-	protected void drag(DOF2Event e) {		
-		if (inputGrabber() instanceof InteractiveFrame) {
-			if(!execAction(e))
-				handle(currentEvent());
-			return;
-		}
-		else {
-			currEvent = e;
-			handle(currentEvent());
-		}
-	}
-
-	/**
-	 * Ends interaction and calls {@link #updateTrackedGrabber(BogusEvent)} on the given event.
-	 */
-	protected void release(DOF2Event e) {
-		if (inputGrabber() instanceof InteractiveFrame) {
-			endAction(e);
-			return;
-		}
-		else
-			if (pickingMode() == PickingMode.MOVE)
-				updateTrackedGrabber(currentEvent());
-	}
-
-	protected void wheel(DOF1Event wEvent) {
-		handle(wEvent);
-	}
-
-	protected void click(ClickEvent cEvent) {
-		if (pickingMode() == PickingMode.CLICK)
-			updateTrackedGrabber(cEvent);
-		handle(cEvent);
 	}
 
 	// high-level API

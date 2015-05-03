@@ -336,13 +336,15 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			eye().interpolateToZoomOnPixel(new Point(event.x(), event.y()));
 			break;
 		default:
-			AbstractScene.showOnlyClickWarning(referenceAction());
+			AbstractScene.showClickWarning(referenceAction());
 			break;
 		}
 	}
 
 	@Override
 	protected void performInteraction(MotionEvent event) {
+		if(processAction(event))
+			return;
 		switch (referenceAction()) {
 		case CUSTOM:
 			performCustomAction(event);
@@ -420,28 +422,33 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		case ZOOM_ON_ANCHOR:
 			break;
 		case ZOOM_ON_REGION:
-			if (!isEyeFrame()) {
-				AbstractScene.showOnlyEyeWarning(referenceAction());
-			}
-			if (event.isAbsolute()) {
-				AbstractScene.showEventVariationWarning(referenceAction());
-				break;
-			}
-			DOF2Event dof2 = MotionEvent.dof2Event(event);
-			if (dof2 == null) {
-				AbstractScene.showMinDOFsWarning("moveForward", 2);
-				break;
-			}
-			int w = (int) Math.abs(dof2.dx());
-			int tlX = (int) dof2.prevX() < (int) dof2.x() ? (int) dof2.prevX() : (int) dof2.x();
-			int h = (int) Math.abs(dof2.dy());
-			int tlY = (int) dof2.prevY() < (int) dof2.y() ? (int) dof2.prevY() : (int) dof2.y();
-			eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
+			//this get called when processing the action
+			//gestureZoomOnRegion(event);
 			break;
 		default:
-			AbstractScene.showOnlyMotionWarning(referenceAction());
+			AbstractScene.showMotionWarning(referenceAction());
 			break;
 		}
+	}
+	
+	protected void gestureZoomOnRegion(MotionEvent event) {
+		if (!isEyeFrame()) {
+			AbstractScene.showOnlyEyeWarning(referenceAction());
+		}
+		if (event.isAbsolute()) {
+			AbstractScene.showEventVariationWarning(referenceAction());
+			return;
+		}
+		DOF2Event dof2 = MotionEvent.dof2Event(event);
+		if (dof2 == null) {
+			AbstractScene.showMinDOFsWarning("gestureZoomOnRegion", 2);
+			return;
+		}
+		int w = (int) Math.abs(dof2.dx());
+		int tlX = (int) dof2.prevX() < (int) dof2.x() ? (int) dof2.prevX() : (int) dof2.x();
+		int h = (int) Math.abs(dof2.dy());
+		int tlY = (int) dof2.prevY() < (int) dof2.y() ? (int) dof2.prevY() : (int) dof2.y();
+		eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
 	}
 
 	@Override
@@ -503,7 +510,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			gestureTranslateZ(event, false);
 			break;
 		default:
-			AbstractScene.showOnlyKeyboardWarning(referenceAction());
+			AbstractScene.showKeyboardWarning(referenceAction());
 			break;
 		}
 	}
@@ -544,5 +551,156 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	protected void performCustomAction(DOF6Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF6Event event)", this.getClass().getName());
+	}
+	
+  //two tempi actions workflow divert from 'normal' (single tempi) actions which just require
+	// either updateTrackeGrabber(event) or handle(event).
+	
+	//TODO pending cloning and hash
+	// Multiple tempo actions require this:
+	Action<MotionAction> initAction;	
+	//private MotionAction twotempi;
+	//private A a;//TODO study make me an attribute to com between init and end
+	private boolean need4Spin;
+	private boolean need4Tossing;
+	private boolean drive;
+	protected MotionEvent currEvent;
+	public MotionEvent initEvent;
+	public DOF2Event zor;
+	
+	public MotionEvent initEvent() {
+		return initEvent;
+	}
+	
+	public MotionEvent currentEvent() {
+		return currEvent;
+	}
+	
+	protected boolean processAction(MotionEvent event) {
+		if(initAction == null) {
+			if(action() != null) {
+				initAction = action();
+				return initAction(event);//start action
+			}
+		}
+		else { // initAction != null
+			if(action() != null) {
+				if(initAction == action())
+					return execAction(event);//continue action
+				else { //initAction != action() -> action changes abruptly, i.e., 
+					endAction(event);
+					//TODO testing these two lines
+					System.out.println("testing case when action changes abruptly");
+					initAction = action();
+					return initAction(event);//start action
+					//return false;
+				}
+			}
+			else {//action() == null
+				return endAction(event);//stopAction
+			}
+		}
+		return true;//i.e., if initAction == action() == null -> ignore :)
+	}
+	
+	protected boolean initAction(MotionEvent event) {
+		if(event instanceof DOF1Event)
+			return false;
+		return initAction(MotionEvent.dof2Event(event));
+	}
+	
+	protected boolean initAction(DOF2Event event) {
+		initEvent = event.get();
+		currEvent = event;
+		
+		stopSpinning();			
+		MotionAction twotempi = action().referenceAction();
+		if (twotempi == MotionAction.SCREEN_TRANSLATE)
+			dirIsFixed = false;
+		boolean rotateMode = ((twotempi == MotionAction.ROTATE) || (twotempi == MotionAction.ROTATE_XYZ)
+				|| (twotempi == MotionAction.ROTATE_CAD)
+				|| (twotempi == MotionAction.SCREEN_ROTATE) || (twotempi == MotionAction.TRANSLATE_XYZ_ROTATE_XYZ));
+		if (rotateMode && scene.is3D())
+			scene.camera().cadRotationIsReversed = scene.camera().frame()
+					.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
+		need4Spin = (rotateMode && (dampingFriction() == 0));
+		drive = (twotempi == MotionAction.DRIVE);
+		need4Tossing = (twotempi == MotionAction.MOVE_FORWARD) || (twotempi == MotionAction.MOVE_BACKWARD)
+				|| (drive);
+		if(need4Tossing)
+			updateSceneUpVector();
+		scene.setRotateVisualHint(twotempi == MotionAction.SCREEN_ROTATE);		
+		if(isEyeFrame())
+			scene.setZoomVisualHint(twotempi == MotionAction.ZOOM_ON_REGION);
+		//if (scene.zoomVisualHint() || scene.rotateVisualHint())	return true;
+		if (scene.zoomVisualHint())
+		  return true;
+		return false;//always handle after init: experimental TODO
+	}
+	
+	protected boolean execAction(MotionEvent event) {
+		if(event instanceof DOF1Event)
+			return false;
+		return execAction(MotionEvent.dof2Event(event));
+	}
+	
+	protected boolean execAction(DOF2Event event) {
+		currEvent = event;
+		if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
+			if (drive) {
+				setFlySpeed(0.01f * scene.radius() * 0.01f * (event.y() - event.y()));
+			}
+			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
+			if (action().referenceAction() == MotionAction.ZOOM_ON_REGION)
+				return true;
+		}
+		else {
+			zor = event.get();
+			zor.setPreviousEvent(initEvent.get());
+			return true;//bypass
+		}
+		return false;
+	}
+	
+	protected boolean endAction(MotionEvent event) {
+		if(event instanceof DOF1Event)
+			return false;
+		boolean result = endAction(MotionEvent.dof2Event(event));
+		initAction = null;
+		return result;
+	}
+	
+	protected boolean endAction(DOF2Event event) {
+		if (scene.rotateVisualHint()) {
+			scene.setRotateVisualHint(false);
+			return true;
+		}
+		if(currentEvent() != null) {
+			if (need4Spin) {
+				startSpinning(currentEvent().speed(), currentEvent().delay());
+				return true;
+			}
+		}
+		//currEvent = event;//not needed
+		if (scene.zoomVisualHint()) {
+			// at first glance this should work
+			// handle(event);
+			// but the problem is that depending on the order the button and the modifiers are released,
+			// different actions maybe triggered, so we go for sure ;) :
+			scene.setZoomVisualHint(false);
+			gestureZoomOnRegion(zor);//now action need to be executed on event
+			return true;//since action is null
+		}
+		//if (pickingMode() == PickingMode.MOVE)
+			//updateTrackedGrabber(event);
+		
+		if (need4Tossing) {
+		  // restore speed after drive action terminates:
+			if(drive)
+				setFlySpeed(0.01f * scene.radius());
+			stopTossing();
+			return true;
+		}
+		return true;
 	}
 }

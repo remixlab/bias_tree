@@ -13,6 +13,7 @@ package remixlab.proscene;
 import processing.core.*;
 import processing.opengl.*;
 import remixlab.bias.core.*;
+import remixlab.bias.event.DOF2Event;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
@@ -1923,9 +1924,13 @@ public class Scene extends AbstractScene implements PConstants {
 	protected void drawScreenRotateHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
+		if(!(motionAgent().inputGrabber() instanceof InteractiveFrame))
+			return;		
+		
 		pg().pushStyle();
-		float p1x = mouseAgent().currentEvent().x() /*- originCorner().x()*/;
-		float p1y = mouseAgent().currentEvent().y() /*- originCorner().y()*/;
+		float p1x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;
+		float p1y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;
+		
 		Vec p2 = new Vec();
 		if (motionAgent().inputGrabber() instanceof GrabberFrame) {
 			if (((GrabberFrame) motionAgent().inputGrabber()).isEyeFrame())
@@ -1947,11 +1952,18 @@ public class Scene extends AbstractScene implements PConstants {
 	protected void drawZoomWindowHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
-		pg().pushStyle();
-		float p1x = mouseAgent().initEvent().x() /*- originCorner().x()*/;
-		float p1y = mouseAgent().initEvent().y() /*- originCorner().y()*/;
-		float p2x = mouseAgent().currentEvent().x() /*- originCorner().x()*/;
-		float p2y = mouseAgent().currentEvent().y() /*- originCorner().y()*/;
+		if(!(motionAgent().inputGrabber() instanceof InteractiveFrame))
+			return;		
+		InteractiveFrame iFrame = (InteractiveFrame)motionAgent().inputGrabber();
+		if(!(iFrame.initEvent instanceof DOF2Event))
+			return;
+		
+		pg().pushStyle();		
+		DOF2Event init = (DOF2Event) iFrame.initEvent;		
+		float p1x = init.x() /*- originCorner().x()*/;
+		float p1y = init.y() /*- originCorner().y()*/;
+		float p2x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;
+		float p2y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;				
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
 		pg().strokeWeight(2);

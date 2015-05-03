@@ -164,8 +164,7 @@ public class InputHandler {
 	 */
 	public boolean enqueueEventTuple(EventGrabberTuple eventTuple) {
 		if (!eventTupleQueue.contains(eventTuple))
-			if (!eventTuple.event().isNull())
-				return eventTupleQueue.add(eventTuple);
+			return eventTupleQueue.add(eventTuple);
 		return false;
 	}
 

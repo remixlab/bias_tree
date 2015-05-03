@@ -2128,16 +2128,16 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		showWarning(themethod + " is not available under the " + platform + " platform.");
 	}
 
-	static public void showOnlyClickWarning(MotionAction action) {
-		showWarning(action.name() + " can only be performed from a ClickEvent.");
+	static public void showClickWarning(MotionAction action) {
+		showWarning(action.name() + " cannot be performed from a ClickEvent.");
 	}
 
-	static public void showOnlyMotionWarning(MotionAction action) {
-		showWarning(action.name() + " can only be performed from a MotionEvent.");
+	static public void showMotionWarning(MotionAction action) {
+		showWarning(action.name() + " cannot be performed from a MotionEvent.");
 	}
 
-	static public void showOnlyKeyboardWarning(MotionAction action) {
-		showWarning(action.name() + " can only be performed from a KeyboardEvent.");
+	static public void showKeyboardWarning(MotionAction action) {
+		showWarning(action.name() + " cannot only be performed from a KeyboardEvent.");
 	}
 
 	static public void showMinDOFsWarning(String themethod, int dofs) {

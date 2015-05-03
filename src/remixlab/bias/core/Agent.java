@@ -317,8 +317,10 @@ public class Agent {
 	protected <E extends Enum<E>> boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)
 			return false;
-		if (event.isNull())
-			return false;
+		if(event instanceof MotionEvent)
+			if(((MotionEvent)event).isAbsolute())
+				if (event.isNull())
+					return false;
 		if (event instanceof MotionEvent)
 			((MotionEvent) event).modulate(sensitivities((MotionEvent) event));
 		Grabber inputGrabber = inputGrabber();
@@ -331,6 +333,18 @@ public class Agent {
 			}
 			return inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber));
 		}
+		return false;
+	}
+	
+	/**
+	 * Force a null action on the interactive grabber.
+	 */
+	@SuppressWarnings("unchecked")
+	protected <E extends Enum<E>> boolean flush(BogusEvent event) {
+		Grabber inputGrabber = inputGrabber();
+		if (inputGrabber != null)
+			if (inputGrabber instanceof InteractiveGrabber<?>)
+				return inputHandler().enqueueEventTuple(new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, null));
 		return false;
 	}
 
