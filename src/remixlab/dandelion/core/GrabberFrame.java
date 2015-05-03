@@ -586,7 +586,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected boolean checkIfGrabsInput(ClickEvent event) {
-		return checkIfGrabsInput(new DOF2Event(event.x(), event.y()));
+		return checkIfGrabsInput(event.x(), event.y());
 	}
 
 	protected boolean checkIfGrabsInput(KeyboardEvent event) {

@@ -567,6 +567,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	protected MotionEvent currEvent;
 	public MotionEvent initEvent;
 	public DOF2Event zor;
+	private float drySpeedCache;
 	
 	public MotionEvent initEvent() {
 		return initEvent;
@@ -625,6 +626,8 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 					.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
 		need4Spin = (rotateMode && (dampingFriction() == 0));
 		drive = (twotempi == MotionAction.DRIVE);
+		if(drive)
+			drySpeedCache = flySpeed();
 		need4Tossing = (twotempi == MotionAction.MOVE_FORWARD) || (twotempi == MotionAction.MOVE_BACKWARD)
 				|| (drive);
 		if(need4Tossing)
@@ -697,7 +700,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		if (need4Tossing) {
 		  // restore speed after drive action terminates:
 			if(drive)
-				setFlySpeed(0.01f * scene.radius());
+				setFlySpeed(drySpeedCache);
 			stopTossing();
 			return true;
 		}

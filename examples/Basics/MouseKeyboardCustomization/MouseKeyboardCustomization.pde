@@ -76,7 +76,7 @@ public void setExoticCustomization() {
   mouse.setClickBinding(Target.FRAME, Event.SHIFT, RIGHT, 2, ClickAction.ALIGN_FRAME);  
   mouse.setWheelBinding(Target.FRAME, Event.CTRL, DOF1Action.ZOOM_ON_ANCHOR);  
   // 1b. keyboard
-  keyboard.setShortcut(Event.CTRL, java.awt.event.KeyEvent.VK_A, KeyboardAction.TOGGLE_GRID_VISUAL_HINT);
+  keyboard.setShortcut(Event.CTRL, java.awt.event.KeyEvent.VK_A, KeyboardSceneAction.TOGGLE_GRID_VISUAL_HINT);
   // 2. Random
   // 2a. mouse
   mouse.setButtonBinding(Target.FRAME, Event.CTRL, LEFT, randomAction(DOF2Action.class));
@@ -84,7 +84,7 @@ public void setExoticCustomization() {
   mouse.setClickBinding(Target.EYE, LEFT, randomAction(ClickAction.class));
   mouse.setWheelBinding(Target.EYE, randomAction(DOF1Action.class));
   // 2b. keyboard
-  keyboard.setShortcut('a', randomAction(KeyboardAction.class));
+  keyboard.setShortcut('a', randomAction(KeyboardSceneAction.class));
 }
 
 public void keyPressed() {
