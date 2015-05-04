@@ -235,9 +235,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	 * pool.
 	 */
 	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
-		// TODO merge with eye?
 		super(scn, referenceFrame, p, r, s);
-		// scene.motionAgent().addGrabber(this);
 	}
 
 	/**
@@ -420,6 +418,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			gestureTranslateZ(event, true);
 			break;
 		case ZOOM_ON_ANCHOR:
+			gestureZoomOnAnchor(event);	
 			break;
 		case ZOOM_ON_REGION:
 			//this get called when processing the action
@@ -429,26 +428,6 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			AbstractScene.showMotionWarning(referenceAction());
 			break;
 		}
-	}
-	
-	protected void gestureZoomOnRegion(MotionEvent event) {
-		if (!isEyeFrame()) {
-			AbstractScene.showOnlyEyeWarning(referenceAction());
-		}
-		if (event.isAbsolute()) {
-			AbstractScene.showEventVariationWarning(referenceAction());
-			return;
-		}
-		DOF2Event dof2 = MotionEvent.dof2Event(event);
-		if (dof2 == null) {
-			AbstractScene.showMinDOFsWarning("gestureZoomOnRegion", 2);
-			return;
-		}
-		int w = (int) Math.abs(dof2.dx());
-		int tlX = (int) dof2.prevX() < (int) dof2.x() ? (int) dof2.prevX() : (int) dof2.x();
-		int h = (int) Math.abs(dof2.dy());
-		int tlY = (int) dof2.prevY() < (int) dof2.y() ? (int) dof2.prevY() : (int) dof2.y();
-		eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
 	}
 
 	@Override

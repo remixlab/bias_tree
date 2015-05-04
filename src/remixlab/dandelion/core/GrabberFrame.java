@@ -1292,6 +1292,49 @@ public class GrabberFrame extends Frame implements Grabber {
 		translate(screenToVec(Vec.multiply(new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), -event.dz()), this.translationSensitivity())));
 	}
 	
+  protected void gestureZoomOnAnchor(MotionEvent event) {
+		
+	}
+	
+  /*
+  protected void gestureZoomOnAnchor(DOF2Event e1) {
+  	if (e1.action() != null) // its a wheel wheel :P
+			delta = e1.x() * -wheelSensitivity() * wheelSensitivityCoef;
+		// TODO should absolute be divided by camera.screenHeight()?
+		else if (e1.isAbsolute())
+			delta = -e1.x() / camera.screenHeight();
+		else
+			delta = -e1.dx() / camera.screenHeight();
+		trans = Vec.subtract(position(), scene.camera().anchor());
+		if (trans.magnitude() > 0.02f * scene.radius() || delta > 0.0f)
+			translate(Vec.multiply(trans, delta));
+	}
+	*/
+	
+	protected void gestureZoomOnRegion(MotionEvent event) {
+		if (!isEyeFrame()) {
+			AbstractScene.showOnlyEyeWarning("gestureZoomOnRegion");
+		}
+		if (event.isAbsolute()) {
+			AbstractScene.showEventVariationWarning("gestureZoomOnRegion");
+			return;
+		}
+		DOF2Event dof2 = MotionEvent.dof2Event(event);
+		if (dof2 == null) {
+			AbstractScene.showMinDOFsWarning("gestureZoomOnRegion", 2);
+			return;
+		}
+		gestureZoomOnRegion(dof2);
+	}
+	
+	protected void gestureZoomOnRegion(DOF2Event event) {
+		int w = (int) Math.abs(event.dx());
+		int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
+		int h = (int) Math.abs(event.dy());
+		int tlY = (int) event.prevY() < (int) event.y() ? (int) event.prevY() : (int) event.y();
+		eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
+	}
+	
 	protected void gestureRotateX(MotionEvent event) {
 		gestureRotateX(event, false);
 	}
