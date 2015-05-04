@@ -1955,11 +1955,11 @@ public class Scene extends AbstractScene implements PConstants {
 		if(!(motionAgent().inputGrabber() instanceof InteractiveFrame))
 			return;		
 		InteractiveFrame iFrame = (InteractiveFrame)motionAgent().inputGrabber();
-		if(!(iFrame.initEvent instanceof DOF2Event))
+		if(!(iFrame.initMotionEvent instanceof DOF2Event))
 			return;
 		
 		pg().pushStyle();		
-		DOF2Event init = (DOF2Event) iFrame.initEvent;		
+		DOF2Event init = (DOF2Event) iFrame.initMotionEvent;		
 		float p1x = init.x() /*- originCorner().x()*/;
 		float p1y = init.y() /*- originCorner().y()*/;
 		float p2x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;

@@ -31,7 +31,7 @@ void setup() {
   //no spinning:
   scene.camera().frame().setSpinningSensitivity(100);
   //no damping:
-  scene.camera().frame().setDampingFriction(1);
+  scene.camera().frame().setDamping(1);
 }
 
 void draw() {

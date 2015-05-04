@@ -52,8 +52,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	private boolean							horiz								= true; // Two simultaneous frames require two mice!
 
 	protected float							eventSpeed;								// spnning and tossing
-	protected Vec								tDir;
-  //TODO handle flyspeed
+	protected Vec								fDir;
 	protected float							flySpd;
 	protected TimingTask				flyTimerTask;
 	protected Vec								scnUpVec;
@@ -386,21 +385,20 @@ public class GrabberFrame extends Frame implements Grabber {
 		setWheelSensitivity(15f);
 		setKeyboardSensitivity(1.0f);
 		setSpinningSensitivity(0.3f);
-		setDampingFriction(0.5f);
+		setDamping(0.5f);
 
 		spinningTimerTask = new TimingTask() {
 			public void execute() {
-				spin();
+				spinExecution();
 			}
 		};
 		scene.registerTimingTask(spinningTimerTask);
 
-		// TODO decide whether to include this:
 		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
 		flyDisp = new Vec(0.0f, 0.0f, 0.0f);
 		flyTimerTask = new TimingTask() {
 			public void execute() {
-				toss();
+				fly();
 			}
 		};
 		scene.registerTimingTask(flyTimerTask);
@@ -414,7 +412,6 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (scene.eye() != null)
 			setFlySpeed(0.01f * scene.eye().sceneRadius());
 
-		// TODO experimenting
 		scene.motionAgent().addGrabber(this);
 		scene.keyboardAgent().addGrabber(this);
 	}
@@ -435,20 +432,19 @@ public class GrabberFrame extends Frame implements Grabber {
 
 		this.spinningTimerTask = new TimingTask() {
 			public void execute() {
-				spin();
+				spinExecution();
 			}
 		};
 
 		this.scene.registerTimingTask(spinningTimerTask);
 
-		// TODO decide whether to include this:
 		this.scnUpVec = new Vec();
 		this.scnUpVec.set(otherFrame.sceneUpVector());
 		this.flyDisp = new Vec();
 		this.flyDisp.set(otherFrame.flyDisp.get());
 		this.flyTimerTask = new TimingTask() {
 			public void execute() {
-				toss();
+				fly();
 			}
 		};
 		this.scene.registerTimingTask(flyTimerTask);
@@ -469,7 +465,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		this.setKeyboardSensitivity(otherFrame.keyboardSensitivity());
 		//
 		this.setSpinningSensitivity(otherFrame.spinningSensitivity());
-		this.setDampingFriction(otherFrame.dampingFriction());
+		this.setDamping(otherFrame.damping());
 		//
 		this.setFlySpeed(otherFrame.flySpeed());
 		//
@@ -519,15 +515,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 	*/
 
-	/*
-	 * //TODO add me as protected so that other can easily override me protected GrabberFrame inEyePath() { //GrabberFrame
-	 * gFrame = frame().get(); //gFrame.theeye = null; //gFrame.eyeFrame = frame(); //return gFrame;
-	 * 
-	 * //TODO really needs more thought specially because of the prev. case: addKeyFrameToPath //best part is that it
-	 * doesn't required ad-hoc constructors //worst part: it requires derived classes to override get() as in
-	 * CustomEyeFrame2 frame().theeye = null; GrabberFrame gFrame = frame().get(); gFrame.eyeFrame = frame();
-	 * frame().theeye = this; return gFrame; }
-	 */
+	//needed by the eye
 	protected GrabberFrame getDetachedFromEye() {
 		GrabberFrame gFrame = this.get();
 		scene.motionAgent().removeGrabber(gFrame);
@@ -536,6 +524,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		return gFrame;
 	}
 
+	//TODO needs testing, pending: public?, examples, and attachToEye
 	protected void detachFromEye() {
 		scene.motionAgent().removeGrabber(this);
 		scene.keyboardAgent().removeGrabber(this);
@@ -544,12 +533,15 @@ public class GrabberFrame extends Frame implements Grabber {
 		scene.keyboardAgent().addGrabber(this);
 	}
 
-	// TODO pending attoToEye
-
 	/*
-	 * protected GrabberFrame getIntoEyePath() { GrabberFrame gFrame = this.get(); gFrame.theeye = null; gFrame.eyeFrame =
-	 * true; return gFrame; }
-	 */
+	// nont really needed
+	protected GrabberFrame getIntoEyePath() {
+		GrabberFrame gFrame = this.get();
+		gFrame.theeye = null;
+		gFrame.eyeFrame = true;
+		return gFrame;
+	}
+	*/
 
 	/**
 	 * Returns the scene this object belongs to
@@ -772,28 +764,28 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * <p>
 	 * Returns the cached value of the spinning friction used in {@link #recomputeSpinningRotation()}.
 	 */
-	protected float dampingFrictionFx() {
+	protected float dampingFx() {
 		return sFriction;
 	}
 
 	/**
 	 * Defines the spinning deceleration.
 	 * <p>
-	 * Default value is 0.5. Use {@link #setDampingFriction(float)} to tune this value. A higher value will make damping
+	 * Default value is 0.5. Use {@link #setDamping(float)} to tune this value. A higher value will make damping
 	 * more difficult (a value of 1.0 forbids damping).
 	 */
-	public float dampingFriction() {
+	public float damping() {
 		return dampFriction;
 	}
 
 	/**
-	 * Defines the {@link #dampingFriction()}. Values must be in the range [0..1].
+	 * Defines the {@link #damping()}. Values must be in the range [0..1].
 	 */
-	public void setDampingFriction(float f) {
+	public void setDamping(float f) {
 		if (f < 0 || f > 1)
 			return;
 		dampFriction = f;
-		setDampingFrictionFx(dampFriction);
+		setDampingFx(dampFriction);
 	}
 
 	/**
@@ -801,7 +793,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * <p>
 	 * Computes and caches the value of the spinning friction used in {@link #recomputeSpinningRotation()}.
 	 */
-	protected void setDampingFrictionFx(float spinningFriction) {
+	protected void setDampingFx(float spinningFriction) {
 		sFriction = spinningFriction * spinningFriction * spinningFriction;
 	}
 
@@ -898,7 +890,7 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	/**
 	 * Returns the minimum gesture speed required to make the InteractiveFrame {@link #spin()}. Spinning requires to set
-	 * to {@link #dampingFriction()} to 0.
+	 * to {@link #damping()} to 0.
 	 * <p>
 	 * See {@link #spin()}, {@link #spinningRotation()} and {@link #startSpinning(MotionEvent)} for details.
 	 * <p>
@@ -910,7 +902,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * @see #translationSensitivity()
 	 * @see #rotationSensitivity()
 	 * @see #wheelSensitivity()
-	 * @see #setDampingFriction(float)
+	 * @see #setDamping(float)
 	 */
 	public final float spinningSensitivity() {
 		return spngSensitivity;
@@ -944,7 +936,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * Use {@link #startSpinning(MotionEvent)} and {@link #stopSpinning()} to change this state. Default value is
 	 * {@code false}.
 	 * 
-	 * @see #isTossing()
+	 * @see #isFlying()
 	 */
 	public final boolean isSpinning() {
 		return spinningTimerTask.isActive();
@@ -960,9 +952,9 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * {@link remixlab.dandelion.geom.Frame#transformOfFrom(Vec, Frame)} to convert this axis from another Frame
 	 * coordinate system.
 	 * <p>
-	 * <b>Attention: </b>Spinning may be decelerated according to {@link #dampingFriction()} till it stops completely.
+	 * <b>Attention: </b>Spinning may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
-	 * @see #tossingDirection()
+	 * @see #flightDirection()
 	 */
 	public final Rotation spinningRotation() {
 		return spngRotation;
@@ -971,7 +963,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	/**
 	 * Defines the {@link #spinningRotation()}. Its axis is defined in the InteractiveFrame coordinate system.
 	 * 
-	 * @see #setTossingDirection(Vec)
+	 * @see #setFlyDirection(Vec)
 	 */
 	public final void setSpinningRotation(Rotation spinningRotation) {
 		spngRotation = spinningRotation;
@@ -982,71 +974,63 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * {@code false} after this call.
 	 * <p>
 	 * <b>Attention: </b>This method may be called by {@link #spin()}, since spinning may be decelerated according to
-	 * {@link #dampingFriction()} till it stops completely.
+	 * {@link #damping()} till it stops completely.
 	 * 
-	 * @see #dampingFriction()
-	 * @see #toss()
+	 * @see #damping()
+	 * @see #flyDamping()
 	 */
 	public final void stopSpinning() {
 		spinningTimerTask.stop();
 	}
-
+	
+	public void startSpinning(MotionEvent event, Rotation rt) {
+		startSpinning(rt, event.speed(), event.delay());
+	}
+	
 	/**
 	 * Starts the spinning of the InteractiveFrame.
 	 * <p>
 	 * This method starts a timer that will call {@link #spin()} every {@code updateInterval} milliseconds. The
 	 * InteractiveFrame {@link #isSpinning()} until you call {@link #stopSpinning()}.
 	 * <p>
-	 * <b>Attention: </b>Spinning may be decelerated according to {@link #dampingFriction()} till it stops completely.
+	 * <b>Attention: </b>Spinning may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
-	 * @see #dampingFriction()
-	 * @see #toss()
+	 * @see #damping()
+	 * @see #flyDamping()
 	 */
-	/*
-	public void startSpinning(MotionEvent e) {
-		eventSpeed = e.speed();
-		int updateInterval = (int) e.delay();
+	public void startSpinning(Rotation rt, float speed, long delay) {
+		setSpinningRotation(rt);
+		eventSpeed = speed;
+		if(Util.zero(damping()) && eventSpeed < spinningSensitivity())
+			return;		
+		int updateInterval = (int) delay;
 		if (updateInterval > 0)
 			spinningTimerTask.run(updateInterval);
 	}
-	*/
-
-/*
-	public void startSpinning(Rotation rt, float speed) {
-		startSpinning(rt, speed, FLY_UPDATE_PERDIOD);
-	}
-	*/
 	
-	public void startSpinning(Rotation rt, float speed, long delay) {
-		setSpinningRotation(rt);
-		//startSpinning(speed);
-		
-		///*
-		if (Util.nonZero(dampingFriction())) // same as damping:
-			startSpinning(speed, delay);
-		else
-			spin();// same as rotate, but try to spin at the end
-			//*/
-	}
-	
-	public boolean startSpinning(float speed) {
-		return startSpinning(speed, FLY_UPDATE_PERDIOD);
-	}
-		
-	public boolean startSpinning(float speed, long delay) {
-		eventSpeed = speed;
-		if(this.spinningRotation() == null)
-			return false;
-		
-		if(Util.zero(dampingFriction()))			
-			if( eventSpeed < this.spinningSensitivity())
-				return false;
-			
-		if(delay > 0) {
-			spinningTimerTask.run(delay);
-			return true;
+	protected void spinExecution() {
+		if(Util.zero(damping()))
+			spin();
+		else {
+			if (eventSpeed == 0) {
+				stopSpinning();
+				return;
+			}
+			spin();
+			recomputeSpinningRotation();
 		}
-		return false;
+	}
+	
+	protected void spin(Rotation rt, float speed, long delay) {
+		if(Util.zero(damping()))
+			spin(rt);
+		else
+			startSpinning(rt, speed, delay); 
+	}
+	
+	protected void spin(Rotation rt) {
+		setSpinningRotation(rt);
+		spin();
 	}
 
 	/**
@@ -1055,37 +1039,26 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * {@link remixlab.dandelion.core.AbstractScene#eye()}. Called by a timer when the InteractiveFrame
 	 * {@link #isSpinning()}.
 	 * <p>
-	 * <b>Attention: </b>Spinning may be decelerated according to {@link #dampingFriction()} till it stops completely.
+	 * <b>Attention: </b>Spinning may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
-	 * @see #dampingFriction()
-	 * @see #toss()
+	 * @see #damping()
+	 * @see #flyDamping()
 	 */
 	protected void spin() {
-		if (Util.nonZero(dampingFriction())) {
-			if (eventSpeed == 0) {
-				stopSpinning();
-				return;
-			}
-			if (isEyeFrame())
-				rotateAroundPoint(spinningRotation(), eye().anchor());
-			else
-				rotate(spinningRotation());
-			recomputeSpinningRotation();
-		}
-		else if (isEyeFrame())
+		if (isEyeFrame())
 			rotateAroundPoint(spinningRotation(), eye().anchor());
 		else
 			rotate(spinningRotation());
 	}
 
 	/**
-	 * Internal method. Recomputes the {@link #spinningRotation()} according to {@link #dampingFriction()}.
+	 * Internal method. Recomputes the {@link #spinningRotation()} according to {@link #damping()}.
 	 * 
-	 * @see #recomputeTossingDirection()
+	 * @see #recomputeFlyDirection()
 	 */
 	protected void recomputeSpinningRotation() {
 		float prevSpeed = eventSpeed;
-		float damping = 1.0f - dampingFrictionFx();
+		float damping = 1.0f - dampingFx();
 		eventSpeed *= damping;
 		if (Math.abs(eventSpeed) < .001f)
 			eventSpeed = 0;
@@ -1338,7 +1311,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showDepthWarning("gestureRotateX");
 			return;
 		}
-		startSpinning(screenToQuat(computeAngle(event) * (isEyeFrame() ? -sens : sens), 0, 0), event.speed(), event.delay());
+		spin(screenToQuat(computeAngle(event) * (isEyeFrame() ? -sens : sens), 0, 0), event.speed(), event.delay());
 	}
 	
 	protected void gestureRotateX(KeyboardEvent event, boolean up) {
@@ -1368,7 +1341,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showDepthWarning("gestureRotateY");
 			return;
 		}
-		startSpinning(screenToQuat(0, computeAngle(event) * (isEyeFrame() ? - sens : sens), 0), event.speed(), event.delay());
+		spin(screenToQuat(0, computeAngle(event) * (isEyeFrame() ? - sens : sens), 0), event.speed(), event.delay());
 	}
 	
 	protected void gestureRotateY(KeyboardEvent event, boolean up) {
@@ -1402,7 +1375,7 @@ public class GrabberFrame extends Frame implements Grabber {
 				rt = new Rot(sens * (scene.isRightHanded() ? -computeAngle(event) : computeAngle(event)));
 			else
 				rt = screenToQuat(0, 0, sens * computeAngle(event));
-		startSpinning(rt, event.speed(), event.delay());
+		spin(rt, event.speed(), event.delay());
 	}
 	
 	protected void gestureRotateZ(KeyboardEvent event, boolean up) {
@@ -1459,7 +1432,7 @@ public class GrabberFrame extends Frame implements Grabber {
 				rt = new Quat(trns, -rt.angle());
 			}
 		}
-		startSpinning(rt, event.speed(), event.delay());
+		spin(rt, event.speed(), event.delay());
 	}
 
 	protected void gestureScale(MotionEvent event) {
@@ -1501,39 +1474,17 @@ public class GrabberFrame extends Frame implements Grabber {
 	protected void gestureMoveForward(DOF2Event event, boolean forward) {
 		Vec trns;
 		float fSpeed = forward ? -flySpeed() : flySpeed();
-		if (isEyeFrame()) {
-			if (is2D()) {
-				rotate(deformedBallRotation(event, eye().projectedCoordinatesOf(position())));
-				flyDisp.set(fSpeed, 0.0f, 0.0f);
-				translate(flyDisp);
-				setTossingDirection(flyDisp);
-				startTossing(event);
-			}
-			else {
-				rotate(rollPitchQuaternion(event, scene.camera()));
-				flyDisp.set(0.0f, 0.0f, fSpeed);
-				trns = rotation().rotate(flyDisp);
-				setTossingDirection(trns);
-				startTossing(event);
-			}
+		if (is2D()) {
+			rotate(deformedBallRotation(event, scene.window().projectedCoordinatesOf(position())));
+			flyDisp.set(-fSpeed, 0.0f, 0.0f);
+			trns = localInverseTransformOf(flyDisp);				
+			startFlying(event, trns);
 		}
 		else {
-			if (is2D()) {
-				rotate(deformedBallRotation(event, scene.window().projectedCoordinatesOf(position())));
-				flyDisp.set(-fSpeed, 0.0f, 0.0f);
-				trns = localInverseTransformOf(flyDisp);
-				// TODO new line, needs testing but seemed like a bug not to have it
-				translate(trns);
-				setTossingDirection(trns);
-				startTossing(event);
-			}
-			else {
-				rotate(rollPitchQuaternion(event, scene.camera()));
-				flyDisp.set(0.0f, 0.0f, fSpeed);
-				trns = rotation().rotate(flyDisp);
-				setTossingDirection(trns);
-				startTossing(event);
-			}
+			rotate(rollPitchQuaternion(event, scene.camera()));
+			flyDisp.set(0.0f, 0.0f, fSpeed);
+			trns = rotation().rotate(flyDisp);				
+			startFlying(event, trns);
 		}
 	}
 
@@ -1551,20 +1502,10 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	protected void gestureDrive(DOF2Event event) {
 		Vec trns;
-		if (isEyeFrame()) {
-			rotate(turnQuaternion(event.dof1Event(), scene.camera()));
-			flyDisp.set(0.0f, 0.0f, flySpeed());
-			trns = rotation().rotate(flyDisp);
-			setTossingDirection(trns);
-			startTossing(event);
-		}
-		else {
-			rotate(turnQuaternion(event.dof1Event(), scene.camera()));
-			flyDisp.set(0.0f, 0.0f, flySpeed());
-			trns = rotation().rotate(flyDisp);
-			setTossingDirection(trns);
-			startTossing(event);
-		}
+		rotate(turnQuaternion(event.dof1Event(), scene.camera()));
+		flyDisp.set(0.0f, 0.0f, flySpeed());
+		trns = rotation().rotate(flyDisp);
+		startFlying(event, trns);
 	}
 
 	protected void gestureRotateCAD(MotionEvent event) {
@@ -1593,7 +1534,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (scene.isRightHanded())
 			dy = -dy;
 		Vec verticalAxis = transformOf(sceneUpVector());
-		startSpinning(Quat.multiply(new Quat(verticalAxis, dx), new Quat(new Vec(1.0f, 0.0f, 0.0f), dy)), event.speed(), event.delay());
+		spin(Quat.multiply(new Quat(verticalAxis, dx), new Quat(new Vec(1.0f, 0.0f, 0.0f), dy)), event.speed(), event.delay());
 	}
 
 	protected void gestureHinge(MotionEvent event) {
@@ -1680,8 +1621,8 @@ public class GrabberFrame extends Frame implements Grabber {
 			if (scene.isLeftHanded())
 				angle = -angle;
 			rt = new Quat(new Vec(0.0f, 0.0f, 1.0f), angle);
-			startSpinning(rt, event.speed(), event.delay());
-			updateSceneUpVector();
+			spin(rt, event.speed(), event.delay());
+			//updateSceneUpVector();
 		}
 		else {
 			trns = scene.camera().projectedCoordinatesOf(position());
@@ -1692,7 +1633,7 @@ public class GrabberFrame extends Frame implements Grabber {
 				rt = new Quat(axis, angle - prev_angle);
 			else
 				rt = new Quat(axis, prev_angle - angle);
-			startSpinning(rt, event.speed(), event.delay());
+			spin(rt, event.speed(), event.delay());
 		}
 	}
 
@@ -1836,8 +1777,6 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 	}
 
-	// TODO decide whether to include this:
-
 	/**
 	 * Returns the up vector used in fly mode, expressed in the world coordinate system.
 	 * <p>
@@ -1877,113 +1816,86 @@ public class GrabberFrame extends Frame implements Grabber {
 	/**
 	 * Returns {@code true} when the InteractiveFrame is tossing.
 	 * <p>
-	 * During tossing, {@link #toss()} translates the InteractiveFrame by its {@link #tossingDirection()} at a frequency
-	 * defined when the InteractiveFrame {@link #startTossing(MotionEvent)}.
+	 * During tossing, {@link #flyDamping()} translates the InteractiveFrame by its {@link #flightDirection()} at a frequency
+	 * defined when the InteractiveFrame {@link #startFlying(MotionEvent)}.
 	 * <p>
-	 * Use {@link #startTossing(MotionEvent)} and {@link #stopTossing()} to change this state. Default value is
+	 * Use {@link #startFlying(MotionEvent)} and {@link #stopFlying()} to change this state. Default value is
 	 * {@code false}.
 	 * 
 	 * {@link #isSpinning()}
 	 */
-	public final boolean isTossing() {
+	public final boolean isFlying() {
 		return flyTimerTask.isActive();
 	}
 
 	/**
-	 * Stops the tossing motion started using {@link #startTossing(MotionEvent)}. {@link #isTossing()} will return
+	 * Stops the tossing motion started using {@link #startFlying(MotionEvent)}. {@link #isFlying()} will return
 	 * {@code false} after this call.
 	 * <p>
-	 * <b>Attention: </b>This method may be called by {@link #toss()}, since tossing may be decelerated according to
-	 * {@link #dampingFriction()} till it stops completely.
+	 * <b>Attention: </b>This method may be called by {@link #flyDamping()}, since tossing may be decelerated according to
+	 * {@link #damping()} till it stops completely.
 	 * 
-	 * @see #dampingFriction()
+	 * @see #damping()
 	 * @see #spin()
 	 */
-	public final void stopTossing() {
+	public final void stopFlying() {
 		flyTimerTask.stop();
 	}
 
 	/**
-	 * Returns the incremental translation that is applied by {@link #toss()} to the InteractiveFrame position when it
-	 * {@link #isTossing()}.
+	 * Returns the incremental translation that is applied by {@link #flyDamping()} to the InteractiveFrame position when it
+	 * {@link #isFlying()}.
 	 * <p>
-	 * Default value is no translation. Use {@link #setTossingDirection(Vec)} to change this value.
+	 * Default value is no translation. Use {@link #setFlyDirection(Vec)} to change this value.
 	 * <p>
-	 * <b>Attention: </b>Tossing may be decelerated according to {@link #dampingFriction()} till it stops completely.
+	 * <b>Attention: </b>Tossing may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
 	 * @see #spinningRotation()
 	 */
-	public final Vec tossingDirection() {
-		return tDir;
+	public final Vec flyDirection() {
+		return fDir;
 	}
 
 	/**
-	 * Defines the {@link #tossingDirection()} in the InteractiveFrame coordinate system.
+	 * Defines the {@link #flightDirection()} in the reference frame coordinate system.
 	 * 
 	 * @see #setSpinningRotation(Rotation)
 	 */
-	public final void setTossingDirection(Vec dir) {
-		tDir = dir;
+	public final void setFlyDirection(Vec dir) {
+		fDir = dir;
 	}
 
 	/**
 	 * Starts the tossing of the InteractiveFrame.
 	 * <p>
-	 * This method starts a timer that will call {@link #toss()} every FLY_UPDATE_PERDIOD milliseconds. The
-	 * InteractiveFrame {@link #isTossing()} until you call {@link #stopTossing()}.
+	 * This method starts a timer that will call {@link #flyDamping()} every FLY_UPDATE_PERDIOD milliseconds. The
+	 * InteractiveFrame {@link #isFlying()} until you call {@link #stopFlying()}.
 	 * <p>
-	 * <b>Attention: </b>Tossing may be decelerated according to {@link #dampingFriction()} till it stops completely.
+	 * <b>Attention: </b>Tossing may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
-	 * @see #dampingFriction()
+	 * @see #damping()
 	 * @see #spin()
 	 */
-	public void startTossing(MotionEvent e) {
-		eventSpeed = e.speed();
+	public void startFlying(MotionEvent event, Vec direction) {
+		startFlying(direction, event.speed());
+	}
+	
+	public void startFlying(Vec direction, float speed) {
+		eventSpeed = speed;
+		setFlyDirection(direction);
 		flyTimerTask.run(FLY_UPDATE_PERDIOD);
 	}
-
+	
 	/**
-	 * Internal method. Recomputes the {@link #tossingDirection()} according to {@link #dampingFriction()}.
-	 * 
-	 * @see #recomputeSpinningRotation()
-	 */
-	protected void recomputeTossingDirection() {
-		float prevSpeed = eventSpeed;
-		float damping = 1.0f - dampingFrictionFx();
-		eventSpeed *= damping;
-		if (Math.abs(eventSpeed) < .001f)
-			eventSpeed = 0;
-
-		flyDisp.setZ(flyDisp.z() * (eventSpeed / prevSpeed));
-
-		if (scene.is2D())
-			setTossingDirection(localInverseTransformOf(flyDisp));
-		else
-			setTossingDirection(rotation().rotate(flyDisp));
-	}
-
-	/**
-	 * Translates the InteractiveFrame by its {@link #tossingDirection()}. Invoked by a timer when the InteractiveFrame is
+	 * Translates the InteractiveFrame by its {@link #flightDirection()}. Invoked by a timer when the InteractiveFrame is
 	 * performing the DRIVE, MOVE_BACKWARD or MOVE_FORWARD dandelion actions.
 	 * <p>
-	 * <b>Attention: </b>Tossing may be decelerated according to {@link #dampingFriction()} till it stops completely.
+	 * <b>Attention: </b>Tossing may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
 	 * @see #spin()
 	 */
-	protected void toss() {
-		//TODO fix me! with new timing logic
-		/*
-		if (Util.nonZero(dampingFriction())) {
-			if (eventSpeed == 0) {
-				stopTossing();
-				return;
-			}
-			translate(tossingDirection());
-			recomputeTossingDirection();
-		}
-		else
-		*/
-			translate(tossingDirection());
+	protected void fly() {
+		translate(flyDirection());
 	}
 
 	/**
@@ -2014,6 +1926,64 @@ public class GrabberFrame extends Frame implements Grabber {
 	public void setFlySpeed(float speed) {
 		flySpd = speed;
 	}
+	
+	//--
+	
+	//TODO tossing pending, but really seems overkill
+	
+//	public final boolean isTossing() {
+//		return tossTimerTask.isActive();
+//	}
+//	
+//	public final void stopTossing() {
+//		tossTimerTask.stop();
+//	}
+//	
+//	public final Vec tossDirection() {
+//		return tDir;
+//	}
+//	
+//	public final void setTossDirection(Vec dir) {
+//		tDir = dir;
+//	}
+//	
+//	public void startTossing(MotionEvent event, Vec direction) {
+//		startTossing(direction, event.speed());
+//	}
+//	
+//	public void startTossing(Vec direction, float speed) {
+//		eventSpeed = speed;
+//		setTossDirection(direction);
+//		tossTimerTask.run(FLY_UPDATE_PERDIOD);
+//	}
+//	
+//	protected void recomputeTossDirection() {
+//		float prevSpeed = eventSpeed;
+//		float damping = 1.0f - tossDampingFx();
+//		eventSpeed *= damping;
+//		if (Math.abs(eventSpeed) < .001f)
+//			eventSpeed = 0;
+//		setTossDirection(Vec.multiply(tossDirection(), (eventSpeed / prevSpeed)));
+//	}
+//	
+//	protected void tossExecution() {
+//		if(Util.zero(tossDamping()))
+//			toss();
+//		else {
+//			if (eventSpeed == 0) {
+//				stopTossing();
+//				return;
+//			}
+//			toss();
+//			recomputeTossDirection();
+//		}			
+//	}
+//	
+//	protected void toss() {
+//		translate(tossDirection());
+//	}
+	
+	//--
 
 	protected Quat rollPitchQuaternion(MotionEvent event, Camera camera) {
 		if (scene.is2D()) {

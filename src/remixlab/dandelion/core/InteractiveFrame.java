@@ -229,7 +229,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	 * The {@link #translation()} is set to 0, with an identity {@link #rotation()} and no {@link #scaling()} (see Frame
 	 * constructor for details). The different sensitivities are set to their default values (see
 	 * {@link #rotationSensitivity()} , {@link #translationSensitivity()}, {@link #spinningSensitivity()} and
-	 * {@link #wheelSensitivity()}). {@link #dampingFriction()} is set to 0.5.
+	 * {@link #wheelSensitivity()}). {@link #damping()} is set to 0.5.
 	 * <p>
 	 * <b>Note:</b> the InteractiveFrame is automatically added to the {@link remixlab.bias.core.InputHandler#agents()}
 	 * pool.
@@ -564,17 +564,17 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	private boolean need4Spin;
 	private boolean need4Tossing;
 	private boolean drive;
-	protected MotionEvent currEvent;
-	public MotionEvent initEvent;
+	protected MotionEvent currMotionEvent;
+	public MotionEvent initMotionEvent;
 	public DOF2Event zor;
-	private float drySpeedCache;
+	private float flySpeedCache;
 	
-	public MotionEvent initEvent() {
-		return initEvent;
+	public MotionEvent initMotionEvent() {
+		return initMotionEvent;
 	}
 	
-	public MotionEvent currentEvent() {
-		return currEvent;
+	public MotionEvent currentMotionEvent() {
+		return currMotionEvent;
 	}
 	
 	protected boolean processAction(MotionEvent event) {
@@ -611,9 +611,8 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 	
 	protected boolean initAction(DOF2Event event) {
-		initEvent = event.get();
-		currEvent = event;
-		
+		initMotionEvent = event.get();
+		currMotionEvent = event;		
 		stopSpinning();			
 		MotionAction twotempi = action().referenceAction();
 		if (twotempi == MotionAction.SCREEN_TRANSLATE)
@@ -624,10 +623,10 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		if (rotateMode && scene.is3D())
 			scene.camera().cadRotationIsReversed = scene.camera().frame()
 					.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
-		need4Spin = (rotateMode && (dampingFriction() == 0));
+		need4Spin = (rotateMode && (damping() == 0));
 		drive = (twotempi == MotionAction.DRIVE);
 		if(drive)
-			drySpeedCache = flySpeed();
+			flySpeedCache = flySpeed();
 		need4Tossing = (twotempi == MotionAction.MOVE_FORWARD) || (twotempi == MotionAction.MOVE_BACKWARD)
 				|| (drive);
 		if(need4Tossing)
@@ -635,10 +634,9 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		scene.setRotateVisualHint(twotempi == MotionAction.SCREEN_ROTATE);		
 		if(isEyeFrame())
 			scene.setZoomVisualHint(twotempi == MotionAction.ZOOM_ON_REGION);
-		//if (scene.zoomVisualHint() || scene.rotateVisualHint())	return true;
 		if (scene.zoomVisualHint())
 		  return true;
-		return false;//always handle after init: experimental TODO
+		return false;
 	}
 	
 	protected boolean execAction(MotionEvent event) {
@@ -648,7 +646,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 	
 	protected boolean execAction(DOF2Event event) {
-		currEvent = event;
+		currMotionEvent = event;
 		if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
 			if (drive) {
 				setFlySpeed(0.01f * scene.radius() * 0.01f * (event.y() - event.y()));
@@ -659,7 +657,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		}
 		else {
 			zor = event.get();
-			zor.setPreviousEvent(initEvent.get());
+			zor.setPreviousEvent(initMotionEvent.get());
 			return true;//bypass
 		}
 		return false;
@@ -678,30 +676,24 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			scene.setRotateVisualHint(false);
 			return true;
 		}
-		if(currentEvent() != null) {
+		if(currentMotionEvent() != null) {
 			if (need4Spin) {
-				startSpinning(currentEvent().speed(), currentEvent().delay());
+				startSpinning(spinningRotation(), currentMotionEvent().speed(), currentMotionEvent().delay());
 				return true;
 			}
 		}
-		//currEvent = event;//not needed
 		if (scene.zoomVisualHint()) {
-			// at first glance this should work
-			// handle(event);
-			// but the problem is that depending on the order the button and the modifiers are released,
+			// the problem is that depending on the order the button and the modifiers are released,
 			// different actions maybe triggered, so we go for sure ;) :
 			scene.setZoomVisualHint(false);
 			gestureZoomOnRegion(zor);//now action need to be executed on event
 			return true;//since action is null
-		}
-		//if (pickingMode() == PickingMode.MOVE)
-			//updateTrackedGrabber(event);
-		
+		}		
 		if (need4Tossing) {
 		  // restore speed after drive action terminates:
 			if(drive)
-				setFlySpeed(drySpeedCache);
-			stopTossing();
+				setFlySpeed(flySpeedCache);
+			stopFlying();
 			return true;
 		}
 		return true;

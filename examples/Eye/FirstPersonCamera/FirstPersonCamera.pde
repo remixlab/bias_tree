@@ -67,4 +67,8 @@ public void keyPressed() {
       scene.mouseAgent().dragToArcball();
     }
   }
+  if(key == '+')
+    scene.eye().frame().setFlySpeed(scene.eye().frame().flySpeed() * 1.1);
+  if(key == '-')
+    scene.eye().frame().setFlySpeed(scene.eye().frame().flySpeed() / 1.1);
 }
