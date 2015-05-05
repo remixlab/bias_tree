@@ -347,6 +347,18 @@ public class Agent {
 				return inputHandler().enqueueEventTuple(new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, null));
 		return false;
 	}
+	
+	/**
+	 * Force a null event on the grabber.
+	 */
+	@SuppressWarnings("unchecked")
+	protected <E extends Enum<E>> boolean flush() {
+		Grabber inputGrabber = inputGrabber();
+		if (inputGrabber != null)
+			if (inputGrabber instanceof InteractiveGrabber<?>)
+				return inputHandler().enqueueEventTuple(new EventGrabberTuple(null, (InteractiveGrabber<E>) inputGrabber, null));
+		return false;
+	}
 
 	/**
 	 * If {@link #trackedGrabber()} is non null, returns it. Otherwise returns the {@link #defaultGrabber()}.
