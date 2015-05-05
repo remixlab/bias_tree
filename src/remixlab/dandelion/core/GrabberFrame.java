@@ -1311,6 +1311,15 @@ public class GrabberFrame extends Frame implements Grabber {
 			translate(Vec.multiply(direction, delta));
 	}
 	
+	protected void gestureZoomOnAnchor(KeyboardEvent event, boolean in) {
+		Vec direction = Vec.subtract(scene.eye().anchor(), position());
+		if (referenceFrame() != null)
+			direction = referenceFrame().transformOf(direction);
+		float delta = (in ? keyboardSensitivity() : -keyboardSensitivity()) / scene.eye().screenHeight();
+		if (direction.magnitude() > 0.02f * scene.radius() || delta > 0.0f)
+			translate(Vec.multiply(direction, delta));
+	}
+	
 	protected void gestureZoomOnRegion(MotionEvent event) {
 		if (!isEyeFrame()) {
 			AbstractScene.showOnlyEyeWarning("gestureZoomOnRegion");

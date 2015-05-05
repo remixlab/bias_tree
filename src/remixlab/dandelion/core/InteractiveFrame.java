@@ -449,8 +449,10 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			gestureScale(event, false);
 			break;
 		case ZOOM_IN_ON_ANCHOR:
+			gestureZoomOnAnchor(event, true);
 			break;
 		case ZOOM_OUT_ON_ANCHOR:
+			gestureZoomOnAnchor(event, false);
 			break;
 		case ROTATE_UP_X:
 			gestureRotateX(event, true);
