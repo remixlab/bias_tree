@@ -1292,24 +1292,24 @@ public class GrabberFrame extends Frame implements Grabber {
 		translate(screenToVec(Vec.multiply(new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), -event.dz()), this.translationSensitivity())));
 	}
 	
-  protected void gestureZoomOnAnchor(MotionEvent event) {
-		
+	protected void gestureZoomOnAnchor(MotionEvent event) {
+		gestureZoomOnAnchor(event, true);
 	}
 	
-  /*
-  protected void gestureZoomOnAnchor(DOF2Event e1) {
-  	if (e1.action() != null) // its a wheel wheel :P
-			delta = e1.x() * -wheelSensitivity() * wheelSensitivityCoef;
-		// TODO should absolute be divided by camera.screenHeight()?
-		else if (e1.isAbsolute())
-			delta = -e1.x() / camera.screenHeight();
-		else
-			delta = -e1.dx() / camera.screenHeight();
-		trans = Vec.subtract(position(), scene.camera().anchor());
-		if (trans.magnitude() > 0.02f * scene.radius() || delta > 0.0f)
-			translate(Vec.multiply(trans, delta));
+	protected void gestureZoomOnAnchor(MotionEvent event, boolean fromX) {
+		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
+		if (dof1Event != null)
+			gestureZoomOnAnchor(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
-	*/
+
+	protected void gestureZoomOnAnchor(DOF1Event event, float sens) {
+		Vec direction = Vec.subtract(scene.eye().anchor(), position());
+		if (referenceFrame() != null)
+			direction = referenceFrame().transformOf(direction);
+		float delta = event.dx() * sens / scene.eye().screenHeight();
+		if (direction.magnitude() > 0.02f * scene.radius() || delta > 0.0f)
+			translate(Vec.multiply(direction, delta));
+	}
 	
 	protected void gestureZoomOnRegion(MotionEvent event) {
 		if (!isEyeFrame()) {
