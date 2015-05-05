@@ -342,21 +342,24 @@ public class Agent {
 	@SuppressWarnings("unchecked")
 	protected <E extends Enum<E>> boolean flush(BogusEvent event) {
 		Grabber inputGrabber = inputGrabber();
-		if (inputGrabber != null)
+		if (inputGrabber != null) {
 			if (inputGrabber instanceof InteractiveGrabber<?>)
 				return inputHandler().enqueueEventTuple(new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, null));
+			//TODO this case experimental
+			//... or (experimental) a null event on the grabber.
+			//if(inputGrabber instanceof Grabber)	return flush();
+		}
 		return false;
 	}
 	
 	/**
 	 * Force a null event on the grabber.
 	 */
-	@SuppressWarnings("unchecked")
-	protected <E extends Enum<E>> boolean flush() {
+	protected boolean flush() {
 		Grabber inputGrabber = inputGrabber();
 		if (inputGrabber != null)
-			if (inputGrabber instanceof InteractiveGrabber<?>)
-				return inputHandler().enqueueEventTuple(new EventGrabberTuple(null, (InteractiveGrabber<E>) inputGrabber, null));
+			if ((inputGrabber instanceof Grabber) && !(inputGrabber instanceof InteractiveGrabber<?>))
+				return inputHandler().enqueueEventTuple(new EventGrabberTuple(null, inputGrabber));
 		return false;
 	}
 
