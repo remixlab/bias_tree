@@ -11,7 +11,7 @@
 package remixlab.proscene;
 
 import remixlab.bias.event.KeyboardEvent;
-import remixlab.dandelion.core.Constants.KeyboardSceneAction;
+import remixlab.dandelion.core.Constants.GlobalAction;
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 
@@ -34,9 +34,9 @@ public class DroidKeyAgent extends KeyAgent {
 		// VK values here: http://docs.oracle.com/javase/7/docs/api/constant-values.html
 		super.setDefaultShortcuts();
 
-		sceneProfile().setBinding('1', KeyboardSceneAction.ADD_KEYFRAME_TO_PATH_1);
-		sceneProfile().setBinding('2', KeyboardSceneAction.DELETE_PATH_1);
-		sceneProfile().setBinding('3', KeyboardSceneAction.PLAY_PATH_1);
+		sceneProfile().setBinding('1', GlobalAction.ADD_KEYFRAME_TO_PATH_1);
+		sceneProfile().setBinding('2', GlobalAction.DELETE_PATH_1);
+		sceneProfile().setBinding('3', GlobalAction.PLAY_PATH_1);
 	}
 
 	/**

@@ -69,8 +69,8 @@ public class MouseAgent extends WheeledMouseAgent {
 			else
 				if(release)
 					flush(currentEvent);
-				else
-					handle(currentEvent);
+				//else
+			handle(currentEvent);
 			prevEvent = currentEvent.get();
 			return;
 		}
@@ -83,8 +83,9 @@ public class MouseAgent extends WheeledMouseAgent {
 					e.getModifiers(), e.getButton(), e.getCount()); 
 			if (pickingMode() == PickingMode.CLICK)
 				updateTrackedGrabber(bogusClickEvent);
-			else
-				handle(bogusClickEvent);
+			//else
+			handle(bogusClickEvent);
+			return;
 		}
 	}
 }

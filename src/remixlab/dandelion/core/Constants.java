@@ -724,7 +724,7 @@ public interface Constants {
 		}
 	}
 
-	public enum KeyboardMotionAction implements Action<MotionAction> {
+	public enum KeyboardAction implements Action<MotionAction> {
 		CENTER_FRAME(MotionAction.CENTER_FRAME),
 		ALIGN_FRAME(MotionAction.ALIGN_FRAME),
 		// DOF_1
@@ -778,7 +778,7 @@ public interface Constants {
 
 		MotionAction	act;
 
-		KeyboardMotionAction(MotionAction a) {
+		KeyboardAction(MotionAction a) {
 			act = a;
 		}
 	}
@@ -788,7 +788,7 @@ public interface Constants {
 	/**
 	 * Keyboard action sub-group.
 	 */
-	public enum KeyboardSceneAction implements Action<SceneAction> {
+	public enum GlobalAction implements Action<SceneAction> {
 		// KEYfRAMES
 		ADD_KEYFRAME_TO_PATH_1(SceneAction.ADD_KEYFRAME_TO_PATH_1),
 		PLAY_PATH_1(SceneAction.PLAY_PATH_1),
@@ -844,7 +844,7 @@ public interface Constants {
 
 		SceneAction	act;
 
-		KeyboardSceneAction(SceneAction a) {
+		GlobalAction(SceneAction a) {
 			act = a;
 		}
 	}
