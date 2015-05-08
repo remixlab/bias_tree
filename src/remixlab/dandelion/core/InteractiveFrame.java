@@ -545,6 +545,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	private boolean need4Spin;
 	private boolean need4Tossing;
 	private boolean drive;
+	private boolean rotateHint;
 	protected MotionEvent currMotionEvent;
 	public MotionEvent initMotionEvent;
 	public DOF2Event zor;
@@ -570,6 +571,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 				if(initAction == action())
 					return execAction(event);//continue action
 				else { //initAction != action() -> action changes abruptly, i.e., 
+					System.out.println("case 1");
 					endAction(event);
 					//TODO testing these two lines
 					System.out.println("testing case when action changes abruptly");
@@ -579,6 +581,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 				}
 			}
 			else {//action() == null
+				System.out.println("case 2");
 				return endAction(event);//stopAction
 			}
 		}
@@ -612,11 +615,14 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 				|| (drive);
 		if(need4Tossing)
 			updateSceneUpVector();
-		scene.setRotateVisualHint(twotempi == MotionAction.SCREEN_ROTATE);		
-		if(isEyeFrame())
-			scene.setZoomVisualHint(twotempi == MotionAction.ZOOM_ON_REGION);
-		if (scene.zoomVisualHint())
-		  return true;
+		rotateHint = twotempi == MotionAction.SCREEN_ROTATE;
+		if(rotateHint)
+			scene.setRotateVisualHint(true);
+		if(isEyeFrame() && twotempi == MotionAction.ZOOM_ON_REGION) {
+			scene.setZoomVisualHint(true);
+			zor = event.get();
+			return true;
+		}
 		return false;
 	}
 	
@@ -628,18 +634,19 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	
 	protected boolean execAction(DOF2Event event) {
 		currMotionEvent = event;
-		if (!scene.zoomVisualHint()) { // bypass zoom_on_region, may be different when using a touch device :P
-			if (drive) {
-				setFlySpeed(0.01f * scene.radius() * 0.01f * (event.y() - event.y()));
-			}
-			// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-			if (action().referenceAction() == MotionAction.ZOOM_ON_REGION)
-				return true;
-		}
-		else {
+		if(zor != null) {
 			zor = event.get();
-			zor.setPreviousEvent(initMotionEvent.get());
-			return true;//bypass
+		  zor.setPreviousEvent(initMotionEvent.get());
+		  return true;//bypass
+		}
+	  // never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
+		if (action().referenceAction() == MotionAction.ZOOM_ON_REGION) {
+			System.out.println("wierd case: ZOOM_ON_REGION on exec action while zor == null");
+			return true;
+		}
+		if (drive) {
+			setFlySpeed(0.01f * scene.radius() * 0.01f * (event.y() - event.y()));
+			return false;
 		}
 		return false;
 	}
@@ -653,8 +660,9 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 	
 	protected boolean endAction(DOF2Event event) {
-		if (scene.rotateVisualHint()) {
+		if (rotateHint) {
 			scene.setRotateVisualHint(false);
+			rotateHint = false;
 			return true;
 		}
 		if(currentMotionEvent() != null) {
@@ -663,13 +671,14 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 				return true;
 			}
 		}
-		if (scene.zoomVisualHint()) {
+		if (zor != null) {
 			// the problem is that depending on the order the button and the modifiers are released,
 			// different actions maybe triggered, so we go for sure ;) :
 			scene.setZoomVisualHint(false);
 			gestureZoomOnRegion(zor);//now action need to be executed on event
+			zor = null;
 			return true;//since action is null
-		}		
+		}
 		if (need4Tossing) {
 		  // restore speed after drive action terminates:
 			if(drive)
