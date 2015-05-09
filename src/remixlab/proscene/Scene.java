@@ -488,7 +488,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Removes all shortcut bindings.
 	 */
 	public void removeKeyboardShortcuts() {
-		keyboardAgent().removeShortcuts();
+		keyboardAgent().removeBindings();
 	}
 
 	/**

@@ -14,6 +14,7 @@ import remixlab.bias.branch.*;
 import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.bias.event.shortcut.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
@@ -198,6 +199,73 @@ public class KeyboardAgent extends Agent {
 			break;
 		}
 	}
+	
+  //high level
+	//i. scene
+	
+	public void setBinding(KeyboardShortcut shortcut, GlobalAction action) {
+		sceneProfile().setBinding(shortcut, action);
+	}
+	
+	public void removeShortcut(KeyboardShortcut shortcut) {
+		sceneProfile().removeBinding(shortcut);
+	}
+	
+	/**
+	 * Removes all shortcut bindings.
+	 */
+	public void removeBindings() {
+		sceneProfile().removeBindings();
+	}
+	
+	public GlobalAction action(KeyboardShortcut shortcut) {
+		return sceneProfile().action(shortcut);
+	}
+	
+  public boolean hasShortcut(KeyboardShortcut shortcut) {
+  	return sceneProfile().hasBinding(shortcut);
+	}
+  
+  /**
+	 * Returns {@code true} if the keyboard action is bound.
+	 */
+	public boolean isActionBound(GlobalAction action) {
+		return sceneProfile().isActionBound(action);
+	}
+	
+	//ii. Frame
+	
+	public void setBinding(Target target, KeyboardShortcut shortcut, KeyboardAction action) {
+		motionProfile(target).setBinding(shortcut, action);
+	}
+	
+	public void removeShortcut(Target target, KeyboardShortcut shortcut) {
+		motionProfile(target).removeBinding(shortcut);
+	}
+	
+	/**
+	 * Removes all shortcut bindings.
+	 */
+	public void removeBindings(Target target) {
+		motionProfile(target).removeBindings();
+	}
+	
+	public KeyboardAction action(Target target, KeyboardShortcut shortcut) {
+		return motionProfile(target).action(shortcut);
+	}
+	
+  public boolean hasShortcut(Target target, KeyboardShortcut shortcut) {
+  	return motionProfile(target).hasBinding(shortcut);
+	}
+  
+  /**
+	 * Returns {@code true} if the keyboard action is bound.
+	 */
+	public boolean isActionBound(Target target, KeyboardAction action) {
+		return motionProfile(target).isActionBound(action);
+	}
+	
+	//end
 
 	/**
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
@@ -228,13 +296,6 @@ public class KeyboardAgent extends Agent {
 	}
 
 	/**
-	 * Removes all shortcut bindings.
-	 */
-	public void removeShortcuts() {
-		sceneProfile().removeBindings();
-	}
-
-	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasShortcut(Character key) {
@@ -246,13 +307,6 @@ public class KeyboardAgent extends Agent {
 	 */
 	public boolean hasShortcut(int mask, int vKey) {
 		return sceneProfile().hasBinding(mask, vKey);
-	}
-
-	/**
-	 * Returns {@code true} if the keyboard action is bound.
-	 */
-	public boolean isActionBound(GlobalAction action) {
-		return sceneProfile().isActionBound(action);
 	}
 
 	/**
@@ -323,12 +377,7 @@ public class KeyboardAgent extends Agent {
 		return motionProfile(target).hasBinding(mask, vKey);
 	}
 
-	/**
-	 * Returns {@code true} if the keyboard action is bound.
-	 */
-	public boolean isActionBound(Target target, KeyboardAction action) {
-		return motionProfile(target).isActionBound(action);
-	}
+	
 
 	/**
 	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action

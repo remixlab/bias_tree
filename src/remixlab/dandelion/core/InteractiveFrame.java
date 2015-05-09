@@ -660,6 +660,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 	
 	protected boolean endAction(DOF2Event event) {
+		System.out.println("win!!!");
 		if (rotateHint) {
 			scene.setRotateVisualHint(false);
 			rotateHint = false;

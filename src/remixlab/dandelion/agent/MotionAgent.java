@@ -14,6 +14,7 @@ import remixlab.bias.branch.*;
 import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.bias.event.shortcut.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
@@ -126,6 +127,10 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	}
 	
 	// TODO test all protected down here in stable before going on
+	
+	protected MotionProfile<A> motionProfile(Target target) {
+		return target == Target.EYE ? eyeProfile() : frameProfile();
+	}
 
 	/**
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
@@ -139,6 +144,10 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	 */
 	public MotionProfile<A> frameProfile() {
 		return frameBranch().profile();
+	}
+	
+	protected ClickProfile<ClickAction> clickProfile(Target target) {
+		return target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 	}
 
 	/**
@@ -183,130 +192,57 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	public int buttonModifiersFix(int mask, int button) {
 		return mask;
 	}
-
-	// click
-
-	/**
-	 * Binds the mask-button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action to be performed by the
-	 * given {@code target} (EYE or FRAME).
-	 */
-	public void setClickBinding(Target target, int mask, int button, int ncs, ClickAction action) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		profile.setBinding(buttonModifiersFix(mask, button), button, ncs, action);
+	
+	//high level (new) with plain shortcuts
+	
+	public void setBinding(Target target, MotionShortcut shortcut, A action) {
+		motionProfile(target).setBinding(shortcut, action);
 	}
-
-	/**
-	 * Binds the button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action to be performed by the given
-	 * {@code target} (EYE or FRAME).
-	 */
-	public void setClickBinding(Target target, int button, int ncs, ClickAction action) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		profile.setBinding(buttonModifiersFix(button), button, ncs, action);
+	
+	public void setBinding(Target target, ClickShortcut shortcut, ClickAction action) {
+		clickProfile(target).setBinding(shortcut, action);
 	}
-
-	/**
-	 * Binds the single-clicked button shortcut to the (click) dandelion action to be performed by the given
-	 * {@code target} (EYE or FRAME).
-	 */
-	public void setClickBinding(Target target, int button, ClickAction action) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		profile.setBinding(buttonModifiersFix(button), button, 1, action);
+	
+	public void removeShortcut(Target target, MotionShortcut shortcut) {
+		motionProfile(target).removeBinding(shortcut);
 	}
-
-	/**
-	 * Removes the mask-button-ncs (number-of-clicks) click-shortcut binding from the
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code true}) or from the
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
-	 */
-	public void removeClickBinding(Target target, int mask, int button, int ncs) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		profile.removeBinding(buttonModifiersFix(mask, button), button, ncs);
+	
+	public void removeShortcut(Target target, ClickShortcut shortcut) {
+		clickProfile(target).removeBinding(shortcut);
 	}
-
-	/**
-	 * Removes the button-ncs (number-of-clicks) click-shortcut binding from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeClickBinding(Target target, int button, int ncs) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		profile.removeBinding(buttonModifiersFix(button), button, ncs);
+	
+	public void removeMotionBindings(Target target) {
+		motionProfile(target).removeBindings();
 	}
-
-	/**
-	 * Removes the single-clicked button shortcut binding from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeClickBinding(Target target, int button) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		profile.removeBinding(buttonModifiersFix(button), button, 1);
-	}
-
-	/**
-	 * Removes all click bindings from the given {@code target} (EYE or FRAME).
-	 */
+	
 	public void removeClickBindings(Target target) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		profile.removeBindings();
+		clickProfile(target).removeBindings();
 	}
-
-	/**
-	 * Returns {@code true} if the mask-button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target}
-	 * (EYE or FRAME).
-	 */
-	public boolean hasClickBinding(Target target, int mask, int button, int ncs) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		return profile.hasBinding(buttonModifiersFix(mask, button), button, ncs);
+	
+	public A action(Target target, MotionShortcut shortcut) {
+		return motionProfile(target).action(shortcut);
 	}
-
-	/**
-	 * Returns {@code true} if the button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target} (EYE
-	 * or FRAME).
-	 */
-	public boolean hasClickBinding(Target target, int button, int ncs) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		return profile.hasBinding(buttonModifiersFix(button), button, ncs);
+	
+	public ClickAction action(Target target, ClickShortcut shortcut) {
+		return clickProfile(target).action(shortcut);
 	}
-
-	/**
-	 * Returns {@code true} if the single-clicked button shortcut is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean hasClickBinding(Target target, int button) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		return profile.hasBinding(buttonModifiersFix(button), button, 1);
+	
+	public boolean hasShortcut(Target target, MotionShortcut shortcut) {
+		return motionProfile(target).hasBinding(shortcut);
 	}
-
+	
+	public boolean hasShortcut(Target target, ClickShortcut shortcut) {
+		return clickProfile(target).hasBinding(shortcut);
+	}
+	
+	public boolean isActionBound(Target target, A action) {
+		return motionProfile(target).isActionBound(action);
+	}
+	
 	/**
 	 * Returns {@code true} if the mouse click action is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean isClickActionBound(Target target, ClickAction action) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		return profile.isActionBound(action);
-	}
-
-	/**
-	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
-	 * the given mask-button-ncs (number-of-clicks) click-shortcut. Returns {@code null} if no action is bound to the
-	 * given shortcut.
-	 */
-	public ClickAction clickAction(Target target, int mask, int button, int ncs) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		return (ClickAction) profile.action(buttonModifiersFix(mask, button), button, ncs);
-	}
-
-	/**
-	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
-	 * the given button-ncs (number-of-clicks) click-shortcut. Returns {@code null} if no action is bound to the given
-	 * shortcut.
-	 */
-	public ClickAction clickAction(Target target, int button, int ncs) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		return (ClickAction) profile.action(buttonModifiersFix(button), button, ncs);
-	}
-
-	/**
-	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
-	 * the given single-clicked button shortcut. Returns {@code null} if no action is bound to the given shortcut.
-	 */
-	public ClickAction clickAction(Target target, int button) {
-		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeBranch.clickProfile() : frameBranch.clickProfile();
-		return (ClickAction) profile.action(buttonModifiersFix(button), button, 1);
+	public boolean isActionBound(Target target, ClickAction action) {
+		return clickProfile(target).isActionBound(action);
 	}
 }

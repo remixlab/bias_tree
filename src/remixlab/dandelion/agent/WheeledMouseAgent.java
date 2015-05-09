@@ -644,4 +644,109 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		return ((DOF2Action) profile.action(WHEEL_ID)).dof1Action();
 	}
+	
+	// click
+
+	/**
+	 * Binds the mask-button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action to be performed by the
+	 * given {@code target} (EYE or FRAME).
+	 */
+	public void setClickBinding(Target target, int mask, int button, int ncs, ClickAction action) {
+		setBinding(target, new ClickShortcut(buttonModifiersFix(mask, button), button, ncs), action);
+	}
+
+	/**
+	 * Binds the button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action to be performed by the given
+	 * {@code target} (EYE or FRAME).
+	 */
+	public void setClickBinding(Target target, int button, int ncs, ClickAction action) {
+		setBinding(target, new ClickShortcut(buttonModifiersFix(button), button, ncs), action);
+	}
+
+	/**
+	 * Binds the single-clicked button shortcut to the (click) dandelion action to be performed by the given
+	 * {@code target} (EYE or FRAME).
+	 */
+	public void setClickBinding(Target target, int button, ClickAction action) {
+		setBinding(target, new ClickShortcut(buttonModifiersFix(button), button, 1), action);
+	}
+
+	/**
+	 * Removes the mask-button-ncs (number-of-clicks) click-shortcut binding from the
+	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code true}) or from the
+	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
+	 */
+	public void removeClickBinding(Target target, int mask, int button, int ncs) {
+		removeShortcut(target, new ClickShortcut(buttonModifiersFix(mask, button), button, ncs));
+	}
+
+	/**
+	 * Removes the button-ncs (number-of-clicks) click-shortcut binding from the given {@code target} (EYE or FRAME).
+	 */
+	public void removeClickBinding(Target target, int button, int ncs) {
+		removeShortcut(target, new ClickShortcut(buttonModifiersFix(button), button, ncs));
+	}
+
+	/**
+	 * Removes the single-clicked button shortcut binding from the given {@code target} (EYE or FRAME).
+	 */
+	public void removeClickBinding(Target target, int button) {
+		removeShortcut(target, new ClickShortcut(buttonModifiersFix(button), button, 1));
+	}
+
+	/**
+	 * Removes all click bindings from the given {@code target} (EYE or FRAME).
+	 */
+	public void removeClickBindings(Target target) {
+		removeClickBindings(target);
+	}
+
+	/**
+	 * Returns {@code true} if the mask-button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target}
+	 * (EYE or FRAME).
+	 */
+	public boolean hasClickBinding(Target target, int mask, int button, int ncs) {
+		return hasShortcut(target, new ClickShortcut(buttonModifiersFix(mask, button), button, ncs));
+	}
+
+	/**
+	 * Returns {@code true} if the button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target} (EYE
+	 * or FRAME).
+	 */
+	public boolean hasClickBinding(Target target, int button, int ncs) {
+		return hasShortcut(target, new ClickShortcut(buttonModifiersFix(button), button, ncs));
+	}
+
+	/**
+	 * Returns {@code true} if the single-clicked button shortcut is bound to the given {@code target} (EYE or FRAME).
+	 */
+	public boolean hasClickBinding(Target target, int button) {
+		return hasShortcut(target, new ClickShortcut(buttonModifiersFix(button), button, 1));
+	}
+
+	/**
+	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
+	 * the given mask-button-ncs (number-of-clicks) click-shortcut. Returns {@code null} if no action is bound to the
+	 * given shortcut.
+	 */
+	public ClickAction clickAction(Target target, int mask, int button, int ncs) {
+		return action(target, new ClickShortcut(buttonModifiersFix(mask, button), button, ncs));
+	}
+
+	/**
+	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
+	 * the given button-ncs (number-of-clicks) click-shortcut. Returns {@code null} if no action is bound to the given
+	 * shortcut.
+	 */
+	public ClickAction clickAction(Target target, int button, int ncs) {
+		return action(target, new ClickShortcut(buttonModifiersFix(button), button, ncs));
+	}
+
+	/**
+	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
+	 * the given single-clicked button shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 */
+	public ClickAction clickAction(Target target, int button) {
+		return action(target, new ClickShortcut(buttonModifiersFix(button), button, 1));
+	}
 }
