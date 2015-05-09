@@ -161,24 +161,24 @@ public class KeyboardAgent extends Agent {
 		sceneProfile().setBinding('S', GlobalAction.SHOW_ALL);
 
 		// TODO add some eye and frame defs
-		removeShortcuts(Target.EYE);
-		removeShortcuts(Target.FRAME);
-		setShortcut(Target.EYE, 'a', KeyboardAction.ALIGN_FRAME);
-		setShortcut(Target.EYE, 'c', KeyboardAction.CENTER_FRAME);
-		setShortcut(Target.FRAME, 'a', KeyboardAction.ALIGN_FRAME);
-		setShortcut(Target.FRAME, 'c', KeyboardAction.CENTER_FRAME);
-		setShortcut(Target.FRAME, 'x', KeyboardAction.TRANSLATE_DOWN_X);
-		setShortcut(Target.FRAME, 'X', KeyboardAction.TRANSLATE_UP_X);
-		setShortcut(Target.FRAME, 'y', KeyboardAction.TRANSLATE_DOWN_Y);
-		setShortcut(Target.FRAME, 'Y', KeyboardAction.TRANSLATE_UP_Y);
-		setShortcut(Target.FRAME, 'z', KeyboardAction.ROTATE_DOWN_Z);
-		setShortcut(Target.FRAME, 'Z', KeyboardAction.ROTATE_UP_Z);
-		setShortcut(Target.EYE, 'x', KeyboardAction.TRANSLATE_DOWN_X);
-		setShortcut(Target.EYE, 'X', KeyboardAction.TRANSLATE_UP_X);
-		setShortcut(Target.EYE, 'y', KeyboardAction.TRANSLATE_DOWN_Y);
-		setShortcut(Target.EYE, 'Y', KeyboardAction.TRANSLATE_UP_Y);
-		setShortcut(Target.EYE, 'z', KeyboardAction.ROTATE_DOWN_Z);
-		setShortcut(Target.EYE, 'Z', KeyboardAction.ROTATE_UP_Z);
+		removeBindings(Target.EYE);
+		removeBindings(Target.FRAME);
+		setBinding(Target.EYE, 'a', KeyboardAction.ALIGN_FRAME);
+		setBinding(Target.EYE, 'c', KeyboardAction.CENTER_FRAME);
+		setBinding(Target.FRAME, 'a', KeyboardAction.ALIGN_FRAME);
+		setBinding(Target.FRAME, 'c', KeyboardAction.CENTER_FRAME);
+		setBinding(Target.FRAME, 'x', KeyboardAction.TRANSLATE_DOWN_X);
+		setBinding(Target.FRAME, 'X', KeyboardAction.TRANSLATE_UP_X);
+		setBinding(Target.FRAME, 'y', KeyboardAction.TRANSLATE_DOWN_Y);
+		setBinding(Target.FRAME, 'Y', KeyboardAction.TRANSLATE_UP_Y);
+		setBinding(Target.FRAME, 'z', KeyboardAction.ROTATE_DOWN_Z);
+		setBinding(Target.FRAME, 'Z', KeyboardAction.ROTATE_UP_Z);
+		setBinding(Target.EYE, 'x', KeyboardAction.TRANSLATE_DOWN_X);
+		setBinding(Target.EYE, 'X', KeyboardAction.TRANSLATE_UP_X);
+		setBinding(Target.EYE, 'y', KeyboardAction.TRANSLATE_DOWN_Y);
+		setBinding(Target.EYE, 'Y', KeyboardAction.TRANSLATE_UP_Y);
+		setBinding(Target.EYE, 'z', KeyboardAction.ROTATE_DOWN_Z);
+		setBinding(Target.EYE, 'Z', KeyboardAction.ROTATE_UP_Z);
 	}
 
 	/**
@@ -211,19 +211,21 @@ public class KeyboardAgent extends Agent {
 		sceneProfile().removeBinding(shortcut);
 	}
 	
-	/**
+  public boolean hasShortcut(KeyboardShortcut shortcut) {
+  	return sceneProfile().hasBinding(shortcut);
+	}
+  
+  public GlobalAction action(KeyboardShortcut shortcut) {
+		return sceneProfile().action(shortcut);
+	}
+  
+  //don't override from here
+  
+  /**
 	 * Removes all shortcut bindings.
 	 */
 	public void removeBindings() {
 		sceneProfile().removeBindings();
-	}
-	
-	public GlobalAction action(KeyboardShortcut shortcut) {
-		return sceneProfile().action(shortcut);
-	}
-	
-  public boolean hasShortcut(KeyboardShortcut shortcut) {
-  	return sceneProfile().hasBinding(shortcut);
 	}
   
   /**
@@ -243,19 +245,21 @@ public class KeyboardAgent extends Agent {
 		motionProfile(target).removeBinding(shortcut);
 	}
 	
-	/**
+  public boolean hasShortcut(Target target, KeyboardShortcut shortcut) {
+  	return motionProfile(target).hasBinding(shortcut);
+	}
+  
+  public KeyboardAction action(Target target, KeyboardShortcut shortcut) {
+		return motionProfile(target).action(shortcut);
+	}
+  
+  //don't override from here
+  
+  /**
 	 * Removes all shortcut bindings.
 	 */
 	public void removeBindings(Target target) {
 		motionProfile(target).removeBindings();
-	}
-	
-	public KeyboardAction action(Target target, KeyboardShortcut shortcut) {
-		return motionProfile(target).action(shortcut);
-	}
-	
-  public boolean hasShortcut(Target target, KeyboardShortcut shortcut) {
-  	return motionProfile(target).hasBinding(shortcut);
 	}
   
   /**
@@ -270,14 +274,14 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
-	public void setShortcut(Character key, GlobalAction action) {
+	public void setBinding(Character key, GlobalAction action) {
 		sceneProfile().setBinding(key, action);
 	}
 
 	/**
 	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
 	 */
-	public void setShortcut(int mask, int vKey, GlobalAction action) {
+	public void setBinding(int mask, int vKey, GlobalAction action) {
 		sceneProfile().setBinding(mask, vKey, action);
 	}
 
@@ -314,7 +318,7 @@ public class KeyboardAgent extends Agent {
 	 * is bound to the given shortcut.
 	 */
 	public GlobalAction action(Character key) {
-		return (GlobalAction) sceneProfile().action(key);
+		return action(new KeyboardShortcut(key));
 	}
 
 	/**
@@ -322,7 +326,7 @@ public class KeyboardAgent extends Agent {
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
 	public GlobalAction action(int mask, int vKey) {
-		return (GlobalAction) sceneProfile().action(mask, vKey);
+		return action(new KeyboardShortcut(mask, vKey));
 	}
 
 	// FRAMEs
@@ -331,14 +335,14 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
-	public void setShortcut(Target target, Character key, KeyboardAction action) {
+	public void setBinding(Target target, Character key, KeyboardAction action) {
 		motionProfile(target).setBinding(key, action);
 	}
 
 	/**
 	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
 	 */
-	public void setShortcut(Target target, int mask, int vKey, KeyboardAction action) {
+	public void setBinding(Target target, int mask, int vKey, KeyboardAction action) {
 		motionProfile(target).setBinding(mask, vKey, action);
 	}
 
@@ -357,13 +361,6 @@ public class KeyboardAgent extends Agent {
 	}
 
 	/**
-	 * Removes all shortcut bindings.
-	 */
-	public void removeShortcuts(Target target) {
-		motionProfile(target).removeBindings();
-	}
-
-	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasShortcut(Target target, Character key) {
@@ -377,14 +374,12 @@ public class KeyboardAgent extends Agent {
 		return motionProfile(target).hasBinding(mask, vKey);
 	}
 
-	
-
 	/**
 	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
 	 * is bound to the given shortcut.
 	 */
 	public KeyboardAction action(Target target, Character key) {
-		return (KeyboardAction) motionProfile(target).action(key);
+		return action(target, new KeyboardShortcut(key));
 	}
 
 	/**
@@ -392,6 +387,6 @@ public class KeyboardAgent extends Agent {
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
 	public KeyboardAction action(Target target, int mask, int vKey) {
-		return (KeyboardAction) motionProfile(target).action(mask, vKey);
+		return action(target, new KeyboardShortcut(mask, vKey));
 	}
 }

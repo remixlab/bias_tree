@@ -211,12 +211,12 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		clickProfile(target).removeBinding(shortcut);
 	}
 	
-	public void removeMotionBindings(Target target) {
-		motionProfile(target).removeBindings();
+	public boolean hasShortcut(Target target, MotionShortcut shortcut) {
+		return motionProfile(target).hasBinding(shortcut);
 	}
 	
-	public void removeClickBindings(Target target) {
-		clickProfile(target).removeBindings();
+	public boolean hasShortcut(Target target, ClickShortcut shortcut) {
+		return clickProfile(target).hasBinding(shortcut);
 	}
 	
 	public A action(Target target, MotionShortcut shortcut) {
@@ -227,12 +227,14 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		return clickProfile(target).action(shortcut);
 	}
 	
-	public boolean hasShortcut(Target target, MotionShortcut shortcut) {
-		return motionProfile(target).hasBinding(shortcut);
+	//don't override from here
+	
+	public void removeMotionBindings(Target target) {
+		motionProfile(target).removeBindings();
 	}
 	
-	public boolean hasShortcut(Target target, ClickShortcut shortcut) {
-		return clickProfile(target).hasBinding(shortcut);
+	public void removeClickBindings(Target target) {
+		clickProfile(target).removeBindings();
 	}
 	
 	public boolean isActionBound(Target target, A action) {

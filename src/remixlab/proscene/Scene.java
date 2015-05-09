@@ -460,14 +460,14 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setKeyboardShortcut(Character key, GlobalAction action) {
-		keyboardAgent().setShortcut(key, action);
+		keyboardAgent().setBinding(key, action);
 	}
 
 	/**
 	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setKeyboardShortcut(int mask, int vKey, GlobalAction action) {
-		keyboardAgent().setShortcut(mask, vKey, action);
+		keyboardAgent().setBinding(mask, vKey, action);
 	}
 
 	/**
