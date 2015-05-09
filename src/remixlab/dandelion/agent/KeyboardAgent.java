@@ -43,7 +43,7 @@ public class KeyboardAgent extends Agent {
 		// addGrabber(scene.eye().frame());
 		resetDefaultGrabber();
 		setDefaultGrabber(scene);
-		setDefaultShortcuts();
+		setDefaultBindings();
 	}
 
   @Override
@@ -146,7 +146,7 @@ public class KeyboardAgent extends Agent {
 	 * {@code 's' -> KeyboardAction.INTERPOLATE_TO_FIT}<br>
 	 * {@code 'S' -> KeyboardAction.SHOW_ALL}<br>
 	 */
-	public void setDefaultShortcuts() {
+	public void setDefaultBindings() {
 		sceneProfile().removeBindings();
 		sceneProfile().setBinding('a', GlobalAction.TOGGLE_AXES_VISUAL_HINT);
 		sceneProfile().setBinding('f', GlobalAction.TOGGLE_PICKING_VISUAL_HINT);
@@ -207,11 +207,11 @@ public class KeyboardAgent extends Agent {
 		sceneProfile().setBinding(shortcut, action);
 	}
 	
-	public void removeShortcut(KeyboardShortcut shortcut) {
+	public void removeBinding(KeyboardShortcut shortcut) {
 		sceneProfile().removeBinding(shortcut);
 	}
 	
-  public boolean hasShortcut(KeyboardShortcut shortcut) {
+  public boolean hasBinding(KeyboardShortcut shortcut) {
   	return sceneProfile().hasBinding(shortcut);
 	}
   
@@ -241,11 +241,11 @@ public class KeyboardAgent extends Agent {
 		motionProfile(target).setBinding(shortcut, action);
 	}
 	
-	public void removeShortcut(Target target, KeyboardShortcut shortcut) {
+	public void removeBinding(Target target, KeyboardShortcut shortcut) {
 		motionProfile(target).removeBinding(shortcut);
 	}
 	
-  public boolean hasShortcut(Target target, KeyboardShortcut shortcut) {
+  public boolean hasBinding(Target target, KeyboardShortcut shortcut) {
   	return motionProfile(target).hasBinding(shortcut);
 	}
   
@@ -288,28 +288,28 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Removes key shortcut binding (if present).
 	 */
-	public void removeShortcut(Character key) {
+	public void removeBinding(Character key) {
 		sceneProfile().removeBinding(key);
 	}
 
 	/**
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
-	public void removeShortcut(int mask, int vKey) {
+	public void removeBinding(int mask, int vKey) {
 		sceneProfile().removeBinding(mask, vKey);
 	}
 
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
-	public boolean hasShortcut(Character key) {
+	public boolean hasBinding(Character key) {
 		return sceneProfile().hasBinding(key);
 	}
 
 	/**
 	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
 	 */
-	public boolean hasShortcut(int mask, int vKey) {
+	public boolean hasBinding(int mask, int vKey) {
 		return sceneProfile().hasBinding(mask, vKey);
 	}
 
@@ -349,28 +349,28 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Removes key shortcut binding (if present).
 	 */
-	public void removeShortcut(Target target, Character key) {
+	public void removeBinding(Target target, Character key) {
 		motionProfile(target).removeBinding(key);
 	}
 
 	/**
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
-	public void removeShortcut(Target target, int mask, int vKey) {
+	public void removeBinding(Target target, int mask, int vKey) {
 		motionProfile(target).removeBinding(mask, vKey);
 	}
 
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
-	public boolean hasShortcut(Target target, Character key) {
+	public boolean hasBinding(Target target, Character key) {
 		return motionProfile(target).hasBinding(key);
 	}
 
 	/**
 	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
 	 */
-	public boolean hasShortcut(Target target, int mask, int vKey) {
+	public boolean hasBinding(Target target, int mask, int vKey) {
 		return motionProfile(target).hasBinding(mask, vKey);
 	}
 

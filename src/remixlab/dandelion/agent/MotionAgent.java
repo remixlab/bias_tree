@@ -26,7 +26,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 
 	public enum PickingMode {
 		MOVE, CLICK
-	}; // TODO this actually affect all grabbers!
+	}; // this actually affect all grabbers!
 
 	protected float	wSens	= 1f;
 
@@ -203,19 +203,19 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		clickProfile(target).setBinding(shortcut, action);
 	}
 	
-	public void removeShortcut(Target target, MotionShortcut shortcut) {
+	public void removeBinding(Target target, MotionShortcut shortcut) {
 		motionProfile(target).removeBinding(shortcut);
 	}
 	
-	public void removeShortcut(Target target, ClickShortcut shortcut) {
+	public void removeBinding(Target target, ClickShortcut shortcut) {
 		clickProfile(target).removeBinding(shortcut);
 	}
 	
-	public boolean hasShortcut(Target target, MotionShortcut shortcut) {
+	public boolean hasBinding(Target target, MotionShortcut shortcut) {
 		return motionProfile(target).hasBinding(shortcut);
 	}
 	
-	public boolean hasShortcut(Target target, ClickShortcut shortcut) {
+	public boolean hasBinding(Target target, ClickShortcut shortcut) {
 		return clickProfile(target).hasBinding(shortcut);
 	}
 	

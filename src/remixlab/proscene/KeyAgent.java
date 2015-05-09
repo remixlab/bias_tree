@@ -39,7 +39,7 @@ public class KeyAgent extends KeyboardAgent {
 	}
 
 	/**
-	 * Calls {@link remixlab.dandelion.agent.KeyboardAgent#setDefaultShortcuts()} and then adds the following:
+	 * Calls {@link remixlab.dandelion.agent.KeyboardAgent#setDefaultBindings()} and then adds the following:
 	 * <p>
 	 * {@code left_arrow -> KeyboardAction.MOVE_LEFT}<br>
 	 * {@code right_arrow -> KeyboardAction.MOVE_RIGHT}<br>
@@ -56,13 +56,13 @@ public class KeyAgent extends KeyboardAgent {
 	 * {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_2, 2)} and
 	 * {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_3, 3)} to play the paths.
 	 * 
-	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultShortcuts()
+	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultBindings()
 	 * @see remixlab.dandelion.agent.KeyboardAgent#setKeyCodeToPlayPath(int, int)
 	 */
 	@Override
-	public void setDefaultShortcuts() {
+	public void setDefaultBindings() {
 		// VK values here: http://docs.oracle.com/javase/7/docs/api/constant-values.html
-		super.setDefaultShortcuts();
+		super.setDefaultBindings();
 		// VK_LEFT : 37
 		sceneProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, 37, GlobalAction.MOVE_LEFT);
 		// VK_UP : 38

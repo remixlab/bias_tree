@@ -442,10 +442,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * {@code 'ALT' + '3' -> KeyboardAction.DELETE_PATH_3}<br>
 	 * {@code '3' -> KeyboardAction.PLAY_PATH_3}<br>
 	 * 
-	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultShortcuts()
+	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultBindings()
 	 */
 	public void setDefaultKeyboardShortcuts() {
-		keyboardAgent().setDefaultShortcuts();
+		keyboardAgent().setDefaultBindings();
 	}
 
 	/**
@@ -474,14 +474,14 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Removes key shortcut binding (if present).
 	 */
 	public void removeKeyboardShortcut(Character key) {
-		keyboardAgent().removeShortcut(key);
+		keyboardAgent().removeBinding(key);
 	}
 
 	/**
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
 	public void removeKeyboardShortcut(int mask, int vKey) {
-		keyboardAgent().removeShortcut(mask, vKey);
+		keyboardAgent().removeBinding(mask, vKey);
 	}
 
 	/**
@@ -495,14 +495,14 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasKeyboardShortcut(Character key) {
-		return keyboardAgent().hasShortcut(key);
+		return keyboardAgent().hasBinding(key);
 	}
 
 	/**
 	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasKeyboardShortcut(int mask, int vKey) {
-		return keyboardAgent().hasShortcut(mask, vKey);
+		return keyboardAgent().hasBinding(mask, vKey);
 	}
 
 	/**

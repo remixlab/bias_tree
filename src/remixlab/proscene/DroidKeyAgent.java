@@ -30,9 +30,9 @@ public class DroidKeyAgent extends KeyAgent {
 	}
 
 	@Override
-	public void setDefaultShortcuts() {
+	public void setDefaultBindings() {
 		// VK values here: http://docs.oracle.com/javase/7/docs/api/constant-values.html
-		super.setDefaultShortcuts();
+		super.setDefaultBindings();
 
 		sceneProfile().setBinding('1', GlobalAction.ADD_KEYFRAME_TO_PATH_1);
 		sceneProfile().setBinding('2', GlobalAction.DELETE_PATH_1);

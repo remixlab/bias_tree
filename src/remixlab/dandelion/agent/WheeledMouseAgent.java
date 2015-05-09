@@ -414,29 +414,29 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Removes the mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeGestureShortcut(Target target) {
-		removeShortcut(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID));
+	public void removeGestureBinding(Target target) {
+		removeBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID));
 	}
 
 	/**
 	 * Removes the mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeGestureShortcut(Target target, int mask) {
-		removeShortcut(target, new MotionShortcut(mask, MotionEvent.NO_ID));
+	public void removeGestureBinding(Target target, int mask) {
+		removeBinding(target, new MotionShortcut(mask, MotionEvent.NO_ID));
 	}
 
 	/**
 	 * Returns {@code true} if the mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean hasGestureShortcut(Target target) {
-		return hasShortcut(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID));
+	public boolean hasGestureBinding(Target target) {
+		return hasBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID));
 	}
 
 	/**
 	 * Returns {@code true} if the mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean hasGestureShortcut(Target target, int mask) {
-		return hasShortcut(target, new MotionShortcut(mask, MotionEvent.NO_ID));
+	public boolean hasGestureBinding(Target target, int mask) {
+		return hasBinding(target, new MotionShortcut(mask, MotionEvent.NO_ID));
 	}
 
 	/**
@@ -476,29 +476,29 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Removes the mask-button mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeButtonShortcut(Target target, int mask, int button) {
-		removeShortcut(target, new MotionShortcut(buttonModifiersFix(mask, button)));
+	public void removeButtonBinding(Target target, int mask, int button) {
+		removeBinding(target, new MotionShortcut(buttonModifiersFix(mask, button)));
 	}
 
 	/**
 	 * Removes the button mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeButtonShortcut(Target target, int button) {
-		removeShortcut(target, new MotionShortcut(buttonModifiersFix(button), button));
+	public void removeButtonBinding(Target target, int button) {
+		removeBinding(target, new MotionShortcut(buttonModifiersFix(button), button));
 	}
 
 	/**
 	 * Returns {@code true} if the mask-button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean hasButtonShortcut(Target target, int mask, int button) {
-		return hasShortcut(target, new MotionShortcut(buttonModifiersFix(mask, button), button));
+	public boolean hasButtonBinding(Target target, int mask, int button) {
+		return hasBinding(target, new MotionShortcut(buttonModifiersFix(mask, button), button));
 	}
 
 	/**
 	 * Returns {@code true} if the button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean hasButtonShortcut(Target target, int button) {
-		return hasShortcut(target, new MotionShortcut(buttonModifiersFix(button), button));
+	public boolean hasButtonBinding(Target target, int button) {
+		return hasBinding(target, new MotionShortcut(buttonModifiersFix(button), button));
 	}
 
 	/**
@@ -537,15 +537,15 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Removes the mask-wheel shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeWheelShortcut(Target target, int mask) {
-		removeShortcut(target, new MotionShortcut(mask, WHEEL_ID));
+	public void removeWheelBinding(Target target, int mask) {
+		removeBinding(target, new MotionShortcut(mask, WHEEL_ID));
 	}
 
 	/**
 	 * Removes the wheel binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeWheelShortcut(Target target) {
-		removeShortcut(target, new MotionShortcut(WHEEL_ID));
+	public void removeWheelBinding(Target target) {
+		removeBinding(target, new MotionShortcut(WHEEL_ID));
 	}
 
 	/**
@@ -565,15 +565,15 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Returns {@code true} if the mask-wheel shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean hasWheelShortcut(Target target, int mask) {
-		return hasShortcut(target, new MotionShortcut(mask, WHEEL_ID));
+	public boolean hasWheelBinding(Target target, int mask) {
+		return hasBinding(target, new MotionShortcut(mask, WHEEL_ID));
 	}
 
 	/**
 	 * Returns {@code true} if the wheel is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean hasWheelShortcut(Target target) {
-		return hasShortcut(target, new MotionShortcut(WHEEL_ID));
+	public boolean hasWheelBinding(Target target) {
+		return hasBinding(target, new MotionShortcut(WHEEL_ID));
 	}
 
 	/**
@@ -630,45 +630,45 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code true}) or from the
 	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
 	 */
-	public void removeClickShortcut(Target target, int mask, int button, int ncs) {
-		removeShortcut(target, new ClickShortcut(buttonModifiersFix(mask, button), button, ncs));
+	public void removeClickBinding(Target target, int mask, int button, int ncs) {
+		removeBinding(target, new ClickShortcut(buttonModifiersFix(mask, button), button, ncs));
 	}
 
 	/**
 	 * Removes the button-ncs (number-of-clicks) click-shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeClickShortcut(Target target, int button, int ncs) {
-		removeShortcut(target, new ClickShortcut(buttonModifiersFix(button), button, ncs));
+	public void removeClickBinding(Target target, int button, int ncs) {
+		removeBinding(target, new ClickShortcut(buttonModifiersFix(button), button, ncs));
 	}
 
 	/**
 	 * Removes the single-clicked button shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
-	public void removeClickShortcut(Target target, int button) {
-		removeShortcut(target, new ClickShortcut(buttonModifiersFix(button), button, 1));
+	public void removeClickBinding(Target target, int button) {
+		removeBinding(target, new ClickShortcut(buttonModifiersFix(button), button, 1));
 	}
 
 	/**
 	 * Returns {@code true} if the mask-button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target}
 	 * (EYE or FRAME).
 	 */
-	public boolean hasClickShortcut(Target target, int mask, int button, int ncs) {
-		return hasShortcut(target, new ClickShortcut(buttonModifiersFix(mask, button), button, ncs));
+	public boolean hasClickBinding(Target target, int mask, int button, int ncs) {
+		return hasBinding(target, new ClickShortcut(buttonModifiersFix(mask, button), button, ncs));
 	}
 
 	/**
 	 * Returns {@code true} if the button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target} (EYE
 	 * or FRAME).
 	 */
-	public boolean hasClickShortcut(Target target, int button, int ncs) {
-		return hasShortcut(target, new ClickShortcut(buttonModifiersFix(button), button, ncs));
+	public boolean hasClickBinding(Target target, int button, int ncs) {
+		return hasBinding(target, new ClickShortcut(buttonModifiersFix(button), button, ncs));
 	}
 
 	/**
 	 * Returns {@code true} if the single-clicked button shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
-	public boolean hasClickShortcut(Target target, int button) {
-		return hasShortcut(target, new ClickShortcut(buttonModifiersFix(button), button, 1));
+	public boolean hasClickBinding(Target target, int button) {
+		return hasBinding(target, new ClickShortcut(buttonModifiersFix(button), button, 1));
 	}
 
 	/**
