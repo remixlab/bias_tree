@@ -34,27 +34,6 @@ public class MouseAgent extends WheeledMouseAgent {
 	}
 
 	/**
-	 * Hack to deal with this: https://github.com/processing/processing/issues/1693 is to override all the following so
-	 * that:
-	 * <p>
-	 * <ol>
-	 * <li>Whenever B_CENTER appears B_ALT should be present.</li>
-	 * <li>Whenever B_RIGHT appears B_META should be present.</li>
-	 * </ol>
-	 */
-	@Override
-	public int buttonModifiersFix(int m, int button) {
-		int mask = m;
-		// ALT
-		if (button == CENTER_ID)
-			mask = (BogusEvent.ALT | m);
-		// META
-		else if (button == RIGHT_ID)
-			mask = (BogusEvent.META | m);
-		return mask;
-	}
-
-	/**
 	 * Processing mouseEvent method to be registered at the PApplet's instance.
 	 */
 	public void mouseEvent(processing.event.MouseEvent e) {
@@ -75,17 +54,34 @@ public class MouseAgent extends WheeledMouseAgent {
 			return;
 		}
 		if (e.getAction() == processing.event.MouseEvent.WHEEL) {// e.getAction() = MouseEvent.WHEEL = 8
+			System.out.print("got a wheel: count: " + e.getCount());
+			DOF1Event wheel = new DOF1Event(e.getCount(), e.getModifiers(), WHEEL_ID);
+			System.out.println(" bogus event: " + wheel.x() + " modifiers: " + BogusEvent.modifiersText(wheel.modifiers()));
+			handle(wheel);
+			return;
+			/*
 			handle(new DOF1Event(e.getCount(), e.getModifiers(), WHEEL_ID));
 			return;
+			*/
 		}
 		if (e.getAction() == processing.event.MouseEvent.CLICK) {
-			ClickEvent bogusClickEvent = new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
-					e.getModifiers(), e.getButton(), e.getCount()); 
+			//TODO processing3a7 is broken since it always returns 0 id button here
+			System.out.print("got a click: ");
+			ClickEvent bogusClickEvent = new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(), e.getModifiers(), e.getButton(), e.getCount()); 
+			if (pickingMode() == PickingMode.CLICK)
+				updateTrackedGrabber(bogusClickEvent);
+			System.out.println(" bogus event: x: " + bogusClickEvent.x() + " y: " + bogusClickEvent.y() + " button: " + bogusClickEvent.id() + " modifiers: " + BogusEvent.modifiersText(bogusClickEvent.modifiers()));
+			//else//
+			handle(bogusClickEvent);
+			return;
+			/*
+			ClickEvent bogusClickEvent = new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(), e.getModifiers(), e.getButton(), e.getCount()); 
 			if (pickingMode() == PickingMode.CLICK)
 				updateTrackedGrabber(bogusClickEvent);
 			//else//
 			handle(bogusClickEvent);
 			return;
+			//*/
 		}
 	}
 }

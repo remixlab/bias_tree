@@ -173,25 +173,6 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	public PickingMode pickingMode() {
 		return pMode;
 	}
-
-	/**
-	 * Same as {@code return buttonModifiersFix(BogusEvent.NOMODIFIER_MASK, button)}.
-	 * 
-	 * @see #buttonModifiersFix(int, int)
-	 */
-	public int buttonModifiersFix(int button) {
-		return buttonModifiersFix(BogusEvent.NO_MODIFIER_MASK, button);
-	}
-
-	/**
-	 * Hack to deal with some platforms not reporting correctly the mouse event mask, such as with Processing:
-	 * https://github.com/processing/processing/issues/1693
-	 * <p>
-	 * Default implementation simple returns the same mask.
-	 */
-	public int buttonModifiersFix(int mask, int button) {
-		return mask;
-	}
 	
 	//high level (new) with plain shortcuts
 	
