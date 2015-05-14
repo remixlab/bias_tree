@@ -16,7 +16,6 @@ import java.util.List;
 
 import remixlab.bias.branch.*;
 import remixlab.bias.event.*;
-import remixlab.bias.event.shortcut.*;
 
 public class Agent {
 	class GrabberBranchTuple {
@@ -49,7 +48,7 @@ public class Agent {
 	protected boolean										agentTrckn;
 
 	protected InputHandler							handler;
-	protected Shortcut shrtct;
+	//protected Shortcut shrtct;
 
 	/**
 	 * Constructs an Agent with the given name and registers is at the given inputHandler.
@@ -266,6 +265,8 @@ public class Agent {
 		return handler;
 	}
 	
+	//TODO seems overkill, since it should be handled in by the grabber
+	/*
 	public Shortcut updateTrackedGrabberShortcut() {
 		return shrtct;
 	}
@@ -273,6 +274,7 @@ public class Agent {
 	public void setUpdateTrackedGrabberShortcut(Shortcut shortcut) {
 		shrtct = shortcut;
 	}
+	*/
 
 	/**
 	 * If {@link #isTracking()} is enabled and the agent is registered at the {@link #inputHandler()} then queries each
@@ -294,22 +296,22 @@ public class Agent {
 		
 		Grabber g = trackedGrabber();
 		
-    if(updateTrackedGrabberShortcut()==null ^ event.shortcut().equals(updateTrackedGrabberShortcut())) {//new
-		  // We first check if tracked grabber remains the same
-    	if (g != null)
-  			if (g.checkIfGrabsInput(event))
-  				return trackedGrabber();
+    //if(updateTrackedGrabberShortcut()==null ^ event.shortcut().equals(updateTrackedGrabberShortcut())) {//new
+	  // We first check if tracked grabber remains the same
+  	if (g != null)
+			if (g.checkIfGrabsInput(event))
+				return trackedGrabber();
 
-  		// pick the first otherwise
-  		trackedGrabber = null;
-  		for (GrabberBranchTuple t : tuples) {
-  			// take whatever. Here the first one
-  			if (t.g.checkIfGrabsInput(event)) {
-  				trackedGrabber = t;
-  				return trackedGrabber();
-  			}
-  		}
-    }//new
+		// pick the first otherwise
+		trackedGrabber = null;
+		for (GrabberBranchTuple t : tuples) {
+			// take whatever. Here the first one
+			if (t.g.checkIfGrabsInput(event)) {
+				trackedGrabber = t;
+				return trackedGrabber();
+			}
+		}
+    //}//new
 		return trackedGrabber();
 	}
 

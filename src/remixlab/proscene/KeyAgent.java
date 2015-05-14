@@ -28,14 +28,55 @@ public class KeyAgent extends KeyboardAgent {
 	 * Processing keyEvent method to be registered at the PApplet's instance.
 	 */
 	public void keyEvent(processing.event.KeyEvent e) {
+		//TODO key idea: use flush(event) when key RELEASE
+		// study p5-2 and proscene-2 behavior in detail
+		// then make a cross table with all cases in both p5 versions
+		// then design, using flush
+		if( !handle(new KeyboardEvent(e.getKey())) )
+			handle(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
+		/*
+		if( e.getKey() == '\uFFFF') {
+			updateTrackedGrabber(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
+			handle(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
+		}
+		else {
+			updateTrackedGrabber(new KeyboardEvent(e.getKey()));
+			handle(new KeyboardEvent(e.getKey()));
+		}
+		*/		
+		/*
+		if (e.getAction() == processing.event.KeyEvent.RELEASE) {			
+			//if( e.getKey() == '\uFFFD') {
+		  if( e.getKey() == '\uFFFF') {
+			  updateTrackedGrabber(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));// TODO needs testing
+			  handle(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
+			}
+			else {
+				updateTrackedGrabber(new KeyboardEvent(e.getKey()));// TODO needs testing
+				handle(new KeyboardEvent(e.getKey()));
+			}
+			//TODO works for handle:
+			//if( !handle(new KeyboardEvent(e.getKey())) )
+				//handle(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
+		}	
+		//*/
+		/*
+		if( e.getKey() == '\uFFFF')
+			System.out.println("got the unicode replacement charcter: " + e.getKey());
 		if (e.getAction() == processing.event.KeyEvent.TYPE) {
+			System.out.println("TYPE: key: " + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) + " keyCode: " + e.getKeyCode());
 			updateTrackedGrabber(new KeyboardEvent(e.getKey()));// TODO needs testing
 			handle(new KeyboardEvent(e.getKey()));
 		}
 		else if (e.getAction() == processing.event.KeyEvent.RELEASE) {
+			System.out.println("RELEASE: key: " + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) + " keyCode: " + e.getKeyCode());
 			updateTrackedGrabber(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));// TODO needs testing
 			handle(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
 		}
+		else if(e.getAction() == processing.event.KeyEvent.PRESS) {
+			System.out.println("PRESS: key: " + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) + " keyCode: " + e.getKeyCode());
+		}
+		//*/
 	}
 
 	/**

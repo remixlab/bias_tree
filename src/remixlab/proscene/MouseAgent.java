@@ -54,7 +54,7 @@ public class MouseAgent extends WheeledMouseAgent {
 			return;
 		}
 		if (e.getAction() == processing.event.MouseEvent.WHEEL) {// e.getAction() = MouseEvent.WHEEL = 8
-			System.out.print("got a wheel: count: " + e.getCount());
+			System.out.print("processing3a7 is broken since no wheel is reported: " + e.getCount());
 			DOF1Event wheel = new DOF1Event(e.getCount(), e.getModifiers(), WHEEL_ID);
 			System.out.println(" bogus event: " + wheel.x() + " modifiers: " + BogusEvent.modifiersText(wheel.modifiers()));
 			handle(wheel);
