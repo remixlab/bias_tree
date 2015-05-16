@@ -27,7 +27,6 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 		return new HashCodeBuilder(17, 37).
 				appendSuper(super.hashCode()).
 				append(vKey).
-				append(key).
 				toHashCode();
 	}
 
@@ -43,23 +42,20 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(vKey, rhs.vKey)
-				.append(key, rhs.key)
 				.isEquals();
 	}
 
 	protected final Integer		vKey;
-	protected final Character	key;
 
 	/**
 	 * Defines a keyboard shortcut from the given character.
 	 * 
-	 * @param k
-	 *          the character that defines the keyboard shortcut.
+	 * @param vk
+	 *          the virtual key that defines the keyboard shortcut.
 	 */
-	public KeyboardShortcut(Character k) {
+	public KeyboardShortcut(Integer vk) {
 		super();
-		this.key = k;
-		this.vKey = null;
+		this.vKey = vk;
 	}
 
 	/**
@@ -73,13 +69,11 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 	public KeyboardShortcut(Integer m, Integer vk) {
 		super(m);
 		this.vKey = vk;
-		this.key = null;
 	}
 
 	protected KeyboardShortcut(KeyboardShortcut other) {
 		super(other);
 		this.vKey = new Integer(other.vKey);
-		this.key = new Character(other.key);
 	}
 
 	@Override
@@ -94,14 +88,10 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 	 */
 	public String description() {
 		String description = new String();
-		if (key != null)
-			description = key.toString();
-		else {
-			if (mask == 0)
-				description = "virtual_key (" + vKey.toString() + ")";
-			else
-				description = BogusEvent.modifiersText(mask) + "+virtual_key (" + vKey.toString() + ")";
-		}
+		if (mask == 0)
+			description = "virtual_key (" + vKey.toString() + ")";
+		else
+			description = BogusEvent.modifiersText(mask) + "+virtual_key (" + vKey.toString() + ")";
 		return description;
 	}
 }

@@ -290,7 +290,7 @@ public class Agent {
 	 * @see #setDefaultGrabber(Grabber)
 	 * @see #isTracking()
 	 */
-	public Grabber updateTrackedGrabber(BogusEvent event) {
+	protected Grabber updateTrackedGrabber(BogusEvent event) {
 		if (event == null || !inputHandler().isAgentRegistered(this) || !isTracking())
 			return trackedGrabber();
 		

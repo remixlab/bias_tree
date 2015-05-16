@@ -17,6 +17,9 @@ import remixlab.dandelion.core.AbstractScene;
 import remixlab.dandelion.core.Constants.GlobalAction;
 
 public class KeyAgent extends KeyboardAgent {
+	protected boolean press, release;
+	protected KeyboardEvent currentEvent;
+	
 	public KeyAgent(AbstractScene scn, String n) {
 		super(scn, n);
 		// registration requires a call to PApplet.registerMethod("keyEvent", keyboardAgent());
@@ -28,12 +31,27 @@ public class KeyAgent extends KeyboardAgent {
 	 * Processing keyEvent method to be registered at the PApplet's instance.
 	 */
 	public void keyEvent(processing.event.KeyEvent e) {
+		press = e.getAction() == processing.event.KeyEvent.PRESS;
+		release = e.getAction() == processing.event.KeyEvent.RELEASE;
+		currentEvent = new KeyboardEvent(e.getModifiers(), e.getKeyCode());
+		/*
+		if(press) {
+			handle(currentEvent);
+			return;
+		}
+		if(release) {
+			updateTrackedGrabber(currentEvent);//TODO?
+			flush(currentEvent);
+			return;
+		}
+		*/
+		
 		//TODO key idea: use flush(event) when key RELEASE
 		// study p5-2 and proscene-2 behavior in detail
 		// then make a cross table with all cases in both p5 versions
 		// then design, using flush
-		if( !handle(new KeyboardEvent(e.getKey())) )
-			handle(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
+		//if( !handle(new KeyboardEvent(e.getKey())) )
+			//handle(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
 		/*
 		if( e.getKey() == '\uFFFF') {
 			updateTrackedGrabber(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
@@ -60,21 +78,23 @@ public class KeyAgent extends KeyboardAgent {
 				//handle(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
 		}	
 		//*/
-		/*
-		if( e.getKey() == '\uFFFF')
-			System.out.println("got the unicode replacement charcter: " + e.getKey());
+		///*
+		//if( e.getKey() == '\uFFFF')	System.out.println("got the unicode replacement character: " + e.getKey());
 		if (e.getAction() == processing.event.KeyEvent.TYPE) {
+			if( e.getKey() == '\uFFFF')	System.out.println("got the unicode replacement character in TYPE: " + e.getKey());
 			System.out.println("TYPE: key: " + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) + " keyCode: " + e.getKeyCode());
-			updateTrackedGrabber(new KeyboardEvent(e.getKey()));// TODO needs testing
-			handle(new KeyboardEvent(e.getKey()));
+			//updateTrackedGrabber(new KeyboardEvent(e.getKey()));// TODO needs testing
+			//handle(new KeyboardEvent(e.getKey()));
 		}
-		else if (e.getAction() == processing.event.KeyEvent.RELEASE) {
-			System.out.println("RELEASE: key: " + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) + " keyCode: " + e.getKeyCode());
-			updateTrackedGrabber(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));// TODO needs testing
-			handle(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
-		}
-		else if(e.getAction() == processing.event.KeyEvent.PRESS) {
+		else if (press) {
+			if( e.getKey() == '\uFFFF')	System.out.println("got the unicode replacement character in PRESS: " + e.getKey());
 			System.out.println("PRESS: key: " + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) + " keyCode: " + e.getKeyCode());
+			//updateTrackedGrabber(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));// TODO needs testing
+			//handle(new KeyboardEvent(e.getModifiers(), e.getKeyCode()));
+		}
+		else if(release) {
+			if( e.getKey() == '\uFFFF')	System.out.println("got the unicode replacement character in RELEASE: " + e.getKey());
+			System.out.println("RELEASE: key: " + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) + " keyCode: " + e.getKeyCode());
 		}
 		//*/
 	}

@@ -147,7 +147,9 @@ public class KeyboardAgent extends Agent {
 	 * {@code 'S' -> KeyboardAction.SHOW_ALL}<br>
 	 */
 	public void setDefaultBindings() {
-		sceneProfile().removeBindings();
+		removeBindings();
+		//TODO pending
+		/*
 		sceneProfile().setBinding('a', GlobalAction.TOGGLE_AXES_VISUAL_HINT);
 		sceneProfile().setBinding('f', GlobalAction.TOGGLE_PICKING_VISUAL_HINT);
 		sceneProfile().setBinding('g', GlobalAction.TOGGLE_GRID_VISUAL_HINT);
@@ -159,10 +161,13 @@ public class KeyboardAgent extends Agent {
 
 		sceneProfile().setBinding('s', GlobalAction.INTERPOLATE_TO_FIT);
 		sceneProfile().setBinding('S', GlobalAction.SHOW_ALL);
+		*/
 
 		// TODO add some eye and frame defs
 		removeBindings(Target.EYE);
 		removeBindings(Target.FRAME);
+		//TODO pending
+		/*
 		setBinding(Target.EYE, 'a', KeyboardAction.ALIGN_FRAME);
 		setBinding(Target.EYE, 'c', KeyboardAction.CENTER_FRAME);
 		setBinding(Target.FRAME, 'a', KeyboardAction.ALIGN_FRAME);
@@ -179,6 +184,7 @@ public class KeyboardAgent extends Agent {
 		setBinding(Target.EYE, 'Y', KeyboardAction.TRANSLATE_UP_Y);
 		setBinding(Target.EYE, 'z', KeyboardAction.ROTATE_DOWN_Z);
 		setBinding(Target.EYE, 'Z', KeyboardAction.ROTATE_UP_Z);
+		*/
 	}
 
 	/**
@@ -274,8 +280,18 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
+	//TODO pending
+	/*
 	public void setBinding(Character key, GlobalAction action) {
 		sceneProfile().setBinding(key, action);
+	}
+	*/
+	
+	/**
+	 * Binds the vKey (virtual key) shortcut to the (Keyboard) dandelion action.
+	 */
+	public void setBinding(int vKey, GlobalAction action) {
+		sceneProfile().setBinding(vKey, action);
 	}
 
 	/**
@@ -288,8 +304,18 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Removes key shortcut binding (if present).
 	 */
+  //TODO pending
+	/*
 	public void removeBinding(Character key) {
 		sceneProfile().removeBinding(key);
+	}
+	*/
+	
+	/**
+	 * Removes mask-vKey (virtual key) shortcut binding (if present).
+	 */
+	public void removeBinding(int vKey) {
+		sceneProfile().removeBinding(vKey);
 	}
 
 	/**
@@ -302,8 +328,18 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
+  //TODO pending
+	/*
 	public boolean hasBinding(Character key) {
 		return sceneProfile().hasBinding(key);
+	}
+	*/
+	
+	/**
+	 * Returns {@code true} if the vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
+	 */
+	public boolean hasBinding(int vKey) {
+		return sceneProfile().hasBinding(vKey);
 	}
 
 	/**
@@ -317,8 +353,19 @@ public class KeyboardAgent extends Agent {
 	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
 	 * is bound to the given shortcut.
 	 */
+	//TODO pending
+	/*
 	public GlobalAction action(Character key) {
 		return action(new KeyboardShortcut(key));
+	}
+	*/
+	
+	/**
+	 * Returns the (Keyboard) dandelion action that is bound to the given vKey (virtual key) shortcut. Returns
+	 * {@code null} if no action is bound to the given shortcut.
+	 */
+	public GlobalAction action(int vKey) {
+		return action(new KeyboardShortcut(vKey));
 	}
 
 	/**
@@ -335,8 +382,18 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
+  //TODO pending
+	/*
 	public void setBinding(Target target, Character key, KeyboardAction action) {
 		motionProfile(target).setBinding(key, action);
+	}
+	*/
+	
+	/**
+	 * Binds the vKey (virtual key) shortcut to the (Keyboard) dandelion action.
+	 */
+	public void setBinding(Target target, int vKey, KeyboardAction action) {
+		motionProfile(target).setBinding(vKey, action);
 	}
 
 	/**
@@ -349,8 +406,18 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Removes key shortcut binding (if present).
 	 */
+  //TODO pending
+	/*
 	public void removeBinding(Target target, Character key) {
 		motionProfile(target).removeBinding(key);
+	}
+	*/
+	
+	/**
+	 * Removes vKey (virtual key) shortcut binding (if present).
+	 */
+	public void removeBinding(Target target, int vKey) {
+		motionProfile(target).removeBinding(vKey);
 	}
 
 	/**
@@ -363,8 +430,18 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
+  //TODO pending
+	/*
 	public boolean hasBinding(Target target, Character key) {
 		return motionProfile(target).hasBinding(key);
+	}
+	*/
+	
+	/**
+	 * Returns {@code true} if the vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
+	 */
+	public boolean hasBinding(Target target, int vKey) {
+		return motionProfile(target).hasBinding(vKey);
 	}
 
 	/**
@@ -378,8 +455,19 @@ public class KeyboardAgent extends Agent {
 	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
 	 * is bound to the given shortcut.
 	 */
+  //TODO pending
+	/*
 	public KeyboardAction action(Target target, Character key) {
 		return action(target, new KeyboardShortcut(key));
+	}
+	*/
+	
+	/**
+	 * Returns the (Keyboard) dandelion action that is bound to the given vKey (virtual key) shortcut. Returns
+	 * {@code null} if no action is bound to the given shortcut.
+	 */
+	public KeyboardAction action(Target target, int vKey) {
+		return action(target, new KeyboardShortcut(vKey));
 	}
 
 	/**
