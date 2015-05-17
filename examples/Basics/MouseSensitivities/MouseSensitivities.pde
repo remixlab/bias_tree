@@ -52,7 +52,7 @@ void setup() {
   defTransSens = interactiveFrame.translationSensitivity();
   defSpngSens  = interactiveFrame.spinningSensitivity();
   defWheelSens = interactiveFrame.wheelSensitivity();
-  defDampFrict = interactiveFrame.dampingFriction();
+  defDampFrict = interactiveFrame.damping();
 
   buttons.add(new ClickButton(scene, new PVector(xM + 210, 50), myFont, "+", Sensitivity.ROTATION, true));	
   buttons.add(new ClickButton(scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 50), myFont, "-", Sensitivity.ROTATION, false));		
@@ -140,8 +140,8 @@ void displayControls() {
   displayText(String.format("%.2f", iFrame.spinningSensitivity()), xM + 165, 90);  
   displayText(equals(iFrame.wheelSensitivity(), defWheelSens) ? "Wheel sensitivity" : "Wheel sensitivity *", xM, 110);
   displayText(String.format("%.2f", iFrame.wheelSensitivity()), xM + 165, 110);  
-  displayText(equals(iFrame.dampingFriction(), defDampFrict) ? "Spinning friction" : "Spinning friction *", xM, 130);
-  displayText(String.format("%.2f", iFrame.dampingFriction()), xM + 165, 130);
+  displayText(equals(iFrame.damping(), defDampFrict) ? "Spinning friction" : "Spinning friction *", xM, 130);
+  displayText(String.format("%.2f", iFrame.damping()), xM + 165, 130);
   scene.endScreenDrawing();
 
   for (int i = 0; i < buttons.size(); i++)
@@ -207,9 +207,9 @@ void changeSensitivity(GrabberFrame iFrame, Sensitivity sens, boolean increase) 
     break;
   case SPINNING_FRICTION:
     step = increase ? 0.05f : -0.05f;
-    res = iFrame.dampingFriction() + step;
+    res = iFrame.damping() + step;
     if (0<= res && res <=1)
-      iFrame.setDampingFriction(res);
+      iFrame.setDamping(res);
     break;
   }
 }
@@ -219,7 +219,7 @@ boolean areDefaultsSet(GrabberFrame iFrame) {
       && equals(iFrame.translationSensitivity(), defTransSens)
       && equals(iFrame.spinningSensitivity(), defSpngSens)
       && equals(iFrame.wheelSensitivity(), defWheelSens)
-      && equals(iFrame.dampingFriction(), defDampFrict)
+      && equals(iFrame.damping(), defDampFrict)
       )
     return true;
   return false;
@@ -230,7 +230,7 @@ void setDefaults(GrabberFrame iFrame) {
   iFrame.setTranslationSensitivity(defTransSens);
   iFrame.setSpinningSensitivity(defSpngSens);
   iFrame.setWheelSensitivity(defWheelSens);
-  iFrame.setDampingFriction(defDampFrict);
+  iFrame.setDamping(defDampFrict);
 }
 
 void displayText(String text, int x, int y) {

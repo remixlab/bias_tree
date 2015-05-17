@@ -11,7 +11,7 @@
 package remixlab.proscene;
 
 import remixlab.bias.event.KeyboardEvent;
-import remixlab.dandelion.core.Constants.GlobalAction;
+import remixlab.dandelion.core.Constants.SceneAction;
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 

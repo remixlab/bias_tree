@@ -42,7 +42,7 @@ void draw() {
 
 void keyPressed() {
   if (key == ' ')
-    if ( scene.mouseAgent().isButtonActionBound(Target.EYE, DOF2Action.ROTATE_CAD) )
+    if ( scene.mouseAgent().isActionBound(Target.EYE, DOF2Action.ROTATE_CAD) )
       scene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE);
     else {
       scene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE_CAD);
