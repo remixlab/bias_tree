@@ -20,6 +20,7 @@ void setup() {
   scene = new Scene(this);
   // when damping friction = 0 -> spin
   scene.eye().frame().setDamping(0);
+  //println("spinning sens: " +  scene.eye().frame().spinningSensitivity());
 }
 
 void draw() {

@@ -41,7 +41,7 @@ import remixlab.fpstiming.*;
  * {@link remixlab.dandelion.core.MatrixStackHelper} or through a third party matrix stack (like it's done with
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>
  */
-public abstract class AbstractScene extends AnimatorObject implements InteractiveGrabber<SceneAction>, Constants {
+public abstract class AbstractScene extends AnimatorObject implements InteractiveGrabber<GlobalAction>, Constants {
 	protected boolean					dottedGrid;
 
 	// O B J E C T S
@@ -135,19 +135,19 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 
 	// grabber implementation
 
-	protected Action<SceneAction>	action;
+	protected Action<GlobalAction>	action;
 
-	public SceneAction referenceAction() {
+	public GlobalAction referenceAction() {
 		return action.referenceAction();
 	}
 
 	@Override
-	public void setAction(Action<SceneAction> a) {
+	public void setAction(Action<GlobalAction> a) {
 		action = a;
 	}
 
 	@Override
-	public Action<SceneAction> action() {
+	public Action<GlobalAction> action() {
 		return action;
 	}
 
@@ -355,6 +355,118 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			return (KeyboardAgent) inputHandler().unregisterAgent(keyboardAgent());
 		}
 		return keyboardAgent();
+	}
+
+	/**
+	 * Restores the default keyboard shortcuts:
+	 * <p>
+	 * {@code 'a' -> KeyboardAction.TOGGLE_AXES_VISUAL_HINT}<br>
+	 * {@code 'f' -> KeyboardAction.TOGGLE_FRAME_VISUAL_HINT}<br>
+	 * {@code 'g' -> KeyboardAction.TOGGLE_GRID_VISUAL_HINT}<br>
+	 * {@code 'm' -> KeyboardAction.TOGGLE_ANIMATION}<br>
+	 * {@code 'e' -> KeyboardAction.TOGGLE_CAMERA_TYPE}<br>
+	 * {@code 'h' -> KeyboardAction.DISPLAY_INFO}<br>
+	 * {@code 'r' -> KeyboardAction.TOGGLE_PATHS_VISUAL_HINT}<br>
+	 * {@code 's' -> KeyboardAction.INTERPOLATE_TO_FIT}<br>
+	 * {@code 'S' -> KeyboardAction.SHOW_ALL}<br>
+	 * {@code left_arrow -> KeyboardAction.MOVE_LEFT}<br>
+	 * {@code right_arrow -> KeyboardAction.MOVE_RIGHT}<br>
+	 * {@code up_arrow -> KeyboardAction.MOVE_UP}<br>
+	 * {@code down_arrow -> KeyboardAction.MOVE_DOWN	}<br>
+	 * {@code 'CTRL' + '1' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_1}<br>
+	 * {@code 'ALT' + '1' -> KeyboardAction.DELETE_PATH_1}<br>
+	 * {@code '1' -> KeyboardAction.PLAY_PATH_1}<br>
+	 * {@code 'CTRL' + '2' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_2}<br>
+	 * {@code 'ALT' + '2' -> KeyboardAction.DELETE_PATH_2}<br>
+	 * {@code '2' -> KeyboardAction.PLAY_PATH_2}<br>
+	 * {@code 'CTRL' + '3' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_3}<br>
+	 * {@code 'ALT' + '3' -> KeyboardAction.DELETE_PATH_3}<br>
+	 * {@code '3' -> KeyboardAction.PLAY_PATH_3}<br>
+	 * 
+	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultBindings()
+	 */
+	public void setDefaultKeyboardShortcuts() {
+		keyboardAgent().setDefaultBindings();
+	}
+
+	/**
+	 * Set the virtual-key to play path. Defaults are java.awt.event.KeyEvent.VK_1, java.awt.event.KeyEvent.VK_2 and
+	 * java.awt.event.KeyEvent.VK_3 which will play paths 1, 2, 3, resp.
+	 */
+	public void setKeyCodeToPlayPath(int code, int path) {
+		keyboardAgent().setKeyCodeToPlayPath(code, path);
+	}
+
+	/**
+	 * Binds the key shortcut to the (Keyboard) dandelion action.
+	 */
+	public void setKeyboardBinding(Character key, SceneAction action) {
+		keyboardAgent().setBinding(key, action);
+	}
+
+	/**
+	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
+	 */
+	public void setKeyboardBinding(int mask, int vKey, SceneAction action) {
+		keyboardAgent().setBinding(mask, vKey, action);
+	}
+
+	/**
+	 * Removes key shortcut binding (if present).
+	 */
+	public void removeKeyboardBinding(Character key) {
+		keyboardAgent().removeBinding(key);
+	}
+
+	/**
+	 * Removes mask-vKey (virtual key) shortcut binding (if present).
+	 */
+	public void removeKeyboardBinding(int mask, int vKey) {
+		keyboardAgent().removeBinding(mask, vKey);
+	}
+
+	/**
+	 * Removes all shortcut bindings.
+	 */
+	public void removeKeyboardBindings() {
+		keyboardAgent().removeBindings();
+	}
+
+	/**
+	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
+	 */
+	public boolean hasKeyboardBinding(Character key) {
+		return keyboardAgent().hasBinding(key);
+	}
+
+	/**
+	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
+	 */
+	public boolean hasKeyboardBinding(int mask, int vKey) {
+		return keyboardAgent().hasBinding(mask, vKey);
+	}
+
+	/**
+	 * Returns {@code true} if the keyboard action is bound.
+	 */
+	public boolean isKeyboardActionBound(SceneAction action) {
+		return keyboardAgent().isActionBound(action);
+	}
+
+	/**
+	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
+	 * is bound to the given shortcut.
+	 */
+	public SceneAction keyboardAction(Character key) {
+		return keyboardAgent().action(key);
+	}
+
+	/**
+	 * Returns the (Keyboard) dandelion action that is bound to the given mask-vKey (virtual key) shortcut. Returns
+	 * {@code null} if no action is bound to the given shortcut.
+	 */
+	public SceneAction keyboardAction(int mask, int vKey) {
+		return keyboardAgent().action(mask, vKey);
 	}
 
 	/**
@@ -2085,7 +2197,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	static public void showEventVariationWarning(MotionAction action) {
 		showWarning(action.name() + " can only be performed using a relative event.");
 	}
-	
+
 	/**
 	 * Display a warning that the specified method can only be implemented from a relative bogus event.
 	 */

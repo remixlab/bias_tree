@@ -341,7 +341,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	@Override
 	protected void performInteraction(MotionEvent event) {
-		if(processAction(event))
+		if (processAction(event))
 			return;
 		switch (referenceAction()) {
 		case CUSTOM:
@@ -418,11 +418,11 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			gestureTranslateZ(event, true);
 			break;
 		case ZOOM_ON_ANCHOR:
-			gestureZoomOnAnchor(event);	
+			gestureZoomOnAnchor(event);
 			break;
 		case ZOOM_ON_REGION:
-			//this get called when processing the action
-			//gestureZoomOnRegion(event);
+			// this get called when processing the action
+			// gestureZoomOnRegion(event);
 			break;
 		default:
 			AbstractScene.showMotionWarning(referenceAction());
@@ -533,71 +533,67 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	protected void performCustomAction(DOF6Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF6Event event)", this.getClass().getName());
 	}
-	
-  //two tempi actions workflow divert from 'normal' (single tempi) actions which just require
+
+	// two tempi actions workflow divert from 'normal' (single tempi) actions which just require
 	// either updateTrackeGrabber(event) or handle(event).
-	
-	//TODO pending cloning and hash
-	// Multiple tempo actions require this:
-	Action<MotionAction> initAction;	
-	//private MotionAction twotempi;
-	//private A a;//TODO study make me an attribute to com between init and end
-	private boolean need4Spin;
-	private boolean need4Tossing;
-	private boolean drive;
-	private boolean rotateHint;
-	protected MotionEvent currMotionEvent;
-	public MotionEvent initMotionEvent;
-	public DOF2Event zor;
-	private float flySpeedCache;
-	
+
+	// TODO pending cloning and hash
+	// Multiple tempi actions require this:
+	Action<MotionAction>	initAction;
+	// private MotionAction twotempi;
+	// private A a;//TODO study make me an attribute to com between init and end
+	private boolean				need4Spin;
+	private boolean				need4Tossing;
+	private boolean				drive;
+	private boolean				rotateHint;
+	protected MotionEvent	currMotionEvent;
+	public MotionEvent		initMotionEvent;
+	public DOF2Event			zor;
+	private float					flySpeedCache;
+
 	public MotionEvent initMotionEvent() {
 		return initMotionEvent;
 	}
-	
+
 	public MotionEvent currentMotionEvent() {
 		return currMotionEvent;
 	}
-	
+
 	protected boolean processAction(MotionEvent event) {
-		if(initAction == null) {
-			if(action() != null) {
+		if (initAction == null) {
+			if (action() != null) {
 				initAction = action();
-				return initAction(event);//start action
+				return initAction(event);// start action
 			}
 		}
 		else { // initAction != null
-			if(action() != null) {
-				if(initAction == action())
-					return execAction(event);//continue action
-				else { //initAction != action() -> action changes abruptly, i.e., 
-					System.out.println("case 1");
+			if (action() != null) {
+				if (initAction == action())
+					return execAction(event);// continue action
+				else { // initAction != action() -> action changes abruptly, i.e.,
 					endAction(event);
-					//TODO testing these two lines
-					System.out.println("testing case when action changes abruptly");
 					initAction = action();
-					return initAction(event);//start action
-					//return false;
+					return initAction(event);// start action
+					// return false;
 				}
 			}
-			else {//action() == null
-				System.out.println("case 2");
-				return endAction(event);//stopAction
+			else {// action() == null
+				return endAction(event);// stopAction
 			}
 		}
-		return true;//i.e., if initAction == action() == null -> ignore :)
+		return true;// i.e., if initAction == action() == null -> ignore :)
 	}
-	
+
 	protected boolean initAction(MotionEvent event) {
-		if(event instanceof DOF1Event)
+		if (event instanceof DOF1Event)
 			return false;
 		return initAction(MotionEvent.dof2Event(event));
 	}
-	
+
 	protected boolean initAction(DOF2Event event) {
 		initMotionEvent = event.get();
-		currMotionEvent = event;		
-		stopSpinning();			
+		currMotionEvent = event;
+		stopSpinning();
 		MotionAction twotempi = action().referenceAction();
 		if (twotempi == MotionAction.SCREEN_TRANSLATE)
 			dirIsFixed = false;
@@ -609,39 +605,38 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 					.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
 		need4Spin = (rotateMode && (damping() == 0));
 		drive = (twotempi == MotionAction.DRIVE);
-		if(drive)
+		if (drive)
 			flySpeedCache = flySpeed();
 		need4Tossing = (twotempi == MotionAction.MOVE_FORWARD) || (twotempi == MotionAction.MOVE_BACKWARD)
 				|| (drive);
-		if(need4Tossing)
+		if (need4Tossing)
 			updateSceneUpVector();
 		rotateHint = twotempi == MotionAction.SCREEN_ROTATE;
-		if(rotateHint)
+		if (rotateHint)
 			scene.setRotateVisualHint(true);
-		if(isEyeFrame() && twotempi == MotionAction.ZOOM_ON_REGION) {
+		if (isEyeFrame() && twotempi == MotionAction.ZOOM_ON_REGION) {
 			scene.setZoomVisualHint(true);
 			zor = event.get();
 			return true;
 		}
 		return false;
 	}
-	
+
 	protected boolean execAction(MotionEvent event) {
-		if(event instanceof DOF1Event)
+		if (event instanceof DOF1Event)
 			return false;
 		return execAction(MotionEvent.dof2Event(event));
 	}
-	
+
 	protected boolean execAction(DOF2Event event) {
 		currMotionEvent = event;
-		if(zor != null) {
+		if (zor != null) {
 			zor = event.get();
-		  zor.setPreviousEvent(initMotionEvent.get());
-		  return true;//bypass
+			zor.setPreviousEvent(initMotionEvent.get());
+			return true;// bypass
 		}
-	  // never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
+		// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
 		if (action().referenceAction() == MotionAction.ZOOM_ON_REGION) {
-			System.out.println("wierd case: ZOOM_ON_REGION on exec action while zor == null");
 			return true;
 		}
 		if (drive) {
@@ -650,23 +645,22 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		}
 		return false;
 	}
-	
+
 	protected boolean endAction(MotionEvent event) {
-		if(event instanceof DOF1Event)
+		if (event instanceof DOF1Event)
 			return false;
 		boolean result = endAction(MotionEvent.dof2Event(event));
 		initAction = null;
 		return result;
 	}
-	
+
 	protected boolean endAction(DOF2Event event) {
-		System.out.println("win!!!");
 		if (rotateHint) {
 			scene.setRotateVisualHint(false);
 			rotateHint = false;
 			return true;
 		}
-		if(currentMotionEvent() != null) {
+		if (currentMotionEvent() != null) {
 			if (need4Spin) {
 				startSpinning(spinningRotation(), currentMotionEvent().speed(), currentMotionEvent().delay());
 				return true;
@@ -676,13 +670,13 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			// the problem is that depending on the order the button and the modifiers are released,
 			// different actions maybe triggered, so we go for sure ;) :
 			scene.setZoomVisualHint(false);
-			gestureZoomOnRegion(zor);//now action need to be executed on event
+			gestureZoomOnRegion(zor);// now action need to be executed on event
 			zor = null;
-			return true;//since action is null
+			return true;// since action is null
 		}
 		if (need4Tossing) {
-		  // restore speed after drive action terminates:
-			if(drive)
+			// restore speed after drive action terminates:
+			if (drive)
 				setFlySpeed(flySpeedCache);
 			stopFlying();
 			return true;

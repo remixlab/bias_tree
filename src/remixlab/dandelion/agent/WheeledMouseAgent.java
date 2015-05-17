@@ -20,10 +20,10 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
-	public static int					LEFT_ID	= 1, CENTER_ID = 2, RIGHT_ID = 3, WHEEL_ID = 4;
+	public static int	LEFT_ID	= 1, CENTER_ID = 2, RIGHT_ID = 3, WHEEL_ID = 4;
 
-	protected float						xSens		= 1f;
-	protected float						ySens		= 1f;
+	protected float		xSens		= 1f;
+	protected float		ySens		= 1f;
 
 	public WheeledMouseAgent(AbstractScene scn, String n) {
 		super(scn, n);
@@ -552,7 +552,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Removes all wheel bindings from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeWheelBindings(Target target) {
-		//bit of a hack ;)
+		// bit of a hack ;)
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		Iterator<Entry<MotionShortcut, DOF2Action>> it = profile.map().entrySet().iterator();
 		while (it.hasNext()) {
@@ -598,7 +598,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	public DOF1Action wheelAction(Target target, DOF1Action action) {
 		return action(target, new MotionShortcut(WHEEL_ID)).dof1Action();
 	}
-	
+
 	// click
 
 	/**

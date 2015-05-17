@@ -239,7 +239,7 @@ public interface Constants {
 		}
 	}
 
-	public enum SceneAction {
+	public enum GlobalAction {
 		// KEYfRAMES
 
 		/**
@@ -366,12 +366,12 @@ public interface Constants {
 		String	description;
 		boolean	twoD;
 
-		SceneAction(String description, boolean td) {
+		GlobalAction(String description, boolean td) {
 			this.description = description;
 			this.twoD = td;
 		}
 
-		SceneAction(String description) {
+		GlobalAction(String description) {
 			this.description = description;
 			this.twoD = true;
 		}
@@ -788,45 +788,45 @@ public interface Constants {
 	/**
 	 * Keyboard action sub-group.
 	 */
-	public enum GlobalAction implements Action<SceneAction> {
+	public enum SceneAction implements Action<GlobalAction> {
 		// KEYfRAMES
-		ADD_KEYFRAME_TO_PATH_1(SceneAction.ADD_KEYFRAME_TO_PATH_1),
-		PLAY_PATH_1(SceneAction.PLAY_PATH_1),
-		DELETE_PATH_1(SceneAction.DELETE_PATH_1),
-		ADD_KEYFRAME_TO_PATH_2(SceneAction.ADD_KEYFRAME_TO_PATH_2),
-		PLAY_PATH_2(SceneAction.PLAY_PATH_2),
-		DELETE_PATH_2(SceneAction.DELETE_PATH_2),
-		ADD_KEYFRAME_TO_PATH_3(SceneAction.ADD_KEYFRAME_TO_PATH_3),
-		PLAY_PATH_3(SceneAction.PLAY_PATH_3),
-		DELETE_PATH_3(SceneAction.DELETE_PATH_3),
+		ADD_KEYFRAME_TO_PATH_1(GlobalAction.ADD_KEYFRAME_TO_PATH_1),
+		PLAY_PATH_1(GlobalAction.PLAY_PATH_1),
+		DELETE_PATH_1(GlobalAction.DELETE_PATH_1),
+		ADD_KEYFRAME_TO_PATH_2(GlobalAction.ADD_KEYFRAME_TO_PATH_2),
+		PLAY_PATH_2(GlobalAction.PLAY_PATH_2),
+		DELETE_PATH_2(GlobalAction.DELETE_PATH_2),
+		ADD_KEYFRAME_TO_PATH_3(GlobalAction.ADD_KEYFRAME_TO_PATH_3),
+		PLAY_PATH_3(GlobalAction.PLAY_PATH_3),
+		DELETE_PATH_3(GlobalAction.DELETE_PATH_3),
 
-		INTERPOLATE_TO_FIT(SceneAction.INTERPOLATE_TO_FIT),
+		INTERPOLATE_TO_FIT(GlobalAction.INTERPOLATE_TO_FIT),
 
 		// GENERAL KEYBOARD ACTIONs
-		TOGGLE_AXES_VISUAL_HINT(SceneAction.TOGGLE_AXES_VISUAL_HINT),
-		TOGGLE_GRID_VISUAL_HINT(SceneAction.TOGGLE_GRID_VISUAL_HINT),
-		TOGGLE_CAMERA_TYPE(SceneAction.TOGGLE_CAMERA_TYPE),
-		TOGGLE_ANIMATION(SceneAction.TOGGLE_ANIMATION),
-		RESET_ANCHOR(SceneAction.RESET_ANCHOR),
-		DISPLAY_INFO(SceneAction.DISPLAY_INFO),
-		TOGGLE_PATHS_VISUAL_HINT(SceneAction.TOGGLE_PATHS_VISUAL_HINT),
-		TOGGLE_PICKING_VISUAL_HINT(SceneAction.TOGGLE_PICKING_VISUAL_HINT),
-		SHOW_ALL(SceneAction.SHOW_ALL),
+		TOGGLE_AXES_VISUAL_HINT(GlobalAction.TOGGLE_AXES_VISUAL_HINT),
+		TOGGLE_GRID_VISUAL_HINT(GlobalAction.TOGGLE_GRID_VISUAL_HINT),
+		TOGGLE_CAMERA_TYPE(GlobalAction.TOGGLE_CAMERA_TYPE),
+		TOGGLE_ANIMATION(GlobalAction.TOGGLE_ANIMATION),
+		RESET_ANCHOR(GlobalAction.RESET_ANCHOR),
+		DISPLAY_INFO(GlobalAction.DISPLAY_INFO),
+		TOGGLE_PATHS_VISUAL_HINT(GlobalAction.TOGGLE_PATHS_VISUAL_HINT),
+		TOGGLE_PICKING_VISUAL_HINT(GlobalAction.TOGGLE_PICKING_VISUAL_HINT),
+		SHOW_ALL(GlobalAction.SHOW_ALL),
 
 		// CAMERA KEYBOARD ACTIONs
-		MOVE_LEFT(SceneAction.MOVE_LEFT),
-		MOVE_RIGHT(SceneAction.MOVE_RIGHT),
-		MOVE_UP(SceneAction.MOVE_UP),
-		MOVE_DOWN(SceneAction.MOVE_DOWN),
-		INCREASE_ROTATION_SENSITIVITY(SceneAction.INCREASE_ROTATION_SENSITIVITY),
-		DECREASE_ROTATION_SENSITIVITY(SceneAction.DECREASE_ROTATION_SENSITIVITY),
-		INCREASE_FLY_SPEED(SceneAction.INCREASE_FLY_SPEED),
-		DECREASE_FLY_SPEED(SceneAction.DECREASE_FLY_SPEED),
+		MOVE_LEFT(GlobalAction.MOVE_LEFT),
+		MOVE_RIGHT(GlobalAction.MOVE_RIGHT),
+		MOVE_UP(GlobalAction.MOVE_UP),
+		MOVE_DOWN(GlobalAction.MOVE_DOWN),
+		INCREASE_ROTATION_SENSITIVITY(GlobalAction.INCREASE_ROTATION_SENSITIVITY),
+		DECREASE_ROTATION_SENSITIVITY(GlobalAction.DECREASE_ROTATION_SENSITIVITY),
+		INCREASE_FLY_SPEED(GlobalAction.INCREASE_FLY_SPEED),
+		DECREASE_FLY_SPEED(GlobalAction.DECREASE_FLY_SPEED),
 
-		CUSTOM(SceneAction.CUSTOM);
+		CUSTOM(GlobalAction.CUSTOM);
 
 		@Override
-		public SceneAction referenceAction() {
+		public GlobalAction referenceAction() {
 			return act;
 		}
 
@@ -842,9 +842,9 @@ public interface Constants {
 			return act.is2D();
 		}
 
-		SceneAction	act;
+		GlobalAction	act;
 
-		GlobalAction(SceneAction a) {
+		SceneAction(GlobalAction a) {
 			act = a;
 		}
 	}

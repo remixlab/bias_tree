@@ -115,7 +115,7 @@ void keyPressed() {
     this.redraw();
   }
   if ( key == 'u' )
-    scene.mouseAgent().setWheelBinding(Target.EYE, DOF1Action.ZOOM);
+    scene.mouseAgent().setWheelBinding(Target.EYE, DOF1Action.TRANSLATE_Z);
   if ( key == 'v' )
     scene.mouseAgent().setWheelBinding(Target.EYE, DOF1Action.SCALE);
 }

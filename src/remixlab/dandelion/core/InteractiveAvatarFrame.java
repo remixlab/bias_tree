@@ -61,6 +61,8 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 	public InteractiveAvatarFrame(AbstractScene scn) {
 		super(scn);
 		eFrame = new GrabberFrame(scene);
+		// TODO should really decide what to do with this grabber frame:
+		scene.motionAgent().removeGrabber(eFrame);
 		q = scene.is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
 		eFrame.setReferenceFrame(this);
 		setTrackingDistance(scene.radius() / 5);

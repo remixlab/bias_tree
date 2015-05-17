@@ -56,9 +56,8 @@ import java.nio.FloatBuffer;
  * {@link #motionAgent()} (which in the desktop version of proscene defaults to a {@link #mouseAgent()}):
  * <ol>
  * <li><b>The default keyboard agent</b> provides shortcuts to Dandelion keyboard actions such as {@link #drawGrid()} or
- * {@link #drawAxes()}. See
- * {@link #setKeyboardShortcut(Character, remixlab.dandelion.core.Constants.GlobalAction)} and
- * {@link #setKeyboardShortcut(int, int, remixlab.dandelion.core.Constants.GlobalAction)}.
+ * {@link #drawAxes()}. See {@link #setKeyboardBinding(Character, remixlab.dandelion.core.Constants.SceneAction)} and
+ * {@link #setKeyboardBinding(int, int, remixlab.dandelion.core.Constants.SceneAction)}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame motion actions. Please refer
  * to the different {@code setMouseButtonBinding()}, {@code setMouseClickBinding()}, {@code setMouseWheelBinding()}
  * methods.
@@ -415,118 +414,6 @@ public class Scene extends AbstractScene implements PConstants {
 	 */
 
 	// KEYBOARD
-
-	/**
-	 * Restores the default keyboard shortcuts:
-	 * <p>
-	 * {@code 'a' -> KeyboardAction.TOGGLE_AXES_VISUAL_HINT}<br>
-	 * {@code 'f' -> KeyboardAction.TOGGLE_FRAME_VISUAL_HINT}<br>
-	 * {@code 'g' -> KeyboardAction.TOGGLE_GRID_VISUAL_HINT}<br>
-	 * {@code 'm' -> KeyboardAction.TOGGLE_ANIMATION}<br>
-	 * {@code 'e' -> KeyboardAction.TOGGLE_CAMERA_TYPE}<br>
-	 * {@code 'h' -> KeyboardAction.DISPLAY_INFO}<br>
-	 * {@code 'r' -> KeyboardAction.TOGGLE_PATHS_VISUAL_HINT}<br>
-	 * {@code 's' -> KeyboardAction.INTERPOLATE_TO_FIT}<br>
-	 * {@code 'S' -> KeyboardAction.SHOW_ALL}<br>
-	 * {@code left_arrow -> KeyboardAction.MOVE_LEFT}<br>
-	 * {@code right_arrow -> KeyboardAction.MOVE_RIGHT}<br>
-	 * {@code up_arrow -> KeyboardAction.MOVE_UP}<br>
-	 * {@code down_arrow -> KeyboardAction.MOVE_DOWN	}<br>
-	 * {@code 'CTRL' + '1' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_1}<br>
-	 * {@code 'ALT' + '1' -> KeyboardAction.DELETE_PATH_1}<br>
-	 * {@code '1' -> KeyboardAction.PLAY_PATH_1}<br>
-	 * {@code 'CTRL' + '2' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_2}<br>
-	 * {@code 'ALT' + '2' -> KeyboardAction.DELETE_PATH_2}<br>
-	 * {@code '2' -> KeyboardAction.PLAY_PATH_2}<br>
-	 * {@code 'CTRL' + '3' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_3}<br>
-	 * {@code 'ALT' + '3' -> KeyboardAction.DELETE_PATH_3}<br>
-	 * {@code '3' -> KeyboardAction.PLAY_PATH_3}<br>
-	 * 
-	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultBindings()
-	 */
-	public void setDefaultKeyboardShortcuts() {
-		keyboardAgent().setDefaultBindings();
-	}
-
-	/**
-	 * Set the virtual-key to play path. Defaults are java.awt.event.KeyEvent.VK_1, java.awt.event.KeyEvent.VK_2 and
-	 * java.awt.event.KeyEvent.VK_3 which will play paths 1, 2, 3, resp.
-	 */
-	public void setKeyCodeToPlayPath(int code, int path) {
-		keyboardAgent().setKeyCodeToPlayPath(code, path);
-	}
-
-	/**
-	 * Binds the key shortcut to the (Keyboard) dandelion action.
-	 */
-	public void setKeyboardShortcut(Character key, GlobalAction action) {
-		keyboardAgent().setBinding(key, action);
-	}
-
-	/**
-	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
-	 */
-	public void setKeyboardShortcut(int mask, int vKey, GlobalAction action) {
-		keyboardAgent().setBinding(mask, vKey, action);
-	}
-
-	/**
-	 * Removes key shortcut binding (if present).
-	 */
-	public void removeKeyboardShortcut(Character key) {
-		keyboardAgent().removeBinding(key);
-	}
-
-	/**
-	 * Removes mask-vKey (virtual key) shortcut binding (if present).
-	 */
-	public void removeKeyboardShortcut(int mask, int vKey) {
-		keyboardAgent().removeBinding(mask, vKey);
-	}
-
-	/**
-	 * Removes all shortcut bindings.
-	 */
-	public void removeKeyboardShortcuts() {
-		keyboardAgent().removeBindings();
-	}
-
-	/**
-	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
-	 */
-	public boolean hasKeyboardShortcut(Character key) {
-		return keyboardAgent().hasBinding(key);
-	}
-
-	/**
-	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
-	 */
-	public boolean hasKeyboardShortcut(int mask, int vKey) {
-		return keyboardAgent().hasBinding(mask, vKey);
-	}
-
-	/**
-	 * Returns {@code true} if the keyboard action is bound.
-	 */
-	public boolean isKeyboardActionBound(GlobalAction action) {
-		return keyboardAgent().isActionBound(action);
-	}
-
-	/**
-	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
-	 * is bound to the given shortcut.
-	 */
-	public GlobalAction keyboardAction(Character key) {
-		return keyboardAgent().action(key);
-	}
-
-	/**
-	 * Returns the (Keyboard) dandelion action that is bound to the given mask-vKey (virtual key) shortcut. Returns
-	 * {@code null} if no action is bound to the given shortcut.
-	 */
-	public GlobalAction keyboardAction(int mask, int vKey) {
-		return keyboardAgent().action(mask, vKey);
-	}
 
 	/**
 	 * Enables Proscene keyboard handling through the {@link #keyboardAgent()}.
@@ -1924,13 +1811,13 @@ public class Scene extends AbstractScene implements PConstants {
 	protected void drawScreenRotateHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
-		if(!(motionAgent().inputGrabber() instanceof InteractiveFrame))
-			return;		
-		
+		if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
+			return;
+
 		pg().pushStyle();
 		float p1x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;
 		float p1y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;
-		
+
 		Vec p2 = new Vec();
 		if (motionAgent().inputGrabber() instanceof GrabberFrame) {
 			if (((GrabberFrame) motionAgent().inputGrabber()).isEyeFrame())
@@ -1952,18 +1839,18 @@ public class Scene extends AbstractScene implements PConstants {
 	protected void drawZoomWindowHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
-		if(!(motionAgent().inputGrabber() instanceof InteractiveFrame))
-			return;		
-		InteractiveFrame iFrame = (InteractiveFrame)motionAgent().inputGrabber();
-		if(!(iFrame.initMotionEvent instanceof DOF2Event))
+		if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
 			return;
-		
-		pg().pushStyle();		
-		DOF2Event init = (DOF2Event) iFrame.initMotionEvent;		
+		InteractiveFrame iFrame = (InteractiveFrame) motionAgent().inputGrabber();
+		if (!(iFrame.initMotionEvent instanceof DOF2Event))
+			return;
+
+		pg().pushStyle();
+		DOF2Event init = (DOF2Event) iFrame.initMotionEvent;
 		float p1x = init.x() /*- originCorner().x()*/;
 		float p1y = init.y() /*- originCorner().y()*/;
 		float p2x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;
-		float p2y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;				
+		float p2y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
 		pg().strokeWeight(2);

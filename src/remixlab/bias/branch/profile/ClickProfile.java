@@ -25,11 +25,11 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	public ClickProfile() {
 		super();
 	}
-	
+
 	protected ClickProfile(ClickProfile<A> other) {
 		super(other);
 	}
-	
+
 	/**
 	 * Returns a deep-copy of this profile.
 	 */
@@ -37,7 +37,7 @@ public class ClickProfile<A extends Action<?>> extends Profile<ClickShortcut, A>
 	public ClickProfile<A> get() {
 		return new ClickProfile<A>(this);
 	}
-	
+
 	/**
 	 * Returns true if the given binding binds a click-action.
 	 * 

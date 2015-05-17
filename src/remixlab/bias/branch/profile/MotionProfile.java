@@ -25,11 +25,11 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	public MotionProfile() {
 		super();
 	}
-	
+
 	protected MotionProfile(MotionProfile<A> other) {
 		super(other);
 	}
-	
+
 	/**
 	 * Returns a deep-copy of this profile.
 	 */
@@ -37,7 +37,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	public MotionProfile<A> get() {
 		return new MotionProfile<A>(this);
 	}
-	
+
 	/**
 	 * Returns true if the given binding binds an action.
 	 */

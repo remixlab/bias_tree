@@ -200,7 +200,7 @@ public class MotionEvent extends BogusEvent {
 		if (event instanceof DOF1Event)
 			return null;
 		if (event instanceof DOF2Event)
-			//return ((DOF2Event) event).get();//TODO better?
+			// return ((DOF2Event) event).get();//TODO better?
 			return (DOF2Event) event;
 		if (event instanceof DOF3Event)
 			return ((DOF3Event) event).dof2Event();

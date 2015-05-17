@@ -24,11 +24,11 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	public KeyboardProfile() {
 		super();
 	}
-	
+
 	protected KeyboardProfile(KeyboardProfile<A> other) {
 		super(other);
 	}
-	
+
 	/**
 	 * Returns a deep-copy of this profile.
 	 */
@@ -36,7 +36,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	public KeyboardProfile<A> get() {
 		return new KeyboardProfile<A>(this);
 	}
-	
+
 	/**
 	 * Defines a keyboard shortcut to bind the given action.
 	 * 
