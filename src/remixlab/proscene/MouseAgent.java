@@ -12,7 +12,6 @@ package remixlab.proscene;
 
 import processing.core.PApplet;
 import remixlab.dandelion.agent.*;
-import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
 
 /**
@@ -42,46 +41,30 @@ public class MouseAgent extends WheeledMouseAgent {
 		drag = e.getAction() == processing.event.MouseEvent.DRAG;
 		release = e.getAction() == processing.event.MouseEvent.RELEASE;
 		if(move || press || drag || release) {
-			currentEvent = new DOF2Event(prevEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),	e.getModifiers(), move ? MotionEvent.NO_ID : e.getButton());			
-			if( move && ( pickingMode() == PickingMode.MOVE ) )
+			currentEvent = new DOF2Event(prevEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),	e.getModifiers(), move ? MotionEvent.NO_ID : e.getButton());
+			if(move && (pickingMode() == PickingMode.MOVE))
 				updateTrackedGrabber(currentEvent);
-			else
-				if(release)
-					flush(currentEvent);
-				//else//
-			handle(currentEvent);
+			if(move || press || drag)
+				handle(currentEvent);
+			if(release)
+				flush(currentEvent);
 			prevEvent = currentEvent.get();
 			return;
 		}
 		if (e.getAction() == processing.event.MouseEvent.WHEEL) {// e.getAction() = MouseEvent.WHEEL = 8
-			System.out.print("processing3a7 is broken since no wheel is reported: " + e.getCount());
-			DOF1Event wheel = new DOF1Event(e.getCount(), e.getModifiers(), WHEEL_ID);
-			System.out.println(" bogus event: " + wheel.x() + " modifiers: " + BogusEvent.modifiersText(wheel.modifiers()));
-			handle(wheel);
-			return;
-			/*
+			System.out.print("p5-3a7 is broken since no wheel is reported: " + e.getCount());
 			handle(new DOF1Event(e.getCount(), e.getModifiers(), WHEEL_ID));
 			return;
-			*/
 		}
 		if (e.getAction() == processing.event.MouseEvent.CLICK) {
-			//TODO processing3a7 is broken since it always returns 0 id button here
-			System.out.print("got a click: ");
-			ClickEvent bogusClickEvent = new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(), e.getModifiers(), e.getButton(), e.getCount()); 
+		  //TODO processing3a7 is broken since it always returns 0 id button here
+			System.out.print("got a click, but p5-3a7 is broken, i.e, button: " + e.getButton());
+			ClickEvent bogusClickEvent = new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
+					e.getModifiers(), e.getButton(), e.getCount()); 
 			if (pickingMode() == PickingMode.CLICK)
 				updateTrackedGrabber(bogusClickEvent);
-			System.out.println(" bogus event: x: " + bogusClickEvent.x() + " y: " + bogusClickEvent.y() + " button: " + bogusClickEvent.id() + " modifiers: " + BogusEvent.modifiersText(bogusClickEvent.modifiers()));
-			//else//
 			handle(bogusClickEvent);
 			return;
-			/*
-			ClickEvent bogusClickEvent = new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(), e.getModifiers(), e.getButton(), e.getCount()); 
-			if (pickingMode() == PickingMode.CLICK)
-				updateTrackedGrabber(bogusClickEvent);
-			//else//
-			handle(bogusClickEvent);
-			return;
-			//*/
 		}
 	}
 }
