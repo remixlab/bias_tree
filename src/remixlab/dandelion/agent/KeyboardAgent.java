@@ -145,46 +145,106 @@ public class KeyboardAgent extends Agent {
 	 * {@code 'r' -> KeyboardAction.TOGGLE_PATHS_VISUAL_HINT}<br>
 	 * {@code 's' -> KeyboardAction.INTERPOLATE_TO_FIT}<br>
 	 * {@code 'S' -> KeyboardAction.SHOW_ALL}<br>
+	 * <p>
+	 * {@code left_arrow -> KeyboardAction.MOVE_LEFT}<br>
+	 * {@code right_arrow -> KeyboardAction.MOVE_RIGHT}<br>
+	 * {@code up_arrow -> KeyboardAction.MOVE_UP}<br>
+	 * {@code down_arrow -> KeyboardAction.MOVE_DOWN	}<br>
+	 * {@code CTRL + java.awt.event.KeyEvent.VK_1 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_1}<br>
+	 * {@code ALT + java.awt.event.KeyEvent.VK_1 -> KeyboardAction.DELETE_PATH_1}<br>
+	 * {@code CTRL + java.awt.event.KeyEvent.VK_2 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_2}<br>
+	 * {@code ALT + java.awt.event.KeyEvent.VK_2 -> KeyboardAction.DELETE_PATH_2}<br>
+	 * {@code CTRL + java.awt.event.KeyEvent.VK_3 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_3}<br>
+	 * {@code ALT + java.awt.event.KeyEvent.VK_3 -> KeyboardAction.DELETE_PATH_3}<br>
+	 * <p>
+	 * Finally, it calls: {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_1, 1)},
+	 * {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_2, 2)} and
+	 * {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_3, 3)} to play the paths.
+	 * 
+	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultBindings()
+	 * @see remixlab.dandelion.agent.KeyboardAgent#setKeyCodeToPlayPath(int, int)
 	 */
 	public void setDefaultBindings() {
+		//TODO docs pending
 		removeBindings();
-		//TODO pending
-		/*
-		sceneProfile().setBinding('a', GlobalAction.TOGGLE_AXES_VISUAL_HINT);
-		sceneProfile().setBinding('f', GlobalAction.TOGGLE_PICKING_VISUAL_HINT);
-		sceneProfile().setBinding('g', GlobalAction.TOGGLE_GRID_VISUAL_HINT);
-		sceneProfile().setBinding('m', GlobalAction.TOGGLE_ANIMATION);
-
-		sceneProfile().setBinding('e', GlobalAction.TOGGLE_CAMERA_TYPE);
-		sceneProfile().setBinding('h', GlobalAction.DISPLAY_INFO);
-		sceneProfile().setBinding('r', GlobalAction.TOGGLE_PATHS_VISUAL_HINT);
-
-		sceneProfile().setBinding('s', GlobalAction.INTERPOLATE_TO_FIT);
-		sceneProfile().setBinding('S', GlobalAction.SHOW_ALL);
-		*/
-
-		// TODO add some eye and frame defs
 		removeBindings(Target.EYE);
 		removeBindings(Target.FRAME);
-		//TODO pending
-		/*
-		setBinding(Target.EYE, 'a', KeyboardAction.ALIGN_FRAME);
-		setBinding(Target.EYE, 'c', KeyboardAction.CENTER_FRAME);
-		setBinding(Target.FRAME, 'a', KeyboardAction.ALIGN_FRAME);
-		setBinding(Target.FRAME, 'c', KeyboardAction.CENTER_FRAME);
-		setBinding(Target.FRAME, 'x', KeyboardAction.TRANSLATE_DOWN_X);
-		setBinding(Target.FRAME, 'X', KeyboardAction.TRANSLATE_UP_X);
-		setBinding(Target.FRAME, 'y', KeyboardAction.TRANSLATE_DOWN_Y);
-		setBinding(Target.FRAME, 'Y', KeyboardAction.TRANSLATE_UP_Y);
-		setBinding(Target.FRAME, 'z', KeyboardAction.ROTATE_DOWN_Z);
-		setBinding(Target.FRAME, 'Z', KeyboardAction.ROTATE_UP_Z);
-		setBinding(Target.EYE, 'x', KeyboardAction.TRANSLATE_DOWN_X);
-		setBinding(Target.EYE, 'X', KeyboardAction.TRANSLATE_UP_X);
-		setBinding(Target.EYE, 'y', KeyboardAction.TRANSLATE_DOWN_Y);
-		setBinding(Target.EYE, 'Y', KeyboardAction.TRANSLATE_UP_Y);
-		setBinding(Target.EYE, 'z', KeyboardAction.ROTATE_DOWN_Z);
-		setBinding(Target.EYE, 'Z', KeyboardAction.ROTATE_UP_Z);
-		*/
+		// 1. Scene bindings
+	  // VK_A : 65
+		setBinding(65, SceneAction.TOGGLE_AXES_VISUAL_HINT);
+	  // VK_E : 69
+		setBinding(69, SceneAction.TOGGLE_CAMERA_TYPE);
+	  // VK_F : 70
+		setBinding(70, SceneAction.TOGGLE_PICKING_VISUAL_HINT);
+	  // VK_G : 71
+		setBinding(71, SceneAction.TOGGLE_GRID_VISUAL_HINT);
+	  // VK_H : 72
+		setBinding(72, SceneAction.DISPLAY_INFO);		
+	  // VK_M : 77
+		setBinding(77, SceneAction.TOGGLE_ANIMATION);		
+	  // VK_R : 82
+		setBinding(82, SceneAction.TOGGLE_PATHS_VISUAL_HINT);
+	  // VK_R : 83
+		setBinding(83, SceneAction.INTERPOLATE_TO_FIT);
+		//setBinding('S', SceneAction.SHOW_ALL);
+		
+		// VK_LEFT : 37
+		setBinding(BogusEvent.NO_MODIFIER_MASK, 37, SceneAction.MOVE_LEFT);
+		// VK_UP : 38
+		setBinding(BogusEvent.NO_MODIFIER_MASK, 38, SceneAction.MOVE_UP);
+		// VK_RIGHT : 39
+		setBinding(BogusEvent.NO_MODIFIER_MASK, 39, SceneAction.MOVE_RIGHT);
+		// VK_DOWN : 40
+		setBinding(BogusEvent.NO_MODIFIER_MASK, 40, SceneAction.MOVE_DOWN);
+
+		// VK_1 : 49
+		setBinding(BogusEvent.CTRL, 49, SceneAction.ADD_KEYFRAME_TO_PATH_1);
+		setBinding(BogusEvent.ALT, 49, SceneAction.DELETE_PATH_1);
+		setKeyCodeToPlayPath(49, 1);
+		// VK_2 : 50
+		setBinding(BogusEvent.CTRL, 50, SceneAction.ADD_KEYFRAME_TO_PATH_2);
+		setBinding(BogusEvent.ALT, 50, SceneAction.DELETE_PATH_2);
+		setKeyCodeToPlayPath(50, 2);
+		// VK_3 : 51
+		setBinding(BogusEvent.CTRL, 51, SceneAction.ADD_KEYFRAME_TO_PATH_3);
+		setBinding(BogusEvent.ALT, 51, SceneAction.DELETE_PATH_3);
+		setKeyCodeToPlayPath(51, 3);
+		
+		// 2. Eye bindings
+	  // VK_A : 65
+		setBinding(Target.EYE, 65, KeyboardAction.ALIGN_FRAME);
+		// VK_C
+		setBinding(Target.EYE, 67, KeyboardAction.CENTER_FRAME);
+		// VK_X
+		setBinding(Target.EYE, 88, KeyboardAction.TRANSLATE_DOWN_X);
+	  // VK_X
+		setBinding(Target.EYE, BogusEvent.SHIFT, 88, KeyboardAction.TRANSLATE_UP_X);
+	  // VK_Y
+		setBinding(Target.EYE, 89, KeyboardAction.TRANSLATE_DOWN_Y);
+	  // VK_Y
+		setBinding(Target.EYE, BogusEvent.SHIFT, 89, KeyboardAction.TRANSLATE_UP_Y);
+	  // VK_Z
+		setBinding(Target.EYE, 90, KeyboardAction.ROTATE_DOWN_Z);
+	  // VK_Z
+		setBinding(Target.EYE, BogusEvent.SHIFT, 90, KeyboardAction.ROTATE_UP_Z);
+		
+		// 3. Frame bindings
+		// VK_A : 65
+		setBinding(Target.FRAME, 65, KeyboardAction.ALIGN_FRAME);
+		// VK_C
+		setBinding(Target.FRAME, 67, KeyboardAction.CENTER_FRAME);
+		// VK_X
+		setBinding(Target.FRAME, 88, KeyboardAction.TRANSLATE_DOWN_X);
+	  // VK_X
+		setBinding(Target.FRAME, BogusEvent.SHIFT, 88, KeyboardAction.TRANSLATE_UP_X);
+	  // VK_Y
+		setBinding(Target.FRAME, 89, KeyboardAction.TRANSLATE_DOWN_Y);
+	  // VK_Y
+		setBinding(Target.FRAME, BogusEvent.SHIFT, 89, KeyboardAction.TRANSLATE_UP_Y);
+	  // VK_Z
+		setBinding(Target.FRAME, 90, KeyboardAction.ROTATE_DOWN_Z);
+	  // VK_Z
+		setBinding(Target.FRAME, BogusEvent.SHIFT, 90, KeyboardAction.ROTATE_UP_Z);
 	}
 
 	/**

@@ -432,6 +432,8 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	@Override
 	protected void performInteraction(KeyboardEvent event) {
+		if(processAction(event))
+			return;
 		switch (referenceAction()) {
 		case ALIGN_FRAME:
 			align();
@@ -559,10 +561,10 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		return currMotionEvent;
 	}
 	
-	protected boolean processAction(MotionEvent event) {
+	protected boolean processAction(KeyboardEvent event) {
 		if(initAction == null) {
 			if(action() != null) {
-				initAction = action();
+				initAction = action();//TODO should go in initAction()
 				return initAction(event);//start action
 			}
 		}
@@ -575,7 +577,36 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 					endAction(event);
 					//TODO testing these two lines
 					System.out.println("testing case when action changes abruptly");
-					initAction = action();
+					initAction = action();//TODO should go in initAction()
+					return initAction(event);//start action
+					//return false;
+				}
+			}
+			else {//action() == null
+				System.out.println("case 2");
+				return endAction(event);//stopAction
+			}
+		}
+		return true;//i.e., if initAction == action() == null -> ignore :)
+	}
+	
+	protected boolean processAction(MotionEvent event) {
+		if(initAction == null) {
+			if(action() != null) {
+				initAction = action();//TODO should go in initAction()
+				return initAction(event);//start action
+			}
+		}
+		else { // initAction != null
+			if(action() != null) {
+				if(initAction == action())
+					return execAction(event);//continue action
+				else { //initAction != action() -> action changes abruptly, i.e., 
+					System.out.println("case 1");
+					endAction(event);
+					//TODO testing these two lines
+					System.out.println("testing case when action changes abruptly");
+					initAction = action();//TODO should go in initAction()
 					return initAction(event);//start action
 					//return false;
 				}
@@ -687,6 +718,29 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			stopFlying();
 			return true;
 		}
+		return true;
+	}
+	
+	// key
+	
+  protected boolean nonContiguous() {
+		return action().referenceAction() == MotionAction.ALIGN_FRAME || action().referenceAction() == MotionAction.CENTER_FRAME;
+	}
+	
+	protected boolean initAction(KeyboardEvent event) {
+		return nonContiguous() ? true : false;
+	}
+	
+	protected boolean execAction(KeyboardEvent event) {
+		return nonContiguous() ? true : false;
+	}
+	
+	protected boolean endAction(KeyboardEvent event) {
+		if(initAction.referenceAction() == MotionAction.ALIGN_FRAME) 
+			align();
+		if(initAction.referenceAction() == MotionAction.CENTER_FRAME)
+			center();
+		initAction = null;
 		return true;
 	}
 }

@@ -162,8 +162,15 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	public void performInteraction(KeyboardEvent event) {
+		if(processAction(event))
+			return;
+		processInteraction(event, referenceAction());		
+	}
+	
+	//TODO apply same pattern in InteractiveFrame
+	protected void processInteraction(KeyboardEvent event, GlobalAction gAction) {
 		Vec trans;
-		switch (referenceAction()) {
+		switch (gAction) {
 		case ADD_KEYFRAME_TO_PATH_1:
 			eye().addKeyFrameToPath(1);
 			break;
@@ -269,6 +276,59 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			break;
 		}
 	}
+	
+	Action<GlobalAction> initAction;
+	
+	protected boolean processAction(KeyboardEvent event) {
+		if(initAction == null) {
+			if(action() != null) {
+				initAction = action();//TODO should go in initAction()
+				return initAction(event);//start action
+			}
+		}
+		else { // initAction != null
+			if(action() != null) {
+				if(initAction == action())
+					return execAction(event);//continue action
+				else { //initAction != action() -> action changes abruptly, i.e., 
+					System.out.println("case 1");
+					endAction(event);
+					//TODO testing these two lines
+					System.out.println("testing case when action changes abruptly");
+					initAction = action();//TODO should go in initAction()
+					return initAction(event);//start action
+					//return false;
+				}
+			}
+			else {//action() == null
+				System.out.println("case 2");
+				return endAction(event);//stopAction
+			}
+		}
+		return true;//i.e., if initAction == action() == null -> ignore :)
+	}
+	
+	protected boolean contiguous(Action<GlobalAction> action) {
+		return action.referenceAction() == GlobalAction.DECREASE_FLY_SPEED || action.referenceAction() == GlobalAction.DECREASE_ROTATION_SENSITIVITY || action.referenceAction() == GlobalAction.INCREASE_FLY_SPEED|| action.referenceAction() == GlobalAction.INCREASE_ROTATION_SENSITIVITY || action.referenceAction() == GlobalAction.MOVE_DOWN || action.referenceAction() == GlobalAction.MOVE_LEFT || action.referenceAction() == GlobalAction.MOVE_RIGHT || action.referenceAction() == GlobalAction.MOVE_UP;
+	}
+	
+	protected boolean initAction(KeyboardEvent event) {
+		return contiguous(action()) ? false : true;
+	}
+	
+	protected boolean execAction(KeyboardEvent event) {
+		return contiguous(action()) ? false : true;
+	}
+	
+	protected boolean endAction(KeyboardEvent event) {
+		if(!contiguous(initAction)) {
+			processInteraction(event, initAction.referenceAction());
+		}
+		initAction = null;
+		return true;
+	}
+	
+	//--
 
 	protected void performCustomAction(KeyboardEvent event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass()
