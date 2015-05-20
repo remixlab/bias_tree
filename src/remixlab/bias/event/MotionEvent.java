@@ -24,13 +24,10 @@ import remixlab.util.HashCodeBuilder;
  * {@link #speed()}, and {@link #delay()}, absolute motion events don't.
  */
 public class MotionEvent extends BogusEvent {
-	// some motion actions may be performed without any button, e.g., mouse move (instead of drag).
-	public static final int	NO_ID	= 0;
-
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode())
-				.append(button)
+				.append(id)
 				.append(delay)
 				.append(distance)
 				.append(speed)
@@ -49,7 +46,7 @@ public class MotionEvent extends BogusEvent {
 
 		MotionEvent other = (MotionEvent) obj;
 		return new EqualsBuilder().appendSuper(super.equals(obj))
-				.append(button, other.button)
+				.append(id, other.id)
 				.append(delay, other.delay)
 				.append(distance, other.distance)
 				.append(speed, other.speed)
@@ -61,7 +58,6 @@ public class MotionEvent extends BogusEvent {
 	// http://stackoverflow.com/questions/3426843/what-is-the-default-initialization-of-an-array-in-java
 	protected long		delay;
 	protected float		distance, speed;
-	protected int			button;
 	protected boolean	rel;
 
 	/**
@@ -69,7 +65,6 @@ public class MotionEvent extends BogusEvent {
 	 */
 	public MotionEvent() {
 		super();
-		this.button = NO_ID;
 	}
 
 	/**
@@ -77,8 +72,7 @@ public class MotionEvent extends BogusEvent {
 	 * {@link remixlab.bias.event.shortcut.MotionShortcut}.
 	 */
 	public MotionEvent(int modifiers) {
-		super(modifiers);
-		this.button = NO_ID;
+		super(modifiers, NO_ID);
 	}
 
 	/**
@@ -86,13 +80,12 @@ public class MotionEvent extends BogusEvent {
 	 * {@link remixlab.bias.event.shortcut.MotionShortcut}.
 	 */
 	public MotionEvent(int modifiers, int button) {
-		super(modifiers);
-		this.button = button;
+		super(modifiers, button);
 	}
 
 	protected MotionEvent(MotionEvent other) {
 		super(other);
-		this.button = other.button;
+		this.id = other.id;
 		this.delay = other.delay;
 		this.distance = other.distance;
 		this.speed = other.speed;
@@ -108,13 +101,6 @@ public class MotionEvent extends BogusEvent {
 	 * Modulate the event dofs according to {@code sens}. Only meaningful if the event {@link #isAbsolute()}.
 	 */
 	public void modulate(float[] sens) {
-	}
-
-	/**
-	 * Returns the button defining the event's {@link remixlab.bias.event.shortcut.MotionShortcut}.
-	 */
-	public int id() {
-		return button;
 	}
 
 	@Override

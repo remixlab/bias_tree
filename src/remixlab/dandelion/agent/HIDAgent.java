@@ -10,6 +10,7 @@
 
 package remixlab.dandelion.agent;
 
+import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
@@ -24,8 +25,8 @@ public class HIDAgent extends MotionAgent<DOF6Action> {
 
 	public HIDAgent(AbstractScene scn, String n) {
 		super(scn, n);
-		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
-		frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+		frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
 	}
 
 	@Override

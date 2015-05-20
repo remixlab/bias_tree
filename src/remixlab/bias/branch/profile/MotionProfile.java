@@ -11,6 +11,7 @@
 package remixlab.bias.branch.profile;
 
 import remixlab.bias.core.Action;
+import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.MotionEvent;
 import remixlab.bias.event.shortcut.*;
 
@@ -42,7 +43,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Returns true if the given binding binds an action.
 	 */
 	public boolean hasBinding() {
-		return hasBinding(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
+		return hasBinding(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID);
 	}
 
 	/**
@@ -68,7 +69,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Convenience function that simply calls {@code setWheelShortcut(0, action)}.
 	 */
 	public void setBinding(A action) {
-		setBinding(MotionEvent.NO_ID, action);
+		setBinding(BogusEvent.NO_ID, action);
 	}
 
 	/**
@@ -100,7 +101,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Convenience function that simply calls {@code removeWheelShortcut(0)}.
 	 */
 	public void removeBinding() {
-		removeBinding(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
+		removeBinding(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID);
 	}
 
 	/**
@@ -126,7 +127,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * Returns the action associated to the given binding.
 	 */
 	public Action<?> action() {
-		return action(MotionEvent.NO_MODIFIER_MASK, MotionEvent.NO_ID);
+		return action(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID);
 	}
 
 	/**

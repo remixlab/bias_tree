@@ -12,8 +12,6 @@ package remixlab.bias.event;
 
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.shortcut.KeyboardShortcut;
-import remixlab.util.EqualsBuilder;
-import remixlab.util.HashCodeBuilder;
 
 /**
  * A keyboard event is a {@link remixlab.bias.core.BogusEvent} specialization that encapsulates a
@@ -28,45 +26,19 @@ import remixlab.util.HashCodeBuilder;
  * CameraCustomization example.
  */
 public class KeyboardEvent extends BogusEvent {
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode())
-				.append(vKey)
-				.toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (obj == this)
-			return true;
-		if (obj.getClass() != getClass())
-			return false;
-
-		KeyboardEvent other = (KeyboardEvent) obj;
-		return new EqualsBuilder().appendSuper(super.equals(obj))
-				.append(vKey, other.vKey)
-				.isEquals();
-	}
-
-	protected int		vKey;
-
 	/**
 	 * Constructs a keyboard event with the <b>modifiers</b> and <b>vk</b> defining its
 	 * {@link remixlab.bias.event.shortcut.KeyboardShortcut}.
 	 */
 	public KeyboardEvent(Integer modifiers, Integer vk) {
-		super(modifiers);
-		this.vKey = vk;
+		super(modifiers, vk);
 	}
 
 	/**
 	 * Constructs a keyboard event with <b>c</b> defining its {@link remixlab.bias.event.shortcut.KeyboardShortcut}.
 	 */
 	public KeyboardEvent(Integer vk) {
-		super();
-		this.vKey = vk;
+		super(NO_MODIFIER_MASK, vk);
 	}
 
 	/**
@@ -74,7 +46,6 @@ public class KeyboardEvent extends BogusEvent {
 	 */
 	protected KeyboardEvent(KeyboardEvent other) {
 		super(other);
-		this.vKey = other.vKey;
 	}
 
 	@Override
@@ -84,14 +55,6 @@ public class KeyboardEvent extends BogusEvent {
 
 	@Override
 	public KeyboardShortcut shortcut() {
-		return new KeyboardShortcut(modifiers(), keyCode());
-	}
-
-	/**
-	 * Returns the key code defining the events keyboard shortcut. It may be null meaning that the keyboard is of the
-	 * shape: {@link #key()}.
-	 */
-	public int keyCode() {
-		return vKey;
+		return new KeyboardShortcut(modifiers(), id());
 	}
 }

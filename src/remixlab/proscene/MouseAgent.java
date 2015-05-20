@@ -12,6 +12,7 @@ package remixlab.proscene;
 
 import processing.core.PApplet;
 import remixlab.dandelion.agent.*;
+import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
 
 /**
@@ -41,7 +42,7 @@ public class MouseAgent extends WheeledMouseAgent {
 		drag = e.getAction() == processing.event.MouseEvent.DRAG;
 		release = e.getAction() == processing.event.MouseEvent.RELEASE;
 		if(move || press || drag || release) {
-			currentEvent = new DOF2Event(prevEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),	e.getModifiers(), move ? MotionEvent.NO_ID : e.getButton());
+			currentEvent = new DOF2Event(prevEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),	e.getModifiers(), move ? BogusEvent.NO_ID : e.getButton());
 			if(move && (pickingMode() == PickingMode.MOVE))
 				updateTrackedGrabber(currentEvent);
 			if(move || press || drag)

@@ -33,6 +33,7 @@ import remixlab.util.HashCodeBuilder;
 public class BogusEvent implements Copyable {
 	// modifier keys
 	public static final int	NO_MODIFIER_MASK	= 0;
+	public static final int	NO_ID	= 0;
 	public static final int	SHIFT							= 1 << 0;
 	public static final int	CTRL							= 1 << 1;
 	public static final int	META							= 1 << 2;
@@ -43,6 +44,7 @@ public class BogusEvent implements Copyable {
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
 				append(modifiers).
+				append(id).
 				append(timestamp).
 				toHashCode();
 	}
@@ -59,31 +61,36 @@ public class BogusEvent implements Copyable {
 		BogusEvent other = (BogusEvent) obj;
 		return new EqualsBuilder()
 				.append(modifiers, other.modifiers)
+				.append(id, other.id)
 				.append(timestamp, other.timestamp)
 				.isEquals();
 	}
 
 	protected final int	modifiers;
 	protected long			timestamp;
+	protected int			id;
 
 	/**
 	 * Constructs an event with an "empty" {@link remixlab.bias.event.shortcut.Shortcut}.
 	 */
 	public BogusEvent() {
-		this.modifiers = 0;
+		this.modifiers = NO_MODIFIER_MASK;
+		this.id = NO_ID;
 		timestamp = System.currentTimeMillis();
 	}
 
 	/**
 	 * Constructs an event taking the given {@code modifiers} as a {@link remixlab.bias.event.shortcut.Shortcut}.
 	 */
-	public BogusEvent(Integer modifiers) {
+	public BogusEvent(Integer modifiers, Integer id) {
 		this.modifiers = modifiers;
+		this.id = id;
 		timestamp = System.currentTimeMillis();
 	}
 
 	protected BogusEvent(BogusEvent other) {
 		this.modifiers = other.modifiers;
+		this.id = other.id;
 		this.timestamp = other.timestamp;
 	}
 
@@ -100,10 +107,17 @@ public class BogusEvent implements Copyable {
 	}
 
 	/**
-	 * @return the modifiers defining the event {@link remixlab.bias.event.shortcut.MotionShortcut}.
+	 * @return the modifiers defining the event {@link remixlab.bias.core.Shortcut}.
 	 */
 	public int modifiers() {
 		return modifiers;
+	}
+	
+	/**
+	 * Returns the id defining the event's {@link remixlab.bias.core.Shortcut}.
+	 */
+	public int id() {
+		return id;
 	}
 
 	/**
