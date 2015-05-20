@@ -13,8 +13,6 @@ package remixlab.bias.event.shortcut;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.MotionEvent;
 import remixlab.util.Copyable;
-import remixlab.util.EqualsBuilder;
-import remixlab.util.HashCodeBuilder;
 
 /**
  * This class represents button shortcuts.
@@ -27,37 +25,11 @@ import remixlab.util.HashCodeBuilder;
  * button pressed).
  */
 public final class MotionShortcut extends Shortcut implements Copyable {
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37).
-				appendSuper(super.hashCode()).
-				append(id).
-				toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (obj == this)
-			return true;
-		if (obj.getClass() != getClass())
-			return false;
-
-		MotionShortcut other = (MotionShortcut) obj;
-		return new EqualsBuilder()
-				.appendSuper(super.equals(obj))
-				.append(id, other.id)
-				.isEquals();
-	}
-
-	protected final Integer	id;
-
 	/**
 	 * Constructs an "empty" shortcut by conveniently calling {@code this(B_NOMODIFIER_MASK, B_NOBUTTON);}
 	 */
 	public MotionShortcut() {
-		this(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID);
+		super(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID);
 	}
 
 	/**
@@ -67,7 +39,7 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 *          button
 	 */
 	public MotionShortcut(Integer id) {
-		this(MotionEvent.NO_MODIFIER_MASK, id);
+		super(MotionEvent.NO_MODIFIER_MASK, id);
 	}
 
 	/**
@@ -79,40 +51,15 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 *          button
 	 */
 	public MotionShortcut(Integer m, Integer id) {
-		super(m);
-		this.id = id;
+		super(m, id);
 	}
 
 	protected MotionShortcut(MotionShortcut other) {
 		super(other);
-		this.id = new Integer(other.id);
 	}
 
 	@Override
 	public MotionShortcut get() {
 		return new MotionShortcut(this);
-	}
-
-	public int id() {
-		return id;
-	}
-
-	/**
-	 * Returns a textual description of this shortcut.
-	 * 
-	 * @return description
-	 */
-	public String description() {
-		return description(id);
-	}
-
-	/**
-	 * Internal. Low-level description() function.
-	 */
-	protected String description(Integer id) {
-		String r = BogusEvent.modifiersText(mask);
-		String bn = (id == BogusEvent.NO_ID) ? "NO_ID" : id.toString() + "_ID";
-		r += (r.length() > 0) ? "+" + bn : bn;
-		return r;
 	}
 }

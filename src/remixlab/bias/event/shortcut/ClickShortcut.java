@@ -29,7 +29,6 @@ public class ClickShortcut extends Shortcut implements Copyable {
 		return new HashCodeBuilder(17, 37).
 				appendSuper(super.hashCode()).
 				append(numberOfClicks).
-				append(id).
 				toHashCode();
 	}
 
@@ -46,12 +45,10 @@ public class ClickShortcut extends Shortcut implements Copyable {
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(numberOfClicks, other.numberOfClicks)
-				.append(id, other.id)
 				.isEquals();
 	}
 
 	protected final Integer	numberOfClicks;
-	protected final Integer	id;
 
 	/**
 	 * Defines a single click shortcut from the given button.
@@ -86,8 +83,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	 *          bumber of clicks
 	 */
 	public ClickShortcut(Integer m, Integer id, Integer c) {
-		super(m);
-		this.id = id;
+		super(m, id);
 		if (c <= 0)
 			this.numberOfClicks = 1;
 		else
@@ -97,16 +93,11 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	protected ClickShortcut(ClickShortcut other) {
 		super(other);
 		this.numberOfClicks = new Integer(other.numberOfClicks);
-		this.id = new Integer(other.id);
 	}
 
 	@Override
 	public ClickShortcut get() {
 		return new ClickShortcut(this);
-	}
-
-	public int id() {
-		return id;
 	}
 
 	/**
@@ -115,9 +106,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	 * @return description
 	 */
 	public String description() {
-		String r = new String();
-		if (mask != 0)
-			r += BogusEvent.modifiersText(mask) + "+" + id.toString() + "_ID";
+		String r = super.description();
 		if (numberOfClicks == 1)
 			r += (r.length() > 0) ? "+" + numberOfClicks.toString() + "_click" : numberOfClicks.toString() + "_click";
 		else

@@ -103,7 +103,7 @@ public class BogusEvent implements Copyable {
 	 * @return the shortcut encapsulated by this event.
 	 */
 	public Shortcut shortcut() {
-		return new Shortcut(modifiers());
+		return new Shortcut(modifiers(), id());
 	}
 
 	/**

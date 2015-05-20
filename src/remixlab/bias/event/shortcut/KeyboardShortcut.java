@@ -12,8 +12,6 @@ package remixlab.bias.event.shortcut;
 
 import remixlab.bias.core.BogusEvent;
 import remixlab.util.Copyable;
-import remixlab.util.EqualsBuilder;
-import remixlab.util.HashCodeBuilder;
 
 /**
  * This class represents keyboard shortcuts.
@@ -22,40 +20,14 @@ import remixlab.util.HashCodeBuilder;
  * key); or, 2. Key combinations (e.g., CTRL key + virtual key representing 'a').
  */
 public final class KeyboardShortcut extends Shortcut implements Copyable {
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37).
-				appendSuper(super.hashCode()).
-				append(vKey).
-				toHashCode();
-	}
-
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (obj == this)
-			return true;
-		if (obj.getClass() != getClass())
-			return false;
-
-		KeyboardShortcut rhs = (KeyboardShortcut) obj;
-		return new EqualsBuilder()
-				.appendSuper(super.equals(obj))
-				.append(vKey, rhs.vKey)
-				.isEquals();
-	}
-
-	protected final Integer		vKey;
-
 	/**
 	 * Defines a keyboard shortcut from the given character.
 	 * 
 	 * @param vk
-	 *          the virtual key that defines the keyboard shortcut.
+	 *          the virtual key that defines the keyboard shthis.vKey = new Integer(other.vKey);ortcut.
 	 */
 	public KeyboardShortcut(Integer vk) {
-		super();
-		this.vKey = vk;
+		super(BogusEvent.NO_MODIFIER_MASK, vk);
 	}
 
 	/**
@@ -67,31 +39,15 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 	 *          the virtual key that defines the keyboard shortcut.
 	 */
 	public KeyboardShortcut(Integer m, Integer vk) {
-		super(m);
-		this.vKey = vk;
+		super(m, vk);
 	}
 
 	protected KeyboardShortcut(KeyboardShortcut other) {
 		super(other);
-		this.vKey = new Integer(other.vKey);
 	}
 
 	@Override
 	public KeyboardShortcut get() {
 		return new KeyboardShortcut(this);
-	}
-
-	/**
-	 * Returns a textual description of this keyboard shortcut.
-	 * 
-	 * @return description
-	 */
-	public String description() {
-		String description = new String();
-		if (mask == 0)
-			description = "virtual_key (" + vKey.toString() + ")";
-		else
-			description = BogusEvent.modifiersText(mask) + "+virtual_key (" + vKey.toString() + ")";
-		return description;
 	}
 }
