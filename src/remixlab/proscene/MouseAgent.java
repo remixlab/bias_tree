@@ -52,13 +52,10 @@ public class MouseAgent extends WheeledMouseAgent {
 			return;
 		}
 		if (e.getAction() == processing.event.MouseEvent.WHEEL) {// e.getAction() = MouseEvent.WHEEL = 8
-			System.out.print("p5-3a7 is broken since no wheel is reported: " + e.getCount());
 			handle(new DOF1Event(e.getCount(), e.getModifiers(), WHEEL_ID));
 			return;
 		}
 		if (e.getAction() == processing.event.MouseEvent.CLICK) {
-		  //TODO processing3a7 is broken since it always returns 0 id button here
-			System.out.print("got a click, but p5-3a7 is broken, i.e, button: " + e.getButton());
 			ClickEvent bogusClickEvent = new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
 					e.getModifiers(), e.getButton(), e.getCount()); 
 			if (pickingMode() == PickingMode.CLICK)
