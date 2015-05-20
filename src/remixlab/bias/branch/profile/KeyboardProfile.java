@@ -24,11 +24,11 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	public KeyboardProfile() {
 		super();
 	}
-
+	
 	protected KeyboardProfile(KeyboardProfile<A> other) {
 		super(other);
 	}
-
+	
 	/**
 	 * Returns a deep-copy of this profile.
 	 */
@@ -36,7 +36,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	public KeyboardProfile<A> get() {
 		return new KeyboardProfile<A>(this);
 	}
-
+	
 	/**
 	 * Defines a keyboard shortcut to bind the given action.
 	 * 
@@ -45,12 +45,12 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 * @param action
 	 *          action to be bound
 	 */
-	public void setBinding(Character key, A action) {
-		if (hasBinding(key)) {
-			Action<?> a = action(key);
+	public void setBinding(Integer vKey, A action) {
+		if (hasBinding(vKey)) {
+			Action<?> a = action(vKey);
 			System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
 		}
-		setBinding(new KeyboardShortcut(key), action);
+		setBinding(new KeyboardShortcut(vKey), action);
 	}
 
 	/**
@@ -74,11 +74,11 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	/**
 	 * Removes the keyboard shortcut.
 	 * 
-	 * @param key
+	 * @param vKey
 	 *          shortcut
 	 */
-	public void removeBinding(Character key) {
-		removeBinding(new KeyboardShortcut(key));
+	public void removeBinding(Integer vKey) {
+		removeBinding(new KeyboardShortcut(vKey));
 	}
 
 	/**
@@ -96,12 +96,12 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	/**
 	 * Returns the action that is bound to the given keyboard shortcut.
 	 * 
-	 * @param key
+	 * @param vKey
 	 *          shortcut
 	 * @return action
 	 */
-	public Action<?> action(Character key) {
-		return action(new KeyboardShortcut(key));
+	public Action<?> action(Integer vKey) {
+		return action(new KeyboardShortcut(vKey));
 	}
 
 	/**
@@ -120,11 +120,11 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	/**
 	 * Returns true if the given keyboard shortcut binds an action.
 	 * 
-	 * @param key
+	 * @param vKey
 	 *          shortcut
 	 */
-	public boolean hasBinding(Character key) {
-		return hasBinding(new KeyboardShortcut(key));
+	public boolean hasBinding(Integer vKey) {
+		return hasBinding(new KeyboardShortcut(vKey));
 	}
 
 	/**

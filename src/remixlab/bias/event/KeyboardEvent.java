@@ -31,7 +31,6 @@ public class KeyboardEvent extends BogusEvent {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode())
-				.append(key)
 				.append(vKey)
 				.toHashCode();
 	}
@@ -47,12 +46,10 @@ public class KeyboardEvent extends BogusEvent {
 
 		KeyboardEvent other = (KeyboardEvent) obj;
 		return new EqualsBuilder().appendSuper(super.equals(obj))
-				.append(key, other.key)
 				.append(vKey, other.vKey)
 				.isEquals();
 	}
 
-	protected char	key;
 	protected int		vKey;
 
 	/**
@@ -67,9 +64,9 @@ public class KeyboardEvent extends BogusEvent {
 	/**
 	 * Constructs a keyboard event with <b>c</b> defining its {@link remixlab.bias.event.shortcut.KeyboardShortcut}.
 	 */
-	public KeyboardEvent(Character c) {
+	public KeyboardEvent(Integer vk) {
 		super();
-		this.key = c;
+		this.vKey = vk;
 	}
 
 	/**
@@ -77,7 +74,6 @@ public class KeyboardEvent extends BogusEvent {
 	 */
 	protected KeyboardEvent(KeyboardEvent other) {
 		super(other);
-		this.key = other.key;
 		this.vKey = other.vKey;
 	}
 
@@ -88,19 +84,7 @@ public class KeyboardEvent extends BogusEvent {
 
 	@Override
 	public KeyboardShortcut shortcut() {
-		// default char value: http://docs.oracle.com/javase/specs/jls/se7/html/jls-4.html#jls-4.12.5
-		if (key == '\u0000')
-			return new KeyboardShortcut(modifiers(), keyCode());
-		else
-			return new KeyboardShortcut(key());
-	}
-
-	/**
-	 * Returns the character key defining the events keyboard shortcut. It may be null meaning that the keyboard is of the
-	 * shape: {@link #modifiers()} mask + {@link #keyCode()}
-	 */
-	public char key() {
-		return key;
+		return new KeyboardShortcut(modifiers(), keyCode());
 	}
 
 	/**

@@ -12,18 +12,16 @@ package remixlab.proscene;
 
 import processing.core.PApplet;
 import remixlab.dandelion.agent.*;
-import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
 
 /**
  * Proscene {@link remixlab.dandelion.agent.WheeledMouseAgent}.
  */
 public class MouseAgent extends WheeledMouseAgent {
-	protected DOF2Event	currentEvent, prevEvent;
-	protected boolean		move, press, drag, release;
-
+	protected DOF2Event currentEvent, prevEvent;
+	protected boolean move, press, drag, release;
 	public MouseAgent(Scene scn, String n) {
-
+		
 		super(scn, n);
 		LEFT_ID = PApplet.LEFT;
 		CENTER_ID = PApplet.CENTER;
@@ -35,27 +33,6 @@ public class MouseAgent extends WheeledMouseAgent {
 	}
 
 	/**
-	 * Hack to deal with this: https://github.com/processing/processing/issues/1693 is to override all the following so
-	 * that:
-	 * <p>
-	 * <ol>
-	 * <li>Whenever B_CENTER appears B_ALT should be present.</li>
-	 * <li>Whenever B_RIGHT appears B_META should be present.</li>
-	 * </ol>
-	 */
-	@Override
-	public int buttonModifiersFix(int m, int button) {
-		int mask = m;
-		// ALT
-		if (button == CENTER_ID)
-			mask = (BogusEvent.ALT | m);
-		// META
-		else if (button == RIGHT_ID)
-			mask = (BogusEvent.META | m);
-		return mask;
-	}
-
-	/**
 	 * Processing mouseEvent method to be registered at the PApplet's instance.
 	 */
 	public void mouseEvent(processing.event.MouseEvent e) {
@@ -63,26 +40,27 @@ public class MouseAgent extends WheeledMouseAgent {
 		press = e.getAction() == processing.event.MouseEvent.PRESS;
 		drag = e.getAction() == processing.event.MouseEvent.DRAG;
 		release = e.getAction() == processing.event.MouseEvent.RELEASE;
-		if (move || press || drag || release) {
-			currentEvent = new DOF2Event(prevEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
-					e.getModifiers(), move ? MotionEvent.NO_ID : e.getButton());
-			if (move && (pickingMode() == PickingMode.MOVE))
+		if(move || press || drag || release) {
+			currentEvent = new DOF2Event(prevEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),	e.getModifiers(), move ? MotionEvent.NO_ID : e.getButton());
+			if(move && (pickingMode() == PickingMode.MOVE))
 				updateTrackedGrabber(currentEvent);
-			if (move || press || drag)
+			if(move || press || drag)
 				handle(currentEvent);
-			if (release)
+			if(release)
 				flush(currentEvent);
 			prevEvent = currentEvent.get();
 			return;
 		}
 		if (e.getAction() == processing.event.MouseEvent.WHEEL) {// e.getAction() = MouseEvent.WHEEL = 8
+			System.out.print("p5-3a7 is broken since no wheel is reported: " + e.getCount());
 			handle(new DOF1Event(e.getCount(), e.getModifiers(), WHEEL_ID));
 			return;
 		}
 		if (e.getAction() == processing.event.MouseEvent.CLICK) {
-			ClickEvent bogusClickEvent = new ClickEvent(e.getX() - scene.originCorner().x(), e.getY()
-					- scene.originCorner().y(),
-					e.getModifiers(), e.getButton(), e.getCount());
+		  //TODO processing3a7 is broken since it always returns 0 id button here
+			System.out.print("got a click, but p5-3a7 is broken, i.e, button: " + e.getButton());
+			ClickEvent bogusClickEvent = new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
+					e.getModifiers(), e.getButton(), e.getCount()); 
 			if (pickingMode() == PickingMode.CLICK)
 				updateTrackedGrabber(bogusClickEvent);
 			handle(bogusClickEvent);

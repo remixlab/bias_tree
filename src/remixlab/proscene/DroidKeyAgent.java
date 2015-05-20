@@ -34,15 +34,20 @@ public class DroidKeyAgent extends KeyAgent {
 		// VK values here: http://docs.oracle.com/javase/7/docs/api/constant-values.html
 		super.setDefaultBindings();
 
-		sceneProfile().setBinding('1', SceneAction.ADD_KEYFRAME_TO_PATH_1);
-		sceneProfile().setBinding('2', SceneAction.DELETE_PATH_1);
-		sceneProfile().setBinding('3', SceneAction.PLAY_PATH_1);
+		//TODO pending
+		/*
+		sceneProfile().setBinding('1', GlobalAction.ADD_KEYFRAME_TO_PATH_1);
+		sceneProfile().setBinding('2', GlobalAction.DELETE_PATH_1);
+		sceneProfile().setBinding('3', GlobalAction.PLAY_PATH_1);
+		*/
 	}
 
 	/**
 	 * Processing keyEvent method to be registered at the PApplet's instance.
 	 */
 	public void keyEvent(processing.event.KeyEvent e) {
+	  //TODO pending
+		/*
 		if (e.getAction() == processing.event.KeyEvent.PRESS) {
 			if (e.getKeyCode() == android.view.KeyEvent.KEYCODE_MENU) {
 				Object context = scene.pApplet();
@@ -52,5 +57,6 @@ public class DroidKeyAgent extends KeyAgent {
 			} else
 				handle(new KeyboardEvent(e.getKey()));
 		}
+		*/
 	}
 }

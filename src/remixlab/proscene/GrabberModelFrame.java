@@ -32,7 +32,7 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 	public void setShape(PShape ps) {
 		pshape = ps;
 	}
-
+	
 	@Override
 	public boolean checkIfGrabsInput(float x, float y) {
 		((Scene) scene).pickingBuffer().pushStyle();

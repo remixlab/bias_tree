@@ -51,7 +51,7 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 		parent = pnt;
 		parent.appendBranch(this);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	protected Branch(Branch<E, P> other) {
 		name = other.name() + "_deep-copy";
@@ -59,10 +59,10 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 		parent = other.agent();
 		parent.appendBranch(this);
 	}
-
+	
 	@Override
-	public Branch<E, P> get() {
-		return new Branch<E, P>(this);
+	public Branch<E,P> get() {
+		return new Branch<E,P>(this);
 	}
 
 	public String name() {

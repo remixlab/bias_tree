@@ -16,7 +16,6 @@ import java.util.List;
 
 import remixlab.bias.branch.*;
 import remixlab.bias.event.*;
-import remixlab.bias.event.shortcut.*;
 
 public class Agent {
 	class GrabberBranchTuple {
@@ -49,7 +48,7 @@ public class Agent {
 	protected boolean										agentTrckn;
 
 	protected InputHandler							handler;
-	protected Shortcut									shrtct;
+	//protected Shortcut shrtct;
 
 	/**
 	 * Constructs an Agent with the given name and registers is at the given inputHandler.
@@ -79,7 +78,7 @@ public class Agent {
 	 */
 	public boolean removeGrabber(Grabber grabber) {
 		// TODO testing
-		// System.out.println("removing grabber pierre! " + this.name());
+		//System.out.println("removing grabber pierre! " + this.name());
 		for (Iterator<GrabberBranchTuple> it = tuples.iterator(); it.hasNext();) {
 			GrabberBranchTuple t = it.next();
 			if (t.g == grabber) {
@@ -265,14 +264,17 @@ public class Agent {
 	public InputHandler inputHandler() {
 		return handler;
 	}
-
+	
+	//TODO seems overkill, since it should be handled in by the grabber
+	/*
 	public Shortcut updateTrackedGrabberShortcut() {
 		return shrtct;
 	}
-
+	
 	public void setUpdateTrackedGrabberShortcut(Shortcut shortcut) {
 		shrtct = shortcut;
 	}
+	*/
 
 	/**
 	 * If {@link #isTracking()} is enabled and the agent is registered at the {@link #inputHandler()} then queries each
@@ -288,28 +290,28 @@ public class Agent {
 	 * @see #setDefaultGrabber(Grabber)
 	 * @see #isTracking()
 	 */
-	public Grabber updateTrackedGrabber(BogusEvent event) {
+	protected Grabber updateTrackedGrabber(BogusEvent event) {
 		if (event == null || !inputHandler().isAgentRegistered(this) || !isTracking())
 			return trackedGrabber();
-
+		
 		Grabber g = trackedGrabber();
+		
+    //if(updateTrackedGrabberShortcut()==null ^ event.shortcut().equals(updateTrackedGrabberShortcut())) {//new
+	  // We first check if tracked grabber remains the same
+  	if (g != null)
+			if (g.checkIfGrabsInput(event))
+				return trackedGrabber();
 
-		if (updateTrackedGrabberShortcut() == null ^ event.shortcut().equals(updateTrackedGrabberShortcut())) {// new
-			// We first check if tracked grabber remains the same
-			if (g != null)
-				if (g.checkIfGrabsInput(event))
-					return trackedGrabber();
-
-			// pick the first otherwise
-			trackedGrabber = null;
-			for (GrabberBranchTuple t : tuples) {
-				// take whatever. Here the first one
-				if (t.g.checkIfGrabsInput(event)) {
-					trackedGrabber = t;
-					return trackedGrabber();
-				}
+		// pick the first otherwise
+		trackedGrabber = null;
+		for (GrabberBranchTuple t : tuples) {
+			// take whatever. Here the first one
+			if (t.g.checkIfGrabsInput(event)) {
+				trackedGrabber = t;
+				return trackedGrabber();
 			}
-		}// new
+		}
+    //}//new
 		return trackedGrabber();
 	}
 
@@ -330,8 +332,8 @@ public class Agent {
 	protected <E extends Enum<E>> boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)
 			return false;
-		if (event instanceof MotionEvent)
-			if (((MotionEvent) event).isAbsolute())
+		if(event instanceof MotionEvent)
+			if(((MotionEvent)event).isAbsolute())
 				if (event.isNull())
 					return false;
 		if (event instanceof MotionEvent)
@@ -348,7 +350,7 @@ public class Agent {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Force a null action on the interactive grabber.
 	 */
@@ -357,8 +359,7 @@ public class Agent {
 		Grabber inputGrabber = inputGrabber();
 		if (inputGrabber != null) {
 			if (inputGrabber instanceof InteractiveGrabber<?>)
-				return inputHandler().enqueueEventTuple(
-						new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, null));
+				return inputHandler().enqueueEventTuple(new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, null));
 		}
 		return false;
 	}

@@ -634,21 +634,21 @@ public class Frame implements Copyable {
 		else
 			translate(t);
 	}
-
-	// TODO this one needs testing, specially 2d case
+	
+	//TODO this one needs testing, specially 2d case
 	public void rotateAroundFrame(Rotation rotation, Frame frame) {
-		if (is3D()) {
-			Vec euler = ((Quat) rotation).eulerAngles();
+		if(is3D()) {
+			Vec euler = ((Quat)rotation).eulerAngles();
 			rotateAroundFrame(euler.x(), euler.y(), euler.z(), frame);
 		}
 		else
 			rotateAroundFrame(0, 0, rotation.angle(), frame);
 	}
-
+	
 	public void rotateAroundFrame(float roll, float pitch, float yaw, Frame frame) {
 		if (frame != null) {
 			Frame ref = frame.get();
-			Frame copy = get();
+		  Frame copy = get();
 			copy.setReferenceFrame(ref);
 			copy.fromFrame(this);
 			ref.rotate(new Quat(roll, pitch, yaw));

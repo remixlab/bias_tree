@@ -19,7 +19,7 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 public class KeyboardAgent extends Agent {
-	protected AbstractScene																								scene;
+	protected AbstractScene																											scene;
 	protected KeyboardBranch<GlobalAction, KeyboardProfile<SceneAction>>	keySceneBranch;
 	protected KeyboardBranch<MotionAction, KeyboardProfile<KeyboardAction>>	keyFrameBranch, keyEyeBranch;
 
@@ -46,27 +46,36 @@ public class KeyboardAgent extends Agent {
 		setDefaultBindings();
 	}
 
+  @Override
+  public boolean addGrabber(Grabber frame) {
+  	if(frame instanceof AbstractScene)
+  		return addGrabber(scene, keySceneBranch);
+  	if (frame instanceof InteractiveFrame)
+  		return addGrabber((InteractiveFrame) frame,	((InteractiveFrame) frame).isEyeFrame() ? keyEyeBranch : keyFrameBranch);
+  	if (!(frame instanceof InteractiveGrabber))
+  		return super.addGrabber(frame);
+  	return false;
+  }
+
+	/*
+	// TODO debug
 	@Override
 	public boolean addGrabber(Grabber frame) {
 		if (frame instanceof AbstractScene)
 			return addGrabber(scene, keySceneBranch);
-		if (frame instanceof InteractiveFrame)
+		if (frame instanceof InteractiveFrame) {
+			if (((InteractiveFrame) frame).isEyeFrame())
+				System.out.println("adding EYE frame in keyboard");
+			else
+				System.out.println("adding FRAME frame in keyboard");
 			return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? keyEyeBranch
 					: keyFrameBranch);
+		}
 		if (!(frame instanceof InteractiveGrabber))
 			return super.addGrabber(frame);
 		return false;
 	}
-
-	/*
-	 * // TODO debug
-	 * 
-	 * @Override public boolean addGrabber(Grabber frame) { if (frame instanceof AbstractScene) return addGrabber(scene,
-	 * keySceneBranch); if (frame instanceof InteractiveFrame) { if (((InteractiveFrame) frame).isEyeFrame())
-	 * System.out.println("adding EYE frame in keyboard"); else System.out.println("adding FRAME frame in keyboard");
-	 * return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? keyEyeBranch :
-	 * keyFrameBranch); } if (!(frame instanceof InteractiveGrabber)) return super.addGrabber(frame); return false; }
-	 */
+	*/
 
 	/**
 	 * Returns the scene this object belongs to
@@ -136,40 +145,106 @@ public class KeyboardAgent extends Agent {
 	 * {@code 'r' -> KeyboardAction.TOGGLE_PATHS_VISUAL_HINT}<br>
 	 * {@code 's' -> KeyboardAction.INTERPOLATE_TO_FIT}<br>
 	 * {@code 'S' -> KeyboardAction.SHOW_ALL}<br>
+	 * <p>
+	 * {@code left_arrow -> KeyboardAction.MOVE_LEFT}<br>
+	 * {@code right_arrow -> KeyboardAction.MOVE_RIGHT}<br>
+	 * {@code up_arrow -> KeyboardAction.MOVE_UP}<br>
+	 * {@code down_arrow -> KeyboardAction.MOVE_DOWN	}<br>
+	 * {@code CTRL + java.awt.event.KeyEvent.VK_1 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_1}<br>
+	 * {@code ALT + java.awt.event.KeyEvent.VK_1 -> KeyboardAction.DELETE_PATH_1}<br>
+	 * {@code CTRL + java.awt.event.KeyEvent.VK_2 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_2}<br>
+	 * {@code ALT + java.awt.event.KeyEvent.VK_2 -> KeyboardAction.DELETE_PATH_2}<br>
+	 * {@code CTRL + java.awt.event.KeyEvent.VK_3 -> KeyboardAction.ADD_KEYFRAME_TO_PATH_3}<br>
+	 * {@code ALT + java.awt.event.KeyEvent.VK_3 -> KeyboardAction.DELETE_PATH_3}<br>
+	 * <p>
+	 * Finally, it calls: {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_1, 1)},
+	 * {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_2, 2)} and
+	 * {@code setKeyCodeToPlayPath(java.awt.event.KeyEvent.VK_3, 3)} to play the paths.
+	 * 
+	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultBindings()
+	 * @see remixlab.dandelion.agent.KeyboardAgent#setKeyCodeToPlayPath(int, int)
 	 */
 	public void setDefaultBindings() {
-		sceneProfile().removeBindings();
-		sceneProfile().setBinding('a', SceneAction.TOGGLE_AXES_VISUAL_HINT);
-		sceneProfile().setBinding('f', SceneAction.TOGGLE_PICKING_VISUAL_HINT);
-		sceneProfile().setBinding('g', SceneAction.TOGGLE_GRID_VISUAL_HINT);
-		sceneProfile().setBinding('m', SceneAction.TOGGLE_ANIMATION);
-
-		sceneProfile().setBinding('e', SceneAction.TOGGLE_CAMERA_TYPE);
-		sceneProfile().setBinding('h', SceneAction.DISPLAY_INFO);
-		sceneProfile().setBinding('r', SceneAction.TOGGLE_PATHS_VISUAL_HINT);
-
-		sceneProfile().setBinding('s', SceneAction.INTERPOLATE_TO_FIT);
-		sceneProfile().setBinding('S', SceneAction.SHOW_ALL);
-
-		// TODO add some eye and frame defs
+		//TODO docs pending
+		removeBindings();
 		removeBindings(Target.EYE);
 		removeBindings(Target.FRAME);
-		setBinding(Target.EYE, 'a', KeyboardAction.ALIGN_FRAME);
-		setBinding(Target.EYE, 'c', KeyboardAction.CENTER_FRAME);
-		setBinding(Target.FRAME, 'a', KeyboardAction.ALIGN_FRAME);
-		setBinding(Target.FRAME, 'c', KeyboardAction.CENTER_FRAME);
-		setBinding(Target.FRAME, 'x', KeyboardAction.TRANSLATE_DOWN_X);
-		setBinding(Target.FRAME, 'X', KeyboardAction.TRANSLATE_UP_X);
-		setBinding(Target.FRAME, 'y', KeyboardAction.TRANSLATE_DOWN_Y);
-		setBinding(Target.FRAME, 'Y', KeyboardAction.TRANSLATE_UP_Y);
-		setBinding(Target.FRAME, 'z', KeyboardAction.ROTATE_DOWN_Z);
-		setBinding(Target.FRAME, 'Z', KeyboardAction.ROTATE_UP_Z);
-		setBinding(Target.EYE, 'x', KeyboardAction.TRANSLATE_DOWN_X);
-		setBinding(Target.EYE, 'X', KeyboardAction.TRANSLATE_UP_X);
-		setBinding(Target.EYE, 'y', KeyboardAction.TRANSLATE_DOWN_Y);
-		setBinding(Target.EYE, 'Y', KeyboardAction.TRANSLATE_UP_Y);
-		setBinding(Target.EYE, 'z', KeyboardAction.ROTATE_DOWN_Z);
-		setBinding(Target.EYE, 'Z', KeyboardAction.ROTATE_UP_Z);
+		// 1. Scene bindings
+	  // VK_A : 65
+		setBinding(65, SceneAction.TOGGLE_AXES_VISUAL_HINT);
+	  // VK_E : 69
+		setBinding(69, SceneAction.TOGGLE_CAMERA_TYPE);
+	  // VK_F : 70
+		setBinding(70, SceneAction.TOGGLE_PICKING_VISUAL_HINT);
+	  // VK_G : 71
+		setBinding(71, SceneAction.TOGGLE_GRID_VISUAL_HINT);
+	  // VK_H : 72
+		setBinding(72, SceneAction.DISPLAY_INFO);		
+	  // VK_M : 77
+		setBinding(77, SceneAction.TOGGLE_ANIMATION);		
+	  // VK_R : 82
+		setBinding(82, SceneAction.TOGGLE_PATHS_VISUAL_HINT);
+	  // VK_R : 83
+		setBinding(83, SceneAction.INTERPOLATE_TO_FIT);
+		//setBinding('S', SceneAction.SHOW_ALL);
+		
+		// VK_LEFT : 37
+		setBinding(BogusEvent.NO_MODIFIER_MASK, 37, SceneAction.MOVE_LEFT);
+		// VK_UP : 38
+		setBinding(BogusEvent.NO_MODIFIER_MASK, 38, SceneAction.MOVE_UP);
+		// VK_RIGHT : 39
+		setBinding(BogusEvent.NO_MODIFIER_MASK, 39, SceneAction.MOVE_RIGHT);
+		// VK_DOWN : 40
+		setBinding(BogusEvent.NO_MODIFIER_MASK, 40, SceneAction.MOVE_DOWN);
+
+		// VK_1 : 49
+		setBinding(BogusEvent.CTRL, 49, SceneAction.ADD_KEYFRAME_TO_PATH_1);
+		setBinding(BogusEvent.ALT, 49, SceneAction.DELETE_PATH_1);
+		setKeyCodeToPlayPath(49, 1);
+		// VK_2 : 50
+		setBinding(BogusEvent.CTRL, 50, SceneAction.ADD_KEYFRAME_TO_PATH_2);
+		setBinding(BogusEvent.ALT, 50, SceneAction.DELETE_PATH_2);
+		setKeyCodeToPlayPath(50, 2);
+		// VK_3 : 51
+		setBinding(BogusEvent.CTRL, 51, SceneAction.ADD_KEYFRAME_TO_PATH_3);
+		setBinding(BogusEvent.ALT, 51, SceneAction.DELETE_PATH_3);
+		setKeyCodeToPlayPath(51, 3);
+		
+		// 2. Eye bindings
+	  // VK_A : 65
+		setBinding(Target.EYE, 65, KeyboardAction.ALIGN_FRAME);
+		// VK_C
+		setBinding(Target.EYE, 67, KeyboardAction.CENTER_FRAME);
+		// VK_X
+		setBinding(Target.EYE, 88, KeyboardAction.TRANSLATE_DOWN_X);
+	  // VK_X
+		setBinding(Target.EYE, BogusEvent.SHIFT, 88, KeyboardAction.TRANSLATE_UP_X);
+	  // VK_Y
+		setBinding(Target.EYE, 89, KeyboardAction.TRANSLATE_DOWN_Y);
+	  // VK_Y
+		setBinding(Target.EYE, BogusEvent.SHIFT, 89, KeyboardAction.TRANSLATE_UP_Y);
+	  // VK_Z
+		setBinding(Target.EYE, 90, KeyboardAction.ROTATE_DOWN_Z);
+	  // VK_Z
+		setBinding(Target.EYE, BogusEvent.SHIFT, 90, KeyboardAction.ROTATE_UP_Z);
+		
+		// 3. Frame bindings
+		// VK_A : 65
+		setBinding(Target.FRAME, 65, KeyboardAction.ALIGN_FRAME);
+		// VK_C
+		setBinding(Target.FRAME, 67, KeyboardAction.CENTER_FRAME);
+		// VK_X
+		setBinding(Target.FRAME, 88, KeyboardAction.TRANSLATE_DOWN_X);
+	  // VK_X
+		setBinding(Target.FRAME, BogusEvent.SHIFT, 88, KeyboardAction.TRANSLATE_UP_X);
+	  // VK_Y
+		setBinding(Target.FRAME, 89, KeyboardAction.TRANSLATE_DOWN_Y);
+	  // VK_Y
+		setBinding(Target.FRAME, BogusEvent.SHIFT, 89, KeyboardAction.TRANSLATE_UP_Y);
+	  // VK_Z
+		setBinding(Target.FRAME, 90, KeyboardAction.ROTATE_DOWN_Z);
+	  // VK_Z
+		setBinding(Target.FRAME, BogusEvent.SHIFT, 90, KeyboardAction.ROTATE_UP_Z);
 	}
 
 	/**
@@ -190,83 +265,93 @@ public class KeyboardAgent extends Agent {
 			break;
 		}
 	}
-
-	// high level
-	// i. scene
-
+	
+  //high level
+	//i. scene
+	
 	public void setBinding(KeyboardShortcut shortcut, SceneAction action) {
 		sceneProfile().setBinding(shortcut, action);
 	}
-
+	
 	public void removeBinding(KeyboardShortcut shortcut) {
 		sceneProfile().removeBinding(shortcut);
 	}
-
-	public boolean hasBinding(KeyboardShortcut shortcut) {
-		return sceneProfile().hasBinding(shortcut);
+	
+  public boolean hasBinding(KeyboardShortcut shortcut) {
+  	return sceneProfile().hasBinding(shortcut);
 	}
-
-	public SceneAction action(KeyboardShortcut shortcut) {
+  
+  public SceneAction action(KeyboardShortcut shortcut) {
 		return sceneProfile().action(shortcut);
 	}
-
-	// don't override from here
-
-	/**
+  
+  //don't override from here
+  
+  /**
 	 * Removes all shortcut bindings.
 	 */
 	public void removeBindings() {
 		sceneProfile().removeBindings();
 	}
-
-	/**
+  
+  /**
 	 * Returns {@code true} if the keyboard action is bound.
 	 */
 	public boolean isActionBound(SceneAction action) {
 		return sceneProfile().isActionBound(action);
 	}
-
-	// ii. Frame
-
+	
+	//ii. Frame
+	
 	public void setBinding(Target target, KeyboardShortcut shortcut, KeyboardAction action) {
 		motionProfile(target).setBinding(shortcut, action);
 	}
-
+	
 	public void removeBinding(Target target, KeyboardShortcut shortcut) {
 		motionProfile(target).removeBinding(shortcut);
 	}
-
-	public boolean hasBinding(Target target, KeyboardShortcut shortcut) {
-		return motionProfile(target).hasBinding(shortcut);
+	
+  public boolean hasBinding(Target target, KeyboardShortcut shortcut) {
+  	return motionProfile(target).hasBinding(shortcut);
 	}
-
-	public KeyboardAction action(Target target, KeyboardShortcut shortcut) {
+  
+  public KeyboardAction action(Target target, KeyboardShortcut shortcut) {
 		return motionProfile(target).action(shortcut);
 	}
-
-	// don't override from here
-
-	/**
+  
+  //don't override from here
+  
+  /**
 	 * Removes all shortcut bindings.
 	 */
 	public void removeBindings(Target target) {
 		motionProfile(target).removeBindings();
 	}
-
-	/**
+  
+  /**
 	 * Returns {@code true} if the keyboard action is bound.
 	 */
 	public boolean isActionBound(Target target, KeyboardAction action) {
 		return motionProfile(target).isActionBound(action);
 	}
-
-	// end
+	
+	//end
 
 	/**
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
-	public void setBinding(Character key, SceneAction action) {
+	//TODO pending
+	/*
+	public void setBinding(Character key, GlobalAction action) {
 		sceneProfile().setBinding(key, action);
+	}
+	*/
+	
+	/**
+	 * Binds the vKey (virtual key) shortcut to the (Keyboard) dandelion action.
+	 */
+	public void setBinding(int vKey, SceneAction action) {
+		sceneProfile().setBinding(vKey, action);
 	}
 
 	/**
@@ -279,8 +364,18 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Removes key shortcut binding (if present).
 	 */
+  //TODO pending
+	/*
 	public void removeBinding(Character key) {
 		sceneProfile().removeBinding(key);
+	}
+	*/
+	
+	/**
+	 * Removes mask-vKey (virtual key) shortcut binding (if present).
+	 */
+	public void removeBinding(int vKey) {
+		sceneProfile().removeBinding(vKey);
 	}
 
 	/**
@@ -293,8 +388,18 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
+  //TODO pending
+	/*
 	public boolean hasBinding(Character key) {
 		return sceneProfile().hasBinding(key);
+	}
+	*/
+	
+	/**
+	 * Returns {@code true} if the vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
+	 */
+	public boolean hasBinding(int vKey) {
+		return sceneProfile().hasBinding(vKey);
 	}
 
 	/**
@@ -308,8 +413,19 @@ public class KeyboardAgent extends Agent {
 	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
 	 * is bound to the given shortcut.
 	 */
-	public SceneAction action(Character key) {
+	//TODO pending
+	/*
+	public GlobalAction action(Character key) {
 		return action(new KeyboardShortcut(key));
+	}
+	*/
+	
+	/**
+	 * Returns the (Keyboard) dandelion action that is bound to the given vKey (virtual key) shortcut. Returns
+	 * {@code null} if no action is bound to the given shortcut.
+	 */
+	public SceneAction action(int vKey) {
+		return action(new KeyboardShortcut(vKey));
 	}
 
 	/**
@@ -326,8 +442,18 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
+  //TODO pending
+	/*
 	public void setBinding(Target target, Character key, KeyboardAction action) {
 		motionProfile(target).setBinding(key, action);
+	}
+	*/
+	
+	/**
+	 * Binds the vKey (virtual key) shortcut to the (Keyboard) dandelion action.
+	 */
+	public void setBinding(Target target, int vKey, KeyboardAction action) {
+		motionProfile(target).setBinding(vKey, action);
 	}
 
 	/**
@@ -340,8 +466,18 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Removes key shortcut binding (if present).
 	 */
+  //TODO pending
+	/*
 	public void removeBinding(Target target, Character key) {
 		motionProfile(target).removeBinding(key);
+	}
+	*/
+	
+	/**
+	 * Removes vKey (virtual key) shortcut binding (if present).
+	 */
+	public void removeBinding(Target target, int vKey) {
+		motionProfile(target).removeBinding(vKey);
 	}
 
 	/**
@@ -354,8 +490,18 @@ public class KeyboardAgent extends Agent {
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
+  //TODO pending
+	/*
 	public boolean hasBinding(Target target, Character key) {
 		return motionProfile(target).hasBinding(key);
+	}
+	*/
+	
+	/**
+	 * Returns {@code true} if the vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
+	 */
+	public boolean hasBinding(Target target, int vKey) {
+		return motionProfile(target).hasBinding(vKey);
 	}
 
 	/**
@@ -369,8 +515,19 @@ public class KeyboardAgent extends Agent {
 	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
 	 * is bound to the given shortcut.
 	 */
+  //TODO pending
+	/*
 	public KeyboardAction action(Target target, Character key) {
 		return action(target, new KeyboardShortcut(key));
+	}
+	*/
+	
+	/**
+	 * Returns the (Keyboard) dandelion action that is bound to the given vKey (virtual key) shortcut. Returns
+	 * {@code null} if no action is bound to the given shortcut.
+	 */
+	public KeyboardAction action(Target target, int vKey) {
+		return action(target, new KeyboardShortcut(vKey));
 	}
 
 	/**
