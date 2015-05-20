@@ -11,7 +11,6 @@
 package remixlab.bias.event;
 
 import remixlab.bias.core.BogusEvent;
-import remixlab.bias.event.shortcut.*;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
@@ -101,11 +100,6 @@ public class MotionEvent extends BogusEvent {
 	 * Modulate the event dofs according to {@code sens}. Only meaningful if the event {@link #isAbsolute()}.
 	 */
 	public void modulate(float[] sens) {
-	}
-
-	@Override
-	public MotionShortcut shortcut() {
-		return new MotionShortcut(modifiers(), id());
 	}
 
 	/**

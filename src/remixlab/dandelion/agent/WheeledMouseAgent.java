@@ -401,42 +401,42 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Binds the mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME).
 	 */
 	public void setGestureBinding(Target target, DOF2Action action) {
-		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action);
+		setBinding(target, new Shortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action);
 	}
 
 	/**
 	 * Binds the mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME).
 	 */
 	public void setGestureBinding(Target target, int mask, DOF2Action action) {
-		setBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID), action);
+		setBinding(target, new Shortcut(mask, BogusEvent.NO_ID), action);
 	}
 
 	/**
 	 * Removes the mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeGestureBinding(Target target) {
-		removeBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID));
+		removeBinding(target, new Shortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID));
 	}
 
 	/**
 	 * Removes the mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeGestureBinding(Target target, int mask) {
-		removeBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID));
+		removeBinding(target, new Shortcut(mask, BogusEvent.NO_ID));
 	}
 
 	/**
 	 * Returns {@code true} if the mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasGestureBinding(Target target) {
-		return hasBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID));
+		return hasBinding(target, new Shortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID));
 	}
 
 	/**
 	 * Returns {@code true} if the mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasGestureBinding(Target target, int mask) {
-		return hasBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID));
+		return hasBinding(target, new Shortcut(mask, BogusEvent.NO_ID));
 	}
 
 	/**
@@ -444,7 +444,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * given mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public DOF2Action gestureAction(Target target) {
-		return action(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID));
+		return action(target, new Shortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID));
 	}
 
 	/**
@@ -452,7 +452,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * given mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public DOF2Action gestureAction(Target target, int mask) {
-		return action(target, new MotionShortcut(mask, BogusEvent.NO_ID));
+		return action(target, new Shortcut(mask, BogusEvent.NO_ID));
 	}
 
 	// Button -> button + drag
@@ -462,7 +462,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * (EYE or FRAME).
 	 */
 	public void setButtonBinding(Target target, int mask, int button, DOF2Action action) {
-		setBinding(target, new MotionShortcut(mask, button), action);
+		setBinding(target, new Shortcut(mask, button), action);
 	}
 
 	/**
@@ -470,35 +470,35 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * FRAME).
 	 */
 	public void setButtonBinding(Target target, int button, DOF2Action action) {
-		setBinding(target, new MotionShortcut(button), action);
+		setBinding(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, button), action);
 	}
 
 	/**
 	 * Removes the mask-button mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeButtonBinding(Target target, int mask, int button) {
-		removeBinding(target, new MotionShortcut(mask, button));
+		removeBinding(target, new Shortcut(mask, button));
 	}
 
 	/**
 	 * Removes the button mouse shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeButtonBinding(Target target, int button) {
-		removeBinding(target, new MotionShortcut(button));
+		removeBinding(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, button));
 	}
 
 	/**
 	 * Returns {@code true} if the mask-button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasButtonBinding(Target target, int mask, int button) {
-		return hasBinding(target, new MotionShortcut(mask, button));
+		return hasBinding(target, new Shortcut(mask, button));
 	}
 
 	/**
 	 * Returns {@code true} if the button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasButtonBinding(Target target, int button) {
-		return hasBinding(target, new MotionShortcut(button));
+		return hasBinding(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, button));
 	}
 
 	/**
@@ -506,7 +506,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * given mask-button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public DOF2Action buttonAction(Target target, int mask, int button) {
-		return action(target, new MotionShortcut(mask, button));
+		return action(target, new Shortcut(mask, button));
 	}
 
 	/**
@@ -514,7 +514,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * given button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public DOF2Action buttonAction(Target target, int button) {
-		return action(target, new MotionShortcut(button));
+		return action(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, button));
 	}
 
 	// wheel here
@@ -524,28 +524,28 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * FRAME).
 	 */
 	public void setWheelBinding(Target target, int mask, DOF1Action action) {
-		setBinding(target, new MotionShortcut(mask, WHEEL_ID), action.dof2Action());
+		setBinding(target, new Shortcut(mask, WHEEL_ID), action.dof2Action());
 	}
 
 	/**
 	 * Binds the wheel to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME).
 	 */
 	public void setWheelBinding(Target target, DOF1Action action) {
-		setBinding(target, new MotionShortcut(WHEEL_ID), action.dof2Action());
+		setBinding(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, WHEEL_ID), action.dof2Action());
 	}
 
 	/**
 	 * Removes the mask-wheel shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeWheelBinding(Target target, int mask) {
-		removeBinding(target, new MotionShortcut(mask, WHEEL_ID));
+		removeBinding(target, new Shortcut(mask, WHEEL_ID));
 	}
 
 	/**
 	 * Removes the wheel binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeWheelBinding(Target target) {
-		removeBinding(target, new MotionShortcut(WHEEL_ID));
+		removeBinding(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, WHEEL_ID));
 	}
 
 	/**
@@ -554,9 +554,9 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	public void removeWheelBindings(Target target) {
 		//bit of a hack ;)
 		MotionProfile<DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
-		Iterator<Entry<MotionShortcut, DOF2Action>> it = profile.map().entrySet().iterator();
+		Iterator<Entry<Shortcut, DOF2Action>> it = profile.map().entrySet().iterator();
 		while (it.hasNext()) {
-			Entry<MotionShortcut, DOF2Action> entry = it.next();
+			Entry<Shortcut, DOF2Action> entry = it.next();
 			if (entry.getKey().id() == WHEEL_ID && entry.getValue().dof1Action() != null)
 				it.remove();
 		}
@@ -566,14 +566,14 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Returns {@code true} if the mask-wheel shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasWheelBinding(Target target, int mask) {
-		return hasBinding(target, new MotionShortcut(mask, WHEEL_ID));
+		return hasBinding(target, new Shortcut(mask, WHEEL_ID));
 	}
 
 	/**
 	 * Returns {@code true} if the wheel is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasWheelBinding(Target target) {
-		return hasBinding(target, new MotionShortcut(WHEEL_ID));
+		return hasBinding(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, WHEEL_ID));
 	}
 
 	/**
@@ -588,7 +588,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * given mask-wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public DOF1Action wheelAction(Target target, int mask, DOF1Action action) {
-		return action(target, new MotionShortcut(mask, WHEEL_ID)).dof1Action();
+		return action(target, new Shortcut(mask, WHEEL_ID)).dof1Action();
 	}
 
 	/**
@@ -596,7 +596,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * given wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public DOF1Action wheelAction(Target target, DOF1Action action) {
-		return action(target, new MotionShortcut(WHEEL_ID)).dof1Action();
+		return action(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, WHEEL_ID)).dof1Action();
 	}
 	
 	// click

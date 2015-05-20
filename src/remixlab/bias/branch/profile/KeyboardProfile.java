@@ -11,7 +11,8 @@
 package remixlab.bias.branch.profile;
 
 import remixlab.bias.core.Action;
-import remixlab.bias.event.shortcut.KeyboardShortcut;
+import remixlab.bias.core.BogusEvent;
+import remixlab.bias.event.shortcut.Shortcut;
 
 /**
  * A {@link remixlab.bias.branch.profile.Profile} defining a mapping between
@@ -20,7 +21,7 @@ import remixlab.bias.event.shortcut.KeyboardShortcut;
  * @param <A>
  *          {@link remixlab.bias.core.Action} : User-defined action.
  */
-public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortcut, A> {
+public class KeyboardProfile<A extends Action<?>> extends Profile<Shortcut, A> {
 	public KeyboardProfile() {
 		super();
 	}
@@ -50,7 +51,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 			Action<?> a = action(vKey);
 			System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
 		}
-		setBinding(new KeyboardShortcut(vKey), action);
+		setBinding(new Shortcut(BogusEvent.NO_MODIFIER_MASK, vKey), action);
 	}
 
 	/**
@@ -68,7 +69,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 			Action<?> a = action(mask, vKey);
 			System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
 		}
-		setBinding(new KeyboardShortcut(mask, vKey), action);
+		setBinding(new Shortcut(mask, vKey), action);
 	}
 
 	/**
@@ -78,7 +79,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 *          shortcut
 	 */
 	public void removeBinding(Integer vKey) {
-		removeBinding(new KeyboardShortcut(vKey));
+		removeBinding(new Shortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
@@ -90,7 +91,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 *          coded key defining the shortcut
 	 */
 	public void removeBinding(Integer mask, Integer vKey) {
-		removeBinding(new KeyboardShortcut(mask, vKey));
+		removeBinding(new Shortcut(mask, vKey));
 	}
 
 	/**
@@ -101,7 +102,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 * @return action
 	 */
 	public Action<?> action(Integer vKey) {
-		return action(new KeyboardShortcut(vKey));
+		return action(new Shortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
@@ -114,7 +115,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 * @return action
 	 */
 	public Action<?> action(Integer mask, Integer vKey) {
-		return action(new KeyboardShortcut(mask, vKey));
+		return action(new Shortcut(mask, vKey));
 	}
 
 	/**
@@ -124,7 +125,7 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 *          shortcut
 	 */
 	public boolean hasBinding(Integer vKey) {
-		return hasBinding(new KeyboardShortcut(vKey));
+		return hasBinding(new Shortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
@@ -136,6 +137,6 @@ public class KeyboardProfile<A extends Action<?>> extends Profile<KeyboardShortc
 	 *          coded key defining the shortcut
 	 */
 	public boolean hasBinding(Integer mask, Integer vKey) {
-		return hasBinding(new KeyboardShortcut(mask, vKey));
+		return hasBinding(new Shortcut(mask, vKey));
 	}
 }

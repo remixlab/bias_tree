@@ -269,19 +269,19 @@ public class KeyboardAgent extends Agent {
   //high level
 	//i. scene
 	
-	public void setBinding(KeyboardShortcut shortcut, SceneAction action) {
+	public void setBinding(Shortcut shortcut, SceneAction action) {
 		sceneProfile().setBinding(shortcut, action);
 	}
 	
-	public void removeBinding(KeyboardShortcut shortcut) {
+	public void removeBinding(Shortcut shortcut) {
 		sceneProfile().removeBinding(shortcut);
 	}
 	
-  public boolean hasBinding(KeyboardShortcut shortcut) {
+  public boolean hasBinding(Shortcut shortcut) {
   	return sceneProfile().hasBinding(shortcut);
 	}
   
-  public SceneAction action(KeyboardShortcut shortcut) {
+  public SceneAction action(Shortcut shortcut) {
 		return sceneProfile().action(shortcut);
 	}
   
@@ -303,19 +303,19 @@ public class KeyboardAgent extends Agent {
 	
 	//ii. Frame
 	
-	public void setBinding(Target target, KeyboardShortcut shortcut, KeyboardAction action) {
+	public void setBinding(Target target, Shortcut shortcut, KeyboardAction action) {
 		motionProfile(target).setBinding(shortcut, action);
 	}
 	
-	public void removeBinding(Target target, KeyboardShortcut shortcut) {
+	public void removeBinding(Target target, Shortcut shortcut) {
 		motionProfile(target).removeBinding(shortcut);
 	}
 	
-  public boolean hasBinding(Target target, KeyboardShortcut shortcut) {
+  public boolean hasBinding(Target target, Shortcut shortcut) {
   	return motionProfile(target).hasBinding(shortcut);
 	}
   
-  public KeyboardAction action(Target target, KeyboardShortcut shortcut) {
+  public KeyboardAction action(Target target, Shortcut shortcut) {
 		return motionProfile(target).action(shortcut);
 	}
   
@@ -416,7 +416,7 @@ public class KeyboardAgent extends Agent {
 	//TODO pending
 	/*
 	public GlobalAction action(Character key) {
-		return action(new KeyboardShortcut(key));
+		return action(new Shortcut(key));
 	}
 	*/
 	
@@ -425,7 +425,7 @@ public class KeyboardAgent extends Agent {
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
 	public SceneAction action(int vKey) {
-		return action(new KeyboardShortcut(vKey));
+		return action(new Shortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
@@ -433,7 +433,7 @@ public class KeyboardAgent extends Agent {
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
 	public SceneAction action(int mask, int vKey) {
-		return action(new KeyboardShortcut(mask, vKey));
+		return action(new Shortcut(mask, vKey));
 	}
 
 	// FRAMEs
@@ -518,7 +518,7 @@ public class KeyboardAgent extends Agent {
   //TODO pending
 	/*
 	public KeyboardAction action(Target target, Character key) {
-		return action(target, new KeyboardShortcut(key));
+		return action(target, new Shortcut(key));
 	}
 	*/
 	
@@ -527,7 +527,7 @@ public class KeyboardAgent extends Agent {
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
 	public KeyboardAction action(Target target, int vKey) {
-		return action(target, new KeyboardShortcut(vKey));
+		return action(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
@@ -535,6 +535,6 @@ public class KeyboardAgent extends Agent {
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
 	public KeyboardAction action(Target target, int mask, int vKey) {
-		return action(target, new KeyboardShortcut(mask, vKey));
+		return action(target, new Shortcut(mask, vKey));
 	}
 }

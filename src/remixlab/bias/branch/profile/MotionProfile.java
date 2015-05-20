@@ -22,7 +22,7 @@ import remixlab.bias.event.shortcut.*;
  * @param <A>
  *          {@link remixlab.bias.core.Action} : User-defined action.
  */
-public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, A> {
+public class MotionProfile<A extends Action<?>> extends Profile<Shortcut, A> {
 	public MotionProfile() {
 		super();
 	}
@@ -62,7 +62,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * @param id
 	 */
 	public boolean hasBinding(Integer mask, Integer id) {
-		return hasBinding(new MotionShortcut(mask, id));
+		return hasBinding(new Shortcut(mask, id));
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 			Action<?> a = action(mask, id);
 			System.out.println("Warning: overwritting binding which was previously associated to " + a);
 		}
-		setBinding(new MotionShortcut(mask, id), action);
+		setBinding(new Shortcut(mask, id), action);
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * @param id
 	 */
 	public void removeBinding(Integer mask, Integer id) {
-		removeBinding(new MotionShortcut(mask, id));
+		removeBinding(new Shortcut(mask, id));
 	}
 
 	/**
@@ -146,6 +146,6 @@ public class MotionProfile<A extends Action<?>> extends Profile<MotionShortcut, 
 	 * @param id
 	 */
 	public Action<?> action(Integer mask, Integer id) {
-		return action(new MotionShortcut(mask, id));
+		return action(new Shortcut(mask, id));
 	}
 }

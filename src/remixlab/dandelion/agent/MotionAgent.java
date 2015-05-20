@@ -133,14 +133,14 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	}
 
 	/**
-	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
+	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.Shortcut}s.
 	 */
 	public MotionProfile<A> eyeProfile() {
 		return eyeBranch().profile();
 	}
 
 	/**
-	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
+	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.Shortcut}s.
 	 */
 	public MotionProfile<A> frameProfile() {
 		return frameBranch().profile();
@@ -176,7 +176,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	
 	//high level (new) with plain shortcuts
 	
-	public void setBinding(Target target, MotionShortcut shortcut, A action) {
+	public void setBinding(Target target, Shortcut shortcut, A action) {
 		motionProfile(target).setBinding(shortcut, action);
 	}
 	
@@ -184,7 +184,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		clickProfile(target).setBinding(shortcut, action);
 	}
 	
-	public void removeBinding(Target target, MotionShortcut shortcut) {
+	public void removeBinding(Target target, Shortcut shortcut) {
 		motionProfile(target).removeBinding(shortcut);
 	}
 	
@@ -192,7 +192,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		clickProfile(target).removeBinding(shortcut);
 	}
 	
-	public boolean hasBinding(Target target, MotionShortcut shortcut) {
+	public boolean hasBinding(Target target, Shortcut shortcut) {
 		return motionProfile(target).hasBinding(shortcut);
 	}
 	
@@ -200,7 +200,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		return clickProfile(target).hasBinding(shortcut);
 	}
 	
-	public A action(Target target, MotionShortcut shortcut) {
+	public A action(Target target, Shortcut shortcut) {
 		return motionProfile(target).action(shortcut);
 	}
 	
