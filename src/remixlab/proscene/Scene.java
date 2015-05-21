@@ -174,8 +174,9 @@ public class Scene extends AbstractScene implements PConstants {
 
 		// 4. (TODO prev 6.) Create agents and register P5 methods
 		if (platform() == Platform.PROCESSING_ANDROID) {
-			defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
-			defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
+			//TODO pending after victor's
+			//defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
+			//defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
 		} else {
 			defMotionAgent = new MouseAgent(this, "proscene_mouse");
 			defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
@@ -400,12 +401,15 @@ public class Scene extends AbstractScene implements PConstants {
 	 * 
 	 * @see #keyboardAgent()
 	 */
+	//TODO re-add me after Victors
+	/*
 	public DroidTouchAgent touchAgent() {
 		if (platform() == Platform.PROCESSING_DESKTOP) {
 			throw new RuntimeException("Proscene touchAgent() is not available in Desktop mode");
 		}
 		return (DroidTouchAgent) defMotionAgent;
 	}
+	*/
 
 	// TODO doc me and re-add me
 	/*

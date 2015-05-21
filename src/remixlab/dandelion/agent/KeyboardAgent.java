@@ -20,22 +20,20 @@ import remixlab.dandelion.core.Constants.*;
 
 public class KeyboardAgent extends Agent {
 	protected AbstractScene																											scene;
-	protected KeyboardBranch<GlobalAction, KeyboardProfile<SceneAction>>	keySceneBranch;
-	protected KeyboardBranch<MotionAction, KeyboardProfile<KeyboardAction>>	keyFrameBranch, keyEyeBranch;
+	protected Branch<GlobalAction, Profile<Shortcut, SceneAction>>	keySceneBranch;
+	protected Branch<MotionAction, Profile<Shortcut, KeyboardAction>>	keyFrameBranch, keyEyeBranch;
 
 	public KeyboardAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		keySceneBranch = new KeyboardBranch<GlobalAction, KeyboardProfile<SceneAction>>(
-				new KeyboardProfile<SceneAction>(),
+		keySceneBranch = new Branch<GlobalAction, Profile<Shortcut, SceneAction>>(
+				new Profile<Shortcut, SceneAction>(),
 				this,
 				"scene_keyboard_branch");
-		keyFrameBranch = new KeyboardBranch<MotionAction, KeyboardProfile<KeyboardAction>>(
-				new KeyboardProfile<KeyboardAction>(),
+		keyFrameBranch = new Branch<MotionAction, Profile<Shortcut, KeyboardAction>>(new Profile<Shortcut, KeyboardAction>(),
 				this,
 				"frame_keyboard_branch");
-		keyEyeBranch = new KeyboardBranch<MotionAction, KeyboardProfile<KeyboardAction>>(
-				new KeyboardProfile<KeyboardAction>(),
+		keyEyeBranch = new Branch<MotionAction, Profile<Shortcut, KeyboardAction>>(new Profile<Shortcut, KeyboardAction>(),
 				this,
 				"eye_keyboard_branch");
 		// new, mimics eye -> motionAgent -> scene -> keyAgent
@@ -90,15 +88,15 @@ public class KeyboardAgent extends Agent {
 		setDefaultGrabber(scene);
 	}
 
-	public KeyboardBranch<GlobalAction, KeyboardProfile<SceneAction>> sceneBranch() {
+	public Branch<GlobalAction, Profile<Shortcut, SceneAction>> sceneBranch() {
 		return keySceneBranch;
 	}
 
-	public KeyboardBranch<MotionAction, KeyboardProfile<KeyboardAction>> eyeBranch() {
+	public Branch<MotionAction, Profile<Shortcut, KeyboardAction>> eyeBranch() {
 		return keyEyeBranch;
 	}
 
-	public KeyboardBranch<MotionAction, KeyboardProfile<KeyboardAction>> frameBranch() {
+	public Branch<MotionAction, Profile<Shortcut, KeyboardAction>> frameBranch() {
 		return keyFrameBranch;
 	}
 
@@ -107,29 +105,19 @@ public class KeyboardAgent extends Agent {
 		return null;
 	}
 
-	@Override
-	public boolean appendBranch(Branch<?, ?> branch) {
-		if (branch instanceof KeyboardBranch)
-			return super.appendBranch(branch);
-		else {
-			System.out.println("Branch should be instanceof KeyboardBranch to be appended");
-			return false;
-		}
+	protected Profile<Shortcut, SceneAction> sceneProfile() {
+		return sceneBranch().profile();
 	}
 
-	protected KeyboardProfile<SceneAction> sceneProfile() {
-		return sceneBranch().keyboardProfile();
+	protected Profile<Shortcut, KeyboardAction> eyeProfile() {
+		return eyeBranch().profile();
 	}
 
-	protected KeyboardProfile<KeyboardAction> eyeProfile() {
-		return eyeBranch().keyboardProfile();
+	protected Profile<Shortcut, KeyboardAction> frameProfile() {
+		return frameBranch().profile();
 	}
 
-	protected KeyboardProfile<KeyboardAction> frameProfile() {
-		return frameBranch().keyboardProfile();
-	}
-
-	protected KeyboardProfile<KeyboardAction> motionProfile(Target target) {
+	protected Profile<Shortcut, KeyboardAction> motionProfile(Target target) {
 		return target == Target.EYE ? eyeProfile() : frameProfile();
 	}
 
@@ -253,13 +241,13 @@ public class KeyboardAgent extends Agent {
 	public void setKeyCodeToPlayPath(int vkey, int path) {
 		switch (path) {
 		case 1:
-			sceneProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, vkey, SceneAction.PLAY_PATH_1);
+			setBinding(BogusEvent.NO_MODIFIER_MASK, vkey, SceneAction.PLAY_PATH_1);
 			break;
 		case 2:
-			sceneProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, vkey, SceneAction.PLAY_PATH_2);
+			setBinding(BogusEvent.NO_MODIFIER_MASK, vkey, SceneAction.PLAY_PATH_2);
 			break;
 		case 3:
-			sceneProfile().setBinding(BogusEvent.NO_MODIFIER_MASK, vkey, SceneAction.PLAY_PATH_3);
+			setBinding(BogusEvent.NO_MODIFIER_MASK, vkey, SceneAction.PLAY_PATH_3);
 			break;
 		default:
 			break;
@@ -351,14 +339,14 @@ public class KeyboardAgent extends Agent {
 	 * Binds the vKey (virtual key) shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setBinding(int vKey, SceneAction action) {
-		sceneProfile().setBinding(vKey, action);
+		setBinding(new Shortcut(BogusEvent.NO_MODIFIER_MASK, vKey), action);
 	}
 
 	/**
 	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setBinding(int mask, int vKey, SceneAction action) {
-		sceneProfile().setBinding(mask, vKey, action);
+		setBinding(new Shortcut(mask, vKey), action);
 	}
 
 	/**
@@ -375,14 +363,14 @@ public class KeyboardAgent extends Agent {
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
 	public void removeBinding(int vKey) {
-		sceneProfile().removeBinding(vKey);
+		removeBinding(new Shortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
 	public void removeBinding(int mask, int vKey) {
-		sceneProfile().removeBinding(mask, vKey);
+		removeBinding(new Shortcut(mask, vKey));
 	}
 
 	/**
@@ -399,14 +387,14 @@ public class KeyboardAgent extends Agent {
 	 * Returns {@code true} if the vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasBinding(int vKey) {
-		return sceneProfile().hasBinding(vKey);
+		return hasBinding(new Shortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
 	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasBinding(int mask, int vKey) {
-		return sceneProfile().hasBinding(mask, vKey);
+		return hasBinding(new Shortcut(mask, vKey));
 	}
 
 	/**
@@ -453,14 +441,14 @@ public class KeyboardAgent extends Agent {
 	 * Binds the vKey (virtual key) shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setBinding(Target target, int vKey, KeyboardAction action) {
-		motionProfile(target).setBinding(vKey, action);
+		setBinding(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, vKey), action);
 	}
 
 	/**
 	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setBinding(Target target, int mask, int vKey, KeyboardAction action) {
-		motionProfile(target).setBinding(mask, vKey, action);
+		setBinding(target, new Shortcut(mask, vKey), action);
 	}
 
 	/**
@@ -477,14 +465,14 @@ public class KeyboardAgent extends Agent {
 	 * Removes vKey (virtual key) shortcut binding (if present).
 	 */
 	public void removeBinding(Target target, int vKey) {
-		motionProfile(target).removeBinding(vKey);
+		removeBinding(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
 	public void removeBinding(Target target, int mask, int vKey) {
-		motionProfile(target).removeBinding(mask, vKey);
+		removeBinding(target, new Shortcut(mask, vKey));
 	}
 
 	/**
@@ -501,14 +489,14 @@ public class KeyboardAgent extends Agent {
 	 * Returns {@code true} if the vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasBinding(Target target, int vKey) {
-		return motionProfile(target).hasBinding(vKey);
+		return hasBinding(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
 	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasBinding(Target target, int mask, int vKey) {
-		return motionProfile(target).hasBinding(mask, vKey);
+		return hasBinding(target, new Shortcut(mask, vKey));
 	}
 
 	/**

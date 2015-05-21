@@ -20,8 +20,8 @@ import remixlab.dandelion.core.Constants.*;
 
 public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	protected AbstractScene																														scene;
-	protected MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>>	eyeBranch;
-	protected MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>>	frameBranch;
+	protected MotionBranch<MotionAction, Profile<Shortcut, A>, ClickProfile<ClickAction>>	eyeBranch;
+	protected MotionBranch<MotionAction, Profile<Shortcut, A>, ClickProfile<ClickAction>>	frameBranch;
 	protected PickingMode																															pMode;
 
 	public enum PickingMode {
@@ -33,11 +33,11 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	public MotionAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		eyeBranch = new MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>>(
-				new MotionProfile<A>(),
+		eyeBranch = new MotionBranch<MotionAction, Profile<Shortcut, A>, ClickProfile<ClickAction>>(
+				new Profile<Shortcut, A>(),
 				new ClickProfile<ClickAction>(), this, (n + "_eye_mouse_branch"));
-		frameBranch = new MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>>(
-				new MotionProfile<A>(),
+		frameBranch = new MotionBranch<MotionAction, Profile<Shortcut, A>, ClickProfile<ClickAction>>(
+				new Profile<Shortcut, A>(),
 				new ClickProfile<ClickAction>(), this, (n + "_frame_mouse_branch"));
 		setPickingMode(PickingMode.MOVE);
 	}
@@ -118,31 +118,31 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		setDefaultGrabber(scene.eye().frame());
 	}
 
-	public MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>> eyeBranch() {
+	public MotionBranch<MotionAction, Profile<Shortcut, A>, ClickProfile<ClickAction>> eyeBranch() {
 		return eyeBranch;
 	}
 
-	public MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch() {
+	public MotionBranch<MotionAction, Profile<Shortcut, A>, ClickProfile<ClickAction>> frameBranch() {
 		return frameBranch;
 	}
 	
 	// TODO test all protected down here in stable before going on
 	
-	protected MotionProfile<A> motionProfile(Target target) {
+	protected Profile<Shortcut, A> motionProfile(Target target) {
 		return target == Target.EYE ? eyeProfile() : frameProfile();
 	}
 
 	/**
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.Shortcut}s.
 	 */
-	public MotionProfile<A> eyeProfile() {
+	public Profile<Shortcut, A> eyeProfile() {
 		return eyeBranch().profile();
 	}
 
 	/**
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.Shortcut}s.
 	 */
-	public MotionProfile<A> frameProfile() {
+	public Profile<Shortcut, A> frameProfile() {
 		return frameBranch().profile();
 	}
 	
