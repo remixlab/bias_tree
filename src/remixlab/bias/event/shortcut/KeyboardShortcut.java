@@ -24,7 +24,7 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 	 * Defines a keyboard shortcut from the given character.
 	 * 
 	 * @param vk
-	 *          the virtual key that defines the keyboard shthis.vKey = new Integer(other.vKey);ortcut.
+	 *          the virtual key that defines the keyboard shortcut.
 	 */
 	public KeyboardShortcut(Integer vk) {
 		super(BogusEvent.NO_MODIFIER_MASK, vk);
