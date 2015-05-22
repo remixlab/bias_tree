@@ -59,8 +59,8 @@ public abstract class ModelObject implements Model {
 		PGraphics pg = scene.pg();
 		draw(pg);
 	}
-	
-  //TODO doc: remember to mention bind(false);
+
+	// TODO doc: remember to mention bind(false);
 	@Override
 	public void draw(PGraphics pg) {
 		if (shape() == null)
@@ -79,7 +79,7 @@ public abstract class ModelObject implements Model {
 			shape().enableStyle();
 		pg.popStyle();
 	}
-	
+
 	@Override
 	public boolean checkIfGrabsInput(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
@@ -110,15 +110,15 @@ public abstract class ModelObject implements Model {
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
-	
+
 	protected boolean checkIfGrabsInput(DOF2Event event) {
-		if(event.isAbsolute()) {
+		if (event.isAbsolute()) {
 			System.out.println("Grabbing a modelObject is only possible from a relative MotionEvent or from a ClickEvent");
 			return false;
 		}
 		return checkIfGrabsInput(event.x(), event.y());
 	}
-	
+
 	public final boolean checkIfGrabsInput(float x, float y) {
 		scene.pickingBuffer().pushStyle();
 		scene.pickingBuffer().colorMode(PApplet.RGB, 255);

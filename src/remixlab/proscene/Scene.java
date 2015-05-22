@@ -56,8 +56,7 @@ import java.nio.FloatBuffer;
  * {@link #motionAgent()} (which in the desktop version of proscene defaults to a {@link #mouseAgent()}):
  * <ol>
  * <li><b>The default keyboard agent</b> provides shortcuts to Dandelion keyboard actions such as {@link #drawGrid()} or
- * {@link #drawAxes()}. See
- * {@link #setKeyboardBinding(Character, remixlab.dandelion.core.Constants.SceneAction)} and
+ * {@link #drawAxes()}. See {@link #setKeyboardBinding(Character, remixlab.dandelion.core.Constants.SceneAction)} and
  * {@link #setKeyboardBinding(int, int, remixlab.dandelion.core.Constants.SceneAction)}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame motion actions. Please refer
  * to the different {@code setMouseButtonBinding()}, {@code setMouseClickBinding()}, {@code setMouseWheelBinding()}
@@ -413,9 +412,9 @@ public class Scene extends AbstractScene implements PConstants {
 	 * RuntimeException("Proscene droidTouchAgent() is not available in Desktop mode"); } return (DroidTouchAgent)
 	 * motionAgent(); }
 	 */
-	
+
 	// KEYBOARD
-	
+
 	/**
 	 * Enables Proscene keyboard handling through the {@link #keyboardAgent()}.
 	 * 
@@ -1812,13 +1811,13 @@ public class Scene extends AbstractScene implements PConstants {
 	protected void drawScreenRotateHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
-		if(!(motionAgent().inputGrabber() instanceof InteractiveFrame))
-			return;		
-		
+		if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
+			return;
+
 		pg().pushStyle();
 		float p1x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;
 		float p1y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;
-		
+
 		Vec p2 = new Vec();
 		if (motionAgent().inputGrabber() instanceof GrabberFrame) {
 			if (((GrabberFrame) motionAgent().inputGrabber()).isEyeFrame())
@@ -1840,18 +1839,18 @@ public class Scene extends AbstractScene implements PConstants {
 	protected void drawZoomWindowHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
-		if(!(motionAgent().inputGrabber() instanceof InteractiveFrame))
-			return;		
-		InteractiveFrame iFrame = (InteractiveFrame)motionAgent().inputGrabber();
-		if(!(iFrame.initMotionEvent instanceof DOF2Event))
+		if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
 			return;
-		
-		pg().pushStyle();		
-		DOF2Event init = (DOF2Event) iFrame.initMotionEvent;		
+		InteractiveFrame iFrame = (InteractiveFrame) motionAgent().inputGrabber();
+		if (!(iFrame.initMotionEvent instanceof DOF2Event))
+			return;
+
+		pg().pushStyle();
+		DOF2Event init = (DOF2Event) iFrame.initMotionEvent;
 		float p1x = init.x() /*- originCorner().x()*/;
 		float p1y = init.y() /*- originCorner().y()*/;
 		float p2x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;
-		float p2y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;				
+		float p2y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
 		pg().strokeWeight(2);

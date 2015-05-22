@@ -34,29 +34,23 @@ public class DroidKeyAgent extends KeyAgent {
 		// VK values here: http://docs.oracle.com/javase/7/docs/api/constant-values.html
 		super.setDefaultBindings();
 
-		//TODO pending
+		// TODO pending
 		/*
-		sceneProfile().setBinding('1', GlobalAction.ADD_KEYFRAME_TO_PATH_1);
-		sceneProfile().setBinding('2', GlobalAction.DELETE_PATH_1);
-		sceneProfile().setBinding('3', GlobalAction.PLAY_PATH_1);
-		*/
+		 * sceneProfile().setBinding('1', GlobalAction.ADD_KEYFRAME_TO_PATH_1); sceneProfile().setBinding('2',
+		 * GlobalAction.DELETE_PATH_1); sceneProfile().setBinding('3', GlobalAction.PLAY_PATH_1);
+		 */
 	}
 
 	/**
 	 * Processing keyEvent method to be registered at the PApplet's instance.
 	 */
 	public void keyEvent(processing.event.KeyEvent e) {
-	  //TODO pending
+		// TODO pending
 		/*
-		if (e.getAction() == processing.event.KeyEvent.PRESS) {
-			if (e.getKeyCode() == android.view.KeyEvent.KEYCODE_MENU) {
-				Object context = scene.pApplet();
-				InputMethodManager imm = (InputMethodManager) ((Context) context)
-						.getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.toggleSoftInput(0, 0);
-			} else
-				handle(new KeyboardEvent(e.getKey()));
-		}
-		*/
+		 * if (e.getAction() == processing.event.KeyEvent.PRESS) { if (e.getKeyCode() == android.view.KeyEvent.KEYCODE_MENU)
+		 * { Object context = scene.pApplet(); InputMethodManager imm = (InputMethodManager) ((Context) context)
+		 * .getSystemService(Context.INPUT_METHOD_SERVICE); imm.toggleSoftInput(0, 0); } else handle(new
+		 * KeyboardEvent(e.getKey())); }
+		 */
 	}
 }

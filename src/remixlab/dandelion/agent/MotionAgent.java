@@ -86,31 +86,24 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		}
 	}
 
-	 @Override 
-	 public boolean addGrabber(Grabber frame) {
-		 if (frame instanceof InteractiveFrame)
-			 return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? eyeBranch : frameBranch);
-		 if(!(frame instanceof InteractiveGrabber))
-			 return super.addGrabber(frame);
-		 return false;
-		}
-
-	 /*
-	// TODO debug
 	@Override
 	public boolean addGrabber(Grabber frame) {
-		if (frame instanceof InteractiveFrame) {
-			if (((InteractiveFrame) frame).isEyeFrame())
-				System.out.println("adding EYE frame in motion");
-			else
-				System.out.println("adding FRAME frame in motion");
+		if (frame instanceof InteractiveFrame)
 			return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? eyeBranch : frameBranch);
-		}
 		if (!(frame instanceof InteractiveGrabber))
 			return super.addGrabber(frame);
 		return false;
 	}
-	*/
+
+	/*
+	 * // TODO debug
+	 * 
+	 * @Override public boolean addGrabber(Grabber frame) { if (frame instanceof InteractiveFrame) { if
+	 * (((InteractiveFrame) frame).isEyeFrame()) System.out.println("adding EYE frame in motion"); else
+	 * System.out.println("adding FRAME frame in motion"); return addGrabber((InteractiveFrame) frame, ((InteractiveFrame)
+	 * frame).isEyeFrame() ? eyeBranch : frameBranch); } if (!(frame instanceof InteractiveGrabber)) return
+	 * super.addGrabber(frame); return false; }
+	 */
 
 	@Override
 	public void resetDefaultGrabber() {
@@ -125,9 +118,9 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	public MotionBranch<MotionAction, MotionProfile<A>, ClickProfile<ClickAction>> frameBranch() {
 		return frameBranch;
 	}
-	
+
 	// TODO test all protected down here in stable before going on
-	
+
 	protected MotionProfile<A> motionProfile(Target target) {
 		return target == Target.EYE ? eyeProfile() : frameProfile();
 	}
@@ -145,7 +138,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	public MotionProfile<A> frameProfile() {
 		return frameBranch().profile();
 	}
-	
+
 	protected ClickProfile<ClickAction> clickProfile(Target target) {
 		return target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 	}
@@ -173,55 +166,55 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	public PickingMode pickingMode() {
 		return pMode;
 	}
-	
-	//high level (new) with plain shortcuts
-	
+
+	// high level (new) with plain shortcuts
+
 	public void setBinding(Target target, MotionShortcut shortcut, A action) {
 		motionProfile(target).setBinding(shortcut, action);
 	}
-	
+
 	public void setBinding(Target target, ClickShortcut shortcut, ClickAction action) {
 		clickProfile(target).setBinding(shortcut, action);
 	}
-	
+
 	public void removeBinding(Target target, MotionShortcut shortcut) {
 		motionProfile(target).removeBinding(shortcut);
 	}
-	
+
 	public void removeBinding(Target target, ClickShortcut shortcut) {
 		clickProfile(target).removeBinding(shortcut);
 	}
-	
+
 	public boolean hasBinding(Target target, MotionShortcut shortcut) {
 		return motionProfile(target).hasBinding(shortcut);
 	}
-	
+
 	public boolean hasBinding(Target target, ClickShortcut shortcut) {
 		return clickProfile(target).hasBinding(shortcut);
 	}
-	
+
 	public A action(Target target, MotionShortcut shortcut) {
 		return motionProfile(target).action(shortcut);
 	}
-	
+
 	public ClickAction action(Target target, ClickShortcut shortcut) {
 		return clickProfile(target).action(shortcut);
 	}
-	
-	//don't override from here
-	
+
+	// don't override from here
+
 	public void removeMotionBindings(Target target) {
 		motionProfile(target).removeBindings();
 	}
-	
+
 	public void removeClickBindings(Target target) {
 		clickProfile(target).removeBindings();
 	}
-	
+
 	public boolean isActionBound(Target target, A action) {
 		return motionProfile(target).isActionBound(action);
 	}
-	
+
 	/**
 	 * Returns {@code true} if the mouse click action is bound to the given {@code target} (EYE or FRAME).
 	 */

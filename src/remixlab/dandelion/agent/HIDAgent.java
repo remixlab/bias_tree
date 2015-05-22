@@ -12,6 +12,7 @@ package remixlab.dandelion.agent;
 
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
+import remixlab.bias.event.shortcut.MotionShortcut;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
@@ -25,8 +26,12 @@ public class HIDAgent extends MotionAgent<DOF6Action> {
 
 	public HIDAgent(AbstractScene scn, String n) {
 		super(scn, n);
-		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
-		frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+		setGestureBinding(Target.EYE, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+		setGestureBinding(Target.FRAME, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+	}
+
+	public void setGestureBinding(Target target, DOF6Action action) {
+		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action);
 	}
 
 	@Override
