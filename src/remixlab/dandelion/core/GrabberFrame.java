@@ -66,9 +66,10 @@ public class GrabberFrame extends Frame implements Grabber {
 	private float								grabsInputThreshold;
 	private boolean							adpThreshold;
 	protected boolean						eyeFrame;
-	//TODO decide this mode vs constraint! seems overkill
-	//protected boolean						rspct2Frame;
-	//protected Frame							gFrame;
+
+	// TODO decide this mode vs constraint! seems overkill
+	// protected boolean rspct2Frame;
+	// protected Frame gFrame;
 
 	@Override
 	public int hashCode() {
@@ -77,8 +78,8 @@ public class GrabberFrame extends Frame implements Grabber {
 				append(grabsInputThreshold).
 				append(adpThreshold).
 				append(eyeFrame).
-				//append(rspct2Frame).
-				//append(gFrame).
+				// append(rspct2Frame).
+				// append(gFrame).
 				append(rotSensitivity).
 				append(transSensitivity).
 				append(sclSensitivity).
@@ -110,8 +111,8 @@ public class GrabberFrame extends Frame implements Grabber {
 				.append(grabsInputThreshold, other.grabsInputThreshold)
 				.append(adpThreshold, other.adpThreshold)
 				.append(eyeFrame, other.eyeFrame)
-				//.append(rspct2Frame, other.rspct2Frame)
-				//.append(gFrame, other.gFrame)
+				// .append(rspct2Frame, other.rspct2Frame)
+				// .append(gFrame, other.gFrame)
 				.append(dampFriction, other.dampFriction)
 				.append(sFriction, other.sFriction)
 				.append(rotSensitivity, other.rotSensitivity)
@@ -381,7 +382,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		setRotationSensitivity(1.0f);
 		setScalingSensitivity(1.0f);
 		setTranslationSensitivity(1.0f);
-		//TODO normalize
+		// TODO normalize
 		setWheelSensitivity(15f);
 		setKeyboardSensitivity(1.0f);
 		setSpinningSensitivity(0.3f);
@@ -427,8 +428,8 @@ public class GrabberFrame extends Frame implements Grabber {
 		this.scene = otherFrame.scene;
 		this.theeye = otherFrame.theeye;
 		this.eyeFrame = otherFrame.eyeFrame;
-		//this.rspct2Frame = otherFrame.rspct2Frame;
-		//this.gFrame = otherFrame.gFrame;
+		// this.rspct2Frame = otherFrame.rspct2Frame;
+		// this.gFrame = otherFrame.gFrame;
 
 		this.spinningTimerTask = new TimingTask() {
 			public void execute() {
@@ -505,17 +506,12 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/*
-	// overkill, superseded by Constraints
-	public boolean respectToEye() {
-		return !rspct2Frame;
-	}
+	 * // overkill, superseded by Constraints public boolean respectToEye() { return !rspct2Frame; }
+	 * 
+	 * public void setRelativeToEye(boolean relEye) { rspct2Frame = !relEye; }
+	 */
 
-	public void setRelativeToEye(boolean relEye) {
-		rspct2Frame = !relEye;
-	}
-	*/
-
-	//needed by the eye
+	// needed by the eye
 	protected GrabberFrame getDetachedFromEye() {
 		GrabberFrame gFrame = this.get();
 		scene.motionAgent().removeGrabber(gFrame);
@@ -524,7 +520,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		return gFrame;
 	}
 
-	//TODO needs testing, pending: public?, examples, and attachToEye
+	// TODO needs testing, pending: public?, examples, and attachToEye
 	protected void detachFromEye() {
 		scene.motionAgent().removeGrabber(this);
 		scene.keyboardAgent().removeGrabber(this);
@@ -534,14 +530,9 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/*
-	// nont really needed
-	protected GrabberFrame getIntoEyePath() {
-		GrabberFrame gFrame = this.get();
-		gFrame.theeye = null;
-		gFrame.eyeFrame = true;
-		return gFrame;
-	}
-	*/
+	 * // nont really needed protected GrabberFrame getIntoEyePath() { GrabberFrame gFrame = this.get(); gFrame.theeye =
+	 * null; gFrame.eyeFrame = true; return gFrame; }
+	 */
 
 	/**
 	 * Returns the scene this object belongs to
@@ -590,15 +581,15 @@ public class GrabberFrame extends Frame implements Grabber {
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
-	
+
 	protected boolean checkIfGrabsInput(DOF2Event event) {
-		if(event.isAbsolute()) {
+		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("checkIfGrabsInput");
 			return false;
 		}
 		return checkIfGrabsInput(event.x(), event.y());
 	}
-	
+
 	public boolean checkIfGrabsInput(float x, float y) {
 		Vec proj = scene.eye().projectedCoordinatesOf(position());
 		float halfThreshold = grabsInputThreshold() / 2;
@@ -771,8 +762,8 @@ public class GrabberFrame extends Frame implements Grabber {
 	/**
 	 * Defines the spinning deceleration.
 	 * <p>
-	 * Default value is 0.5. Use {@link #setDamping(float)} to tune this value. A higher value will make damping
-	 * more difficult (a value of 1.0 forbids damping).
+	 * Default value is 0.5. Use {@link #setDamping(float)} to tune this value. A higher value will make damping more
+	 * difficult (a value of 1.0 forbids damping).
 	 */
 	public float damping() {
 		return dampFriction;
@@ -831,7 +822,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	public final void setWheelSensitivity(float sensitivity) {
 		wheelSensitivity = sensitivity;
 	}
-	
+
 	/**
 	 * Defines the {@link #wheelSensitivity()}.
 	 */
@@ -922,7 +913,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	public float wheelSensitivity() {
 		return wheelSensitivity;
 	}
-	
+
 	public float keyboardSensitivity() {
 		return keySensitivity;
 	}
@@ -982,11 +973,11 @@ public class GrabberFrame extends Frame implements Grabber {
 	public final void stopSpinning() {
 		spinningTimerTask.stop();
 	}
-	
+
 	public void startSpinning(MotionEvent event, Rotation rt) {
 		startSpinning(rt, event.speed(), event.delay());
 	}
-	
+
 	/**
 	 * Starts the spinning of the InteractiveFrame.
 	 * <p>
@@ -1001,15 +992,15 @@ public class GrabberFrame extends Frame implements Grabber {
 	public void startSpinning(Rotation rt, float speed, long delay) {
 		setSpinningRotation(rt);
 		eventSpeed = speed;
-		if(Util.zero(damping()) && eventSpeed < spinningSensitivity())
-			return;		
+		if (Util.zero(damping()) && eventSpeed < spinningSensitivity())
+			return;
 		int updateInterval = (int) delay;
 		if (updateInterval > 0)
 			spinningTimerTask.run(updateInterval);
 	}
-	
+
 	protected void spinExecution() {
-		if(Util.zero(damping()))
+		if (Util.zero(damping()))
 			spin();
 		else {
 			if (eventSpeed == 0) {
@@ -1020,14 +1011,14 @@ public class GrabberFrame extends Frame implements Grabber {
 			recomputeSpinningRotation();
 		}
 	}
-	
+
 	protected void spin(Rotation rt, float speed, long delay) {
-		if(Util.zero(damping()))
+		if (Util.zero(damping()))
 			spin(rt);
 		else
-			startSpinning(rt, speed, delay); 
+			startSpinning(rt, speed, delay);
 	}
-	
+
 	protected void spin(Rotation rt) {
 		setSpinningRotation(rt);
 		spin();
@@ -1090,7 +1081,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 */
 	protected int originalDirection(DOF2Event event) {
 		if (!dirIsFixed) {
-			Point delta = new Point(event.dx(), event.dy());				
+			Point delta = new Point(event.dx(), event.dy());
 			dirIsFixed = Math.abs(delta.x()) != Math.abs(delta.y());
 			horiz = Math.abs(delta.x()) > Math.abs(delta.y());
 		}
@@ -1109,10 +1100,10 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * centered on ({@code center.x()}, {@code center.y()}).
 	 */
 	public Rotation deformedBallRotation(DOF2Event event, Vec center) {
-		if(event.isAbsolute()) {
+		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("deformedBallRotation");
 			return null;
-		}			
+		}
 		if (scene.is2D()) {
 			Rot rt;
 			Point prevPos = new Point(event.prevX(), event.prevY());
@@ -1167,15 +1158,15 @@ public class GrabberFrame extends Frame implements Grabber {
 	protected float computeAngle(DOF1Event e1) {
 		return computeAngle(e1.dx());
 	}
-	
+
 	protected float computeAngle(KeyboardEvent e1) {
 		return computeAngle(1);
 	}
-	
+
 	protected float computeAngle(float dx) {
 		return dx * (float) Math.PI / scene.eye().screenWidth();
 	}
-	
+
 	protected boolean wheel(MotionEvent event) {
 		return event instanceof DOF1Event;
 	}
@@ -1195,7 +1186,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		else
 			projectOnLine(scene.eye().position(), scene.eye().viewDirection());
 	}
-	
+
 	//
 
 	protected void gestureTranslateX(MotionEvent event) {
@@ -1209,11 +1200,12 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureTranslateX(DOF1Event event, float sens) {
-		translate(screenToVec(Vec.multiply(new Vec(isEyeFrame() ? -event.dx() : event.dx(), 0, 0), sens)) );
+		translate(screenToVec(Vec.multiply(new Vec(isEyeFrame() ? -event.dx() : event.dx(), 0, 0), sens)));
 	}
-	
+
 	protected void gestureTranslateX(KeyboardEvent event, boolean up) {
-		translate(screenToVec(Vec.multiply(new Vec(1, 0), (up ^ this.isEyeFrame()) ? keyboardSensitivity() : -keyboardSensitivity())));
+		translate(screenToVec(Vec.multiply(new Vec(1, 0), (up ^ this.isEyeFrame()) ? keyboardSensitivity()
+				: -keyboardSensitivity())));
 	}
 
 	protected void gestureTranslateY(MotionEvent event) {
@@ -1227,11 +1219,13 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureTranslateY(DOF1Event event, float sens) {
-		translate(screenToVec(Vec.multiply(new Vec(0, isEyeFrame() ^ scene.isRightHanded() ? -event.dx() : event.dx()), sens)));
+		translate(screenToVec(Vec.multiply(new Vec(0, isEyeFrame() ^ scene.isRightHanded() ? -event.dx() : event.dx()),
+				sens)));
 	}
-	
+
 	protected void gestureTranslateY(KeyboardEvent event, boolean up) {
-		translate(screenToVec(Vec.multiply(new Vec(0, (up ^ this.isEyeFrame() ^ scene.isLeftHanded()) ? 1 : -1), this.keyboardSensitivity())));
+		translate(screenToVec(Vec.multiply(new Vec(0, (up ^ this.isEyeFrame() ^ scene.isLeftHanded()) ? 1 : -1),
+				this.keyboardSensitivity())));
 	}
 
 	protected void gestureTranslateZ(MotionEvent event) {
@@ -1251,13 +1245,14 @@ public class GrabberFrame extends Frame implements Grabber {
 	protected void gestureTranslateZ(DOF1Event event, float sens) {
 		translate(screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, isEyeFrame() ? -event.dx() : event.dx()), sens)));
 	}
-	
+
 	protected void gestureTranslateZ(KeyboardEvent event, boolean up) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureTranslateZ");
 			return;
 		}
-		translate(screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, 1), (up ^ this.isEyeFrame()) ? -keyboardSensitivity() : keyboardSensitivity())));
+		translate(screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, 1), (up ^ this.isEyeFrame()) ? -keyboardSensitivity()
+				: keyboardSensitivity())));
 	}
 
 	protected void gestureTranslateXY(MotionEvent event) {
@@ -1273,7 +1268,8 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureTranslateXY(DOF2Event event) {
-		translate(screenToVec(Vec.multiply(new Vec(isEyeFrame() ? -event.dx() : event.dx(), (scene.isRightHanded() ^ isEyeFrame()) ? -event.dy() : event.dy(), 0.0f), this.translationSensitivity())));
+		translate(screenToVec(Vec.multiply(new Vec(isEyeFrame() ? -event.dx() : event.dx(),
+				(scene.isRightHanded() ^ isEyeFrame()) ? -event.dy() : event.dy(), 0.0f), this.translationSensitivity())));
 	}
 
 	protected void gestureTranslateXYZ(MotionEvent event) {
@@ -1289,13 +1285,15 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureTranslateXYZ(DOF3Event event) {
-		translate(screenToVec(Vec.multiply(new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), -event.dz()), this.translationSensitivity())));
+		translate(screenToVec(Vec.multiply(
+				new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), -event.dz()),
+				this.translationSensitivity())));
 	}
-	
+
 	protected void gestureZoomOnAnchor(MotionEvent event) {
 		gestureZoomOnAnchor(event, true);
 	}
-	
+
 	protected void gestureZoomOnAnchor(MotionEvent event, boolean fromX) {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
@@ -1310,7 +1308,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (direction.magnitude() > 0.02f * scene.radius() || delta > 0.0f)
 			translate(Vec.multiply(direction, delta));
 	}
-	
+
 	protected void gestureZoomOnAnchor(KeyboardEvent event, boolean in) {
 		Vec direction = Vec.subtract(scene.eye().anchor(), position());
 		if (referenceFrame() != null)
@@ -1319,7 +1317,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (direction.magnitude() > 0.02f * scene.radius() || delta > 0.0f)
 			translate(Vec.multiply(direction, delta));
 	}
-	
+
 	protected void gestureZoomOnRegion(MotionEvent event) {
 		if (!isEyeFrame()) {
 			AbstractScene.showOnlyEyeWarning("gestureZoomOnRegion");
@@ -1335,7 +1333,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 		gestureZoomOnRegion(dof2);
 	}
-	
+
 	protected void gestureZoomOnRegion(DOF2Event event) {
 		int w = (int) Math.abs(event.dx());
 		int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
@@ -1343,7 +1341,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		int tlY = (int) event.prevY() < (int) event.y() ? (int) event.prevY() : (int) event.y();
 		eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
 	}
-	
+
 	protected void gestureRotateX(MotionEvent event) {
 		gestureRotateX(event, false);
 	}
@@ -1365,7 +1363,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 		spin(screenToQuat(computeAngle(event) * (isEyeFrame() ? -sens : sens), 0, 0), event.speed(), event.delay());
 	}
-	
+
 	protected void gestureRotateX(KeyboardEvent event, boolean up) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateX");
@@ -1373,7 +1371,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 		rotate(screenToQuat(computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0, 0));
 	}
-	
+
 	protected void gestureRotateY(MotionEvent event) {
 		gestureRotateY(event, true);
 	}
@@ -1393,9 +1391,9 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showDepthWarning("gestureRotateY");
 			return;
 		}
-		spin(screenToQuat(0, computeAngle(event) * (isEyeFrame() ? - sens : sens), 0), event.speed(), event.delay());
+		spin(screenToQuat(0, computeAngle(event) * (isEyeFrame() ? -sens : sens), 0), event.speed(), event.delay());
 	}
-	
+
 	protected void gestureRotateY(KeyboardEvent event, boolean up) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateY");
@@ -1404,7 +1402,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		Rotation rt = screenToQuat(0, computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0);
 		rotate(rt);
 	}
-	
+
 	protected void gestureRotateZ(MotionEvent event) {
 		gestureRotateZ(event, false);
 	}
@@ -1422,14 +1420,13 @@ public class GrabberFrame extends Frame implements Grabber {
 				rt = new Rot(sens * (scene.isRightHanded() ? computeAngle(event) : -computeAngle(event)));
 			else
 				rt = screenToQuat(0, 0, sens * -computeAngle(event));
+		else if (is2D())
+			rt = new Rot(sens * (scene.isRightHanded() ? -computeAngle(event) : computeAngle(event)));
 		else
-			if (is2D())
-				rt = new Rot(sens * (scene.isRightHanded() ? -computeAngle(event) : computeAngle(event)));
-			else
-				rt = screenToQuat(0, 0, sens * computeAngle(event));
+			rt = screenToQuat(0, 0, sens * computeAngle(event));
 		spin(rt, event.speed(), event.delay());
 	}
-	
+
 	protected void gestureRotateZ(KeyboardEvent event, boolean up) {
 		Rotation rt;
 		if (is2D())
@@ -1452,7 +1449,8 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureRotateXYZ(DOF3Event event) {
-		rotate(screenToQuat(Vec.multiply(new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz())), rotationSensitivity())));
+		rotate(screenToQuat(Vec.multiply(
+				new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz())), rotationSensitivity())));
 	}
 
 	protected void gestureArcball(MotionEvent event) {
@@ -1462,12 +1460,12 @@ public class GrabberFrame extends Frame implements Grabber {
 		else
 			AbstractScene.showMinDOFsWarning("arcball", 2);
 	}
-	
+
 	protected void gestureArcball(DOF2Event event) {
-		if(event.isAbsolute()) {
+		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("deformedBallRotation");
 			return;
-	  }
+		}
 		Rotation rt;
 		Vec trns;
 		if (isEyeFrame())
@@ -1505,10 +1503,10 @@ public class GrabberFrame extends Frame implements Grabber {
 			scale(delta >= 0 ? s : 1 / s);
 		}
 	}
-	
+
 	protected void gestureScale(KeyboardEvent event, boolean up) {
-		float s = 1 + Math.abs(keyboardSensitivity()) / (isEyeFrame() ? (float) -scene.height() : (float) scene.height()); 
-		scale(up?s:1/s);
+		float s = 1 + Math.abs(keyboardSensitivity()) / (isEyeFrame() ? (float) -scene.height() : (float) scene.height());
+		scale(up ? s : 1 / s);
 	}
 
 	protected void gestureMoveForward(MotionEvent event) {
@@ -1529,13 +1527,13 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (is2D()) {
 			rotate(deformedBallRotation(event, scene.window().projectedCoordinatesOf(position())));
 			flyDisp.set(-fSpeed, 0.0f, 0.0f);
-			trns = localInverseTransformOf(flyDisp);				
+			trns = localInverseTransformOf(flyDisp);
 			startFlying(event, trns);
 		}
 		else {
 			rotate(rollPitchQuaternion(event, scene.camera()));
 			flyDisp.set(0.0f, 0.0f, fSpeed);
-			trns = rotation().rotate(flyDisp);				
+			trns = rotation().rotate(flyDisp);
 			startFlying(event, trns);
 		}
 	}
@@ -1574,7 +1572,7 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	// TODO merge with arcball
 	protected void gestureRotateCAD(DOF2Event event) {
-		if(event.isAbsolute()) {
+		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("gestureRotateCAD");
 			return;
 		}
@@ -1586,7 +1584,8 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (scene.isRightHanded())
 			dy = -dy;
 		Vec verticalAxis = transformOf(sceneUpVector());
-		spin(Quat.multiply(new Quat(verticalAxis, dx), new Quat(new Vec(1.0f, 0.0f, 0.0f), dy)), event.speed(), event.delay());
+		spin(Quat.multiply(new Quat(verticalAxis, dx), new Quat(new Vec(1.0f, 0.0f, 0.0f), dy)), event.speed(),
+				event.delay());
 	}
 
 	protected void gestureHinge(MotionEvent event) {
@@ -1655,10 +1654,10 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	protected void gestureScreenRotate(DOF2Event event) {
-		if(event.isAbsolute()) {
+		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("gestureScreenRotate");
 			return;
-		}		
+		}
 		if (this.is2D()) {
 			gestureArcball(event);
 			return;
@@ -1674,7 +1673,7 @@ public class GrabberFrame extends Frame implements Grabber {
 				angle = -angle;
 			rt = new Quat(new Vec(0.0f, 0.0f, 1.0f), angle);
 			spin(rt, event.speed(), event.delay());
-			//updateSceneUpVector();
+			// updateSceneUpVector();
 		}
 		else {
 			trns = scene.camera().projectedCoordinatesOf(position());
@@ -1689,32 +1688,32 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 	}
 
-	//Quite nice
-	
+	// Quite nice
+
 	public Vec screenToVec(float x, float y, float z) {
-		return screenToVec(new Vec(x,y,z));
+		return screenToVec(new Vec(x, y, z));
 	}
-	
+
 	public Vec screenToVec(Vec trns) {
 		return eyeToReferenceFrame(screenToEye(trns));
 	}
-	
+
 	public Vec eyeToReferenceFrame(float x, float y, float z) {
-		return eyeToReferenceFrame(new Vec(x,y,z));
+		return eyeToReferenceFrame(new Vec(x, y, z));
 	}
 
 	public Vec eyeToReferenceFrame(Vec trns) {
-		GrabberFrame gFrame = isEyeFrame() ? this : /*respectToEye() ?*/ scene.eye().frame() /*: this*/;
+		GrabberFrame gFrame = isEyeFrame() ? this : /* respectToEye() ? */scene.eye().frame() /* : this */;
 		Vec t = gFrame.inverseTransformOf(trns);
 		if (referenceFrame() != null)
 			t = referenceFrame().transformOf(t);
 		return t;
 	}
-	
+
 	public Vec screenToEye(float x, float y, float z) {
-		return screenToEye(new Vec(x,y,z));
+		return screenToEye(new Vec(x, y, z));
 	}
-	
+
 	public Vec screenToEye(Vec trns) {
 		Vec eyeVec = trns.get();
 		// Scale to fit the screen relative event displacement
@@ -1755,21 +1754,15 @@ public class GrabberFrame extends Frame implements Grabber {
 		// if( isEyeFrame() )
 		return eyeVec;
 	}
-	
+
 	/*
-	public void setGFrame(Frame frame) {
-		gFrame = frame;
-	}
+	 * public void setGFrame(Frame frame) { gFrame = frame; }
+	 * 
+	 * public Frame gFrame() { return gFrame; }
+	 * 
+	 * public void unsetGFrame() { gFrame = null; }
+	 */
 
-	public Frame gFrame() {
-		return gFrame;
-	}
-
-	public void unsetGFrame() {
-		gFrame = null;
-	}
-	*/
-	
 	public Quat screenToQuat(Vec angles) {
 		return screenToQuat(angles.vec[0], angles.vec[1], angles.vec[2]);
 	}
@@ -1794,7 +1787,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 
 		// don't really need to differentiate among the two cases, but eyeFrame can be speeded up
-		if (isEyeFrame() /*|| (!isEyeFrame() && !this.respectToEye())*/) {
+		if (isEyeFrame() /* || (!isEyeFrame() && !this.respectToEye()) */) {
 			return new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw);
 		}
 		else {
@@ -1809,7 +1802,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			return q;
 		}
 	}
-	
+
 	@Override
 	public void rotateAroundFrame(float roll, float pitch, float yaw, Frame frame) {
 		if (frame != null) {
@@ -1823,7 +1816,7 @@ public class GrabberFrame extends Frame implements Grabber {
 			scene.keyboardAgent().removeGrabber((Grabber) copy);
 			copy.setReferenceFrame(ref);
 			copy.fromFrame(this);
-			ref.rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));			
+			ref.rotate(new Quat(scene.isLeftHanded() ? -roll : roll, pitch, scene.isLeftHanded() ? -yaw : yaw));
 			fromFrame(copy);
 			return;
 		}
@@ -1868,8 +1861,8 @@ public class GrabberFrame extends Frame implements Grabber {
 	/**
 	 * Returns {@code true} when the InteractiveFrame is tossing.
 	 * <p>
-	 * During tossing, {@link #flyDamping()} translates the InteractiveFrame by its {@link #flightDirection()} at a frequency
-	 * defined when the InteractiveFrame {@link #startFlying(MotionEvent)}.
+	 * During tossing, {@link #flyDamping()} translates the InteractiveFrame by its {@link #flightDirection()} at a
+	 * frequency defined when the InteractiveFrame {@link #startFlying(MotionEvent)}.
 	 * <p>
 	 * Use {@link #startFlying(MotionEvent)} and {@link #stopFlying()} to change this state. Default value is
 	 * {@code false}.
@@ -1895,8 +1888,8 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Returns the incremental translation that is applied by {@link #flyDamping()} to the InteractiveFrame position when it
-	 * {@link #isFlying()}.
+	 * Returns the incremental translation that is applied by {@link #flyDamping()} to the InteractiveFrame position when
+	 * it {@link #isFlying()}.
 	 * <p>
 	 * Default value is no translation. Use {@link #setFlyDirection(Vec)} to change this value.
 	 * <p>
@@ -1931,13 +1924,13 @@ public class GrabberFrame extends Frame implements Grabber {
 	public void startFlying(MotionEvent event, Vec direction) {
 		startFlying(direction, event.speed());
 	}
-	
+
 	public void startFlying(Vec direction, float speed) {
 		eventSpeed = speed;
 		setFlyDirection(direction);
 		flyTimerTask.run(FLY_UPDATE_PERDIOD);
 	}
-	
+
 	/**
 	 * Translates the InteractiveFrame by its {@link #flightDirection()}. Invoked by a timer when the InteractiveFrame is
 	 * performing the DRIVE, MOVE_BACKWARD or MOVE_FORWARD dandelion actions.
@@ -1978,64 +1971,64 @@ public class GrabberFrame extends Frame implements Grabber {
 	public void setFlySpeed(float speed) {
 		flySpd = speed;
 	}
-	
-	//--
-	
-	//TODO tossing pending, but really seems overkill
-	
-//	public final boolean isTossing() {
-//		return tossTimerTask.isActive();
-//	}
-//	
-//	public final void stopTossing() {
-//		tossTimerTask.stop();
-//	}
-//	
-//	public final Vec tossDirection() {
-//		return tDir;
-//	}
-//	
-//	public final void setTossDirection(Vec dir) {
-//		tDir = dir;
-//	}
-//	
-//	public void startTossing(MotionEvent event, Vec direction) {
-//		startTossing(direction, event.speed());
-//	}
-//	
-//	public void startTossing(Vec direction, float speed) {
-//		eventSpeed = speed;
-//		setTossDirection(direction);
-//		tossTimerTask.run(FLY_UPDATE_PERDIOD);
-//	}
-//	
-//	protected void recomputeTossDirection() {
-//		float prevSpeed = eventSpeed;
-//		float damping = 1.0f - tossDampingFx();
-//		eventSpeed *= damping;
-//		if (Math.abs(eventSpeed) < .001f)
-//			eventSpeed = 0;
-//		setTossDirection(Vec.multiply(tossDirection(), (eventSpeed / prevSpeed)));
-//	}
-//	
-//	protected void tossExecution() {
-//		if(Util.zero(tossDamping()))
-//			toss();
-//		else {
-//			if (eventSpeed == 0) {
-//				stopTossing();
-//				return;
-//			}
-//			toss();
-//			recomputeTossDirection();
-//		}			
-//	}
-//	
-//	protected void toss() {
-//		translate(tossDirection());
-//	}
-	
-	//--
+
+	// --
+
+	// TODO tossing pending, but really seems overkill
+
+	// public final boolean isTossing() {
+	// return tossTimerTask.isActive();
+	// }
+	//
+	// public final void stopTossing() {
+	// tossTimerTask.stop();
+	// }
+	//
+	// public final Vec tossDirection() {
+	// return tDir;
+	// }
+	//
+	// public final void setTossDirection(Vec dir) {
+	// tDir = dir;
+	// }
+	//
+	// public void startTossing(MotionEvent event, Vec direction) {
+	// startTossing(direction, event.speed());
+	// }
+	//
+	// public void startTossing(Vec direction, float speed) {
+	// eventSpeed = speed;
+	// setTossDirection(direction);
+	// tossTimerTask.run(FLY_UPDATE_PERDIOD);
+	// }
+	//
+	// protected void recomputeTossDirection() {
+	// float prevSpeed = eventSpeed;
+	// float damping = 1.0f - tossDampingFx();
+	// eventSpeed *= damping;
+	// if (Math.abs(eventSpeed) < .001f)
+	// eventSpeed = 0;
+	// setTossDirection(Vec.multiply(tossDirection(), (eventSpeed / prevSpeed)));
+	// }
+	//
+	// protected void tossExecution() {
+	// if(Util.zero(tossDamping()))
+	// toss();
+	// else {
+	// if (eventSpeed == 0) {
+	// stopTossing();
+	// return;
+	// }
+	// toss();
+	// recomputeTossDirection();
+	// }
+	// }
+	//
+	// protected void toss() {
+	// translate(tossDirection());
+	// }
+
+	// --
 
 	protected Quat rollPitchQuaternion(MotionEvent event, Camera camera) {
 		if (scene.is2D()) {

@@ -57,7 +57,7 @@ public class Shortcut implements Copyable {
 		mask = BogusEvent.NO_MODIFIER_MASK;
 		id = BogusEvent.NO_ID;
 	}
-	
+
 	/**
 	 * @param m
 	 *          modifier mask defining the shortcut
@@ -69,7 +69,7 @@ public class Shortcut implements Copyable {
 
 	protected Shortcut(Shortcut other) {
 		this.mask = new Integer(other.mask);
-		this.id  = new Integer(other.id);
+		this.id = new Integer(other.id);
 	}
 
 	@Override
@@ -85,13 +85,13 @@ public class Shortcut implements Copyable {
 	public String description() {
 		String modifiersString = BogusEvent.modifiersText(mask);
 		String idString = "ID_" + id.toString();
-		return modifiersString.length() > 0 ? modifiersString + "+" + idString : idString; 
+		return modifiersString.length() > 0 ? modifiersString + "+" + idString : idString;
 	}
 
 	public int modifiers() {
 		return mask;
 	}
-	
+
 	public int id() {
 		return id;
 	}

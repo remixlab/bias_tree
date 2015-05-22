@@ -33,7 +33,7 @@ import remixlab.util.HashCodeBuilder;
 public class BogusEvent implements Copyable {
 	// modifier keys
 	public static final int	NO_MODIFIER_MASK	= 0;
-	public static final int	NO_ID	= 0;
+	public static final int	NO_ID							= 0;
 	public static final int	SHIFT							= 1 << 0;
 	public static final int	CTRL							= 1 << 1;
 	public static final int	META							= 1 << 2;
@@ -68,7 +68,7 @@ public class BogusEvent implements Copyable {
 
 	protected final int	modifiers;
 	protected long			timestamp;
-	protected int			id;
+	protected int				id;
 
 	/**
 	 * Constructs an event with an "empty" {@link remixlab.bias.event.shortcut.Shortcut}.
@@ -112,7 +112,7 @@ public class BogusEvent implements Copyable {
 	public int modifiers() {
 		return modifiers;
 	}
-	
+
 	/**
 	 * Returns the id defining the event's {@link remixlab.bias.core.Shortcut}.
 	 */

@@ -42,7 +42,7 @@ public class HIDAgent extends MotionAgent<DOF6Action> {
 		else
 			return super.sensitivities(event);
 	}
-	
+
 	public void setGestureBinding(Target target, DOF6Action action) {
 		setBinding(target, new Shortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action);
 	}

@@ -21,10 +21,10 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
-	public static int					LEFT_ID	= 1, CENTER_ID = 2, RIGHT_ID = 3, WHEEL_ID = 4;
+	public static int	LEFT_ID	= 1, CENTER_ID = 2, RIGHT_ID = 3, WHEEL_ID = 4;
 
-	protected float						xSens		= 1f;
-	protected float						ySens		= 1f;
+	protected float		xSens		= 1f;
+	protected float		ySens		= 1f;
 
 	public WheeledMouseAgent(AbstractScene scn, String n) {
 		super(scn, n);
@@ -122,13 +122,13 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		setButtonBinding(Target.EYE, MotionEvent.SHIFT, LEFT_ID, DOF2Action.ZOOM_ON_REGION);
 		setButtonBinding(Target.EYE, MotionEvent.SHIFT, CENTER_ID, DOF2Action.SCREEN_TRANSLATE);
 		setButtonBinding(Target.EYE, MotionEvent.SHIFT, RIGHT_ID, DOF2Action.SCREEN_ROTATE);
-		
+
 		setButtonBinding(Target.FRAME, LEFT_ID, DOF2Action.ROTATE);
-		setButtonBinding(Target.FRAME, CENTER_ID, DOF2Action.ROTATE);
+		setButtonBinding(Target.FRAME, CENTER_ID, DOF2Action.SCALE);
 		setButtonBinding(Target.FRAME, RIGHT_ID, DOF2Action.TRANSLATE);
 		setButtonBinding(Target.FRAME, MotionEvent.SHIFT, CENTER_ID, DOF2Action.SCREEN_TRANSLATE);
 		setButtonBinding(Target.FRAME, MotionEvent.SHIFT, RIGHT_ID, DOF2Action.SCREEN_ROTATE);
-		
+
 		setCommonBindings();
 	}
 
@@ -165,25 +165,25 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	public void moveToArcball() {
 		removeFrameBindings();
 		removeEyeBindings();
-		
+
 		setGestureBinding(Target.EYE, DOF2Action.ROTATE);
 		setGestureBinding(Target.EYE, MotionEvent.SHIFT, scene.is3D() ? DOF2Action.TRANSLATE_Z : DOF2Action.SCALE);
 		setGestureBinding(Target.EYE, MotionEvent.CTRL, DOF2Action.TRANSLATE);
-		setGestureBinding(Target.EYE, (MotionEvent.CTRL | MotionEvent.SHIFT), DOF2Action.ZOOM_ON_REGION);	
+		setGestureBinding(Target.EYE, (MotionEvent.CTRL | MotionEvent.SHIFT), DOF2Action.ZOOM_ON_REGION);
 		setButtonBinding(Target.EYE, CENTER_ID, DOF2Action.SCREEN_TRANSLATE);
 		setButtonBinding(Target.EYE, RIGHT_ID, DOF2Action.SCREEN_ROTATE);
-		//TODO really needs testing: seem to be trying to flush()
-		//am i talking to myself lonely lately? :p lets make it!
-		//I think it currently is being (not enqueued) semaphored by agent.handle
+		// TODO really needs testing: seem to be trying to flush()
+		// am i talking to myself lonely lately? :p lets make it!
+		// I think it currently is being (not enqueued) semaphored by agent.handle
 		// study relaxing this constraint, anyway here it goes:
 		setGestureBinding(Target.EYE, MotionEvent.ALT, null);
-		
+
 		setGestureBinding(Target.FRAME, DOF2Action.ROTATE);
 		setGestureBinding(Target.FRAME, MotionEvent.SHIFT, DOF2Action.SCALE);
-		setGestureBinding(Target.FRAME, MotionEvent.CTRL, DOF2Action.TRANSLATE);		
+		setGestureBinding(Target.FRAME, MotionEvent.CTRL, DOF2Action.TRANSLATE);
 		setButtonBinding(Target.FRAME, CENTER_ID, DOF2Action.SCREEN_TRANSLATE);
 		setButtonBinding(Target.FRAME, RIGHT_ID, DOF2Action.SCREEN_ROTATE);
-		//TODO idem here
+		// TODO idem here
 		setGestureBinding(Target.FRAME, MotionEvent.ALT, null);
 		setCommonBindings();
 	}
@@ -220,7 +220,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	public void dragToFirstPerson() {
 		removeFrameBindings();
 		removeEyeBindings();
-		
+
 		setButtonBinding(Target.EYE, LEFT_ID, DOF2Action.MOVE_FORWARD);
 		setButtonBinding(Target.EYE, RIGHT_ID, DOF2Action.MOVE_BACKWARD);
 		setButtonBinding(Target.EYE, MotionEvent.SHIFT, LEFT_ID, DOF2Action.ROTATE_Z);
@@ -235,7 +235,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		setButtonBinding(Target.FRAME, RIGHT_ID, DOF2Action.TRANSLATE);
 		setButtonBinding(Target.FRAME, MotionEvent.SHIFT, CENTER_ID, DOF2Action.SCREEN_TRANSLATE);
 		setButtonBinding(Target.FRAME, MotionEvent.SHIFT, RIGHT_ID, DOF2Action.SCREEN_ROTATE);
-		
+
 		setCommonBindings();
 	}
 
@@ -282,11 +282,11 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		removeEyeBindings();
 		setGestureBinding(Target.EYE, MotionEvent.CTRL, DOF2Action.MOVE_FORWARD);
 		setGestureBinding(Target.EYE, MotionEvent.SHIFT, DOF2Action.MOVE_BACKWARD);
-		//TODO idem
-		setGestureBinding(Target.EYE, MotionEvent.ALT, null);		
+		// TODO idem
+		setGestureBinding(Target.EYE, MotionEvent.ALT, null);
 		setButtonBinding(Target.EYE, RIGHT_ID, DOF2Action.ROTATE_Z);
 		setWheelBinding(Target.EYE, (MotionEvent.CTRL | MotionEvent.SHIFT), DOF1Action.ROTATE_Z);
-		
+
 		if (scene.is3D()) {
 			setGestureBinding(Target.EYE, DOF2Action.LOOK_AROUND);
 			setGestureBinding(Target.EYE, (MotionEvent.CTRL | MotionEvent.SHIFT), DOF2Action.DRIVE);
@@ -294,7 +294,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		setGestureBinding(Target.FRAME, DOF2Action.ROTATE);
 		setGestureBinding(Target.FRAME, MotionEvent.SHIFT, DOF2Action.SCALE);
 		setGestureBinding(Target.FRAME, MotionEvent.CTRL, DOF2Action.TRANSLATE);
-		//TODO idem
+		// TODO idem
 		setGestureBinding(Target.FRAME, MotionEvent.ALT, null);
 		setButtonBinding(Target.FRAME, CENTER_ID, DOF2Action.SCREEN_TRANSLATE);
 		setButtonBinding(Target.FRAME, RIGHT_ID, DOF2Action.SCREEN_ROTATE);
@@ -323,13 +323,13 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	public void dragToThirdPerson() {
 		removeFrameBindings();
 		removeEyeBindings();
-		
+
 		setButtonBinding(Target.FRAME, LEFT_ID, DOF2Action.MOVE_FORWARD);
 		setButtonBinding(Target.FRAME, RIGHT_ID, DOF2Action.MOVE_BACKWARD);
 		setButtonBinding(Target.FRAME, MotionEvent.SHIFT, LEFT_ID, DOF2Action.ROTATE_Z);
-		
+
 		if (scene.is3D()) {
-			setButtonBinding(Target.FRAME, CENTER_ID,  DOF2Action.LOOK_AROUND);
+			setButtonBinding(Target.FRAME, CENTER_ID, DOF2Action.LOOK_AROUND);
 			setButtonBinding(Target.FRAME, MotionEvent.SHIFT, CENTER_ID, DOF2Action.DRIVE);
 		}
 		setCommonBindings();
@@ -363,16 +363,16 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * @see #dragToArcball()
 	 * @see #dragToFirstPerson()
 	 */
-	//TODO 3rd person and 1st person seems more complementary than oppose (as it's handled now)
+	// TODO 3rd person and 1st person seems more complementary than oppose (as it's handled now)
 	public void moveToThirdPerson() {
 		removeFrameBindings();
 		removeEyeBindings();
-		
+
 		setGestureBinding(Target.FRAME, MotionEvent.CTRL, DOF2Action.MOVE_FORWARD);
 		setGestureBinding(Target.FRAME, MotionEvent.SHIFT, DOF2Action.MOVE_BACKWARD);
-				
+
 		setWheelBinding(Target.FRAME, (MotionEvent.CTRL | MotionEvent.SHIFT), DOF1Action.ROTATE_Z);
-		//TODO idem
+		// TODO idem
 		setGestureBinding(Target.FRAME, MotionEvent.ALT, null);
 		if (scene.is3D()) {
 			setGestureBinding(Target.FRAME, DOF2Action.LOOK_AROUND);
@@ -406,11 +406,11 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	protected void setCommonBindings() {
 		setClickBinding(Target.EYE, LEFT_ID, 2, ClickAction.ALIGN_FRAME);
 		setClickBinding(Target.EYE, RIGHT_ID, 2, ClickAction.CENTER_FRAME);
-		
+
 		setClickBinding(Target.FRAME, LEFT_ID, 2, ClickAction.ALIGN_FRAME);
 		setClickBinding(Target.FRAME, RIGHT_ID, 2, ClickAction.CENTER_FRAME);
-		
-		setWheelBinding(Target.EYE, scene.is3D() ? DOF1Action.TRANSLATE_Z	: DOF1Action.SCALE);
+
+		setWheelBinding(Target.EYE, scene.is3D() ? DOF1Action.TRANSLATE_Z : DOF1Action.SCALE);
 		setWheelBinding(Target.FRAME, DOF1Action.SCALE);
 	}
 
@@ -573,7 +573,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Removes all wheel bindings from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeWheelBindings(Target target) {
-		//bit of a hack ;)
+		// bit of a hack ;)
 		Profile<Shortcut, DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		Iterator<Entry<Shortcut, DOF2Action>> it = profile.map().entrySet().iterator();
 		while (it.hasNext()) {
@@ -619,7 +619,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	public DOF1Action wheelAction(Target target, DOF1Action action) {
 		return action(target, new Shortcut(BogusEvent.NO_MODIFIER_MASK, WHEEL_ID)).dof1Action();
 	}
-	
+
 	// click
 
 	/**

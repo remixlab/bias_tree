@@ -46,16 +46,16 @@ public class MotionBranch<E extends Enum<E>, M extends Profile<?, ? extends Acti
 		super(p, a, n);
 		clickProfile = c;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	protected MotionBranch(MotionBranch<E,M,C> other) {
+	protected MotionBranch(MotionBranch<E, M, C> other) {
 		super(other);
 		clickProfile = (C) other.clickProfile().get();
 	}
-	
+
 	@Override
-	public MotionBranch<E,M,C> get() {
-		return new MotionBranch<E,M,C>(this);
+	public MotionBranch<E, M, C> get() {
+		return new MotionBranch<E, M, C>(this);
 	}
 
 	/**
