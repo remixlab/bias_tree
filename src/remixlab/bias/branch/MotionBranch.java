@@ -13,6 +13,7 @@ package remixlab.bias.branch;
 import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.bias.event.shortcut.*;
 
 /**
  * An {@link remixlab.bias.branch.Branch} with an extra {@link remixlab.bias.branch.profile.ClickProfile} defining
@@ -26,11 +27,8 @@ import remixlab.bias.event.*;
  * @param <C>
  *          {@link remixlab.bias.branch.profile.ClickProfile} to parameterize the Agent with.
  */
-public class MotionBranch<E extends Enum<E>, M extends MotionProfile<? extends Action<E>>, C extends ClickProfile<? extends Action<E>>>
-		extends
-		Branch<E, M> {
-	protected C	clickProfile;
-
+public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Action<E>> extends Branch<E, A, MotionShortcut> {	
+  protected Profile<ClickShortcut, C>	clickProfile;
 	/**
 	 * 
 	 * @param p
@@ -42,47 +40,46 @@ public class MotionBranch<E extends Enum<E>, M extends MotionProfile<? extends A
 	 * @param n
 	 *          the branch name
 	 */
-	public MotionBranch(M p, C c, Agent a, String n) {
-		super(p, a, n);
-		clickProfile = c;
+	public MotionBranch(Agent a, String n) {
+		super(a, n);
+		clickProfile = new Profile<ClickShortcut, C>();
 	}
 
-	@SuppressWarnings("unchecked")
-	protected MotionBranch(MotionBranch<E, M, C> other) {
+	protected MotionBranch(MotionBranch<E, A, C> other) {
 		super(other);
-		clickProfile = (C) other.clickProfile().get();
+		clickProfile = other.clickProfile().get();
 	}
 
 	@Override
-	public MotionBranch<E, M, C> get() {
-		return new MotionBranch<E, M, C>(this);
+	public MotionBranch<E, A, C> get() {
+		return new MotionBranch<E, A, C>(this);
 	}
 
 	/**
 	 * Alias for {@link #profile()}.
 	 */
-	public M motionProfile() {
+	public Profile<MotionShortcut, A> motionProfile() {
 		return profile();
 	}
 
 	/**
 	 * Sets the {@link remixlab.bias.branch.profile.MotionProfile}
 	 */
-	public void setMotionProfile(M profile) {
+	public void setMotionProfile(Profile<MotionShortcut, A> profile) {
 		setProfile(profile);
 	}
 
 	/**
 	 * Returns the {@link remixlab.bias.branch.profile.ClickProfile} instance.
 	 */
-	public C clickProfile() {
+	public Profile<ClickShortcut, C> clickProfile() {
 		return clickProfile;
 	}
 
 	/**
 	 * Sets the {@link remixlab.bias.branch.profile.ClickProfile}
 	 */
-	public void setClickProfile(C profile) {
+	public void setClickProfile(Profile<ClickShortcut, C> profile) {
 		clickProfile = profile;
 	}
 

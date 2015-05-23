@@ -20,24 +20,15 @@ import remixlab.dandelion.core.Constants.*;
 
 public class KeyboardAgent extends Agent {
 	protected AbstractScene																								scene;
-	protected KeyboardBranch<GlobalAction, KeyboardProfile<SceneAction>>	keySceneBranch;
-	protected KeyboardBranch<MotionAction, KeyboardProfile<KeyboardAction>>	keyFrameBranch, keyEyeBranch;
+	protected KeyboardBranch<GlobalAction, SceneAction>	keySceneBranch;
+	protected KeyboardBranch<MotionAction, KeyboardAction>	keyFrameBranch, keyEyeBranch;
 
 	public KeyboardAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		keySceneBranch = new KeyboardBranch<GlobalAction, KeyboardProfile<SceneAction>>(
-				new KeyboardProfile<SceneAction>(),
-				this,
-				"scene_keyboard_branch");
-		keyFrameBranch = new KeyboardBranch<MotionAction, KeyboardProfile<KeyboardAction>>(
-				new KeyboardProfile<KeyboardAction>(),
-				this,
-				"frame_keyboard_branch");
-		keyEyeBranch = new KeyboardBranch<MotionAction, KeyboardProfile<KeyboardAction>>(
-				new KeyboardProfile<KeyboardAction>(),
-				this,
-				"eye_keyboard_branch");
+		keySceneBranch = new KeyboardBranch<GlobalAction, SceneAction>(this, "scene_keyboard_branch");
+		keyFrameBranch = new KeyboardBranch<MotionAction, KeyboardAction>(this,	"frame_keyboard_branch");
+		keyEyeBranch = new KeyboardBranch<MotionAction, KeyboardAction>(this, "eye_keyboard_branch");
 		// new, mimics eye -> motionAgent -> scene -> keyAgent
 		// addGrabber(scene);
 		// addGrabber(scene.eye().frame());
@@ -81,15 +72,15 @@ public class KeyboardAgent extends Agent {
 		setDefaultGrabber(scene);
 	}
 
-	public KeyboardBranch<GlobalAction, KeyboardProfile<SceneAction>> sceneBranch() {
+	public KeyboardBranch<GlobalAction, SceneAction> sceneBranch() {
 		return keySceneBranch;
 	}
 
-	public KeyboardBranch<MotionAction, KeyboardProfile<KeyboardAction>> eyeBranch() {
+	public KeyboardBranch<MotionAction, KeyboardAction> eyeBranch() {
 		return keyEyeBranch;
 	}
 
-	public KeyboardBranch<MotionAction, KeyboardProfile<KeyboardAction>> frameBranch() {
+	public KeyboardBranch<MotionAction, KeyboardAction> frameBranch() {
 		return keyFrameBranch;
 	}
 
@@ -99,7 +90,7 @@ public class KeyboardAgent extends Agent {
 	}
 
 	@Override
-	public boolean appendBranch(Branch<?, ?> branch) {
+	public boolean appendBranch(Branch<?, ?, ?> branch) {
 		if (branch instanceof KeyboardBranch)
 			return super.appendBranch(branch);
 		else {
@@ -108,19 +99,19 @@ public class KeyboardAgent extends Agent {
 		}
 	}
 
-	protected KeyboardProfile<SceneAction> sceneProfile() {
+	protected Profile<KeyboardShortcut, SceneAction> sceneProfile() {
 		return sceneBranch().keyboardProfile();
 	}
 
-	protected KeyboardProfile<KeyboardAction> eyeProfile() {
+	protected Profile<KeyboardShortcut, KeyboardAction> eyeProfile() {
 		return eyeBranch().keyboardProfile();
 	}
 
-	protected KeyboardProfile<KeyboardAction> frameProfile() {
+	protected Profile<KeyboardShortcut, KeyboardAction> frameProfile() {
 		return frameBranch().keyboardProfile();
 	}
 
-	protected KeyboardProfile<KeyboardAction> motionProfile(Target target) {
+	protected Profile<KeyboardShortcut, KeyboardAction> motionProfile(Target target) {
 		return target == Target.EYE ? eyeProfile() : frameProfile();
 	}
 

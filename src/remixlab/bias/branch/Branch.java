@@ -12,6 +12,7 @@ package remixlab.bias.branch;
 
 import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
+import remixlab.bias.event.shortcut.Shortcut;
 import remixlab.util.Copyable;
 
 /**
@@ -40,29 +41,28 @@ import remixlab.util.Copyable;
  * @param <P>
  *          {@link remixlab.bias.branch.profile.Profile} to parameterize the Agent with.
  */
-public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>> implements Copyable {
-	protected P				profile;
+public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> implements Copyable {
+	protected Profile<S, A>				profile;
 	protected Agent		parent;
 	protected String	name;
 
-	public Branch(P p, Agent pnt, String n) {
+	public Branch(Agent pnt, String n) {
 		name = n;
-		profile = p;
+		profile = new Profile<S, A>();
 		parent = pnt;
 		parent.appendBranch(this);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Branch(Branch<E, P> other) {
+	protected Branch(Branch<E, A, S> other) {
 		name = other.name() + "_deep-copy";
-		profile = (P) other.profile().get();
+		profile = other.profile().get();
 		parent = other.agent();
 		parent.appendBranch(this);
 	}
 
 	@Override
-	public Branch<E, P> get() {
-		return new Branch<E, P>(this);
+	public Branch<E, A, S> get() {
+		return new Branch<E, A, S>(this);
 	}
 
 	public String name() {
@@ -76,7 +76,7 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 	/**
 	 * @return the agents {@link remixlab.bias.branch.profile.Profile} instance.
 	 */
-	public P profile() {
+	public Profile<S, A> profile() {
 		return profile;
 	}
 
@@ -85,7 +85,7 @@ public class Branch<E extends Enum<E>, P extends Profile<?, ? extends Action<E>>
 	 * 
 	 * @param p
 	 */
-	public void setProfile(P p) {
+	public void setProfile(Profile<S, A> p) {
 		if (p == null)
 			return;
 		profile = p;

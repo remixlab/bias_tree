@@ -82,12 +82,15 @@ public class MultiTouchAgent extends HIDAgent {
 	 * FRAME).
 	 */
 	public void setGestureBinding(Target target, Gestures gesture, DOF6Action action) {
+		//TODO adapt me
+		/*
 		MotionProfile<DOF6Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		if (gesture == Gestures.DRAG_THREE_ID || gesture == Gestures.TURN_THREE_ID || gesture == Gestures.PINCH_THREE_ID
 				|| gesture == Gestures.OPPOSABLE_THREE_ID)
 			profile.setBinding(gesture.id, action);
 		else
 			System.out.println("You can not assign a DOF6 to gesture");
+			*/
 	}
 
 	/**
@@ -95,11 +98,14 @@ public class MultiTouchAgent extends HIDAgent {
 	 * FRAME).
 	 */
 	public void setGestureBinding(Target target, Gestures gesture, DOF3Action action) {
+	//TODO adapt me
+			/*
 		MotionProfile<DOF6Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		if (gesture == Gestures.TAP_ID || gesture == Gestures.DRAG_ONE_ID)
 			System.out.println("You can not assign a DOF3 to gesture");
 		else
 			profile.setBinding(gesture.id, action.dof6Action());
+			*/
 	}
 
 	/**
@@ -107,11 +113,14 @@ public class MultiTouchAgent extends HIDAgent {
 	 * FRAME).
 	 */
 	public void setGestureBinding(Target target, Gestures gesture, DOF2Action action) {
+	//TODO adapt me
+			/*
 		MotionProfile<DOF6Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		if (gesture == Gestures.TAP_ID)
 			System.out.println("You can not assign a DOF2 to gesture");
 		else
 			profile.setBinding(gesture.id, action.dof6Action());
+			*/
 	}
 
 	/**
@@ -119,39 +128,59 @@ public class MultiTouchAgent extends HIDAgent {
 	 * FRAME).
 	 */
 	public void setGestureBinding(Target target, Gestures gesture, DOF1Action action) {
+	//TODO adapt me
+			/*
 		MotionProfile<DOF6Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		profile.setBinding(gesture.id, action.dof6Action());
+		*/
 	}
 
 	/**
 	 * Removes the gesture shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeGestureBinding(Target target, Gestures gesture) {
+	//TODO adapt me
+			/*
 		MotionProfile<DOF6Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		profile.removeBinding(gesture.id);
+		*/
 	}
 
 	public void removeAllGestureBinding(Target target) {
+	//TODO adapt me
+			/*
 		MotionProfile<DOF6Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		for (Gestures gesture : Gestures.values()) {
 			profile.removeBinding(gesture.id);
 		}
+		*/
 	}
 
 	/**
 	 * Returns {@code true} if the gesture shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasGestureBinding(Target target, Gestures gesture) {
+	//TODO adapt me
+			/*
 		MotionProfile<DOF6Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		return profile.hasBinding(gesture.id);
+		*/
+		//Dummie value
+		return false;
 	}
 
 	/**
 	 * Returns {@code true} if the gesture action is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean isGestureActionBound(Target target, DOF6Action action) {
+	//TODO adapt me
+			/*
 		MotionProfile<DOF6Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		return profile.isActionBound(action);
+		*/
+	//Dummie value
+			return false;
+
 	}
 
 	/**
@@ -159,8 +188,13 @@ public class MultiTouchAgent extends HIDAgent {
 	 * Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public DOF6Action gestureAction(Target target, Gestures gesture) {
+	//TODO adapt me
+		/*
 		MotionProfile<DOF6Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		return (DOF6Action) profile.action(gesture.id);
+		*/
+	//Dummie value
+		return null;
 	}
 
 	/**
@@ -168,32 +202,49 @@ public class MultiTouchAgent extends HIDAgent {
 	 * FRAME).
 	 */
 	public void setTapBinding(Target target, Gestures gesture, ClickAction action) {
+	//TODO adapt me
+		/*
 		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 		profile.setBinding(gesture.id, action);
+		*/
 	}
 
 	/**
 	 * Removes the gesture click-shortcut binding from the given {@code target} (EYE or FRAME).
 	 */
 	public void removeTapBinding(Target target, Gestures gesture) {
+	//TODO adapt me
+			/*
+		return false;
 		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 		profile.removeBinding(gesture.id);
+		*/
 	}
 
 	/**
 	 * Returns {@code true} if the tap gesture shortcut is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean hasTapBinding(Target target, Gestures gesture) {
+	//TODO adapt me
+			/*
 		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 		return profile.hasBinding(gesture.id);
+		*/
+	//Dummie value
+		return false;
 	}
 
 	/**
 	 * Returns {@code true} if the tap action is bound to the given {@code target} (EYE or FRAME).
 	 */
 	public boolean isTapActionBound(Target target, ClickAction action) {
+	//TODO adapt me
+		/*
 		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 		return profile.isActionBound(action);
+		*/
+	//Dummie value
+			return false;
 	}
 
 	/**
@@ -201,8 +252,13 @@ public class MultiTouchAgent extends HIDAgent {
 	 * the given tap gesture shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
 	public ClickAction tapAction(Target target, Gestures gesture) {
+	//TODO adapt me
+			/*
 		ClickProfile<ClickAction> profile = target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 		return (ClickAction) profile.action(gesture.id);
+		*/
+	//Dummie value
+			return null;
 	}
 
 	// TouchProcessor and helper classes were adapted from Android Multi-Touch event demo by David Bouchard,

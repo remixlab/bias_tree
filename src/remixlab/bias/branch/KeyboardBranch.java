@@ -10,7 +10,8 @@
 
 package remixlab.bias.branch;
 
-import remixlab.bias.branch.profile.KeyboardProfile;
+import remixlab.bias.branch.profile.*;
+import remixlab.bias.event.shortcut.*;
 import remixlab.bias.core.*;
 
 /**
@@ -20,32 +21,31 @@ import remixlab.bias.core.*;
  * @param <K>
  *          The {@link remixlab.bias.branch.profile.KeyboardProfile} to parameterize this Agent with.
  */
-public class KeyboardBranch<E extends Enum<E>, K extends KeyboardProfile<? extends Action<E>>> extends Branch<E, K> {
-
-	public KeyboardBranch(K k, Agent pnt, String n) {
-		super(k, pnt, n);
+public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Branch<E, A, KeyboardShortcut> {
+	public KeyboardBranch(Agent pnt, String n) {
+		super(pnt, n);
 	}
 
-	protected KeyboardBranch(KeyboardBranch<E, K> other) {
+	protected KeyboardBranch(KeyboardBranch<E, A> other) {
 		super(other);
 	}
 
 	@Override
-	public KeyboardBranch<E, K> get() {
-		return new KeyboardBranch<E, K>(this);
+	public KeyboardBranch<E, A> get() {
+		return new KeyboardBranch<E, A>(this);
 	}
 
 	/**
 	 * @return The {@link remixlab.bias.branch.profile.KeyboardProfile}
 	 */
-	public K keyboardProfile() {
+	public Profile<KeyboardShortcut, A> keyboardProfile() {
 		return profile();
 	}
 
 	/**
 	 * Sets the The {@link remixlab.bias.branch.profile.KeyboardProfile}.
 	 */
-	public void setKeyboardProfile(K kprofile) {
+	public void setKeyboardProfile(Profile<KeyboardShortcut, A> kprofile) {
 		setProfile(profile);
 	}
 }
