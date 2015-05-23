@@ -10,7 +10,6 @@
 
 package remixlab.bias.event.shortcut;
 
-import remixlab.bias.core.BogusEvent;
 import remixlab.util.Copyable;
 
 /**
@@ -27,7 +26,7 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 	 *          the virtual key that defines the keyboard shortcut.
 	 */
 	public KeyboardShortcut(Integer vk) {
-		super(BogusEvent.NO_MODIFIER_MASK, vk);
+		super(vk);
 	}
 
 	/**

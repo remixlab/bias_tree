@@ -10,8 +10,6 @@
 
 package remixlab.bias.event.shortcut;
 
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.event.MotionEvent;
 import remixlab.util.Copyable;
 
 /**
@@ -29,7 +27,7 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 * Constructs an "empty" shortcut by conveniently calling {@code this(B_NOMODIFIER_MASK, B_NOBUTTON);}
 	 */
 	public MotionShortcut() {
-		super(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID);
+		super();
 	}
 
 	/**
@@ -39,7 +37,7 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 *          button
 	 */
 	public MotionShortcut(Integer id) {
-		super(MotionEvent.NO_MODIFIER_MASK, id);
+		super(id);
 	}
 
 	/**
