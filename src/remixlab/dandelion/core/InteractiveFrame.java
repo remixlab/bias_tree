@@ -66,11 +66,34 @@ import remixlab.util.*;
  */
 public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber<MotionAction>, Copyable,
 		Constants {
+	
+//TODO pending cloning and hash
+	// Multiple tempo actions require this:
+	Action<MotionAction>	initAction;
+	// private MotionAction twotempi;
+	// private A a;//TODO study make me an attribute to com between init and end
+	protected boolean				need4Spin;
+	protected boolean				need4Tossing;
+	protected boolean				drive;
+	protected boolean				rotateHint;
+	protected MotionEvent	currMotionEvent;
+	public MotionEvent		initMotionEvent;
+	public DOF2Event			zor;
+	protected float					flySpeedCache;
+	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
 				appendSuper(super.hashCode()).
 				append(action).
+				append(initAction).
+				append(need4Spin).
+				append(drive).
+				append(rotateHint).
+				append(currMotionEvent).
+				append(initMotionEvent).
+				append(zor).
+				append(flySpeedCache).
 				toHashCode();
 	}
 
@@ -87,6 +110,14 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(action, other.action)
+				.append(initAction, other.initAction)
+				.append(need4Spin, other.need4Spin)
+				.append(drive, other.drive)
+				.append(rotateHint, other.rotateHint)
+				.append(currMotionEvent, other.currMotionEvent)
+				.append(initMotionEvent, other.initMotionEvent)
+				.append(zor, other.zor)
+				.append(flySpeedCache, other.flySpeedCache)
 				.isEquals();
 	}
 
@@ -267,9 +298,17 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		super(theEye);
 	}
 
+	//TODO needs testing
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
 		this.setAction(otherFrame.action());
+		this.initAction = otherFrame.initAction;
+		if(otherFrame.currMotionEvent != null)
+			this.currMotionEvent = otherFrame.currMotionEvent.get();
+		if(otherFrame.initMotionEvent != null)
+		this.initMotionEvent = otherFrame.initMotionEvent.get();
+		if(otherFrame.zor != null)
+			this.zor = otherFrame.zor.get();
 	}
 
 	@Override
@@ -538,20 +577,6 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	// two tempi actions workflow divert from 'normal' (single tempi) actions which just require
 	// either updateTrackeGrabber(event) or handle(event).
-
-	// TODO pending cloning and hash
-	// Multiple tempo actions require this:
-	Action<MotionAction>	initAction;
-	// private MotionAction twotempi;
-	// private A a;//TODO study make me an attribute to com between init and end
-	private boolean				need4Spin;
-	private boolean				need4Tossing;
-	private boolean				drive;
-	private boolean				rotateHint;
-	protected MotionEvent	currMotionEvent;
-	public MotionEvent		initMotionEvent;
-	public DOF2Event			zor;
-	private float					flySpeedCache;
 
 	public MotionEvent initMotionEvent() {
 		return initMotionEvent;
