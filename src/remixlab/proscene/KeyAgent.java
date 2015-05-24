@@ -10,7 +10,6 @@
 
 package remixlab.proscene;
 
-import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
