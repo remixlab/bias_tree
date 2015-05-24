@@ -117,14 +117,13 @@ public class Agent {
 	public boolean hasGrabber(Grabber grabber) {
 		if (grabber == null)
 			return false;
-		//TODO testimg
-		return grabbers().contains(grabber);
-		/*
+		//return grabbers().contains(grabber);
+		///*
 		for(Grabber g : grabbers())
 			if(g == grabber)
 				return true;
 		return false;
-		*/
+		//*/
 	}
 
 	/**
