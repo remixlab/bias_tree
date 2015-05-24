@@ -585,6 +585,17 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	public MotionEvent currentMotionEvent() {
 		return currMotionEvent;
 	}
+	
+	//TODO pending generalization in order to move to helper grabber objects
+	/*
+	protected boolean processAction(BogusEvent event) {
+		if(event instanceof MotionEvent)
+			return processAction((MotionEvent) event);
+		if(event instanceof KeyboardEvent)
+			return processAction((KeyboardEvent) event);
+		return false;
+	}
+	*/
 
 	protected boolean processAction(KeyboardEvent event) {
 		if (initAction == null) {

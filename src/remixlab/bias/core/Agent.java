@@ -17,7 +17,7 @@ import java.util.List;
 import remixlab.bias.branch.*;
 import remixlab.bias.event.*;
 
-public class Agent {
+public class Agent {	
 	class GrabberBranchTuple {
 		Grabber				g;
 		Branch<?, ?, ?>	b;
@@ -36,23 +36,6 @@ public class Agent {
 			g = null;
 			b = null;
 		}
-		
-		//TODO testing
-		//GrabberBranchTuple seems to be only requiring E extends Enum<E> as a parameter Type
-		/*
-		public <E extends Enum<E>> Action<E> test(InteractiveGrabber<E> _g, Branch<E, ?, ?> _a) {
-			g = _g;
-			b = _a;
-			return _a.handle(_g, null);
-		}
-		*/
-		
-		//TODO but requires this one to go
-		/*
-		public <E extends Enum<E>> Action<E> handle(BogusEvent event) {
-			return b.handle((InteractiveGrabber<E>) g, event);
-		}
-		*/
 	}
 
 	protected String										nm;
@@ -173,7 +156,7 @@ public class Agent {
 		return list;
 	}
 	
-	///*
+	/*
 	public <E extends Enum<E>, K extends Branch<E, ?, ?>, G extends InteractiveGrabber<E>> boolean addGrabber(G grabber, K branch) {
 		// Overkill but feels safer ;)
 		if (grabber == null || this.hasGrabber(grabber) || branch == null)
@@ -185,7 +168,7 @@ public class Agent {
 	}
 	//*/
 	
-	/*
+	///*
   //TODO experimental
 	public <E extends Enum<E>, K extends Branch<E, ?, ?>, G extends InteractiveGrabber<E>> boolean
 			addGrabber(G grabber, K branch) {
@@ -193,10 +176,9 @@ public class Agent {
 		if (grabber == null || this.hasGrabber(grabber) || branch == null)
 			return false;
 		if (!hasBranch(branch))
-			if(this.appendBranch(branch)) {
-				tuples.add(new GrabberBranchTuple(grabber, branch));
-				return true;
-		}
+			if(!this.appendBranch(branch))
+				return false;
+		tuples.add(new GrabberBranchTuple(grabber, branch));
 		return false;
 	}
 	//*/
@@ -400,8 +382,7 @@ public class Agent {
 		Grabber inputGrabber = inputGrabber();
 		if (inputGrabber != null) {
 			if (inputGrabber instanceof InteractiveGrabber<?>)
-				return inputHandler().enqueueEventTuple(
-						new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, null));
+				return inputHandler().enqueueEventTuple(new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, null));
 		}
 		return false;
 	}
