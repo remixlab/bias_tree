@@ -345,6 +345,18 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	public boolean isInInteraction() {
 		return action != null;
 	}
+	
+	@Override
+	public void performInteraction(BogusEvent event) {
+		if (processAction(event))
+			return;
+		if (event instanceof KeyboardEvent)
+			performInteraction((KeyboardEvent) event);
+		if (event instanceof ClickEvent)
+			performInteraction((ClickEvent) event);
+		if(event instanceof MotionEvent)
+			performInteraction((MotionEvent) event);
+	}
 
 	@Override
 	protected void performInteraction(ClickEvent event) {
@@ -380,8 +392,6 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	@Override
 	protected void performInteraction(MotionEvent event) {
-		if (processAction(event))
-			return;
 		switch (referenceAction()) {
 		case CUSTOM:
 			performCustomAction(event);
@@ -471,8 +481,6 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	@Override
 	protected void performInteraction(KeyboardEvent event) {
-		if (processAction(event))
-			return;
 		switch (referenceAction()) {
 		case ALIGN_FRAME:
 			align();
@@ -586,73 +594,50 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		return currMotionEvent;
 	}
 	
-	//TODO pending generalization in order to move to helper grabber objects
-	/*
-	protected boolean processAction(BogusEvent event) {
+	@Override
+	public final boolean processAction(BogusEvent event) {
+		if (initAction == null) {
+			if (action() != null) {
+				return initAction(event);// start action
+			}
+		}
+		else { // initAction != null
+			if (action() != null) {
+				if (initAction == action())
+					return execAction(event);// continue action
+				else { // initAction != action() -> action changes abruptly
+					//System.out.println("case 1 in frame: action() != null && initAction != null (action changes abruptely, calls flush)");
+					flushAction(event);
+					return initAction(event);// start action
+				}
+			}
+			else {// action() == null
+			  //System.out.println("case 2 in frame: action() == null && initAction != null (ends action, calls flush)");
+				flushAction(event);// stopAction
+				initAction = null;
+				setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
+				return true;
+			}
+		}
+		return true;// i.e., if initAction == action() == null -> ignore :)
+	}
+	
+	//init domain
+	
+	protected boolean initAction(BogusEvent event) {
+		initAction = action();
+		if (event instanceof KeyboardEvent)
+			return initAction((KeyboardEvent) event);
+		if (event instanceof ClickEvent)		
+			return initAction((ClickEvent) event);
 		if(event instanceof MotionEvent)
-			return processAction((MotionEvent) event);
-		if(event instanceof KeyboardEvent)
-			return processAction((KeyboardEvent) event);
+			return initAction((MotionEvent) event);		
 		return false;
 	}
-	*/
 
-	protected boolean processAction(KeyboardEvent event) {
-		if (initAction == null) {
-			if (action() != null) {
-				initAction = action();// TODO should go in initAction()
-				return initAction(event);// start action
-			}
-		}
-		else { // initAction != null
-			if (action() != null) {
-				if (initAction == action())
-					return execAction(event);// continue action
-				else { // initAction != action() -> action changes abruptly, i.e.,
-					System.out.println("case 1");
-					endAction(event);
-					// TODO testing these two lines
-					System.out.println("testing case when action changes abruptly");
-					initAction = action();// TODO should go in initAction()
-					return initAction(event);// start action
-					// return false;
-				}
-			}
-			else {// action() == null
-				System.out.println("case 2");
-				return endAction(event);// stopAction
-			}
-		}
-		return true;// i.e., if initAction == action() == null -> ignore :)
-	}
-
-	protected boolean processAction(MotionEvent event) {
-		if (initAction == null) {
-			if (action() != null) {
-				initAction = action();// TODO should go in initAction()
-				return initAction(event);// start action
-			}
-		}
-		else { // initAction != null
-			if (action() != null) {
-				if (initAction == action())
-					return execAction(event);// continue action
-				else { // initAction != action() -> action changes abruptly, i.e.,
-					System.out.println("case 1");
-					endAction(event);
-					// TODO testing these two lines
-					System.out.println("testing case when action changes abruptly");
-					initAction = action();// TODO should go in initAction()
-					return initAction(event);// start action
-					// return false;
-				}
-			}
-			else {// action() == null
-				System.out.println("case 2");
-				return endAction(event);// stopAction
-			}
-		}
-		return true;// i.e., if initAction == action() == null -> ignore :)
+	protected boolean initAction(ClickEvent event) {
+		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
+		return false;
 	}
 
 	protected boolean initAction(MotionEvent event) {
@@ -692,6 +677,18 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		}
 		return false;
 	}
+	
+	// exec domain
+	
+	protected boolean execAction(BogusEvent event) {
+		if (event instanceof KeyboardEvent)
+			return execAction((KeyboardEvent) event);
+		if (event instanceof ClickEvent)		
+			return execAction((ClickEvent) event);
+		if(event instanceof MotionEvent)
+			return execAction((MotionEvent) event);
+		return false;
+	}	
 
 	protected boolean execAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
@@ -717,26 +714,41 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		}
 		return false;
 	}
-
-	protected boolean endAction(MotionEvent event) {
-		if (event instanceof DOF1Event)
-			return false;
-		boolean result = endAction(MotionEvent.dof2Event(event));
-		initAction = null;
-		return result;
+	
+	protected boolean execAction(ClickEvent event) {
+		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
+		return false;
+	}
+	
+	// flushDomain
+	
+	protected void flushAction(BogusEvent event) {
+		if (event instanceof KeyboardEvent)
+			flushAction((KeyboardEvent) event);
+		if (event instanceof ClickEvent)		
+			flushAction((ClickEvent) event);
+		if(event instanceof MotionEvent)
+			flushAction((MotionEvent) event);
 	}
 
-	protected boolean endAction(DOF2Event event) {
+	protected void flushAction(MotionEvent event) {
+		if (!(event instanceof DOF1Event))
+			flushAction(MotionEvent.dof2Event(event));
+		//initAction = null;//TODO experimental
+	}
+	
+	protected void flushAction(ClickEvent event) {
+	}
+
+	protected void flushAction(DOF2Event event) {
 		System.out.println("win!!!");
 		if (rotateHint) {
 			scene.setRotateVisualHint(false);
 			rotateHint = false;
-			return true;
 		}
 		if (currentMotionEvent() != null) {
 			if (need4Spin) {
 				startSpinning(spinningRotation(), currentMotionEvent().speed(), currentMotionEvent().delay());
-				return true;
 			}
 		}
 		if (zor != null) {
@@ -745,16 +757,13 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			scene.setZoomVisualHint(false);
 			gestureZoomOnRegion(zor);// now action need to be executed on event
 			zor = null;
-			return true;// since action is null
 		}
 		if (need4Tossing) {
 			// restore speed after drive action terminates:
 			if (drive)
 				setFlySpeed(flySpeedCache);
 			stopFlying();
-			return true;
 		}
-		return true;
 	}
 
 	// key
@@ -772,12 +781,10 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		return nonContiguous() ? true : false;
 	}
 
-	protected boolean endAction(KeyboardEvent event) {
+	protected void flushAction(KeyboardEvent event) {
 		if (initAction.referenceAction() == MotionAction.ALIGN_FRAME)
 			align();
 		if (initAction.referenceAction() == MotionAction.CENTER_FRAME)
 			center();
-		initAction = null;
-		return true;
 	}
 }
