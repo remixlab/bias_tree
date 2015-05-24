@@ -93,15 +93,6 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 			return action(event.shortcut());
 		return null;
 	}
-	
-	public A handle(K shortcut) {
-		return action(shortcut);
-		/*
-		if (event != null)
-			return action(event.shortcut());
-		return null;
-		*/
-	}
 
 	/**
 	 * Returns the {@code map} (which is simply an instance of {@code HashMap}) encapsulated by this object.

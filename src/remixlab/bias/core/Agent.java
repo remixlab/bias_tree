@@ -36,6 +36,23 @@ public class Agent {
 			g = null;
 			b = null;
 		}
+		
+		//TODO testing
+		//GrabberBranchTuple seems to be only requiring E extends Enum<E> as a parameter Type
+		/*
+		public <E extends Enum<E>> Action<E> test(InteractiveGrabber<E> _g, Branch<E, ?, ?> _a) {
+			g = _g;
+			b = _a;
+			return _a.handle(_g, null);
+		}
+		*/
+		
+		//TODO but requires this one to go
+		/*
+		public <E extends Enum<E>> Action<E> handle(BogusEvent event) {
+			return b.handle((InteractiveGrabber<E>) g, event);
+		}
+		*/
 	}
 
 	protected String										nm;
@@ -155,9 +172,9 @@ public class Agent {
 				list.add((InteractiveGrabber<E>) t.g);
 		return list;
 	}
-
-	public <E extends Enum<E>, K extends Branch<E, ?/* extends Action<E> */, ?>, G extends InteractiveGrabber<E>> boolean
-			addGrabber(G grabber, K branch) {
+	
+	///*
+	public <E extends Enum<E>, K extends Branch<E, ?, ?>, G extends InteractiveGrabber<E>> boolean addGrabber(G grabber, K branch) {
 		// Overkill but feels safer ;)
 		if (grabber == null || this.hasGrabber(grabber) || branch == null)
 			return false;
@@ -166,6 +183,23 @@ public class Agent {
 		tuples.add(new GrabberBranchTuple(grabber, branch));
 		return true;
 	}
+	//*/
+	
+	/*
+  //TODO experimental
+	public <E extends Enum<E>, K extends Branch<E, ?, ?>, G extends InteractiveGrabber<E>> boolean
+			addGrabber(G grabber, K branch) {
+		// Overkill but feels safer ;)
+		if (grabber == null || this.hasGrabber(grabber) || branch == null)
+			return false;
+		if (!hasBranch(branch))
+			if(this.appendBranch(branch)) {
+				tuples.add(new GrabberBranchTuple(grabber, branch));
+				return true;
+		}
+		return false;
+	}
+	//*/
 
 	public Branch<?, ?, ?> branch(Grabber g) {
 		if (g instanceof InteractiveGrabber) {
@@ -187,6 +221,9 @@ public class Agent {
 	 * MotionProfile<M>, ClickProfile<C>>(m, c, this, name); }
 	 */
 
+	//TODO from here, very final touch:
+	//1. This one should be virtual, only a concrete agent knows what Type of Branch to add
+	//2. Move pool to branch?
 	public boolean appendBranch(Branch<?, ?, ?> branch) {
 		if (branch == null)
 			return false;
