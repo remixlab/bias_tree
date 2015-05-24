@@ -688,7 +688,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		if(event instanceof MotionEvent)
 			return execAction((MotionEvent) event);
 		return false;
-	}	
+	}
 
 	protected boolean execAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
@@ -741,7 +741,6 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 
 	protected void flushAction(DOF2Event event) {
-		System.out.println("win!!!");
 		if (rotateHint) {
 			scene.setRotateVisualHint(false);
 			rotateHint = false;
