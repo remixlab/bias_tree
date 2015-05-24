@@ -17,12 +17,12 @@ import java.util.List;
 import remixlab.bias.branch.*;
 import remixlab.bias.event.*;
 
-public class Agent {
+public class Agent {	
 	class GrabberBranchTuple {
 		Grabber				g;
-		Branch<?, ?>	b;
+		Branch<?, ?, ?>	b;
 
-		public <E extends Enum<E>> GrabberBranchTuple(InteractiveGrabber<E> _g, Branch<E, ?> _a) {
+		public <E extends Enum<E>> GrabberBranchTuple(InteractiveGrabber<E> _g, Branch<E, ?, ?> _a) {
 			g = _g;
 			b = _a;
 		}
@@ -40,7 +40,7 @@ public class Agent {
 
 	protected String										nm;
 
-	protected List<Branch<?, ?>>				brnchs;
+	protected List<Branch<?, ?, ?>>				brnchs;
 	protected List<GrabberBranchTuple>	tuples;
 
 	protected GrabberBranchTuple				trackedGrabber;
@@ -62,7 +62,7 @@ public class Agent {
 		setTracking(true);
 		handler = inputHandler;
 		handler.registerAgent(this);
-		brnchs = new ArrayList<Branch<?, ?>>();
+		brnchs = new ArrayList<Branch<?, ?, ?>>();
 	}
 
 	/**
@@ -117,7 +117,14 @@ public class Agent {
 	public boolean hasGrabber(Grabber grabber) {
 		if (grabber == null)
 			return false;
+		//TODO testimg
 		return grabbers().contains(grabber);
+		/*
+		for(Grabber g : grabbers())
+			if(g == grabber)
+				return true;
+		return false;
+		*/
 	}
 
 	/**
@@ -141,16 +148,16 @@ public class Agent {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends Enum<E>> List<InteractiveGrabber<E>> grabbers(Branch<E, ?> branch) {
+	public <E extends Enum<E>> List<InteractiveGrabber<E>> grabbers(Branch<E, ?, ?> branch) {
 		List<InteractiveGrabber<E>> list = new ArrayList<InteractiveGrabber<E>>();
 		for (GrabberBranchTuple t : tuples)
 			if (t.b == branch)
 				list.add((InteractiveGrabber<E>) t.g);
 		return list;
 	}
-
-	public <E extends Enum<E>, K extends Branch<E, ?/* extends Action<E> */>, G extends InteractiveGrabber<E>> boolean
-			addGrabber(G grabber, K branch) {
+	
+	/*
+	public <E extends Enum<E>, K extends Branch<E, ?, ?>, G extends InteractiveGrabber<E>> boolean addGrabber(G grabber, K branch) {
 		// Overkill but feels safer ;)
 		if (grabber == null || this.hasGrabber(grabber) || branch == null)
 			return false;
@@ -159,8 +166,24 @@ public class Agent {
 		tuples.add(new GrabberBranchTuple(grabber, branch));
 		return true;
 	}
+	//*/
+	
+	///*
+  //TODO experimental
+	public <E extends Enum<E>, K extends Branch<E, ?, ?>, G extends InteractiveGrabber<E>> boolean
+			addGrabber(G grabber, K branch) {
+		// Overkill but feels safer ;)
+		if (grabber == null || this.hasGrabber(grabber) || branch == null)
+			return false;
+		if (!hasBranch(branch))
+			if(!this.appendBranch(branch))
+				return false;
+		tuples.add(new GrabberBranchTuple(grabber, branch));
+		return false;
+	}
+	//*/
 
-	public Branch<?, ?> branch(Grabber g) {
+	public Branch<?, ?, ?> branch(Grabber g) {
 		if (g instanceof InteractiveGrabber) {
 			for (GrabberBranchTuple t : tuples)
 				if (t.g == g)
@@ -169,7 +192,7 @@ public class Agent {
 		return null;
 	}
 
-	public List<Branch<?, ?>> branches() {
+	public List<Branch<?, ?, ?>> branches() {
 		return brnchs;
 	}
 
@@ -180,7 +203,10 @@ public class Agent {
 	 * MotionProfile<M>, ClickProfile<C>>(m, c, this, name); }
 	 */
 
-	public boolean appendBranch(Branch<?, ?> branch) {
+	//TODO from here, very final touch:
+	//1. This one should be virtual, only a concrete agent knows what Type of Branch to add
+	//2. Move pool to branch?
+	public boolean appendBranch(Branch<?, ?, ?> branch) {
 		if (branch == null)
 			return false;
 		if (!brnchs.contains(branch)) {
@@ -190,11 +216,11 @@ public class Agent {
 		return false;
 	}
 
-	public boolean hasBranch(Branch<?, ?> branch) {
+	public boolean hasBranch(Branch<?, ?, ?> branch) {
 		return brnchs.contains(branch);
 	}
 
-	public <E extends Enum<E>> void resetBranch(Branch<E, ?> branch) {
+	public <E extends Enum<E>> void resetBranch(Branch<E, ?, ?> branch) {
 		for (Iterator<GrabberBranchTuple> it = tuples.iterator(); it.hasNext();) {
 			GrabberBranchTuple t = it.next();
 			if (t.b == branch) {
@@ -215,7 +241,7 @@ public class Agent {
 		}
 	}
 
-	public boolean pruneBranch(Branch<?, ?> branch) {
+	public boolean pruneBranch(Branch<?, ?, ?> branch) {
 		if (brnchs.contains(branch)) {
 			this.resetBranch(branch);
 			this.brnchs.remove(branch);
@@ -225,7 +251,7 @@ public class Agent {
 	}
 
 	public void pruneBranches() {
-		for (Branch<?, ?> branch : branches())
+		for (Branch<?, ?, ?> branch : branches())
 			resetBranch(branch);
 		branches().clear();
 	}
@@ -239,7 +265,7 @@ public class Agent {
 		description += "\n";
 		description += "ActionAgents' info\n";
 		int index = 1;
-		for (Branch<?, ?> branch : branches()) {
+		for (Branch<?, ?, ?> branch : branches()) {
 			description += index;
 			description += ". ";
 			description += branch.info();
@@ -356,8 +382,7 @@ public class Agent {
 		Grabber inputGrabber = inputGrabber();
 		if (inputGrabber != null) {
 			if (inputGrabber instanceof InteractiveGrabber<?>)
-				return inputHandler().enqueueEventTuple(
-						new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, null));
+				return inputHandler().enqueueEventTuple(new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, null));
 		}
 		return false;
 	}

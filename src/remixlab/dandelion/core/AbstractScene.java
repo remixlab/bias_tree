@@ -154,23 +154,18 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
-
+	
 	@Override
 	public void performInteraction(BogusEvent event) {
+		if (processAction(event)) //may call performInteraction(KeyboardEvent event) by setting the action() :o
+			return;
 		if (event instanceof KeyboardEvent)
 			performInteraction((KeyboardEvent) event);
 	}
-
-	public void performInteraction(KeyboardEvent event) {
-		if (processAction(event))
-			return;
-		processInteraction(event, referenceAction());
-	}
-
-	// TODO apply same pattern in InteractiveFrame
-	protected void processInteraction(KeyboardEvent event, GlobalAction gAction) {
+	
+	protected void performInteraction(KeyboardEvent event) {
 		Vec trans;
-		switch (gAction) {
+		switch (referenceAction()) {
 		case ADD_KEYFRAME_TO_PATH_1:
 			eye().addKeyFrameToPath(1);
 			break;
@@ -278,11 +273,18 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	Action<GlobalAction>	initAction;
+	
+	@Override
+	public final boolean processAction(BogusEvent event) {
+		if(event instanceof KeyboardEvent)
+			return processAction((KeyboardEvent) event);
+		return true;
+	}
 
 	protected boolean processAction(KeyboardEvent event) {
+		System.out.println();
 		if (initAction == null) {
 			if (action() != null) {
-				initAction = action();// TODO should go in initAction()
 				return initAction(event);// start action
 			}
 		}
@@ -290,19 +292,18 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			if (action() != null) {
 				if (initAction == action())
 					return execAction(event);// continue action
-				else { // initAction != action() -> action changes abruptly, i.e.,
-					System.out.println("case 1");
-					endAction(event);
-					// TODO testing these two lines
-					System.out.println("testing case when action changes abruptly");
-					initAction = action();// TODO should go in initAction()
+				else { // initAction != action() -> action changes abruptly
+					//System.out.println("case 1 in scene: action() != null && initAction != null (action changes abruptely, calls flush)");
+					flushAction(event);
 					return initAction(event);// start action
-					// return false;
 				}
 			}
 			else {// action() == null
-				System.out.println("case 2");
-				return endAction(event);// stopAction
+				//System.out.println("case 2 in scene: action() == null && initAction != null (ends action, calls flush)");
+				flushAction(event);// stopAction
+				initAction = null;
+				setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
+				return true;
 			}
 		}
 		return true;// i.e., if initAction == action() == null -> ignore :)
@@ -318,6 +319,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	protected boolean initAction(KeyboardEvent event) {
+		initAction = action();
 		return contiguous(action()) ? false : true;
 	}
 
@@ -325,15 +327,13 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		return contiguous(action()) ? false : true;
 	}
 
-	protected boolean endAction(KeyboardEvent event) {
+	protected void flushAction(KeyboardEvent event) {
+		System.out.println("calling flushAction on KeyboardEvent! with action: " + initAction);
 		if (!contiguous(initAction)) {
-			processInteraction(event, initAction.referenceAction());
+			setAction(initAction);
+			performInteraction(event);
 		}
-		initAction = null;
-		return true;
 	}
-
-	// --
 
 	protected void performCustomAction(KeyboardEvent event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass()

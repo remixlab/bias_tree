@@ -12,7 +12,7 @@ package remixlab.dandelion.agent;
 
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
-import remixlab.bias.event.shortcut.Shortcut;
+import remixlab.bias.event.shortcut.MotionShortcut;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
@@ -30,6 +30,10 @@ public class HIDAgent extends MotionAgent<DOF6Action> {
 		setGestureBinding(Target.FRAME, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
 	}
 
+	public void setGestureBinding(Target target, DOF6Action action) {
+		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action);
+	}
+
 	@Override
 	public DOF6Event feed() {
 		return null;
@@ -41,10 +45,6 @@ public class HIDAgent extends MotionAgent<DOF6Action> {
 			return new float[] { xSens, ySens, zSens, xrSens, yrSens, zrSens };
 		else
 			return super.sensitivities(event);
-	}
-
-	public void setGestureBinding(Target target, DOF6Action action) {
-		setBinding(target, new Shortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action);
 	}
 
 	public void setSensitivities(float x, float y, float z, float rx, float ry, float rz) {

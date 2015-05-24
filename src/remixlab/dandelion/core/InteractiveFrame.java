@@ -66,11 +66,34 @@ import remixlab.util.*;
  */
 public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber<MotionAction>, Copyable,
 		Constants {
+	
+//TODO pending cloning and hash
+	// Multiple tempo actions require this:
+	Action<MotionAction>	initAction;
+	// private MotionAction twotempi;
+	// private A a;//TODO study make me an attribute to com between init and end
+	protected boolean				need4Spin;
+	protected boolean				need4Tossing;
+	protected boolean				drive;
+	protected boolean				rotateHint;
+	protected MotionEvent	currMotionEvent;
+	public MotionEvent		initMotionEvent;
+	public DOF2Event			zor;
+	protected float					flySpeedCache;
+	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
 				appendSuper(super.hashCode()).
 				append(action).
+				append(initAction).
+				append(need4Spin).
+				append(drive).
+				append(rotateHint).
+				append(currMotionEvent).
+				append(initMotionEvent).
+				append(zor).
+				append(flySpeedCache).
 				toHashCode();
 	}
 
@@ -87,6 +110,14 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(action, other.action)
+				.append(initAction, other.initAction)
+				.append(need4Spin, other.need4Spin)
+				.append(drive, other.drive)
+				.append(rotateHint, other.rotateHint)
+				.append(currMotionEvent, other.currMotionEvent)
+				.append(initMotionEvent, other.initMotionEvent)
+				.append(zor, other.zor)
+				.append(flySpeedCache, other.flySpeedCache)
 				.isEquals();
 	}
 
@@ -267,9 +298,17 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		super(theEye);
 	}
 
+	//TODO needs testing
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
 		this.setAction(otherFrame.action());
+		this.initAction = otherFrame.initAction;
+		if(otherFrame.currMotionEvent != null)
+			this.currMotionEvent = otherFrame.currMotionEvent.get();
+		if(otherFrame.initMotionEvent != null)
+		this.initMotionEvent = otherFrame.initMotionEvent.get();
+		if(otherFrame.zor != null)
+			this.zor = otherFrame.zor.get();
 	}
 
 	@Override
@@ -306,6 +345,18 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	public boolean isInInteraction() {
 		return action != null;
 	}
+	
+	@Override
+	public void performInteraction(BogusEvent event) {
+		if (processAction(event))
+			return;
+		if (event instanceof KeyboardEvent)
+			performInteraction((KeyboardEvent) event);
+		if (event instanceof ClickEvent)
+			performInteraction((ClickEvent) event);
+		if(event instanceof MotionEvent)
+			performInteraction((MotionEvent) event);
+	}
 
 	@Override
 	protected void performInteraction(ClickEvent event) {
@@ -341,8 +392,6 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	@Override
 	protected void performInteraction(MotionEvent event) {
-		if (processAction(event))
-			return;
 		switch (referenceAction()) {
 		case CUSTOM:
 			performCustomAction(event);
@@ -432,8 +481,6 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	@Override
 	protected void performInteraction(KeyboardEvent event) {
-		if (processAction(event))
-			return;
 		switch (referenceAction()) {
 		case ALIGN_FRAME:
 			align();
@@ -539,20 +586,6 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	// two tempi actions workflow divert from 'normal' (single tempi) actions which just require
 	// either updateTrackeGrabber(event) or handle(event).
 
-	// TODO pending cloning and hash
-	// Multiple tempo actions require this:
-	Action<MotionAction>	initAction;
-	// private MotionAction twotempi;
-	// private A a;//TODO study make me an attribute to com between init and end
-	private boolean				need4Spin;
-	private boolean				need4Tossing;
-	private boolean				drive;
-	private boolean				rotateHint;
-	protected MotionEvent	currMotionEvent;
-	public MotionEvent		initMotionEvent;
-	public DOF2Event			zor;
-	private float					flySpeedCache;
-
 	public MotionEvent initMotionEvent() {
 		return initMotionEvent;
 	}
@@ -560,11 +593,11 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	public MotionEvent currentMotionEvent() {
 		return currMotionEvent;
 	}
-
-	protected boolean processAction(KeyboardEvent event) {
+	
+	@Override
+	public final boolean processAction(BogusEvent event) {
 		if (initAction == null) {
 			if (action() != null) {
-				initAction = action();// TODO should go in initAction()
 				return initAction(event);// start action
 			}
 		}
@@ -572,51 +605,39 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			if (action() != null) {
 				if (initAction == action())
 					return execAction(event);// continue action
-				else { // initAction != action() -> action changes abruptly, i.e.,
-					System.out.println("case 1");
-					endAction(event);
-					// TODO testing these two lines
-					System.out.println("testing case when action changes abruptly");
-					initAction = action();// TODO should go in initAction()
+				else { // initAction != action() -> action changes abruptly
+					//System.out.println("case 1 in frame: action() != null && initAction != null (action changes abruptely, calls flush)");
+					flushAction(event);
 					return initAction(event);// start action
-					// return false;
 				}
 			}
 			else {// action() == null
-				System.out.println("case 2");
-				return endAction(event);// stopAction
+			  //System.out.println("case 2 in frame: action() == null && initAction != null (ends action, calls flush)");
+				flushAction(event);// stopAction
+				initAction = null;
+				setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
+				return true;
 			}
 		}
 		return true;// i.e., if initAction == action() == null -> ignore :)
 	}
+	
+	//init domain
+	
+	protected boolean initAction(BogusEvent event) {
+		initAction = action();
+		if (event instanceof KeyboardEvent)
+			return initAction((KeyboardEvent) event);
+		if (event instanceof ClickEvent)		
+			return initAction((ClickEvent) event);
+		if(event instanceof MotionEvent)
+			return initAction((MotionEvent) event);		
+		return false;
+	}
 
-	protected boolean processAction(MotionEvent event) {
-		if (initAction == null) {
-			if (action() != null) {
-				initAction = action();// TODO should go in initAction()
-				return initAction(event);// start action
-			}
-		}
-		else { // initAction != null
-			if (action() != null) {
-				if (initAction == action())
-					return execAction(event);// continue action
-				else { // initAction != action() -> action changes abruptly, i.e.,
-					System.out.println("case 1");
-					endAction(event);
-					// TODO testing these two lines
-					System.out.println("testing case when action changes abruptly");
-					initAction = action();// TODO should go in initAction()
-					return initAction(event);// start action
-					// return false;
-				}
-			}
-			else {// action() == null
-				System.out.println("case 2");
-				return endAction(event);// stopAction
-			}
-		}
-		return true;// i.e., if initAction == action() == null -> ignore :)
+	protected boolean initAction(ClickEvent event) {
+		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
+		return false;
 	}
 
 	protected boolean initAction(MotionEvent event) {
@@ -656,6 +677,18 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		}
 		return false;
 	}
+	
+	// exec domain
+	
+	protected boolean execAction(BogusEvent event) {
+		if (event instanceof KeyboardEvent)
+			return execAction((KeyboardEvent) event);
+		if (event instanceof ClickEvent)		
+			return execAction((ClickEvent) event);
+		if(event instanceof MotionEvent)
+			return execAction((MotionEvent) event);
+		return false;
+	}
 
 	protected boolean execAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
@@ -681,26 +714,40 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		}
 		return false;
 	}
-
-	protected boolean endAction(MotionEvent event) {
-		if (event instanceof DOF1Event)
-			return false;
-		boolean result = endAction(MotionEvent.dof2Event(event));
-		initAction = null;
-		return result;
+	
+	protected boolean execAction(ClickEvent event) {
+		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
+		return false;
+	}
+	
+	// flushDomain
+	
+	protected void flushAction(BogusEvent event) {
+		if (event instanceof KeyboardEvent)
+			flushAction((KeyboardEvent) event);
+		if (event instanceof ClickEvent)		
+			flushAction((ClickEvent) event);
+		if(event instanceof MotionEvent)
+			flushAction((MotionEvent) event);
 	}
 
-	protected boolean endAction(DOF2Event event) {
-		System.out.println("win!!!");
+	protected void flushAction(MotionEvent event) {
+		if (!(event instanceof DOF1Event))
+			flushAction(MotionEvent.dof2Event(event));
+		//initAction = null;//TODO experimental
+	}
+	
+	protected void flushAction(ClickEvent event) {
+	}
+
+	protected void flushAction(DOF2Event event) {
 		if (rotateHint) {
 			scene.setRotateVisualHint(false);
 			rotateHint = false;
-			return true;
 		}
 		if (currentMotionEvent() != null) {
 			if (need4Spin) {
 				startSpinning(spinningRotation(), currentMotionEvent().speed(), currentMotionEvent().delay());
-				return true;
 			}
 		}
 		if (zor != null) {
@@ -709,16 +756,13 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			scene.setZoomVisualHint(false);
 			gestureZoomOnRegion(zor);// now action need to be executed on event
 			zor = null;
-			return true;// since action is null
 		}
 		if (need4Tossing) {
 			// restore speed after drive action terminates:
 			if (drive)
 				setFlySpeed(flySpeedCache);
 			stopFlying();
-			return true;
 		}
-		return true;
 	}
 
 	// key
@@ -736,12 +780,10 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		return nonContiguous() ? true : false;
 	}
 
-	protected boolean endAction(KeyboardEvent event) {
+	protected void flushAction(KeyboardEvent event) {
 		if (initAction.referenceAction() == MotionAction.ALIGN_FRAME)
 			align();
 		if (initAction.referenceAction() == MotionAction.CENTER_FRAME)
 			center();
-		initAction = null;
-		return true;
 	}
 }

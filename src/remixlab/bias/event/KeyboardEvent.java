@@ -11,6 +11,7 @@
 package remixlab.bias.event;
 
 import remixlab.bias.core.BogusEvent;
+import remixlab.bias.event.shortcut.KeyboardShortcut;
 
 /**
  * A keyboard event is a {@link remixlab.bias.core.BogusEvent} specialization that encapsulates a
@@ -50,5 +51,10 @@ public class KeyboardEvent extends BogusEvent {
 	@Override
 	public KeyboardEvent get() {
 		return new KeyboardEvent(this);
+	}
+
+	@Override
+	public KeyboardShortcut shortcut() {
+		return new KeyboardShortcut(modifiers(), id());
 	}
 }
