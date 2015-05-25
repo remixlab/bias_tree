@@ -12,6 +12,7 @@ package remixlab.dandelion.core;
 
 import remixlab.bias.core.Action;
 
+//TODO fix docs
 public interface Constants {
 	/**
 	 * Which object is performing the motion action.
@@ -20,275 +21,207 @@ public interface Constants {
 		EYE, FRAME
 	}
 
-	/**
-	 * Dandelion global action enum. All enum sub-groups point-out to this one.
-	 */
-	public enum DandelionAction {
-		// KEYfRAMES
-		/**
-		 * Add keyframe to path 1
-		 */
-		ADD_KEYFRAME_TO_PATH_1("Add keyframe to path 1", true, 0),
-		/**
-		 * Play path 1
-		 */
-		PLAY_PATH_1("Play path 1", true, 0),
-		/**
-		 * Delete path 1
-		 */
-		DELETE_PATH_1("Delete path 1", true, 0),
-		/**
-		 * Add keyframe to path 2
-		 */
-		ADD_KEYFRAME_TO_PATH_2("Add keyframe to path 2", true, 0),
-		/**
-		 * Play path 2
-		 */
-		PLAY_PATH_2("Play path 2", true, 0),
-		/**
-		 * Delete path 2
-		 */
-		DELETE_PATH_2("Delete path 2", true, 0),
-		/**
-		 * Add keyframe to path 3
-		 */
-		ADD_KEYFRAME_TO_PATH_3("Add keyframe to path 3", true, 0),
-		/**
-		 * Play path 3
-		 */
-		PLAY_PATH_3("Play path 3", true, 0),
-		/**
-		 * Delete path 3
-		 */
-		DELETE_PATH_3("Delete path 3", true, 0),
-
-		// CLICk ACTIONs
+	public enum MotionAction {
 		/**
 		 * Center frame
 		 */
-		CENTER_FRAME("Center frame", true, 0),
+		CENTER_FRAME("Center frame", true),
 		/**
 		 * Align frame with world
 		 */
-		ALIGN_FRAME("Align frame with world", true, 0),
+		ALIGN_FRAME("Align frame with world", true),
+
+		// only keyboard
+
+		/**
+		 * Scale up frame
+		 */
+		SCALE_UP("Scale up frame", true),
+		/**
+		 * Scale down frame
+		 */
+		SCALE_DOWN("Scale down frame", true),
+		/**
+		 * Zoom in eye on anchor
+		 */
+		ZOOM_IN_ON_ANCHOR("Zoom in eye on anchor", false),
+		/**
+		 * Zoom out eye on anchor
+		 */
+		ZOOM_OUT_ON_ANCHOR("Zoom out eye on anchor", false),
+		/**
+		 * Translate frame up along X axis
+		 */
+		TRANSLATE_UP_X("Translate frame up along X axis", true),
+		/**
+		 * Translate frame down along X axis
+		 */
+		TRANSLATE_DOWN_X("Translate frame down along X axis", true),
+		/**
+		 * Translate frame up along Y axis
+		 */
+		TRANSLATE_UP_Y("Translate frame up along Y axis", true),
+		/**
+		 * Translate frame down along Y axis
+		 */
+		TRANSLATE_DOWN_Y("Translate frame down along Y axis", true),
+		/**
+		 * Translate frame up along Z axis
+		 */
+		TRANSLATE_UP_Z("Translate frame up along Z axis", false),
+		/**
+		 * Translate frame down along Z axis
+		 */
+		TRANSLATE_DOWN_Z("Translate frame down along Z axis", false),
+		/**
+		 * Rotate frame up X axis
+		 */
+		ROTATE_UP_X("Rotate frame up X axis", false),
+		/**
+		 * Rotate frame down X axis
+		 */
+		ROTATE_DOWN_X("Rotate frame down X axis", false),
+		/**
+		 * Rotate frame up Y axis
+		 */
+		ROTATE_UP_Y("Rotate frame up Y axis", false),
+		/**
+		 * Rotate frame down Y axis
+		 */
+		ROTATE_DOWN_Y("Rotate frame down Y axis", false),
+		/**
+		 * Rotate frame up Z axis
+		 */
+		ROTATE_UP_Z("Rotate frame up Z axis", true),
+		/**
+		 * Rotate frame down Z axis
+		 */
+		ROTATE_DOWN_Z("Rotate frame down Z axis", true),
 
 		// Click actions require cursor pos:
 		/**
 		 * Interpolate the eye to zoom on pixel
 		 */
-		ZOOM_ON_PIXEL("Interpolate the eye to zoom on pixel", true, 0),
+		ZOOM_ON_PIXEL("Interpolate the eye to zoom on pixel", true),
 		/**
 		 * Set the anchor from the pixel under the pointer
 		 */
-		ANCHOR_FROM_PIXEL("Set the anchor from the pixel under the pointer", true, 0),
-
-		// GENERAL KEYBOARD ACTIONs
-		/**
-		 * Toggles axes visual hint
-		 */
-		TOGGLE_AXES_VISUAL_HINT("Toggles axes visual hint", true, 0),
-		/**
-		 * Toggles grid visual hint
-		 */
-		TOGGLE_GRID_VISUAL_HINT("Toggles grid visual hint", true, 0),
-		/**
-		 * Toggles paths visual hint
-		 */
-		TOGGLE_PATHS_VISUAL_HINT("Toggles paths visual hint", true, 0),
-		/**
-		 * Toggles frame visual hint
-		 */
-		TOGGLE_PICKING_VISUAL_HINT("Toggles frame visual hint", true, 0),
-		/**
-		 * Toggles animation
-		 */
-		TOGGLE_ANIMATION("Toggles animation", true, 0),
-		/**
-		 * Toggles camera type
-		 */
-		TOGGLE_CAMERA_TYPE("Toggles camera type", false, 0),
-		/**
-		 * Displays the global help
-		 */
-		DISPLAY_INFO("Displays the global help", true, 0),
-		/**
-		 * Zoom to fit the scene
-		 */
-		INTERPOLATE_TO_FIT("Zoom to fit the scene", true, 0),
-		/**
-		 * Reset the anchor to the world origin
-		 */
-		RESET_ANCHOR("Reset the anchor to the world origin", true, 0),
-		/**
-		 * Show the whole scene
-		 */
-		SHOW_ALL("Show the whole scene", true, 0),
-
-		// CAMERA KEYBOARD ACTIONs
-		/**
-		 * Move eye to the left
-		 */
-		MOVE_LEFT("Move eye to the left", true, 0),
-		/**
-		 * Move eye to the right
-		 */
-		MOVE_RIGHT("Move eye to the right", true, 0),
-		/**
-		 * Move eye up
-		 */
-		MOVE_UP("Move eye up", true, 0),
-		/**
-		 * Move eye down
-		 */
-		MOVE_DOWN("Move eye down", true, 0),
-		/**
-		 * Increase frame rotation sensitivity
-		 */
-		INCREASE_ROTATION_SENSITIVITY("Increase frame rotation sensitivity", true, 0),
-		/**
-		 * Decrease frame rotation sensitivity
-		 */
-		DECREASE_ROTATION_SENSITIVITY("Decrease frame rotation sensitivity", true, 0),
-		/**
-		 * Increase eye fly speed
-		 */
-		INCREASE_FLY_SPEED("Increase eye fly speed", true, 0),
-		/**
-		 * Decrease eye fly speed
-		 */
-		DECREASE_FLY_SPEED("Decrease eye fly speed", true, 0),
+		ANCHOR_FROM_PIXEL("Set the anchor from the pixel under the pointer", true),
 
 		// Wheel
+
 		/**
-		 * Scale frame
+		 * custom Scale frame
 		 */
-		SCALE("Scale frame", true, 1),
-		/**
-		 * Zoom eye
-		 */
-		ZOOM("Zoom eye", false, 1),
+		SCALE("Scale frame", true),
 		/**
 		 * Zoom eye on anchor
 		 */
-		ZOOM_ON_ANCHOR("Zoom eye on anchor", false, 1),
+		ZOOM_ON_ANCHOR("Zoom eye on anchor", false),
 		/**
 		 * Translate along screen X axis
 		 */
-		TRANSLATE_X("Translate along screen X axis", true, 1),
+		TRANSLATE_X("Translate along screen X axis", true),
 		/**
 		 * Translate along screen Y axis
 		 */
-		TRANSLATE_Y("Translate along screen Y axis", true, 1),
+		TRANSLATE_Y("Translate along screen Y axis", true),
 		/**
 		 * Translate along screen Z axis
 		 */
-		TRANSLATE_Z("Translate along screen Z axis", false, 1),
+		TRANSLATE_Z("Translate along screen Z axis", false),
 		/**
 		 * Rotate frame around screen x axis (eye or interactive frame)
 		 */
-		ROTATE_X("Rotate frame around screen x axis (eye or interactive frame)", false, 1),
+		ROTATE_X("Rotate frame around screen x axis (eye or interactive frame)", false),
 		/**
 		 * Rotate frame around screen y axis (eye or interactive frame)
 		 */
-		ROTATE_Y("Rotate frame around screen y axis (eye or interactive frame)", false, 1),
+		ROTATE_Y("Rotate frame around screen y axis (eye or interactive frame)", false),
 		/**
 		 * Rotate frame around screen z axis (eye or interactive frame)
 		 */
-		ROTATE_Z("Rotate frame around screen z axis (eye or interactive frame)", true, 1),
+		ROTATE_Z("Rotate frame around screen z axis (eye or interactive frame)", true),
 		/**
 		 * Drive (camera or interactive frame)
 		 */
-		DRIVE("Drive (camera or interactive frame)", false, 2),
+		DRIVE("Drive (camera or interactive frame)", false),
 
 		// 2 DOFs ACTIONs
 		/**
 		 * Frame (eye or interactive frame) arcball rotate
 		 */
-		ROTATE("Frame (eye or interactive frame) arcball rotate", true, 2),
+		ROTATE("Frame (eye or interactive frame) arcball rotate", true),
 		/**
 		 * Rotate camera frame as in CAD applications
 		 */
-		ROTATE_CAD("Rotate camera frame as in CAD applications", false, 2),
+		ROTATE_CAD("Rotate camera frame as in CAD applications", false),
 		/**
 		 * Translate frame (eye or interactive frame)
 		 */
-		TRANSLATE("Translate frame (eye or interactive frame)", true, 2),
+		TRANSLATE("Translate frame (eye or interactive frame)", true),
 		/**
 		 * Move forward frame (camera or interactive frame)
 		 */
-		MOVE_FORWARD("Move forward frame (camera or interactive frame)", true, 2),
+		MOVE_FORWARD("Move forward frame (camera or interactive frame)", true),
 		/**
 		 * Move backward frame (camera or interactive frame)
 		 */
-		MOVE_BACKWARD("Move backward frame (camera or interactive frame)", true, 2),
+		MOVE_BACKWARD("Move backward frame (camera or interactive frame)", true),
 		/**
 		 * Look around with frame (camera or interactive frame)
 		 */
-		LOOK_AROUND("Look around with frame (camera or interactive frame)", false, 2),
+		LOOK_AROUND("Look around with frame (camera or interactive frame)", false),
 		/**
 		 * Screen rotate (eye or interactive frame)
 		 */
-		SCREEN_ROTATE("Screen rotate (eye or interactive frame)", true, 2),
+		SCREEN_ROTATE("Screen rotate (eye or interactive frame)", true),
 		/**
 		 * Screen translate frame (eye or interactive frame)
 		 */
-		SCREEN_TRANSLATE("Screen translate frame (eye or interactive frame)", true, 2),
+		SCREEN_TRANSLATE("Screen translate frame (eye or interactive frame)", true),
 		/**
 		 * Zoom on region (eye or interactive frame)
 		 */
-		ZOOM_ON_REGION("Zoom on region (eye or interactive frame)", true, 2),
+		ZOOM_ON_REGION("Zoom on region (eye or interactive frame)", true),
 		/**
 		 * Translate frame (camera or interactive frame) from dx, dy, dz simultaneously
 		 */
-		TRANSLATE_XYZ("Translate frame (camera or interactive frame) from dx, dy, dz simultaneously", false, 3),
+		TRANSLATE_XYZ("Translate frame (camera or interactive frame) from dx, dy, dz simultaneously", false),
 		/**
 		 * Rotate frame (camera or interactive frame) from Euler angles
 		 */
-		ROTATE_XYZ("Rotate frame (camera or interactive frame) from Euler angles", false, 3),
+		ROTATE_XYZ("Rotate frame (camera or interactive frame) from Euler angles", false),
 		/**
 		 * Translate frame (camera or interactive frame) from dx, dy, dz and rotate it from Euler angles simultaneously
 		 */
 		TRANSLATE_XYZ_ROTATE_XYZ(
 				"Translate frame (camera or interactive frame) from dx, dy, dz and rotate it from Euler angles simultaneously",
-				false, 6),
+				false),
 		/**
 		 * Move camera on the surface of a sphere using 5-DOF's: 2 rotations around scene anchor, 1 rotation around scene-up
 		 * vector and 1 translation along it, and 1 rotation around eye X-axis.
 		 */
-		HINGE("Move camera on the surface of a sphere using 5-DOF's", false, 6),
+		HINGE("Move camera on the surface of a sphere using 5-DOF's", false),
 
 		// CUSTOM ACTIONs
+
 		/**
-		 * User defined action
+		 * User defined motion-action
 		 */
-		CUSTOM("User defined action");
+		CUSTOM("User defined motion-action");
 
 		String	description;
 		boolean	twoD;
-		int			dofs;
 
-		DandelionAction(String description, boolean td, int ds) {
+		MotionAction(String description, boolean td) {
 			this.description = description;
 			this.twoD = td;
-			this.dofs = ds;
 		}
 
-		DandelionAction(String description, int ds) {
+		MotionAction(String description) {
 			this.description = description;
 			this.twoD = true;
-			this.dofs = ds;
-		}
-
-		DandelionAction(String description, boolean td) {
-			this.description = description;
-			this.twoD = td;
-			this.dofs = 2;
-		}
-
-		DandelionAction(String description) {
-			this.description = description;
-			this.twoD = true;
-			this.dofs = 0;
 		}
 
 		/**
@@ -304,75 +237,183 @@ public interface Constants {
 		public boolean is2D() {
 			return twoD;
 		}
+	}
+
+	public enum GlobalAction {
+		// KEYfRAMES
 
 		/**
-		 * Returns the degrees-of-freedom needed to perform the action item.
+		 * Add keyframe to path 1
 		 */
-		public int dofs() {
-			return dofs;
+		ADD_KEYFRAME_TO_PATH_1("Add keyframe to path 1", true),
+		/**
+		 * Play path 1
+		 */
+		PLAY_PATH_1("Play path 1", true),
+		/**
+		 * Delete path 1
+		 */
+		DELETE_PATH_1("Delete path 1", true),
+		/**
+		 * Add keyframe to path 2
+		 */
+		ADD_KEYFRAME_TO_PATH_2("Add keyframe to path 2", true),
+		/**
+		 * Play path 2
+		 */
+		PLAY_PATH_2("Play path 2", true),
+		/**
+		 * Delete path 2
+		 */
+		DELETE_PATH_2("Delete path 2", true),
+		/**
+		 * Add keyframe to path 3
+		 */
+		ADD_KEYFRAME_TO_PATH_3("Add keyframe to path 3", true),
+		/**
+		 * Play path 3
+		 */
+		PLAY_PATH_3("Play path 3", true),
+		/**
+		 * Delete path 3
+		 */
+		DELETE_PATH_3("Delete path 3", true),
+
+		/**
+		 * Zoom to fit the scene
+		 */
+		INTERPOLATE_TO_FIT("Zoom to fit the scene", true),
+
+		// GENERAL KEYBOARD ACTIONs
+		/**
+		 * Toggles axes visual hint
+		 */
+		TOGGLE_AXES_VISUAL_HINT("Toggles axes visual hint", true),
+		/**
+		 * Toggles grid visual hint
+		 */
+		TOGGLE_GRID_VISUAL_HINT("Toggles grid visual hint", true),
+		/**
+		 * Toggles paths visual hint
+		 */
+		TOGGLE_PATHS_VISUAL_HINT("Toggles paths visual hint", true),
+		/**
+		 * Toggles frame visual hint
+		 */
+		TOGGLE_PICKING_VISUAL_HINT("Toggles frame visual hint", true),
+		/**
+		 * Toggles animation
+		 */
+		TOGGLE_ANIMATION("Toggles animation", true),
+		/**
+		 * Toggles camera type
+		 */
+		TOGGLE_CAMERA_TYPE("Toggles camera type", false),
+		/**
+		 * Displays the global help
+		 */
+		DISPLAY_INFO("Displays the global help", true),
+		/**
+		 * Reset the anchor to the world origin
+		 */
+		RESET_ANCHOR("Reset the anchor to the world origin", true),
+		/**
+		 * Show the whole scene
+		 */
+		SHOW_ALL("Show the whole scene", true),
+
+		// CAMERA KEYBOARD ACTIONs
+		/**
+		 * Move eye to the left
+		 */
+		MOVE_LEFT("Move eye to the left", true),
+		/**
+		 * Move eye to the right
+		 */
+		MOVE_RIGHT("Move eye to the right", true),
+		/**
+		 * Move eye up
+		 */
+		MOVE_UP("Move eye up", true),
+		/**
+		 * Move eye down
+		 */
+		MOVE_DOWN("Move eye down", true),
+		/**
+		 * Increase frame rotation sensitivity
+		 */
+		INCREASE_ROTATION_SENSITIVITY("Increase frame rotation sensitivity", true),
+		/**
+		 * Decrease frame rotation sensitivity
+		 */
+		DECREASE_ROTATION_SENSITIVITY("Decrease frame rotation sensitivity", true),
+		/**
+		 * Increase eye fly speed
+		 */
+		INCREASE_FLY_SPEED("Increase eye fly speed", true),
+		/**
+		 * Decrease eye fly speed
+		 */
+		DECREASE_FLY_SPEED("Decrease eye fly speed", true),
+
+		// CUSTOM ACTIONs
+
+		/**
+		 * User defined keyboard-action
+		 */
+		CUSTOM("User defined keyboard-action");
+
+		String	description;
+		boolean	twoD;
+
+		GlobalAction(String description, boolean td) {
+			this.description = description;
+			this.twoD = td;
+		}
+
+		GlobalAction(String description) {
+			this.description = description;
+			this.twoD = true;
+		}
+
+		/**
+		 * Returns a description of the action item.
+		 */
+		public String description() {
+			return description;
+		}
+
+		/**
+		 * Whether or not this action item is available in 2D. All actions are available in 3D.
+		 */
+		public boolean is2D() {
+			return twoD;
 		}
 	}
+
+	// Eye
 
 	/**
 	 * Click action sub-group.
 	 */
-	public enum ClickAction implements Action<DandelionAction> {
-		// KEYfRAMES
-		ADD_KEYFRAME_TO_PATH_1(DandelionAction.ADD_KEYFRAME_TO_PATH_1),
-		PLAY_PATH_1(DandelionAction.PLAY_PATH_1),
-		DELETE_PATH_1(DandelionAction.DELETE_PATH_1),
-		ADD_KEYFRAME_TO_PATH_2(DandelionAction.ADD_KEYFRAME_TO_PATH_2),
-		PLAY_PATH_2(DandelionAction.PLAY_PATH_2),
-		DELETE_PATH_2(DandelionAction.DELETE_PATH_2),
-		ADD_KEYFRAME_TO_PATH_3(DandelionAction.ADD_KEYFRAME_TO_PATH_3),
-		PLAY_PATH_3(DandelionAction.PLAY_PATH_3),
-		DELETE_PATH_3(DandelionAction.DELETE_PATH_3),
-
-		// CLICk ACTIONs
-		INTERPOLATE_TO_FIT(DandelionAction.INTERPOLATE_TO_FIT),
-		CENTER_FRAME(DandelionAction.CENTER_FRAME),
-		ALIGN_FRAME(DandelionAction.ALIGN_FRAME),
+	public enum ClickAction implements Action<MotionAction> {
+		CENTER_FRAME(MotionAction.CENTER_FRAME),
+		ALIGN_FRAME(MotionAction.ALIGN_FRAME),
 
 		// Click actions require cursor pos:
-		ZOOM_ON_PIXEL(DandelionAction.ZOOM_ON_PIXEL),
-		ANCHOR_FROM_PIXEL(DandelionAction.ANCHOR_FROM_PIXEL),
+		ZOOM_ON_PIXEL(MotionAction.ZOOM_ON_PIXEL),
+		ANCHOR_FROM_PIXEL(MotionAction.ANCHOR_FROM_PIXEL),
 
-		// GENERAL KEYBOARD ACTIONs
-		TOGGLE_AXES_VISUAL_HINT(DandelionAction.TOGGLE_AXES_VISUAL_HINT),
-		TOGGLE_GRID_VISUAL_HINT(DandelionAction.TOGGLE_GRID_VISUAL_HINT),
-		TOGGLE_CAMERA_TYPE(DandelionAction.TOGGLE_CAMERA_TYPE),
-		TOGGLE_ANIMATION(DandelionAction.TOGGLE_ANIMATION),
-		RESET_ANCHOR(DandelionAction.RESET_ANCHOR),
-		DISPLAY_INFO(DandelionAction.DISPLAY_INFO),
-		TOGGLE_PATHS_VISUAL_HINT(DandelionAction.TOGGLE_PATHS_VISUAL_HINT),
-		TOGGLE_PICKING_VISUAL_HINT(DandelionAction.TOGGLE_PICKING_VISUAL_HINT),
-		SHOW_ALL(DandelionAction.SHOW_ALL),
-
-		// CAMERA KEYBOARD ACTIONs
-		MOVE_LEFT(DandelionAction.MOVE_LEFT),
-		MOVE_RIGHT(DandelionAction.MOVE_RIGHT),
-		MOVE_UP(DandelionAction.MOVE_UP),
-		MOVE_DOWN(DandelionAction.MOVE_DOWN),
-		INCREASE_ROTATION_SENSITIVITY(DandelionAction.INCREASE_ROTATION_SENSITIVITY),
-		DECREASE_ROTATION_SENSITIVITY(DandelionAction.DECREASE_ROTATION_SENSITIVITY),
-		INCREASE_FLY_SPEED(DandelionAction.INCREASE_FLY_SPEED),
-		DECREASE_FLY_SPEED(DandelionAction.DECREASE_FLY_SPEED),
-
-		CUSTOM(DandelionAction.CUSTOM);
+		CUSTOM(MotionAction.CUSTOM);
 
 		@Override
-		public DandelionAction referenceAction() {
+		public MotionAction referenceAction() {
 			return act;
 		}
 
 		@Override
 		public String description() {
 			return this.referenceAction().description();
-		}
-
-		@Override
-		public int dofs() {
-			return act.dofs();
 		}
 
 		/**
@@ -382,79 +423,9 @@ public interface Constants {
 			return act.is2D();
 		}
 
-		DandelionAction	act;
+		MotionAction	act;
 
-		ClickAction(DandelionAction a) {
-			act = a;
-		}
-	}
-
-	/**
-	 * Keyboard action sub-group.
-	 */
-	public enum KeyboardAction implements Action<DandelionAction> {
-		// KEYfRAMES
-		ADD_KEYFRAME_TO_PATH_1(DandelionAction.ADD_KEYFRAME_TO_PATH_1),
-		PLAY_PATH_1(DandelionAction.PLAY_PATH_1),
-		DELETE_PATH_1(DandelionAction.DELETE_PATH_1),
-		ADD_KEYFRAME_TO_PATH_2(DandelionAction.ADD_KEYFRAME_TO_PATH_2),
-		PLAY_PATH_2(DandelionAction.PLAY_PATH_2),
-		DELETE_PATH_2(DandelionAction.DELETE_PATH_2),
-		ADD_KEYFRAME_TO_PATH_3(DandelionAction.ADD_KEYFRAME_TO_PATH_3),
-		PLAY_PATH_3(DandelionAction.PLAY_PATH_3),
-		DELETE_PATH_3(DandelionAction.DELETE_PATH_3),
-
-		// CLICk ACTIONs
-		INTERPOLATE_TO_FIT(DandelionAction.INTERPOLATE_TO_FIT),
-
-		// GENERAL KEYBOARD ACTIONs
-		TOGGLE_AXES_VISUAL_HINT(DandelionAction.TOGGLE_AXES_VISUAL_HINT),
-		TOGGLE_GRID_VISUAL_HINT(DandelionAction.TOGGLE_GRID_VISUAL_HINT),
-		TOGGLE_CAMERA_TYPE(DandelionAction.TOGGLE_CAMERA_TYPE),
-		TOGGLE_ANIMATION(DandelionAction.TOGGLE_ANIMATION),
-		RESET_ANCHOR(DandelionAction.RESET_ANCHOR),
-		DISPLAY_INFO(DandelionAction.DISPLAY_INFO),
-		TOGGLE_PATHS_VISUAL_HINT(DandelionAction.TOGGLE_PATHS_VISUAL_HINT),
-		TOGGLE_PICKING_VISUAL_HINT(DandelionAction.TOGGLE_PICKING_VISUAL_HINT),
-		SHOW_ALL(DandelionAction.SHOW_ALL),
-
-		// CAMERA KEYBOARD ACTIONs
-		MOVE_LEFT(DandelionAction.MOVE_LEFT),
-		MOVE_RIGHT(DandelionAction.MOVE_RIGHT),
-		MOVE_UP(DandelionAction.MOVE_UP),
-		MOVE_DOWN(DandelionAction.MOVE_DOWN),
-		INCREASE_ROTATION_SENSITIVITY(DandelionAction.INCREASE_ROTATION_SENSITIVITY),
-		DECREASE_ROTATION_SENSITIVITY(DandelionAction.DECREASE_ROTATION_SENSITIVITY),
-		INCREASE_FLY_SPEED(DandelionAction.INCREASE_FLY_SPEED),
-		DECREASE_FLY_SPEED(DandelionAction.DECREASE_FLY_SPEED),
-
-		CUSTOM(DandelionAction.CUSTOM);
-
-		@Override
-		public DandelionAction referenceAction() {
-			return act;
-		}
-
-		@Override
-		public String description() {
-			return this.referenceAction().description();
-		}
-
-		@Override
-		public int dofs() {
-			return act.dofs();
-		}
-
-		/**
-		 * Whether or not this action item is available in 2D. All actions are available in 3D.
-		 */
-		public boolean is2D() {
-			return act.is2D();
-		}
-
-		DandelionAction	act;
-
-		KeyboardAction(DandelionAction a) {
+		ClickAction(MotionAction a) {
 			act = a;
 		}
 	}
@@ -462,33 +433,27 @@ public interface Constants {
 	/**
 	 * DOF1 action sub-group.
 	 */
-	public enum DOF1Action implements Action<DandelionAction> {
+	public enum DOF1Action implements Action<MotionAction> {
 		// DOF_1
-		SCALE(DandelionAction.SCALE),
-		ZOOM(DandelionAction.ZOOM),
-		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
-		TRANSLATE_X(DandelionAction.TRANSLATE_X),
-		TRANSLATE_Y(DandelionAction.TRANSLATE_Y),
-		TRANSLATE_Z(DandelionAction.TRANSLATE_Z),
-		ROTATE_X(DandelionAction.ROTATE_X),
-		ROTATE_Y(DandelionAction.ROTATE_Y),
-		ROTATE_Z(DandelionAction.ROTATE_Z),
+		SCALE(MotionAction.SCALE),
+		ZOOM_ON_ANCHOR(MotionAction.ZOOM_ON_ANCHOR),
+		TRANSLATE_X(MotionAction.TRANSLATE_X),
+		TRANSLATE_Y(MotionAction.TRANSLATE_Y),
+		TRANSLATE_Z(MotionAction.TRANSLATE_Z),
+		ROTATE_X(MotionAction.ROTATE_X),
+		ROTATE_Y(MotionAction.ROTATE_Y),
+		ROTATE_Z(MotionAction.ROTATE_Z),
 
-		CUSTOM(DandelionAction.CUSTOM);
+		CUSTOM(MotionAction.CUSTOM);
 
 		@Override
-		public DandelionAction referenceAction() {
+		public MotionAction referenceAction() {
 			return act;
 		}
 
 		@Override
 		public String description() {
 			return this.referenceAction().description();
-		}
-
-		@Override
-		public int dofs() {
-			return act.dofs();
 		}
 
 		/**
@@ -498,58 +463,21 @@ public interface Constants {
 			return act.is2D();
 		}
 
-		DandelionAction	act;
-
-		DOF1Action(DandelionAction a) {
-			act = a;
-		}
-	}
-
-	/**
-	 * Wheel action sub-group.
-	 * 
-	 * @deprecated Please refrain from using this type, it will be removed from future releases. Use DOF1Action instead.
-	 */
-	@Deprecated
-	public enum WheelAction implements Action<DandelionAction> {
-		// DOF_1
-		SCALE(DandelionAction.SCALE),
-		ZOOM(DandelionAction.ZOOM),
-		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
-		TRANSLATE_X(DandelionAction.TRANSLATE_X),
-		TRANSLATE_Y(DandelionAction.TRANSLATE_Y),
-		TRANSLATE_Z(DandelionAction.TRANSLATE_Z),
-		ROTATE_X(DandelionAction.ROTATE_X),
-		ROTATE_Y(DandelionAction.ROTATE_Y),
-		ROTATE_Z(DandelionAction.ROTATE_Z),
-
-		CUSTOM(DandelionAction.CUSTOM);
-
-		@Override
-		public DandelionAction referenceAction() {
-			return act;
+		public DOF2Action dof2Action() {
+			return DOF2Action.valueOf(this.toString());
 		}
 
-		@Override
-		public String description() {
-			return this.referenceAction().description();
+		public DOF3Action dof3Action() {
+			return DOF3Action.valueOf(this.toString());
 		}
 
-		@Override
-		public int dofs() {
-			return act.dofs();
+		public DOF6Action dof6Action() {
+			return DOF6Action.valueOf(this.toString());
 		}
 
-		/**
-		 * Whether or not this action item is available in 2D. All actions are available in 3D.
-		 */
-		public boolean is2D() {
-			return act.is2D();
-		}
+		MotionAction	act;
 
-		DandelionAction	act;
-
-		WheelAction(DandelionAction a) {
+		DOF1Action(MotionAction a) {
 			act = a;
 		}
 	}
@@ -557,45 +485,39 @@ public interface Constants {
 	/**
 	 * DOF2 action sub-group.
 	 */
-	public enum DOF2Action implements Action<DandelionAction> {
+	public enum DOF2Action implements Action<MotionAction> {
 		// DOF_1
-		SCALE(DandelionAction.SCALE),
-		ZOOM(DandelionAction.ZOOM),
-		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
-		TRANSLATE_X(DandelionAction.TRANSLATE_X),
-		TRANSLATE_Y(DandelionAction.TRANSLATE_Y),
-		TRANSLATE_Z(DandelionAction.TRANSLATE_Z),
-		ROTATE_X(DandelionAction.ROTATE_X),
-		ROTATE_Y(DandelionAction.ROTATE_Y),
-		ROTATE_Z(DandelionAction.ROTATE_Z),
+		SCALE(MotionAction.SCALE),
+		ZOOM_ON_ANCHOR(MotionAction.ZOOM_ON_ANCHOR),
+		TRANSLATE_X(MotionAction.TRANSLATE_X),
+		TRANSLATE_Y(MotionAction.TRANSLATE_Y),
+		TRANSLATE_Z(MotionAction.TRANSLATE_Z),
+		ROTATE_X(MotionAction.ROTATE_X),
+		ROTATE_Y(MotionAction.ROTATE_Y),
+		ROTATE_Z(MotionAction.ROTATE_Z),
 
 		// DOF_2
-		DRIVE(DandelionAction.DRIVE),
-		ROTATE(DandelionAction.ROTATE),
-		ROTATE_CAD(DandelionAction.ROTATE_CAD),
-		TRANSLATE(DandelionAction.TRANSLATE),
-		MOVE_FORWARD(DandelionAction.MOVE_FORWARD),
-		MOVE_BACKWARD(DandelionAction.MOVE_BACKWARD),
-		LOOK_AROUND(DandelionAction.LOOK_AROUND),
-		SCREEN_ROTATE(DandelionAction.SCREEN_ROTATE),
-		SCREEN_TRANSLATE(DandelionAction.SCREEN_TRANSLATE),
-		ZOOM_ON_REGION(DandelionAction.ZOOM_ON_REGION),
+		DRIVE(MotionAction.DRIVE),
+		ROTATE(MotionAction.ROTATE),
+		ROTATE_CAD(MotionAction.ROTATE_CAD),
+		TRANSLATE(MotionAction.TRANSLATE),
+		MOVE_FORWARD(MotionAction.MOVE_FORWARD),
+		MOVE_BACKWARD(MotionAction.MOVE_BACKWARD),
+		LOOK_AROUND(MotionAction.LOOK_AROUND),
+		SCREEN_ROTATE(MotionAction.SCREEN_ROTATE),
+		SCREEN_TRANSLATE(MotionAction.SCREEN_TRANSLATE),
+		ZOOM_ON_REGION(MotionAction.ZOOM_ON_REGION),
 
-		CUSTOM(DandelionAction.CUSTOM);
+		CUSTOM(MotionAction.CUSTOM);
 
 		@Override
-		public DandelionAction referenceAction() {
+		public MotionAction referenceAction() {
 			return act;
 		}
 
 		@Override
 		public String description() {
 			return this.referenceAction().description();
-		}
-
-		@Override
-		public int dofs() {
-			return act.dofs();
 		}
 
 		/**
@@ -605,9 +527,27 @@ public interface Constants {
 			return act.is2D();
 		}
 
-		DandelionAction	act;
+		public DOF3Action dof3Action() {
+			return DOF3Action.valueOf(this.toString());
+		}
 
-		DOF2Action(DandelionAction a) {
+		public DOF6Action dof6Action() {
+			return DOF6Action.valueOf(this.toString());
+		}
+
+		public DOF1Action dof1Action() {
+			DOF1Action dof1Action = null;
+			try {
+				dof1Action = DOF1Action.valueOf(this.toString());
+			} catch (IllegalArgumentException e) {
+				System.out.println("non-existant DOF1Action");
+			}
+			return dof1Action;
+		}
+
+		MotionAction	act;
+
+		DOF2Action(MotionAction a) {
 			act = a;
 		}
 	}
@@ -615,49 +555,43 @@ public interface Constants {
 	/**
 	 * DOF3 action sub-group.
 	 */
-	public enum DOF3Action implements Action<DandelionAction> {
+	public enum DOF3Action implements Action<MotionAction> {
 		// DOF_1
-		SCALE(DandelionAction.SCALE),
-		ZOOM(DandelionAction.ZOOM),
-		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
-		TRANSLATE_X(DandelionAction.TRANSLATE_X),
-		TRANSLATE_Y(DandelionAction.TRANSLATE_Y),
-		TRANSLATE_Z(DandelionAction.TRANSLATE_Z),
-		ROTATE_X(DandelionAction.ROTATE_X),
-		ROTATE_Y(DandelionAction.ROTATE_Y),
-		ROTATE_Z(DandelionAction.ROTATE_Z),
+		SCALE(MotionAction.SCALE),
+		ZOOM_ON_ANCHOR(MotionAction.ZOOM_ON_ANCHOR),
+		TRANSLATE_X(MotionAction.TRANSLATE_X),
+		TRANSLATE_Y(MotionAction.TRANSLATE_Y),
+		TRANSLATE_Z(MotionAction.TRANSLATE_Z),
+		ROTATE_X(MotionAction.ROTATE_X),
+		ROTATE_Y(MotionAction.ROTATE_Y),
+		ROTATE_Z(MotionAction.ROTATE_Z),
 
 		// DOF_2
-		DRIVE(DandelionAction.DRIVE),
-		ROTATE(DandelionAction.ROTATE),
-		ROTATE_CAD(DandelionAction.ROTATE_CAD),
-		TRANSLATE(DandelionAction.TRANSLATE),
-		MOVE_FORWARD(DandelionAction.MOVE_FORWARD),
-		MOVE_BACKWARD(DandelionAction.MOVE_BACKWARD),
-		LOOK_AROUND(DandelionAction.LOOK_AROUND),
-		SCREEN_ROTATE(DandelionAction.SCREEN_ROTATE),
-		SCREEN_TRANSLATE(DandelionAction.SCREEN_TRANSLATE),
-		ZOOM_ON_REGION(DandelionAction.ZOOM_ON_REGION),
+		DRIVE(MotionAction.DRIVE),
+		ROTATE(MotionAction.ROTATE),
+		ROTATE_CAD(MotionAction.ROTATE_CAD),
+		TRANSLATE(MotionAction.TRANSLATE),
+		MOVE_FORWARD(MotionAction.MOVE_FORWARD),
+		MOVE_BACKWARD(MotionAction.MOVE_BACKWARD),
+		LOOK_AROUND(MotionAction.LOOK_AROUND),
+		SCREEN_ROTATE(MotionAction.SCREEN_ROTATE),
+		SCREEN_TRANSLATE(MotionAction.SCREEN_TRANSLATE),
+		ZOOM_ON_REGION(MotionAction.ZOOM_ON_REGION),
 
 		// DOF_3
-		TRANSLATE_XYZ(DandelionAction.TRANSLATE_XYZ),
-		ROTATE_XYZ(DandelionAction.ROTATE_XYZ),
+		TRANSLATE_XYZ(MotionAction.TRANSLATE_XYZ),
+		ROTATE_XYZ(MotionAction.ROTATE_XYZ),
 
-		CUSTOM(DandelionAction.CUSTOM);
+		CUSTOM(MotionAction.CUSTOM);
 
 		@Override
-		public DandelionAction referenceAction() {
+		public MotionAction referenceAction() {
 			return act;
 		}
 
 		@Override
 		public String description() {
 			return this.referenceAction().description();
-		}
-
-		@Override
-		public int dofs() {
-			return act.dofs();
 		}
 
 		/**
@@ -667,9 +601,33 @@ public interface Constants {
 			return act.is2D();
 		}
 
-		DandelionAction	act;
+		public DOF6Action dof6Action() {
+			return DOF6Action.valueOf(this.toString());
+		}
 
-		DOF3Action(DandelionAction a) {
+		public DOF1Action dof1Action() {
+			DOF1Action dof1Action = null;
+			try {
+				dof1Action = DOF1Action.valueOf(this.toString());
+			} catch (IllegalArgumentException e) {
+				System.out.println("non-existant DOF1Action");
+			}
+			return dof1Action;
+		}
+
+		public DOF2Action dof2Action() {
+			DOF2Action dof2Action = null;
+			try {
+				dof2Action = DOF2Action.valueOf(this.toString());
+			} catch (IllegalArgumentException e) {
+				System.out.println("non-existant DOF2Action");
+			}
+			return dof2Action;
+		}
+
+		MotionAction	act;
+
+		DOF3Action(MotionAction a) {
 			act = a;
 		}
 	}
@@ -677,55 +635,49 @@ public interface Constants {
 	/**
 	 * DOF6 action sub-group.
 	 */
-	public enum DOF6Action implements Action<DandelionAction> {
+	public enum DOF6Action implements Action<MotionAction> {
 		// DOF_1
-		SCALE(DandelionAction.SCALE),
-		ZOOM(DandelionAction.ZOOM),
-		ZOOM_ON_ANCHOR(DandelionAction.ZOOM_ON_ANCHOR),
-		TRANSLATE_X(DandelionAction.TRANSLATE_X),
-		TRANSLATE_Y(DandelionAction.TRANSLATE_Y),
-		TRANSLATE_Z(DandelionAction.TRANSLATE_Z),
-		ROTATE_X(DandelionAction.ROTATE_X),
-		ROTATE_Y(DandelionAction.ROTATE_Y),
-		ROTATE_Z(DandelionAction.ROTATE_Z),
+		SCALE(MotionAction.SCALE),
+		ZOOM_ON_ANCHOR(MotionAction.ZOOM_ON_ANCHOR),
+		TRANSLATE_X(MotionAction.TRANSLATE_X),
+		TRANSLATE_Y(MotionAction.TRANSLATE_Y),
+		TRANSLATE_Z(MotionAction.TRANSLATE_Z),
+		ROTATE_X(MotionAction.ROTATE_X),
+		ROTATE_Y(MotionAction.ROTATE_Y),
+		ROTATE_Z(MotionAction.ROTATE_Z),
 
 		// DOF_2
-		ROTATE(DandelionAction.ROTATE),
-		DRIVE(DandelionAction.DRIVE),
-		ROTATE_CAD(DandelionAction.ROTATE_CAD),
-		TRANSLATE(DandelionAction.TRANSLATE),
-		MOVE_FORWARD(DandelionAction.MOVE_FORWARD),
-		MOVE_BACKWARD(DandelionAction.MOVE_BACKWARD),
-		LOOK_AROUND(DandelionAction.LOOK_AROUND),
-		SCREEN_ROTATE(DandelionAction.SCREEN_ROTATE),
-		SCREEN_TRANSLATE(DandelionAction.SCREEN_TRANSLATE),
-		ZOOM_ON_REGION(DandelionAction.ZOOM_ON_REGION),
+		ROTATE(MotionAction.ROTATE),
+		DRIVE(MotionAction.DRIVE),
+		ROTATE_CAD(MotionAction.ROTATE_CAD),
+		TRANSLATE(MotionAction.TRANSLATE),
+		MOVE_FORWARD(MotionAction.MOVE_FORWARD),
+		MOVE_BACKWARD(MotionAction.MOVE_BACKWARD),
+		LOOK_AROUND(MotionAction.LOOK_AROUND),
+		SCREEN_ROTATE(MotionAction.SCREEN_ROTATE),
+		SCREEN_TRANSLATE(MotionAction.SCREEN_TRANSLATE),
+		ZOOM_ON_REGION(MotionAction.ZOOM_ON_REGION),
 
 		// DOF_3
-		TRANSLATE_XYZ(DandelionAction.TRANSLATE_XYZ),
-		ROTATE_XYZ(DandelionAction.ROTATE_XYZ),
+		TRANSLATE_XYZ(MotionAction.TRANSLATE_XYZ),
+		ROTATE_XYZ(MotionAction.ROTATE_XYZ),
 
 		// DOF_4
-		HINGE(DandelionAction.HINGE),
+		HINGE(MotionAction.HINGE),
 
 		// DOF_6
-		TRANSLATE_XYZ_ROTATE_XYZ(DandelionAction.TRANSLATE_XYZ_ROTATE_XYZ),
+		TRANSLATE_XYZ_ROTATE_XYZ(MotionAction.TRANSLATE_XYZ_ROTATE_XYZ),
 
-		CUSTOM(DandelionAction.CUSTOM);
+		CUSTOM(MotionAction.CUSTOM);
 
 		@Override
-		public DandelionAction referenceAction() {
+		public MotionAction referenceAction() {
 			return act;
 		}
 
 		@Override
 		public String description() {
 			return this.referenceAction().description();
-		}
-
-		@Override
-		public int dofs() {
-			return act.dofs();
 		}
 
 		/**
@@ -735,9 +687,164 @@ public interface Constants {
 			return act.is2D();
 		}
 
-		DandelionAction	act;
+		public DOF1Action dof1Action() {
+			DOF1Action dof1Action = null;
+			try {
+				dof1Action = DOF1Action.valueOf(this.toString());
+			} catch (IllegalArgumentException e) {
+				System.out.println("non-existant DOF1Action");
+			}
+			return dof1Action;
+		}
 
-		DOF6Action(DandelionAction a) {
+		public DOF2Action dof2Action() {
+			DOF2Action dof2Action = null;
+			try {
+				dof2Action = DOF2Action.valueOf(this.toString());
+			} catch (IllegalArgumentException e) {
+				System.out.println("non-existant DOF2Action");
+			}
+			return dof2Action;
+		}
+
+		public DOF3Action dof3Action() {
+			DOF3Action dof3Action = null;
+			try {
+				dof3Action = DOF3Action.valueOf(this.toString());
+			} catch (IllegalArgumentException e) {
+				System.out.println("non-existant DOF3Action");
+			}
+			return dof3Action;
+		}
+
+		MotionAction	act;
+
+		DOF6Action(MotionAction a) {
+			act = a;
+		}
+	}
+
+	public enum KeyboardAction implements Action<MotionAction> {
+		CENTER_FRAME(MotionAction.CENTER_FRAME),
+		ALIGN_FRAME(MotionAction.ALIGN_FRAME),
+		// DOF_1
+		SCALE_UP(MotionAction.SCALE_UP),
+		SCALE_DOWN(MotionAction.SCALE_DOWN),
+		ZOOM_IN_ON_ANCHOR(MotionAction.ZOOM_IN_ON_ANCHOR),
+		ZOOM_OUT_ON_ANCHOR(MotionAction.ZOOM_OUT_ON_ANCHOR),
+		TRANSLATE_UP_X(MotionAction.TRANSLATE_UP_X),
+		TRANSLATE_UP_Y(MotionAction.TRANSLATE_UP_Y),
+		TRANSLATE_UP_Z(MotionAction.TRANSLATE_UP_Z),
+		TRANSLATE_DOWN_X(MotionAction.TRANSLATE_DOWN_X),
+		TRANSLATE_DOWN_Y(MotionAction.TRANSLATE_DOWN_Y),
+		TRANSLATE_DOWN_Z(MotionAction.TRANSLATE_DOWN_Z),
+		ROTATE_UP_X(MotionAction.ROTATE_UP_X),
+		ROTATE_DOWN_X(MotionAction.ROTATE_DOWN_X),
+		ROTATE_UP_Y(MotionAction.ROTATE_UP_Y),
+		ROTATE_DOWN_Y(MotionAction.ROTATE_DOWN_Y),
+		ROTATE_UP_Z(MotionAction.ROTATE_UP_Z),
+		ROTATE_DOWN_Z(MotionAction.ROTATE_DOWN_Z),
+
+		CUSTOM(MotionAction.CUSTOM);
+
+		@Override
+		public MotionAction referenceAction() {
+			return act;
+		}
+
+		@Override
+		public String description() {
+			return this.referenceAction().description();
+		}
+
+		/**
+		 * Whether or not this action item is available in 2D. All actions are available in 3D.
+		 */
+		public boolean is2D() {
+			return act.is2D();
+		}
+
+		public DOF2Action dof2Action() {
+			return DOF2Action.valueOf(this.toString());
+		}
+
+		public DOF3Action dof3Action() {
+			return DOF3Action.valueOf(this.toString());
+		}
+
+		public DOF6Action dof6Action() {
+			return DOF6Action.valueOf(this.toString());
+		}
+
+		MotionAction	act;
+
+		KeyboardAction(MotionAction a) {
+			act = a;
+		}
+	}
+
+	// Scene
+
+	/**
+	 * Keyboard action sub-group.
+	 */
+	public enum SceneAction implements Action<GlobalAction> {
+		// KEYfRAMES
+		ADD_KEYFRAME_TO_PATH_1(GlobalAction.ADD_KEYFRAME_TO_PATH_1),
+		PLAY_PATH_1(GlobalAction.PLAY_PATH_1),
+		DELETE_PATH_1(GlobalAction.DELETE_PATH_1),
+		ADD_KEYFRAME_TO_PATH_2(GlobalAction.ADD_KEYFRAME_TO_PATH_2),
+		PLAY_PATH_2(GlobalAction.PLAY_PATH_2),
+		DELETE_PATH_2(GlobalAction.DELETE_PATH_2),
+		ADD_KEYFRAME_TO_PATH_3(GlobalAction.ADD_KEYFRAME_TO_PATH_3),
+		PLAY_PATH_3(GlobalAction.PLAY_PATH_3),
+		DELETE_PATH_3(GlobalAction.DELETE_PATH_3),
+
+		INTERPOLATE_TO_FIT(GlobalAction.INTERPOLATE_TO_FIT),
+
+		// GENERAL KEYBOARD ACTIONs
+		TOGGLE_AXES_VISUAL_HINT(GlobalAction.TOGGLE_AXES_VISUAL_HINT),
+		TOGGLE_GRID_VISUAL_HINT(GlobalAction.TOGGLE_GRID_VISUAL_HINT),
+		TOGGLE_CAMERA_TYPE(GlobalAction.TOGGLE_CAMERA_TYPE),
+		TOGGLE_ANIMATION(GlobalAction.TOGGLE_ANIMATION),
+		RESET_ANCHOR(GlobalAction.RESET_ANCHOR),
+		DISPLAY_INFO(GlobalAction.DISPLAY_INFO),
+		TOGGLE_PATHS_VISUAL_HINT(GlobalAction.TOGGLE_PATHS_VISUAL_HINT),
+		TOGGLE_PICKING_VISUAL_HINT(GlobalAction.TOGGLE_PICKING_VISUAL_HINT),
+		SHOW_ALL(GlobalAction.SHOW_ALL),
+
+		// CAMERA KEYBOARD ACTIONs
+		MOVE_LEFT(GlobalAction.MOVE_LEFT),
+		MOVE_RIGHT(GlobalAction.MOVE_RIGHT),
+		MOVE_UP(GlobalAction.MOVE_UP),
+		MOVE_DOWN(GlobalAction.MOVE_DOWN),
+		INCREASE_ROTATION_SENSITIVITY(GlobalAction.INCREASE_ROTATION_SENSITIVITY),
+		DECREASE_ROTATION_SENSITIVITY(GlobalAction.DECREASE_ROTATION_SENSITIVITY),
+		INCREASE_FLY_SPEED(GlobalAction.INCREASE_FLY_SPEED),
+		DECREASE_FLY_SPEED(GlobalAction.DECREASE_FLY_SPEED),
+
+		CUSTOM(GlobalAction.CUSTOM);
+
+		@Override
+		public GlobalAction referenceAction() {
+			return act;
+		}
+
+		@Override
+		public String description() {
+			return this.referenceAction().description();
+		}
+
+		/**
+		 * Whether or not this action item is available in 2D. All actions are available in 3D.
+		 */
+		public boolean is2D() {
+			return act.is2D();
+		}
+
+		GlobalAction	act;
+
+		SceneAction(GlobalAction a) {
 			act = a;
 		}
 	}

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import remixlab.bias.core.*;
+import remixlab.dandelion.core.Constants.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.constraint.*;
@@ -40,55 +41,55 @@ import remixlab.fpstiming.*;
  * {@link remixlab.dandelion.core.MatrixStackHelper} or through a third party matrix stack (like it's done with
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>
  */
-public abstract class AbstractScene extends AnimatorObject implements Constants, Grabber {
-	protected boolean												dottedGrid;
+public abstract class AbstractScene extends AnimatorObject implements InteractiveGrabber<GlobalAction>, Constants {
+	protected boolean					dottedGrid;
 
 	// O B J E C T S
-	protected MatrixHelper									matrixHelper;
-	protected Eye														eye;
-	protected Trackable											trck;
+	protected MatrixHelper		matrixHelper;
+	protected Eye							eye;
+	protected Trackable				trck;
 
 	// E X C E P T I O N H A N D L I N G
-	protected int														startCoordCalls;
+	protected int							startCoordCalls;
 
 	// NUMBER OF FRAMES SINCE THE FIRST SCENE WAS INSTANTIATED
-	static public long											frameCount;
+	static public long				frameCount;
 
 	// InputHandler
-	protected InputHandler									iHandler;
+	protected InputHandler		iHandler;
 
 	// D I S P L A Y F L A G S
-	protected int														visualHintMask;
+	protected int							visualHintMask;
 
 	// LEFT vs RIGHT_HAND
-	protected boolean												rightHanded;
+	protected boolean					rightHanded;
 
 	// S I Z E
-	protected int														width, height;
+	protected int							width, height;
 
 	// offscreen
 	// TODO should be protected
-	public Point														upperLeftCorner;
-	protected boolean												offscreen;
-	protected long													lastEqUpdate;
+	public Point							upperLeftCorner;
+	protected boolean					offscreen;
+	protected long						lastEqUpdate;
 
 	// FRAME SYNC requires this:
-	protected final long										deltaCount;
+	protected final long			deltaCount;
 
-	protected ActionWheeledBiMotionAgent<?>	defMotionAgent;
-	protected KeyboardAgent									defKeyboardAgent;
+	protected MotionAgent<?>	defMotionAgent;
+	protected KeyboardAgent		defKeyboardAgent;
 
 	/**
 	 * Visual hints as "the last shall be first"
 	 */
-	public final static int									AXES		= 1 << 0;
-	public final static int									GRID		= 1 << 1;
-	public final static int									PICKING	= 1 << 2;
-	public final static int									PATHS		= 1 << 3;
-	public final static int									ZOOM		= 1 << 4; // prosceneMouse.zoomOnRegion
-	public final static int									ROTATE	= 1 << 5; // prosceneMouse.screenRotate
+	public final static int		AXES		= 1 << 0;
+	public final static int		GRID		= 1 << 1;
+	public final static int		PICKING	= 1 << 2;
+	public final static int		PATHS		= 1 << 3;
+	public final static int		ZOOM		= 1 << 4; // prosceneMouse.zoomOnRegion
+	public final static int		ROTATE	= 1 << 5; // prosceneMouse.screenRotate
 
-	protected Platform											platform;
+	protected Platform				platform;
 
 	public enum Platform {
 		PROCESSING_DESKTOP, PROCESSING_ANDROID, PROCESSING_JS
@@ -132,6 +133,226 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		upperLeftCorner = new Point(0, 0);
 	}
 
+	// grabber implementation
+
+	protected Action<GlobalAction>	action;
+
+	public GlobalAction referenceAction() {
+		return action.referenceAction();
+	}
+
+	@Override
+	public void setAction(Action<GlobalAction> a) {
+		action = a;
+	}
+
+	@Override
+	public Action<GlobalAction> action() {
+		return action;
+	}
+
+	public boolean grabsInput(Agent agent) {
+		return agent.inputGrabber() == this;
+	}
+	
+	@Override
+	public void performInteraction(BogusEvent event) {
+		if (processAction(event)) //may call performInteraction(KeyboardEvent event) by setting the action() :o
+			return;
+		if (event instanceof KeyboardEvent)
+			performInteraction((KeyboardEvent) event);
+	}
+	
+	protected void performInteraction(KeyboardEvent event) {
+		Vec trans;
+		switch (referenceAction()) {
+		case ADD_KEYFRAME_TO_PATH_1:
+			eye().addKeyFrameToPath(1);
+			break;
+		case ADD_KEYFRAME_TO_PATH_2:
+			eye().addKeyFrameToPath(2);
+			break;
+		case ADD_KEYFRAME_TO_PATH_3:
+			eye().addKeyFrameToPath(3);
+			break;
+		case CUSTOM:
+			performCustomAction(event);
+			break;
+		case DECREASE_FLY_SPEED:
+			eye().setFlySpeed(eye().flySpeed() / 1.2f);
+			break;
+		case DECREASE_ROTATION_SENSITIVITY:
+			eye().setRotationSensitivity(eye().rotationSensitivity() / 1.2f);
+			break;
+		case DELETE_PATH_1:
+			eye().deletePath(1);
+			break;
+		case DELETE_PATH_2:
+			eye().deletePath(2);
+			break;
+		case DELETE_PATH_3:
+			eye().deletePath(3);
+			break;
+		case DISPLAY_INFO:
+			displayInfo();
+			break;
+		case INCREASE_FLY_SPEED:
+			eye().setFlySpeed(eye().flySpeed() * 1.2f);
+			break;
+		case INCREASE_ROTATION_SENSITIVITY:
+			eye().setRotationSensitivity(eye().rotationSensitivity() * 1.2f);
+			break;
+		case INTERPOLATE_TO_FIT:
+			eye().interpolateToFitScene();
+			break;
+		case MOVE_DOWN:
+			trans = eye().frame()
+					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? -10.0f : 10.0f * eye().flySpeed(), 0.0f));
+			if (this.is3D())
+				trans.divide(camera().frame().magnitude());
+			eye().frame().translate(trans);
+			break;
+		case MOVE_LEFT:
+			trans = new Vec(-10.0f * eye().flySpeed(), 0.0f, 0.0f);
+			if (this.is3D())
+				trans.divide(camera().frame().magnitude());
+			eye().frame().translate(eye().frame().inverseTransformOf(trans));
+			break;
+		case MOVE_RIGHT:
+			trans = new Vec(10.0f * eye().flySpeed(), 0.0f, 0.0f);
+			if (this.is3D())
+				trans.divide(camera().frame().magnitude());
+			eye().frame().translate(eye().frame().inverseTransformOf(trans));
+			break;
+		case MOVE_UP:
+			trans = eye().frame()
+					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? 10.0f : -10.0f * eye().flySpeed(), 0.0f));
+			if (this.is3D())
+				trans.divide(camera().frame().magnitude());
+			eye().frame().translate(trans);
+			break;
+		case PLAY_PATH_1:
+			eye().playPath(1);
+			break;
+		case PLAY_PATH_2:
+			eye().playPath(2);
+			break;
+		case PLAY_PATH_3:
+			eye().playPath(3);
+			break;
+		case RESET_ANCHOR:
+			eye().setAnchor(new Vec(0, 0, 0));
+			// looks horrible, but works ;)
+			eye().anchorFlag = true;
+			eye().timerFx.runOnce(1000);
+			break;
+		case SHOW_ALL:
+			showAll();
+			break;
+		case TOGGLE_ANIMATION:
+			toggleAnimation();
+			break;
+		case TOGGLE_AXES_VISUAL_HINT:
+			toggleAxesVisualHint();
+			break;
+		case TOGGLE_CAMERA_TYPE:
+			toggleCameraType();
+			break;
+		case TOGGLE_GRID_VISUAL_HINT:
+			toggleGridVisualHint();
+			break;
+		case TOGGLE_PATHS_VISUAL_HINT:
+			togglePathsVisualHint();
+			break;
+		case TOGGLE_PICKING_VISUAL_HINT:
+			togglePickingVisualhint();
+			break;
+		default:
+			break;
+		}
+	}
+
+	Action<GlobalAction>	initAction;
+	
+	@Override
+	public final boolean processAction(BogusEvent event) {
+		if(event instanceof KeyboardEvent)
+			return processAction((KeyboardEvent) event);
+		return true;
+	}
+
+	protected boolean processAction(KeyboardEvent event) {
+		System.out.println();
+		if (initAction == null) {
+			if (action() != null) {
+				return initAction(event);// start action
+			}
+		}
+		else { // initAction != null
+			if (action() != null) {
+				if (initAction == action())
+					return execAction(event);// continue action
+				else { // initAction != action() -> action changes abruptly
+					//System.out.println("case 1 in scene: action() != null && initAction != null (action changes abruptely, calls flush)");
+					flushAction(event);
+					return initAction(event);// start action
+				}
+			}
+			else {// action() == null
+				//System.out.println("case 2 in scene: action() == null && initAction != null (ends action, calls flush)");
+				flushAction(event);// stopAction
+				initAction = null;
+				setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
+				return true;
+			}
+		}
+		return true;// i.e., if initAction == action() == null -> ignore :)
+	}
+
+	protected boolean contiguous(Action<GlobalAction> action) {
+		return action.referenceAction() == GlobalAction.DECREASE_FLY_SPEED
+				|| action.referenceAction() == GlobalAction.DECREASE_ROTATION_SENSITIVITY
+				|| action.referenceAction() == GlobalAction.INCREASE_FLY_SPEED
+				|| action.referenceAction() == GlobalAction.INCREASE_ROTATION_SENSITIVITY
+				|| action.referenceAction() == GlobalAction.MOVE_DOWN || action.referenceAction() == GlobalAction.MOVE_LEFT
+				|| action.referenceAction() == GlobalAction.MOVE_RIGHT || action.referenceAction() == GlobalAction.MOVE_UP;
+	}
+
+	protected boolean initAction(KeyboardEvent event) {
+		initAction = action();
+		return contiguous(action()) ? false : true;
+	}
+
+	protected boolean execAction(KeyboardEvent event) {
+		return contiguous(action()) ? false : true;
+	}
+
+	protected void flushAction(KeyboardEvent event) {
+		System.out.println("calling flushAction on KeyboardEvent! with action: " + initAction);
+		if (!contiguous(initAction)) {
+			setAction(initAction);
+			performInteraction(event);
+		}
+	}
+
+	protected void performCustomAction(KeyboardEvent event) {
+		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass()
+				.getName());
+	}
+
+	@Override
+	public boolean checkIfGrabsInput(BogusEvent event) {
+		if (event instanceof KeyboardEvent)
+			return checkIfGrabsInput((KeyboardEvent) event);
+		return false;
+	}
+
+	protected boolean checkIfGrabsInput(KeyboardEvent event) {
+		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)",
+		// this.getClass().getName());
+		return false;
+	}
+
 	/**
 	 * Returns the upper left corner of the Scene window. It's always (0,0) for on-screen scenes, but off-screen scenes
 	 * may be defined elsewhere on a canvas.
@@ -153,6 +374,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	// AGENTs
+
+	// Keyboard
 
 	/**
 	 * Returns the default {@link remixlab.dandelion.agent.KeyboardAgent} keyboard agent.
@@ -202,11 +425,126 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
+	 * Restores the default keyboard shortcuts:
+	 * <p>
+	 * {@code 'a' -> KeyboardAction.TOGGLE_AXES_VISUAL_HINT}<br>
+	 * {@code 'f' -> KeyboardAction.TOGGLE_FRAME_VISUAL_HINT}<br>
+	 * {@code 'g' -> KeyboardAction.TOGGLE_GRID_VISUAL_HINT}<br>
+	 * {@code 'm' -> KeyboardAction.TOGGLE_ANIMATION}<br>
+	 * {@code 'e' -> KeyboardAction.TOGGLE_CAMERA_TYPE}<br>
+	 * {@code 'h' -> KeyboardAction.DISPLAY_INFO}<br>
+	 * {@code 'r' -> KeyboardAction.TOGGLE_PATHS_VISUAL_HINT}<br>
+	 * {@code 's' -> KeyboardAction.INTERPOLATE_TO_FIT}<br>
+	 * {@code 'S' -> KeyboardAction.SHOW_ALL}<br>
+	 * {@code left_arrow -> KeyboardAction.MOVE_LEFT}<br>
+	 * {@code right_arrow -> KeyboardAction.MOVE_RIGHT}<br>
+	 * {@code up_arrow -> KeyboardAction.MOVE_UP}<br>
+	 * {@code down_arrow -> KeyboardAction.MOVE_DOWN	}<br>
+	 * {@code 'CTRL' + '1' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_1}<br>
+	 * {@code 'ALT' + '1' -> KeyboardAction.DELETE_PATH_1}<br>
+	 * {@code '1' -> KeyboardAction.PLAY_PATH_1}<br>
+	 * {@code 'CTRL' + '2' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_2}<br>
+	 * {@code 'ALT' + '2' -> KeyboardAction.DELETE_PATH_2}<br>
+	 * {@code '2' -> KeyboardAction.PLAY_PATH_2}<br>
+	 * {@code 'CTRL' + '3' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_3}<br>
+	 * {@code 'ALT' + '3' -> KeyboardAction.DELETE_PATH_3}<br>
+	 * {@code '3' -> KeyboardAction.PLAY_PATH_3}<br>
+	 * 
+	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultBindings()
+	 */
+	public void setDefaultKeyboardBindings() {
+		keyboardAgent().setDefaultBindings();
+	}
+
+	/**
+	 * Set the virtual-key to play path. Defaults are java.awt.event.KeyEvent.VK_1, java.awt.event.KeyEvent.VK_2 and
+	 * java.awt.event.KeyEvent.VK_3 which will play paths 1, 2, 3, resp.
+	 */
+	public void setKeyCodeToPlayPath(int code, int path) {
+		keyboardAgent().setKeyCodeToPlayPath(code, path);
+	}
+
+	/**
+	 * Binds the key shortcut to the (Keyboard) dandelion action.
+	 */
+	public void setKeyboardBinding(Character key, SceneAction action) {
+		keyboardAgent().setBinding(key, action);
+	}
+
+	/**
+	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
+	 */
+	public void setKeyboardBinding(int mask, int vKey, SceneAction action) {
+		keyboardAgent().setBinding(mask, vKey, action);
+	}
+
+	/**
+	 * Removes key shortcut binding (if present).
+	 */
+	public void removeKeyboardBinding(Character key) {
+		keyboardAgent().removeBinding(key);
+	}
+
+	/**
+	 * Removes mask-vKey (virtual key) shortcut binding (if present).
+	 */
+	public void removeKeyboarBinding(int mask, int vKey) {
+		keyboardAgent().removeBinding(mask, vKey);
+	}
+
+	/**
+	 * Removes all shortcut bindings.
+	 */
+	public void removeKeyboardBindings() {
+		keyboardAgent().removeBindings();
+	}
+
+	/**
+	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
+	 */
+	// TODO don't forget to check those that receives a Character as a parameter
+	public boolean hasKeyboardBinding(Character key) {
+		return keyboardAgent().hasBinding(key);
+	}
+
+	/**
+	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
+	 */
+	public boolean hasKeyboardBinding(int mask, int vKey) {
+		return keyboardAgent().hasBinding(mask, vKey);
+	}
+
+	/**
+	 * Returns {@code true} if the keyboard action is bound.
+	 */
+	public boolean isKeyboardActionBound(SceneAction action) {
+		return keyboardAgent().isActionBound(action);
+	}
+
+	/**
+	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
+	 * is bound to the given shortcut.
+	 */
+	public SceneAction keyboardAction(Character key) {
+		return keyboardAgent().action(key);
+	}
+
+	/**
+	 * Returns the (Keyboard) dandelion action that is bound to the given mask-vKey (virtual key) shortcut. Returns
+	 * {@code null} if no action is bound to the given shortcut.
+	 */
+	public SceneAction keyboardAction(int mask, int vKey) {
+		return keyboardAgent().action(mask, vKey);
+	}
+
+	// Motion agent
+
+	/**
 	 * Returns the default motion agent.
 	 * 
 	 * @see #keyboardAgent()
 	 */
-	public ActionWheeledBiMotionAgent<?> motionAgent() {
+	public MotionAgent<?> motionAgent() {
 		return defMotionAgent;
 	}
 
@@ -241,9 +579,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * @see #enableMotionAgent()
 	 * @see #enableKeyboardAgent()
 	 */
-	public ActionWheeledBiMotionAgent<?> disableMotionAgent() {
+	public Agent disableMotionAgent() {
 		if (inputHandler().isAgentRegistered(motionAgent())) {
-			return (ActionWheeledBiMotionAgent<?>) inputHandler().unregisterAgent(motionAgent());
+			return inputHandler().unregisterAgent(motionAgent());
 		}
 		return motionAgent();
 	}
@@ -318,33 +656,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Same as {@code return inputHandler().grabsAnyAgentInput(grabber)}.
-	 * 
-	 * @see remixlab.bias.core.InputHandler#grabsAnyAgentInput(Grabber)
-	 */
-	public boolean grabsAnyAgentInput(Grabber grabber) {
-		return inputHandler().grabsAnyAgentInput(grabber);
-	}
-
-	/**
-	 * Implementation of the {@link remixlab.bias.core.Grabber#grabsInput(Agent)} method. Internal use. You should not use
-	 * this.
-	 */
-	@Override
-	public boolean grabsInput(Agent agent) {
-		return agent.inputGrabber() == this;
-	}
-
-	/**
-	 * Implementation of the {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} method. Internal use. You
-	 * should not use this.
-	 */
-	@Override
-	public boolean checkIfGrabsInput(BogusEvent event) {
-		return (event instanceof KeyboardEvent || event instanceof ClickEvent);
-	}
-
-	/**
 	 * Convenience function that simply returns {@code inputHandler().info()}.
 	 * 
 	 * @see #displayInfo(boolean)
@@ -373,152 +684,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 			System.out.println(info());
 		else
 			AbstractScene.showMissingImplementationWarning("displayInfo", getClass().getName());
-	}
-
-	/**
-	 * Implementation of the {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)} method. Internal use. You
-	 * should not use this.
-	 */
-	@Override
-	public void performInteraction(BogusEvent event) {
-		if (!(event instanceof ClickEvent) && !(event instanceof KeyboardEvent))
-			return;
-
-		Action<DandelionAction> a = null;
-
-		if (event instanceof ClickEvent)
-			a = (ClickAction) ((ClickEvent) event).action();
-		if (event instanceof KeyboardEvent)
-			a = (KeyboardAction) ((KeyboardEvent) event).action();
-		if (a == null)
-			return;
-		DandelionAction id = a.referenceAction();
-
-		if (!id.is2D() && this.is2D())
-			return;
-
-		execAction(id);
-	}
-
-	/**
-	 * Internal method implementing the dandelion action. Called by {@link #performInteraction(BogusEvent)}.
-	 */
-	protected void execAction(DandelionAction id) {
-		Vec trans;
-		switch (id) {
-		case ADD_KEYFRAME_TO_PATH_1:
-			eye().addKeyFrameToPath(1);
-			break;
-		case DELETE_PATH_1:
-			eye().deletePath(1);
-			break;
-		case PLAY_PATH_1:
-			eye().playPath(1);
-			break;
-		case ADD_KEYFRAME_TO_PATH_2:
-			eye().addKeyFrameToPath(2);
-			break;
-		case DELETE_PATH_2:
-			eye().deletePath(2);
-			break;
-		case PLAY_PATH_2:
-			eye().playPath(2);
-			break;
-		case ADD_KEYFRAME_TO_PATH_3:
-			eye().addKeyFrameToPath(3);
-			break;
-		case DELETE_PATH_3:
-			eye().deletePath(3);
-			break;
-		case PLAY_PATH_3:
-			eye().playPath(3);
-			break;
-		case TOGGLE_AXES_VISUAL_HINT:
-			toggleAxesVisualHint();
-			break;
-		case TOGGLE_GRID_VISUAL_HINT:
-			toggleGridVisualHint();
-			break;
-		case TOGGLE_CAMERA_TYPE:
-			toggleCameraType();
-			break;
-		case TOGGLE_ANIMATION:
-			toggleAnimation();
-			break;
-		case DISPLAY_INFO:
-			displayInfo();
-			break;
-		case TOGGLE_PATHS_VISUAL_HINT:
-			togglePathsVisualHint();
-			break;
-		case TOGGLE_PICKING_VISUAL_HINT:
-			togglePickingVisualhint();
-			break;
-		case SHOW_ALL:
-			showAll();
-			break;
-		case MOVE_LEFT:
-			trans = new Vec(-10.0f * eye().flySpeed(), 0.0f, 0.0f);
-			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
-			eye().frame().translate(eye().frame().inverseTransformOf(trans));
-			break;
-		case MOVE_RIGHT:
-			trans = new Vec(10.0f * eye().flySpeed(), 0.0f, 0.0f);
-			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
-			eye().frame().translate(eye().frame().inverseTransformOf(trans));
-			break;
-		case MOVE_UP:
-			trans = eye().frame()
-					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? 10.0f : -10.0f * eye().flySpeed(), 0.0f));
-			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
-			eye().frame().translate(trans);
-			break;
-		case MOVE_DOWN:
-			trans = eye().frame()
-					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? -10.0f : 10.0f * eye().flySpeed(), 0.0f));
-			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
-			eye().frame().translate(trans);
-			break;
-		case INCREASE_ROTATION_SENSITIVITY:
-			eye().setRotationSensitivity(eye().rotationSensitivity() * 1.2f);
-			break;
-		case DECREASE_ROTATION_SENSITIVITY:
-			eye().setRotationSensitivity(eye().rotationSensitivity() / 1.2f);
-			break;
-		case INCREASE_FLY_SPEED:
-			eye().setFlySpeed(eye().flySpeed() * 1.2f);
-			break;
-		case DECREASE_FLY_SPEED:
-			eye().setFlySpeed(eye().flySpeed() / 1.2f);
-			break;
-		case INTERPOLATE_TO_FIT:
-			eye().interpolateToFitScene();
-			break;
-		case RESET_ANCHOR:
-			eye().setAnchor(new Vec(0, 0, 0));
-			// looks horrible, but works ;)
-			eye().frame().anchorFlag = true;
-			eye().frame().timerFx.runOnce(1000);
-			break;
-		case CUSTOM:
-			performCustomAction();
-			break;
-		default:
-			System.out.println("Action cannot be handled here!");
-			break;
-		}
-	}
-
-	/**
-	 * Method invoked when the Dandelion.CUSTOM action is bound. Default implementation is empty. Override it at derived
-	 * classes.
-	 */
-	protected void performCustomAction() {
-		AbstractScene.showMissingImplementationWarning(DandelionAction.CUSTOM, this.getClass().getName());
 	}
 
 	// 1. Scene overloaded
@@ -579,7 +744,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Wrapper for {@link remixlab.dandelion.core.MatrixHelper#bind()}
 	 */
-	protected void bind() {
+	protected void bindMatrices() {
 		matrixHelper.bind();
 	}
 
@@ -902,16 +1067,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Same as setAxesVisualHint(boolean draw) which should be used instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public void setAxisVisualHint(boolean draw) {
-		setAxesVisualHint(draw);
-	}
-
-	/**
 	 * Sets the display of the axes according to {@code draw}
 	 */
 	public void setAxesVisualHint(boolean draw) {
@@ -974,7 +1129,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Called before your main drawing, e.g., P5.pre().
 	 * <p>
-	 * Handles the {@link #avatar()}, then calls {@link #bind()} and finally
+	 * Handles the {@link #avatar()}, then calls {@link #bindMatrices()} and finally
 	 * {@link remixlab.dandelion.core.Eye#updateBoundaryEquations()} if {@link #areBoundaryEquationsEnabled()}.
 	 */
 	public void preDraw() {
@@ -984,7 +1139,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 			eye().frame().setScaling(avatar().eyeFrame().scaling());
 		}
 
-		bind();
+		bindMatrices();
 		if (areBoundaryEquationsEnabled() && (eye().lastUpdate() > lastEqUpdate || lastEqUpdate == 0)) {
 			eye().updateBoundaryEquations();
 			lastEqUpdate = timingHandler().frameCount();
@@ -999,12 +1154,12 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * <li>{@link remixlab.fpstiming.TimingHandler#handle()}</li>
 	 * <li>{@link remixlab.bias.core.InputHandler#handle()}</li>
 	 * <li>{@link #proscenium()}</li>
-	 * <li> {@link #invokeDrawHandler()}</li>
+	 * <li> {@link #invokeGraphicsHandler()}</li>
 	 * <li>{@link #displayVisualHints()}.</li>
 	 * </ol>
 	 * 
 	 * @see #proscenium()
-	 * @see #invokeDrawHandler()
+	 * @see #invokeGraphicsHandler()
 	 * @see #gridVisualHint()
 	 * @see #visualHints()
 	 */
@@ -1020,7 +1175,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		// 3. Alternative use only
 		proscenium();
 		// 4. Draw external registered method (only in java sub-classes)
-		invokeDrawHandler(); // abstract
+		invokeGraphicsHandler(); // abstract
 		// 5. Display visual hints
 		displayVisualHints(); // abstract
 	}
@@ -1028,14 +1183,14 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Invokes an external drawing method (if registered). Called by {@link #postDraw()}.
 	 * <p>
-	 * Requires reflection and thus it's made abstract. See proscene.Scene for an implementation.
+	 * Requires reflection and thus default implementation is empty. See proscene.Scene for an implementation.
 	 */
-	protected boolean invokeDrawHandler() {
+	protected boolean invokeGraphicsHandler() {
 		return false;
 	}
 
 	/**
-	 * Internal use. Display various on-screen visual hints to be called from {@link #pre()} or {@link #draw()}.
+	 * Internal use. Display various on-screen visual hints to be called from {@link #postDraw()}.
 	 */
 	protected void displayVisualHints() {
 		if (gridVisualHint())
@@ -1052,9 +1207,9 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 			drawZoomWindowHint();
 		if (rotateVisualHint())
 			drawScreenRotateHint();
-		if (eye().frame().anchorFlag)
+		if (eye().anchorFlag)
 			drawAnchorHint();
-		if (eye().frame().pupFlag)
+		if (eye().pupFlag)
 			drawPointUnderPixelHint();
 	}
 
@@ -1120,13 +1275,13 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * Hides all the keyframe eye paths.
 	 * 
 	 * @see #drawEyePaths()
-	 * @see remixlab.dandelion.core.KeyFrameInterpolator#removeFramesFromAllAgentPools()
+	 * @see remixlab.dandelion.core.KeyFrameInterpolator#removePathFromMotionAgent()
 	 */
 	public void hideEyePaths() {
 		Iterator<Integer> itrtr = eye.kfi.keySet().iterator();
 		while (itrtr.hasNext()) {
 			Integer key = itrtr.next();
-			eye.keyFrameInterpolatorMap().get(key).removeFramesFromAllAgentPools();
+			eye.keyFrameInterpolatorMap().get(key).removePathFromMotionAgent();
 		}
 	}
 
@@ -1155,16 +1310,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 */
 	public void drawPath(KeyFrameInterpolator kfi, int mask, int nbFrames) {
 		drawPath(kfi, mask, nbFrames, 100);
-	}
-
-	/**
-	 * Same as drawAxes() which should be used instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public void drawAxis() {
-		drawAxes();
 	}
 
 	/**
@@ -1409,16 +1554,6 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	public abstract void drawCone(int detail, float x, float y, float r1, float r2, float h);
 
 	/**
-	 * Same as drawAxes(float length) which should be used instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public void drawAxis(float length) {
-		drawAxes(length);
-	}
-
-	/**
 	 * Draws axes of length {@code length} which origin correspond to the world coordinate system origin.
 	 * 
 	 * @see #drawGrid(float, int)
@@ -1585,19 +1720,20 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 			return;
 
 		eye().frame().stopSpinning();
-		if (avatar() instanceof InteractiveFrame)
-			((InteractiveFrame) (avatar())).stopSpinning();
+		if (avatar() instanceof GrabberFrame)
+			((GrabberFrame) (avatar())).stopSpinning();
 
 		// perform small animation ;)
 		if (eye().anyInterpolationStarted())
-			eye().stopAllInterpolations();
+			eye().stopInterpolations();
 		// eye().interpolateTo(avatar().eyeFrame());//works only when eyeFrame scaling = magnitude
-		Frame eyeFrameCopy = avatar().eyeFrame().get();
+		GrabberFrame eyeFrameCopy = avatar().eyeFrame().get();
 		eyeFrameCopy.setMagnitude(avatar().eyeFrame().scaling());
 		eye().interpolateTo(eyeFrameCopy);
 
-		if (avatar() instanceof Grabber)
-			motionAgent().setDefaultGrabber((Grabber) avatar());
+		if (avatar() instanceof GrabberFrame)
+			if (!((GrabberFrame) avatar()).isEyeFrame())
+				motionAgent().setDefaultGrabber((GrabberFrame) avatar());
 		motionAgent().disableTracking();
 	}
 
@@ -1607,9 +1743,8 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * @see #setAvatar(Trackable)
 	 */
 	public void unsetAvatar() {
-		motionAgent().setDefaultGrabber(eye().frame());
+		motionAgent().resetDefaultGrabber();
 		motionAgent().enableTracking();
-
 		trck = null;
 	}
 
@@ -1636,17 +1771,24 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		if (vp == null)
 			return;
 
+		boolean isKeyGrabber = eye().frame() == keyboardAgent().inputGrabber();
+		if (eye() != null) {
+			motionAgent().removeGrabber(eye().frame());
+			keyboardAgent().removeGrabber(eye().frame());
+		}
+
 		vp.setSceneRadius(radius());
 		vp.setSceneCenter(center());
 
 		vp.setScreenWidthAndHeight(width(), height());
 
 		eye = vp;
-
-		for (Agent agent : inputHandler().agents()) {
-			if (agent instanceof ActionWheeledBiMotionAgent)
-				agent.setDefaultGrabber(eye.frame());
-		}
+		// TODO really pending
+		motionAgent().addGrabber(eye().frame());
+		motionAgent().setDefaultGrabber(eye().frame());
+		keyboardAgent().addGrabber(eye().frame());
+		if (isKeyGrabber)
+			keyboardAgent().setDefaultGrabber(eye().frame());
 
 		showAll();
 	}
@@ -1714,7 +1856,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Same as {@code eye().frame().setConstraint(constraint)}.
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveEyeFrame#setConstraint(Constraint)
+	 * @see remixlab.dandelion.core.InteractiveFrame#setConstraint(Constraint)
 	 */
 	public void setEyeConstraint(Constraint constraint) {
 		eye().frame().setConstraint(constraint);
@@ -2086,23 +2228,13 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	}
 
 	/**
-	 * Same as {@code showDepthWarning(method, true)}.
-	 * 
-	 * @see #showDepthWarning(String, boolean)
-	 */
-	static public void showDepthWarning(String method) {
-		showDepthWarning(method, true);
-	}
-
-	/**
-	 * Display a warning that the specified method is only available with 3D (or with 2D if {@code twod} is false).
+	 * Display a warning that the specified method is only available in 3D.
 	 * 
 	 * @param method
 	 *          The method name (no parentheses)
 	 */
-	static public void showDepthWarning(String method, boolean twod) {
-		String dim = twod ? "2D." : "3D.";
-		showWarning(method + "() is not available in " + dim);
+	static public void showDepthWarning(String method) {
+		showWarning(method + "() is not available in 2d");
 	}
 
 	/**
@@ -2111,7 +2243,7 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * @param action
 	 *          the action name (no parentheses)
 	 */
-	static public void showDepthWarning(DandelionAction action) {
+	static public void showDepthWarning(MotionAction action) {
 		showWarning(action.name() + " is not available in 2D.");
 	}
 
@@ -2125,22 +2257,50 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	/**
 	 * Display a warning that the specified Action lacks implementation.
 	 */
-	static public void showMissingImplementationWarning(DandelionAction action, String theclass) {
+	static public void showMissingImplementationWarning(MotionAction action, String theclass) {
 		showWarning(action.name() + " should be implemented by your " + theclass + " derived class.");
 	}
 
 	/**
 	 * Display a warning that the specified Action can only be implemented from a relative bogus event.
 	 */
-	static public void showEventVariationWarning(DandelionAction action) {
+	static public void showEventVariationWarning(MotionAction action) {
 		showWarning(action.name() + " can only be performed using a relative event.");
+	}
+
+	/**
+	 * Display a warning that the specified method can only be implemented from a relative bogus event.
+	 */
+	static public void showEventVariationWarning(String method) {
+		showWarning(method + " can only be performed using a relative event.");
+	}
+
+	static public void showOnlyEyeWarning(MotionAction action) {
+		showOnlyEyeWarning(action, true);
 	}
 
 	/**
 	 * Display a warning that the specified Action is only available for the Eye frame.
 	 */
-	static public void showOnlyEyeWarning(DandelionAction action) {
-		showWarning(action.name() + " can only be performed by the eye (frame).");
+	static public void showOnlyEyeWarning(MotionAction action, boolean eye) {
+		if (eye)
+			showWarning(action.name() + " can only be performed when frame is attached to an eye.");
+		else
+			showWarning(action.name() + " can only be performed when frame is detached from an eye.");
+	}
+
+	static public void showOnlyEyeWarning(String method) {
+		showOnlyEyeWarning(method, true);
+	}
+
+	/**
+	 * Display a warning that the specified method is only available for a frame (but not an eye-frame).
+	 */
+	static public void showOnlyEyeWarning(String method, boolean eye) {
+		if (eye)
+			showWarning(method + "() can only be performed when frame is attached to an eye.");
+		else
+			showWarning(method + "() can only be performed when frame detached from an eye.");
 	}
 
 	/**
@@ -2150,11 +2310,27 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 		showWarning(themethod + " is not available under the " + platform + " platform.");
 	}
 
+	static public void showClickWarning(MotionAction action) {
+		showWarning(action.name() + " cannot be performed from a ClickEvent.");
+	}
+
+	static public void showMotionWarning(MotionAction action) {
+		showWarning(action.name() + " cannot be performed from a MotionEvent.");
+	}
+
+	static public void showKeyboardWarning(MotionAction action) {
+		showWarning(action.name() + " cannot only be performed from a KeyboardEvent.");
+	}
+
+	static public void showMinDOFsWarning(String themethod, int dofs) {
+		showWarning(themethod + "() requires at least a " + dofs + " dofs.");
+	}
+
 	// NICE STUFF
 
 	/**
 	 * Apply the local transformation defined by {@code frame}, i.e., respect to the frame
-	 * {@link remixlab.dandelion.core.Frame#referenceFrame()}. The Frame is first translated and then rotated around the
+	 * {@link remixlab.dandelion.geom.Frame#referenceFrame()}. The Frame is first translated and then rotated around the
 	 * new translated origin.
 	 * <p>
 	 * This method may be used to modify the modelview matrix from a Frame hierarchy. For example, with this Frame
@@ -2235,10 +2411,10 @@ public abstract class AbstractScene extends AnimatorObject implements Constants,
 	 * your own Scene object (for instance, in Processing you should just overload {@code PApplet.draw()} to define your
 	 * scene).
 	 * <p>
-	 * The eye matrices set in {@link #bind()} converts from the world to the camera coordinate systems. Thus vertices
-	 * given here can then be considered as being given in the world coordinate system. The eye is moved in this world
-	 * using the mouse. This representation is much more intuitive than a camera-centric system (which for instance is the
-	 * standard in OpenGL).
+	 * The eye matrices set in {@link #bindMatrices()} converts from the world to the camera coordinate systems. Thus
+	 * vertices given here can then be considered as being given in the world coordinate system. The eye is moved in this
+	 * world using the mouse. This representation is much more intuitive than a camera-centric system (which for instance
+	 * is the standard in OpenGL).
 	 */
 	public void proscenium() {
 	}

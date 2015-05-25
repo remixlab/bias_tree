@@ -25,7 +25,7 @@ public void setup() {
   canvas.smooth();
   scene = new Scene(this, canvas);
   scene.setPickingVisualHint(true);
-  scene.addDrawHandler(this, "mainDrawing");
+  scene.addGraphicsHandler(this, "mainDrawing");
   frame1 = new InteractiveFrame(scene);
   frame1.translate(new Vec(30, 30));
   frame2 = new InteractiveFrame(scene, frame1);
@@ -39,7 +39,7 @@ public void setup() {
   // is to be drawn (see drawing code below) to its constructor.
   auxScene = new Scene(this, auxCanvas, 0, 360);
   auxScene.setPickingVisualHint(true);
-  auxScene.addDrawHandler(this, "auxDrawing");
+  auxScene.addGraphicsHandler(this, "auxDrawing");
   auxScene.setRadius(200);
   auxScene.showAll();
 
@@ -56,9 +56,9 @@ public void setup() {
 
 public void draw() {
   handleMouse();
-  Frame.sync(frame1, auxFrame1);
-  Frame.sync(frame2, auxFrame2);
-  Frame.sync(frame3, auxFrame3);
+  GrabberFrame.sync(frame1, auxFrame1);
+  GrabberFrame.sync(frame2, auxFrame2);
+  GrabberFrame.sync(frame3, auxFrame3);
   canvas.beginDraw();
   scene.beginDraw();
   canvas.background(0);

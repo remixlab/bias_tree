@@ -18,19 +18,16 @@ import remixlab.util.HashCodeBuilder;
 /**
  * Base class of all DOF_n_Events: {@link remixlab.bias.core.BogusEvent}s defined from DOFs (degrees-of-freedom).
  * <p>
- * A MotionEvent encapsulates a {@link remixlab.bias.event.shortcut.ButtonShortcut}. MotionEvents may be relative or
+ * A MotionEvent encapsulates a {@link remixlab.bias.event.shortcut.MotionShortcut}. MotionEvents may be relative or
  * absolute (see {@link #isRelative()}, {@link #isAbsolute()}) depending whether or not they're defined from a previous
  * MotionEvent (see {@link #setPreviousEvent(MotionEvent)}). While relative motion events have {@link #distance()},
  * {@link #speed()}, and {@link #delay()}, absolute motion events don't.
  */
 public class MotionEvent extends BogusEvent {
-	// some motion actions may be performed without any button, e.g., mouse move (instead of drag).
-	public static final int	NOBUTTON	= 0;
-
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode())
-				.append(button)
+				.append(id)
 				.append(delay)
 				.append(distance)
 				.append(speed)
@@ -49,7 +46,7 @@ public class MotionEvent extends BogusEvent {
 
 		MotionEvent other = (MotionEvent) obj;
 		return new EqualsBuilder().appendSuper(super.equals(obj))
-				.append(button, other.button)
+				.append(id, other.id)
 				.append(delay, other.delay)
 				.append(distance, other.distance)
 				.append(speed, other.speed)
@@ -61,38 +58,34 @@ public class MotionEvent extends BogusEvent {
 	// http://stackoverflow.com/questions/3426843/what-is-the-default-initialization-of-an-array-in-java
 	protected long		delay;
 	protected float		distance, speed;
-	protected int			button;
 	protected boolean	rel;
 
 	/**
-	 * Constructs a MotionEvent with an "empty" {@link remixlab.bias.event.shortcut.ButtonShortcut}.
+	 * Constructs a MotionEvent with an "empty" {@link remixlab.bias.event.shortcut.MotionShortcut}.
 	 */
 	public MotionEvent() {
 		super();
-		this.button = NOBUTTON;
 	}
 
 	/**
 	 * Constructs a MotionEvent taking the given {@code modifiers} as a
-	 * {@link remixlab.bias.event.shortcut.ButtonShortcut}.
+	 * {@link remixlab.bias.event.shortcut.MotionShortcut}.
 	 */
 	public MotionEvent(int modifiers) {
-		super(modifiers);
-		this.button = NOBUTTON;
+		super(modifiers, NO_ID);
 	}
 
 	/**
 	 * Constructs a MotionEvent taking the given {@code modifiers} and {@code modifiers} as a
-	 * {@link remixlab.bias.event.shortcut.ButtonShortcut}.
+	 * {@link remixlab.bias.event.shortcut.MotionShortcut}.
 	 */
 	public MotionEvent(int modifiers, int button) {
-		super(modifiers);
-		this.button = button;
+		super(modifiers, button);
 	}
 
 	protected MotionEvent(MotionEvent other) {
 		super(other);
-		this.button = other.button;
+		this.id = other.id;
 		this.delay = other.delay;
 		this.distance = other.distance;
 		this.speed = other.speed;
@@ -105,21 +98,14 @@ public class MotionEvent extends BogusEvent {
 	}
 
 	/**
-	 * Modulate the event dofs according to {@code sens}.
+	 * Modulate the event dofs according to {@code sens}. Only meaningful if the event {@link #isAbsolute()}.
 	 */
 	public void modulate(float[] sens) {
 	}
 
-	/**
-	 * Returns the button defining the event's {@link remixlab.bias.event.shortcut.ButtonShortcut}.
-	 */
-	public int button() {
-		return button;
-	}
-
 	@Override
-	public ButtonShortcut shortcut() {
-		return new ButtonShortcut(modifiers(), button());
+	public MotionShortcut shortcut() {
+		return new MotionShortcut(modifiers(), id());
 	}
 
 	/**
@@ -174,5 +160,60 @@ public class MotionEvent extends BogusEvent {
 			else
 				speed = distance / (float) delay;
 		}
+	}
+
+	public static DOF1Event dof1Event(MotionEvent event) {
+		return dof1Event(event, true);
+	}
+
+	public static DOF1Event dof1Event(MotionEvent event, boolean fromX) {
+		if (event instanceof DOF1Event)
+			return (DOF1Event) event;
+		if (event instanceof DOF2Event)
+			return ((DOF2Event) event).dof1Event(fromX);
+		if (event instanceof DOF3Event)
+			return ((DOF3Event) event).dof2Event().dof1Event(fromX);
+		if (event instanceof DOF6Event)
+			return ((DOF6Event) event).dof3Event(fromX).dof2Event().dof1Event(fromX);
+		return null;
+	}
+
+	public static DOF2Event dof2Event(MotionEvent event) {
+		return dof2Event(event, true);
+	}
+
+	public static DOF2Event dof2Event(MotionEvent event, boolean fromX) {
+		if (event instanceof DOF1Event)
+			return null;
+		if (event instanceof DOF2Event)
+			// return ((DOF2Event) event).get();//TODO better?
+			return (DOF2Event) event;
+		if (event instanceof DOF3Event)
+			return ((DOF3Event) event).dof2Event();
+		if (event instanceof DOF6Event)
+			return ((DOF6Event) event).dof3Event(fromX).dof2Event();
+		return null;
+	}
+
+	public static DOF3Event dof3Event(MotionEvent event) {
+		return dof3Event(event, true);
+	}
+
+	public static DOF3Event dof3Event(MotionEvent event, boolean fromTranslation) {
+		if (event instanceof DOF1Event)
+			return null;
+		if (event instanceof DOF2Event)
+			return null;
+		if (event instanceof DOF3Event)
+			return (DOF3Event) event;
+		if (event instanceof DOF6Event)
+			return ((DOF6Event) event).dof3Event(fromTranslation);
+		return null;
+	}
+
+	public static DOF6Event dof6Event(MotionEvent event) {
+		if (event instanceof DOF6Event)
+			return (DOF6Event) event;
+		return null;
 	}
 }

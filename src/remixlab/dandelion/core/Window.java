@@ -16,10 +16,10 @@ import remixlab.util.Copyable;
 /**
  * 2D implementation of the {@link remixlab.dandelion.core.Eye} abstract class.
  * <p>
- * <b>Attention: </b> the {@link #frame()} {@link remixlab.dandelion.core.Frame#magnitude()} is used to scale the view.
+ * <b>Attention: </b> the {@link #frame()} {@link remixlab.dandelion.geom.Frame#magnitude()} is used to scale the view.
  * The Window magnitude is thus generally different from that of the scene. Use {@link #eyeCoordinatesOf(Vec)} and
  * {@link #worldCoordinatesOf(Vec)} (or any of the powerful Frame transformations (
- * {@link remixlab.dandelion.core.Frame#coordinatesOf(Vec)}, {@link remixlab.dandelion.core.Frame#transformOf(Vec)},
+ * {@link remixlab.dandelion.geom.Frame#coordinatesOf(Vec)}, {@link remixlab.dandelion.geom.Frame#transformOf(Vec)},
  * ...)) to convert to and from the Eye {@link #frame()} coordinate system.
  */
 public class Window extends Eye implements Copyable {
@@ -302,6 +302,9 @@ public class Window extends Eye implements Copyable {
 	@Override
 	public boolean setAnchorFromPixel(Point pixel) {
 		setAnchor(unprojectedCoordinatesOf(new Vec((float) pixel.x(), (float) pixel.y(), 0.5f)));
+		// new
+		anchorFlag = true;
+		timerFx.runOnce(1000);
 		return true;
 	}
 
@@ -313,6 +316,10 @@ public class Window extends Eye implements Copyable {
 		float cY = (float) pixel.y() - winH / 2;
 		Rect rect = new Rect((int) cX, (int) cY, (int) winW, (int) winH);
 		this.interpolateToZoomOnRegion(rect);
+		// draw hint
+		pupVec = unprojectedCoordinatesOf(new Vec(pixel.x(), pixel.y(), 0.5f));
+		pupFlag = true;
+		timerFx.runOnce(1000);
 	}
 
 	@Override

@@ -36,12 +36,24 @@ public abstract class MatrixHelper {
 	}
 
 	/**
+	 * Returns the scene this object belongs to
+	 */
+	public AbstractScene scene() {
+		return scene;
+	}
+
+	public void bind(boolean recompute) {
+		loadProjection(recompute);
+		loadModelView(recompute);
+		if (recompute)
+			cacheProjectionView();
+	}
+
+	/**
 	 * Load {@link #projection()} and {@link #modelView()} in {@link remixlab.dandelion.core.AbstractScene#preDraw()}.
 	 */
 	public void bind() {
-		loadProjection();
-		loadModelView();
-		cacheProjectionView();
+		bind(true);
 	}
 
 	/**
@@ -95,36 +107,37 @@ public abstract class MatrixHelper {
 		return projectionViewInverseMat;
 	}
 
+	// TODO doc me
+	public void loadProjection(boolean recompute) {
+		setProjection(scene.eye().getProjection(recompute));
+	}
+
 	/**
-	 * Computes the projection matrix from {@link remixlab.dandelion.core.AbstractScene#eye()} parameters and loads it the
-	 * matrix helper. Used in {@link #bind()}.
+	 * Computes the projection matrix from {@link remixlab.dandelion.core.AbstractScene#eye()} parameters and loads it
+	 * into the matrix helper. Used in {@link #bind()}.
 	 * 
 	 * @see remixlab.dandelion.core.Eye#getProjection(boolean)
 	 */
 	public void loadProjection() {
-		setProjection(scene.eye().getProjection(true));
+		loadProjection(true);
+	}
+
+	// TODO doc me
+	public void loadModelView(boolean recompute) {
+		setModelView(scene.eye().getView(recompute));
 	}
 
 	/**
-	 * Convenience function that simply calls {@code loadModelView(true)}.
-	 */
-	public void loadModelView() {
-		loadModelView(true);
-	}
-
-	/**
-	 * Computes the view matrix from {@link remixlab.dandelion.core.AbstractScene#eye()} parameters and loads it the
+	 * Computes the view matrix from {@link remixlab.dandelion.core.AbstractScene#eye()} parameters and loads it into the
 	 * matrix helper. Used in {@link #bind()}. If {@code includeView} is {@code false}
 	 * 
 	 * @see remixlab.dandelion.core.Eye#getView(boolean)
 	 */
-	public void loadModelView(boolean includeView) {
-		// TODO test also: initModelView(false); //webgl context?
-		scene.eye().computeView();
-		if (includeView)
-			setModelView(scene.eye().getView(false));
-		else
-			resetModelView();// loads identity -> only model, (excludes view)
+	public void loadModelView() {
+		loadModelView(true);
+		// other way is to compute view but load identity. Maybe usfull for a webgl context?
+		// scene.eye().computeView();
+		// resetModelView();// loads identity -> only model, (excludes view)
 	}
 
 	/**

@@ -31,7 +31,7 @@ void setup() {
   //no spinning:
   scene.camera().frame().setSpinningSensitivity(100);
   //no damping:
-  scene.camera().frame().setDampingFriction(1);
+  scene.camera().frame().setDamping(1);
 }
 
 void draw() {
@@ -42,7 +42,7 @@ void draw() {
 
 void keyPressed() {
   if (key == ' ')
-    if ( scene.mouseAgent().isButtonActionBound(Target.EYE, DOF2Action.ROTATE_CAD) )
+    if ( scene.mouseAgent().isActionBound(Target.EYE, DOF2Action.ROTATE_CAD) )
       scene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE);
     else {
       scene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE_CAD);

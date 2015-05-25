@@ -1,5 +1,5 @@
 /**************************************************************************************
- * ProScene (version 2.1.0)
+ * ProScene (version 3.0.0)
  * Copyright (c) 2010-2014 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  * 
@@ -13,11 +13,13 @@ package remixlab.proscene;
 import processing.core.*;
 import processing.opengl.*;
 import remixlab.bias.core.*;
+import remixlab.bias.event.DOF2Event;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -43,9 +45,9 @@ import java.nio.FloatBuffer;
  * {@link #proscenium()} which defines the objects in your scene. Just make sure to define the {@code PApplet.draw()}
  * method, even if it's empty. See the example <i>AlternativeUse</i>.
  * <li><b>External draw handler registration</b>. In addition (not being part of Dandelion), you can even declare an
- * external drawing method and then register it at the Scene with {@link #addDrawHandler(Object, String)}. That method
- * should return {@code void} and have one single {@code Scene} parameter. This strategy may be useful when there are
- * multiple viewers sharing the same drawing code. See the example <i>StandardCamera</i>.
+ * external drawing method and then register it at the Scene with {@link #addGraphicsHandler(Object, String)}. That
+ * method should return {@code void} and have one single {@code Scene} parameter. This strategy may be useful when there
+ * are multiple viewers sharing the same drawing code. See the example <i>StandardCamera</i>.
  * </ol>
  * <h3>Interactivity mechanisms</h3>
  * 
@@ -54,8 +56,8 @@ import java.nio.FloatBuffer;
  * {@link #motionAgent()} (which in the desktop version of proscene defaults to a {@link #mouseAgent()}):
  * <ol>
  * <li><b>The default keyboard agent</b> provides shortcuts to Dandelion keyboard actions such as {@link #drawGrid()} or
- * {@link #drawAxes()}. See {@link #setKeyboardShortcut(Character, remixlab.dandelion.core.Constants.KeyboardAction)}
- * and {@link #setKeyboardShortcut(int, int, remixlab.dandelion.core.Constants.KeyboardAction)}.
+ * {@link #drawAxes()}. See {@link #setKeyboardBinding(Character, remixlab.dandelion.core.Constants.SceneAction)} and
+ * {@link #setKeyboardBinding(int, int, remixlab.dandelion.core.Constants.SceneAction)}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame motion actions. Please refer
  * to the different {@code setMouseButtonBinding()}, {@code setMouseClickBinding()}, {@code setMouseWheelBinding()}
  * methods.
@@ -96,13 +98,18 @@ public class Scene extends AbstractScene implements PConstants {
 	// end: GWT-incompatible
 	// */
 
-	public static final String	prettyVersion	= "2.1.0";
+	public static final String	prettyVersion	= "3.0.0";
 
 	public static final String	version				= "23";
 
 	// P R O C E S S I N G A P P L E T A N D O B J E C T S
 	protected PApplet						parent;
 	protected PGraphics					pgraphics;
+
+	// Models
+	protected static int				modelCount;
+	protected PGraphics					pickingBuffer;
+	protected List<Model>				models;
 
 	// E X C E P T I O N H A N D L I N G
 	protected int								beginOffScreenDrawingCalls;
@@ -152,40 +159,49 @@ public class Scene extends AbstractScene implements PConstants {
 		// 1. P5 objects
 		parent = p;
 		pgraphics = pg;
+		offscreen = pg != p.g;
+		upperLeftCorner = offscreen ? new Point(x, y) : new Point(0, 0);
 
 		// 2. Matrix helper
-		if (pg instanceof PGraphics3D)
-			setMatrixHelper(new GLMatrixHelper(this, (PGraphics3D) pg));
-		else if (pg instanceof PGraphics2D)
-			setMatrixHelper(new GLMatrixHelper(this, (PGraphics2D) pg));
-		else
-			setMatrixHelper(new Java2DMatrixHelper(this, pg));
+		setMatrixHelper(matrixHelper(pg));
 
-		// 3. Eye
+		// 3. Models & picking buffer
+		models = new ArrayList<Model>();
+		pickingBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width,
+				pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height,
+				JAVA2D);
+
+		// 4. (TODO prev 6.) Create agents and register P5 methods
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
+			defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
+		} else {
+			defMotionAgent = new MouseAgent(this, "proscene_mouse");
+			defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
+			enableMotionAgent();
+		}
+		enableKeyboardAgent();
+		pApplet().registerMethod("pre", this);
+		pApplet().registerMethod("draw", this);
+
+		// Android: remove the following 2 lines if needed to compile the project
+		if (platform() == Platform.PROCESSING_DESKTOP)
+			pApplet().registerMethod("post", this);// -> handle picking buffer
+
+		// 5. (TODO prev 4.) Eye
 		setLeftHanded();
 		width = pg.width;
 		height = pg.height;
 		eye = is3D() ? new Camera(this) : new Window(this);
 		setEye(eye());// calls showAll();
 
-		// 4. Off-screen?
-		offscreen = pg != p.g;
-		upperLeftCorner = offscreen ? new Point(x, y) : new Point(0, 0);
-
-		// 5. Create agents and register P5 methods
-		defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
-		enableKeyboardAgent();
-		defMotionAgent = new MouseAgent(this, "proscene_mouse");
-		enableMotionAgent();
-		pApplet().registerMethod("pre", this);
-		pApplet().registerMethod("draw", this);
-		// Misc stuff:
+		// 6. Misc stuff:
 		setDottedGrid(!(platform() == Platform.PROCESSING_ANDROID || is2D()));
 		if (platform() == Platform.PROCESSING_DESKTOP || platform() == Platform.PROCESSING_ANDROID)
 			this.setNonSeqTimers();
 		// pApplet().frameRate(100);
 
-		// 6. Init should be called only once
+		// 7. Init should be called only once
 		init();
 	}
 
@@ -204,6 +220,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 */
 	public PGraphics pg() {
 		return pgraphics;
+	}
+
+	public PGraphics pickingBuffer() {
+		return pickingBuffer;
 	}
 
 	@Override
@@ -339,7 +359,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 */
 	@Override
 	public void enableMotionAgent() {
-		if (!inputHandler().isAgentRegistered(motionAgent())) {
+		if (!isMotionAgentEnabled()) {
 			inputHandler().registerAgent(motionAgent());
 			parent.registerMethod("mouseEvent", motionAgent());
 		}
@@ -353,27 +373,17 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #enableKeyboardAgent()
 	 */
 	@Override
-	public ActionWheeledBiMotionAgent<?> disableMotionAgent() {
-		if (inputHandler().isAgentRegistered(motionAgent())) {
+	public Agent disableMotionAgent() {
+		if (isMotionAgentEnabled()) {
 			parent.unregisterMethod("mouseEvent", motionAgent());
-			return (ActionWheeledBiMotionAgent<?>) inputHandler().unregisterAgent(motionAgent());
+			return inputHandler().unregisterAgent(motionAgent());
 		}
 		return motionAgent();
 	}
 
-	// MOUSE
-
 	/**
-	 * Returns the default mouse agent handling Processing mouse events. Simply returns a ProsceneMouse cast of the
-	 * {@link #motionAgent()}.
-	 * <p>
-	 * The use of {@link #motionAgent()} is preferable and encouraged since it's more general and platform independent,
-	 * i.e., it returns a "mouse agent" for the proscene desktop version or a "touch agent" for the android version.
-	 * <p>
-	 * If you plan to customize your mouse you can either use this method or one of the multiple high-level methods
-	 * provided (recommended and simpler way), such as {@code setMouseAsArcball}, {@code setMouseAsFirstPerson()},
-	 * {@code setMouseAsThirdPerson()}, {@code setMouseButtonBinding}, {@code setMouseClickBinding},
-	 * {@code setMouseWheelBinding}, etc. All those methods actually wrap the mouse agent to achieve their functionality.
+	 * Returns the default mouse agent handling Processing mouse events. If you plan to customize your mouse use this
+	 * method.
 	 * 
 	 * @see #keyboardAgent()
 	 */
@@ -381,656 +391,29 @@ public class Scene extends AbstractScene implements PConstants {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			throw new RuntimeException("Proscene mouseAgent() is not available in Android mode");
 		}
-		return (MouseAgent) motionAgent();
+		return (MouseAgent) defMotionAgent;
 	}
 
 	/**
-	 * Use {@link #enableMotionAgent()} instead.
+	 * Returns the default touch agent handling touch events. If you plan to customize your touch use this method.
+	 * 
+	 * @see #keyboardAgent()
 	 */
-	@Deprecated
-	public void enableMouseAgent() {
-		if (platform() == Platform.PROCESSING_ANDROID) {
-			AbstractScene.showPlatformVariationWarning("enableMouseAgent", platform());
-			return;
+	public DroidTouchAgent touchAgent() {
+		if (platform() == Platform.PROCESSING_DESKTOP) {
+			throw new RuntimeException("Proscene touchAgent() is not available in Desktop mode");
 		}
-		enableMotionAgent();
+		return (DroidTouchAgent) defMotionAgent;
 	}
 
-	/**
-	 * Use {@link #disableMotionAgent()} instead.
+	// TODO doc me and re-add me
+	/*
+	 * public DroidTouchAgent droidTouchAgent() { if (platform() != Platform.PROCESSING_ANDROID) { throw new
+	 * RuntimeException("Proscene droidTouchAgent() is not available in Desktop mode"); } return (DroidTouchAgent)
+	 * motionAgent(); }
 	 */
-	@Deprecated
-	public WheeledMouseAgent disableMouseAgent() {
-		return (WheeledMouseAgent) disableMotionAgent();
-	}
-
-	/**
-	 * Use {@link #isMotionAgentEnabled()} instead.
-	 */
-	@Deprecated
-	public boolean isMouseAgentEnabled() {
-		if (platform() == Platform.PROCESSING_ANDROID) {
-			AbstractScene.showPlatformVariationWarning("isMouseAgentEnabled", platform());
-			return false;
-		}
-		return isMotionAgentEnabled();
-	}
-
-	/**
-	 * Set mouse bindings as 'arcball':
-	 * <p>
-	 * 1. <b>InteractiveFrame bindings</b><br>
-	 * Left button -> ROTATE<br>
-	 * Center button -> SCALE<br>
-	 * Right button -> TRANSLATE<br>
-	 * Shift + Center button -> SCREEN_TRANSLATE<br>
-	 * Shift + Right button -> SCREEN_ROTATE<br>
-	 * <p>
-	 * 2. <b>InteractiveEyeFrame bindings</b><br>
-	 * Left button -> ROTATE<br>
-	 * Center button -> ZOOM<br>
-	 * Right button -> TRANSLATE<br>
-	 * Shift + Left button -> ZOOM_ON_REGION<br>
-	 * Shift + Center button -> SCREEN_TRANSLATE<br>
-	 * Shift + Right button -> SCREEN_ROTATE.
-	 * <p>
-	 * Also set the following (common) bindings are:
-	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
-	 * 
-	 * @see #setMouseAsFirstPerson()
-	 * @see #setMouseAsThirdPerson()
-	 */
-	public void setMouseAsArcball() {
-		mouseAgent().setAsArcball();
-	}
-
-	/**
-	 * Set mouse bindings as 'first-person':
-	 * <p>
-	 * 1. <b>InteractiveFrame bindings</b><br>
-	 * Left button -> ROTATE<br>
-	 * Center button -> SCALE<br>
-	 * Right button -> TRANSLATE<br>
-	 * Shift + Center button -> SCREEN_TRANSLATE<br>
-	 * Shift + Right button -> SCREEN_ROTATE<br>
-	 * <p>
-	 * 2. <b>InteractiveEyeFrame bindings</b><br>
-	 * Left button -> MOVE_FORWARD<br>
-	 * Center button -> LOOK_AROUND<br>
-	 * Right button -> MOVE_BACKWARD<br>
-	 * Shift + Left button -> ROLL<br>
-	 * Shift + Center button -> DRIVE<br>
-	 * Ctrl + Wheel -> ROLL<br>
-	 * Shift + Wheel -> DRIVE<br>
-	 * <p>
-	 * Also set the following (common) bindings are:
-	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
-	 * 
-	 * @see #setMouseAsArcball()
-	 * @see #setMouseAsThirdPerson()
-	 */
-	public void setMouseAsFirstPerson() {
-		mouseAgent().setAsFirstPerson();
-	}
-
-	/**
-	 * Set mouse bindings as third-person:
-	 * <p>
-	 * Left button -> MOVE_FORWARD<br>
-	 * Center button -> LOOK_AROUND<br>
-	 * Right button -> MOVE_BACKWARD<br>
-	 * Shift + Left button -> ROLL<br>
-	 * Shift + Center button -> DRIVE<br>
-	 * <p>
-	 * Also set the following (common) bindings are:
-	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveEyeFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveEyeFrame<br>
-	 * 
-	 * @see #setMouseAsArcball()
-	 * @see #setMouseAsFirstPerson()
-	 */
-	public void setMouseAsThirdPerson() {
-		mouseAgent().setAsThirdPerson();
-	}
-
-	/**
-	 * Binds the mask-button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target}
-	 * (EYE or FRAME).
-	 */
-	public void setMouseButtonBinding(Target target, int mask, int button, DOF2Action action) {
-		mouseAgent().setButtonBinding(target, mask, button, action);
-	}
-
-	/**
-	 * Binds the button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or
-	 * FRAME).
-	 */
-	public void setMouseButtonBinding(Target target, int button, DOF2Action action) {
-		mouseAgent().setButtonBinding(target, button, action);
-	}
-
-	/**
-	 * Removes the mask-button mouse shortcut binding from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeMouseButtonBinding(Target target, int mask, int button) {
-		mouseAgent().removeButtonBinding(target, mask, button);
-	}
-
-	/**
-	 * Removes the button mouse shortcut binding from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeMouseButtonBinding(Target target, int button) {
-		mouseAgent().removeButtonBinding(target, button);
-	}
-
-	/**
-	 * Returns {@code true} if the mask-button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean hasMouseButtonBinding(Target target, int mask, int button) {
-		return mouseAgent().hasButtonBinding(target, mask, button);
-	}
-
-	/**
-	 * Use {@link #hasMouseButtonBinding(remixlab.dandelion.core.Constants.Target, int, int)} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean isMouseButtonBindingInUse(Target target, int mask, int button) {
-		return hasMouseButtonBinding(target, mask, button);
-	}
-
-	/**
-	 * Returns {@code true} if the button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean hasMouseButtonBinding(Target target, int button) {
-		return mouseAgent().hasButtonBinding(target, button);
-	}
-
-	/**
-	 * Use {@link #hasMouseButtonBinding(remixlab.dandelion.core.Constants.Target, int)} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean isMouseButtonBindingInUse(Target target, int button) {
-		return hasMouseButtonBinding(target, button);
-	}
-
-	/**
-	 * Returns {@code true} if the mouse action is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean isMouseButtonActionBound(Target target, DOF2Action action) {
-		return mouseAgent().isButtonActionBound(target, action);
-	}
-
-	/**
-	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given mask-button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
-	 */
-	public DOF2Action mouseButtonAction(Target target, int mask, int button) {
-		return mouseAgent().buttonAction(target, mask, button);
-	}
-
-	/**
-	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
-	 */
-	public DOF2Action mouseButtonAction(Target target, int button) {
-		return mouseAgent().buttonAction(target, button);
-	}
-
-	// wheel here
-
-	/**
-	 * Use setMouseWheelBinding(Target, int, DOF1Action) instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public void setMouseWheelBinding(Target target, int mask, WheelAction action) {
-		DOF1Action dof1Action = null;
-		if (action != null)
-			switch (action) {
-			case CUSTOM:
-				dof1Action = DOF1Action.CUSTOM;
-				break;
-			case ROTATE_X:
-				dof1Action = DOF1Action.ROTATE_X;
-				break;
-			case ROTATE_Y:
-				dof1Action = DOF1Action.ROTATE_Y;
-				break;
-			case ROTATE_Z:
-				dof1Action = DOF1Action.ROTATE_Z;
-				break;
-			case SCALE:
-				dof1Action = DOF1Action.SCALE;
-				break;
-			case TRANSLATE_X:
-				dof1Action = DOF1Action.TRANSLATE_X;
-				break;
-			case TRANSLATE_Y:
-				dof1Action = DOF1Action.TRANSLATE_Y;
-				break;
-			case TRANSLATE_Z:
-				dof1Action = DOF1Action.TRANSLATE_Z;
-				break;
-			case ZOOM:
-				dof1Action = DOF1Action.ZOOM;
-				break;
-			case ZOOM_ON_ANCHOR:
-				dof1Action = DOF1Action.ZOOM_ON_ANCHOR;
-				break;
-			}
-		setMouseWheelBinding(target, mask, dof1Action);
-	}
-
-	/**
-	 * Use setMouseWheelBinding(Target, DOF1Action) instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public void setMouseWheelBinding(Target target, WheelAction action) {
-		DOF1Action dof1Action = null;
-		if (action != null)
-			switch (action) {
-			case CUSTOM:
-				dof1Action = DOF1Action.CUSTOM;
-				break;
-			case ROTATE_X:
-				dof1Action = DOF1Action.ROTATE_X;
-				break;
-			case ROTATE_Y:
-				dof1Action = DOF1Action.ROTATE_Y;
-				break;
-			case ROTATE_Z:
-				dof1Action = DOF1Action.ROTATE_Z;
-				break;
-			case SCALE:
-				dof1Action = DOF1Action.SCALE;
-				break;
-			case TRANSLATE_X:
-				dof1Action = DOF1Action.TRANSLATE_X;
-				break;
-			case TRANSLATE_Y:
-				dof1Action = DOF1Action.TRANSLATE_Y;
-				break;
-			case TRANSLATE_Z:
-				dof1Action = DOF1Action.TRANSLATE_Z;
-				break;
-			case ZOOM:
-				dof1Action = DOF1Action.ZOOM;
-				break;
-			case ZOOM_ON_ANCHOR:
-				dof1Action = DOF1Action.ZOOM_ON_ANCHOR;
-				break;
-			}
-		setMouseWheelBinding(target, dof1Action);
-	}
-
-	/**
-	 * Binds the mask-wheel shortcut to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or
-	 * FRAME).
-	 */
-	public void setMouseWheelBinding(Target target, int mask, DOF1Action action) {
-		mouseAgent().setWheelBinding(target, mask, action);
-	}
-
-	/**
-	 * Binds the wheel to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME).
-	 */
-	public void setMouseWheelBinding(Target target, DOF1Action action) {
-		mouseAgent().setWheelBinding(target, action);
-	}
-
-	/**
-	 * Removes the mask-wheel shortcut binding from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeMouseWheelBinding(Target target, int mask) {
-		mouseAgent().removeWheelBinding(target, mask);
-	}
-
-	/**
-	 * Removes the wheel binding from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeMouseWheelBinding(Target target) {
-		mouseAgent().removeWheelBinding(target);
-	}
-
-	/**
-	 * Returns {@code true} if the mask-wheel shortcut is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean hasMouseWheelBinding(Target target, int mask) {
-		return mouseAgent().hasWheelBinding(target, mask);
-	}
-
-	/**
-	 * Use {@link #hasMouseWheelBinding(remixlab.dandelion.core.Constants.Target, int)} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean isMouseWheelBindingInUse(Target target, int mask) {
-		return hasMouseWheelBinding(target, mask);
-	}
-
-	/**
-	 * Returns {@code true} if the wheel is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean hasMouseWheelBinding(Target target) {
-		return mouseAgent().hasWheelBinding(target);
-	}
-
-	/**
-	 * Use {@link #hasMouseWheelBinding(remixlab.dandelion.core.Constants.Target)} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean isMouseWheelBindingInUse(Target target) {
-		return hasMouseWheelBinding(target);
-	}
-
-	/**
-	 * Returns {@code true} if the mouse wheel action is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean isMouseWheelActionBound(Target target, DOF1Action action) {
-		return mouseAgent().isWheelActionBound(target, action);
-	}
-
-	/**
-	 * Returns the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given mask-wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
-	 */
-	public DOF1Action mouseWheelAction(Target target, int mask, DOF1Action action) {
-		return mouseAgent().wheelAction(target, mask, action);
-	}
-
-	/**
-	 * Returns the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
-	 */
-	public DOF1Action mouseWheelAction(Target target, DOF1Action action) {
-		return mouseAgent().wheelAction(target, action);
-	}
-
-	// mouse click
-
-	/**
-	 * Binds the mask-button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action to be performed by the
-	 * given {@code target} (EYE or FRAME).
-	 */
-	public void setMouseClickBinding(Target target, int mask, int button, int ncs, ClickAction action) {
-		mouseAgent().setClickBinding(target, mask, button, ncs, action);
-	}
-
-	/**
-	 * Binds the button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action to be performed by the given
-	 * {@code target} (EYE or FRAME).
-	 */
-	public void setMouseClickBinding(Target target, int button, int ncs, ClickAction action) {
-		mouseAgent().setClickBinding(target, button, ncs, action);
-	}
-
-	/**
-	 * Binds the single-clicked button shortcut to the (click) dandelion action to be performed by the given
-	 * {@code target} (EYE or FRAME).
-	 */
-	public void setMouseClickBinding(Target target, int button, ClickAction action) {
-		mouseAgent().setClickBinding(target, button, action);
-	}
-
-	/**
-	 * Removes the mask-button-ncs (number-of-clicks) click-shortcut binding from the
-	 * {@link remixlab.dandelion.core.InteractiveEyeFrame} (if {@code eye} is {@code true}) or from the
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
-	 */
-	public void removeMouseClickBinding(Target target, int mask, int button, int ncs) {
-		mouseAgent().removeClickBinding(target, mask, button, ncs);
-	}
-
-	/**
-	 * Removes the button-ncs (number-of-clicks) click-shortcut binding from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeMouseClickBinding(Target target, int button, int ncs) {
-		mouseAgent().removeClickBinding(target, button, ncs);
-	}
-
-	/**
-	 * Removes the single-clicked button shortcut binding from the given {@code target} (EYE or FRAME).
-	 */
-	public void removeMouseClickBinding(Target target, int button) {
-		mouseAgent().removeClickBinding(target, button);
-	}
-
-	/**
-	 * Returns {@code true} if the mask-button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target}
-	 * (EYE or FRAME).
-	 */
-	public boolean hasMouseClickBinding(Target target, int mask, int button, int ncs) {
-		return mouseAgent().hasClickBinding(target, mask, button, ncs);
-	}
-
-	/**
-	 * Use {@link #hasMouseClickBinding(remixlab.dandelion.core.Constants.Target, int, int, int)} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean isMouseClickBindingInUse(Target target, int mask, int button, int ncs) {
-		return hasMouseClickBinding(target, mask, button, ncs);
-	}
-
-	/**
-	 * Returns {@code true} if the button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target} (EYE
-	 * or FRAME).
-	 */
-	public boolean hasMouseClickBinding(Target target, int button, int ncs) {
-		return mouseAgent().hasClickBinding(target, button, ncs);
-	}
-
-	/**
-	 * Use {@link #hasMouseClickBinding(remixlab.dandelion.core.Constants.Target, int, int)} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean isMouseClickBindingInUse(Target target, int button, int ncs) {
-		return hasMouseClickBinding(target, button, ncs);
-	}
-
-	/**
-	 * Returns {@code true} if the single-clicked button shortcut is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean hasMouseClickBinding(Target target, int button) {
-		return mouseAgent().hasClickBinding(target, button);
-	}
-
-	/**
-	 * Use {@link #hasMouseClickBinding(remixlab.dandelion.core.Constants.Target, int)} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean isMouseClickBindingInUse(Target target, int button) {
-		return hasMouseClickBinding(target, button);
-	}
-
-	/**
-	 * Returns {@code true} if the mouse click action is bound to the given {@code target} (EYE or FRAME).
-	 */
-	public boolean isMouseClickActionBound(Target target, ClickAction action) {
-		return mouseAgent().isClickActionBound(target, action);
-	}
-
-	/**
-	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
-	 * the given mask-button-ncs (number-of-clicks) click-shortcut. Returns {@code null} if no action is bound to the
-	 * given shortcut.
-	 */
-	public ClickAction mouseClickAction(Target target, int mask, int button, int ncs) {
-		return mouseAgent().clickAction(target, mask, button, ncs);
-	}
-
-	/**
-	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
-	 * the given button-ncs (number-of-clicks) click-shortcut. Returns {@code null} if no action is bound to the given
-	 * shortcut.
-	 */
-	public ClickAction mouseClickAction(Target target, int button, int ncs) {
-		return mouseAgent().clickAction(target, button, ncs);
-	}
-
-	/**
-	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
-	 * the given single-clicked button shortcut. Returns {@code null} if no action is bound to the given shortcut.
-	 */
-	public ClickAction mouseClickAction(Target target, int button) {
-		return mouseAgent().clickAction(target, button);
-	}
 
 	// KEYBOARD
-
-	/**
-	 * Restores the default keyboard shortcuts:
-	 * <p>
-	 * {@code 'a' -> KeyboardAction.TOGGLE_AXES_VISUAL_HINT}<br>
-	 * {@code 'f' -> KeyboardAction.TOGGLE_FRAME_VISUAL_HINT}<br>
-	 * {@code 'g' -> KeyboardAction.TOGGLE_GRID_VISUAL_HINT}<br>
-	 * {@code 'm' -> KeyboardAction.TOGGLE_ANIMATION}<br>
-	 * {@code 'e' -> KeyboardAction.TOGGLE_CAMERA_TYPE}<br>
-	 * {@code 'h' -> KeyboardAction.DISPLAY_INFO}<br>
-	 * {@code 'r' -> KeyboardAction.TOGGLE_PATHS_VISUAL_HINT}<br>
-	 * {@code 's' -> KeyboardAction.INTERPOLATE_TO_FIT}<br>
-	 * {@code 'S' -> KeyboardAction.SHOW_ALL}<br>
-	 * {@code left_arrow -> KeyboardAction.MOVE_LEFT}<br>
-	 * {@code right_arrow -> KeyboardAction.MOVE_RIGHT}<br>
-	 * {@code up_arrow -> KeyboardAction.MOVE_UP}<br>
-	 * {@code down_arrow -> KeyboardAction.MOVE_DOWN	}<br>
-	 * {@code 'CTRL' + '1' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_1}<br>
-	 * {@code 'ALT' + '1' -> KeyboardAction.DELETE_PATH_1}<br>
-	 * {@code '1' -> KeyboardAction.PLAY_PATH_1}<br>
-	 * {@code 'CTRL' + '2' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_2}<br>
-	 * {@code 'ALT' + '2' -> KeyboardAction.DELETE_PATH_2}<br>
-	 * {@code '2' -> KeyboardAction.PLAY_PATH_2}<br>
-	 * {@code 'CTRL' + '3' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_3}<br>
-	 * {@code 'ALT' + '3' -> KeyboardAction.DELETE_PATH_3}<br>
-	 * {@code '3' -> KeyboardAction.PLAY_PATH_3}<br>
-	 * 
-	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultShortcuts()
-	 * @see #setMouseAsArcball()
-	 * @see #setMouseAsFirstPerson()
-	 * @see #setMouseAsThirdPerson()
-	 */
-	public void setDefaultKeyboardShortcuts() {
-		keyboardAgent().setDefaultShortcuts();
-	}
-
-	/**
-	 * Set the virtual-key to play path. Defaults are java.awt.event.KeyEvent.VK_1, java.awt.event.KeyEvent.VK_2 and
-	 * java.awt.event.KeyEvent.VK_3 which will play paths 1, 2, 3, resp.
-	 */
-	public void setKeyCodeToPlayPath(int code, int path) {
-		keyboardAgent().setKeyCodeToPlayPath(code, path);
-	}
-
-	/**
-	 * Binds the key shortcut to the (Keyboard) dandelion action.
-	 */
-	public void setKeyboardShortcut(Character key, KeyboardAction action) {
-		keyboardAgent().setShortcut(key, action);
-	}
-
-	/**
-	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
-	 */
-	public void setKeyboardShortcut(int mask, int vKey, KeyboardAction action) {
-		keyboardAgent().setShortcut(mask, vKey, action);
-	}
-
-	/**
-	 * Removes key shortcut binding (if present).
-	 */
-	public void removeKeyboardShortcut(Character key) {
-		keyboardAgent().removeShortcut(key);
-	}
-
-	/**
-	 * Removes mask-vKey (virtual key) shortcut binding (if present).
-	 */
-	public void removeKeyboardShortcut(int mask, int vKey) {
-		keyboardAgent().removeShortcut(mask, vKey);
-	}
-
-	/**
-	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
-	 */
-	public boolean hasKeyboardShortcut(Character key) {
-		return keyboardAgent().hasShortcut(key);
-	}
-
-	/**
-	 * Use {@link #hasKeyboardShortcut(Character)} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean isKeyboardShortcutInUse(Character key) {
-		return hasKeyboardShortcut(key);
-	}
-
-	/**
-	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
-	 */
-	public boolean hasKeyboardShortcut(int mask, int vKey) {
-		return keyboardAgent().hasShortcut(mask, vKey);
-	}
-
-	/**
-	 * Returns {@code true} if the keyboard action is bound.
-	 */
-	public boolean isKeyboardActionBound(KeyboardAction action) {
-		return keyboardAgent().isActionBound(action);
-	}
-
-	/**
-	 * Use {@link #hasKeyboardShortcut(int, int)} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean isKeyboardShortcutInUse(int mask, int vKey) {
-		return hasKeyboardShortcut(mask, vKey);
-	}
-
-	/**
-	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
-	 * is bound to the given shortcut.
-	 */
-	public KeyboardAction keyboardAction(Character key) {
-		return keyboardAgent().action(key);
-	}
-
-	/**
-	 * Returns the (Keyboard) dandelion action that is bound to the given mask-vKey (virtual key) shortcut. Returns
-	 * {@code null} if no action is bound to the given shortcut.
-	 */
-	public KeyboardAction keyboardAction(int mask, int vKey) {
-		return keyboardAgent().action(mask, vKey);
-	}
 
 	/**
 	 * Enables Proscene keyboard handling through the {@link #keyboardAgent()}.
@@ -1194,7 +577,7 @@ public class Scene extends AbstractScene implements PConstants {
 	// DRAW METHOD REG
 
 	@Override
-	protected boolean invokeDrawHandler() {
+	protected boolean invokeGraphicsHandler() {
 		// 3. Draw external registered method
 		if (drawHandlerObject != null) {
 			try {
@@ -1218,10 +601,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @param methodName
 	 *          the method to execute in the object handler class
 	 * 
-	 * @see #removeDrawHandler()
-	 * @see #invokeDrawHandler()
+	 * @see #removeGraphicsHandler()
+	 * @see #invokeGraphicsHandler()
 	 */
-	public void addDrawHandler(Object obj, String methodName) {
+	public void addGraphicsHandler(Object obj, String methodName) {
 		try {
 			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
 			drawHandlerObject = obj;
@@ -1235,10 +618,10 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Unregisters the 'draw' handler method (if any has previously been added to the Scene).
 	 * 
-	 * @see #addDrawHandler(Object, String)
-	 * @see #invokeDrawHandler()
+	 * @see #addGraphicsHandler(Object, String)
+	 * @see #invokeGraphicsHandler()
 	 */
-	public void removeDrawHandler() {
+	public void removeGraphicsHandler() {
 		drawHandlerMethod = null;
 		drawHandlerObject = null;
 		drawHandlerMethodName = null;
@@ -1247,10 +630,10 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Returns {@code true} if the user has registered a 'draw' handler method to the Scene and {@code false} otherwise.
 	 * 
-	 * @see #addDrawHandler(Object, String)
-	 * @see #invokeDrawHandler()
+	 * @see #addGraphicsHandler(Object, String)
+	 * @see #invokeGraphicsHandler()
 	 */
-	public boolean hasDrawHandler() {
+	public boolean hasGraphicsHandler() {
 		if (drawHandlerMethodName == null)
 			return false;
 		return true;
@@ -1402,6 +785,20 @@ public class Scene extends AbstractScene implements PConstants {
 		postDraw();
 	}
 
+	// Android: remove this method if needed to compile the project
+	public void post() {
+		// draw into picking buffer
+		pickingBuffer().beginDraw();
+		pickingBuffer().pushStyle();
+		pickingBuffer().background(0);
+		if (models().size() > 0)
+			drawModels(pickingBuffer());
+		pickingBuffer().popStyle();
+		pickingBuffer().endDraw();
+		if (models().size() > 0)
+			pickingBuffer().loadPixels();
+	}
+
 	/**
 	 * Only if the Scene {@link #isOffscreen()}. This method should be called just after the {@link #pg()} beginDraw()
 	 * method. Simply calls {@link #preDraw()}.
@@ -1417,20 +814,23 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #isOffscreen()
 	 */
 	public void beginDraw() {
-		if (isOffscreen()) {
-			if (beginOffScreenDrawingCalls != 0)
-				throw new RuntimeException("There should be exactly one beginDraw() call followed by a "
-						+ "endDraw() and they cannot be nested. Check your implementation!");
-			beginOffScreenDrawingCalls++;
+		if (!isOffscreen())
+			throw new RuntimeException(
+					"begin(/end)Draw() should be used only within offscreen scenes. Check your implementation!");
 
-			if ((width != pg().width) || (height != pg().height)) {
-				width = pg().width;
-				height = pg().height;
-				eye().setScreenWidthAndHeight(width, height);
-			}
+		if (beginOffScreenDrawingCalls != 0)
+			throw new RuntimeException("There should be exactly one beginDraw() call followed by a "
+					+ "endDraw() and they cannot be nested. Check your implementation!");
 
-			preDraw();
+		beginOffScreenDrawingCalls++;
+
+		if ((width != pg().width) || (height != pg().height)) {
+			width = pg().width;
+			height = pg().height;
+			eye().setScreenWidthAndHeight(width, height);
 		}
+
+		preDraw();
 	}
 
 	/**
@@ -1445,6 +845,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #isOffscreen()
 	 */
 	public void endDraw() {
+		if (!isOffscreen())
+			throw new RuntimeException(
+					"(begin/)endDraw() should be used only within offscreen scenes. Check your implementation!");
+
 		beginOffScreenDrawingCalls--;
 
 		if (beginOffScreenDrawingCalls != 0)
@@ -1453,6 +857,171 @@ public class Scene extends AbstractScene implements PConstants {
 							+ "endDraw() and they cannot be nested. Check your implementation!");
 
 		postDraw();
+	}
+
+	/**
+	 * Returns all the models handled by the scene.
+	 * 
+	 * @see #drawModels()
+	 * @see #drawModels(PGraphics)
+	 * @see #addModel(Model)
+	 * @see #removeModel(Model)
+	 */
+	public List<Model> models() {
+		return models;
+	}
+
+	/**
+	 * Add the {@code model} into the scene. Does nothing if the current models belongs to the scene.
+	 * 
+	 * @see #models()
+	 * @see #drawModels()
+	 * @see #drawModels(PGraphics)
+	 * @see #removeModel(Model)
+	 */
+	public boolean addModel(Model model) {
+		if (model == null)
+			return false;
+		if (models().contains(model))
+			return false;
+		if (models().size() == 0)
+			pickingBuffer().loadPixels();
+		boolean result = models().add(model);
+		if (model instanceof ModelObject)
+			for (Agent agent : inputHandler().agents())
+				agent.addGrabber(model);
+		return result;
+	}
+
+	/**
+	 * Returns true if scene has {@code model} and false otherwise.
+	 */
+	public boolean hasModel(Model model) {
+		return models().contains(model);
+	}
+
+	/**
+	 * Remove the {@code model} from the scene.
+	 * 
+	 * @see #models()
+	 * @see #drawModels()
+	 * @see #drawModels(PGraphics)
+	 * @see #addModel(Model)
+	 */
+	public boolean removeModel(Model model) {
+		return models().remove(model);
+	}
+
+	public void removeModels() {
+		models().clear();
+	}
+
+	/**
+	 * Draw all scene {@link #models()}. Shader chaining may be accomplished by {@link #drawModels(PGraphics)}.
+	 * 
+	 * @see #models()
+	 * @see #drawModels(PGraphics)
+	 * @see #addModel(Model)
+	 * @see #removeModel(Model)
+	 */
+	public void drawModels() {
+		for (Model model : models())
+			model.draw(pg());
+	}
+
+	/**
+	 * Draw all {@link #models()} into the given pgraphics without calling {@code pgraphics.beginDraw()/endDraw()} (which
+	 * should be called manually).
+	 * <p>
+	 * This method allows shader chaining.
+	 * 
+	 * @param pgraphics
+	 * 
+	 * @see #models()
+	 * @see #drawModels()
+	 * @see #addModel(Model)
+	 * @see #removeModel(Model)
+	 */
+	public void drawModels(PGraphics pgraphics) {
+		// 1. Set pgraphics matrices using a custom MatrixHelper
+		bindMatrices(pgraphics);
+
+		// 2. Draw all models into pgraphics
+		for (Model model : models())
+			model.draw(pgraphics);
+	}
+
+	/**
+	 * Returns a new matrix helper for the given {@code pgraphics}. Rarely needed.
+	 * <p>
+	 * Note that the current scene matrix helper may be retrieved by {@link #matrixHelper()}.
+	 * 
+	 * @see #matrixHelper()
+	 * @see #setMatrixHelper(MatrixHelper)
+	 * @see #drawModels()
+	 * @see #drawModels(PGraphics)
+	 * @see #applyWorldTransformation(PGraphics, Frame)
+	 */
+	public MatrixHelper matrixHelper(PGraphics pgraphics) {
+		return (pgraphics instanceof processing.opengl.PGraphicsOpenGL) ? new GLMatrixHelper(this,
+				(PGraphicsOpenGL) pgraphics) : new Java2DMatrixHelper(this, pgraphics);
+	}
+
+	/**
+	 * Same as {@code matrixHelper(pgraphics).bind(false)}. Set the {@code pgraphics} matrices by calling
+	 * {@link remixlab.dandelion.core.MatrixHelper#loadProjection(boolean)} and
+	 * {@link remixlab.dandelion.core.MatrixHelper#loadModelView(boolean)} (only makes sense when {@link #pg()} is
+	 * different than {@code pgraphics}).
+	 * <p>
+	 * This method doesn't perform any computation, but simple retrieve the current matrices whose actual computation has
+	 * been updated in {@link #preDraw()}.
+	 */
+	public void bindMatrices(PGraphics pgraphics) {
+		if (this.pg() == pgraphics)
+			return;
+		matrixHelper(pgraphics).bind(false);
+	}
+
+	/**
+	 * Apply the local transformation defined by the given {@code frame} on the given {@code pgraphics}. This method
+	 * doesn't call {@link #bindMatrices(PGraphics)} which should be called manually (only makes sense when {@link #pg()}
+	 * is different than {@code pgraphics}). Needed by {@link #applyWorldTransformation(PGraphics, Frame)}.
+	 * 
+	 * @see #applyWorldTransformation(PGraphics, Frame)
+	 * @see #bindMatrices(PGraphics)
+	 */
+	public void applyTransformation(PGraphics pgraphics, Frame frame) {
+		if (pgraphics instanceof PGraphics3D) {
+			pgraphics.translate(frame.translation().vec[0], frame.translation().vec[1], frame.translation().vec[2]);
+			pgraphics.rotate(frame.rotation().angle(), ((Quat) frame.rotation()).axis().vec[0],
+					((Quat) frame.rotation()).axis().vec[1], ((Quat) frame.rotation()).axis().vec[2]);
+			pgraphics.scale(frame.scaling(), frame.scaling(), frame.scaling());
+		}
+		else {
+			pgraphics.translate(frame.translation().x(), frame.translation().y());
+			pgraphics.rotate(frame.rotation().angle());
+			pgraphics.scale(frame.scaling(), frame.scaling());
+		}
+	}
+
+	/**
+	 * Apply the global transformation defined by the given {@code frame} on the given {@code pgraphics}. This method
+	 * doesn't call {@link #bindMatrices(PGraphics)} which should be called manually (only makes sense when {@link #pg()}
+	 * is different than {@code pgraphics}). Needed by {@link remixlab.proscene.Model#draw(PGraphics)}
+	 * 
+	 * @see remixlab.proscene.Model#draw(PGraphics)
+	 * @see #applyTransformation(PGraphics, Frame)
+	 * @see #bindMatrices(PGraphics)
+	 */
+	public void applyWorldTransformation(PGraphics pgraphics, Frame frame) {
+		Frame refFrame = frame.referenceFrame();
+		if (refFrame != null) {
+			applyWorldTransformation(pgraphics, refFrame);
+			applyTransformation(pgraphics, frame);
+		}
+		else {
+			applyTransformation(pgraphics, frame);
+		}
 	}
 
 	// SCREENDRAWING
@@ -1924,7 +1493,7 @@ public class Scene extends AbstractScene implements PConstants {
 						popModelView();
 					}
 			}
-			kfi.addFramesToAllAgentPools();
+			kfi.addPathToMotionAgent();
 			pg().strokeWeight(pg().strokeWeight / 2f);
 			drawPickingTargets(true);
 		}
@@ -2093,13 +1662,14 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void drawPickingTargets(boolean keyFrame) {
 		pg().pushStyle();
-		for (Grabber mg : inputHandler().globalGrabberList()) {
-			if (mg instanceof InteractiveFrame) {
-				InteractiveFrame iF = (InteractiveFrame) mg;// downcast needed
+		for (Grabber mg : motionAgent().grabbers()) {
+			if (mg instanceof GrabberFrame) {
+				GrabberFrame iF = (GrabberFrame) mg;// downcast needed
 				// frames
-				if (!(iF.isInEyePath() ^ keyFrame)) {
+				if (!(iF.isInEyePath() ^ keyFrame) && (!iF.isEyeFrame())) {
 					Vec center = projectedCoordinatesOf(iF.position());
-					if (grabsAnyAgentInput(mg)) {
+					// if (iF.grabsInput(motionAgent())) {
+					if (motionAgent().isInputGrabber(mg)) {
 						pg().pushStyle();
 						pg().strokeWeight(2 * pg().strokeWeight);
 						pg().colorMode(HSB, 255);
@@ -2229,21 +1799,32 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	protected void drawPointUnderPixelHint() {
 		pg().pushStyle();
-		Vec v = eye().projectedCoordinatesOf(eye().frame().pupVec);
+		Vec v = eye().projectedCoordinatesOf(eye().pupVec);
 		pg().stroke(255);
 		pg().strokeWeight(3);
 		drawCross(v.vec[0], v.vec[1], 30);
 		pg().popStyle();
 	}
 
+	// TODO check these comments:
 	@Override
 	protected void drawScreenRotateHint() {
-		pg().pushStyle();
-		if (!(motionAgent() instanceof MouseAgent))
+		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
-		float p1x = mouseAgent().lastEvent().x() - originCorner().x();
-		float p1y = mouseAgent().lastEvent().y() - originCorner().y();
-		Vec p2 = eye().projectedCoordinatesOf(anchor());
+		if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
+			return;
+
+		pg().pushStyle();
+		float p1x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;
+		float p1y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;
+
+		Vec p2 = new Vec();
+		if (motionAgent().inputGrabber() instanceof GrabberFrame) {
+			if (((GrabberFrame) motionAgent().inputGrabber()).isEyeFrame())
+				p2 = eye().projectedCoordinatesOf(anchor());
+			else
+				p2 = eye().projectedCoordinatesOf(((GrabberFrame) mouseAgent().inputGrabber()).position());
+		}
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
 		pg().strokeWeight(2);
@@ -2253,15 +1834,23 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().popStyle();
 	}
 
+	// TODO check these comments:
 	@Override
 	protected void drawZoomWindowHint() {
-		if (!(motionAgent() instanceof MouseAgent))
+		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
+		if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
+			return;
+		InteractiveFrame iFrame = (InteractiveFrame) motionAgent().inputGrabber();
+		if (!(iFrame.initMotionEvent instanceof DOF2Event))
+			return;
+
 		pg().pushStyle();
-		float p1x = mouseAgent().pressEvent().x() - originCorner().x();
-		float p1y = mouseAgent().pressEvent().y() - originCorner().y();
-		float p2x = mouseAgent().lastEvent().x() - originCorner().x();
-		float p2y = mouseAgent().lastEvent().y() - originCorner().y();
+		DOF2Event init = (DOF2Event) iFrame.initMotionEvent;
+		float p1x = init.x() /*- originCorner().x()*/;
+		float p1y = init.y() /*- originCorner().y()*/;
+		float p2x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;
+		float p2y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
 		pg().strokeWeight(2);
@@ -2276,72 +1865,122 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().popStyle();
 	}
 
-	// decide whether or not to include these in the 2.1 release:
-	/*
-	 * 
-	 * // PVector <-> toVec
-	 * 
-	 * public void drawArrow(PVector from, PVector to, float radius) { drawArrow(Scene.toVec(from), Scene.toVec(to),
-	 * radius); }
-	 * 
-	 * public void drawFilledCircle(PVector center, float radius) { drawFilledCircle(Scene.toVec(center), radius); }
-	 * 
-	 * public void drawHollowCylinder(int detail, float w, float h, PVector m, PVector n) { drawHollowCylinder(detail, w,
-	 * h, Scene.toVec(m), Scene.toVec(n)); }
-	 * 
-	 * public void drawFilledSquare(PVector center, float edge) { drawFilledSquare(Scene.toVec(center), edge); }
-	 * 
-	 * public void drawShooterTarget(PVector center, float length) { drawShooterTarget(Scene.toVec(center), length); }
-	 * 
-	 * public boolean isPointVisible(PVector point) { return isPointVisible(Scene.toVec(point)); }
-	 * 
-	 * public Eye.Visibility ballVisibility(PVector center, float radius) { return ballVisibility(Scene.toVec(center),
-	 * radius); }
-	 * 
-	 * public Eye.Visibility boxVisibility(PVector p1, PVector p2) { return boxVisibility(Scene.toVec(p1),
-	 * Scene.toVec(p2)); }
-	 * 
-	 * public boolean isFaceBackFacing(PVector a, PVector b, PVector c) { return isFaceBackFacing(Scene.toVec(a),
-	 * Scene.toVec(b), Scene.toVec(c)); }
-	 * 
-	 * public PVector worldPointUnderPixel(Point pixel) { return Scene.toPVector(pointUnderPixel(pixel)); }
-	 * 
-	 * public PVector eyeProjectedCoordinatesOf(PVector src) { return
-	 * Scene.toPVector(projectedCoordinatesOf(Scene.toVec(src))); }
-	 * 
-	 * public PVector eyeUnprojectedCoordinatesOf(PVector src) { return
-	 * Scene.toPVector(unprojectedCoordinatesOf(Scene.toVec(src))); }
-	 * 
-	 * public PVector sceneCenter() { return Scene.toPVector(center()); }
-	 * 
-	 * public void setCenter(PVector center) { setCenter(Scene.toVec(center)); }
-	 * 
-	 * public PVector sceneAnchor() { return Scene.toPVector(anchor()); }
-	 * 
-	 * public void setAnchor(PVector anchor) { setAnchor(Scene.toVec(anchor)); }
-	 * 
-	 * public void setBoundingBox(PVector min, PVector max) { setBoundingBox(Scene.toVec(min),Scene.toVec(max)); }
-	 * 
-	 * public void setBoundingRect(PVector min, PVector max) { setBoundingRect(Scene.toVec(min), Scene.toVec(max)); }
-	 * 
-	 * //PMatrix <-> toMat
-	 * 
-	 * public void applyModelView(PMatrix2D source) { applyModelView(Scene.toMat(source)); }
-	 * 
-	 * public void applyModelView(PMatrix3D source) { applyModelView(Scene.toMat(source)); }
-	 * 
-	 * public void applyProjection(PMatrix3D source) { applyProjection(Scene.toMat(source)); }
-	 * 
-	 * public PMatrix2D modelViewMatrix2D() { return Scene.toPMatrix2D(modelView()); }
-	 * 
-	 * public PMatrix3D modelViewMatrix() { return Scene.toPMatrix(modelView()); }
-	 * 
-	 * public PMatrix3D projectionMatrix() { return Scene.toPMatrix(projection()); }
-	 * 
-	 * public void setModelView(PMatrix2D source) { setModelView(Scene.toMat(source)); }
-	 * 
-	 * public void setModelView(PMatrix3D source) { setModelView(Scene.toMat(source)); }
-	 * 
-	 * public void setProjection(PMatrix3D source) { setProjection(Scene.toMat(source)); } //
-	 */
+	// decide whether or not to include these in the 3.0 release:
+
+	// PVector <-> toVec
+
+	// public void drawArrow(PVector from, PVector to, float radius) {
+	// drawArrow(Scene.toVec(from), Scene.toVec(to),
+	// radius);
+	// }
+	//
+	// public void drawFilledCircle(PVector center, float radius) {
+	// drawFilledCircle(Scene.toVec(center), radius);
+	// }
+	//
+	// public void drawHollowCylinder(int detail, float w, float h, PVector m, PVector n) {
+	// drawHollowCylinder(detail, w,
+	// h, Scene.toVec(m), Scene.toVec(n));
+	// }
+	//
+	// public void drawFilledSquare(PVector center, float edge) {
+	// drawFilledSquare(Scene.toVec(center), edge);
+	// }
+	//
+	// public void drawShooterTarget(PVector center, float length) {
+	// drawShooterTarget(Scene.toVec(center), length);
+	// }
+	//
+	// public boolean isPointVisible(PVector point) {
+	// return isPointVisible(Scene.toVec(point));
+	// }
+	//
+	// public Eye.Visibility ballVisibility(PVector center, float radius) {
+	// return ballVisibility(Scene.toVec(center),
+	// radius);
+	// }
+	//
+	// public Eye.Visibility boxVisibility(PVector p1, PVector p2) {
+	// return boxVisibility(Scene.toVec(p1),
+	// Scene.toVec(p2));
+	// }
+	//
+	// public boolean isFaceBackFacing(PVector a, PVector b, PVector c) {
+	// return isFaceBackFacing(Scene.toVec(a),
+	// Scene.toVec(b), Scene.toVec(c));
+	// }
+	//
+	// public PVector worldPointUnderPixel(Point pixel) {
+	// return Scene.toPVector(pointUnderPixel(pixel));
+	// }
+	//
+	// public PVector eyeProjectedCoordinatesOf(PVector src) {
+	// return Scene.toPVector(projectedCoordinatesOf(Scene.toVec(src)));
+	// }
+	//
+	// public PVector eyeUnprojectedCoordinatesOf(PVector src) {
+	// return Scene.toPVector(unprojectedCoordinatesOf(Scene.toVec(src)));
+	// }
+	//
+	// public PVector sceneCenter() {
+	// return Scene.toPVector(center());
+	// }
+	//
+	// public void setCenter(PVector center) {
+	// setCenter(Scene.toVec(center));
+	// }
+	//
+	// public PVector sceneAnchor() {
+	// return Scene.toPVector(anchor());
+	// }
+	//
+	// public void setAnchor(PVector anchor) {
+	// setAnchor(Scene.toVec(anchor));
+	// }
+	//
+	// public void setBoundingBox(PVector min, PVector max) {
+	// setBoundingBox(Scene.toVec(min), Scene.toVec(max));
+	// }
+	//
+	// public void setBoundingRect(PVector min, PVector max) {
+	// setBoundingRect(Scene.toVec(min), Scene.toVec(max));
+	// }
+	//
+	// // PMatrix <-> toMat
+	//
+	// public void applyModelView(PMatrix2D source) {
+	// applyModelView(Scene.toMat(source));
+	// }
+	//
+	// public void applyModelView(PMatrix3D source) {
+	// applyModelView(Scene.toMat(source));
+	// }
+	//
+	// public void applyProjection(PMatrix3D source) {
+	// applyProjection(Scene.toMat(source));
+	// }
+	//
+	// public PMatrix2D modelViewMatrix2D() {
+	// return Scene.toPMatrix2D(modelView());
+	// }
+	//
+	// public PMatrix3D modelViewMatrix() {
+	// return Scene.toPMatrix(modelView());
+	// }
+	//
+	// public PMatrix3D projectionMatrix() {
+	// return Scene.toPMatrix(projection());
+	// }
+	//
+	// public void setModelView(PMatrix2D source) {
+	// setModelView(Scene.toMat(source));
+	// }
+	//
+	// public void setModelView(PMatrix3D source) {
+	// setModelView(Scene.toMat(source));
+	// }
+	//
+	// public void setProjection(PMatrix3D source) {
+	// setProjection(Scene.toMat(source));
+	// }
 }

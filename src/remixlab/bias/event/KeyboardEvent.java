@@ -12,8 +12,6 @@ package remixlab.bias.event;
 
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.shortcut.KeyboardShortcut;
-import remixlab.util.EqualsBuilder;
-import remixlab.util.HashCodeBuilder;
 
 /**
  * A keyboard event is a {@link remixlab.bias.core.BogusEvent} specialization that encapsulates a
@@ -28,48 +26,19 @@ import remixlab.util.HashCodeBuilder;
  * CameraCustomization example.
  */
 public class KeyboardEvent extends BogusEvent {
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode())
-				.append(key)
-				.append(vKey)
-				.toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (obj == this)
-			return true;
-		if (obj.getClass() != getClass())
-			return false;
-
-		KeyboardEvent other = (KeyboardEvent) obj;
-		return new EqualsBuilder().appendSuper(super.equals(obj))
-				.append(key, other.key)
-				.append(vKey, other.vKey)
-				.isEquals();
-	}
-
-	protected char	key;
-	protected int		vKey;
-
 	/**
 	 * Constructs a keyboard event with the <b>modifiers</b> and <b>vk</b> defining its
 	 * {@link remixlab.bias.event.shortcut.KeyboardShortcut}.
 	 */
 	public KeyboardEvent(Integer modifiers, Integer vk) {
-		super(modifiers);
-		this.vKey = vk;
+		super(modifiers, vk);
 	}
 
 	/**
 	 * Constructs a keyboard event with <b>c</b> defining its {@link remixlab.bias.event.shortcut.KeyboardShortcut}.
 	 */
-	public KeyboardEvent(Character c) {
-		super();
-		this.key = c;
+	public KeyboardEvent(Integer vk) {
+		super(NO_MODIFIER_MASK, vk);
 	}
 
 	/**
@@ -77,8 +46,6 @@ public class KeyboardEvent extends BogusEvent {
 	 */
 	protected KeyboardEvent(KeyboardEvent other) {
 		super(other);
-		this.key = other.key;
-		this.vKey = other.vKey;
 	}
 
 	@Override
@@ -88,26 +55,6 @@ public class KeyboardEvent extends BogusEvent {
 
 	@Override
 	public KeyboardShortcut shortcut() {
-		// default char value: http://docs.oracle.com/javase/specs/jls/se7/html/jls-4.html#jls-4.12.5
-		if (key == '\u0000')
-			return new KeyboardShortcut(modifiers(), keyCode());
-		else
-			return new KeyboardShortcut(key());
-	}
-
-	/**
-	 * Returns the character key defining the events keyboard shortcut. It may be null meaning that the keyboard is of the
-	 * shape: {@link #modifiers()} mask + {@link #keyCode()}
-	 */
-	public char key() {
-		return key;
-	}
-
-	/**
-	 * Returns the key code defining the events keyboard shortcut. It may be null meaning that the keyboard is of the
-	 * shape: {@link #key()}.
-	 */
-	public int keyCode() {
-		return vKey;
+		return new KeyboardShortcut(modifiers(), id());
 	}
 }

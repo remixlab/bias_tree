@@ -17,6 +17,7 @@
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
+import remixlab.dandelion.core.Constants.*;
 
 Scene scene;
 InteractiveFrame iFrame;
@@ -26,7 +27,7 @@ String renderer = P3D;
 
 public void setup() {
   size(640, 360, renderer);		
-  scene = new Scene(this);	
+  scene = new Scene(this); 
   iFrame = new InteractiveFrame(scene);
   iFrame.setGrabsInputThreshold(scene.radius()/4, true);
   iFrame.translate(new Vec(50, 50));

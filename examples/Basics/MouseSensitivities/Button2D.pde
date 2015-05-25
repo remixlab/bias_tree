@@ -26,7 +26,7 @@ public abstract class Button2D extends GrabberObject {
     textFont(myFont);
     textAlign(LEFT);
     setText(t);
-    scene.motionAgent().addInPool(this);
+    scene.motionAgent().addGrabber(this);
   }
 
   public void setText(String text) {
@@ -49,10 +49,10 @@ public abstract class Button2D extends GrabberObject {
   }
 
   @Override
-  public boolean checkIfGrabsInput(BogusEvent event) {
+  public boolean checkIfGrabsInput(DOF2Event event) {
     if (event instanceof DOF2Event) {
-      float x = ((DOF2Event)event).x();
-      float y = ((DOF2Event)event).y();
+      float x = event.x();
+      float y = event.y();
       return ((position.x <= x) && (x <= position.x + myWidth) && (position.y <= y) && (y <= position.y + myHeight));
     }
     else

@@ -1,5 +1,5 @@
 /**************************************************************************************
- * ProScene (version 2.1.0)
+ * ProScene (version 3.0.0)
  * Copyright (c) 2010-2014 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  * 
@@ -11,7 +11,7 @@
 package remixlab.proscene;
 
 import processing.core.PApplet;
-import remixlab.dandelion.agent.WheeledMouseAgent;
+import remixlab.dandelion.agent.*;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
 
@@ -19,63 +19,53 @@ import remixlab.bias.event.*;
  * Proscene {@link remixlab.dandelion.agent.WheeledMouseAgent}.
  */
 public class MouseAgent extends WheeledMouseAgent {
+	protected DOF2Event	currentEvent, prevEvent;
+	protected boolean		move, press, drag, release;
+
 	public MouseAgent(Scene scn, String n) {
+
 		super(scn, n);
-		left = PApplet.LEFT;
-		center = PApplet.CENTER;
-		right = PApplet.RIGHT;
-		setAsArcball();
+		LEFT_ID = PApplet.LEFT;
+		CENTER_ID = PApplet.CENTER;
+		RIGHT_ID = PApplet.RIGHT;
+		dragToArcball();
 		// registration requires a call to PApplet.registerMethod("mouseEvent", motionAgent());
 		// which is done in Scene.enableMotionAgent(), which also register the agent at the inputHandler
 		inputHandler().unregisterAgent(this);
 	}
 
 	/**
-	 * Hack to deal with this: https://github.com/processing/processing/issues/1693 is to override all the following so
-	 * that:
-	 * <p>
-	 * <ol>
-	 * <li>Whenever B_CENTER appears B_ALT should be present.</li>
-	 * <li>Whenever B_RIGHT appears B_META should be present.</li>
-	 * </ol>
-	 */
-	@Override
-	public int buttonModifiersFix(int m, int button) {
-		int mask = m;
-		// ALT
-		if (button == center)
-			mask = (BogusEvent.ALT | m);
-		// META
-		else if (button == right)
-			mask = (BogusEvent.META | m);
-		return mask;
-	}
-
-	/**
 	 * Processing mouseEvent method to be registered at the PApplet's instance.
 	 */
 	public void mouseEvent(processing.event.MouseEvent e) {
-		if (e.getAction() == processing.event.MouseEvent.MOVE) {
-			move(new DOF2Event(lastEvent(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y()));
+		move = e.getAction() == processing.event.MouseEvent.MOVE;
+		press = e.getAction() == processing.event.MouseEvent.PRESS;
+		drag = e.getAction() == processing.event.MouseEvent.DRAG;
+		release = e.getAction() == processing.event.MouseEvent.RELEASE;
+		if (move || press || drag || release) {
+			currentEvent = new DOF2Event(prevEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
+					e.getModifiers(), move ? BogusEvent.NO_ID : e.getButton());
+			if (move && (pickingMode() == PickingMode.MOVE))
+				updateTrackedGrabber(currentEvent);
+			if (move || press || drag)
+				handle(currentEvent);
+			if (release)
+				flush(currentEvent);
+			prevEvent = currentEvent.get();
+			return;
 		}
-		if (e.getAction() == processing.event.MouseEvent.PRESS) {
-			press(new DOF2Event(lastEvent(), e.getX() - scene.originCorner().x(),
-					e.getY() - scene.originCorner().y(), e.getModifiers(), e.getButton()));
-		}
-		if (e.getAction() == processing.event.MouseEvent.DRAG) {
-			drag(new DOF2Event(lastEvent(), e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
-					e.getModifiers(), e.getButton()));
-		}
-		if (e.getAction() == processing.event.MouseEvent.RELEASE) {
-			release(new DOF2Event(lastEvent(), e.getX() - scene.originCorner().x(), e.getY()
-					- scene.originCorner().y(), e.getModifiers(), e.getButton()));
-		}
-		if (e.getAction() == processing.event.MouseEvent.WHEEL) {
-			handle(new DOF1Event(e.getCount(), e.getModifiers(), MotionEvent.NOBUTTON));
+		if (e.getAction() == processing.event.MouseEvent.WHEEL) {// e.getAction() = MouseEvent.WHEEL = 8
+			handle(new DOF1Event(e.getCount(), e.getModifiers(), WHEEL_ID));
+			return;
 		}
 		if (e.getAction() == processing.event.MouseEvent.CLICK) {
-			handle(new ClickEvent(e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
-					e.getModifiers(), e.getButton(), e.getCount()));
+			ClickEvent bogusClickEvent = new ClickEvent(e.getX() - scene.originCorner().x(), e.getY()
+					- scene.originCorner().y(),
+					e.getModifiers(), e.getButton(), e.getCount());
+			if (pickingMode() == PickingMode.CLICK)
+				updateTrackedGrabber(bogusClickEvent);
+			handle(bogusClickEvent);
+			return;
 		}
 	}
 }

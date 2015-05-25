@@ -17,6 +17,7 @@ package remixlab.bias.core;
 public class EventGrabberTuple {
 	protected BogusEvent	event;
 	protected Grabber			grabber;
+	protected Action<?>		action;
 
 	/**
 	 * Constructs <{@link remixlab.bias.core.BogusEvent},{@link remixlab.bias.core.Grabber}> tuple.
@@ -34,14 +35,15 @@ public class EventGrabberTuple {
 	/**
 	 * @param e
 	 *          {@link remixlab.bias.core.BogusEvent}
-	 * @param a
-	 *          {@link remixlab.bias.core.Action}
 	 * @param g
 	 *          {@link remixlab.bias.core.Grabber}
+	 * @param a
+	 *          {@link remixlab.bias.core.Action}
 	 */
-	public EventGrabberTuple(BogusEvent e, Action<?> a, Grabber g) {
-		this(e, g);
-		event.setAction(a);
+	public <E extends Enum<E>> EventGrabberTuple(BogusEvent e, InteractiveGrabber<E> g, Action<E> a) {
+		event = e;
+		grabber = g;
+		action = a;
 	}
 
 	/**
@@ -49,8 +51,12 @@ public class EventGrabberTuple {
 	 * 
 	 * @return true if succeeded and false otherwise.
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public boolean perform() {
 		if (grabber != null) {
+			if (grabber instanceof InteractiveGrabber) {
+				((InteractiveGrabber) grabber).setAction(action);
+			}
 			grabber.performInteraction(event);
 			return true;
 		}
@@ -69,12 +75,5 @@ public class EventGrabberTuple {
 	 */
 	public Grabber grabber() {
 		return grabber;
-	}
-
-	/**
-	 * Returns the events action.
-	 */
-	public Action<?> action() {
-		return event.action();
 	}
 }

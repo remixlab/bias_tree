@@ -63,7 +63,7 @@ import remixlab.util.*;
  * along a path.
  * <p>
  * <b>Attention:</b> If a Constraint is attached to the {@link #frame()} (see
- * {@link remixlab.dandelion.core.Frame#constraint()}), it should be deactivated before {@link #interpolationStarted()},
+ * {@link remixlab.dandelion.geom.Frame#constraint()}), it should be deactivated before {@link #interpolationStarted()},
  * otherwise the interpolated motion (computed as if there was no constraint) will probably be erroneous.
  */
 public class KeyFrameInterpolator implements Copyable {
@@ -135,11 +135,11 @@ public class KeyFrameInterpolator implements Copyable {
 					.isEquals();
 		}
 
-		protected Vec		tgPVec;
-		protected float	tm;
-		protected Frame	frm;
+		protected Vec						tgPVec;
+		protected float					tm;
+		protected GrabberFrame	frm;
 
-		KeyFrame(Frame fr, float t) {
+		KeyFrame(GrabberFrame fr, float t) {
 			tm = t;
 			frm = fr;
 		}
@@ -165,7 +165,7 @@ public class KeyFrameInterpolator implements Copyable {
 			return tm;
 		}
 
-		Frame frame() {
+		GrabberFrame frame() {
 			return frm;
 		}
 
@@ -182,7 +182,7 @@ public class KeyFrameInterpolator implements Copyable {
 	protected class KeyFrame3D extends KeyFrame {
 		protected Quat	tgQuat;
 
-		KeyFrame3D(Frame fr, float t) {
+		KeyFrame3D(GrabberFrame fr, float t) {
 			super(fr, t);
 		}
 
@@ -210,7 +210,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * 2D KeyFrame internal class.
 	 */
 	protected class KeyFrame2D extends KeyFrame {
-		KeyFrame2D(Frame fr, float t) {
+		KeyFrame2D(GrabberFrame fr, float t) {
 			super(fr, t);
 		}
 
@@ -269,7 +269,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * @see #KeyFrameInterpolator(AbstractScene, Frame)
 	 */
 	public KeyFrameInterpolator(AbstractScene scn) {
-		this(scn, new Frame(scn));
+		this(scn, new Frame());
 	}
 
 	/**
@@ -332,8 +332,7 @@ public class KeyFrameInterpolator implements Copyable {
 		for (KeyFrame element : otherKFI.keyFrameList) {
 			KeyFrame kf = (KeyFrame) element.get();
 			this.keyFrameList.add(kf);
-			if (kf.frame() instanceof InteractiveFrame)
-				this.scene.inputHandler().removeFromAllAgentPools((InteractiveFrame) kf.frame());
+			scene.motionAgent().removeGrabber(kf.frame());
 		}
 
 		this.currentFrame0 = keyFrameList.listIterator(otherKFI.currentFrame0.nextIndex());
@@ -354,6 +353,13 @@ public class KeyFrameInterpolator implements Copyable {
 	@Override
 	public KeyFrameInterpolator get() {
 		return new KeyFrameInterpolator(this);
+	}
+
+	/**
+	 * Returns the scene this object belongs to
+	 */
+	public AbstractScene scene() {
+		return scene;
 	}
 
 	/**
@@ -390,7 +396,8 @@ public class KeyFrameInterpolator implements Copyable {
 	}
 
 	/**
-	 * Returns the number of keyFrames used by the interpolation. Use {@link #addKeyFrame(Frame)} to add new keyFrames.
+	 * Returns the number of keyFrames used by the interpolation. Use {@link #addKeyFrame(GrabberFrame)} to add new
+	 * keyFrames.
 	 */
 	public int numberOfKeyFrames() {
 		return keyFrameList.size();
@@ -496,16 +503,6 @@ public class KeyFrameInterpolator implements Copyable {
 	}
 
 	/**
-	 * Use {@link #interpolationStarted()} instead.
-	 * 
-	 * @deprecated Please refrain from using this method, it will be removed from future releases.
-	 */
-	@Deprecated
-	public boolean interpolationIsStarted() {
-		return interpolationStarted();
-	}
-
-	/**
 	 * Calls {@link #startInterpolation()} or {@link #stopInterpolation()}, depending on {@link #interpolationStarted()} .
 	 */
 	public void toggleInterpolation() {
@@ -583,7 +580,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * Use {@link #setInterpolationTime(float)} before calling this method to change the starting
 	 * {@link #interpolationTime()}.
 	 * <p>
-	 * <b>Attention:</b> The keyFrames must be defined (see {@link #addKeyFrame(Frame, float)}) before you
+	 * <b>Attention:</b> The keyFrames must be defined (see {@link #addKeyFrame(GrabberFrame, float)}) before you
 	 * startInterpolation(), or else the interpolation will naturally immediately stop.
 	 */
 	public void startInterpolation(int myPeriod) {
@@ -625,10 +622,10 @@ public class KeyFrameInterpolator implements Copyable {
 	/**
 	 * Appends a new keyFrame to the path.
 	 * <p>
-	 * Same as {@link #addKeyFrame(Frame, float)}, except that the {@link #keyFrameTime(int)} is set to the previous
-	 * {@link #keyFrameTime(int)} plus one second (or 0.0 if there is no previous keyFrame).
+	 * Same as {@link #addKeyFrame(GrabberFrame, float)}, except that the {@link #keyFrameTime(int)} is set to the
+	 * previous {@link #keyFrameTime(int)} plus one second (or 0.0 if there is no previous keyFrame).
 	 */
-	public void addKeyFrame(Frame frame) {
+	public void addKeyFrame(GrabberFrame frame) {
 		float time;
 
 		if (keyFrameList.isEmpty())
@@ -650,7 +647,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * allows for dynamic paths, where keyFrame can be edited, even during the interpolation. {@code null} frame
 	 * references are silently ignored. The {@link #keyFrameTime(int)} has to be monotonously increasing over keyFrames.
 	 */
-	public void addKeyFrame(Frame frame, float time) {
+	public void addKeyFrame(GrabberFrame frame, float time) {
 		if (frame == null)
 			return;
 
@@ -685,20 +682,19 @@ public class KeyFrameInterpolator implements Copyable {
 		if (interpolationStarted())
 			stopInterpolation();
 		KeyFrame kf = keyFrameList.remove(index);
-		if (kf.frm instanceof InteractiveFrame)
-			scene.inputHandler().removeFromAllAgentPools((InteractiveFrame) kf.frm);
+		scene.motionAgent().removeGrabber(kf.frm);
 		setInterpolationTime(firstTime());
 	}
 
 	/**
-	 * Removes all keyFrames from the path. Calls {@link #removeFramesFromAllAgentPools()}. The
-	 * {@link #numberOfKeyFrames()} is set to 0.
+	 * Removes all keyFrames from the path. Calls {@link #removePathFromMotionAgent()}. The {@link #numberOfKeyFrames()}
+	 * is set to 0.
 	 * 
-	 * @see #removeFramesFromAllAgentPools()
+	 * @see #removePathFromMotionAgent()
 	 */
 	public void deletePath() {
 		stopInterpolation();
-		removeFramesFromAllAgentPools();
+		removePathFromMotionAgent();
 		keyFrameList.clear();
 		pathIsValid = false;
 		valuesAreValid = false;
@@ -709,24 +705,22 @@ public class KeyFrameInterpolator implements Copyable {
 	 * Removes all the Frames from all the pools of the agents registered at the
 	 * {@link remixlab.dandelion.core.AbstractScene#inputHandler()}.
 	 * 
-	 * @see #addFramesToAllAgentPools()
+	 * @see #addPathToMotionAgent()
 	 */
-	public void removeFramesFromAllAgentPools() {
+	public void removePathFromMotionAgent() {
 		for (int i = 0; i < keyFrameList.size(); ++i)
-			if (keyFrameList.get(i).frame() instanceof InteractiveFrame)
-				scene.inputHandler().removeFromAllAgentPools((InteractiveFrame) keyFrameList.get(i).frame());
+			scene.motionAgent().removeGrabber(keyFrameList.get(i).frame());
 	}
 
 	/**
 	 * Re-adds all the Frames to all the pools of the agents registered at the
 	 * {@link remixlab.dandelion.core.AbstractScene#inputHandler()}.
 	 * 
-	 * @see #removeFramesFromAllAgentPools()
+	 * @see #removePathFromMotionAgent()
 	 */
-	public void addFramesToAllAgentPools() {
+	public void addPathToMotionAgent() {
 		for (int i = 0; i < keyFrameList.size(); ++i)
-			if (keyFrameList.get(i).frame() instanceof InteractiveFrame)
-				scene.inputHandler().addInAllAgentPools((InteractiveFrame) keyFrameList.get(i).frame());
+			scene.motionAgent().addGrabber(keyFrameList.get(i).frame());
 	}
 
 	protected void updateModifiedFrameValues() {
@@ -776,9 +770,11 @@ public class KeyFrameInterpolator implements Copyable {
 				updateModifiedFrameValues();
 
 			if (keyFrameList.get(0) == keyFrameList.get(keyFrameList.size() - 1))
-				path.add(new Frame(scene, keyFrameList.get(0).position(), keyFrameList.get(0).orientation(), keyFrameList
-						.get(0)
-						.magnitude()));
+				// TODO experimenting really
+				path.add(new Frame(keyFrameList.get(0).position(), keyFrameList.get(0).orientation(),
+						keyFrameList
+								.get(0)
+								.magnitude()));
 			else {
 				KeyFrame[] kf = new KeyFrame[4];
 				kf[0] = keyFrameList.get(0);
@@ -797,7 +793,7 @@ public class KeyFrameInterpolator implements Copyable {
 					pvec2 = Vec.add(pvec2, kf[2].tgP());
 
 					for (int step = 0; step < nbSteps; ++step) {
-						Frame frame = new Frame(scene);
+						Frame frame = new Frame();
 						float alpha = step / (float) nbSteps;
 						frame.setPosition(Vec.add(kf[1].position(), Vec.multiply(
 								Vec.add(kf[1].tgP(), Vec.multiply(Vec.add(pvec1, Vec.multiply(pvec2, alpha)), alpha)), alpha)));
@@ -824,7 +820,7 @@ public class KeyFrameInterpolator implements Copyable {
 					kf[3] = (index < keyFrameList.size()) ? keyFrameList.get(index) : null;
 				}
 				// Add last KeyFrame
-				path.add(new Frame(scene, kf[1].position(), kf[1].orientation(), kf[1].magnitude()));
+				path.add(new Frame(kf[1].position(), kf[1].orientation(), kf[1].magnitude()));
 			}
 			pathIsValid = true;
 		}
@@ -852,12 +848,12 @@ public class KeyFrameInterpolator implements Copyable {
 	 * <p>
 	 * See also {@link #keyFrameTime(int)}. {@code index} has to be in the range 0..{@link #numberOfKeyFrames()}-1.
 	 * <p>
-	 * <b>Note:</b> If this keyFrame was defined using a reference to a Frame (see {@link #addKeyFrame(Frame, float)} the
-	 * current referenced Frame state is returned.
+	 * <b>Note:</b> If this keyFrame was defined using a reference to a Frame (see
+	 * {@link #addKeyFrame(GrabberFrame, float)} the current referenced Frame state is returned.
 	 */
-	public Frame keyFrame(int index) {
+	public GrabberFrame keyFrame(int index) {
 		/**
-		 * AbstractKeyFrame kf = keyFr.get(index); return new RefFrame(kf.orientation(), kf.position(), kf.magnitude());
+		 * AbstractKeyFrame kf = keyFr.get(index); return new Frame(kf.orientation(), kf.position(), kf.magnitude());
 		 */
 		return keyFrameList.get(index).frame();
 	}

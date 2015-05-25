@@ -10,7 +10,6 @@
 
 package remixlab.dandelion.constraint;
 
-import remixlab.dandelion.core.Frame;
 import remixlab.dandelion.geom.*;
 import remixlab.util.Util;
 

@@ -29,12 +29,12 @@ import java.util.ArrayList;
  * <p>
  * Stereo display is possible on devices with quad buffer capabilities (with {@code PERSPECTIVE} {@link #type()} only).
  * <p>
- * <b>Attention: </b> the {@link #frame()} {@link remixlab.dandelion.core.Frame#magnitude()} is used to set the
+ * <b>Attention: </b> the {@link #frame()} {@link remixlab.dandelion.geom.Frame#magnitude()} is used to set the
  * {@link #fieldOfView()} or compute {@link #getBoundaryWidthHeight()} if the camera {@link #type()} is
  * {@code PERSPECTIVE} or {@code ORTHOGRAPHIC}, respectively. The Camera magnitude is thus generally different from that
  * of the scene. Use {@link #eyeCoordinatesOf(Vec)} and {@link #worldCoordinatesOf(Vec)} (or any of the powerful Frame
- * transformations ( {@link remixlab.dandelion.core.Frame#coordinatesOf(Vec)},
- * {@link remixlab.dandelion.core.Frame#transformOf(Vec)}, ...)) to convert to and from the Eye {@link #frame()}
+ * transformations ( {@link remixlab.dandelion.geom.Frame#coordinatesOf(Vec)},
+ * {@link remixlab.dandelion.geom.Frame#transformOf(Vec)}, ...)) to convert to and from the Eye {@link #frame()}
  * coordinate system.
  */
 public class Camera extends Eye implements Copyable {
@@ -88,18 +88,22 @@ public class Camera extends Eye implements Copyable {
 	};
 
 	// C a m e r a p a r a m e t e r s
-	private float	zNearCoef;
-	private float	zClippingCoef;
-	private Type	tp;								// PERSPECTIVE or ORTHOGRAPHIC
+	private float		zNearCoef;
+	private float		zClippingCoef;
+	private Type		tp;										// PERSPECTIVE or ORTHOGRAPHIC
 
 	// S t e r e o p a r a m e t e r s
-	private float	IODist;						// inter-ocular distance, in meters
-	private float	focusDist;					// in scene units
-	private float	physicalDist2Scrn;	// in meters
-	private float	physicalScrnWidth;	// in meters
+	private float		IODist;								// inter-ocular distance, in meters
+	private float		focusDist;							// in scene units
+	private float		physicalDist2Scrn;			// in meters
+	private float		physicalScrnWidth;			// in meters
 
 	// rescale ortho when anchor changes
-	private float	rapK	= 1;
+	private float		rapK	= 1;
+
+	// Inverse the direction of an horizontal mouse motion. Depends on the projected
+	// screen orientation of the vertical axis when the mouse button is pressed.
+	public boolean	cadRotationIsReversed;
 
 	/**
 	 * Main constructor.
@@ -293,7 +297,7 @@ public class Camera extends Eye implements Copyable {
 
 	/**
 	 * Sets the vertical {@link #fieldOfView()} of the Camera (in radians). The {@link #fieldOfView()} is encapsulated as
-	 * the camera {@link remixlab.dandelion.core.Frame#magnitude()} using the following expression:
+	 * the camera {@link remixlab.dandelion.geom.Frame#magnitude()} using the following expression:
 	 * {@code frame().setMagnitude((float) Math.tan(fov / 2.0f))}.
 	 * <p>
 	 * Note that {@link #focusDistance()} is set to {@link #sceneRadius()} / tan( {@link #fieldOfView()}/2) by this
@@ -840,6 +844,9 @@ public class Camera extends Eye implements Copyable {
 		Vec pup = pointUnderPixel(pixel);
 		if (pup != null) {
 			setAnchor(pup);
+			// new animation
+			anchorFlag = true;
+			timerFx.runOnce(1000);
 			return true;
 		}
 		return false;
@@ -919,7 +926,7 @@ public class Camera extends Eye implements Copyable {
 	 * @see #getBoundaryWidthHeight(float[])
 	 */
 	@Override
-	protected float rescalingOrthoFactor() {
+	public float rescalingOrthoFactor() {
 		float toAnchor = this.distanceToAnchor();
 		return (2 * (Util.zero(toAnchor) ? Util.FLOAT_EPS : toAnchor) * rapK / screenHeight());
 	}
@@ -927,7 +934,7 @@ public class Camera extends Eye implements Copyable {
 	@Override
 	public void setAnchor(Vec rap) {
 		float prevDist = distanceToAnchor();
-		frame().setAnchor(rap);
+		this.anchorPnt = rap;
 		float newDist = distanceToAnchor();
 		if ((Util.nonZero(prevDist)) && (Util.nonZero(newDist)))
 			rapK *= prevDist / newDist;
@@ -1107,6 +1114,11 @@ public class Camera extends Eye implements Copyable {
 		}
 
 		interpolateToZoomOnTarget(target);
+
+		// draw hint
+		pupVec = target;
+		pupFlag = true;
+		timerFx.runOnce(1000);
 	}
 
 	protected void interpolateToZoomOnTarget(Vec target) {
@@ -1116,17 +1128,20 @@ public class Camera extends Eye implements Copyable {
 		float coef = 0.1f;
 
 		if (anyInterpolationStarted())
-			stopAllInterpolations();
+			stopInterpolations();
 
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
 		interpolationKfi.addKeyFrame(
-				new Frame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame()
+				new GrabberFrame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame()
 						.orientation(), frame().magnitude()), 0.4f);
 
 		// Small hack: attach a temporary frame to take advantage of lookAt without modifying frame
-		tempFrame = new InteractiveEyeFrame(this);
-		InteractiveEyeFrame originalFrame = frame();
+		tempFrame = new GrabberFrame(scene);
+		// TODO experimental
+		// InteractiveFrame originalFrame = frame();
+		GrabberFrame originalFrame = frame();
+		// InteractiveFrame originalFrame = (InteractiveFrame)frame();
 		tempFrame.setPosition(Vec.add(Vec.multiply(frame().position(), coef), Vec.multiply(target, (1.0f - coef))));
 		tempFrame.setOrientation(frame().orientation().get());
 		tempFrame.setMagnitude(frame().magnitude());

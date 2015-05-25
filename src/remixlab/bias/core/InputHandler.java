@@ -91,11 +91,7 @@ public class InputHandler {
 	 * @see #agentsArray()
 	 */
 	public List<Agent> agents() {
-		List<Agent> list = new ArrayList<Agent>();
-		for (Agent agent : agents.values())
-			list.add(agent);
-
-		return list;
+		return new ArrayList<Agent>(agents.values());
 	}
 
 	/**
@@ -149,7 +145,7 @@ public class InputHandler {
 	/**
 	 * Unregisters all agents from the handler.
 	 */
-	public void unregisterAllAgents() {
+	public void unregisterAgents() {
 		agents.clear();
 	}
 
@@ -168,10 +164,7 @@ public class InputHandler {
 	 */
 	public boolean enqueueEventTuple(EventGrabberTuple eventTuple) {
 		if (!eventTupleQueue.contains(eventTuple))
-			if (!eventTuple.event().isNull()) {
-				eventTupleQueue.add(eventTuple);
-				return true;
-			}
+			return eventTupleQueue.add(eventTuple);
 		return false;
 	}
 
@@ -188,90 +181,7 @@ public class InputHandler {
 	/**
 	 * Clears the event queue. Nothing is executed.
 	 */
-	public void removeAllEventTuples() {
+	public void removeEventTuples() {
 		eventTupleQueue.clear();
-	}
-
-	/**
-	 * Returns {@code true} if the given {@code grabber} is in the {@code agent} pool and {@code false} otherwise.
-	 */
-	public boolean isInAgentPool(Grabber grabber, Agent agent) {
-		if (agent == null)
-			return false;
-		return agent.isInPool(grabber);
-	}
-
-	/**
-	 * Adds {@code grabber} to the {@code agent} {@link remixlab.bias.core.Agent#pool()}.
-	 */
-	public boolean addInAgentPool(Grabber grabber, Agent agent) {
-		if (agent == null)
-			return false;
-		return agent.addInPool(grabber);
-	}
-
-	/**
-	 * Removes {@code grabber} from the {@code agent} {@link remixlab.bias.core.Agent#pool()}.
-	 */
-	public boolean removeFromAgentPool(Grabber grabber, Agent agent) {
-		if (agent == null)
-			return false;
-		return agent.removeFromPool(grabber);
-	}
-
-	/**
-	 * Clears the {@code agent} {@link remixlab.bias.core.Agent#pool()}.
-	 */
-	public void clearAgentPool(Agent agent) {
-		agent.clearPool();
-	}
-
-	/**
-	 * Adds {@code grabber} into all registered agents.
-	 */
-	public void addInAllAgentPools(Grabber grabber) {
-		for (Agent agent : agents.values())
-			if (!agent.isInPool(grabber))
-				agent.addInPool(grabber);
-	}
-
-	/**
-	 * Returns {@code true} if the grabber {@link remixlab.bias.core.Grabber#grabsInput(Agent)} from any registered agent.
-	 */
-	public boolean grabsAnyAgentInput(Grabber grabber) {
-		for (Agent agent : agents()) {
-			if (grabber.grabsInput(agent))
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Removes {@code grabber} from all registered agents.
-	 */
-	public void removeFromAllAgentPools(Grabber grabber) {
-		for (Agent agent : agents.values())
-			agent.removeFromPool(grabber);
-	}
-
-	/**
-	 * Clears all registered agent's {@link remixlab.bias.core.Agent#pool()}.
-	 */
-	public void clearAllAgentPools() {
-		for (Agent agent : agents.values())
-			agent.clearPool();
-	}
-
-	/**
-	 * Returns a list containing all Grabber objects registered at all agents.
-	 */
-	public List<Grabber> globalGrabberList() {
-		List<Grabber> msGrabberPool = new ArrayList<Grabber>();
-		for (Agent device : agents.values())
-			for (Grabber grabber : device.pool())
-				if (!msGrabberPool.contains(grabber))
-					msGrabberPool.add(grabber);
-
-		return msGrabberPool;
 	}
 }

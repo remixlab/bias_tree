@@ -20,7 +20,7 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
 Scene scene;
-ArrayList toruses;
+ArrayList<InteractiveTorus> toruses;
 Button2D button1, button2;
 int myColor;
 
@@ -62,7 +62,7 @@ public void addTorus() {
 
 public void removeTorus() {
   if (toruses.size() > 0) {
-    scene.inputHandler().removeFromAllAgentPools(((InteractiveTorus) toruses.get(0)).iFrame);
+    scene.mouseAgent().removeGrabber(toruses.get(0).iFrame);
     toruses.remove(0);
   }
 }

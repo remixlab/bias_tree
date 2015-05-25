@@ -26,6 +26,7 @@ public class Shortcut implements Copyable {
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
 				append(mask).
+				append(id).
 				toHashCode();
 	}
 
@@ -41,29 +42,45 @@ public class Shortcut implements Copyable {
 		Shortcut other = (Shortcut) obj;
 		return new EqualsBuilder()
 				.append(mask, other.mask)
+				.append(id, other.id)
 				.isEquals();
 	}
 
 	protected final Integer	mask;
-
-	/**
-	 * @param m
-	 *          modifier mask defining the shortcut
-	 */
-	public Shortcut(Integer m) {
-		mask = m;
-	}
+	protected final Integer	id;
 
 	/**
 	 * Constructs an "empty" shortcut. Same as: {@link #Shortcut(Integer)} with the integer parameter being
 	 * B_NOMODIFIER_MASK.
 	 */
 	public Shortcut() {
-		mask = BogusEvent.NOMODIFIER_MASK;
+		mask = BogusEvent.NO_MODIFIER_MASK;
+		id = BogusEvent.NO_ID;
+	}
+	
+	/**
+	 * Defines a shortcut from the given id.
+	 * 
+	 * @param _id
+	 *          button
+	 */
+	public Shortcut(Integer _id) {
+		mask = BogusEvent.NO_MODIFIER_MASK;
+		id = _id;
+	}
+
+	/**
+	 * @param m
+	 *          modifier mask defining the shortcut
+	 */
+	public Shortcut(Integer m, Integer i) {
+		mask = m;
+		id = i;
 	}
 
 	protected Shortcut(Shortcut other) {
 		this.mask = new Integer(other.mask);
+		this.id = new Integer(other.id);
 	}
 
 	@Override
@@ -77,6 +94,16 @@ public class Shortcut implements Copyable {
 	 * @return description as a String
 	 */
 	public String description() {
-		return BogusEvent.modifiersText(mask);
+		String modifiersString = BogusEvent.modifiersText(mask);
+		String idString = "ID_" + id.toString();
+		return modifiersString.length() > 0 ? modifiersString + "+" + idString : idString;
+	}
+
+	public int modifiers() {
+		return mask;
+	}
+
+	public int id() {
+		return id;
 	}
 }

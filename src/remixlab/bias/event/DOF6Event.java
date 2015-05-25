@@ -83,12 +83,12 @@ public class DOF6Event extends MotionEvent {
 	 */
 	public DOF6Event(float x, float y, float z, float rx, float ry, float rz, int modifiers, int button) {
 		super(modifiers, button);
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.rx = rx;
-		this.ry = ry;
-		this.rz = rz;
+		this.dx = x;
+		this.dy = y;
+		this.dz = z;
+		this.drx = rx;
+		this.dry = ry;
+		this.drz = rz;
 	}
 
 	/**
@@ -107,7 +107,13 @@ public class DOF6Event extends MotionEvent {
 	public DOF6Event(DOF6Event prevEvent,
 			float x, float y, float z, float rx,
 			float ry, float rz, int modifiers, int button) {
-		this(x, y, z, rx, ry, rz, modifiers, button);
+		super(modifiers, button);
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.rx = rx;
+		this.ry = ry;
+		this.rz = rz;
 		setPreviousEvent(prevEvent);
 	}
 
@@ -123,12 +129,12 @@ public class DOF6Event extends MotionEvent {
 	 */
 	public DOF6Event(float x, float y, float z, float rx, float ry, float rz) {
 		super();
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.rx = rx;
-		this.ry = ry;
-		this.rz = rz;
+		this.dx = x;
+		this.dy = y;
+		this.dz = z;
+		this.drx = rx;
+		this.dry = ry;
+		this.drz = rz;
 	}
 
 	/**
@@ -363,24 +369,20 @@ public class DOF6Event extends MotionEvent {
 	public void modulate(float[] sens) {
 		if (sens != null)
 			if (sens.length >= 6 && this.isAbsolute()) {
-				x = x * sens[0];
-				y = y * sens[1];
-				z = z * sens[2];
-				rx = rx * sens[3];
-				ry = ry * sens[4];
-				rz = rz * sens[5];
+				dx = dx * sens[0];
+				dy = dy * sens[1];
+				dz = dz * sens[2];
+				drx = drx * sens[3];
+				dry = dry * sens[4];
+				drz = drz * sens[5];
 			}
 	}
 
 	@Override
 	public boolean isNull() {
-		if (isRelative() && Util.zero(dx()) && Util.zero(dy())
+		if (Util.zero(dx()) && Util.zero(dy())
 				&& Util.zero(dz()) && Util.zero(drx())
 				&& Util.zero(dry()) && Util.zero(drz()))
-			return true;
-		if (isAbsolute() && Util.zero(x()) && Util.zero(y())
-				&& Util.zero(z()) && Util.zero(rx())
-				&& Util.zero(ry()) && Util.zero(rz()))
 			return true;
 		return false;
 	}
@@ -405,18 +407,18 @@ public class DOF6Event extends MotionEvent {
 		DOF3Event e3;
 		if (isRelative()) {
 			if (fromTranslation) {
-				pe3 = new DOF3Event(prevX(), prevY(), prevZ(), modifiers(), button());
-				e3 = new DOF3Event(pe3, x(), y(), z(), modifiers(), button());
+				pe3 = new DOF3Event(null, prevX(), prevY(), prevZ(), modifiers(), id());
+				e3 = new DOF3Event(pe3, x(), y(), z(), modifiers(), id());
 			} else {
-				pe3 = new DOF3Event(prevRX(), prevRY(), prevRZ(), modifiers(), button());
-				e3 = new DOF3Event(pe3, rx(), ry(), rz(), modifiers(), button());
+				pe3 = new DOF3Event(null, prevRX(), prevRY(), prevRZ(), modifiers(), id());
+				e3 = new DOF3Event(pe3, rx(), ry(), rz(), modifiers(), id());
 			}
 		} else {
 			if (fromTranslation) {
-				e3 = new DOF3Event(x(), y(), z(), modifiers(), button());
+				e3 = new DOF3Event(dx(), dy(), dz(), modifiers(), id());
 			}
 			else {
-				e3 = new DOF3Event(rx(), ry(), rz(), modifiers(), button());
+				e3 = new DOF3Event(drx(), dry(), drz(), modifiers(), id());
 			}
 		}
 		e3.modifiedTimestamp(this.timestamp());

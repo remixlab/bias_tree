@@ -10,7 +10,6 @@
 
 package remixlab.bias.event.shortcut;
 
-//import remixlab.dandelion.core.Constants;
 import remixlab.bias.core.BogusEvent;
 import remixlab.util.Copyable;
 import remixlab.util.EqualsBuilder;
@@ -30,7 +29,6 @@ public class ClickShortcut extends Shortcut implements Copyable {
 		return new HashCodeBuilder(17, 37).
 				appendSuper(super.hashCode()).
 				append(numberOfClicks).
-				append(button).
 				toHashCode();
 	}
 
@@ -47,33 +45,31 @@ public class ClickShortcut extends Shortcut implements Copyable {
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(numberOfClicks, other.numberOfClicks)
-				.append(button, other.button)
 				.isEquals();
 	}
 
 	protected final Integer	numberOfClicks;
-	protected final Integer	button;
 
 	/**
 	 * Defines a single click shortcut from the given button.
 	 * 
-	 * @param b
-	 *          button
+	 * @param id
+	 *          id
 	 */
-	public ClickShortcut(Integer b) {
-		this(BogusEvent.NOMODIFIER_MASK, b, 1);
+	public ClickShortcut(Integer id) {
+		this(BogusEvent.NO_MODIFIER_MASK, id, 1);
 	}
 
 	/**
 	 * Defines a click shortcut from the given button and number of clicks.
 	 * 
-	 * @param b
-	 *          button
+	 * @param id
+	 *          id
 	 * @param c
 	 *          number of clicks
 	 */
-	public ClickShortcut(Integer b, Integer c) {
-		this(BogusEvent.NOMODIFIER_MASK, b, c);
+	public ClickShortcut(Integer id, Integer c) {
+		this(BogusEvent.NO_MODIFIER_MASK, id, c);
 	}
 
 	/**
@@ -81,14 +77,13 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	 * 
 	 * @param m
 	 *          modifier mask
-	 * @param b
-	 *          button
+	 * @param id
+	 *          id
 	 * @param c
 	 *          bumber of clicks
 	 */
-	public ClickShortcut(Integer m, Integer b, Integer c) {
-		super(m);
-		this.button = b;
+	public ClickShortcut(Integer m, Integer id, Integer c) {
+		super(m, id);
 		if (c <= 0)
 			this.numberOfClicks = 1;
 		else
@@ -98,7 +93,6 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	protected ClickShortcut(ClickShortcut other) {
 		super(other);
 		this.numberOfClicks = new Integer(other.numberOfClicks);
-		this.button = new Integer(other.button);
 	}
 
 	@Override
@@ -112,9 +106,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	 * @return description
 	 */
 	public String description() {
-		String r = new String();
-		if (mask != 0)
-			r += BogusEvent.modifiersText(mask) + "+" + button.toString() + "_BUTTON";
+		String r = super.description();
 		if (numberOfClicks == 1)
 			r += (r.length() > 0) ? "+" + numberOfClicks.toString() + "_click" : numberOfClicks.toString() + "_click";
 		else

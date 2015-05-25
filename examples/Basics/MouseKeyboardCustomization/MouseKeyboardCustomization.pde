@@ -2,8 +2,17 @@
  * Mouse and Keyboard Customization.
  * by Jean Pierre Charalambos.
  * 
- * This example shows proscene mouse and keyboard customization.
+ * This example shows pinking modes and mouse and keyboard customization in proscene.
  *
+ * There are two picking modes in proscene: MOVE and CLICK. In the MOVE mode objects are
+ * picked with a mouse move gesture. In CLICK mode objetcs are picked with a mouse click
+ * gesture. In addition, mouse actions may be bound to a mouse move gesture
+ * (mouse.setGestureBinding()) or to a mouse  press-drag-release gesture
+ * (mouse.setButtonBinding). The mouse methods moveToArcBall() and dragToArcball() provide
+ * convenient default mouse move and button bindings, resp.
+ *
+ * Press 'u' to select MOVE picking mode and activate dragToArcball bindings.
+ * Press 'v' to select CLICK picking mode and activate moveToArcball bindings.
  * Press 'i' to switch the interaction between the camera frame and the interactive frame.
  * Press ' ' (the space bar) to randomly change the mouse bindings and keyboard shortcuts.
  * Press 'q' to display customization details.
@@ -43,7 +52,7 @@ void draw() {
   // Multiply matrix to get in the frame coordinate system.
   scene.applyModelView(iFrame.matrix());  //Option 1. or,
   //iFrame.applyTransformation(); //Option 2.
-  // Draw an axis using the Scene static function
+  // Draw axes using the Scene static function
   scene.drawAxes(20);
   // Draw a second torus attached to the interactive frame
   if (scene.motionAgent().defaultGrabber() == iFrame) {
@@ -76,7 +85,7 @@ public void setExoticCustomization() {
   mouse.setClickBinding(Target.FRAME, Event.SHIFT, RIGHT, 2, ClickAction.ALIGN_FRAME);  
   mouse.setWheelBinding(Target.FRAME, Event.CTRL, DOF1Action.ZOOM_ON_ANCHOR);  
   // 1b. keyboard
-  keyboard.setShortcut(Event.CTRL, java.awt.event.KeyEvent.VK_A, KeyboardAction.TOGGLE_GRID_VISUAL_HINT);
+  keyboard.setBinding(Event.CTRL, java.awt.event.KeyEvent.VK_A, SceneAction.TOGGLE_GRID_VISUAL_HINT);
   // 2. Random
   // 2a. mouse
   mouse.setButtonBinding(Target.FRAME, Event.CTRL, LEFT, randomAction(DOF2Action.class));
@@ -84,23 +93,29 @@ public void setExoticCustomization() {
   mouse.setClickBinding(Target.EYE, LEFT, randomAction(ClickAction.class));
   mouse.setWheelBinding(Target.EYE, randomAction(DOF1Action.class));
   // 2b. keyboard
-  keyboard.setShortcut('a', randomAction(KeyboardAction.class));
+  keyboard.setBinding('a', randomAction(SceneAction.class));
 }
 
 public void keyPressed() {
   if(key == ' ')
     setExoticCustomization();
   if(key == 'u') {
-    mouse.setAsArcball();
-    keyboard.setDefaultShortcuts();
+    mouse.setPickingMode(MouseAgent.PickingMode.MOVE);
+    mouse.dragToArcball();
+    keyboard.setDefaultBindings();
+  }
+  if(key == 'v') {
+    mouse.setPickingMode(MouseAgent.PickingMode.CLICK);
+    mouse.moveToArcball();
+    keyboard.setDefaultBindings();
   }
   if(key == 'q') {
     String info;
     info = "RIGHT mouse button + 2 clicks, ";
-    info += scene.hasMouseClickBinding(Target.EYE, Event.SHIFT, RIGHT, 2) ? "define an EYE binding\n" : "isn't a binding\n";
+    info += mouse.hasClickBinding(Target.EYE, Event.SHIFT, RIGHT, 2) ? "define an EYE binding\n" : "isn't a binding\n";
     info += "ROTATE_X action ";
-    info += scene.isMouseButtonActionBound(Target.FRAME, DOF2Action.ROTATE_X) ? "bound to the frame\n" : "not bound\n";
-    info += "CTRL + LEFT button -> " + scene.mouseButtonAction(Target.FRAME, Event.CTRL, LEFT) + " frame\n";
+    info += mouse.isActionBound(Target.FRAME, DOF2Action.ROTATE_X) ? "bound to the frame\n" : "not bound\n";
+    info += "CTRL + LEFT button -> " + mouse.buttonAction(Target.FRAME, Event.CTRL, LEFT) + " frame\n";
     println(info);
   }
   if ( key == 'i')

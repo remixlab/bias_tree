@@ -36,7 +36,7 @@ void setup() {
   // enable computation of the frustum planes equations (disabled by default)
   scene.enableBoundaryEquations();
   scene.setGridVisualHint(false);
-  scene.addDrawHandler(this, "mainDrawing");
+  scene.addGraphicsHandler(this, "mainDrawing");
 
   auxCanvas = createGraphics(640, 360, P3D);
   // Note that we pass the upper left corner coordinates where the scene
@@ -47,7 +47,7 @@ void setup() {
   auxScene.setGridVisualHint(false);
   auxScene.setRadius(400);
   auxScene.showAll();
-  auxScene.addDrawHandler(this, "auxiliarDrawing");
+  auxScene.addGraphicsHandler(this, "auxiliarDrawing");
 }
 
 public void mainDrawing(Scene s) {
@@ -115,9 +115,9 @@ void keyPressed() {
     this.redraw();
   }
   if ( key == 'u' )
-    scene.motionAgent().eyeWheelProfile().setBinding(DOF1Action.ZOOM);
+    scene.mouseAgent().setWheelBinding(Target.EYE, DOF1Action.TRANSLATE_Z);
   if ( key == 'v' )
-    scene.motionAgent().eyeWheelProfile().setBinding(DOF1Action.SCALE);
+    scene.mouseAgent().setWheelBinding(Target.EYE, DOF1Action.SCALE);
 }
 
 public class StdCamera extends Camera {

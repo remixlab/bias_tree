@@ -32,19 +32,20 @@ import remixlab.util.HashCodeBuilder;
  */
 public class BogusEvent implements Copyable {
 	// modifier keys
-	public static final int	NOMODIFIER_MASK	= 0;
-	public static final int	SHIFT						= 1 << 0;
-	public static final int	CTRL						= 1 << 1;
-	public static final int	META						= 1 << 2;
-	public static final int	ALT							= 1 << 3;
-	public static final int	ALT_GRAPH				= 1 << 4;
+	public static final int	NO_MODIFIER_MASK	= 0;
+	public static final int	NO_ID							= 0;
+	public static final int	SHIFT							= 1 << 0;
+	public static final int	CTRL							= 1 << 1;
+	public static final int	META							= 1 << 2;
+	public static final int	ALT								= 1 << 3;
+	public static final int	ALT_GRAPH					= 1 << 4;
 
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
 				append(modifiers).
+				append(id).
 				append(timestamp).
-				append(action).
 				toHashCode();
 	}
 
@@ -60,35 +61,37 @@ public class BogusEvent implements Copyable {
 		BogusEvent other = (BogusEvent) obj;
 		return new EqualsBuilder()
 				.append(modifiers, other.modifiers)
+				.append(id, other.id)
 				.append(timestamp, other.timestamp)
-				.append(action, other.action)
 				.isEquals();
 	}
 
 	protected final int	modifiers;
 	protected long			timestamp;
-	protected Action<?>	action;
+	protected int				id;
 
 	/**
 	 * Constructs an event with an "empty" {@link remixlab.bias.event.shortcut.Shortcut}.
 	 */
 	public BogusEvent() {
-		this.modifiers = 0;
+		this.modifiers = NO_MODIFIER_MASK;
+		this.id = NO_ID;
 		timestamp = System.currentTimeMillis();
 	}
 
 	/**
 	 * Constructs an event taking the given {@code modifiers} as a {@link remixlab.bias.event.shortcut.Shortcut}.
 	 */
-	public BogusEvent(Integer modifiers) {
+	public BogusEvent(Integer modifiers, Integer id) {
 		this.modifiers = modifiers;
+		this.id = id;
 		timestamp = System.currentTimeMillis();
 	}
 
 	protected BogusEvent(BogusEvent other) {
 		this.modifiers = other.modifiers;
+		this.id = other.id;
 		this.timestamp = other.timestamp;
-		this.action = other.action;
 	}
 
 	@Override
@@ -97,40 +100,24 @@ public class BogusEvent implements Copyable {
 	}
 
 	/**
-	 * Returns the event's user-defined {@link remixlab.bias.core.Action}. The Action is attached to the event with
-	 * {@link #setAction(Action)} and it may be bull which defines a raw-bogus event.
-	 * 
-	 * @see #setAction(Action)
-	 */
-	public Action<?> action() {
-		return action;
-	}
-
-	/**
-	 * Actions are meant to be attached to the event exclusively by an {@link remixlab.bias.core.Agent} (see
-	 * {@link remixlab.bias.core.Agent#handle(BogusEvent)} for details).
-	 * 
-	 * @param a
-	 *          User-defined action to be attached to the event.
-	 * 
-	 * @see #action()
-	 */
-	protected void setAction(Action<?> a) {
-		action = a;
-	}
-
-	/**
 	 * @return the shortcut encapsulated by this event.
 	 */
 	public Shortcut shortcut() {
-		return new Shortcut(modifiers());
+		return new Shortcut(modifiers(), id());
 	}
 
 	/**
-	 * @return the modifiers defining the event {@link remixlab.bias.event.shortcut.ButtonShortcut}.
+	 * @return the modifiers defining the event {@link remixlab.bias.core.Shortcut}.
 	 */
 	public int modifiers() {
 		return modifiers;
+	}
+
+	/**
+	 * Returns the id defining the event's {@link remixlab.bias.core.Shortcut}.
+	 */
+	public int id() {
+		return id;
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /**
- * Mouse Sensitivities.
+ * Mouse Frame.
  * by Jean Pierre Charalambos.
  * 
  * This example illustrates the variables that can be fine tuned to control
@@ -21,7 +21,7 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
 Scene scene;
-ArrayList buttons;	
+ArrayList<Button2D> buttons;	
 int xM = 10;
 InteractiveFrame interactiveFrame;
 boolean isIFrame = false;
@@ -52,7 +52,7 @@ void setup() {
   defTransSens = interactiveFrame.translationSensitivity();
   defSpngSens  = interactiveFrame.spinningSensitivity();
   defWheelSens = interactiveFrame.wheelSensitivity();
-  defDampFrict = interactiveFrame.dampingFriction();
+  defDampFrict = interactiveFrame.damping();
 
   buttons.add(new ClickButton(scene, new PVector(xM + 210, 50), myFont, "+", Sensitivity.ROTATION, true));	
   buttons.add(new ClickButton(scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 50), myFont, "-", Sensitivity.ROTATION, false));		
@@ -116,7 +116,7 @@ void displayControls() {
     scene.endScreenDrawing();
   }
 
-  InteractiveFrame iFrame;		
+  GrabberFrame iFrame;
   if ( isIFrame ) {
     iFrame = interactiveFrame;
     scene.beginScreenDrawing();
@@ -140,8 +140,8 @@ void displayControls() {
   displayText(String.format("%.2f", iFrame.spinningSensitivity()), xM + 165, 90);  
   displayText(equals(iFrame.wheelSensitivity(), defWheelSens) ? "Wheel sensitivity" : "Wheel sensitivity *", xM, 110);
   displayText(String.format("%.2f", iFrame.wheelSensitivity()), xM + 165, 110);  
-  displayText(equals(iFrame.dampingFriction(), defDampFrict) ? "Spinning friction" : "Spinning friction *", xM, 130);
-  displayText(String.format("%.2f", iFrame.dampingFriction()), xM + 165, 130);
+  displayText(equals(iFrame.damping(), defDampFrict) ? "Spinning friction" : "Spinning friction *", xM, 130);
+  displayText(String.format("%.2f", iFrame.damping()), xM + 165, 130);
   scene.endScreenDrawing();
 
   for (int i = 0; i < buttons.size(); i++)
@@ -169,15 +169,15 @@ void decreaseSensitivity(Sensitivity sens) {
     decreaseSensitivity(scene.eye().frame(), sens);
 }	
 
-void increaseSensitivity(InteractiveFrame iFrame, Sensitivity sens) {
+void increaseSensitivity(GrabberFrame iFrame, Sensitivity sens) {
   changeSensitivity(iFrame, sens, true);
 }
 
-void decreaseSensitivity(InteractiveFrame iFrame, Sensitivity sens) {
+void decreaseSensitivity(GrabberFrame iFrame, Sensitivity sens) {
   changeSensitivity(iFrame, sens, false);
 }	
 
-void changeSensitivity(InteractiveFrame iFrame, Sensitivity sens, boolean increase) {
+void changeSensitivity(GrabberFrame iFrame, Sensitivity sens, boolean increase) {
   float step = 1;
   float res;
   switch (sens) {
@@ -207,30 +207,30 @@ void changeSensitivity(InteractiveFrame iFrame, Sensitivity sens, boolean increa
     break;
   case SPINNING_FRICTION:
     step = increase ? 0.05f : -0.05f;
-    res = iFrame.dampingFriction() + step;
+    res = iFrame.damping() + step;
     if (0<= res && res <=1)
-      iFrame.setDampingFriction(res);
+      iFrame.setDamping(res);
     break;
   }
 }
 
-boolean areDefaultsSet(InteractiveFrame iFrame) {
+boolean areDefaultsSet(GrabberFrame iFrame) {
   if (   equals(iFrame.rotationSensitivity(), defRotSens)
       && equals(iFrame.translationSensitivity(), defTransSens)
       && equals(iFrame.spinningSensitivity(), defSpngSens)
       && equals(iFrame.wheelSensitivity(), defWheelSens)
-      && equals(iFrame.dampingFriction(), defDampFrict)
+      && equals(iFrame.damping(), defDampFrict)
       )
     return true;
   return false;
 }
 
-void setDefaults(InteractiveFrame iFrame) {
+void setDefaults(GrabberFrame iFrame) {
   iFrame.setRotationSensitivity(defRotSens);
   iFrame.setTranslationSensitivity(defTransSens);
   iFrame.setSpinningSensitivity(defSpngSens);
   iFrame.setWheelSensitivity(defWheelSens);
-  iFrame.setDampingFriction(defDampFrict);
+  iFrame.setDamping(defDampFrict);
 }
 
 void displayText(String text, int x, int y) {
@@ -255,9 +255,10 @@ void keyPressed() {
     dispControls = !dispControls;
     for (int i = 0; i < buttons.size(); i++)
       if (dispControls)
-        scene.inputHandler().addInAllAgentPools((ClickButton) buttons.get(i));
+        scene.motionAgent().addGrabber(buttons.get(i)); //(((ClickButton) buttons.get(i));
       else
-        scene.inputHandler().removeFromAllAgentPools((ClickButton) buttons.get(i));
+        scene.motionAgent().removeGrabber(buttons.get(i));
+        //scene.inputHandler().removeFromAllAgentPools((ClickButton) buttons.get(i));
   }		
   if (key == 'd' || key == 'D') {
     if ( isIFrame )

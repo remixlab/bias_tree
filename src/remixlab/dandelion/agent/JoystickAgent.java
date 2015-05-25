@@ -10,56 +10,86 @@
 
 package remixlab.dandelion.agent;
 
-import remixlab.bias.agent.profile.ClickProfile;
-import remixlab.bias.agent.profile.MotionProfile;
-import remixlab.dandelion.core.AbstractScene;
+import remixlab.bias.event.*;
+import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-/**
- * An {@link remixlab.dandelion.agent.ActionWheeledBiMotionAgent} representing a Human Interface Device with 3
- * Degrees-Of-Freedom (e.g., three translations or three rotations), such as some Joysticks.
- */
-public class JoystickAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF3Action>> {
-	/**
-	 * Default constructor. Nothing fancy.
-	 */
+public class JoystickAgent extends MotionAgent<DOF3Action> {
+	protected float	xSens	= 1f;
+	protected float	ySens	= 1f;
+	protected float	zSens	= 1f;
+
 	public JoystickAgent(AbstractScene scn, String n) {
-		super(new MotionProfile<DOF1Action>(),
-				new MotionProfile<DOF1Action>(),
-				new MotionProfile<DOF3Action>(),
-				new MotionProfile<DOF3Action>(),
-				new ClickProfile<ClickAction>(),
-				new ClickProfile<ClickAction>(), scn, n);
+		super(scn, n);
 	}
 
 	@Override
-	public MotionProfile<DOF3Action> eyeProfile() {
-		return camProfile;
+	public DOF6Event feed() {
+		return null;
 	}
 
 	@Override
-	public MotionProfile<DOF3Action> frameProfile() {
-		return profile;
+	public float[] sensitivities(MotionEvent event) {
+		if (event instanceof DOF3Event)
+			return new float[] { xSens, ySens, zSens, 1f, 1f, 1f };
+		else
+			return super.sensitivities(event);
 	}
 
 	/**
-	 * Sets the translation sensitivity along X.
+	 * Defines the {@link #xSensitivity()}.
 	 */
-	public void setXTranslationSensitivity(float s) {
-		sens[0] = s;
+	public void setXSensitivity(float sensitivity) {
+		xSens = sensitivity;
 	}
 
 	/**
-	 * Sets the translation sensitivity along Y.
+	 * Returns the x sensitivity.
+	 * <p>
+	 * Default value is 1. A higher value will make the event more efficient (usually meaning a faster motion). Use a
+	 * negative value to invert the along x-Axis motion direction.
+	 * 
+	 * @see #setWheelSensitivity(float)
 	 */
-	public void setYTranslationSensitivity(float s) {
-		sens[1] = s;
+	public float xSensitivity() {
+		return xSens;
 	}
 
 	/**
-	 * Sets the translation sensitivity along Z.
+	 * Defines the {@link #ySensitivity()}.
 	 */
-	public void setZTranslationSensitivity(float s) {
-		sens[2] = s;
+	public void setYSensitivity(float sensitivity) {
+		ySens = sensitivity;
+	}
+
+	/**
+	 * Returns the y sensitivity.
+	 * <p>
+	 * Default value is 1. A higher value will make the event more efficient (usually meaning a faster motion). Use a
+	 * negative value to invert the along y-Axis motion direction.
+	 * 
+	 * @see #setWheelSensitivity(float)
+	 */
+	public float ySensitivity() {
+		return ySens;
+	}
+
+	/**
+	 * Defines the {@link #ySensitivity()}.
+	 */
+	public void setZSensitivity(float sensitivity) {
+		zSens = sensitivity;
+	}
+
+	/**
+	 * Returns the y sensitivity.
+	 * <p>
+	 * Default value is 1. A higher value will make the event more efficient (usually meaning a faster motion). Use a
+	 * negative value to invert the along z-Axis motion direction.
+	 * 
+	 * @see #setWheelSensitivity(float)
+	 */
+	public float zSensitivity() {
+		return zSens;
 	}
 }

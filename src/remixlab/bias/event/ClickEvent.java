@@ -27,7 +27,6 @@ public class ClickEvent extends BogusEvent {
 				appendSuper(super.hashCode()).
 				append(x).
 				append(y).
-				append(button).
 				append(numberOfClicks).
 				toHashCode();
 	}
@@ -44,7 +43,6 @@ public class ClickEvent extends BogusEvent {
 		ClickEvent other = (ClickEvent) obj;
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
-				.append(button, other.button)
 				.append(numberOfClicks, other.numberOfClicks)
 				.append(x, other.x)
 				.append(y, other.y)
@@ -53,7 +51,6 @@ public class ClickEvent extends BogusEvent {
 
 	protected float			x, y;
 	protected final int	numberOfClicks;
-	protected final int	button;
 
 	/**
 	 * Constructs a single click ClickEvent at the given position and from the given button defining the events
@@ -64,9 +61,9 @@ public class ClickEvent extends BogusEvent {
 	 * @param b
 	 */
 	public ClickEvent(float x, float y, int b) {
+		super(NO_MODIFIER_MASK, b);
 		this.x = x;
 		this.y = y;
-		this.button = b;
 		this.numberOfClicks = 1;
 	}
 
@@ -80,9 +77,9 @@ public class ClickEvent extends BogusEvent {
 	 * @param clicks
 	 */
 	public ClickEvent(float x, float y, int b, int clicks) {
+		super(NO_MODIFIER_MASK, b);
 		this.x = x;
 		this.y = y;
-		this.button = b;
 		this.numberOfClicks = clicks;
 	}
 
@@ -97,10 +94,9 @@ public class ClickEvent extends BogusEvent {
 	 * @param clicks
 	 */
 	public ClickEvent(float x, float y, int modifiers, int b, int clicks) {
-		super(modifiers);
+		super(modifiers, b);
 		this.x = x;
 		this.y = y;
-		this.button = b;
 		this.numberOfClicks = clicks;
 	}
 
@@ -108,7 +104,6 @@ public class ClickEvent extends BogusEvent {
 		super(other);
 		this.x = other.x;
 		this.y = other.y;
-		this.button = other.button;
 		this.numberOfClicks = other.numberOfClicks;
 	}
 
@@ -119,7 +114,7 @@ public class ClickEvent extends BogusEvent {
 
 	@Override
 	public ClickShortcut shortcut() {
-		return new ClickShortcut(modifiers(), button(), clickCount());
+		return new ClickShortcut(modifiers(), id(), clickCount());
 	}
 
 	/**
@@ -141,12 +136,5 @@ public class ClickEvent extends BogusEvent {
 	 */
 	public int clickCount() {
 		return numberOfClicks;
-	}
-
-	/**
-	 * @return clicked button
-	 */
-	public int button() {
-		return button;
 	}
 }

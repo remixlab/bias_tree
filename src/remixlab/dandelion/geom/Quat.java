@@ -677,8 +677,7 @@ public class Quat implements Linkable, Rotation {
 	}
 
 	/**
-	 * Convenience function that simply calls {@code fromEulerAngles(angles.x,
-	 * angles.y, angles.z)}.
+	 * Convenience function that simply calls {@code fromEulerAngles(angles.vec[0], angles.vec[1], angles.vec[2])}.
 	 * 
 	 * @see #fromEulerAngles(float, float, float)
 	 * @see #eulerAngles()

@@ -21,7 +21,7 @@ void setup() {
   scene = new Scene(this);	
   iFrame = new InteractiveFrame(scene);
   iFrame.translate(new Vec(30, 30, 0));
-  scene.mouseAgent().setAsFirstPerson();
+  scene.mouseAgent().dragToFirstPerson();
   firstPerson = true;
 }
 
@@ -61,10 +61,14 @@ public void keyPressed() {
   if ( key == ' ') {
     firstPerson = !firstPerson;
     if ( firstPerson ) {
-      scene.mouseAgent().setAsFirstPerson();
+      scene.mouseAgent().dragToFirstPerson();
     }
     else {
-      scene.mouseAgent().setAsArcball();
+      scene.mouseAgent().dragToArcball();
     }
   }
+  if(key == '+')
+    scene.eye().frame().setFlySpeed(scene.eye().frame().flySpeed() * 1.1);
+  if(key == '-')
+    scene.eye().frame().setFlySpeed(scene.eye().frame().flySpeed() / 1.1);
 }

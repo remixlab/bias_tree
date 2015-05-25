@@ -10,38 +10,28 @@
 
 package remixlab.dandelion.agent;
 
-import remixlab.bias.agent.profile.ClickProfile;
-import remixlab.bias.agent.profile.MotionProfile;
-import remixlab.bias.event.DOF6Event;
-import remixlab.bias.event.MotionEvent;
+import remixlab.bias.core.BogusEvent;
+import remixlab.bias.event.*;
+import remixlab.bias.event.shortcut.MotionShortcut;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-/**
- * An {@link remixlab.dandelion.agent.ActionWheeledBiMotionAgent} representing a Human Interface Device with 6
- * Degrees-Of-Freedom (three translations and three rotations), such as the Space Navigator or any MultiTouch device.
- */
-public class HIDAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF6Action>> {
-	/**
-	 * Constructs an HIDAgent with the following bindings:
-	 * <p>
-	 * {@code eyeProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);}<br>
-	 * {@code frameProfile().setBinding(B_NOMODIFIER_MASK, B_NOBUTTON, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ)}<br>
-	 * 
-	 * @param scn
-	 *          AbstractScene
-	 * @param n
-	 *          name
-	 */
+public class HIDAgent extends MotionAgent<DOF6Action> {
+	protected float	xSens		= 1f;
+	protected float	ySens		= 1f;
+	protected float	zSens		= 1f;
+	protected float	xrSens	= 1f;
+	protected float	yrSens	= 1f;
+	protected float	zrSens	= 1f;
+
 	public HIDAgent(AbstractScene scn, String n) {
-		super(new MotionProfile<DOF1Action>(),
-				new MotionProfile<DOF1Action>(),
-				new MotionProfile<DOF6Action>(),
-				new MotionProfile<DOF6Action>(),
-				new ClickProfile<ClickAction>(),
-				new ClickProfile<ClickAction>(), scn, n);
-		eyeProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
-		frameProfile().setBinding(MotionEvent.NOMODIFIER_MASK, MotionEvent.NOBUTTON, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+		super(scn, n);
+		setGestureBinding(Target.EYE, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+		setGestureBinding(Target.FRAME, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
+	}
+
+	public void setGestureBinding(Target target, DOF6Action action) {
+		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action);
 	}
 
 	@Override
@@ -50,54 +40,67 @@ public class HIDAgent extends ActionWheeledBiMotionAgent<MotionProfile<DOF6Actio
 	}
 
 	@Override
-	public MotionProfile<DOF6Action> eyeProfile() {
-		return camProfile;
+	public float[] sensitivities(MotionEvent event) {
+		if (event instanceof DOF6Event)
+			return new float[] { xSens, ySens, zSens, xrSens, yrSens, zrSens };
+		else
+			return super.sensitivities(event);
 	}
 
-	@Override
-	public MotionProfile<DOF6Action> frameProfile() {
-		return profile;
+	public void setSensitivities(float x, float y, float z, float rx, float ry, float rz) {
+		xSens = x;
+		ySens = y;
+		zSens = z;
+		xrSens = rx;
+		yrSens = ry;
+		zrSens = rz;
 	}
 
-	/**
-	 * Sets the translation sensitivity along X.
-	 */
 	public void setXTranslationSensitivity(float s) {
-		sens[0] = s;
+		xSens = s;
 	}
 
-	/**
-	 * Sets the translation sensitivity along Y.
-	 */
+	public float xTranslationSensitivity() {
+		return xSens;
+	}
+
 	public void setYTranslationSensitivity(float s) {
-		sens[1] = s;
+		ySens = s;
 	}
 
-	/**
-	 * Sets the translation sensitivity along Z.
-	 */
+	public float yTranslationSensitivity() {
+		return ySens;
+	}
+
 	public void setZTranslationSensitivity(float s) {
-		sens[2] = s;
+		zSens = s;
 	}
 
-	/**
-	 * Sets the rotation sensitivity along X.
-	 */
+	public float zTranslationSensitivity() {
+		return zSens;
+	}
+
 	public void setXRotationSensitivity(float s) {
-		sens[3] = s;
+		xrSens = s;
 	}
 
-	/**
-	 * Sets the rotation sensitivity along Y.
-	 */
+	public float xRotationSensitivity() {
+		return xrSens;
+	}
+
 	public void setYRotationSensitivity(float s) {
-		sens[4] = s;
+		yrSens = s;
 	}
 
-	/**
-	 * Sets the rotation sensitivity along Z.
-	 */
+	public float yRotationSensitivity() {
+		return yrSens;
+	}
+
 	public void setZRotationSensitivity(float s) {
-		sens[5] = s;
+		zrSens = s;
+	}
+
+	public float zRotationSensitivity() {
+		return zrSens;
 	}
 }
