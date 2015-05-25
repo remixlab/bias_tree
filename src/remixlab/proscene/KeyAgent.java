@@ -10,6 +10,7 @@
 
 package remixlab.proscene;
 
+import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
@@ -43,7 +44,7 @@ public class KeyAgent extends KeyboardAgent {
 			flush(currentEvent);
 			updateTrackedGrabber(currentEvent);// TODO?
 		}
-		/*
+		///*
 		if (press) {
 			if( e.getKey() == '\uFFFF')
 				 System.out.println("got the unicode replacement character in PRESS: " + e.getKey());			 

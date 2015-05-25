@@ -215,7 +215,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		// AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
 	}
 	
-Action<E>	initAction;
+  Action<E>	initAction;
 	
 	/**
 	 * TODO: fix docs as the following is only partially true

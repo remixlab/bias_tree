@@ -282,7 +282,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	protected boolean processAction(KeyboardEvent event) {
-		System.out.println();
 		if (initAction == null) {
 			if (action() != null) {
 				return initAction(event);// start action
@@ -328,7 +327,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	protected void flushAction(KeyboardEvent event) {
-		System.out.println("calling flushAction on KeyboardEvent! with action: " + initAction);
 		if (!contiguous(initAction)) {
 			setAction(initAction);
 			performInteraction(event);

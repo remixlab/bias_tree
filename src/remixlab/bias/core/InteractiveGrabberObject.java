@@ -176,13 +176,13 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 				if (initAction == action())
 					return execAction(event);// continue action
 				else { // initAction != action() -> action changes abruptly, i.e.,
-					//System.out.println("case 1");
+				  //System.out.println("case 1 in frame: action() != null && initAction != null (action changes abruptely, calls flush)");
 					flushAction(event);
 					return initAction(event);// start action
 				}
 			}
 			else {// action() == null
-				//System.out.println("case 2");
+			  //System.out.println("case 2 in frame: action() == null && initAction != null (ends action, calls flush)");
 				flushAction(event);// stopAction
 				initAction = null;
 				setAction(null); // experimental, but sounds logical since: initAction != null && action() == null

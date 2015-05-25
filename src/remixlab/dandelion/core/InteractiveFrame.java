@@ -606,13 +606,11 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 				if (initAction == action())
 					return execAction(event);// continue action
 				else { // initAction != action() -> action changes abruptly
-					//System.out.println("case 1 in frame: action() != null && initAction != null (action changes abruptely, calls flush)");
 					flushAction(event);
 					return initAction(event);// start action
 				}
 			}
 			else {// action() == null
-			  //System.out.println("case 2 in frame: action() == null && initAction != null (ends action, calls flush)");
 				flushAction(event);// stopAction
 				initAction = null;
 				setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
@@ -705,7 +703,6 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		}
 		// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
 		if (action().referenceAction() == MotionAction.ZOOM_ON_REGION) {
-			System.out.println("wierd case: ZOOM_ON_REGION on exec action while zor == null");
 			return true;
 		}
 		if (drive) {
@@ -734,7 +731,6 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	protected void flushAction(MotionEvent event) {
 		if (!(event instanceof DOF1Event))
 			flushAction(MotionEvent.dof2Event(event));
-		//initAction = null;//TODO experimental
 	}
 	
 	protected void flushAction(ClickEvent event) {
