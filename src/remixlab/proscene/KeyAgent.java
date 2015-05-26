@@ -32,7 +32,7 @@ public class KeyAgent extends KeyboardAgent {
 		press = e.getAction() == processing.event.KeyEvent.PRESS;
 		release = e.getAction() == processing.event.KeyEvent.RELEASE;
 		type = e.getAction() == processing.event.KeyEvent.TYPE;
-		currentEvent = new KeyboardEvent(/*e.getKey(),*/ e.getModifiers(), e.getKeyCode());
+		currentEvent = new KeyboardEvent(e.getKey(), e.getModifiers(), e.getKeyCode());
 		if (press)
 			handle(currentEvent);
 		if (release) {
