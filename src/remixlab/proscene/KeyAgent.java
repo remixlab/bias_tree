@@ -10,8 +10,6 @@
 
 package remixlab.proscene;
 
-import java.awt.event.KeyEvent;
-
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
@@ -34,6 +32,7 @@ public class KeyAgent extends KeyboardAgent {
 		press = e.getAction() == processing.event.KeyEvent.PRESS;
 		release = e.getAction() == processing.event.KeyEvent.RELEASE;
 		type = e.getAction() == processing.event.KeyEvent.TYPE;
+		currentEvent = new KeyboardEvent(e.getModifiers(), e.getKeyCode());
 		if (press)
 			handle(currentEvent);
 		if (release) {
@@ -65,8 +64,14 @@ public class KeyAgent extends KeyboardAgent {
 		// */
 	}
 
+	/*
+	public static int getKeyCode(char key) {
+		return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key);
+	}
+	*/
+	
 	@Override
-	public int getKeyCodeForChar(char key) {
-		return KeyEvent.getExtendedKeyCodeForChar(key);
+	public int keyCode(char key) {
+		return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key);
 	}
 }

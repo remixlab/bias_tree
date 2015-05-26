@@ -446,7 +446,7 @@ public class KeyboardAgent extends Agent {
 
 	// Char hack from here
 
-	public int getKeyCodeForChar(char key) {
+	public int keyCode(char key) {
 		AbstractScene.showMissingImplementationWarning("getKeyCodeForChar", "KeyboardAgent");
 		return BogusEvent.NO_ID;
 	}
@@ -455,36 +455,36 @@ public class KeyboardAgent extends Agent {
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setBinding(char key, SceneAction action) {
-		setBinding(getKeyCodeForChar(key), action);
+		setBinding(keyCode(key), action);
 	}
 
 	/**
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setBinding(int mask, char key, SceneAction action) {
-		setBinding(mask, getKeyCodeForChar(key), action);
+		setBinding(mask, keyCode(key), action);
 	}
 
 	/**
 	 * Removes key shortcut binding (if present).
 	 */
 	public void removeBinding(char key) {
-		removeBinding(getKeyCodeForChar(key));
+		removeBinding(keyCode(key));
 	}
 
 	public void removeBinding(int mask, char key) {
-		removeBinding(mask, getKeyCodeForChar(key));
+		removeBinding(mask, keyCode(key));
 	}
 
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasBinding(char key) {
-		return hasBinding(getKeyCodeForChar(key));
+		return hasBinding(keyCode(key));
 	}
 
 	public boolean hasBinding(int mask, char key) {
-		return hasBinding(mask, getKeyCodeForChar(key));
+		return hasBinding(mask, keyCode(key));
 	}
 
 	/**
@@ -492,44 +492,44 @@ public class KeyboardAgent extends Agent {
 	 * is bound to the given shortcut.
 	 */
 	public SceneAction action(char key) {
-		return action(getKeyCodeForChar(key));
+		return action(keyCode(key));
 	}
 
 	public SceneAction action(int mask, char key) {
-		return action(mask, getKeyCodeForChar(key));
+		return action(mask, keyCode(key));
 	}
 
 	/**
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
 	public void setBinding(Target target, char key, KeyboardAction action) {
-		setBinding(target, getKeyCodeForChar(key), action);
+		setBinding(target, keyCode(key), action);
 	}
 
 	public void setBinding(Target target, int mask, char key, KeyboardAction action) {
-		setBinding(target, mask, getKeyCodeForChar(key), action);
+		setBinding(target, mask, keyCode(key), action);
 	}
 
 	/**
 	 * Removes key shortcut binding (if present).
 	 */
 	public void removeBinding(Target target, char key) {
-		removeBinding(target, getKeyCodeForChar(key));
+		removeBinding(target, keyCode(key));
 	}
 
 	public void removeBinding(Target target, int mask, char key) {
-		removeBinding(target, mask, getKeyCodeForChar(key));
+		removeBinding(target, mask, keyCode(key));
 	}
 
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
 	public boolean hasBinding(Target target, char key) {
-		return hasBinding(target, getKeyCodeForChar(key));
+		return hasBinding(target, keyCode(key));
 	}
 
 	public boolean hasBinding(Target target, int mask, char key) {
-		return hasBinding(target, mask, getKeyCodeForChar(key));
+		return hasBinding(target, mask, keyCode(key));
 	}
 
 	/**
@@ -537,10 +537,10 @@ public class KeyboardAgent extends Agent {
 	 * is bound to the given shortcut.
 	 */
 	public KeyboardAction action(Target target, char key) {
-		return action(target, getKeyCodeForChar(key));
+		return action(target, keyCode(key));
 	}
 
 	public KeyboardAction action(Target target, int mask, char key) {
-		return action(target, mask, getKeyCodeForChar(key));
+		return action(target, mask, keyCode(key));
 	}
 }
