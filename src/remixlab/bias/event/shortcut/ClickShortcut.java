@@ -48,7 +48,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
 				.isEquals();
 	}
 
-	protected final Integer	numberOfClicks;
+	protected final int	numberOfClicks;
 
 	/**
 	 * Defines a single click shortcut from the given button.
@@ -56,7 +56,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	 * @param id
 	 *          id
 	 */
-	public ClickShortcut(Integer id) {
+	public ClickShortcut(int id) {
 		this(BogusEvent.NO_MODIFIER_MASK, id, 1);
 	}
 
@@ -68,7 +68,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	 * @param c
 	 *          number of clicks
 	 */
-	public ClickShortcut(Integer id, Integer c) {
+	public ClickShortcut(int id, int c) {
 		this(BogusEvent.NO_MODIFIER_MASK, id, c);
 	}
 
@@ -82,7 +82,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	 * @param c
 	 *          bumber of clicks
 	 */
-	public ClickShortcut(Integer m, Integer id, Integer c) {
+	public ClickShortcut(int m, int id, int c) {
 		super(m, id);
 		if (c <= 0)
 			this.numberOfClicks = 1;
@@ -92,7 +92,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
 
 	protected ClickShortcut(ClickShortcut other) {
 		super(other);
-		this.numberOfClicks = new Integer(other.numberOfClicks);
+		this.numberOfClicks = other.numberOfClicks;
 	}
 
 	@Override
@@ -108,9 +108,9 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	public String description() {
 		String r = super.description();
 		if (numberOfClicks == 1)
-			r += (r.length() > 0) ? "+" + numberOfClicks.toString() + "_click" : numberOfClicks.toString() + "_click";
+			r += (r.length() > 0) ? "+" + String.valueOf(numberOfClicks) + "_click" : String.valueOf(numberOfClicks) + "_click";
 		else
-			r += (r.length() > 0) ? "+" + numberOfClicks.toString() + "_clicks" : numberOfClicks.toString() + "_clicks";
+			r += (r.length() > 0) ? "+" + String.valueOf(numberOfClicks) + "_clicks" : String.valueOf(numberOfClicks) + "_clicks";
 		return r;
 	}
 }

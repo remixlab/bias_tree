@@ -46,11 +46,11 @@ public class Shortcut implements Copyable {
 				.isEquals();
 	}
 
-	protected final Integer	mask;
-	protected final Integer	id;
+	protected final int	mask;
+	protected final int	id;
 
 	/**
-	 * Constructs an "empty" shortcut. Same as: {@link #Shortcut(Integer)} with the integer parameter being
+	 * Constructs an "empty" shortcut. Same as: {@link #Shortcut(int)} with the integer parameter being
 	 * B_NOMODIFIER_MASK.
 	 */
 	public Shortcut() {
@@ -64,7 +64,7 @@ public class Shortcut implements Copyable {
 	 * @param _id
 	 *          button
 	 */
-	public Shortcut(Integer _id) {
+	public Shortcut(int _id) {
 		mask = BogusEvent.NO_MODIFIER_MASK;
 		id = _id;
 	}
@@ -73,14 +73,14 @@ public class Shortcut implements Copyable {
 	 * @param m
 	 *          modifier mask defining the shortcut
 	 */
-	public Shortcut(Integer m, Integer i) {
+	public Shortcut(int m, int i) {
 		mask = m;
 		id = i;
 	}
 
 	protected Shortcut(Shortcut other) {
-		this.mask = new Integer(other.mask);
-		this.id = new Integer(other.id);
+		this.mask = other.mask;
+		this.id = other.id;
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class Shortcut implements Copyable {
 	 */
 	public String description() {
 		String modifiersString = BogusEvent.modifiersText(mask);
-		String idString = "ID_" + id.toString();
+		String idString = "ID_" + String.valueOf(id);
 		return modifiersString.length() > 0 ? modifiersString + "+" + idString : idString;
 	}
 

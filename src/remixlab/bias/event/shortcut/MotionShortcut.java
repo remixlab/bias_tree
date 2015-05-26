@@ -36,7 +36,7 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 * @param id
 	 *          button
 	 */
-	public MotionShortcut(Integer id) {
+	public MotionShortcut(int id) {
 		super(id);
 	}
 
@@ -48,7 +48,7 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 * @param id
 	 *          button
 	 */
-	public MotionShortcut(Integer m, Integer id) {
+	public MotionShortcut(int m, int id) {
 		super(m, id);
 	}
 

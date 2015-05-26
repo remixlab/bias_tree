@@ -82,7 +82,7 @@ public class BogusEvent implements Copyable {
 	/**
 	 * Constructs an event taking the given {@code modifiers} as a {@link remixlab.bias.event.shortcut.Shortcut}.
 	 */
-	public BogusEvent(Integer modifiers, Integer id) {
+	public BogusEvent(int modifiers, int id) {
 		this.modifiers = modifiers;
 		this.id = id;
 		timestamp = System.currentTimeMillis();

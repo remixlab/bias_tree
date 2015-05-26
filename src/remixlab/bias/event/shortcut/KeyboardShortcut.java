@@ -25,7 +25,7 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 	 * @param vk
 	 *          the virtual key that defines the keyboard shortcut.
 	 */
-	public KeyboardShortcut(Integer vk) {
+	public KeyboardShortcut(int vk) {
 		super(vk);
 	}
 
@@ -37,7 +37,7 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 	 * @param vk
 	 *          the virtual key that defines the keyboard shortcut.
 	 */
-	public KeyboardShortcut(Integer m, Integer vk) {
+	public KeyboardShortcut(int m, int vk) {
 		super(m, vk);
 	}
 
