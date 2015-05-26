@@ -39,37 +39,24 @@ public class KeyAgent extends KeyboardAgent {
 			flush(currentEvent);
 			updateTrackedGrabber(currentEvent);// needs testing
 		}
-		
+
 		/*
-		// debug
-		if (press) {
-			if (e.getKey() == '\uFFFF')
-				System.out.println("got the unicode replacement char in PRESS: " + e.getKey());
-			System.out.println("PRESS: key: " + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers())
-					+ " keyCode: " + e.getKeyCode()); // updateTrackedGrabber(new KeyboardEvent(e.getModifiers(),
-																						// e.getKeyCode()));//
-		}
-		else if (release) {
-			if (e.getKey() == '\uFFFF')
-				System.out.println("got the unicode replacement char in RELEASE: " + e.getKey());
-			System.out.println("RELEASE: key: " + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers())
-					+ " keyCode: " + e.getKeyCode());
-		}
-		else if(type) {
-			if (e.getKey() == '\uFFFF')
-				System.out.println("got the unicode replacement char in TYPE: " + e.getKey());
-			System.out.println("TYPE: key: " + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers())
-					+ " keyCode: " + e.getKeyCode());
-		}
-		// */
+		 * // debug if (press) { if (e.getKey() == '\uFFFF')
+		 * System.out.println("got the unicode replacement char in PRESS: " + e.getKey()); System.out.println("PRESS: key: "
+		 * + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) + " keyCode: " + e.getKeyCode()); //
+		 * updateTrackedGrabber(new KeyboardEvent(e.getModifiers(), // e.getKeyCode()));// } else if (release) { if
+		 * (e.getKey() == '\uFFFF') System.out.println("got the unicode replacement char in RELEASE: " + e.getKey());
+		 * System.out.println("RELEASE: key: " + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) +
+		 * " keyCode: " + e.getKeyCode()); } else if(type) { if (e.getKey() == '\uFFFF')
+		 * System.out.println("got the unicode replacement char in TYPE: " + e.getKey()); System.out.println("TYPE: key: " +
+		 * e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) + " keyCode: " + e.getKeyCode()); } //
+		 */
 	}
 
 	/*
-	public static int getKeyCode(char key) {
-		return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key);
-	}
-	*/
-	
+	 * public static int getKeyCode(char key) { return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key); }
+	 */
+
 	@Override
 	public int keyCode(char key) {
 		return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key);

@@ -17,9 +17,9 @@ PGraphics canvas, auxCanvas;
 float circleRadius = 150;
 
 void setup() {
-  size(640, 720, JAVA2D);
+  size(640, 720, P2D);
 
-  canvas = createGraphics(640, 360, JAVA2D);
+  canvas = createGraphics(640, 360, P2D);
   scene = new Scene(this, canvas);
 
   scene.setRadius(200);
@@ -30,7 +30,7 @@ void setup() {
   scene.setGridVisualHint(false);
   scene.addGraphicsHandler(this, "mainDrawing");
 
-  auxCanvas = createGraphics(640, 360, JAVA2D);
+  auxCanvas = createGraphics(640, 360, P2D);
   // Note that we pass the upper left corner coordinates where the scene
   // is to be drawn (see drawing code below) to its constructor.
   auxScene = new Scene(this, auxCanvas, 0, 360);

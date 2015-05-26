@@ -26,7 +26,7 @@ public void setup() {
   iFrame = new InteractiveAvatarFrame(scene);
   iFrame.setGrabsInputThreshold(scene.radius()/4, true);
   iFrame.translate(new Vec(30, -30, 0));
-  scene.setKeyboardBinding('r', null);
+  scene.keyboardAgent().setBinding('r', null);//better to use removeBinding() though
   scene.setNonSeqTimers();
   scene.setVisualHints(Scene.AXES | Scene.GRID | Scene.PICKING );
   //create a eye path and add some key frames:

@@ -26,13 +26,13 @@ import remixlab.bias.event.shortcut.KeyboardShortcut;
  * CameraCustomization example.
  */
 public class KeyboardEvent extends BogusEvent {
-	protected final char key;
-	
+	protected final char	key;
+
 	public KeyboardEvent(char _key, int modifiers, int vk) {
 		super(modifiers, vk);
 		key = _key;
 	}
-	
+
 	/**
 	 * Constructs a keyboard event with the <b>modifiers</b> and <b>vk</b> defining its
 	 * {@link remixlab.bias.event.shortcut.KeyboardShortcut}.
@@ -41,7 +41,7 @@ public class KeyboardEvent extends BogusEvent {
 		super(modifiers, vk);
 		key = '\uFFFF';
 	}
-	
+
 	public KeyboardEvent(char _key, int vk) {
 		super(NO_MODIFIER_MASK, vk);
 		key = _key;
@@ -72,7 +72,7 @@ public class KeyboardEvent extends BogusEvent {
 	public KeyboardShortcut shortcut() {
 		return new KeyboardShortcut(modifiers(), id());
 	}
-	
+
 	// not really in used
 	public char key() {
 		return key;

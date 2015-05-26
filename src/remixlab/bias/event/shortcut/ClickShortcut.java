@@ -108,9 +108,11 @@ public class ClickShortcut extends Shortcut implements Copyable {
 	public String description() {
 		String r = super.description();
 		if (numberOfClicks == 1)
-			r += (r.length() > 0) ? "+" + String.valueOf(numberOfClicks) + "_click" : String.valueOf(numberOfClicks) + "_click";
+			r += (r.length() > 0) ? "+" + String.valueOf(numberOfClicks) + "_click" : String.valueOf(numberOfClicks)
+					+ "_click";
 		else
-			r += (r.length() > 0) ? "+" + String.valueOf(numberOfClicks) + "_clicks" : String.valueOf(numberOfClicks) + "_clicks";
+			r += (r.length() > 0) ? "+" + String.valueOf(numberOfClicks) + "_clicks" : String.valueOf(numberOfClicks)
+					+ "_clicks";
 		return r;
 	}
 }
