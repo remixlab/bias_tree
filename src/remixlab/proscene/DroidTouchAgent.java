@@ -30,19 +30,18 @@ public class DroidTouchAgent extends MultiTouchAgent {
 	}
 
 	public void setDefaultBinding() {
-	  //TODO adapt me, broken api
+		// TODO adapt me, broken api
 		/*
-		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_ONE_ID.id(), DOF6Action.ROTATE);
-		frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_ONE_ID.id(), DOF6Action.ROTATE);
-		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_TWO_ID.id(), DOF6Action.TRANSLATE);
-		frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_TWO_ID.id(), DOF6Action.TRANSLATE);
-		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.PINCH_TWO_ID.id(),
-				scene.is3D() ? DOF6Action.TRANSLATE_Z : DOF6Action.SCALE);
-		frameProfile().setBinding(DOF6Event.NO_MODIFIER_MASK, Gestures.PINCH_TWO_ID.id(),
-				scene.is3D() ? DOF6Action.TRANSLATE_Z : DOF6Action.SCALE);
-		eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.TURN_TWO_ID.id(), DOF6Action.ROTATE_Z);
-		frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.TURN_TWO_ID.id(), DOF6Action.ROTATE_Z);
-		*/
+		 * eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_ONE_ID.id(), DOF6Action.ROTATE);
+		 * frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_ONE_ID.id(), DOF6Action.ROTATE);
+		 * eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_TWO_ID.id(), DOF6Action.TRANSLATE);
+		 * frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_TWO_ID.id(), DOF6Action.TRANSLATE);
+		 * eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.PINCH_TWO_ID.id(), scene.is3D() ?
+		 * DOF6Action.TRANSLATE_Z : DOF6Action.SCALE); frameProfile().setBinding(DOF6Event.NO_MODIFIER_MASK,
+		 * Gestures.PINCH_TWO_ID.id(), scene.is3D() ? DOF6Action.TRANSLATE_Z : DOF6Action.SCALE);
+		 * eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.TURN_TWO_ID.id(), DOF6Action.ROTATE_Z);
+		 * frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.TURN_TWO_ID.id(), DOF6Action.ROTATE_Z);
+		 */
 	}
 
 	public void touchEvent(android.view.MotionEvent e) {

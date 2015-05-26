@@ -57,7 +57,7 @@ public class Shortcut implements Copyable {
 		mask = BogusEvent.NO_MODIFIER_MASK;
 		id = BogusEvent.NO_ID;
 	}
-	
+
 	/**
 	 * Defines a shortcut from the given id.
 	 * 

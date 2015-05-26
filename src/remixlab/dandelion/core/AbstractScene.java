@@ -154,15 +154,15 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
-	
+
 	@Override
 	public void performInteraction(BogusEvent event) {
-		if (processAction(event)) //may call performInteraction(KeyboardEvent event) by setting the action() :o
+		if (processAction(event)) // may call performInteraction(KeyboardEvent event) by setting the action() :o
 			return;
 		if (event instanceof KeyboardEvent)
 			performInteraction((KeyboardEvent) event);
 	}
-	
+
 	protected void performInteraction(KeyboardEvent event) {
 		Vec trans;
 		switch (referenceAction()) {
@@ -273,10 +273,10 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	Action<GlobalAction>	initAction;
-	
+
 	@Override
 	public final boolean processAction(BogusEvent event) {
-		if(event instanceof KeyboardEvent)
+		if (event instanceof KeyboardEvent)
 			return processAction((KeyboardEvent) event);
 		return true;
 	}
@@ -292,13 +292,13 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 				if (initAction == action())
 					return execAction(event);// continue action
 				else { // initAction != action() -> action changes abruptly
-					//System.out.println("case 1 in scene: action() != null && initAction != null (action changes abruptely, calls flush)");
+					// System.out.println("case 1 in scene: action() != null && initAction != null (action changes abruptely, calls flush)");
 					flushAction(event);
 					return initAction(event);// start action
 				}
 			}
 			else {// action() == null
-				//System.out.println("case 2 in scene: action() == null && initAction != null (ends action, calls flush)");
+				// System.out.println("case 2 in scene: action() == null && initAction != null (ends action, calls flush)");
 				flushAction(event);// stopAction
 				initAction = null;
 				setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
@@ -422,6 +422,8 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		return keyboardAgent();
 	}
 
+	// TODO decide whether to include this wrappers or not
+
 	/**
 	 * Restores the default keyboard shortcuts:
 	 * <p>
@@ -450,90 +452,90 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * 
 	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultBindings()
 	 */
-	public void setDefaultKeyboardBindings() {
-		keyboardAgent().setDefaultBindings();
-	}
+	/*
+	 * public void setDefaultKeyboardBindings() { keyboardAgent().setDefaultBindings(); }
+	 */
 
 	/**
 	 * Set the virtual-key to play path. Defaults are java.awt.event.KeyEvent.VK_1, java.awt.event.KeyEvent.VK_2 and
 	 * java.awt.event.KeyEvent.VK_3 which will play paths 1, 2, 3, resp.
 	 */
-	public void setKeyCodeToPlayPath(int code, int path) {
-		keyboardAgent().setKeyCodeToPlayPath(code, path);
-	}
+	/*
+	 * public void setKeyCodeToPlayPath(int code, int path) { keyboardAgent().setKeyCodeToPlayPath(code, path); }
+	 */
 
 	/**
 	 * Binds the key shortcut to the (Keyboard) dandelion action.
 	 */
-	public void setKeyboardBinding(Character key, SceneAction action) {
-		keyboardAgent().setBinding(key, action);
-	}
+	/*
+	 * public void setKeyboardBinding(Character key, SceneAction action) { keyboardAgent().setBinding(key, action); }
+	 */
 
 	/**
 	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) dandelion action.
 	 */
-	public void setKeyboardBinding(int mask, int vKey, SceneAction action) {
-		keyboardAgent().setBinding(mask, vKey, action);
-	}
+	/*
+	 * public void setKeyboardBinding(int mask, int vKey, SceneAction action) { keyboardAgent().setBinding(mask, vKey,
+	 * action); }
+	 */
 
 	/**
 	 * Removes key shortcut binding (if present).
 	 */
-	public void removeKeyboardBinding(Character key) {
-		keyboardAgent().removeBinding(key);
-	}
+	/*
+	 * public void removeKeyboardBinding(Character key) { keyboardAgent().removeBinding(key); }
+	 */
 
 	/**
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
-	public void removeKeyboarBinding(int mask, int vKey) {
-		keyboardAgent().removeBinding(mask, vKey);
-	}
+	/*
+	 * public void removeKeyboarBinding(int mask, int vKey) { keyboardAgent().removeBinding(mask, vKey); }
+	 */
 
 	/**
 	 * Removes all shortcut bindings.
 	 */
-	public void removeKeyboardBindings() {
-		keyboardAgent().removeBindings();
-	}
+	/*
+	 * public void removeKeyboardBindings() { keyboardAgent().removeBindings(); }
+	 */
 
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) dandelion action.
 	 */
-	// TODO don't forget to check those that receives a Character as a parameter
-	public boolean hasKeyboardBinding(Character key) {
-		return keyboardAgent().hasBinding(key);
-	}
+	/*
+	 * public boolean hasKeyboardBinding(Character key) { return keyboardAgent().hasBinding(key); }
+	 */
 
 	/**
 	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) dandelion action.
 	 */
-	public boolean hasKeyboardBinding(int mask, int vKey) {
-		return keyboardAgent().hasBinding(mask, vKey);
-	}
+	/*
+	 * public boolean hasKeyboardBinding(int mask, int vKey) { return keyboardAgent().hasBinding(mask, vKey); }
+	 */
 
 	/**
 	 * Returns {@code true} if the keyboard action is bound.
 	 */
-	public boolean isKeyboardActionBound(SceneAction action) {
-		return keyboardAgent().isActionBound(action);
-	}
+	/*
+	 * public boolean isKeyboardActionBound(SceneAction action) { return keyboardAgent().isActionBound(action); }
+	 */
 
 	/**
 	 * Returns the (Keyboard) dandelion action that is bound to the given key shortcut. Returns {@code null} if no action
 	 * is bound to the given shortcut.
 	 */
-	public SceneAction keyboardAction(Character key) {
-		return keyboardAgent().action(key);
-	}
+	/*
+	 * public SceneAction keyboardAction(Character key) { return keyboardAgent().action(key); }
+	 */
 
 	/**
 	 * Returns the (Keyboard) dandelion action that is bound to the given mask-vKey (virtual key) shortcut. Returns
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
-	public SceneAction keyboardAction(int mask, int vKey) {
-		return keyboardAgent().action(mask, vKey);
-	}
+	/*
+	 * public SceneAction keyboardAction(int mask, int vKey) { return keyboardAgent().action(mask, vKey); }
+	 */
 
 	// Motion agent
 

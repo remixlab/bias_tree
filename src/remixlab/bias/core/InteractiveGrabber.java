@@ -19,6 +19,6 @@ public interface InteractiveGrabber<E extends Enum<E>> extends Grabber {
 	public void setAction(Action<E> action);
 
 	public Action<E> action();
-	
+
 	public boolean processAction(BogusEvent event);
 }

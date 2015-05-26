@@ -42,9 +42,9 @@ import remixlab.util.Copyable;
  *          {@link remixlab.bias.branch.profile.Profile} to parameterize the Agent with.
  */
 public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> implements Copyable {
-	protected Profile<S, A>				profile;
-	protected Agent		parent;
-	protected String	name;
+	protected Profile<S, A>	profile;
+	protected Agent					parent;
+	protected String				name;
 
 	public Branch(Agent pnt, String n) {
 		name = n;

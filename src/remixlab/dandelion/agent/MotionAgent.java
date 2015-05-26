@@ -19,10 +19,10 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 public class MotionAgent<A extends Action<MotionAction>> extends Agent {
-	protected AbstractScene																														scene;
+	protected AbstractScene																scene;
 	protected MotionBranch<MotionAction, A, ClickAction>	eyeBranch;
 	protected MotionBranch<MotionAction, A, ClickAction>	frameBranch;
-	protected PickingMode																															pMode;
+	protected PickingMode																	pMode;
 
 	public enum PickingMode {
 		MOVE, CLICK

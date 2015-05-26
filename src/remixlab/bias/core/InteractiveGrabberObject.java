@@ -65,11 +65,11 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 			performInteraction((KeyboardEvent) event);
 		if (event instanceof ClickEvent)
 			performInteraction((ClickEvent) event);
-		if(event instanceof MotionEvent)
+		if (event instanceof MotionEvent)
 			performInteraction((MotionEvent) event);
 	}
-	
-  //TODO : deal with warnings
+
+	// TODO : deal with warnings
 	protected void performInteraction(KeyboardEvent event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(KeyboardEvent event)",
 		// this.getClass().getName());
@@ -79,7 +79,7 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		// AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)",
 		// this.getClass().getName());
 	}
-	
+
 	protected void performInteraction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			performInteraction((DOF1Event) event);
@@ -111,10 +111,10 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	public boolean checkIfGrabsInput(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
 			return checkIfGrabsInput((KeyboardEvent) event);
-		if (event instanceof ClickEvent)		
+		if (event instanceof ClickEvent)
 			return checkIfGrabsInput((ClickEvent) event);
-		if(event instanceof MotionEvent)
-			return checkIfGrabsInput((MotionEvent) event);		
+		if (event instanceof MotionEvent)
+			return checkIfGrabsInput((MotionEvent) event);
 		return false;
 	}
 
@@ -128,7 +128,7 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
-	
+
 	public boolean checkIfGrabsInput(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			return checkIfGrabsInput((DOF1Event) event);
@@ -156,13 +156,13 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	protected boolean checkIfGrabsInput(DOF6Event event) {
 		return false;
 	}
-	
+
 	Action<E>	initAction;
-	
+
 	/**
-	 * TODO: fix docs as the following is only partially true
-	 * Should always return true after calling {@link #flushAction(BogusEvent)}. Otherwise the null action may be enqueued
-	 * to {@link #performInteraction(BogusEvent)} which will then causes the infamous null pointer exception.
+	 * TODO: fix docs as the following is only partially true Should always return true after calling
+	 * {@link #flushAction(BogusEvent)}. Otherwise the null action may be enqueued to
+	 * {@link #performInteraction(BogusEvent)} which will then causes the infamous null pointer exception.
 	 */
 	@Override
 	public final boolean processAction(BogusEvent event) {
@@ -176,13 +176,13 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 				if (initAction == action())
 					return execAction(event);// continue action
 				else { // initAction != action() -> action changes abruptly, i.e.,
-				  //System.out.println("case 1 in frame: action() != null && initAction != null (action changes abruptely, calls flush)");
+					// System.out.println("case 1 in frame: action() != null && initAction != null (action changes abruptely, calls flush)");
 					flushAction(event);
 					return initAction(event);// start action
 				}
 			}
 			else {// action() == null
-			  //System.out.println("case 2 in frame: action() == null && initAction != null (ends action, calls flush)");
+				// System.out.println("case 2 in frame: action() == null && initAction != null (ends action, calls flush)");
 				flushAction(event);// stopAction
 				initAction = null;
 				setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
@@ -191,18 +191,18 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		}
 		return true;// i.e., if initAction == action() == null -> ignore :)
 	}
-	
+
 	protected boolean initAction(BogusEvent event) {
 		initAction = action();
 		if (event instanceof KeyboardEvent)
 			return initAction((KeyboardEvent) event);
-		if (event instanceof ClickEvent)		
+		if (event instanceof ClickEvent)
 			return initAction((ClickEvent) event);
-		if(event instanceof MotionEvent)
-			return initAction((MotionEvent) event);		
+		if (event instanceof MotionEvent)
+			return initAction((MotionEvent) event);
 		return false;
 	}
-	
+
 	protected boolean initAction(KeyboardEvent event) {
 		// AbstractScene.showMissingImplementationWarning("initAction(KeyboardEvent event)",
 		// this.getClass().getName());
@@ -213,7 +213,7 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
-	
+
 	public boolean initAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			return initAction((DOF1Event) event);
@@ -240,18 +240,18 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 
 	protected boolean initAction(DOF6Event event) {
 		return false;
-	}	
-	
+	}
+
 	protected boolean execAction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
 			return execAction((KeyboardEvent) event);
-		if (event instanceof ClickEvent)		
+		if (event instanceof ClickEvent)
 			return execAction((ClickEvent) event);
-		if(event instanceof MotionEvent)
+		if (event instanceof MotionEvent)
 			return execAction((MotionEvent) event);
 		return false;
 	}
-	
+
 	protected boolean execAction(KeyboardEvent event) {
 		// AbstractScene.showMissingImplementationWarning("execAction(KeyboardEvent event)",
 		// this.getClass().getName());
@@ -262,7 +262,7 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		// AbstractScene.showMissingImplementationWarning("execAction(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
-	
+
 	public boolean execAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			return execAction((DOF1Event) event);
@@ -290,25 +290,25 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	protected boolean execAction(DOF6Event event) {
 		return false;
 	}
-	
+
 	/**
 	 * {@link #processAction(BogusEvent)} should always return true after calling this one.
 	 */
 	protected void flushAction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
 			flushAction((KeyboardEvent) event);
-		if (event instanceof ClickEvent)		
+		if (event instanceof ClickEvent)
 			flushAction((ClickEvent) event);
-		if(event instanceof MotionEvent)
+		if (event instanceof MotionEvent)
 			flushAction((MotionEvent) event);
 	}
-	
+
 	protected void flushAction(KeyboardEvent event) {
 	}
 
 	protected void flushAction(ClickEvent event) {
 	}
-	
+
 	public void flushAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			flushAction((DOF1Event) event);
@@ -321,18 +321,18 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	}
 
 	protected void flushAction(DOF1Event event) {
-		
+
 	}
 
 	protected void flushAction(DOF2Event event) {
-		
+
 	}
 
 	protected void flushAction(DOF3Event event) {
-		
+
 	}
 
 	protected void flushAction(DOF6Event event) {
-		
+
 	}
 }

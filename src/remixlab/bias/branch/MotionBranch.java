@@ -27,8 +27,10 @@ import remixlab.bias.event.shortcut.*;
  * @param <C>
  *          {@link remixlab.bias.branch.profile.ClickProfile} to parameterize the Agent with.
  */
-public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Action<E>> extends Branch<E, A, MotionShortcut> {	
-  protected Profile<ClickShortcut, C>	clickProfile;
+public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Action<E>> extends
+		Branch<E, A, MotionShortcut> {
+	protected Profile<ClickShortcut, C>	clickProfile;
+
 	/**
 	 * 
 	 * @param p

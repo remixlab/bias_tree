@@ -66,21 +66,21 @@ import remixlab.util.*;
  */
 public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber<MotionAction>, Copyable,
 		Constants {
-	
-//TODO pending cloning and hash
+
+	// TODO pending cloning and hash
 	// Multiple tempo actions require this:
 	Action<MotionAction>	initAction;
 	// private MotionAction twotempi;
 	// private A a;//TODO study make me an attribute to com between init and end
-	protected boolean				need4Spin;
-	protected boolean				need4Tossing;
-	protected boolean				drive;
-	protected boolean				rotateHint;
+	protected boolean			need4Spin;
+	protected boolean			need4Tossing;
+	protected boolean			drive;
+	protected boolean			rotateHint;
 	protected MotionEvent	currMotionEvent;
 	public MotionEvent		initMotionEvent;
 	public DOF2Event			zor;
-	protected float					flySpeedCache;
-	
+	protected float				flySpeedCache;
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -298,16 +298,16 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		super(theEye);
 	}
 
-	//TODO needs testing
+	// TODO needs testing
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
 		this.setAction(otherFrame.action());
 		this.initAction = otherFrame.initAction;
-		if(otherFrame.currMotionEvent != null)
+		if (otherFrame.currMotionEvent != null)
 			this.currMotionEvent = otherFrame.currMotionEvent.get();
-		if(otherFrame.initMotionEvent != null)
-		this.initMotionEvent = otherFrame.initMotionEvent.get();
-		if(otherFrame.zor != null)
+		if (otherFrame.initMotionEvent != null)
+			this.initMotionEvent = otherFrame.initMotionEvent.get();
+		if (otherFrame.zor != null)
 			this.zor = otherFrame.zor.get();
 	}
 
@@ -345,7 +345,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	public boolean isInInteraction() {
 		return action != null;
 	}
-	
+
 	@Override
 	public void performInteraction(BogusEvent event) {
 		if (processAction(event))
@@ -354,7 +354,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			performInteraction((KeyboardEvent) event);
 		if (event instanceof ClickEvent)
 			performInteraction((ClickEvent) event);
-		if(event instanceof MotionEvent)
+		if (event instanceof MotionEvent)
 			performInteraction((MotionEvent) event);
 	}
 
@@ -593,7 +593,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	public MotionEvent currentMotionEvent() {
 		return currMotionEvent;
 	}
-	
+
 	@Override
 	public final boolean processAction(BogusEvent event) {
 		if (initAction == null) {
@@ -619,17 +619,17 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		}
 		return true;// i.e., if initAction == action() == null -> ignore :)
 	}
-	
-	//init domain
-	
+
+	// init domain
+
 	protected boolean initAction(BogusEvent event) {
 		initAction = action();
 		if (event instanceof KeyboardEvent)
 			return initAction((KeyboardEvent) event);
-		if (event instanceof ClickEvent)		
+		if (event instanceof ClickEvent)
 			return initAction((ClickEvent) event);
-		if(event instanceof MotionEvent)
-			return initAction((MotionEvent) event);		
+		if (event instanceof MotionEvent)
+			return initAction((MotionEvent) event);
 		return false;
 	}
 
@@ -675,15 +675,15 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		}
 		return false;
 	}
-	
+
 	// exec domain
-	
+
 	protected boolean execAction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
 			return execAction((KeyboardEvent) event);
-		if (event instanceof ClickEvent)		
+		if (event instanceof ClickEvent)
 			return execAction((ClickEvent) event);
-		if(event instanceof MotionEvent)
+		if (event instanceof MotionEvent)
 			return execAction((MotionEvent) event);
 		return false;
 	}
@@ -711,20 +711,20 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		}
 		return false;
 	}
-	
+
 	protected boolean execAction(ClickEvent event) {
 		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
-	
+
 	// flushDomain
-	
+
 	protected void flushAction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
 			flushAction((KeyboardEvent) event);
-		if (event instanceof ClickEvent)		
+		if (event instanceof ClickEvent)
 			flushAction((ClickEvent) event);
-		if(event instanceof MotionEvent)
+		if (event instanceof MotionEvent)
 			flushAction((MotionEvent) event);
 	}
 
@@ -732,7 +732,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		if (!(event instanceof DOF1Event))
 			flushAction(MotionEvent.dof2Event(event));
 	}
-	
+
 	protected void flushAction(ClickEvent event) {
 	}
 
