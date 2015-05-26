@@ -10,6 +10,7 @@
 
 package remixlab.bias.event.shortcut;
 
+import remixlab.bias.core.BogusEvent;
 import remixlab.util.Copyable;
 
 /**
@@ -48,5 +49,11 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 	@Override
 	public KeyboardShortcut get() {
 		return new KeyboardShortcut(this);
+	}
+	
+	@Override
+	public String description() {
+		String m = BogusEvent.modifiersText(mask);
+		return ((m.length() > 0 ) ? m + "+VKEY_" : "VKEY_") + String.valueOf(id);
 	}
 }

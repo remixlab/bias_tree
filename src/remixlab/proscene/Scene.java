@@ -451,26 +451,60 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public String info() {
 		String info = super.info();
+		
+		// info PARSING
+		
+		// 1. We first parse the mouse agent info (the one contained in super.info())
 
-		String l = Integer.toString(PApplet.LEFT) + "_BUTTON";
-		String c = Integer.toString(PApplet.CENTER) + "_BUTTON";
-		String r = Integer.toString(PApplet.RIGHT) + "_BUTTON";
+		String l = "ID_" + String.valueOf(MouseAgent.LEFT_ID);
+		String r = "ID_" + String.valueOf(MouseAgent.RIGHT_ID);
+		String c = "ID_" + String.valueOf(MouseAgent.CENTER_ID);
+		String w = "ID_" + String.valueOf(WheeledMouseAgent.WHEEL_ID);
+		String n = "ID_0";
+		
+		// ... and replace it with proper descriptions:
 
-		info = info.replace(l, "LEFT_BUTTON").replace(c, "CENTER_BUTTON").replace(r, "RIGHT_BUTTON");
+		info = info.replace(l, "LEFT_BUTTON").replace(r, "RIGHT_BUTTON").replace(c, "CENTER_BUTTON").replace(w, "WHEEL").replace(n, "NO_BUTTON");
 		String keyboardtitle = keyboardAgent().name()
 				+ " (key-codes are defined here: http://docs.oracle.com/javase/7/docs/api/constant-values.html)";
 		info = info.replace(keyboardAgent().name(), keyboardtitle);
+		
+		// 2. keyboard parsing is split in two steps: 
+		
+		// 2a. Parse the "1", "2", "3" and left-right-up-down keys:  
+		
+		String vk_1 = "VKEY_" + String.valueOf(49);
+		String vk_2 = "VKEY_" + String.valueOf(50);
+		String vk_3 = "VKEY_" + String.valueOf(51);
+		String vk_l = "VKEY_" + String.valueOf(37);
+		String vk_u = "VKEY_" + String.valueOf(38);
+		String vk_r = "VKEY_" + String.valueOf(39);
+		String vk_d = "VKEY_" + String.valueOf(40);
+		
+	  // ... and replace it with proper descriptions:
 
-		String vk_1 = "virtual_key (" + Integer.toString(49) + ")";
-		String vk_2 = "virtual_key (" + Integer.toString(50) + ")";
-		String vk_3 = "virtual_key (" + Integer.toString(51) + ")";
-		String vk_l = "virtual_key (" + Integer.toString(37) + ")";
-		String vk_u = "virtual_key (" + Integer.toString(38) + ")";
-		String vk_r = "virtual_key (" + Integer.toString(39) + ")";
-		String vk_d = "virtual_key (" + Integer.toString(40) + ")";
-
-		info = info.replace(vk_1, "VK_1").replace(vk_2, "VK_2").replace(vk_3, "VK_3")
-				.replace(vk_l, "VK_LEFT").replace(vk_u, "VK_UP").replace(vk_r, "VK_RIGHT").replace(vk_d, "VK_DOWN");
+		info = info.replace(vk_1, "'1'").replace(vk_2, "'2'").replace(vk_3, "'3'")
+				.replace(vk_l, "LEFT_vkey").replace(vk_u, "UP_vkey").replace(vk_r, "RIGHT_vkey").replace(vk_d, "DOWN_vkey");
+		
+	  // 2b. Parse the remaining virtual key codes: 
+		
+		/*
+		 * //TODO (far fancier than the mouse agent)
+		 * 
+		 * Search for the following pattern in info string: "VKEY_id " (note the final white space)
+		 * 
+		 *   where id is the virtual key code (as defined in the above url)
+		 * 
+		 * and replace it with: "char"
+		 * 
+		 *   where char is the key bound to that code, i.e., the one obtained with the following code: char char=(char)id_int
+		 *         
+		 *      where id_int is the integer representation of the id char (see: http://stackoverflow.com/questions/15991822/java-converting-keycode-to-string-or-char);
+		 *      
+		 *      Note that id_int should be obtained from "_id " before the actual replacement.
+		 *    
+		 * See: http://www.vogella.com/tutorials/JavaRegularExpressions/article.html
+		 */
 
 		return info;
 	}

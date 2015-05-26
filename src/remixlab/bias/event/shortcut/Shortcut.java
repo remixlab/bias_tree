@@ -94,9 +94,8 @@ public class Shortcut implements Copyable {
 	 * @return description as a String
 	 */
 	public String description() {
-		String modifiersString = BogusEvent.modifiersText(mask);
-		String idString = "ID_" + String.valueOf(id);
-		return modifiersString.length() > 0 ? modifiersString + "+" + idString : idString;
+		String m = BogusEvent.modifiersText(mask);
+		return ((m.length() > 0 ) ? m + "+ID_" : "ID_") + String.valueOf(id);
 	}
 
 	public int modifiers() {
