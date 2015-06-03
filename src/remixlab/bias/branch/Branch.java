@@ -106,8 +106,8 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	 * The {@link #profile()} is used to parse the event into an user-defined action which is then set into the grabber
 	 * (see {@link remixlab.bias.core.InteractiveGrabber#setAction(Action)}) and returned.
 	 */
-	public Action<E> handle(InteractiveGrabber<E> grabber, BogusEvent event) {
-		if (grabber == null || event == null)
+	public Action<E> handle(BogusEvent event) {
+		if (event == null)
 			return null;
 		Action<E> action = profile().handle(event);
 		// if (action != null) grabber.setAction(action);

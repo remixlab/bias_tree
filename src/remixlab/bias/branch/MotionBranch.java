@@ -102,8 +102,8 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	}
 
 	@Override
-	public Action<E> handle(InteractiveGrabber<E> grabber, BogusEvent event) {
-		if (grabber == null || event == null)
+	public Action<E> handle(BogusEvent event) {
+		if (event == null)
 			return null;
 		Action<E> action = null;
 		if (event instanceof MotionEvent)

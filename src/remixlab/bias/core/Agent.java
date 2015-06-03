@@ -146,7 +146,8 @@ public class Agent {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
+	///*
+	@SuppressWarnings("unchecked")	
 	public <E extends Enum<E>> List<InteractiveGrabber<E>> grabbers(Branch<E, ?, ?> branch) {
 		List<InteractiveGrabber<E>> list = new ArrayList<InteractiveGrabber<E>>();
 		for (GrabberBranchTuple t : tuples)
@@ -154,6 +155,18 @@ public class Agent {
 				list.add((InteractiveGrabber<E>) t.g);
 		return list;
 	}
+	//*/
+	
+	/*
+	//TODO test me to remove warning
+	public <E extends Enum<E>> List<InteractiveGrabber<?>> grabbers(Branch<E, ?, ?> branch) {
+		List<InteractiveGrabber<?>> list = new ArrayList<InteractiveGrabber<?>>();
+		for (GrabberBranchTuple t : tuples)
+			if (t.b == branch)
+				list.add((InteractiveGrabber<?>)t.g);
+		return list;
+	}
+	//*/
 
 	/*
 	 * public <E extends Enum<E>, K extends Branch<E, ?, ?>, G extends InteractiveGrabber<E>> boolean addGrabber(G
@@ -346,7 +359,7 @@ public class Agent {
 	 * 
 	 * @see #inputGrabber()
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	protected <E extends Enum<E>> boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)
 			return false;
@@ -360,7 +373,7 @@ public class Agent {
 		if (inputGrabber != null) {
 			if (inputGrabber instanceof InteractiveGrabber<?>) {
 				GrabberBranchTuple t = trackedGrabber() != null ? trackedGrabber : defaultGrabber;
-				Action<E> action = (Action<E>) t.b.handle((InteractiveGrabber) inputGrabber, event);
+				Action<E> action = (Action<E>) t.b.handle(event);
 				return action != null ? inputHandler().enqueueEventTuple(
 						new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, action)) : false;
 			}
