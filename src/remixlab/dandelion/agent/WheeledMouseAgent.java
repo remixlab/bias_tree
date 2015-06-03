@@ -613,7 +613,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Returns the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
 	 * given mask-wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
-	public DOF1Action wheelAction(Target target, int mask, DOF1Action action) {
+	public DOF1Action wheelAction(Target target, int mask) {
 		return action(target, new MotionShortcut(mask, WHEEL_ID)).dof1Action();
 	}
 
@@ -621,7 +621,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Returns the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
 	 * given wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
 	 */
-	public DOF1Action wheelAction(Target target, DOF1Action action) {
+	public DOF1Action wheelAction(Target target) {
 		return action(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID)).dof1Action();
 	}
 
