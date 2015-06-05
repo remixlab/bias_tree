@@ -10,6 +10,9 @@
 
 package remixlab.bias.branch;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.shortcut.Shortcut;
@@ -43,21 +46,24 @@ import remixlab.util.Copyable;
  */
 public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> implements Copyable {
 	protected Profile<S, A>	profile;
-	protected Agent					parent;
+	protected List<InteractiveGrabber<E>> grabbers;
+	protected Agent					agent;
 	protected String				name;
 
 	public Branch(Agent pnt, String n) {
 		name = n;
+		agent = pnt;
 		profile = new Profile<S, A>();
-		parent = pnt;
-		parent.appendBranch(this);
+		grabbers = new ArrayList<InteractiveGrabber<E>>();
+		agent.appendBranch(this);
 	}
 
 	protected Branch(Branch<E, A, S> other) {
 		name = other.name() + "_deep-copy";
+		agent = other.agent();
 		profile = other.profile().get();
-		parent = other.agent();
-		parent.appendBranch(this);
+		grabbers = new ArrayList<InteractiveGrabber<E>>();
+		agent.appendBranch(this);
 	}
 
 	@Override
@@ -70,7 +76,7 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	}
 
 	public Agent agent() {
-		return parent;
+		return agent;
 	}
 
 	/**
@@ -112,5 +118,35 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 		Action<E> action = profile().handle(event);
 		// if (action != null) grabber.setAction(action);
 		return action;
+	}
+	
+	public boolean addGrabber(InteractiveGrabber<E> grabber) {
+		if (grabber == null || this.hasGrabber(grabber))
+			return false;
+		return grabbers.add(grabber);
+	}
+	
+	public boolean removeGrabber(Grabber grabber) {
+		return grabbers.remove(grabber);
+	}
+	
+	public List<InteractiveGrabber<E>> grabbers() {
+		return grabbers;
+	}
+	
+	public boolean hasGrabber(Grabber grabber) {
+		if (grabber == null)
+			return false;
+		// return grabbers().contains(grabber);
+		// /*
+		for (Grabber g : grabbers())
+			if (g == grabber)
+				return true;
+		return false;
+		// */
+	}
+	
+	public void reset() {
+		grabbers.clear();
 	}
 }

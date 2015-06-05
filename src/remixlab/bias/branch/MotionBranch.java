@@ -106,10 +106,20 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 		if (event == null)
 			return null;
 		Action<E> action = null;
+		
+		///*
 		if (event instanceof MotionEvent)
 			action = profile().handle(event);
 		if (event instanceof ClickEvent)
 			action = clickProfile.handle(event);
+		//*/
+		
+		/*
+		action = profile().handle(event);
+		if (action == null)
+			action = clickProfile.handle(event);
+		//*/
+		
 		return action;
 	}
 }

@@ -91,12 +91,12 @@ public void keyPressed() {
       scene.mouseAgent().dragToArcball();
       scene.eye().interpolateToFitScene();
     }
-  if(key=='i') ((InteractiveAvatarFrame) scene.avatar()).setInclination(((InteractiveAvatarFrame) scene.avatar()).inclination() - PI / 64);
-  if(key=='I') ((InteractiveAvatarFrame) scene.avatar()).setInclination(((InteractiveAvatarFrame) scene.avatar()).inclination() + PI / 64);
-  if(key=='z') ((InteractiveAvatarFrame) scene.avatar()).setAzimuth(((InteractiveAvatarFrame) scene.avatar()).azimuth() - PI / 64);
-  if(key=='Z') ((InteractiveAvatarFrame) scene.avatar()).setAzimuth(((InteractiveAvatarFrame) scene.avatar()).azimuth() + PI / 64);
-  if(key=='t') ((InteractiveAvatarFrame) scene.avatar()).setTrackingDistance(((InteractiveAvatarFrame) scene.avatar()).trackingDistance() - scene.radius() / 50);
-  if(key=='T') ((InteractiveAvatarFrame) scene.avatar()).setTrackingDistance(((InteractiveAvatarFrame) scene.avatar()).trackingDistance() + scene.radius() / 50);
+  if(key=='i') avatar.setInclination(avatar.inclination() - PI / 64);
+  if(key=='I') avatar.setInclination(avatar.inclination() + PI / 64);
+  if(key=='z') avatar.setAzimuth(avatar.azimuth() - PI / 64);
+  if(key=='Z') avatar.setAzimuth(avatar.azimuth() + PI / 64);
+  if(key=='t') avatar.setTrackingDistance(avatar.trackingDistance() - scene.radius() / 50);
+  if(key=='T') avatar.setTrackingDistance(avatar.trackingDistance() + scene.radius() / 50);
   if(key=='p') ((InteractiveFrame) scene.avatar()).setFlySpeed(((InteractiveFrame) scene.avatar()).flySpeed() / 1.2f);
   if(key=='P') ((InteractiveFrame) scene.avatar()).setFlySpeed(((InteractiveFrame) scene.avatar()).flySpeed() * 1.2f);
 }
