@@ -49,7 +49,7 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 		setProfile(profile);
 	}
 	
-	// high-level api (wrappers around the profile)
+	// high-level api (wrappers around the profile): from here nor really needed
 	
 	/**
 	 * Removes all shortcut bindings.

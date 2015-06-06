@@ -124,7 +124,7 @@ public class Agent {
 		if (hasGrabber(grabber))
 			return false;
 		if (grabber instanceof InteractiveGrabber) {
-			System.out.println("use addGrabber(G grabber, K actionAgent) instead");
+			System.err.println("use addGrabber(G grabber, K actionAgent) instead");
 			return false;
 		}
 		return grabberList.add(grabber);
@@ -439,7 +439,7 @@ public class Agent {
 	// Char hack from here
 
 	public int keyCode(char key) {
-		//AbstractScene.showMissingImplementationWarning("keyCode", "KeyboardAgent");
+		System.err.println("keyCode(char) should be implemented by your Agent derived class");
 		return BogusEvent.NO_ID;
 	}
 }
