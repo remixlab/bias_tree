@@ -435,4 +435,11 @@ public class Agent {
 	public void resetDefaultGrabber() {
 		setDefaultGrabber(null);
 	}
+	
+	// Char hack from here
+
+	public int keyCode(char key) {
+		//AbstractScene.showMissingImplementationWarning("keyCode", "KeyboardAgent");
+		return BogusEvent.NO_ID;
+	}
 }

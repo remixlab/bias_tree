@@ -53,10 +53,6 @@ public class KeyAgent extends KeyboardAgent {
 		 */
 	}
 
-	/*
-	 * public static int getKeyCode(char key) { return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key); }
-	 */
-
 	@Override
 	public int keyCode(char key) {
 		return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key);
