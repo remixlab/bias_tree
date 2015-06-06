@@ -442,6 +442,24 @@ public abstract class Eye implements Copyable {
 	public final void setTranslationSensitivity(float sensitivity) {
 		frame().setTranslationSensitivity(sensitivity);
 	}
+	
+	/**
+	 * Convenience wrapper function that simply returns {@code frame().scalingSensitivity()}
+	 * 
+	 * @see remixlab.dandelion.core.GrabberFrame#scalingSensitivity()
+	 */
+	public final float scalingSensitivity() {
+		return frame().scalingSensitivity();
+	}
+	
+	/**
+	 * Convenience wrapper function that simply calls {@code frame().setScalingSensitivity(sensitivity)}
+	 * 
+	 * @see remixlab.dandelion.core.GrabberFrame#setScalingSensitivity(float)
+	 */
+	public final void setScalingSensitivity(float sensitivity) {
+		frame().setScalingSensitivity(sensitivity);
+	}
 
 	/**
 	 * Returns the Eye position, defined in the world coordinate system.
