@@ -99,7 +99,6 @@ void draw() {
   line(flockWidth, flockHeight, 0, flockWidth, flockHeight, flockDepth);
 
   triggered = scene.timer().trigggered();
-
   for (Boid boid : flock) {
     if (triggered)
       boid.run(flock);
@@ -144,13 +143,11 @@ void keyPressed() {
   case ' ':
     if ( scene.avatar() == null && previousAvatar != null) {
       scene.setAvatar(previousAvatar);
-      //scene.setMouseAsThirdPerson();
       scene.mouseAgent().setDefaultGrabber(previousAvatar);
       scene.mouseAgent().disableTracking();
     } else {
       previousAvatar = (InteractiveAvatarFrame)scene.avatar();
-      scene.unsetAvatar(); //simply sets avatar as null      
-      //scene.mouseAgent().setAsArcball();
+      scene.unsetAvatar(); //simply sets avatar as null
       scene.mouseAgent().setDefaultGrabber(scene.eye().frame());
       scene.mouseAgent().enableTracking();
       scene.camera().interpolateToFitScene();

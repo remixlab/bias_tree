@@ -112,13 +112,11 @@ public void draw() {
   }
 }
 
-float gauss(float x, float sigma)
-{
+float gauss(float x, float sigma) {
   return exp( -( x * x ) / ( 2.0 * sigma * sigma ) );
 }
 
-void buildKernel(float sigma)
-{
+void buildKernel(float sigma) {
   int kernelSize = 2 * ceil( sigma * 3.0 ) + 1;
   kernel = new float[kernelSize];
   float halfWidth = ( kernelSize - 1 ) * 0.5;

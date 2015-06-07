@@ -49,13 +49,9 @@ public abstract class Button2D extends GrabberObject {
   }
 
   @Override
-  public boolean checkIfGrabsInput(BogusEvent event) {
-    if (event instanceof DOF2Event) {
-      float x = ((DOF2Event)event).x();
-      float y = ((DOF2Event)event).y();
-      return ((position.x <= x) && (x <= position.x + myWidth) && (position.y <= y) && (y <= position.y + myHeight));
-    }
-    else
-      return false;
+  public boolean checkIfGrabsInput(DOF2Event event) {
+    float x = ((DOF2Event)event).x();
+    float y = ((DOF2Event)event).y();
+    return ((position.x <= x) && (x <= position.x + myWidth) && (position.y <= y) && (y <= position.y + myHeight));
   }
 }

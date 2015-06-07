@@ -1,6 +1,6 @@
 /**
  * Scramble.
- * by Alejandro Duarte (alejandro.d.a@gmail.com)
+ * by Alejandro Duarte (alejandro.d.a@gmail.com) and Jean Pierre Charalambos
  *
  * This example implements an advanced puzzle game. The rules are straightforward
  * and can easily be understood once one begins to play it. The code was commented

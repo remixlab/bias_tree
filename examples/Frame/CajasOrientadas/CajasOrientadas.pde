@@ -36,8 +36,7 @@ public void setup() {
 }
 
 public void draw() {
-  background(0);  
-
+  background(0);
   esfera.draw();
   for (int i = 0; i < cajas.length; i++) {
     cajas[i].setOrientation(esfera.getPosition());

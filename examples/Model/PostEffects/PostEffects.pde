@@ -24,21 +24,16 @@ public void setup() {
   textFont(font);
   colorMode(HSB, 255);
   cols = new color[100];
-  posns = new float[300];
-  
+  posns = new float[300];  
   for (int i = 0; i<100; i++){
     posns[3*i]=random(-1000, 1000);
     posns[3*i+1]=random(-1000, 1000);
     posns[3*i+2]=random(-1000, 1000);
     cols[i]= color(255 * i / 100.0, 255, 255, 255);
-  }
-  
-  graphics = createGraphics(width, height, P3D);
-  
+  }  
+  graphics = createGraphics(width, height, P3D);  
   scene = new Scene(this, graphics);
-
   models = new InteractiveModelFrame[100];
-
   for (int i = 0; i < models.length; i++) {
     models[i] = new InteractiveModelFrame(scene, boxShape());
     models[i].translate(posns[3*i], posns[3*i+1], posns[3*i+2]);
@@ -47,7 +42,6 @@ public void setup() {
     models[i].shape().setFill(cols[i]);
     popStyle();
   }
-
   scene.setRadius(1000);
   scene.showAll();
      
@@ -102,7 +96,7 @@ public void setup() {
   horizontalGraphics.shader(horizontalShader);
   horizontalShader.set("h", 0.005);
   horizontalShader.set("r", 0.5);
-  frameRate(1000);
+  frameRate(100);
 }
 
 public void draw() {
