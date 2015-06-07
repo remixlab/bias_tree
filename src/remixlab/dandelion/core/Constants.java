@@ -339,22 +339,6 @@ public interface Constants {
 		 * Move eye down
 		 */
 		MOVE_DOWN("Move eye down", true),
-		/**
-		 * Increase frame rotation sensitivity
-		 */
-		INCREASE_ROTATION_SENSITIVITY("Increase frame rotation sensitivity", true),
-		/**
-		 * Decrease frame rotation sensitivity
-		 */
-		DECREASE_ROTATION_SENSITIVITY("Decrease frame rotation sensitivity", true),
-		/**
-		 * Increase eye fly speed
-		 */
-		INCREASE_FLY_SPEED("Increase eye fly speed", true),
-		/**
-		 * Decrease eye fly speed
-		 */
-		DECREASE_FLY_SPEED("Decrease eye fly speed", true),
 
 		// CUSTOM ACTIONs
 
@@ -818,10 +802,6 @@ public interface Constants {
 		MOVE_RIGHT(GlobalAction.MOVE_RIGHT),
 		MOVE_UP(GlobalAction.MOVE_UP),
 		MOVE_DOWN(GlobalAction.MOVE_DOWN),
-		INCREASE_ROTATION_SENSITIVITY(GlobalAction.INCREASE_ROTATION_SENSITIVITY),
-		DECREASE_ROTATION_SENSITIVITY(GlobalAction.DECREASE_ROTATION_SENSITIVITY),
-		INCREASE_FLY_SPEED(GlobalAction.INCREASE_FLY_SPEED),
-		DECREASE_FLY_SPEED(GlobalAction.DECREASE_FLY_SPEED),
 
 		CUSTOM(GlobalAction.CUSTOM);
 

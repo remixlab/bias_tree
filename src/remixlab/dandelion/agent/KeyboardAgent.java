@@ -167,9 +167,8 @@ public class KeyboardAgent extends Agent {
 		// VK_R : 82
 		setBinding(82, SceneAction.TOGGLE_PATHS_VISUAL_HINT);
 		// VK_S : 83
-		setBinding(83, SceneAction.INTERPOLATE_TO_FIT);
-		// setBinding('S', SceneAction.SHOW_ALL);
-		setBinding('p', SceneAction.INTERPOLATE_TO_FIT);
+		setBinding('s', SceneAction.INTERPOLATE_TO_FIT);
+		setBinding(BogusEvent.SHIFT, 's', SceneAction.SHOW_ALL);
 
 		// VK_LEFT : 37
 		setBinding(37, SceneAction.MOVE_LEFT);

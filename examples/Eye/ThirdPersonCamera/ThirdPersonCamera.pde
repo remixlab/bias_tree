@@ -97,6 +97,6 @@ public void keyPressed() {
   if(key=='Z') avatar.setAzimuth(avatar.azimuth() + PI / 64);
   if(key=='t') avatar.setTrackingDistance(avatar.trackingDistance() - scene.radius() / 50);
   if(key=='T') avatar.setTrackingDistance(avatar.trackingDistance() + scene.radius() / 50);
-  if(key=='p') ((InteractiveFrame) scene.avatar()).setFlySpeed(((InteractiveFrame) scene.avatar()).flySpeed() / 1.2f);
-  if(key=='P') ((InteractiveFrame) scene.avatar()).setFlySpeed(((InteractiveFrame) scene.avatar()).flySpeed() * 1.2f);
+  if(key=='p') avatar.setFlySpeed(avatar.flySpeed() / 1.2f);
+  if(key=='P') avatar.setFlySpeed(avatar.flySpeed() * 1.2f);
 }

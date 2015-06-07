@@ -178,12 +178,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		case CUSTOM:
 			performCustomAction(event);
 			break;
-		case DECREASE_FLY_SPEED:
-			eye().setFlySpeed(eye().flySpeed() / 1.2f);
-			break;
-		case DECREASE_ROTATION_SENSITIVITY:
-			eye().setRotationSensitivity(eye().rotationSensitivity() / 1.2f);
-			break;
 		case DELETE_PATH_1:
 			eye().deletePath(1);
 			break;
@@ -195,12 +189,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			break;
 		case DISPLAY_INFO:
 			displayInfo();
-			break;
-		case INCREASE_FLY_SPEED:
-			eye().setFlySpeed(eye().flySpeed() * 1.2f);
-			break;
-		case INCREASE_ROTATION_SENSITIVITY:
-			eye().setRotationSensitivity(eye().rotationSensitivity() * 1.2f);
 			break;
 		case INTERPOLATE_TO_FIT:
 			eye().interpolateToFitScene();
@@ -309,11 +297,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	protected boolean contiguous(Action<GlobalAction> action) {
-		return action.referenceAction() == GlobalAction.DECREASE_FLY_SPEED
-				|| action.referenceAction() == GlobalAction.DECREASE_ROTATION_SENSITIVITY
-				|| action.referenceAction() == GlobalAction.INCREASE_FLY_SPEED
-				|| action.referenceAction() == GlobalAction.INCREASE_ROTATION_SENSITIVITY
-				|| action.referenceAction() == GlobalAction.MOVE_DOWN || action.referenceAction() == GlobalAction.MOVE_LEFT
+		return action.referenceAction() == GlobalAction.MOVE_DOWN || action.referenceAction() == GlobalAction.MOVE_LEFT
 				|| action.referenceAction() == GlobalAction.MOVE_RIGHT || action.referenceAction() == GlobalAction.MOVE_UP;
 	}
 
