@@ -78,19 +78,19 @@ public void setExoticCustomization() {
   // 1b. Random
   keyboard.setBinding('a', randomAction(SceneAction.class));
   // 2. Frame:
-  keyboard.setBinding(Target.FRAME, 'x', KeyboardAction.ROTATE_UP_X);
-  keyboard.setBinding(Target.FRAME, Event.SHIFT, 'x', KeyboardAction.ROTATE_DOWN_X);
-  keyboard.setBinding(Target.FRAME, 'y', KeyboardAction.ROTATE_UP_Y);
-  keyboard.setBinding(Target.FRAME, Event.SHIFT, 'y', KeyboardAction.ROTATE_DOWN_Y);
-  keyboard.setBinding(Target.FRAME, 'z', KeyboardAction.ROTATE_UP_Z);
-  keyboard.setBinding(Target.FRAME, Event.SHIFT, 'z', KeyboardAction.ROTATE_DOWN_Z);
+  keyboard.setBinding(Target.FRAME, 'x', KeyboardAction.ROTATE_X_POS);
+  keyboard.setBinding(Target.FRAME, Event.SHIFT, 'x', KeyboardAction.ROTATE_X_NEG);
+  keyboard.setBinding(Target.FRAME, 'y', KeyboardAction.ROTATE_Y_POS);
+  keyboard.setBinding(Target.FRAME, Event.SHIFT, 'y', KeyboardAction.ROTATE_Y_NEG);
+  keyboard.setBinding(Target.FRAME, 'z', KeyboardAction.ROTATE_Z_POS);
+  keyboard.setBinding(Target.FRAME, Event.SHIFT, 'z', KeyboardAction.ROTATE_Z_NEG);
   // 3. Eye
-  keyboard.setBinding(Target.EYE, 'x', KeyboardAction.ROTATE_UP_X);
-  keyboard.setBinding(Target.EYE, Event.SHIFT, 'x', KeyboardAction.ROTATE_DOWN_X);
-  keyboard.setBinding(Target.EYE, 'y', KeyboardAction.ROTATE_UP_Y);
-  keyboard.setBinding(Target.EYE, Event.SHIFT, 'y', KeyboardAction.ROTATE_DOWN_Y);
-  keyboard.setBinding(Target.EYE, 'z', KeyboardAction.ROTATE_UP_Z);
-  keyboard.setBinding(Target.EYE, Event.SHIFT, 'z', KeyboardAction.ROTATE_DOWN_Z);    
+  keyboard.setBinding(Target.EYE, 'x', KeyboardAction.ROTATE_X_POS);
+  keyboard.setBinding(Target.EYE, Event.SHIFT, 'x', KeyboardAction.ROTATE_X_NEG);
+  keyboard.setBinding(Target.EYE, 'y', KeyboardAction.ROTATE_Y_POS);
+  keyboard.setBinding(Target.EYE, Event.SHIFT, 'y', KeyboardAction.ROTATE_Y_NEG);
+  keyboard.setBinding(Target.EYE, 'z', KeyboardAction.ROTATE_Z_POS);
+  keyboard.setBinding(Target.EYE, Event.SHIFT, 'z', KeyboardAction.ROTATE_Z_NEG);    
 }
 
 public void keyPressed() {

@@ -503,40 +503,40 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		case ZOOM_OUT_ON_ANCHOR:
 			gestureZoomOnAnchor(event, false);
 			break;
-		case ROTATE_UP_X:
+		case ROTATE_X_POS:
 			gestureRotateX(event, true);
 			break;
-		case ROTATE_DOWN_X:
+		case ROTATE_X_NEG:
 			gestureRotateX(event, false);
 			break;
-		case ROTATE_UP_Y:
+		case ROTATE_Y_POS:
 			gestureRotateY(event, true);
 			break;
-		case ROTATE_DOWN_Y:
+		case ROTATE_Y_NEG:
 			gestureRotateY(event, false);
 			break;
-		case ROTATE_UP_Z:
+		case ROTATE_Z_POS:
 			gestureRotateZ(event, true);
 			break;
-		case ROTATE_DOWN_Z:
+		case ROTATE_Z_NEG:
 			gestureRotateZ(event, false);
 			break;
-		case TRANSLATE_UP_X:
+		case TRANSLATE_X_POS:
 			gestureTranslateX(event, true);
 			break;
-		case TRANSLATE_DOWN_X:
+		case TRANSLATE_X_NEG:
 			gestureTranslateX(event, false);
 			break;
-		case TRANSLATE_UP_Y:
+		case TRANSLATE_Y_POS:
 			gestureTranslateY(event, true);
 			break;
-		case TRANSLATE_DOWN_Y:
+		case TRANSLATE_Y_NEG:
 			gestureTranslateY(event, false);
 			break;
-		case TRANSLATE_UP_Z:
+		case TRANSLATE_Z_POS:
 			gestureTranslateZ(event, true);
 			break;
-		case TRANSLATE_DOWN_Z:
+		case TRANSLATE_Z_NEG:
 			gestureTranslateZ(event, false);
 			break;
 		default:

@@ -1,5 +1,5 @@
 /**
- * Mouse Frame.
+ * Sensitivities
  * by Jean Pierre Charalambos.
  * 
  * This example illustrates the variables that can be fine tuned to control

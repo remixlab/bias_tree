@@ -1,5 +1,5 @@
 /**
- * Mouse Grabbers.
+ * Grabbers.
  * by Jean Pierre Charalambos.
  * 
  * This example illustrates how to attach an iFrame to an object to control it.
@@ -62,7 +62,7 @@ public void addTorus() {
 
 public void removeTorus() {
   if (toruses.size() > 0) {
-    scene.mouseAgent().removeGrabber(toruses.get(0).iFrame);
+    scene.motionAgent().removeGrabber(toruses.get(0).iFrame);
     toruses.remove(0);
   }
 }

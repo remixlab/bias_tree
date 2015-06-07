@@ -202,17 +202,17 @@ public class KeyboardAgent extends Agent {
 		// VK_C
 		setBinding(Target.EYE, 67, KeyboardAction.CENTER_FRAME);
 		// VK_X
-		setBinding(Target.EYE, 88, KeyboardAction.TRANSLATE_DOWN_X);
+		setBinding(Target.EYE, 88, KeyboardAction.TRANSLATE_X_NEG);
 		// VK_X
-		setBinding(Target.EYE, BogusEvent.SHIFT, 88, KeyboardAction.TRANSLATE_UP_X);
+		setBinding(Target.EYE, BogusEvent.SHIFT, 88, KeyboardAction.TRANSLATE_X_POS);
 		// VK_Y
-		setBinding(Target.EYE, 89, KeyboardAction.TRANSLATE_DOWN_Y);
+		setBinding(Target.EYE, 89, KeyboardAction.TRANSLATE_Y_NEG);
 		// VK_Y
-		setBinding(Target.EYE, BogusEvent.SHIFT, 89, KeyboardAction.TRANSLATE_UP_Y);
+		setBinding(Target.EYE, BogusEvent.SHIFT, 89, KeyboardAction.TRANSLATE_Y_POS);
 		// VK_Z
-		setBinding(Target.EYE, 90, KeyboardAction.ROTATE_DOWN_Z);
+		setBinding(Target.EYE, 90, KeyboardAction.ROTATE_Z_NEG);
 		// VK_Z
-		setBinding(Target.EYE, BogusEvent.SHIFT, 90, KeyboardAction.ROTATE_UP_Z);
+		setBinding(Target.EYE, BogusEvent.SHIFT, 90, KeyboardAction.ROTATE_Z_POS);
 
 		// 3. Frame bindings
 		// VK_A : 65
@@ -220,17 +220,17 @@ public class KeyboardAgent extends Agent {
 		// VK_C
 		setBinding(Target.FRAME, 67, KeyboardAction.CENTER_FRAME);
 		// VK_X
-		setBinding(Target.FRAME, 88, KeyboardAction.TRANSLATE_DOWN_X);
+		setBinding(Target.FRAME, 88, KeyboardAction.TRANSLATE_X_NEG);
 		// VK_X
-		setBinding(Target.FRAME, BogusEvent.SHIFT, 88, KeyboardAction.TRANSLATE_UP_X);
+		setBinding(Target.FRAME, BogusEvent.SHIFT, 88, KeyboardAction.TRANSLATE_X_POS);
 		// VK_Y
-		setBinding(Target.FRAME, 89, KeyboardAction.TRANSLATE_DOWN_Y);
+		setBinding(Target.FRAME, 89, KeyboardAction.TRANSLATE_Y_NEG);
 		// VK_Y
-		setBinding(Target.FRAME, BogusEvent.SHIFT, 89, KeyboardAction.TRANSLATE_UP_Y);
+		setBinding(Target.FRAME, BogusEvent.SHIFT, 89, KeyboardAction.TRANSLATE_Y_POS);
 		// VK_Z
-		setBinding(Target.FRAME, 90, KeyboardAction.ROTATE_DOWN_Z);
+		setBinding(Target.FRAME, 90, KeyboardAction.ROTATE_Z_NEG);
 		// VK_Z
-		setBinding(Target.FRAME, BogusEvent.SHIFT, 90, KeyboardAction.ROTATE_UP_Z);
+		setBinding(Target.FRAME, BogusEvent.SHIFT, 90, KeyboardAction.ROTATE_Z_POS);
 	}
 
 	/**

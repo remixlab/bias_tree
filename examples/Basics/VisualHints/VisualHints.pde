@@ -26,9 +26,10 @@ public void setup() {
   iFrame = new InteractiveAvatarFrame(scene);
   iFrame.setGrabsInputThreshold(scene.radius()/4, true);
   iFrame.translate(new Vec(30, -30, 0));
-  scene.keyboardAgent().setBinding('r', null);//better to use removeBinding() though
+  scene.keyboardAgent().removeBinding('r');
+  scene.keyboardAgent().setBinding('u', SceneAction.TOGGLE_PATHS_VISUAL_HINT);
   scene.setNonSeqTimers();
-  scene.setVisualHints(Scene.AXES | Scene.GRID | Scene.PICKING );
+  scene.setVisualHints(Scene.AXES | Scene.GRID | Scene.PICKING | Scene.PATHS);
   //create a eye path and add some key frames:
   //key frames can be added at runtime with keys [j..n]
   scene.eye().setPosition(new Vec(80,0,0));
@@ -80,27 +81,11 @@ public void draw() {
     scene.drawTorusSolenoid(6, 10);
   }
   popMatrix();
-  drawPaths();
 }
 
 public void keyPressed() {
   if ( key == 'i')
     scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
-  if(key == 'u')
-    displayPaths = !displayPaths;
-}
-
-public void drawPaths() {
-  if(displayPaths) {
-    pushStyle();
-    colorMode(RGB, 255);
-    strokeWeight(3);
-    stroke(220,0,220);
-    scene.drawEyePaths();
-    popStyle();
-  }
-  else
-    scene.hideEyePaths();
 }
 
 void mousePressed() {
@@ -157,5 +142,17 @@ public class CustomizedScene extends Scene {
     line(p2.x(), p2.y(), p1x, p1y);
     endScreenDrawing();
     pg().popStyle();
+  }
+  
+  @Override
+  public void drawEyePaths() {    
+    pushStyle();
+    colorMode(RGB, 255);
+    strokeWeight(1);
+    stroke(220,0,220);    
+    KeyFrameInterpolator[] k = eye.keyFrameInterpolatorArray();
+    for(int i=0; i< k.length; i++)
+      drawPath(k[i], 3, 5, radius());      
+    popStyle();
   }
 }

@@ -52,51 +52,51 @@ public interface Constants {
 		/**
 		 * Translate frame up along X axis
 		 */
-		TRANSLATE_UP_X("Translate frame up along X axis", true),
+		TRANSLATE_X_POS("Translate frame up along X axis", true),
 		/**
 		 * Translate frame down along X axis
 		 */
-		TRANSLATE_DOWN_X("Translate frame down along X axis", true),
+		TRANSLATE_X_NEG("Translate frame down along X axis", true),
 		/**
 		 * Translate frame up along Y axis
 		 */
-		TRANSLATE_UP_Y("Translate frame up along Y axis", true),
+		TRANSLATE_Y_POS("Translate frame up along Y axis", true),
 		/**
 		 * Translate frame down along Y axis
 		 */
-		TRANSLATE_DOWN_Y("Translate frame down along Y axis", true),
+		TRANSLATE_Y_NEG("Translate frame down along Y axis", true),
 		/**
 		 * Translate frame up along Z axis
 		 */
-		TRANSLATE_UP_Z("Translate frame up along Z axis", false),
+		TRANSLATE_Z_POS("Translate frame up along Z axis", false),
 		/**
 		 * Translate frame down along Z axis
 		 */
-		TRANSLATE_DOWN_Z("Translate frame down along Z axis", false),
+		TRANSLATE_Z_NEG("Translate frame down along Z axis", false),
 		/**
 		 * Rotate frame up X axis
 		 */
-		ROTATE_UP_X("Rotate frame up X axis", false),
+		ROTATE_X_POS("Rotate frame up X axis", false),
 		/**
 		 * Rotate frame down X axis
 		 */
-		ROTATE_DOWN_X("Rotate frame down X axis", false),
+		ROTATE_X_NEG("Rotate frame down X axis", false),
 		/**
 		 * Rotate frame up Y axis
 		 */
-		ROTATE_UP_Y("Rotate frame up Y axis", false),
+		ROTATE_Y_POS("Rotate frame up Y axis", false),
 		/**
 		 * Rotate frame down Y axis
 		 */
-		ROTATE_DOWN_Y("Rotate frame down Y axis", false),
+		ROTATE_Y_NEG("Rotate frame down Y axis", false),
 		/**
 		 * Rotate frame up Z axis
 		 */
-		ROTATE_UP_Z("Rotate frame up Z axis", true),
+		ROTATE_Z_POS("Rotate frame up Z axis", true),
 		/**
 		 * Rotate frame down Z axis
 		 */
-		ROTATE_DOWN_Z("Rotate frame down Z axis", true),
+		ROTATE_Z_NEG("Rotate frame down Z axis", true),
 
 		// Click actions require cursor pos:
 		/**
@@ -716,18 +716,18 @@ public interface Constants {
 		SCALE_DOWN(MotionAction.SCALE_DOWN),
 		ZOOM_IN_ON_ANCHOR(MotionAction.ZOOM_IN_ON_ANCHOR),
 		ZOOM_OUT_ON_ANCHOR(MotionAction.ZOOM_OUT_ON_ANCHOR),
-		TRANSLATE_UP_X(MotionAction.TRANSLATE_UP_X),
-		TRANSLATE_UP_Y(MotionAction.TRANSLATE_UP_Y),
-		TRANSLATE_UP_Z(MotionAction.TRANSLATE_UP_Z),
-		TRANSLATE_DOWN_X(MotionAction.TRANSLATE_DOWN_X),
-		TRANSLATE_DOWN_Y(MotionAction.TRANSLATE_DOWN_Y),
-		TRANSLATE_DOWN_Z(MotionAction.TRANSLATE_DOWN_Z),
-		ROTATE_UP_X(MotionAction.ROTATE_UP_X),
-		ROTATE_DOWN_X(MotionAction.ROTATE_DOWN_X),
-		ROTATE_UP_Y(MotionAction.ROTATE_UP_Y),
-		ROTATE_DOWN_Y(MotionAction.ROTATE_DOWN_Y),
-		ROTATE_UP_Z(MotionAction.ROTATE_UP_Z),
-		ROTATE_DOWN_Z(MotionAction.ROTATE_DOWN_Z),
+		TRANSLATE_X_POS(MotionAction.TRANSLATE_X_POS),
+		TRANSLATE_Y_POS(MotionAction.TRANSLATE_Y_POS),
+		TRANSLATE_Z_POS(MotionAction.TRANSLATE_Z_POS),
+		TRANSLATE_X_NEG(MotionAction.TRANSLATE_X_NEG),
+		TRANSLATE_Y_NEG(MotionAction.TRANSLATE_Y_NEG),
+		TRANSLATE_Z_NEG(MotionAction.TRANSLATE_Z_NEG),
+		ROTATE_X_POS(MotionAction.ROTATE_X_POS),
+		ROTATE_X_NEG(MotionAction.ROTATE_X_NEG),
+		ROTATE_Y_POS(MotionAction.ROTATE_Y_POS),
+		ROTATE_Y_NEG(MotionAction.ROTATE_Y_NEG),
+		ROTATE_Z_POS(MotionAction.ROTATE_Z_POS),
+		ROTATE_Z_NEG(MotionAction.ROTATE_Z_NEG),
 
 		CUSTOM(MotionAction.CUSTOM);
 
