@@ -16,7 +16,6 @@
 
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.geom.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
@@ -43,7 +42,7 @@ void setup() {
   scene.setGridVisualHint(false);
   interactiveFrame = new InteractiveFrame(scene);
   interactiveFrame.setGrabsInputThreshold(scene.radius()/4, true);
-  interactiveFrame.translate(new Vec(60, 60));
+  interactiveFrame.translate(60, 60);
 
   buttons = new ArrayList();
   

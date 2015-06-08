@@ -12,7 +12,6 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
@@ -46,17 +45,17 @@ void keyPressed() {
       scene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE);
     else {
       scene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE_CAD);
-      scene.camera().setUpVector(new Vec(0, 1, 0));
+      scene.camera().setUpVector(0, 1, 0);
     }
   if (key == 'u' || key == 'U')
     scene.flip();
   else {
     if (key == 'x' || key == 'X')
-      scene.camera().setUpVector(new Vec(1, 0, 0));
+      scene.camera().setUpVector(1, 0, 0);
     else if (key == 'y' || key == 'Y')
-      scene.camera().setUpVector(new Vec(0, 1, 0));
+      scene.camera().setUpVector(0, 1, 0);
     else if (key == 'z' || key == 'Z')
-      scene.camera().setUpVector(new Vec(0, 0, 1));
+      scene.camera().setUpVector(0, 0, 1);
     scene.camera().lookAt(scene.center());
   }
 }

@@ -10,7 +10,6 @@
 
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.geom.*;
 
 Scene scene, auxScene;
 PGraphics canvas, auxCanvas;  
@@ -27,11 +26,11 @@ public void setup() {
   scene.setPickingVisualHint(true);
   scene.addGraphicsHandler(this, "mainDrawing");
   frame1 = new InteractiveFrame(scene);
-  frame1.translate(new Vec(30, 30));
+  frame1.translate(30, 30);
   frame2 = new InteractiveFrame(scene, frame1);
-  frame2.translate(new Vec(40, 0, 0));
+  frame2.translate(40, 0);
   frame3 = new InteractiveFrame(scene, frame2);
-  frame3.translate(new Vec(40, 0, 0));
+  frame3.translate(40, 0);
 
   auxCanvas = createGraphics(640, 360, renderer);
   auxCanvas.smooth();
@@ -44,11 +43,11 @@ public void setup() {
   auxScene.showAll();
 
   auxFrame1 = new InteractiveFrame(auxScene);
-  auxFrame1.translate(new Vec(30, 30));
+  auxFrame1.translate(30, 30);
   auxFrame2 = new InteractiveFrame(auxScene, auxFrame1);
-  auxFrame2.translate(new Vec(40, 0, 0));
+  auxFrame2.translate(40, 0);
   auxFrame3 = new InteractiveFrame(auxScene, auxFrame2);
-  auxFrame3.translate(new Vec(40, 0, 0));
+  auxFrame3.translate(40, 0);
 
   handleMouse();
   smooth();

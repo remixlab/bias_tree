@@ -182,6 +182,33 @@ public class Camera extends Eye implements Copyable {
 		// Useful in fly mode to keep the horizontal direction.
 		frame().updateSceneUpVector();
 	}
+	
+	/**
+	 * Same as {@code setUpVector(new Vec(x,y,z))}.
+	 * 
+	 * @see #setUpVector(Vec)
+	 */
+	public void setUpVector(float x, float y, float z) {
+		setUpVector(new Vec(x,y,z));
+	}
+	
+	/**
+	 * Same as {@code setUpVector(new Vec(x,y,z), boolean noMove)}.
+	 * 
+	 * @see #setUpVector(Vec, boolean)
+	 */
+	public void setUpVector(float x, float y, float z, boolean noMove) {
+		setUpVector(new Vec(x,y,z), noMove);
+	}
+	
+	/**
+	 * Same as {@code setPosition(new Vec(x,y,z))}.
+	 * 
+	 * @see #setPosition(Vec)
+	 */
+	public void setPosition(float x, float y, float z) {
+		setPosition(new Vec(x,y,z));
+	}
 
 	@Override
 	public Vec viewDirection() {
@@ -212,6 +239,15 @@ public class Camera extends Eye implements Copyable {
 		Quat q = new Quat();
 		q.fromRotatedBasis(xAxis, xAxis.cross(direction), Vec.multiply(direction, -1));
 		frame().setOrientationWithConstraint(q);
+	}
+	
+	/**
+	 * Same as {@code setViewDirection(new Vec(x, y, z))}.
+	 * 
+	 * @see #setViewDirection(Vec) 
+	 */
+	public void setViewDirection(float x, float y, float z) {
+		setViewDirection(new Vec(x, y, z));
 	}
 
 	/**
@@ -503,6 +539,15 @@ public class Camera extends Eye implements Copyable {
 			if (distanceToBoundary(i, point) > 0)
 				return false;
 		return true;
+	}
+	
+	/**
+	 * Same as {@code return isPointVisible(new Vec(x, y, z))}.
+	 * 
+	 * @see #isPointVisible(Vec)
+	 */
+	public boolean isPointVisible(float x, float y, float z) {
+		return isPointVisible(new Vec(x, y, z));
 	}
 
 	@Override
@@ -939,6 +984,15 @@ public class Camera extends Eye implements Copyable {
 		if ((Util.nonZero(prevDist)) && (Util.nonZero(newDist)))
 			rapK *= prevDist / newDist;
 	}
+	
+	/**
+	 * Same as {@code setAnchor(new Vec(x,y,z))}.
+	 * 
+	 * @see AbstractScene#setAnchor(Vec)
+	 */
+	public void setAnchor(float x, float y, float z) {
+		setAnchor(new Vec(x,y,z));
+	}
 
 	@Override
 	public void computeProjection() {
@@ -1027,6 +1081,15 @@ public class Camera extends Eye implements Copyable {
 	@Override
 	public void lookAt(Vec target) {
 		setViewDirection(Vec.subtract(target, position()));
+	}
+	
+	/**
+	 * Same as {@code lookAt(new Vec(x,y,z))}.
+	 * 
+	 * @see #lookAt(Vec)
+	 */
+	public void lookAt(float x, float y, float z) {
+		lookAt(new Vec(x,y,z));
 	}
 
 	@Override

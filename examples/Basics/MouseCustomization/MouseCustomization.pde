@@ -20,7 +20,6 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 import remixlab.dandelion.agent.*;
@@ -37,7 +36,7 @@ void setup() {
   scene = new Scene(this);
   mouse = scene.mouseAgent();
   iFrame = new InteractiveFrame(scene);
-  iFrame.translate(new Vec(30, 30));
+  iFrame.translate(30, 30);
   setExoticCustomization();
 }
 

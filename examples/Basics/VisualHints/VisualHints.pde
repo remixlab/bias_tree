@@ -25,7 +25,7 @@ public void setup() {
   scene = new CustomizedScene(this);
   iFrame = new InteractiveAvatarFrame(scene);
   iFrame.setGrabsInputThreshold(scene.radius()/4, true);
-  iFrame.translate(new Vec(30, -30, 0));
+  iFrame.translate(30, -30, 0);
   scene.keyboardAgent().removeBinding('r');
   scene.keyboardAgent().setBinding('u', SceneAction.TOGGLE_PATHS_VISUAL_HINT);
   scene.setNonSeqTimers();

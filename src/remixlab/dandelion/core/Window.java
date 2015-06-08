@@ -110,6 +110,33 @@ public class Window extends Eye implements Copyable {
 		// Useful in fly mode to keep the horizontal direction.
 		frame().updateSceneUpVector();
 	}
+	
+	/**
+	 * Same as {@code setUpVector(new Vec(x,y))}.
+	 * 
+	 * @see #setUpVector(Vec)
+	 */
+	public void setUpVector(float x, float y) {
+		setUpVector(new Vec(x,y));
+	}
+	
+	/**
+	 * Same as {@code setUpVector(new Vec(x,y), boolean noMove)}.
+	 * 
+	 * @see #setUpVector(Vec, boolean)
+	 */
+	public void setUpVector(float x, float y, boolean noMove) {
+		setUpVector(new Vec(x,y), noMove);
+	}
+	
+	/**
+	 * Same as {@code setPosition(new Vec(x,y))}.
+	 * 
+	 * @see #setPosition(Vec)
+	 */
+	public void setPosition(float x, float y) {
+		setPosition(new Vec(x,y));
+	}
 
 	@Override
 	public boolean setSceneCenterFromPixel(Point pixel) {
@@ -287,6 +314,15 @@ public class Window extends Eye implements Copyable {
 				return false;
 		return true;
 	}
+	
+	/**
+	 * Same as {@code return isPointVisible(new Vec(x, y))}.
+	 * 
+	 * @see #isPointVisible(Vec)
+	 */
+	public boolean isPointVisible(float x, float y) {
+		return isPointVisible(new Vec(x, y));
+	}
 
 	@Override
 	public float sceneToPixelRatio(Vec position) {
@@ -297,6 +333,24 @@ public class Window extends Eye implements Copyable {
 	@Override
 	public void lookAt(Vec target) {
 		frame().setPosition(target.x(), target.y());
+	}
+	
+	/**
+	 * Same as {@code lookAt(new Vec(x,y))}.
+	 * 
+	 * @see #lookAt(Vec)
+	 */
+	public void lookAt(float x, float y) {
+		lookAt(new Vec(x,y));
+	}
+	
+	/**
+	 * Same as {@code setAnchor(new Vec(x,y))}.
+	 * 
+	 * @see AbstractScene#setAnchor(Vec)
+	 */
+	public void setAnchor(float x, float y) {
+		setAnchor(new Vec(x,y));
 	}
 
 	@Override

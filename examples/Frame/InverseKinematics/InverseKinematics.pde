@@ -13,7 +13,6 @@
  
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.geom.*;
 
 PShape base_robot; 
 PShape link_one;
@@ -49,7 +48,7 @@ void setup() {
   scene.setRadius(200);
   scene.setVisualHints( Scene.PICKING );
   punto = new InteractiveFrame( scene );
-  punto.setPosition( new Vec( 0, -10, 0) );
+  punto.setPosition(0, -10, 0);
 }
 
 void draw() {

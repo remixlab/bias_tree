@@ -16,7 +16,6 @@
 
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.Constants.*;
 
 Scene scene;
@@ -30,7 +29,7 @@ public void setup() {
   scene = new Scene(this); 
   iFrame = new InteractiveFrame(scene);
   iFrame.setGrabsInputThreshold(scene.radius()/4, true);
-  iFrame.translate(new Vec(50, 50));
+  iFrame.translate(50, 50);
   // Simply testing non sequential timers:
   scene.setNonSeqTimers(); // comment it to use sequential timers instead (default)
 }

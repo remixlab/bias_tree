@@ -9,7 +9,6 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
 
 Scene scene;
@@ -20,7 +19,7 @@ void setup() {
   size(640, 360, P3D);		
   scene = new Scene(this);	
   iFrame = new InteractiveFrame(scene);
-  iFrame.translate(new Vec(30, 30, 0));
+  iFrame.translate(30, 30);
   scene.mouseAgent().dragToFirstPerson();
   firstPerson = true;
 }

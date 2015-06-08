@@ -661,6 +661,15 @@ public class Quat implements Linkable, Rotation {
 			this.quat[3] = (float) Math.cos(angle / 2.0f);
 		}
 	}
+	
+	/**
+	 * Same as {@code fromAxisAngle(new Vec(x,y,z), angle)}.
+	 * 
+	 * @see #fromAxisAngle(Vec, float)
+	 */
+	public void fromAxisAngle(float x, float y, float z, float angle) {
+		fromAxisAngle(new Vec(x,y,z), angle);
+	}
 
 	/**
 	 * Same as {@link #fromEulerAngles(Vec)}.
@@ -789,6 +798,15 @@ public class Quat implements Linkable, Rotation {
 			fromAxisAngle(axis, angle);
 		}
 	}
+	
+	/**
+	 * Same as {@code fromTo(new Vec(x1,y1,z1), new Vec(x2,y2,z2))}.
+	 * 
+	 * @see #fromTo(Vec, Vec)
+	 */
+	public void fromTo(float x1, float y1, float z1, float x2, float y2, float z2) {
+		fromTo(new Vec(x1,y1,z1), new Vec(x2,y2,z2));
+	}
 
 	/**
 	 * Set the Quat from a (supposedly correct) 3x3 rotation matrix given in the upper left 3x3 sub-matrix of the Mat.
@@ -898,22 +916,6 @@ public class Quat implements Linkable, Rotation {
 	@Override
 	public final float angle() {
 		return 2.0f * (float) Math.acos(w());
-	}
-
-	/**
-	 * Fills params with {@link #axis()} and {@link #angle()}.
-	 * 
-	 * @param axis
-	 * @param angle
-	 */
-	public void axisAngle(Vec axis, float angle) {
-		angle = 2 * (float) Math.acos(w());
-		axis.setX(x());
-		axis.setY(y());
-		axis.setZ(z());
-		float sinus = axis.magnitude();
-		if (Util.nonZero(sinus))
-			axis.divide(sinus);
 	}
 
 	/**
