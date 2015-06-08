@@ -1905,107 +1905,105 @@ public class Scene extends AbstractScene implements PConstants {
 
 	// PVector <-> toVec
 	
-	public void drawArrow(PVector from, PVector to, float radius) {
-		drawArrow(Scene.toVec(from), Scene.toVec(to), radius);
-	}
-
-	public void drawFilledCircle(PVector center, float radius) {
-		drawFilledCircle(Scene.toVec(center), radius);
-	}
-
-	public void drawHollowCylinder(int detail, float w, float h, PVector m, PVector n) {
-		drawHollowCylinder(detail, w, h, Scene.toVec(m), Scene.toVec(n));
-	}
-
-	public void drawFilledSquare(PVector center, float edge) {
-		drawFilledSquare(Scene.toVec(center), edge);
-	}
-
-	public void drawShooterTarget(PVector center, float length) {
-		drawShooterTarget(Scene.toVec(center), length);
-	}
-
-	public boolean isPointVisible(PVector point) {
-		return isPointVisible(Scene.toVec(point));
-	}
-
-	public Eye.Visibility ballVisibility(PVector center, float radius) {
-		return ballVisibility(Scene.toVec(center), radius);
-	}
-
-	public Eye.Visibility boxVisibility(PVector p1, PVector p2) {
-		return boxVisibility(Scene.toVec(p1), Scene.toVec(p2));
-	}
-
-	public boolean isFaceBackFacing(PVector a, PVector b, PVector c) {
-		return isFaceBackFacing(Scene.toVec(a), Scene.toVec(b), Scene.toVec(c));
-	}
-
-	public PVector pointUnderPixel(float x, float y) {
-		return Scene.toPVector(pointUnderPixel(new Point(x,y)));
-	}
-
-	public PVector projectedCoordinatesOf(PVector src) {
-		return Scene.toPVector(projectedCoordinatesOf(Scene.toVec(src)));
-	}
-
-	public PVector unprojectedCoordinatesOf(PVector src) {
-		return Scene.toPVector(unprojectedCoordinatesOf(Scene.toVec(src)));
-	}
-
-	public void setCenter(PVector center) {
-		setCenter(Scene.toVec(center));
-	}
-
-	public void setAnchor(PVector anchor) {
-		setAnchor(Scene.toVec(anchor));
-	}
-
-	public void setBoundingBox(PVector min, PVector max) {
-		setBoundingBox(Scene.toVec(min), Scene.toVec(max));
-	}
-
-	public void setBoundingRect(PVector min, PVector max) {
-		setBoundingRect(Scene.toVec(min), Scene.toVec(max));
-	}
+//	public void drawArrow(PVector from, PVector to, float radius) {
+//		drawArrow(Scene.toVec(from), Scene.toVec(to), radius);
+//	}
+//
+//	public void drawFilledCircle(PVector center, float radius) {
+//		drawFilledCircle(Scene.toVec(center), radius);
+//	}
+//
+//	public void drawHollowCylinder(int detail, float w, float h, PVector m, PVector n) {
+//		drawHollowCylinder(detail, w, h, Scene.toVec(m), Scene.toVec(n));
+//	}
+//
+//	public void drawFilledSquare(PVector center, float edge) {
+//		drawFilledSquare(Scene.toVec(center), edge);
+//	}
+//
+//	public void drawShooterTarget(PVector center, float length) {
+//		drawShooterTarget(Scene.toVec(center), length);
+//	}
+//
+//	public boolean isPointVisible(PVector point) {
+//		return isPointVisible(Scene.toVec(point));
+//	}
+//
+//	public Eye.Visibility ballVisibility(PVector center, float radius) {
+//		return ballVisibility(Scene.toVec(center), radius);
+//	}
+//
+//	public Eye.Visibility boxVisibility(PVector p1, PVector p2) {
+//		return boxVisibility(Scene.toVec(p1), Scene.toVec(p2));
+//	}
+//
+//	public boolean isFaceBackFacing(PVector a, PVector b, PVector c) {
+//		return isFaceBackFacing(Scene.toVec(a), Scene.toVec(b), Scene.toVec(c));
+//	}
+//
+//	public PVector pointUnderPixel(float x, float y) {
+//		return Scene.toPVector(pointUnderPixel(new Point(x,y)));
+//	}
+//
+//	public PVector projectedCoordinatesOf(PVector src) {
+//		return Scene.toPVector(projectedCoordinatesOf(Scene.toVec(src)));
+//	}
+//
+//	public PVector unprojectedCoordinatesOf(PVector src) {
+//		return Scene.toPVector(unprojectedCoordinatesOf(Scene.toVec(src)));
+//	}
+//
+//	public void setCenter(PVector center) {
+//		setCenter(Scene.toVec(center));
+//	}
+//
+//	public void setAnchor(PVector anchor) {
+//		setAnchor(Scene.toVec(anchor));
+//	}
+//
+//	public void setBoundingBox(PVector min, PVector max) {
+//		setBoundingBox(Scene.toVec(min), Scene.toVec(max));
+//	}
+//
+//	public void setBoundingRect(PVector min, PVector max) {
+//		setBoundingRect(Scene.toVec(min), Scene.toVec(max));
+//	}
 
 	// PMatrix <-> toMat
 
-	/*
-	public void applyModelViewMatrix(PMatrix2D source) {
-		applyModelView(Scene.toMat(source));
-	}
-
-	public void applyModelViewMatrix(PMatrix3D source) {
-		applyModelView(Scene.toMat(source));
-	}
-
-	public void applyProjectionMatrix(PMatrix3D source) {
-		applyProjection(Scene.toMat(source));
-	}
-
-	public PMatrix2D modelViewMatrix2D() {
-		return Scene.toPMatrix2D(modelView());
-	}
-
-	public PMatrix3D modelViewMatrix() {
-		return Scene.toPMatrix(modelView());
-	}
-
-	public PMatrix3D projectionMatrix() {
-		return Scene.toPMatrix(projection());
-	}
-
-	public void setModelViewMatrix(PMatrix2D source) {
-		setModelView(Scene.toMat(source));
-	}
-
-	public void setModelViewMatrix(PMatrix3D source) {
-		setModelView(Scene.toMat(source));
-	}
-
-	public void setProjectionMatrix(PMatrix3D source) {
-		setProjection(Scene.toMat(source));
-	}
-	*/
+//	public void applyModelViewMatrix(PMatrix2D source) {
+//		applyModelView(Scene.toMat(source));
+//	}
+//
+//	public void applyModelViewMatrix(PMatrix3D source) {
+//		applyModelView(Scene.toMat(source));
+//	}
+//
+//	public void applyProjectionMatrix(PMatrix3D source) {
+//		applyProjection(Scene.toMat(source));
+//	}
+//
+//	public PMatrix2D modelViewMatrix2D() {
+//		return Scene.toPMatrix2D(modelView());
+//	}
+//
+//	public PMatrix3D modelViewMatrix() {
+//		return Scene.toPMatrix(modelView());
+//	}
+//
+//	public PMatrix3D projectionMatrix() {
+//		return Scene.toPMatrix(projection());
+//	}
+//
+//	public void setModelViewMatrix(PMatrix2D source) {
+//		setModelView(Scene.toMat(source));
+//	}
+//
+//	public void setModelViewMatrix(PMatrix3D source) {
+//		setModelView(Scene.toMat(source));
+//	}
+//
+//	public void setProjectionMatrix(PMatrix3D source) {
+//		setProjection(Scene.toMat(source));
+//	}
 }
