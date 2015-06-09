@@ -130,8 +130,8 @@ class Boid {
     if ( frame.checkIfGrabsInput(mouseX, mouseY) )
       fill( grabsMouseColor);
 
-    // setAvatar according to scene.mouseAgent().inputGrabber()
-    if (frame.grabsInput(scene.mouseAgent()))       
+    // setAvatar according to scene.motionAgent().inputGrabber()
+    if (frame.grabsInput(scene.motionAgent()))       
       if (!isAvatar())
         scene.setAvatar(frame);
 
