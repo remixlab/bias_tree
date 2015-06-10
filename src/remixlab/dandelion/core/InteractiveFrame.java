@@ -597,12 +597,14 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	@Override
 	public final boolean processAction(BogusEvent event) {
 		if (initAction == null) {
-			if (action() != null) {
+			//if (action() != null) {
+			if (!event.flush) {
 				return initAction(event);// start action
 			}
 		}
 		else { // initAction != null
-			if (action() != null) {
+			//if (action() != null) {
+			if (!event.flush) {
 				if (initAction == action())
 					return execAction(event);// continue action
 				else { // initAction != action() -> action changes abruptly

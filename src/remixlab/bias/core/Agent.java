@@ -315,11 +315,13 @@ public class Agent {
 	 */
 	@SuppressWarnings("unchecked")
 	protected <E extends Enum<E>> boolean flush(BogusEvent event) {
+		BogusEvent message = event.get();
+		message.flush = true;
 		Grabber inputGrabber = inputGrabber();
 		if (inputGrabber != null) {
 			if (inputGrabber instanceof InteractiveGrabber<?>)
 				return inputHandler().enqueueEventTuple(
-						new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, null));
+						new EventGrabberTuple(message, (InteractiveGrabber<E>) inputGrabber, ((InteractiveGrabber<E>) inputGrabber).action()));
 		}
 		return false;
 	}

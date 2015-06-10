@@ -39,6 +39,8 @@ public class BogusEvent implements Copyable {
 	public static final int	META							= 1 << 2;
 	public static final int	ALT								= 1 << 3;
 	public static final int	ALT_GRAPH					= 1 << 4;
+	
+	public boolean flush;
 
 	@Override
 	public int hashCode() {
