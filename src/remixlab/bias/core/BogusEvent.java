@@ -40,7 +40,7 @@ public class BogusEvent implements Copyable {
 	public static final int	ALT								= 1 << 3;
 	public static final int	ALT_GRAPH					= 1 << 4;
 	
-	public boolean flush;
+	private boolean flush;
 
 	@Override
 	public int hashCode() {
@@ -99,6 +99,16 @@ public class BogusEvent implements Copyable {
 	@Override
 	public BogusEvent get() {
 		return new BogusEvent(this);
+	}
+	
+	public BogusEvent flush() {
+		BogusEvent message = this.get();
+		message.flush = true;
+		return message;
+	}
+	
+	public boolean flushed() {
+		return flush;
 	}
 
 	/**

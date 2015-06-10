@@ -166,12 +166,12 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	 */
 	public final boolean processEvent(BogusEvent event) {
 		if (initAction == null) {
-			if (action() != null) {
+			if (!event.flushed()) {
 				return initAction(event);// start action
 			}
 		}
 		else { // initAction != null
-			if (action() != null) {
+			if (!event.flushed()) {
 				if (initAction == action())
 					return execAction(event);// continue action
 				else { // initAction != action() -> action changes abruptly, i.e.,

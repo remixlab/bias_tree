@@ -315,8 +315,7 @@ public class Agent {
 	 */
 	@SuppressWarnings("unchecked")
 	protected <E extends Enum<E>> boolean flush(BogusEvent event) {
-		BogusEvent message = event.get();
-		message.flush = true;
+		BogusEvent message = event.flush();
 		Grabber inputGrabber = inputGrabber();
 		if (inputGrabber != null) {
 			if (inputGrabber instanceof InteractiveGrabber<?>) {

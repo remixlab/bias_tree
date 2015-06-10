@@ -224,12 +224,12 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	 */
 	public final boolean processEvent(BogusEvent event) {
 		if (initAction == null) {
-			if (action() != null) {
+			if (!event.flushed()) {
 				return initAction(event);// start action
 			}
 		}
 		else { // initAction != null
-			if (action() != null) {
+			if (!event.flushed()) {
 				if (initAction == action())
 					return execAction(event);// continue action
 				else { // initAction != action() -> action changes abruptly, i.e.,
