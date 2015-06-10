@@ -319,9 +319,10 @@ public class Agent {
 		message.flush = true;
 		Grabber inputGrabber = inputGrabber();
 		if (inputGrabber != null) {
-			if (inputGrabber instanceof InteractiveGrabber<?>)
-				return inputHandler().enqueueEventTuple(
-						new EventGrabberTuple(message, (InteractiveGrabber<E>) inputGrabber, ((InteractiveGrabber<E>) inputGrabber).action()));
+			if (inputGrabber instanceof InteractiveGrabber<?>) {
+				Action<E> action = ((InteractiveGrabber<E>) inputGrabber).action();
+				return action != null ? inputHandler().enqueueEventTuple(new EventGrabberTuple(message, (InteractiveGrabber<E>) inputGrabber, action)) : false;
+			}
 		}
 		return false;
 	}

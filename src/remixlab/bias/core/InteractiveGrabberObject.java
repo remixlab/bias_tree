@@ -59,7 +59,7 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 
 	@Override
 	public void performInteraction(BogusEvent event) {
-		if (processAction(event))
+		if (processEvent(event))
 			return;
 		if (event instanceof KeyboardEvent)
 			performInteraction((KeyboardEvent) event);
@@ -164,8 +164,7 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	 * {@link #flushAction(BogusEvent)}. Otherwise the null action may be enqueued to
 	 * {@link #performInteraction(BogusEvent)} which will then causes the infamous null pointer exception.
 	 */
-	@Override
-	public final boolean processAction(BogusEvent event) {
+	public final boolean processEvent(BogusEvent event) {
 		if (initAction == null) {
 			if (action() != null) {
 				return initAction(event);// start action
@@ -292,7 +291,7 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	}
 
 	/**
-	 * {@link #processAction(BogusEvent)} should always return true after calling this one.
+	 * {@link #processEvent(BogusEvent)} should always return true after calling this one.
 	 */
 	protected void flushAction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)

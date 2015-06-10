@@ -348,7 +348,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	@Override
 	public void performInteraction(BogusEvent event) {
-		if (processAction(event))
+		if (processEvent(event))
 			return;
 		if (event instanceof KeyboardEvent)
 			performInteraction((KeyboardEvent) event);
@@ -594,8 +594,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		return currMotionEvent;
 	}
 
-	@Override
-	public final boolean processAction(BogusEvent event) {
+	public final boolean processEvent(BogusEvent event) {
 		if (initAction == null) {
 			//if (action() != null) {
 			if (!event.flush) {
@@ -636,6 +635,11 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 
 	protected boolean initAction(ClickEvent event) {
+		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
+		return false;
+	}
+	
+	protected boolean initAction(KeyboardEvent event) {
 		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
@@ -718,6 +722,10 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
+	
+	protected boolean execAction(KeyboardEvent event) {
+		return false;
+	}
 
 	// flushDomain
 
@@ -733,6 +741,10 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	protected void flushAction(MotionEvent event) {
 		if (!(event instanceof DOF1Event))
 			flushAction(MotionEvent.dof2Event(event));
+	}
+	
+	// key
+	protected void flushAction(KeyboardEvent event) {		
 	}
 
 	protected void flushAction(ClickEvent event) {
@@ -761,27 +773,5 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 				setFlySpeed(flySpeedCache);
 			stopFlying();
 		}
-	}
-
-	// key
-
-	protected boolean nonContiguous() {
-		return action().referenceAction() == MotionAction.ALIGN_FRAME
-				|| action().referenceAction() == MotionAction.CENTER_FRAME;
-	}
-
-	protected boolean initAction(KeyboardEvent event) {
-		return nonContiguous() ? true : false;
-	}
-
-	protected boolean execAction(KeyboardEvent event) {
-		return nonContiguous() ? true : false;
-	}
-
-	protected void flushAction(KeyboardEvent event) {
-		if (initAction.referenceAction() == MotionAction.ALIGN_FRAME)
-			align();
-		if (initAction.referenceAction() == MotionAction.CENTER_FRAME)
-			center();
 	}
 }

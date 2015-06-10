@@ -157,8 +157,8 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 
 	@Override
 	public void performInteraction(BogusEvent event) {
-		if (processAction(event)) // may call performInteraction(KeyboardEvent event) by setting the action() :o
-			return;
+		//if (processAction(event)) // may call performInteraction(KeyboardEvent event) by setting the action() :o
+			//return;
 		if (event instanceof KeyboardEvent)
 			performInteraction((KeyboardEvent) event);
 	}
@@ -257,63 +257,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			break;
 		default:
 			break;
-		}
-	}
-
-	Action<GlobalAction>	initAction;
-
-	@Override
-	public final boolean processAction(BogusEvent event) {
-		if (event instanceof KeyboardEvent)
-			return processAction((KeyboardEvent) event);
-		return true;
-	}
-
-	protected boolean processAction(KeyboardEvent event) {
-		if (initAction == null) {
-			if (action() != null) {
-				return initAction(event);// start action
-			}
-		}
-		else { // initAction != null
-			if (action() != null) {
-				if (initAction == action())
-					return execAction(event);// continue action
-				else { // initAction != action() -> action changes abruptly
-					// System.out.println("case 1 in scene: action() != null && initAction != null (action changes abruptely, calls flush)");
-					flushAction(event);
-					return initAction(event);// start action
-				}
-			}
-			else {// action() == null
-				// System.out.println("case 2 in scene: action() == null && initAction != null (ends action, calls flush)");
-				flushAction(event);// stopAction
-				initAction = null;
-				setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
-				return true;
-			}
-		}
-		return true;// i.e., if initAction == action() == null -> ignore :)
-	}
-
-	protected boolean contiguous(Action<GlobalAction> action) {
-		return action.referenceAction() == GlobalAction.MOVE_DOWN || action.referenceAction() == GlobalAction.MOVE_LEFT
-				|| action.referenceAction() == GlobalAction.MOVE_RIGHT || action.referenceAction() == GlobalAction.MOVE_UP;
-	}
-
-	protected boolean initAction(KeyboardEvent event) {
-		initAction = action();
-		return contiguous(action()) ? false : true;
-	}
-
-	protected boolean execAction(KeyboardEvent event) {
-		return contiguous(action()) ? false : true;
-	}
-
-	protected void flushAction(KeyboardEvent event) {
-		if (!contiguous(initAction)) {
-			setAction(initAction);
-			performInteraction(event);
 		}
 	}
 

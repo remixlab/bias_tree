@@ -33,24 +33,10 @@ public class KeyAgent extends KeyboardAgent {
 		release = e.getAction() == processing.event.KeyEvent.RELEASE;
 		type = e.getAction() == processing.event.KeyEvent.TYPE;
 		currentEvent = new KeyboardEvent(e.getKey(), e.getModifiers(), e.getKeyCode());
-		if (press)
+		if (press) {
 			handle(currentEvent);
-		if (release) {
-			flush(currentEvent);
-			updateTrackedGrabber(currentEvent);// needs testing
+			updateTrackedGrabber(currentEvent);
 		}
-
-		/*
-		 * // debug if (press) { if (e.getKey() == '\uFFFF')
-		 * System.out.println("got the unicode replacement char in PRESS: " + e.getKey()); System.out.println("PRESS: key: "
-		 * + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) + " keyCode: " + e.getKeyCode()); //
-		 * updateTrackedGrabber(new KeyboardEvent(e.getModifiers(), // e.getKeyCode()));// } else if (release) { if
-		 * (e.getKey() == '\uFFFF') System.out.println("got the unicode replacement char in RELEASE: " + e.getKey());
-		 * System.out.println("RELEASE: key: " + e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) +
-		 * " keyCode: " + e.getKeyCode()); } else if(type) { if (e.getKey() == '\uFFFF')
-		 * System.out.println("got the unicode replacement char in TYPE: " + e.getKey()); System.out.println("TYPE: key: " +
-		 * e.getKey() + " modifiers " + BogusEvent.modifiersText(e.getModifiers()) + " keyCode: " + e.getKeyCode()); } //
-		 */
 	}
 
 	@Override
