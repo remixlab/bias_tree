@@ -32,7 +32,6 @@ void setup() {
   scene.setAxesVisualHint(false);
   scene.setAnimationPeriod(40); // 25Hz
   scene.startAnimation();
-  smooth();
 
   nbPart = 2000;
   particle = new Particle[nbPart];

@@ -743,8 +743,6 @@ public class Scene extends AbstractScene implements PConstants {
 
 	@Override
 	public float pixelDepth(Point pixel) {
-		if (pg().smooth)
-			throw new RuntimeException("pixelDepth requires scene.pg().noSmooth()");
 		PGraphicsOpenGL pggl;
 		if (pg() instanceof PGraphicsOpenGL)
 			pggl = (PGraphicsOpenGL) pg();

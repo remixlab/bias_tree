@@ -58,7 +58,6 @@ class MyScene extends Scene {
     setAxesVisualHint(false);
     setAnimationPeriod(40); // 25Hz
     startAnimation();
-    smooth();
   }
 
   // Define here what is actually going to be drawn.

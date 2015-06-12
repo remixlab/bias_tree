@@ -315,13 +315,28 @@ public class Agent {
 	 */
 	@SuppressWarnings("unchecked")
 	protected <E extends Enum<E>> boolean flush(BogusEvent event) {
-		BogusEvent message = event.flush();
+		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)
+			return false;
+		/*
+		if (event instanceof MotionEvent)
+			if (((MotionEvent) event).isAbsolute())
+				if (event.isNull())
+					return false;
+		*/
+		if (event instanceof MotionEvent)
+			((MotionEvent) event).modulate(sensitivities((MotionEvent) event));
 		Grabber inputGrabber = inputGrabber();
 		if (inputGrabber != null) {
+			BogusEvent flushedEvent = event.flush();
 			if (inputGrabber instanceof InteractiveGrabber<?>) {
-				Action<E> action = ((InteractiveGrabber<E>) inputGrabber).action();
-				return action != null ? inputHandler().enqueueEventTuple(new EventGrabberTuple(message, (InteractiveGrabber<E>) inputGrabber, action)) : false;
+				//option 1: previous action
+				//Action<E> action = ((InteractiveGrabber<E>) inputGrabber).action();
+				//option 2: parse action
+				Branch<?,?,?> t = trackedGrabber() != null ? trackedGrabberBranch : defaultGrabberBranch;				
+				Action<E> action = (Action<E>) t.handle(event);
+				return action != null ? inputHandler().enqueueEventTuple(new EventGrabberTuple(flushedEvent, (InteractiveGrabber<E>) inputGrabber, action)) : false;
 			}
+			return inputHandler().enqueueEventTuple(new EventGrabberTuple(flushedEvent, inputGrabber));
 		}
 		return false;
 	}

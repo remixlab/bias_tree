@@ -101,7 +101,7 @@ public class BogusEvent implements Copyable {
 		return new BogusEvent(this);
 	}
 	
-	public BogusEvent flush() {
+	protected BogusEvent flush() {
 		BogusEvent message = this.get();
 		message.flush = true;
 		return message;

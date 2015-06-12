@@ -19,9 +19,8 @@ InteractiveFrame frame1, auxFrame1, frame2, auxFrame2, frame3, auxFrame3;
 String renderer = P2D;
 
 public void setup() {
-  size(640, 720, renderer);
-  canvas = createGraphics(640, 360, renderer);
-  canvas.smooth();
+  size(640, 700, renderer);
+  canvas = createGraphics(640, 350, renderer);
   scene = new Scene(this, canvas);
   scene.setPickingVisualHint(true);
   scene.addGraphicsHandler(this, "mainDrawing");
@@ -32,8 +31,7 @@ public void setup() {
   frame3 = new InteractiveFrame(scene, frame2);
   frame3.translate(40, 0);
 
-  auxCanvas = createGraphics(640, 360, renderer);
-  auxCanvas.smooth();
+  auxCanvas = createGraphics(640, 350, renderer);
   // Note that we pass the upper left corner coordinates where the scene
   // is to be drawn (see drawing code below) to its constructor.
   auxScene = new Scene(this, auxCanvas, 0, 360);
@@ -50,7 +48,6 @@ public void setup() {
   auxFrame3.translate(40, 0);
 
   handleMouse();
-  smooth();
 }
 
 public void draw() {

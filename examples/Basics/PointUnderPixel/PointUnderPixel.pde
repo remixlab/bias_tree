@@ -30,9 +30,6 @@ void setup() {
   scene.keyboardAgent().setBinding('z', SceneAction.RESET_ANCHOR);
   scene.mouseAgent().setClickBinding(Target.EYE, LEFT, 1, ClickAction.ZOOM_ON_PIXEL);
   scene.mouseAgent().setClickBinding(Target.EYE, Event.CTRL, LEFT, 1, ClickAction.ANCHOR_FROM_PIXEL);
-  //Point under pixel requires noSmooth, see here: 
-  //https://github.com/processing/processing/issues/2771
-  noSmooth();
 }
 
 void draw() {  

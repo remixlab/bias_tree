@@ -25,7 +25,6 @@
  * Press 'm' to toggle (start/stop) animation.
  * Press '+' to decrease the animation period (animation speeds up).
  * Press '-' to increase the animation period (animation speeds down).
- * Press 'u' to toggle smoothing.
  * Press 'v' to toggle boids' wall skipping.
  * Press 'f' to toggle the drawing of the frame selection hits.
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
@@ -43,7 +42,6 @@ int flockHeight = 720;
 int flockDepth = 600;
 int initBoidNum = 300; // amount of boids to start the program with
 ArrayList<Boid> flock;
-boolean smoothEdges = false;
 boolean avoidWalls = true;
 float hue = 255;
 boolean triggered;
@@ -63,10 +61,6 @@ void setup() {
   for (int i = 0; i < initBoidNum; i++)
     flock.add(new Boid(scene, new PVector(flockWidth/2, flockHeight/2, flockDepth/2 )));
   scene.startAnimation();
-  if (smoothEdges)
-    smooth();
-  else
-    noSmooth();
 }
 
 void draw() {
@@ -121,13 +115,6 @@ void keyPressed() {
     scene.switchTimers();
   case 'p':
     println("Frame rate: " + frameRate);
-    break;
-  case 'u':
-    smoothEdges = !smoothEdges;
-    if (smoothEdges)
-      smooth();
-    else
-      noSmooth();
     break;
   case 'v':
     avoidWalls = !avoidWalls;
