@@ -123,6 +123,9 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	public boolean addGrabber(InteractiveGrabber<E> grabber) {
 		if (grabber == null || this.hasGrabber(grabber))
 			return false;
+		//if grabber is in agent, re-branch it:
+		if(agent.hasGrabber(grabber))
+			agent.removeGrabber(grabber);
 		return grabbers.add(grabber);
 	}
 	

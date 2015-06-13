@@ -65,7 +65,7 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	private float								grabsInputThreshold;
 	private boolean							adpThreshold;
-	protected boolean						eyeFrame;
+	protected boolean						inEyePath;
 
 	// TODO decide this mode vs constraint! seems overkill
 	// protected boolean rspct2Frame;
@@ -77,7 +77,7 @@ public class GrabberFrame extends Frame implements Grabber {
 				appendSuper(super.hashCode()).
 				append(grabsInputThreshold).
 				append(adpThreshold).
-				append(eyeFrame).
+				append(inEyePath).
 				// append(rspct2Frame).
 				// append(gFrame).
 				append(rotSensitivity).
@@ -110,7 +110,7 @@ public class GrabberFrame extends Frame implements Grabber {
 				.appendSuper(super.equals(obj))
 				.append(grabsInputThreshold, other.grabsInputThreshold)
 				.append(adpThreshold, other.adpThreshold)
-				.append(eyeFrame, other.eyeFrame)
+				.append(inEyePath, other.inEyePath)
 				// .append(rspct2Frame, other.rspct2Frame)
 				// .append(gFrame, other.gFrame)
 				.append(dampFriction, other.dampFriction)
@@ -142,7 +142,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 */
 	protected GrabberFrame(AbstractScene scn, GrabberFrame iFrame) {
 		this(scn, iFrame.translation().get(), iFrame.rotation().get(), iFrame.scaling());
-		eyeFrame = true;
+		inEyePath = true;
 	}
 
 	/**
@@ -427,7 +427,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		super(otherFrame);
 		this.scene = otherFrame.scene;
 		this.theeye = otherFrame.theeye;
-		this.eyeFrame = otherFrame.eyeFrame;
+		this.inEyePath = otherFrame.inEyePath;
 		// this.rspct2Frame = otherFrame.rspct2Frame;
 		// this.gFrame = otherFrame.gFrame;
 
@@ -2077,7 +2077,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * 
 	 */
 	public boolean isInEyePath() {
-		return eyeFrame;
+		return inEyePath;
 	}
 
 	/**

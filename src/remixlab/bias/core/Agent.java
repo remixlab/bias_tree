@@ -51,8 +51,6 @@ public class Agent {
 	 * See {@link #addGrabber(Grabber)} for details. Removing a grabber that is not in {@link #grabbers()} has no effect.
 	 */	
 	public boolean removeGrabber(Grabber grabber) {
-		// TODO testing
-	    // System.out.println("removing grabber pierre! " + this.name());
 		if(defaultGrabber() == grabber)
 			setDefaultGrabber(null);
 		if(trackedGrabber() == grabber)

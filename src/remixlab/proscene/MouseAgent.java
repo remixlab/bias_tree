@@ -23,7 +23,6 @@ public class MouseAgent extends WheeledMouseAgent {
 	protected boolean		move, press, drag, release;
 
 	public MouseAgent(Scene scn, String n) {
-
 		super(scn, n);
 		LEFT_ID = PApplet.LEFT;
 		CENTER_ID = PApplet.CENTER;
