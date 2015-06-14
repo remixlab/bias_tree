@@ -30,7 +30,7 @@ public class MouseAgent extends WheeledMouseAgent {
 		dragToArcball();
 		// registration requires a call to PApplet.registerMethod("mouseEvent", motionAgent());
 		// which is done in Scene.enableMotionAgent(), which also register the agent at the inputHandler
-		inputHandler().unregisterAgent(this);
+		//inputHandler().unregisterAgent(this);
 	}
 
 	/**

@@ -178,9 +178,9 @@ public class Scene extends AbstractScene implements PConstants {
 		} else {
 			defMotionAgent = new MouseAgent(this, "proscene_mouse");
 			defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
-			enableMotionAgent();
+			parent.registerMethod("mouseEvent", motionAgent());
 		}
-		enableKeyboardAgent();
+		parent.registerMethod("keyEvent", keyboardAgent());
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
 
@@ -424,7 +424,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 */
 	@Override
 	public void enableKeyboardAgent() {
-		if (!inputHandler().isAgentRegistered(keyboardAgent())) {
+		if (!isKeyboardAgentEnabled()) {
 			inputHandler().registerAgent(keyboardAgent());
 			parent.registerMethod("keyEvent", keyboardAgent());
 		}

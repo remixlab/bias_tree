@@ -26,7 +26,7 @@ public class DroidKeyAgent extends KeyAgent {
 		scene = scn;
 		// registration requires a call to PApplet.registerMethod("keyEvent", keyboardAgent());
 		// which is done in Scene.enableKeyboardAgent(), which also register the agent at the inputHandler
-		inputHandler().unregisterAgent(this);
+		//inputHandler().unregisterAgent(this);
 	}
 
 	@Override
