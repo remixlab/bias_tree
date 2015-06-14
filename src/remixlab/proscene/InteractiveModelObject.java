@@ -157,6 +157,17 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
+	
+	/**
+	 * Checks if the frame grabs input from any agent registered at the scene input handler.
+	 */
+	public boolean grabsInput() {
+		for(Agent agent : scene.inputHandler().agents()) {
+			if(agent.inputGrabber() == this)
+				return true;
+		}
+		return false;
+	}
 
 	protected int getColor() {
 		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python

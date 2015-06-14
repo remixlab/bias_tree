@@ -54,6 +54,17 @@ public abstract class GrabberObject implements Grabber {
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
+	
+	/**
+	 * Checks if the frame grabs input from any agent registered at the given input handler.
+	 */
+	public boolean grabsInput(InputHandler inputHandler) {
+		for(Agent agent : inputHandler.agents()) {
+			if(agent.inputGrabber() == this)
+				return true;
+		}
+		return false;
+	}
 
 	@Override
 	public void performInteraction(BogusEvent event) {
