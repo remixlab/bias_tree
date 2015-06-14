@@ -70,7 +70,7 @@ public void draw() {
     pushMatrix();
     kfi.keyFrame(i).applyTransformation(scene);
 
-    if ( keyFrame[i].grabsInput(scene.motionAgent()) )
+    if ( keyFrame[i].grabsInput() )
       scene.drawAxes(40);
     else
       scene.drawAxes(20);

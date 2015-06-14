@@ -104,7 +104,7 @@ public void draw() {
 
   // 1. Draw into main buffer
   for (int i = 0; i < models.length; i++) 
-    if (models[i].grabsInput(scene.motionAgent()))
+    if (models[i].grabsInput())
       models[i].shape().setFill(color(255, 255, 255, 255));
     else {
       pushStyle();

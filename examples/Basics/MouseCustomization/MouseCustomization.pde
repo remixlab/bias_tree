@@ -56,7 +56,7 @@ void draw() {
     fill(0, 255, 255);
     scene.drawTorusSolenoid();
   }
-  else if (iFrame.grabsInput(scene.motionAgent())) {
+  else if (iFrame.grabsInput()) {
     fill(255, 0, 0);
     scene.drawTorusSolenoid();
   }

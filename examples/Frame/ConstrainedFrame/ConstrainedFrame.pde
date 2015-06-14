@@ -123,7 +123,7 @@ public void draw() {
     fill(0, 255, 255);
     scene.drawTorusSolenoid();
   }
-  else if (frame.grabsInput(scene.motionAgent())) {
+  else if (frame.grabsInput()) {
     fill(255, 0, 0);
     scene.drawTorusSolenoid();
   }
