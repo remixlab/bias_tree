@@ -18,7 +18,7 @@ package remixlab.bias.core;
  * sub-group should be mapped back to an item in the global Enum set (see {@link #referenceAction()}).
  * <p>
  * <b>Note:</b> User-defined actions subgroups implementing this Interface are used to parameterize
- * {@link remixlab.bias.branch.profile.Profile}s which are then used to parameterize {@link remixlab.bias.branch.Branch}
+ * {@link remixlab.bias.branch.profile.Profile}s which are then used to parameterize {@link remixlab.bias.core.GenericBranch}
  * s. The idea being that user-defined actions may be grouped together according to the BogusEvent type needed to
  * implement them (see {@link remixlab.bias.core.Grabber#performInteraction(remixlab.bias.core.BogusEvent)}). Parsing
  * the BogusEvent thus requires the proper {@link remixlab.bias.core.Agent} type.

@@ -21,7 +21,7 @@ import remixlab.bias.core.*;
  * @param <K>
  *          The {@link remixlab.bias.branch.profile.KeyboardProfile} to parameterize this Agent with.
  */
-public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Branch<E, A, KeyboardShortcut> {
+public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends GenericBranch<E, A, KeyboardShortcut> {
 	public KeyboardBranch(Agent pnt, String n) {
 		super(pnt, n);
 	}

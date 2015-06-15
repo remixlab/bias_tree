@@ -90,7 +90,7 @@ public class KeyboardAgent extends Agent {
 	}
 
 	@Override
-	public boolean appendBranch(Branch<?, ?, ?> branch) {
+	public boolean appendBranch(GenericBranch<?, ?, ?> branch) {
 		if (branch instanceof KeyboardBranch)
 			return super.appendBranch(branch);
 		else {

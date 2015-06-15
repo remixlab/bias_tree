@@ -8,11 +8,13 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.branch;
+package remixlab.bias.core;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import remixlab.bias.branch.KeyboardBranch;
+import remixlab.bias.branch.MotionBranch;
 import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.shortcut.Shortcut;
@@ -33,9 +35,9 @@ import remixlab.util.Copyable;
  * Third-parties implementations should "simply":
  * <ul>
  * <li>Derive from the Branch above that best fits their needs and add it into an agent (
- * {@link remixlab.bias.core.Agent#appendBranch(Branch)}).</li>
+ * {@link remixlab.bias.core.Agent#appendBranch(GenericBranch)}).</li>
  * <li>Configure its profiles.
- * <li>Add some grabbers into the branch ({@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, Branch)}).</li>
+ * <li>Add some grabbers into the branch ({@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, GenericBranch)}).</li>
  * </ul>.
  * 
  * @param <E>
@@ -44,13 +46,13 @@ import remixlab.util.Copyable;
  * @param <P>
  *          {@link remixlab.bias.branch.profile.Profile} to parameterize the Agent with.
  */
-public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> implements Copyable {
+public class GenericBranch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> implements Copyable {
 	protected Profile<S, A>	profile;
 	protected List<InteractiveGrabber<E>> grabbers;
 	protected Agent					agent;
 	protected String				name;
 
-	public Branch(Agent pnt, String n) {
+	public GenericBranch(Agent pnt, String n) {
 		name = n;
 		agent = pnt;
 		profile = new Profile<S, A>();
@@ -58,7 +60,7 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 		agent.appendBranch(this);
 	}
 
-	protected Branch(Branch<E, A, S> other) {
+	protected GenericBranch(GenericBranch<E, A, S> other) {
 		name = other.name() + "_deep-copy";
 		agent = other.agent();
 		profile = other.profile().get();
@@ -67,8 +69,8 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	}
 
 	@Override
-	public Branch<E, A, S> get() {
-		return new Branch<E, A, S>(this);
+	public GenericBranch<E, A, S> get() {
+		return new GenericBranch<E, A, S>(this);
 	}
 
 	public String name() {
@@ -151,5 +153,33 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	
 	public void reset() {
 		grabbers.clear();
+	}
+	
+	//TODO testing set default grabber (methods should be protected -> move Branch into core)
+	
+    InteractiveGrabber<E> trackedGrabber, defaultGrabber;
+	
+	public InteractiveGrabber<E> updateTrackedGrabber(BogusEvent event) {
+		trackedGrabber = null;
+		for (InteractiveGrabber<E> g : grabbers())
+			if(g.checkIfGrabsInput(event)) {
+				trackedGrabber = g;
+				break;
+			}
+		return trackedGrabber;
+	}
+	
+	public boolean setDefaultGrabber(Grabber grabber) {
+		defaultGrabber = null;
+		for (InteractiveGrabber<E> g : grabbers())
+			if(g == grabber) {
+				defaultGrabber = g;
+				return true;
+			}
+		return false;
+	}
+	
+	protected InteractiveGrabber<E> inputGrabber() {
+		return trackedGrabber != null ? trackedGrabber : defaultGrabber;
 	}
 }

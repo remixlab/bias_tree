@@ -19,9 +19,9 @@ import remixlab.bias.event.*;
 
 public class Agent {
 	protected String										nm;
-	protected List<Branch<?, ?, ?>>			brnchs;
+	protected List<GenericBranch<?, ?, ?>>			brnchs;
 	protected List<Grabber>	grabberList;
-	protected Branch<?, ?, ?>				trackedGrabberBranch, defaultGrabberBranch;
+	protected GenericBranch<?, ?, ?>				trackedGrabberBranch, defaultGrabberBranch;
 	protected Grabber trackedGrabber, defaultGrabber;
 	protected boolean							agentTrckn;
 	protected InputHandler							handler;
@@ -32,7 +32,7 @@ public class Agent {
 	public Agent(InputHandler inputHandler, String name) {
 		nm = name;
 		grabberList = new ArrayList<Grabber>();
-		brnchs = new ArrayList<Branch<?, ?, ?>>();
+		brnchs = new ArrayList<GenericBranch<?, ?, ?>>();
 		setTracking(true);
 		handler = inputHandler;
 		handler.registerAgent(this);
@@ -75,7 +75,7 @@ public class Agent {
 		trackedGrabber = null;
 		//tGrabberBranch = null;		
 		grabberList.clear();		
-		for (Iterator<Branch<?, ?, ?>> it = brnchs.iterator(); it.hasNext();)
+		for (Iterator<GenericBranch<?, ?, ?>> it = brnchs.iterator(); it.hasNext();)
 			it.next().reset();
 	}
 	
@@ -128,11 +128,11 @@ public class Agent {
 		return grabberList.add(grabber);
 	}
 	
-	public <E extends Enum<E>> List<InteractiveGrabber<E>> grabbers(Branch<E, ?, ?> branch) {
+	public <E extends Enum<E>> List<InteractiveGrabber<E>> grabbers(GenericBranch<E, ?, ?> branch) {
 		return branch.grabbers();
 	}
 	
-	public <E extends Enum<E>, K extends Branch<E, ?, ?>, G extends InteractiveGrabber<E>> boolean addGrabber(G grabber, K branch) {
+	public <E extends Enum<E>, K extends GenericBranch<E, ?, ?>, G extends InteractiveGrabber<E>> boolean addGrabber(G grabber, K branch) {
 		if(branch == null)
 			return false;
 		if (!hasBranch(branch))
@@ -141,18 +141,18 @@ public class Agent {
 		return branch.addGrabber(grabber);
 	}
 
-	public Branch<?, ?, ?> branch(Grabber g) {
-		for (Branch<?, ?, ?> b : branches())
+	public GenericBranch<?, ?, ?> branch(Grabber g) {
+		for (GenericBranch<?, ?, ?> b : branches())
 			if (b.hasGrabber(g))
 					return b;
 		return null;
 	}
 
-	public List<Branch<?, ?, ?>> branches() {
+	public List<GenericBranch<?, ?, ?>> branches() {
 		return brnchs;
 	}
 
-	public boolean appendBranch(Branch<?, ?, ?> branch) {
+	public boolean appendBranch(GenericBranch<?, ?, ?> branch) {
 		if (branch == null)
 			return false;
 		if (!brnchs.contains(branch)) {
@@ -162,11 +162,11 @@ public class Agent {
 		return false;
 	}
 
-	public boolean hasBranch(Branch<?, ?, ?> branch) {
+	public boolean hasBranch(GenericBranch<?, ?, ?> branch) {
 		return brnchs.contains(branch);
 	}
 	
-	public void resetBranch(Branch<?, ?, ?> branch) {
+	public void resetBranch(GenericBranch<?, ?, ?> branch) {
 		branch.reset();
 		if(branch == this.defaultGrabberBranch)
 			setDefaultGrabber(null);
@@ -176,11 +176,11 @@ public class Agent {
 	}
 
 	public void resetBranches() {
-		for (Branch<?, ?, ?> branch : branches())
+		for (GenericBranch<?, ?, ?> branch : branches())
 			resetBranch(branch);
 	}
 
-	public boolean pruneBranch(Branch<?, ?, ?> branch) {
+	public boolean pruneBranch(GenericBranch<?, ?, ?> branch) {
 		if (brnchs.contains(branch)) {
 			this.resetBranch(branch);
 			this.brnchs.remove(branch);
@@ -203,7 +203,7 @@ public class Agent {
 		description += "\n";
 		description += "ActionAgents' info\n";
 		int index = 1;
-		for (Branch<?, ?, ?> branch : branches()) {
+		for (GenericBranch<?, ?, ?> branch : branches()) {
 			description += index;
 			description += ". ";
 			description += branch.info();
@@ -260,7 +260,16 @@ public class Agent {
 				return trackedGrabber();
 			}
 		}
-		for (Branch<?, ?, ?> branch : branches()) {
+		trackedGrabberBranch = null;//TODO experimenting, but it seems a much important line! 
+		for (GenericBranch<?, ?, ?> branch : branches()) {
+			InteractiveGrabber<?> iGrabber = branch.updateTrackedGrabber(event);
+			if(iGrabber != null) {
+				trackedGrabber = iGrabber;
+				this.trackedGrabberBranch = branch;
+				return trackedGrabber();
+			}
+			//TODO experimenting
+			/*
 			for (InteractiveGrabber<?> grabber : branch.grabbers()) {
 				if(grabber.checkIfGrabsInput(event)) {
 					trackedGrabber = grabber;
@@ -268,6 +277,7 @@ public class Agent {
 					return trackedGrabber();
 				}
 			}
+			*/
 		}
 		return trackedGrabber();
 	}
@@ -298,7 +308,7 @@ public class Agent {
 		Grabber inputGrabber = inputGrabber();
 		if (inputGrabber != null) {
 			if (inputGrabber instanceof InteractiveGrabber<?>) {
-				Branch<?,?,?> t = trackedGrabber() != null ? trackedGrabberBranch : defaultGrabberBranch;				
+				GenericBranch<?,?,?> t = trackedGrabber() != null ? trackedGrabberBranch : defaultGrabberBranch;				
 				Action<E> action = (Action<E>) t.handle(event);
 				return action != null ? inputHandler().enqueueEventTuple(
 						new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, action)) : false;
@@ -330,7 +340,7 @@ public class Agent {
 				//option 1: previous action
 				//Action<E> action = ((InteractiveGrabber<E>) inputGrabber).action();
 				//option 2: parse action
-				Branch<?,?,?> t = trackedGrabber() != null ? trackedGrabberBranch : defaultGrabberBranch;				
+				GenericBranch<?,?,?> t = trackedGrabber() != null ? trackedGrabberBranch : defaultGrabberBranch;				
 				Action<E> action = (Action<E>) t.handle(event);
 				return action != null ? inputHandler().enqueueEventTuple(new EventGrabberTuple(flushedEvent, (InteractiveGrabber<E>) inputGrabber, action)) : false;
 			}
@@ -433,12 +443,20 @@ public class Agent {
 			//this.dGrabberBranch = null;
 			return true;
 		}			
-		for (Branch<?,?,?> b : branches())
+		for (GenericBranch<?,?,?> b : branches())
+			if( b.setDefaultGrabber(grabber) ) {
+				this.defaultGrabber = grabber;
+				this.defaultGrabberBranch = b;
+				return true;
+			}
+			//TODO experimenting
+			/*
 			if (b.hasGrabber(grabber)) {
 				this.defaultGrabber = grabber;
 				this.defaultGrabberBranch = b;
 				return true;
 			}
+			*/
 		return false;
 	}
 
