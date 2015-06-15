@@ -23,7 +23,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	protected PShape	pshape;
 
 	// public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent, PShape ps) {
-	public <K extends GenericBranch<E, ?/* extends Action<E> */, ?>> InteractiveModelObject(Scene scn, Agent a, K actionAgent,
+	public <K extends Branch<E, ?/* extends Action<E> */, ?>> InteractiveModelObject(Scene scn, Agent a, K actionAgent,
 			PShape ps) {
 		scene = scn;
 		pshape = ps;
@@ -32,7 +32,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		id = ++Scene.modelCount;
 	}
 
-	public <K extends GenericBranch<E, ?/* extends Action<E> */, ?>> InteractiveModelObject(Scene scn, Agent a, K actionAgent) {
+	public <K extends Branch<E, ?/* extends Action<E> */, ?>> InteractiveModelObject(Scene scn, Agent a, K actionAgent) {
 		// public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent) {
 		scene = scn;
 		if (scene.addModel(this))

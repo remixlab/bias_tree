@@ -73,7 +73,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	}
 
 	@Override
-	public boolean appendBranch(GenericBranch<?, ?, ?> branch) {
+	public boolean appendBranch(Branch<?, ?, ?> branch) {
 		if (branch instanceof MotionBranch)
 			return super.appendBranch(branch);
 		else {

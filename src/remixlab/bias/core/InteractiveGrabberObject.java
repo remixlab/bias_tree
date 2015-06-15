@@ -10,7 +10,6 @@
 
 package remixlab.bias.core;
 
-import remixlab.bias.branch.*;
 import remixlab.bias.event.*;
 
 public abstract class InteractiveGrabberObject<E extends Enum<E>> implements InteractiveGrabber<E>
@@ -31,7 +30,7 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	 * 
 	 * @see remixlab.bias.core.Agent#grabbers()
 	 */
-	public InteractiveGrabberObject(Agent agent, GenericBranch<E, ? extends Action<E>, ?> actionAgent) {
+	public InteractiveGrabberObject(Agent agent, Branch<E, ? extends Action<E>, ?> actionAgent) {
 		agent.addGrabber(this, actionAgent);
 	}
 

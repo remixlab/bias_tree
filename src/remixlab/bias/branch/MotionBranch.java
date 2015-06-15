@@ -16,7 +16,7 @@ import remixlab.bias.event.*;
 import remixlab.bias.event.shortcut.*;
 
 /**
- * An {@link remixlab.bias.core.GenericBranch} with an extra {@link remixlab.bias.branch.profile.ClickProfile} defining
+ * An {@link remixlab.bias.core.Branch} with an extra {@link remixlab.bias.branch.profile.ClickProfile} defining
  * {@link remixlab.bias.event.shortcut.ClickShortcut} -> {@link remixlab.bias.core.Action} mappings.
  * <p>
  * The Agent thus is defined by two profiles: the {@link #motionProfile()} (alias for {@link #profile()} provided for
@@ -28,7 +28,7 @@ import remixlab.bias.event.shortcut.*;
  *          {@link remixlab.bias.branch.profile.ClickProfile} to parameterize the Agent with.
  */
 public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Action<E>> extends
-		GenericBranch<E, A, MotionShortcut> {
+		Branch<E, A, MotionShortcut> {
 	protected Profile<ClickShortcut, C>	clickProfile;
 
 	/**
@@ -100,12 +100,18 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 		}
 		return description;
 	}
-
+	
 	@Override
-	public Action<E> handle(BogusEvent event) {
+	protected boolean handle(BogusEvent event) {
+		//TODO testing
+		if (inputGrabber == null) {
+			System.out.println("MotionBranch weird message throw by handle() that should never happen!");
+			return false;
+		}
 		if (event == null)
-			return null;
-		Action<E> action = null;
+			return false;
+		
+        Action<E> action = null;
 		
 		///*
 		if (event instanceof MotionEvent)
@@ -120,9 +126,11 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 			action = clickProfile.handle(event);
 		//*/
 		
-		return action;
+		if (action == null)
+			return false;
+		return agent.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber, action));
 	}
-	
+
 	// high-level api (wrappers around the profile): from here nor really needed
 	
 	/*

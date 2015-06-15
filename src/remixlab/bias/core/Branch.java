@@ -13,10 +13,7 @@ package remixlab.bias.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import remixlab.bias.branch.KeyboardBranch;
-import remixlab.bias.branch.MotionBranch;
 import remixlab.bias.branch.profile.*;
-import remixlab.bias.core.*;
 import remixlab.bias.event.shortcut.Shortcut;
 import remixlab.util.Copyable;
 
@@ -35,9 +32,9 @@ import remixlab.util.Copyable;
  * Third-parties implementations should "simply":
  * <ul>
  * <li>Derive from the Branch above that best fits their needs and add it into an agent (
- * {@link remixlab.bias.core.Agent#appendBranch(GenericBranch)}).</li>
+ * {@link remixlab.bias.core.Agent#appendBranch(Branch)}).</li>
  * <li>Configure its profiles.
- * <li>Add some grabbers into the branch ({@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, GenericBranch)}).</li>
+ * <li>Add some grabbers into the branch ({@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, Branch)}).</li>
  * </ul>.
  * 
  * @param <E>
@@ -46,13 +43,14 @@ import remixlab.util.Copyable;
  * @param <P>
  *          {@link remixlab.bias.branch.profile.Profile} to parameterize the Agent with.
  */
-public class GenericBranch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> implements Copyable {
+public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> implements Copyable {
 	protected Profile<S, A>	profile;
 	protected List<InteractiveGrabber<E>> grabbers;
 	protected Agent					agent;
 	protected String				name;
+	protected InteractiveGrabber<E> inputGrabber;
 
-	public GenericBranch(Agent pnt, String n) {
+	public Branch(Agent pnt, String n) {
 		name = n;
 		agent = pnt;
 		profile = new Profile<S, A>();
@@ -60,7 +58,7 @@ public class GenericBranch<E extends Enum<E>, A extends Action<E>, S extends Sho
 		agent.appendBranch(this);
 	}
 
-	protected GenericBranch(GenericBranch<E, A, S> other) {
+	protected Branch(Branch<E, A, S> other) {
 		name = other.name() + "_deep-copy";
 		agent = other.agent();
 		profile = other.profile().get();
@@ -69,8 +67,8 @@ public class GenericBranch<E extends Enum<E>, A extends Action<E>, S extends Sho
 	}
 
 	@Override
-	public GenericBranch<E, A, S> get() {
-		return new GenericBranch<E, A, S>(this);
+	public Branch<E, A, S> get() {
+		return new Branch<E, A, S>(this);
 	}
 
 	public String name() {
@@ -93,7 +91,7 @@ public class GenericBranch<E extends Enum<E>, A extends Action<E>, S extends Sho
 	 * 
 	 * @param p
 	 */
-	public void setProfile(Profile<S, A> p) {
+	protected void setProfile(Profile<S, A> p) {
 		if (p == null)
 			return;
 		profile = p;
@@ -114,12 +112,18 @@ public class GenericBranch<E extends Enum<E>, A extends Action<E>, S extends Sho
 	 * The {@link #profile()} is used to parse the event into an user-defined action which is then set into the grabber
 	 * (see {@link remixlab.bias.core.InteractiveGrabber#setAction(Action)}) and returned.
 	 */
-	public Action<E> handle(BogusEvent event) {
+	protected boolean handle(BogusEvent event) {
+		//TODO testing
+		if (inputGrabber == null) {
+			System.out.println("Branch weird message throw by handle() that should never happen!");
+			return false;
+		}
 		if (event == null)
-			return null;
+			return false;
 		Action<E> action = profile().handle(event);
-		// if (action != null) grabber.setAction(action);
-		return action;
+		if (action == null)
+			return false;
+		return agent.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber, action));
 	}
 	
 	public boolean addGrabber(InteractiveGrabber<E> grabber) {
@@ -155,31 +159,21 @@ public class GenericBranch<E extends Enum<E>, A extends Action<E>, S extends Sho
 		grabbers.clear();
 	}
 	
-	//TODO testing set default grabber (methods should be protected -> move Branch into core)
-	
-    InteractiveGrabber<E> trackedGrabber, defaultGrabber;
-	
-	public InteractiveGrabber<E> updateTrackedGrabber(BogusEvent event) {
-		trackedGrabber = null;
+	protected InteractiveGrabber<E> updateTrackedGrabber(BogusEvent event) {
 		for (InteractiveGrabber<E> g : grabbers())
 			if(g.checkIfGrabsInput(event)) {
-				trackedGrabber = g;
-				break;
+				inputGrabber = g;
+				return inputGrabber;
 			}
-		return trackedGrabber;
+		return null;
 	}
 	
-	public boolean setDefaultGrabber(Grabber grabber) {
-		defaultGrabber = null;
+	protected boolean setDefaultGrabber(Grabber grabber) {
 		for (InteractiveGrabber<E> g : grabbers())
 			if(g == grabber) {
-				defaultGrabber = g;
+				inputGrabber = g;
 				return true;
 			}
 		return false;
-	}
-	
-	protected InteractiveGrabber<E> inputGrabber() {
-		return trackedGrabber != null ? trackedGrabber : defaultGrabber;
 	}
 }
