@@ -307,7 +307,7 @@ public class Agent {
 		if (inputGrabber != null) {
 			if (inputGrabber instanceof InteractiveGrabber<?>) {
 				Branch<?,?,?> t = trackedGrabber() != null ? trackedGrabberBranch : defaultGrabberBranch;
-				return t.handle(event);
+				return trackedGrabber() != null ? t.handleTrackedGrabber(event) : t.handleDefaultGrabber(event);
 				//TODO experimenting
 				/*
 				GenericBranch<?,?,?> t = trackedGrabber() != null ? trackedGrabberBranch : defaultGrabberBranch;				
@@ -329,6 +329,10 @@ public class Agent {
 			return false;
 		if (event instanceof MotionEvent)
 			((MotionEvent) event).modulate(sensitivities((MotionEvent) event));
+		//TODO (see the same note on iFrame) : FIX ME!!!
+		//1. what to do with the action in event.flush.
+		//2. what to do with EventGrabberTuple
+		// are those two related somehow?
 		Grabber inputGrabber = inputGrabber();
 		//if (inputGrabber != null)
 			//return inputHandler().enqueueEventTuple(new EventGrabberTuple(event.flush(), inputGrabber));

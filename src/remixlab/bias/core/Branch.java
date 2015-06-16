@@ -48,7 +48,7 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	protected List<InteractiveGrabber<E>> grabbers;
 	protected Agent					agent;
 	protected String				name;
-	protected InteractiveGrabber<E> inputGrabber;
+	protected InteractiveGrabber<E> trackedGrabber, defaultGrabber;
 
 	public Branch(Agent pnt, String n) {
 		name = n;
@@ -112,9 +112,16 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	 * The {@link #profile()} is used to parse the event into an user-defined action which is then set into the grabber
 	 * (see {@link remixlab.bias.core.InteractiveGrabber#setAction(Action)}) and returned.
 	 */
-	protected boolean handle(BogusEvent event) {
-		//TODO testing
-		if (inputGrabber == null) {
+	protected boolean handleTrackedGrabber(BogusEvent event) {
+		return handle(trackedGrabber, event);
+	}
+	
+	protected boolean handleDefaultGrabber(BogusEvent event) {
+		return handle(defaultGrabber, event);
+	}
+	
+	protected boolean handle(InteractiveGrabber<E> grabber, BogusEvent event) {
+		if (grabber == null) {
 			System.out.println("Branch weird message throw by handle() that should never happen!");
 			return false;
 		}
@@ -123,7 +130,7 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 		Action<E> action = profile().handle(event);
 		if (action == null)
 			return false;
-		return agent.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber, action));
+		return agent.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, grabber, action));
 	}
 	
 	public boolean addGrabber(InteractiveGrabber<E> grabber) {
@@ -160,18 +167,21 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	}
 	
 	protected InteractiveGrabber<E> updateTrackedGrabber(BogusEvent event) {
+		//trackedGrabber = null;
 		for (InteractiveGrabber<E> g : grabbers())
 			if(g.checkIfGrabsInput(event)) {
-				inputGrabber = g;
-				return inputGrabber;
+				trackedGrabber = g;
+				return trackedGrabber;
 			}
+		//return trackedGrabber;
 		return null;
 	}
 	
 	protected boolean setDefaultGrabber(Grabber grabber) {
+		//defaultGrabber = null;
 		for (InteractiveGrabber<E> g : grabbers())
 			if(g == grabber) {
-				inputGrabber = g;
+				defaultGrabber = g;
 				return true;
 			}
 		return false;

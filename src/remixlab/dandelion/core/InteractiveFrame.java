@@ -652,6 +652,10 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		initMotionEvent = event.get();
 		currMotionEvent = event;
 		stopSpinning();
+		//TODO (see the same note on Agent)
+		//1. what to do with the action in event.flush.
+		//2. what to do with EventGrabberTuple
+		// are those two related somehow?
 		MotionAction twotempi = action().referenceAction();
 		if (twotempi == MotionAction.SCREEN_TRANSLATE)
 			dirIsFixed = false;

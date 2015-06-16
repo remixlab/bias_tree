@@ -102,9 +102,9 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	}
 	
 	@Override
-	protected boolean handle(BogusEvent event) {
+	protected boolean handle(InteractiveGrabber<E> grabber, BogusEvent event) {
 		//TODO testing
-		if (inputGrabber == null) {
+		if (grabber == null) {
 			System.out.println("MotionBranch weird message throw by handle() that should never happen!");
 			return false;
 		}
@@ -128,7 +128,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 		
 		if (action == null)
 			return false;
-		return agent.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber, action));
+		return agent.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, grabber, action));
 	}
 
 	// high-level api (wrappers around the profile): from here nor really needed
