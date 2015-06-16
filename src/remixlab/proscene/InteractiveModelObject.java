@@ -252,7 +252,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 				// System.out.println("case 2");
 				flushAction(event);// stopAction
 				initAction = null;
-				setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
+				//setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
 				return true;
 			}
 		}

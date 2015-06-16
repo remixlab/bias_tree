@@ -183,7 +183,7 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 				// System.out.println("case 2 in frame: action() == null && initAction != null (ends action, calls flush)");
 				flushAction(event);// stopAction
 				initAction = null;
-				setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
+				//setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
 				return true;
 			}
 		}

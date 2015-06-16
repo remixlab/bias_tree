@@ -46,10 +46,16 @@ public class MouseAgent extends WheeledMouseAgent {
 					e.getModifiers(), move ? BogusEvent.NO_ID : e.getButton());
 			if (move && (pickingMode() == PickingMode.MOVE))
 				updateTrackedGrabber(currentEvent);
+			
+			handle(currentEvent, release);
+			
+			/*
 			if (move || press || drag)
 				handle(currentEvent);
 			if (release)
 				flush(currentEvent);
+			//*/
+			
 			prevEvent = currentEvent.get();
 			return;
 		}

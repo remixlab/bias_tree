@@ -612,7 +612,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			else {// action() == null
 				flushAction(event);// stopAction
 				initAction = null;
-				setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
+				//setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
 				return true;
 			}
 		}
