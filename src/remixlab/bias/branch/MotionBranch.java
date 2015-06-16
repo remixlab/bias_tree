@@ -128,7 +128,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 		
 		if (action == null)
 			return false;
-		return agent.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, grabber, action));
+		return agent.inputHandler().enqueueEventTuple(new InteractiveEventGrabberTuple<E>(event, grabber, action));
 	}
 
 	// high-level api (wrappers around the profile): from here nor really needed

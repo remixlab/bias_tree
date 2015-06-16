@@ -113,10 +113,14 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	 * (see {@link remixlab.bias.core.InteractiveGrabber#setAction(Action)}) and returned.
 	 */
 	protected boolean handleTrackedGrabber(BogusEvent event) {
+		if(trackedGrabber != agent.trackedGrabber())
+			throw new RuntimeException("faulty tracked grabber in branch");
 		return handle(trackedGrabber, event);
 	}
 	
 	protected boolean handleDefaultGrabber(BogusEvent event) {
+		if(defaultGrabber != agent.defaultGrabber())
+			throw new RuntimeException("faulty tracked grabber in branch");
 		return handle(defaultGrabber, event);
 	}
 	
@@ -130,7 +134,7 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 		Action<E> action = profile().handle(event);
 		if (action == null)
 			return false;
-		return agent.inputHandler().enqueueEventTuple(new EventGrabberTuple(event, grabber, action));
+		return agent.inputHandler().enqueueEventTuple(new InteractiveEventGrabberTuple<E>(event, grabber, action));
 	}
 	
 	public boolean addGrabber(InteractiveGrabber<E> grabber) {
