@@ -36,7 +36,6 @@ public class EventGrabberTuple {
 	 * 
 	 * @return true if succeeded and false otherwise.
 	 */
-	//@SuppressWarnings({ "unchecked", "rawtypes" })
 	public boolean perform() {
 		if(grabber == null || event == null)
 			return false;

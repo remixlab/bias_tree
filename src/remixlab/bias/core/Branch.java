@@ -120,7 +120,7 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	
 	protected boolean handleDefaultGrabber(BogusEvent event) {
 		if(defaultGrabber != agent.defaultGrabber())
-			throw new RuntimeException("faulty tracked grabber in branch");
+			throw new RuntimeException("faulty default grabber in branch");
 		return handle(defaultGrabber, event);
 	}
 	

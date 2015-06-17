@@ -259,7 +259,7 @@ public class Agent {
 				return trackedGrabber();
 			}
 		}
-		trackedGrabberBranch = null;//TODO experimenting, but it seems a much important line! 
+		trackedGrabberBranch = null;//this seems an important line :p 
 		for (Branch<?, ?, ?> branch : branches()) {
 			InteractiveGrabber<?> iGrabber = branch.updateTrackedGrabber(event);
 			if(iGrabber != null) {
@@ -267,22 +267,19 @@ public class Agent {
 				this.trackedGrabberBranch = branch;
 				return trackedGrabber();
 			}
-			//TODO experimenting
-			/*
-			for (InteractiveGrabber<?> grabber : branch.grabbers()) {
-				if(grabber.checkIfGrabsInput(event)) {
-					trackedGrabber = grabber;
-					this.trackedGrabberBranch = branch;
-					return trackedGrabber();
-				}
-			}
-			*/
 		}
 		return trackedGrabber();
 	}
 
 	public float[] sensitivities(MotionEvent event) {
 		return new float[] { 1f, 1f, 1f, 1f, 1f, 1f };
+	}
+	
+	/**
+	 * Force a flushed event on the interactive grabber.
+	 */
+	protected boolean flush(BogusEvent event) {
+		return handle(event, true);
 	}
 	
 	protected boolean handle(BogusEvent event) {
@@ -312,42 +309,11 @@ public class Agent {
 			if (inputGrabber instanceof InteractiveGrabber<?>) {
 				Branch<?,?,?> t = trackedGrabber() != null ? trackedGrabberBranch : defaultGrabberBranch;
 				return trackedGrabber() != null ? t.handleTrackedGrabber(flush ? event.flush() : event ) : t.handleDefaultGrabber(flush ? event.flush() : event);
-				//TODO experimenting
-				/*
-				GenericBranch<?,?,?> t = trackedGrabber() != null ? trackedGrabberBranch : defaultGrabberBranch;				
-				Action<E> action = (Action<E>) t.handle(event);
-				return action != null ? inputHandler().enqueueEventTuple(
-						new EventGrabberTuple(event, (InteractiveGrabber<E>) inputGrabber, action)) : false;
-				*/
 			}
 			return inputHandler().enqueueEventTuple(new EventGrabberTuple(flush ? event.flush() : event, inputGrabber));
 		}
 		return false;
 	}
-	
-	/**
-	 * Force a flushed event on the interactive grabber.
-	 */
-	protected boolean flush(BogusEvent event) {
-		return handle(event, true);
-	}
-	
-	/*
-	protected boolean flush(BogusEvent event) {
-		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)
-			return false;
-		if (event instanceof MotionEvent)
-			((MotionEvent) event).modulate(sensitivities((MotionEvent) event));
-		//TODO (see the same note on iFrame) : FIX ME!!!
-		//1. what to do with the action in event.flush.
-		//2. what to do with EventGrabberTuple
-		// are those two related somehow?
-		Grabber inputGrabber = inputGrabber();
-		if (inputGrabber != null)
-			return inputHandler().enqueueEventTuple(new EventGrabberTuple(event.flush(), inputGrabber));
-		return false;
-	}
-	*/
 
 	/**
 	 * If {@link #trackedGrabber()} is non null, returns it. Otherwise returns the {@link #defaultGrabber()}.
@@ -452,14 +418,6 @@ public class Agent {
 				this.defaultGrabberBranch = b;
 				return true;
 			}
-			//TODO experimenting
-			/*
-			if (b.hasGrabber(grabber)) {
-				this.defaultGrabber = grabber;
-				this.defaultGrabberBranch = b;
-				return true;
-			}
-			*/
 		return false;
 	}
 

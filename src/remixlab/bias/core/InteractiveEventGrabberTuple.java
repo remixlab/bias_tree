@@ -8,7 +8,7 @@ public class InteractiveEventGrabberTuple<E extends Enum<E>> extends EventGrabbe
 	 * @param e
 	 *          {@link remixlab.bias.core.BogusEvent}
 	 * @param g
-	 *          {@link remixlab.bias.core.Grabber}
+	 *          {@link remixlab.bias.core.InteractiveGrabber}
 	 * @param a
 	 *          {@link remixlab.bias.core.Action}
 	 */
