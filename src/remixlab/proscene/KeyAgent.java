@@ -10,6 +10,7 @@
 
 package remixlab.proscene;
 
+import processing.core.PApplet;
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
@@ -20,9 +21,11 @@ public class KeyAgent extends KeyboardAgent {
 
 	public KeyAgent(AbstractScene scn, String n) {
 		super(scn, n);
-		// registration requires a call to PApplet.registerMethod("keyEvent", keyboardAgent());
-		// which is done in Scene.enableKeyboardAgent(), which also register the agent at the inputHandler
-		//inputHandler().unregisterAgent(this);
+		LEFT_KEY = PApplet.LEFT;
+		RIGHT_KEY = PApplet.RIGHT;
+		UP_KEY= PApplet.UP;
+		DOWN_KEY= PApplet.DOWN;
+		setDefaultBindings();
 	}
 
 	/**

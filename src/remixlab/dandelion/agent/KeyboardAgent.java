@@ -19,6 +19,8 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 public class KeyboardAgent extends Agent {
+	public static int LEFT_KEY	= 1, RIGHT_KEY = 2, UP_KEY = 3, DOWN_KEY = 4;
+	
 	protected AbstractScene															scene;
 	protected KeyboardBranch<GlobalAction, SceneAction>	keySceneBranch;
 	protected KeyboardBranch<MotionAction, KeyboardAction>	keyFrameBranch, keyEyeBranch;
@@ -48,16 +50,6 @@ public class KeyboardAgent extends Agent {
 			return super.addGrabber(frame);
 		return false;
 	}
-
-	/*
-	 * // TODO debug
-	 * 
-	 * @Override public boolean addGrabber(Grabber frame) { if (frame instanceof AbstractScene) return addGrabber(scene,
-	 * keySceneBranch); if (frame instanceof InteractiveFrame) { if (((InteractiveFrame) frame).isEyeFrame())
-	 * System.out.println("adding EYE frame in keyboard"); else System.out.println("adding FRAME frame in keyboard");
-	 * return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? keyEyeBranch :
-	 * keyFrameBranch); } if (!(frame instanceof InteractiveGrabber)) return super.addGrabber(frame); return false; }
-	 */
 
 	/**
 	 * Returns the scene this object belongs to
@@ -153,34 +145,34 @@ public class KeyboardAgent extends Agent {
 		removeBindings(Target.FRAME);
 		// 1. Scene bindings
 		// VK_A : 65
-		setBinding(65, SceneAction.TOGGLE_AXES_VISUAL_HINT);
+		setBinding('a', SceneAction.TOGGLE_AXES_VISUAL_HINT);
 		// VK_E : 69
-		setBinding(69, SceneAction.TOGGLE_CAMERA_TYPE);
+		setBinding('e', SceneAction.TOGGLE_CAMERA_TYPE);
 		// VK_F : 70
-		setBinding(70, SceneAction.TOGGLE_PICKING_VISUAL_HINT);
+		setBinding('f', SceneAction.TOGGLE_PICKING_VISUAL_HINT);
 		// VK_G : 71
-		setBinding(71, SceneAction.TOGGLE_GRID_VISUAL_HINT);
+		setBinding('g', SceneAction.TOGGLE_GRID_VISUAL_HINT);
 		// VK_H : 72
-		setBinding(72, SceneAction.DISPLAY_INFO);
+		setBinding('h', SceneAction.DISPLAY_INFO);
 		// VK_M : 77
-		setBinding(77, SceneAction.TOGGLE_ANIMATION);
+		setBinding('m', SceneAction.TOGGLE_ANIMATION);
 		// VK_R : 82
-		setBinding(82, SceneAction.TOGGLE_PATHS_VISUAL_HINT);
+		setBinding('r', SceneAction.TOGGLE_PATHS_VISUAL_HINT);
 		// VK_S : 83
 		setBinding('s', SceneAction.INTERPOLATE_TO_FIT);
 		setBinding(BogusEvent.SHIFT, 's', SceneAction.SHOW_ALL);
 
 		// VK_LEFT : 37
-		setBinding(37, SceneAction.MOVE_LEFT);
+		setBinding(LEFT_KEY, SceneAction.MOVE_LEFT);
 		// setBinding(BogusEvent.NO_MODIFIER_MASK, 37, SceneAction.MOVE_LEFT);
 		// VK_UP : 38
-		setBinding(38, SceneAction.MOVE_UP);
+		setBinding(UP_KEY, SceneAction.MOVE_UP);
 		// setBinding(BogusEvent.NO_MODIFIER_MASK, 38, SceneAction.MOVE_UP);
 		// VK_RIGHT : 39
-		setBinding(39, SceneAction.MOVE_RIGHT);
+		setBinding(RIGHT_KEY, SceneAction.MOVE_RIGHT);
 		// setBinding(BogusEvent.NO_MODIFIER_MASK, 39, SceneAction.MOVE_RIGHT);
 		// VK_DOWN : 40
-		setBinding(40, SceneAction.MOVE_DOWN);
+		setBinding(DOWN_KEY, SceneAction.MOVE_DOWN);
 		// setBinding(BogusEvent.NO_MODIFIER_MASK, 40, SceneAction.MOVE_DOWN);
 
 		// VK_1 : 49
@@ -198,39 +190,39 @@ public class KeyboardAgent extends Agent {
 
 		// 2. Eye bindings
 		// VK_A : 65
-		setBinding(Target.EYE, 65, KeyboardAction.ALIGN_FRAME);
+		setBinding(Target.EYE, 'a', KeyboardAction.ALIGN_FRAME);
 		// VK_C
-		setBinding(Target.EYE, 67, KeyboardAction.CENTER_FRAME);
-		// VK_X
-		setBinding(Target.EYE, 88, KeyboardAction.TRANSLATE_X_NEG);
-		// VK_X
-		setBinding(Target.EYE, BogusEvent.SHIFT, 88, KeyboardAction.TRANSLATE_X_POS);
-		// VK_Y
-		setBinding(Target.EYE, 89, KeyboardAction.TRANSLATE_Y_NEG);
-		// VK_Y
-		setBinding(Target.EYE, BogusEvent.SHIFT, 89, KeyboardAction.TRANSLATE_Y_POS);
+		setBinding(Target.EYE, 'c', KeyboardAction.CENTER_FRAME);
+		// VK_LEFT
+		setBinding(Target.EYE, LEFT_KEY, KeyboardAction.TRANSLATE_X_NEG);
+		// VK_RIGHT
+		setBinding(Target.EYE, RIGHT_KEY, KeyboardAction.TRANSLATE_X_POS);
+		// VK_DOWN
+		setBinding(Target.EYE, DOWN_KEY, KeyboardAction.TRANSLATE_Y_NEG);
+		// VK_UP
+		setBinding(Target.EYE, UP_KEY, KeyboardAction.TRANSLATE_Y_POS);
 		// VK_Z
-		setBinding(Target.EYE, 90, KeyboardAction.ROTATE_Z_NEG);
+		setBinding(Target.EYE, 'z', KeyboardAction.ROTATE_Z_NEG);
 		// VK_Z
-		setBinding(Target.EYE, BogusEvent.SHIFT, 90, KeyboardAction.ROTATE_Z_POS);
+		setBinding(Target.EYE, BogusEvent.SHIFT, 'z', KeyboardAction.ROTATE_Z_POS);
 
 		// 3. Frame bindings
 		// VK_A : 65
-		setBinding(Target.FRAME, 65, KeyboardAction.ALIGN_FRAME);
+		setBinding(Target.FRAME, 'a', KeyboardAction.ALIGN_FRAME);
 		// VK_C
-		setBinding(Target.FRAME, 67, KeyboardAction.CENTER_FRAME);
-		// VK_X
-		setBinding(Target.FRAME, 88, KeyboardAction.TRANSLATE_X_NEG);
-		// VK_X
-		setBinding(Target.FRAME, BogusEvent.SHIFT, 88, KeyboardAction.TRANSLATE_X_POS);
-		// VK_Y
-		setBinding(Target.FRAME, 89, KeyboardAction.TRANSLATE_Y_NEG);
-		// VK_Y
-		setBinding(Target.FRAME, BogusEvent.SHIFT, 89, KeyboardAction.TRANSLATE_Y_POS);
+		setBinding(Target.FRAME, 'c', KeyboardAction.CENTER_FRAME);
+		// VK_LEFT
+		setBinding(Target.FRAME, LEFT_KEY, KeyboardAction.TRANSLATE_X_NEG);
+		// VK_RIGHT
+		setBinding(Target.FRAME, RIGHT_KEY, KeyboardAction.TRANSLATE_X_POS);
+		// VK_UP
+		setBinding(Target.FRAME, DOWN_KEY, KeyboardAction.TRANSLATE_Y_NEG);
+		// VK_DOWN
+		setBinding(Target.FRAME, UP_KEY, KeyboardAction.TRANSLATE_Y_POS);
 		// VK_Z
-		setBinding(Target.FRAME, 90, KeyboardAction.ROTATE_Z_NEG);
+		setBinding(Target.FRAME, 'z', KeyboardAction.ROTATE_Z_NEG);
 		// VK_Z
-		setBinding(Target.FRAME, BogusEvent.SHIFT, 90, KeyboardAction.ROTATE_Z_POS);
+		setBinding(Target.FRAME, BogusEvent.SHIFT, 'z', KeyboardAction.ROTATE_Z_POS);
 	}
 
 	/**

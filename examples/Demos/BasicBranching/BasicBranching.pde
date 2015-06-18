@@ -2,6 +2,17 @@
  * Basic Branching.
  * by Jean Pierre Charalambos.
  * 
+ * Cloning and creating branches to control a specific object instance
+ * (in this case the torus with its axes drawn) differently than it's
+ * done with the others.
+ *
+ * To set the input grabber object (the object targeted for interaction)
+ * for both the mouse and the keyboard press: 
+ *
+ * Press 't' for the torus with its axes drawn
+ * Press 'u' for any of the other toruses
+ * Press 'v' for the default grabber
+ *
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 
@@ -30,7 +41,8 @@ void setup() {
   for (int i = 0; i < toruses.length; i++)
     toruses[i] = new InteractiveTorus(scene);
     
-  iMotionBranch = new MotionBranch<MotionAction, DOF2Action, ClickAction>(scene.mouseAgent(), "my_motion_branch");
+  // 1. Cloning a (mouse) branch
+  iMotionBranch = scene.mouseAgent().frameBranch().get();
   iMotionBranch.setMotionBinding(LEFT, DOF2Action.TRANSLATE);
   iMotionBranch.setMotionBinding(RIGHT, DOF2Action.ROTATE);
   //scene.mouseAgent().removeGrabber(toruses[3].iFrame);
@@ -39,11 +51,12 @@ void setup() {
   iMotionBranch.addGrabber(toruses[3].iFrame);
   //scene.mouseAgent().addGrabber(toruses[3].iFrame, iMotionBranch);//same as prev line
   
-  iKeyBranch = scene.keyboardAgent().frameBranch().get();
-  iKeyBranch.setBinding(UP, KeyboardAction.TRANSLATE_Y_POS);
-  iKeyBranch.setBinding(DOWN, KeyboardAction.TRANSLATE_Y_NEG);
-  iKeyBranch.setBinding(RIGHT, KeyboardAction.TRANSLATE_X_POS);
-  iKeyBranch.setBinding(LEFT, KeyboardAction.TRANSLATE_X_NEG);
+  // 2. Creating a (keyboard) branch
+  iKeyBranch = new KeyboardBranch<MotionAction, KeyboardAction>(scene.keyboardAgent(), "my_key_branch");
+  iKeyBranch.setBinding('y', KeyboardAction.TRANSLATE_Y_POS);
+  iKeyBranch.setBinding(Event.SHIFT, 'y', KeyboardAction.TRANSLATE_Y_NEG);
+  iKeyBranch.setBinding('x', KeyboardAction.TRANSLATE_X_POS);
+  iKeyBranch.setBinding(Event.SHIFT, 'x', KeyboardAction.TRANSLATE_X_NEG);
   //scene.keyboardAgent().removeGrabber(toruses[3].iFrame);
   //scene.keyboardAgent().appendBranch(iKeyBranch);
   // following line calls previous two:
@@ -59,10 +72,16 @@ void draw() {
 }
 
 void keyPressed() {
-  if ( key == 't' )
+  if ( key == 't' ) {
     scene.keyboardAgent().setDefaultGrabber(toruses[3].iFrame);
-  if ( key == 'u' )
+    scene.motionAgent().setDefaultGrabber(toruses[3].iFrame);
+  }
+  if ( key == 'u' ) {
     scene.keyboardAgent().setDefaultGrabber(toruses[2].iFrame);
-  if ( key == 'v' )
+    scene.motionAgent().setDefaultGrabber(toruses[2].iFrame);
+  }
+  if ( key == 'v' ) {
     scene.keyboardAgent().resetDefaultGrabber();
+    scene.motionAgent().resetDefaultGrabber();
+  }
 }

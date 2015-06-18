@@ -114,20 +114,19 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	 */
 	protected boolean handleTrackedGrabber(BogusEvent event) {
 		if(trackedGrabber != agent.trackedGrabber())
-			throw new RuntimeException("faulty tracked grabber in branch");
+			throw new RuntimeException("faulty tracked-grabber in branch!");
 		return handle(trackedGrabber, event);
 	}
 	
 	protected boolean handleDefaultGrabber(BogusEvent event) {
 		if(defaultGrabber != agent.defaultGrabber())
-			throw new RuntimeException("faulty default grabber in branch");
+			throw new RuntimeException("faulty default-grabber in branch!");
 		return handle(defaultGrabber, event);
 	}
 	
 	protected boolean handle(InteractiveGrabber<E> grabber, BogusEvent event) {
 		if (grabber == null) {
-			System.out.println("Branch weird message throw by handle() that should never happen!");
-			return false;
+			throw new RuntimeException("iGrabber should never be null. Check your agent implementation!");
 		}
 		if (event == null)
 			return false;

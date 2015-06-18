@@ -105,8 +105,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	protected boolean handle(InteractiveGrabber<E> grabber, BogusEvent event) {
 		//TODO testing
 		if (grabber == null) {
-			System.out.println("MotionBranch weird message throw by handle() that should never happen!");
-			return false;
+			throw new RuntimeException("InteractiveGrabber should never be null. Check your agent implementation!");
 		}
 		if (event == null)
 			return false;
