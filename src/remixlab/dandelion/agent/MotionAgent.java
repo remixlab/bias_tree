@@ -71,9 +71,9 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	public float wheelSensitivity() {
 		return wSens;
 	}
-
+	
 	@Override
-	public boolean appendBranch(Branch<?, ?, ?> branch) {
+	protected boolean appendBranch(Branch<?, ?, ?> branch) {
 		if (branch instanceof MotionBranch)
 			return super.appendBranch(branch);
 		else {
@@ -81,7 +81,12 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 			return false;
 		}
 	}
-
+	
+	//TODO what would be the method signature in Agent class this method overrides? (might allow to make all branch constructors protected)
+	public <E extends Enum<E>, B extends Action<E>, C extends Action<E>> MotionBranch<E, B, C> appendBranch() {
+		return new MotionBranch<E, B, C>(this, "my_motion_branch");
+	}
+	
 	@Override
 	public boolean addGrabber(Grabber frame) {
 		if (frame instanceof InteractiveFrame)
@@ -90,16 +95,6 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 			return super.addGrabber(frame);
 		return false;
 	}
-
-	/*
-	 * // TODO debug
-	 * 
-	 * @Override public boolean addGrabber(Grabber frame) { if (frame instanceof InteractiveFrame) { if
-	 * (((InteractiveFrame) frame).isEyeFrame()) System.out.println("adding EYE frame in motion"); else
-	 * System.out.println("adding FRAME frame in motion"); return addGrabber((InteractiveFrame) frame, ((InteractiveFrame)
-	 * frame).isEyeFrame() ? eyeBranch : frameBranch); } if (!(frame instanceof InteractiveGrabber)) return
-	 * super.addGrabber(frame); return false; }
-	 */
 
 	@Override
 	public void resetDefaultGrabber() {

@@ -16,6 +16,8 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.bias.event.shortcut.*;
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.core.Constants.GlobalAction;
+import remixlab.dandelion.core.Constants.SceneAction;
 import remixlab.dandelion.core.Constants.*;
 
 public class KeyboardAgent extends Agent {
@@ -80,15 +82,20 @@ public class KeyboardAgent extends Agent {
 	public KeyboardEvent feed() {
 		return null;
 	}
-
+	
 	@Override
-	public boolean appendBranch(Branch<?, ?, ?> branch) {
+	protected boolean appendBranch(Branch<?, ?, ?> branch) {
 		if (branch instanceof KeyboardBranch)
 			return super.appendBranch(branch);
 		else {
 			System.out.println("Branch should be instanceof KeyboardBranch to be appended");
 			return false;
 		}
+	}
+	
+	//TODO what would be the method signature in Agent class this method overrides? (might allow to make all branch constructors protected)
+	public <E extends Enum<E>, A extends Action<E>> KeyboardBranch<E, A> appendBranch() {
+		return new KeyboardBranch<E, A>(this, "my_key_branch");
 	}
 
 	protected Profile<KeyboardShortcut, SceneAction> sceneProfile() {

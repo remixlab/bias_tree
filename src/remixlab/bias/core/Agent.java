@@ -151,7 +151,7 @@ public class Agent {
 		return brnchs;
 	}
 
-	public boolean appendBranch(Branch<?, ?, ?> branch) {
+	protected boolean appendBranch(Branch<?, ?, ?> branch) {
 		if (branch == null)
 			return false;
 		if (!brnchs.contains(branch)) {

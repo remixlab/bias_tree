@@ -2,7 +2,7 @@
  * Basic Branching.
  * by Jean Pierre Charalambos.
  * 
- * Cloning and creating branches to control a specific object instance
+ * Creating agent branches to control a specific object instance
  * (in this case the torus with its axes drawn) differently than it's
  * done with the others.
  *
@@ -41,25 +41,20 @@ void setup() {
   for (int i = 0; i < toruses.length; i++)
     toruses[i] = new InteractiveTorus(scene);
     
-  // 1. Cloning a (mouse) branch
-  iMotionBranch = scene.mouseAgent().frameBranch().get();
+  iMotionBranch = scene.motionAgent().appendBranch();
+  //iMotionBranch = scene.mouseAgent().frameBranch().get();//deep copy may be possible
   iMotionBranch.setMotionBinding(LEFT, DOF2Action.TRANSLATE);
   iMotionBranch.setMotionBinding(RIGHT, DOF2Action.ROTATE);
-  //scene.mouseAgent().removeGrabber(toruses[3].iFrame);
-  //scene.mouseAgent().appendBranch(iMotionBranch);
-  // following line calls previous two:
   iMotionBranch.addGrabber(toruses[3].iFrame);
   //scene.mouseAgent().addGrabber(toruses[3].iFrame, iMotionBranch);//same as prev line
   
   // 2. Creating a (keyboard) branch
-  iKeyBranch = new KeyboardBranch<MotionAction, KeyboardAction>(scene.keyboardAgent(), "my_key_branch");
+  //iKeyBranch = new KeyboardBranch<MotionAction, KeyboardAction>(scene.keyboardAgent(), "my_key_branch");
+  iKeyBranch = scene.keyboardAgent().appendBranch();
   iKeyBranch.setBinding('y', KeyboardAction.TRANSLATE_Y_POS);
   iKeyBranch.setBinding(Event.SHIFT, 'y', KeyboardAction.TRANSLATE_Y_NEG);
   iKeyBranch.setBinding('x', KeyboardAction.TRANSLATE_X_POS);
   iKeyBranch.setBinding(Event.SHIFT, 'x', KeyboardAction.TRANSLATE_X_NEG);
-  //scene.keyboardAgent().removeGrabber(toruses[3].iFrame);
-  //scene.keyboardAgent().appendBranch(iKeyBranch);
-  // following line calls previous two:
   //iKeyBranch.addGrabber(toruses[3].iFrame);
   scene.keyboardAgent().addGrabber(toruses[3].iFrame, iKeyBranch);//same as prev line
 }
