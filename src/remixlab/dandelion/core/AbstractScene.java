@@ -1959,6 +1959,10 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		Vec point = unprojectedCoordinatesOf(new Vec(pixel.x(), pixel.y(), depth));
 		return (depth < 1.0f) ? point : null;
 	}
+	
+	public Vec pointUnderPixel(float x, float y) {
+		return pointUnderPixel(new Point(x, y));
+	}
 
 	/**
 	 * Returns the depth (z-value) of the object under the {@code pixel}.
@@ -1970,6 +1974,10 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * {@link remixlab.dandelion.core.Camera#viewDirection()}. See the {@code gluUnProject} man page for details.
 	 */
 	public abstract float pixelDepth(Point pixel);
+	
+	public float pixelDepth(float x, float y) {
+		return pixelDepth(new Point(x, y));
+	}
 
 	/**
 	 * Same as {@link remixlab.dandelion.core.Eye#projectedCoordinatesOf(Mat, Vec)}.
@@ -2097,6 +2105,10 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	public boolean setAnchorFromPixel(Point pixel) {
 		return eye().setAnchorFromPixel(pixel);
 	}
+	
+	public boolean setAnchorFromPixel(float x, float y) {
+		return setAnchorFromPixel(new Point(x, y));
+	}
 
 	/**
 	 * Convenience wrapper function that simply returns {@code camera().setSceneCenterFromPixel(pixel)}
@@ -2109,6 +2121,10 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 */
 	public boolean setCenterFromPixel(Point pixel) {
 		return eye().setSceneCenterFromPixel(pixel);
+	}
+	
+	public boolean setCenterFromPixel(float x, float y) {
+		return setCenterFromPixel(new Point(x, y));
 	}
 
 	/**

@@ -1,3 +1,15 @@
+/**
+ * Custom Eye Frame.
+ * by Jean Pierre Charalambos.
+ * 
+ * Customizing the camera eye frame only requires to extend from the
+ * GrabberFrame and implementing some of the performInteraction() methods on
+ * the event types the new frame needs to support.
+ *
+ * Press ' ' to switch between the custom eye frame and the default one.
+ * Press 'h' to display the key shortcuts and mouse bindings in the console.
+ */
+
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
@@ -61,16 +73,5 @@ public void keyPressed() {
       println("resetting to orig eye frame");
       scene.eye().setFrame(orig);
     }
-  }
-  if ( key == 'p' ) {
-    print("pos: ");
-    scene.eye().frame().position().print();
-    println("frame magnitude: " + scene.eye().frame().magnitude());
-  }
-  if ( key == 'q' ) {
-    print("anchor: ");
-    scene.eye().anchor().print();
-    print("anchor projectedCoordinatesOf: ");
-    scene.eye().projectedCoordinatesOf(scene.eye().anchor()).print();
   }
 }

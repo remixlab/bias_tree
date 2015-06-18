@@ -614,6 +614,10 @@ public abstract class Eye implements Copyable {
 	 * this case no {@link #sceneCenter()} is set).
 	 */
 	public abstract boolean setSceneCenterFromPixel(Point pixel);
+	
+	public boolean setSceneCenterFromPixel(float x, float y) {
+		return setSceneCenterFromPixel(new Point(x,y));
+	}
 
 	/**
 	 * Returns the position of the scene center, defined in the world coordinate system.
@@ -670,6 +674,10 @@ public abstract class Eye implements Copyable {
 	 * this case no {@link #anchor()} is set).
 	 */
 	public abstract boolean setAnchorFromPixel(Point pixel);
+	
+	public boolean setAnchorFromPixel(float x, float y) {
+		return setAnchorFromPixel(new Point(x,y));
+	}
 
 	/**
 	 * Returns the Eye aspect ratio defined by {@link #screenWidth()} / {@link #screenHeight()}.
@@ -1871,4 +1879,8 @@ public abstract class Eye implements Copyable {
 	 * @see #interpolateToFitScene()
 	 */
 	public abstract void interpolateToZoomOnPixel(Point pixel);
+	
+	public void interpolateToZoomOnPixel(float x, float y) {
+		interpolateToZoomOnPixel(new Point(x,y));
+	}
 }

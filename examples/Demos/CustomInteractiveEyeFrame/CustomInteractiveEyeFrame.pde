@@ -1,3 +1,17 @@
+/**
+ * Custom Interactive Eye Frame.
+ * by Jean Pierre Charalambos.
+ * 
+ * This example shows how to customize the camera eye frame with custom
+ * user defined actions which requires to extend from the GrabberFrame
+ * and implement: 1. Some of the performInteraction() methods on the
+ * event types the new frame needs to support (see the CustomEyeFrame
+ * example); and, 2. The InteractiveGrabber interface.
+ *
+ * Press ' ' to switch between the custom eye frame and the default one.
+ * Press 'h' to display the key shortcuts and mouse bindings in the console.
+ */
+
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.bias.branch.*;
@@ -5,23 +19,27 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.proscene.*;
 
+// 1. Action declaration
+// We first declare the global action set the frame will support
 public enum GlobalAction {
   ROTATE, 
   TRANSLATE, 
-  ZOOM
+  ZOOM,
+  CENTER
 }
 
-  public enum MyMotionAction implements Action<GlobalAction> {
+
+public enum MyMotionAction implements Action<GlobalAction> {
   ROTATE(GlobalAction.ROTATE), 
-    TRANSLATE(GlobalAction.TRANSLATE);
+  TRANSLATE(GlobalAction.TRANSLATE);
 
   @Override
-    public GlobalAction referenceAction() {
+  public GlobalAction referenceAction() {
     return act;
   }
 
   @Override
-    public String description() {
+  public String description() {
     return "A simple motion action";
   }
 
@@ -33,15 +51,16 @@ public enum GlobalAction {
 }
 
 public enum MyClickAction implements Action<GlobalAction> {
-  ZOOM(GlobalAction.ZOOM);
+  ZOOM(GlobalAction.ZOOM),
+  CENTER(GlobalAction.CENTER);
 
   @Override
-    public GlobalAction referenceAction() {
+  public GlobalAction referenceAction() {
     return act;
   }
 
   @Override
-    public String description() {
+  public String description() {
     return "A simple click action";
   }
 
@@ -49,15 +68,6 @@ public enum MyClickAction implements Action<GlobalAction> {
 
   MyClickAction(GlobalAction a) {
     act = a;
-  }
-}
-
-public class CustomMouseBranch extends MotionBranch<GlobalAction, MyMotionAction, MyClickAction> {
-  public CustomMouseBranch(MouseAgent parent, String n) {
-    super(parent, n);
-    setClickBinding(LEFT, 1, MyClickAction.ZOOM);
-    setMotionBinding(LEFT, MyMotionAction.TRANSLATE);
-    setMotionBinding(RIGHT, MyMotionAction.ROTATE);
   }
 }
 
@@ -108,14 +118,16 @@ public class CustumEyeFrame extends GrabberFrame implements InteractiveGrabber<G
   public void performInteraction(ClickEvent event) {
     switch (referenceAction()) {
     case ZOOM:
-      println("to be implemented");
+      eye().interpolateToZoomOnPixel(event.x(), event.y());
+      break;
+    case CENTER:
+      center();
       break;
     }
   }
 }
 
 Scene              scene;
-CustomMouseBranch  mouseBranch;
 CustumEyeFrame  eyeFrame;
 GrabberFrame orig;
 public void setup() {
@@ -123,20 +135,13 @@ public void setup() {
   scene = new Scene(this);    
 
   orig = scene.eye().frame();
-  mouseBranch = new CustomMouseBranch(scene.mouseAgent(), "my_mouse");
+  MotionBranch<GlobalAction, MyMotionAction, MyClickAction> mouseBranch = scene.mouseAgent().appendBranch();
+  mouseBranch.setClickBinding(LEFT, 1, MyClickAction.ZOOM);
+  mouseBranch.setMotionBinding(LEFT, MyMotionAction.TRANSLATE);
+  mouseBranch.setMotionBinding(RIGHT, MyMotionAction.ROTATE);
   eyeFrame = new CustumEyeFrame(scene.eye());
   scene.mouseAgent().addGrabber(eyeFrame, mouseBranch);
   scene.camera().setFieldOfView((float) Math.PI / 3.0f);
-
-  if (scene.motionAgent().branch(eyeFrame) == mouseBranch)
-    println("validating agent.branch(1)");
-
-  if (scene.mouseAgent().branch(scene.eye().frame()) == scene.mouseAgent().eyeBranch())
-    println("validating agent.branch(2)");
-
-  if (scene.mouseAgent().branch(scene.eye().frame()) != scene.mouseAgent().frameBranch()) {
-    println("validating agent.branch(3)");
-  }      
 
   scene.eye().setFrame(eyeFrame);
   scene.showAll();
@@ -157,16 +162,5 @@ public void keyPressed() {
       println("resetting to orig eye frame");
       scene.eye().setFrame(orig);
     }
-  }
-  if ( key == 'p' ) {
-    print("pos: ");
-    scene.eye().frame().position().print();
-    println("frame magnitude: " + scene.eye().frame().magnitude());
-  }
-  if ( key == 'q' ) {
-    print("anchor: ");
-    scene.eye().anchor().print();
-    print("anchor projectedCoordinatesOf: ");
-    scene.eye().projectedCoordinatesOf(scene.eye().anchor()).print();
   }
 }
