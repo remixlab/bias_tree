@@ -133,9 +133,8 @@ void keyPressed() {
       scene.motionAgent().setDefaultGrabber(previousAvatar);
       scene.motionAgent().disableTracking();
     } else {
-      previousAvatar = (InteractiveAvatarFrame)scene.avatar();
-      scene.unsetAvatar(); //simply sets avatar as null
-      scene.motionAgent().setDefaultGrabber(scene.eye().frame());
+      previousAvatar = (InteractiveAvatarFrame)scene.unsetAvatar();
+      scene.motionAgent().resetDefaultGrabber();
       scene.motionAgent().enableTracking();
       scene.camera().interpolateToFitScene();
     }

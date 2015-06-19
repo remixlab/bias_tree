@@ -1665,14 +1665,16 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	/**
-	 * If there's an avatar unset it.
+	 * If there's an avatar unset it. Returns previous avatar.
 	 * 
 	 * @see #setAvatar(Trackable)
 	 */
-	public void unsetAvatar() {
+	public Trackable unsetAvatar() {
+		Trackable prev = trck;
 		motionAgent().resetDefaultGrabber();
 		motionAgent().enableTracking();
 		trck = null;
+		return prev;
 	}
 
 	// 3. EYE STUFF
