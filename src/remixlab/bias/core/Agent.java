@@ -399,13 +399,13 @@ public class Agent {
 	 * {@link #inputGrabber()}
 	 */
 	public boolean setDefaultGrabber(Grabber grabber) {
-		if( ! hasGrabber(grabber) )
-			return false;
 		if (grabber == null) {
 			this.defaultGrabber = null;
 			//this.dGrabberBranch = null;
 			return true;
 		}
+		if( ! hasGrabber(grabber) )
+			return false;
 		if(grabberList.contains(grabber)) {
 			this.defaultGrabber = grabber;
 			//this.dGrabberBranch = null;
