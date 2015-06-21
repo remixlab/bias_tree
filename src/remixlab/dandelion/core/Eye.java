@@ -17,6 +17,7 @@ import java.util.List;
 
 import remixlab.bias.core.Agent;
 import remixlab.bias.core.Grabber;
+import remixlab.bias.core.InteractiveGrabber;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
@@ -378,7 +379,7 @@ public abstract class Eye implements Copyable {
 			itr.next().setFrame(frm);
 		
 		for(Agent agent : agents) {
-			if(this == scene.eye())
+			if(this == scene.eye() && ( (scene.eye().frame() instanceof GrabberFrame &&  !(scene.eye().frame() instanceof InteractiveGrabber) ) || scene.eye().frame() instanceof InteractiveFrame))
 				agent.addGrabber(scene.eye().frame());
 			agent.setDefaultGrabber(frame());
 		}
