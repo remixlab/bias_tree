@@ -16,8 +16,6 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.bias.event.shortcut.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.core.Constants.GlobalAction;
-import remixlab.dandelion.core.Constants.SceneAction;
 import remixlab.dandelion.core.Constants.*;
 
 public class KeyboardAgent extends Agent {
@@ -33,11 +31,7 @@ public class KeyboardAgent extends Agent {
 		keySceneBranch = new KeyboardBranch<GlobalAction, SceneAction>(this, "scene_keyboard_branch");
 		keyFrameBranch = new KeyboardBranch<MotionAction, KeyboardAction>(this, "frame_keyboard_branch");
 		keyEyeBranch = new KeyboardBranch<MotionAction, KeyboardAction>(this, "eye_keyboard_branch");
-		// new, mimics eye -> motionAgent -> scene -> keyAgent
-		// addGrabber(scene);
-		// addGrabber(scene.eye().frame());
 		resetDefaultGrabber();
-		setDefaultGrabber(scene);
 		setDefaultBindings();
 	}
 
@@ -50,6 +44,7 @@ public class KeyboardAgent extends Agent {
 					: keyFrameBranch);
 		if (!(frame instanceof InteractiveGrabber))
 			return super.addGrabber(frame);
+		System.err.println("use addGrabber(G grabber, K KeyboardBranch) instead");
 		return false;
 	}
 

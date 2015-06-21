@@ -93,6 +93,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 			return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? eyeBranch : frameBranch);
 		if (!(frame instanceof InteractiveGrabber))
 			return super.addGrabber(frame);
+		System.err.println("use addGrabber(G grabber, K MotionBranch) instead");
 		return false;
 	}
 

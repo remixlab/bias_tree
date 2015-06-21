@@ -121,7 +121,7 @@ public class Agent {
 		if (hasGrabber(grabber))
 			return false;
 		if (grabber instanceof InteractiveGrabber) {
-			System.err.println("use addGrabber(G grabber, K actionAgent) instead");
+			System.err.println("use addGrabber(G grabber, K Branch) instead");
 			return false;
 		}
 		return grabberList.add(grabber);
@@ -404,8 +404,10 @@ public class Agent {
 			//this.dGrabberBranch = null;
 			return true;
 		}
-		if( ! hasGrabber(grabber) )
+		if( ! hasGrabber(grabber) ) {
+			System.err.println("To set a default grabber the object should be added into agent first. Use one of the agent addGrabber() methods");
 			return false;
+		}
 		if(grabberList.contains(grabber)) {
 			this.defaultGrabber = grabber;
 			//this.dGrabberBranch = null;
