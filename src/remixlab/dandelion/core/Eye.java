@@ -10,9 +10,12 @@
 
 package remixlab.dandelion.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
+import remixlab.bias.core.Agent;
 import remixlab.bias.core.Grabber;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
@@ -351,6 +354,38 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * A {@code null} {@code icf} reference will silently be ignored.
 	 */
+	///*
+	public final void setFrame(GrabberFrame icf) {
+		if (icf == null || icf == frame())
+			return;
+		
+		List<Agent> agents = new ArrayList<Agent>();
+		for(Agent agent : scene.inputHandler().agents())
+			if(agent.defaultGrabber() == frame() && agent.defaultGrabber() != null)
+				agents.add(agent);
+		
+		if (frame() != null)
+				frame().theeye = null;//key line as it breaks stdCamera example and perhaps much more examples
+		
+		//if(!replaceFrame(icf)) {
+			frm = icf;
+			frm.theeye = this;
+		//}
+		
+		interpolationKfi.setFrame(frm);
+		Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
+		while (itr.hasNext())
+			itr.next().setFrame(frm);
+		
+		for(Agent agent : agents) {
+			if(this == scene.eye())
+				agent.addGrabber(scene.eye().frame());
+			agent.setDefaultGrabber(frame());
+		}
+	}
+	//*/
+	
+	/*
 	public final void setFrame(GrabberFrame icf) {
 		if (icf == null)
 			return;
@@ -372,6 +407,7 @@ public abstract class Eye implements Copyable {
 		if (this == scene.eye())
 			scene.motionAgent().resetDefaultGrabber();
 	}
+	//*/
 
 	/**
 	 * 2D Windows simply call {@code frame().setPosition(target.x(), target.y())}. 3D Cameras set {@link #orientation()},
