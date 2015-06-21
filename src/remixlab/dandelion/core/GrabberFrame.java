@@ -413,8 +413,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (scene.eye() != null)
 			setFlySpeed(0.01f * scene.eye().sceneRadius());
 
-		scene.motionAgent().addGrabber(this);
-		scene.keyboardAgent().addGrabber(this);
+		for(Agent agent : scene.inputHandler().agents())
+			if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
+				agent.addGrabber(this);
 	}
 
 	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
@@ -491,13 +492,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		// }
 		// };
 		// this.scene.registerTimingTask(flyTimerTask);
-
-		if (scene.motionAgent().hasGrabber(otherFrame)) {
-			scene.motionAgent().addGrabber(this);
-		}
-		if (scene.keyboardAgent().hasGrabber(otherFrame)) {
-			scene.keyboardAgent().addGrabber(this);
-		}
+		
+		for(Agent agent : scene.inputHandler().agents())
+			if(agent.hasGrabber(otherFrame))
+				if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
+					agent.addGrabber(this);
 	}
 
 	@Override
@@ -514,8 +513,8 @@ public class GrabberFrame extends Frame implements Grabber {
 	// needed by the eye
 	protected GrabberFrame getDetachedFromEye() {
 		GrabberFrame gFrame = this.get();
-		scene.motionAgent().removeGrabber(gFrame);
-		scene.keyboardAgent().removeGrabber(gFrame);
+		for(Agent agent : scene.inputHandler().agents())
+			agent.removeGrabber(gFrame);
 		gFrame.theeye = null;
 		return gFrame;
 	}
