@@ -379,8 +379,8 @@ public abstract class Eye implements Copyable {
 			itr.next().setFrame(frm);
 		
 		for(Agent agent : agents) {
-			if(this == scene.eye() && ( (scene.eye().frame() instanceof GrabberFrame &&  !(scene.eye().frame() instanceof InteractiveGrabber) ) || scene.eye().frame() instanceof InteractiveFrame))
-				agent.addGrabber(scene.eye().frame());
+			if(this == scene.eye() && ( (!(frame() instanceof InteractiveGrabber) ) || frame() instanceof InteractiveFrame) )
+				agent.addGrabber(frame());
 			agent.setDefaultGrabber(frame());
 		}
 	}
