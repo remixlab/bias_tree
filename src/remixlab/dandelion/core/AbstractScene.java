@@ -10,8 +10,10 @@
 
 package remixlab.dandelion.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import remixlab.bias.core.*;
 import remixlab.dandelion.core.Constants.*;
@@ -1692,10 +1694,57 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	public Eye eye() {
 		return eye;
 	}
+	
+	/**
+	 * Replaces the current {@link #eye()} with {@code vp}
+	 */
+	///*
+	public void setEye(Eye vp) {
+		if (vp == null)
+			return;
+		if(!replaceEye(vp)) {
+			eye = vp;			
+			for(Agent agent : inputHandler().agents()) {
+				if( !(eye().frame() instanceof InteractiveGrabber) || eye().frame() instanceof InteractiveFrame) {
+					agent.addGrabber(eye().frame());
+					if(agent instanceof MotionAgent) // resetDefaultGrabber handy here since it avoids condition
+						agent.setDefaultGrabber(eye().frame());
+				}
+			}
+		}		
+		eye().setSceneRadius(radius());
+		eye().setSceneCenter(center());
+		eye().setScreenWidthAndHeight(width(), height());
+		showAll();
+	}
+	//*/
+	
+	protected boolean replaceEye(Eye vp) {
+		if (vp == null || vp == eye())
+			return false;
+		if (eye() != null) {
+			List<Agent> agents = new ArrayList<Agent>();
+			for(Agent agent : inputHandler().agents())
+				if(agent.defaultGrabber() == eye().frame() && agent.defaultGrabber() != null) {
+					agents.add(agent);
+				agent.removeGrabber(eye().frame());
+			}
+			eye = vp;
+			for(Agent agent : inputHandler().agents())
+				if( !(eye().frame() instanceof InteractiveGrabber) || eye().frame() instanceof InteractiveFrame)
+				  agent.addGrabber(eye().frame());
+			for(Agent agent : agents)
+				agent.setDefaultGrabber(eye().frame());
+			
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Replaces the current {@link #eye()} with {@code vp}
 	 */
+	/*
 	public void setEye(Eye vp) {
 		if (vp == null)
 			return;
@@ -1721,6 +1770,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 
 		showAll();
 	}
+	*/
 
 	/**
 	 * If {@link #isLeftHanded()} calls {@link #setRightHanded()}, otherwise calls {@link #setLeftHanded()}.

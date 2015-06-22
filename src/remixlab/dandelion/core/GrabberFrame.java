@@ -412,7 +412,8 @@ public class GrabberFrame extends Frame implements Grabber {
 
 		if (scene.eye() != null)
 			setFlySpeed(0.01f * scene.eye().sceneRadius());
-
+		
+		if(!this.isEyeFrame())//TODO testing this condition (eyeframe is never added)
 		for(Agent agent : scene.inputHandler().agents())
 			if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
 				agent.addGrabber(this);
@@ -493,6 +494,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		// };
 		// this.scene.registerTimingTask(flyTimerTask);
 		
+		//TODO really gotta check this one! ie., test by commenting
 		for(Agent agent : scene.inputHandler().agents())
 			if(agent.hasGrabber(otherFrame))
 				if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)

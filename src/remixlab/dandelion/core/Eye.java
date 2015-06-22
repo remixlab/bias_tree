@@ -365,13 +365,26 @@ public abstract class Eye implements Copyable {
 			if(agent.defaultGrabber() == frame() && agent.defaultGrabber() != null)
 				agents.add(agent);
 		
-		if (frame() != null)
-				frame().theeye = null;//key line as it breaks stdCamera example and perhaps much more examples
+		//if (frame() != null)
+				//frame().theeye = null;//key line as it breaks stdCamera example and perhaps much more examples
 		
+		//TODO: //working without the condition
+		// /*
 		//if(!replaceFrame(icf)) {
 			frm = icf;
 			frm.theeye = this;
 		//}
+		// */
+		
+		//TODO experiment from here as it breaks interpolations
+		/*
+		if(icf.theeye == this)
+			frm = icf;
+		else {
+			System.err.println("Cannot set eye frame. Pass this eye to the frame constructor first");
+			return;
+		}
+		//*/
 		
 		interpolationKfi.setFrame(frm);
 		Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
