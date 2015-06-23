@@ -369,7 +369,7 @@ public abstract class Eye implements Copyable {
 				//frame().theeye = null;//key line as it breaks stdCamera example and perhaps much more examples
 		
 		//TODO: //working without the condition
-		// /*
+		/*
 		//if(!replaceFrame(icf)) {
 			frm = icf;
 			frm.theeye = this;
@@ -377,7 +377,7 @@ public abstract class Eye implements Copyable {
 		// */
 		
 		//TODO experiment from here as it breaks interpolations
-		/*
+		///*
 		if(icf.theeye == this)
 			frm = icf;
 		else {
@@ -1776,7 +1776,7 @@ public abstract class Eye implements Copyable {
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new GrabberFrame(frame().getDetachedFromEye()));
 		// Small hack: attach a temporary frame to take advantage of fitScreenRegion without modifying frame
-		tempFrame = new GrabberFrame(scene);
+		tempFrame = new GrabberFrame(this);//we previously passed the scene. TODO: simplify this method
 		GrabberFrame originalFrame = frame();
 		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
 		tempFrame.setOrientation(frame().orientation().get());
@@ -1804,7 +1804,7 @@ public abstract class Eye implements Copyable {
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new GrabberFrame(frame().getDetachedFromEye()));
 		// Small hack: attach a temporary frame to take advantage of showEntireScene without modifying frame
-		tempFrame = new GrabberFrame(scene);
+		tempFrame = new GrabberFrame(this);//we previously passed the scene. TODO: simplify this method
 		GrabberFrame originalFrame = frame();
 		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
 		tempFrame.setOrientation(frame().orientation().get());
