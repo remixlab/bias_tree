@@ -413,7 +413,6 @@ public class GrabberFrame extends Frame implements Grabber {
 		if (scene.eye() != null)
 			setFlySpeed(0.01f * scene.eye().sceneRadius());
 		
-		if(!this.isEyeFrame())//TODO testing this condition (eyeframe is never added)
 		for(Agent agent : scene.inputHandler().agents())
 			if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
 				agent.addGrabber(this);
@@ -424,11 +423,16 @@ public class GrabberFrame extends Frame implements Grabber {
 		theeye = eye;
 		setFlySpeed(0.01f * eye().sceneRadius());
 	}
-
-	protected GrabberFrame(GrabberFrame otherFrame) {
+	
+	protected GrabberFrame(GrabberFrame otherFrame, boolean attach) {
 		super(otherFrame);
 		this.scene = otherFrame.scene;
-		this.theeye = otherFrame.theeye;
+		
+		if(attach)
+			this.theeye = otherFrame.theeye;
+		else
+			this.theeye = null;
+		
 		this.inEyePath = otherFrame.inEyePath;
 		// this.rspct2Frame = otherFrame.rspct2Frame;
 		// this.gFrame = otherFrame.gFrame;
@@ -452,9 +456,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		};
 		this.scene.registerTimingTask(flyTimerTask);
 		lastUpdate = otherFrame.lastUpdate();
-
 		// end
-
 		// this.isInCamPath = otherFrame.isInCamPath;
 		//
 		// this.setGrabsInputThreshold(otherFrame.grabsInputThreshold(), otherFrame.adaptiveGrabsInputThreshold());
@@ -471,39 +473,25 @@ public class GrabberFrame extends Frame implements Grabber {
 		this.setDamping(otherFrame.damping());
 		//
 		this.setFlySpeed(otherFrame.flySpeed());
-		//
-		// this.setAction(otherFrame.action());
-		//
-		// this.spinningTimerTask = new TimingTask() {
-		// public void execute() {
-		// spin();
-		// }
-		// };
-		// this.scene.registerTimingTask(spinningTimerTask);
-		//
-		// this.scnUpVec = new Vec();
-		// this.scnUpVec.set(otherFrame.sceneUpVector());
-		// this.flyDisp = new Vec();
-		// this.flyDisp.set(otherFrame.flyDisp);
-		// this.setFlySpeed(otherFrame.flySpeed());
-		//
-		// this.flyTimerTask = new TimingTask() {
-		// public void execute() {
-		// toss();
-		// }
-		// };
-		// this.scene.registerTimingTask(flyTimerTask);
 		
-		//TODO really gotta check this one! ie., test by commenting
+		if(attach)
 		for(Agent agent : scene.inputHandler().agents())
 			if(agent.hasGrabber(otherFrame))
 				if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
 					agent.addGrabber(this);
 	}
 
+	protected GrabberFrame(GrabberFrame otherFrame) {
+		this(otherFrame, true);
+	}
+
 	@Override
 	public GrabberFrame get() {
 		return new GrabberFrame(this);
+	}
+	
+	protected GrabberFrame detach() {
+		return new GrabberFrame(this, false);
 	}
 
 	/*
@@ -512,23 +500,14 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * public void setRelativeToEye(boolean relEye) { rspct2Frame = !relEye; }
 	 */
 
+	/*
 	// needed by the eye
 	protected GrabberFrame getDetachedFromEye() {
 		GrabberFrame gFrame = this.get();
-		for(Agent agent : scene.inputHandler().agents())
-			agent.removeGrabber(gFrame);
 		gFrame.theeye = null;
 		return gFrame;
 	}
-
-	// TODO needs testing, pending: public?, examples, and attachToEye
-	protected void detachFromEye() {
-		scene.motionAgent().removeGrabber(this);
-		scene.keyboardAgent().removeGrabber(this);
-		theeye = null;
-		scene.motionAgent().addGrabber(this);
-		scene.keyboardAgent().addGrabber(this);
-	}
+	//*/
 
 	/*
 	 * // nont really needed protected GrabberFrame getIntoEyePath() { GrabberFrame gFrame = this.get(); gFrame.theeye =
