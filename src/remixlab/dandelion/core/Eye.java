@@ -1415,8 +1415,8 @@ public abstract class Eye implements Copyable {
 			info = false;
 		}
 
-		// kfi.get(key).addKeyFrame(frame().getIntoEyePath());
-		kfi.get(key).addKeyFrame(new InteractiveFrame(scene, frame()));
+		kfi.get(key).addKeyFrame(frame().getIntoEyePath());
+		//kfi.get(key).addKeyFrame(new InteractiveFrame(scene, frame()));
 
 		if (info)
 			System.out.println("Path " + key + ", position " + kfi.get(key).numberOfKeyFrames() + " added");

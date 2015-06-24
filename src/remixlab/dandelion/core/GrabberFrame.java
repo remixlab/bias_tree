@@ -487,11 +487,15 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	@Override
 	public GrabberFrame get() {
-		return new GrabberFrame(this);
+		return get(true);
 	}
 	
-	protected GrabberFrame detach() {
-		return new GrabberFrame(this, false);
+	protected GrabberFrame get(boolean attach) {
+		return new GrabberFrame(this, attach);
+	}
+	
+	public GrabberFrame detach() {
+		return get(false);
 	}
 
 	/*
@@ -509,10 +513,13 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 	//*/
 
-	/*
-	 * // nont really needed protected GrabberFrame getIntoEyePath() { GrabberFrame gFrame = this.get(); gFrame.theeye =
-	 * null; gFrame.eyeFrame = true; return gFrame; }
-	 */
+	 // non really needed
+	protected GrabberFrame getIntoEyePath() {
+		GrabberFrame gFrame = get();
+		gFrame.theeye = null;
+		gFrame.inEyePath = true;
+		return gFrame; 
+	}
 
 	/**
 	 * Returns the scene this object belongs to
