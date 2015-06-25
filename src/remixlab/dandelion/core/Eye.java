@@ -66,7 +66,7 @@ public abstract class Eye implements Copyable {
 				append(scnRadius).
 				append(scrnHeight).
 				append(scrnWidth).
-				append(tempFrame).
+				//append(tempFrame).
 				append(viewport).
 				append(anchorPnt).
 				toHashCode();
@@ -97,7 +97,7 @@ public abstract class Eye implements Copyable {
 				.append(scnRadius, other.scnRadius)
 				.append(scrnHeight, other.scrnHeight)
 				.append(scrnWidth, other.scrnWidth)
-				.append(tempFrame, other.tempFrame)
+				//.append(tempFrame, other.tempFrame)
 				.append(viewport, other.viewport)
 				.append(anchorPnt, other.anchorPnt)
 				.isEquals();
@@ -132,7 +132,7 @@ public abstract class Eye implements Copyable {
 	protected HashMap<Integer, KeyFrameInterpolator>	kfi;
 	// protected Iterator<Integer> itrtr;
 	protected KeyFrameInterpolator										interpolationKfi;
-	protected GrabberFrame														tempFrame;
+	//protected GrabberFrame														tempFrame;
 
 	// F r u s t u m p l a n e c o e f f i c i e n t s
 	protected float																		fpCoefficients[][];
@@ -342,6 +342,30 @@ public abstract class Eye implements Copyable {
 	 */
 	public void flip() {
 		scene.flip();
+	}
+	
+	public final GrabberFrame detachFrame() {
+		return frame().detach();
+	}
+	
+	public final void attachFrame(GrabberFrame g) {
+		if (g == null || g == frame())
+			return;
+		//GrabberFrame f = frame().detach();
+		if(g.theeye == null) {
+			frm = g;
+			for(Agent agent : scene.inputHandler().agents())
+				agent.removeGrabber(frm);
+			frm.theeye = this;
+			interpolationKfi.setFrame(frm);
+			Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
+			while (itr.hasNext())
+				itr.next().setFrame(frm);
+		}
+		else {
+			System.err.println("Cannot set eye frame. Pass this eye to the frame constructor first");
+			return;
+		}
 	}
 
 	/**
@@ -1758,13 +1782,9 @@ public abstract class Eye implements Copyable {
 
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(frame().detach());
-		// Small hack: attach a temporary frame to take advantage of fitScreenRegion without modifying frame
-		tempFrame = new GrabberFrame(this);//we previously passed the scene. TODO: simplify this method
 		GrabberFrame originalFrame = frame();
-		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
-		tempFrame.setOrientation(frame().orientation().get());
-		tempFrame.setMagnitude(frame().magnitude());
-		setFrame(tempFrame);
+		GrabberFrame tempFrame = detachFrame();
+		attachFrame(tempFrame);
 		fitScreenRegion(rectangle);
 		setFrame(originalFrame);
 		interpolationKfi.addKeyFrame(tempFrame);
@@ -1785,18 +1805,12 @@ public abstract class Eye implements Copyable {
 			stopInterpolations();
 
 		interpolationKfi.deletePath();
-		interpolationKfi.addKeyFrame(frame().detach());
-		// Small hack: attach a temporary frame to take advantage of showEntireScene without modifying frame
-		//tempFrame = frame().detach();//we previously passed the scene. TODO: simplify this method
-		tempFrame = new GrabberFrame(this);
+		interpolationKfi.addKeyFrame(detachFrame());		
 		GrabberFrame originalFrame = frame();
-		tempFrame.setPosition(new Vec(frame().position().vec[0], frame().position().vec[1], frame().position().vec[2]));
-		tempFrame.setOrientation(frame().orientation().get());
-		tempFrame.setMagnitude(frame().magnitude());
-		setFrame(tempFrame);
+		GrabberFrame tempFrame = detachFrame();
+		attachFrame(tempFrame);
 		showEntireScene();
 		setFrame(originalFrame);
-
 		interpolationKfi.addKeyFrame(tempFrame);
 		interpolationKfi.startInterpolation();
 	}
@@ -1866,7 +1880,9 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * You will typically use this method at init time after you defined a new {@link #sceneRadius()}.
 	 */
-	public abstract void showEntireScene();
+	public void showEntireScene() {
+		fitBall(sceneCenter(), sceneRadius());
+	}
 
 	/**
 	 * Moves the Eye so that its {@link #sceneCenter()} is projected on the center of the window. The

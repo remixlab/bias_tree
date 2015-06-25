@@ -152,11 +152,6 @@ public class Window extends Eye implements Copyable {
 	}
 
 	@Override
-	public void showEntireScene() {
-		fitBall(sceneCenter(), sceneRadius());
-	}
-
-	@Override
 	public void fitBall(Vec center, float radius) {
 		float size = Math.min(scene.width(), scene.height());
 		frame().setMagnitude(2 * radius / size);

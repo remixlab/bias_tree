@@ -1162,11 +1162,6 @@ public class Camera extends Eye implements Copyable {
 	}
 
 	@Override
-	public void showEntireScene() {
-		fitBall(sceneCenter(), sceneRadius());
-	}
-
-	@Override
 	public void interpolateToZoomOnPixel(Point pixel) {
 		Vec target = pointUnderPixel(pixel);
 
@@ -1195,20 +1190,12 @@ public class Camera extends Eye implements Copyable {
 
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(new InteractiveFrame(scene, frame()));
-		interpolationKfi.addKeyFrame(
-				new GrabberFrame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame()
-						.orientation(), frame().magnitude()), 0.4f);
+		interpolationKfi.addKeyFrame(new GrabberFrame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame().orientation(), frame().magnitude()), 0.4f);
 
-		// Small hack: attach a temporary frame to take advantage of lookAt without modifying frame
-		tempFrame = new GrabberFrame(scene);
-		// TODO experimental
-		// InteractiveFrame originalFrame = frame();
 		GrabberFrame originalFrame = frame();
-		// InteractiveFrame originalFrame = (InteractiveFrame)frame();
+		GrabberFrame tempFrame = detachFrame();
 		tempFrame.setPosition(Vec.add(Vec.multiply(frame().position(), coef), Vec.multiply(target, (1.0f - coef))));
-		tempFrame.setOrientation(frame().orientation().get());
-		tempFrame.setMagnitude(frame().magnitude());
-		setFrame(tempFrame);
+		attachFrame(tempFrame);
 		lookAt(target);
 		setFrame(originalFrame);
 

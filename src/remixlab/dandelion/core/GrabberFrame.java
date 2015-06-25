@@ -259,12 +259,6 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, null, p, r, s);
 	}
 
-	public GrabberFrame(Eye eye, Vec p, Rotation r, float s) {
-		this(eye.scene(), p, r, s);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
-	}
-
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
@@ -275,9 +269,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, Frame referenceFrame) {
-		this(eye.scene(), referenceFrame);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, referenceFrame, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
@@ -290,9 +282,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p) {
-		this(eye.scene(), referenceFrame, p);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, referenceFrame, p, eye.scene().is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
@@ -305,9 +295,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, Frame referenceFrame, Rotation r) {
-		this(eye.scene(), referenceFrame, r);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, referenceFrame, new Vec(), r, 1);
 	}
 
 	/**
@@ -320,9 +308,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, Frame referenceFrame, float s) {
-		this(eye.scene(), referenceFrame, s);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, referenceFrame, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
@@ -335,9 +321,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, float s) {
-		this(eye.scene(), referenceFrame, p, s);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, referenceFrame, p, eye.scene().is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
@@ -350,9 +334,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r) {
-		this(eye.scene(), referenceFrame, p, r);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, referenceFrame, p, r, 1);
 	}
 
 	/**
@@ -365,9 +347,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, Frame referenceFrame, Rotation r, float s) {
-		this(eye.scene(), referenceFrame, r, s);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, referenceFrame, new Vec(), r, s);
 	}
 
 	/**
@@ -378,7 +358,17 @@ public class GrabberFrame extends Frame implements Grabber {
 	public GrabberFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(referenceFrame, p, r, s);
 		scene = scn;
+		init(scene, referenceFrame, p, r, s);
+	}
 
+	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
+		super(referenceFrame, p, r, s);
+		scene = eye.scene();
+		theeye = eye;
+		init(scene, referenceFrame, p, r, s);
+	}
+	
+	protected void init(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		setRotationSensitivity(1.0f);
 		setScalingSensitivity(1.0f);
 		setTranslationSensitivity(1.0f);
@@ -409,29 +399,21 @@ public class GrabberFrame extends Frame implements Grabber {
 		setGrabsInputThreshold(20);
 		// TODO future versions should go (except for iFrames in eyePath?):
 		// setGrabsInputThreshold(Math.round(scene.radius()/10f), true);
-
-		if (scene.eye() != null)
-			setFlySpeed(0.01f * scene.eye().sceneRadius());
 		
-		for(Agent agent : scene.inputHandler().agents())
-			if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
-				agent.addGrabber(this);
-	}
-
-	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
-		this(eye.scene(), referenceFrame, p, r, s);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		if(!isEyeFrame()) {
+			for(Agent agent : scene.inputHandler().agents())
+				if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
+					agent.addGrabber(this);
+		}
+		else
+			setFlySpeed(0.01f * eye().sceneRadius());
 	}
 	
-	protected GrabberFrame(GrabberFrame otherFrame, boolean attach) {
+	protected GrabberFrame(GrabberFrame otherFrame) {
 		super(otherFrame);
 		this.scene = otherFrame.scene;
 		
-		if(attach)
-			this.theeye = otherFrame.theeye;
-		else
-			this.theeye = null;
+		this.theeye = otherFrame.theeye;
 		
 		this.inEyePath = otherFrame.inEyePath;
 		// this.rspct2Frame = otherFrame.rspct2Frame;
@@ -474,28 +456,24 @@ public class GrabberFrame extends Frame implements Grabber {
 		//
 		this.setFlySpeed(otherFrame.flySpeed());
 		
-		if(attach)
-		for(Agent agent : scene.inputHandler().agents())
-			if(agent.hasGrabber(otherFrame))
-				if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
-					agent.addGrabber(this);
-	}
-
-	protected GrabberFrame(GrabberFrame otherFrame) {
-		this(otherFrame, true);
+		if(!this.isEyeFrame())
+			for(Agent agent : scene.inputHandler().agents())
+				if(agent.hasGrabber(otherFrame))
+					if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
+						agent.addGrabber(this);
 	}
 
 	@Override
 	public GrabberFrame get() {
-		return get(true);
-	}
-	
-	protected GrabberFrame get(boolean attach) {
-		return new GrabberFrame(this, attach);
+		return new GrabberFrame(this);
 	}
 	
 	public GrabberFrame detach() {
-		return get(false);
+		GrabberFrame g = get();
+		for(Agent agent : scene.inputHandler().agents())
+			agent.removeGrabber(g);
+		g.theeye = null;
+		return g;
 	}
 
 	/*
