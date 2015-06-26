@@ -347,26 +347,6 @@ public abstract class Eye implements Copyable {
 	public final GrabberFrame detachFrame() {
 		return frame().detach();
 	}
-	
-	public final void attachFrame(GrabberFrame g) {
-		if (g == null || g == frame())
-			return;
-		//GrabberFrame f = frame().detach();
-		if(g.theeye == null) {
-			frm = g;
-			for(Agent agent : scene.inputHandler().agents())
-				agent.removeGrabber(frm);
-			frm.theeye = this;
-			interpolationKfi.setFrame(frm);
-			Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
-			while (itr.hasNext())
-				itr.next().setFrame(frm);
-		}
-		else {
-			System.err.println("Cannot set eye frame. Pass this eye to the frame constructor first");
-			return;
-		}
-	}
 
 	/**
 	 * Sets the Eye {@link #frame()}.
@@ -380,55 +360,39 @@ public abstract class Eye implements Copyable {
 	 * A {@code null} {@code icf} reference will silently be ignored.
 	 */
 	///*
-	public final void setFrame(GrabberFrame icf) {
-		if (icf == null || icf == frame())
-			return;
-		
-		List<Agent> agents = new ArrayList<Agent>();
-		for(Agent agent : scene.inputHandler().agents())
-			if(agent.defaultGrabber() == frame() && agent.defaultGrabber() != null)
-				agents.add(agent);
-		
-		if(icf.theeye == this)
-			frm = icf;
-		else {
-			System.err.println("Cannot set eye frame. Pass this eye to the frame constructor first");
-			return;
+	public final void setFrame(GrabberFrame g) {
+		if (g == null || g == frame())
+			return;		
+		if (g.theeye != null)
+			if(g.theeye != this)
+				return;		
+		if(g.theeye == null) {
+			frm = g;
+			for(Agent agent : scene.inputHandler().agents())
+				agent.removeGrabber(frm);
+			frm.theeye = this;
+			interpolationKfi.setFrame(frm);
+			Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
+			while (itr.hasNext())
+				itr.next().setFrame(frm);
 		}
-		
-		interpolationKfi.setFrame(frm);
-		Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
-		while (itr.hasNext())
-			itr.next().setFrame(frm);
-		
-		for(Agent agent : agents) {
-			if(this == scene.eye() && ( (!(frame() instanceof InteractiveGrabber) ) || frame() instanceof InteractiveFrame) )
-				agent.addGrabber(frame());
-			agent.setDefaultGrabber(frame());
+		else {
+			List<Agent> agents = new ArrayList<Agent>();
+			for(Agent agent : scene.inputHandler().agents())
+				if(agent.defaultGrabber() == frame() && agent.defaultGrabber() != null)
+					agents.add(agent);			
+			frm = g;			
+			interpolationKfi.setFrame(frm);
+			Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
+			while (itr.hasNext())
+				itr.next().setFrame(frm);			
+			for(Agent agent : agents) {
+				if(this == scene.eye() && ( (!(frame() instanceof InteractiveGrabber) ) || frame() instanceof InteractiveFrame) )
+					agent.addGrabber(frame());
+				agent.setDefaultGrabber(frame());
+			}
 		}
 	}
-	//*/
-	
-	/*
-	public final boolean setFrame(GrabberFrame icf) {
-		if (icf == null || icf == frame())
-			return false;
-		
-		if(icf.theeye == this)
-			frm = icf;
-		else {
-			System.err.println("Cannot set eye frame. Pass this eye to the frame constructor first");
-			return false;
-		}
-		
-		interpolationKfi.setFrame(frm);
-		Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
-		while (itr.hasNext())
-			itr.next().setFrame(frm);
-		
-		return true;
-	}
-	//*/
 
 	/**
 	 * 2D Windows simply call {@code frame().setPosition(target.x(), target.y())}. 3D Cameras set {@link #orientation()},
@@ -1784,7 +1748,7 @@ public abstract class Eye implements Copyable {
 		interpolationKfi.addKeyFrame(frame().detach());
 		GrabberFrame originalFrame = frame();
 		GrabberFrame tempFrame = detachFrame();
-		attachFrame(tempFrame);
+		setFrame(tempFrame);
 		fitScreenRegion(rectangle);
 		setFrame(originalFrame);
 		interpolationKfi.addKeyFrame(tempFrame);
@@ -1808,7 +1772,7 @@ public abstract class Eye implements Copyable {
 		interpolationKfi.addKeyFrame(detachFrame());		
 		GrabberFrame originalFrame = frame();
 		GrabberFrame tempFrame = detachFrame();
-		attachFrame(tempFrame);
+		setFrame(tempFrame);
 		showEntireScene();
 		setFrame(originalFrame);
 		interpolationKfi.addKeyFrame(tempFrame);
