@@ -224,6 +224,16 @@ public class Frame implements Copyable {
 	public Frame get() {
 		return new Frame(this);
 	}
+	
+	public Frame detach() {
+		Frame frame = get();
+		Iterator<Frame> iterator = frame.childrenList.iterator();
+		while (iterator.hasNext())
+			childrenList.remove(iterator.next());
+		frame.setReferenceFrame(null);
+		frame.fromFrame(this);
+		return frame;
+	}
 
 	// MODIFIED
 
