@@ -347,6 +347,25 @@ public abstract class Eye implements Copyable {
 	public final GrabberFrame detachFrame() {
 		return frame().detach();
 	}
+	
+	/**
+	 * Internal use. Temporarily attach a frame to the Eye which is useful to some interpolation methods
+	 * such as {@link #interpolateToFitScene()}.
+	 */
+	protected final void replaceFrame(GrabberFrame g) {
+		if (g == null || g == frame())
+			return;			
+		if(g.theeye == null) {//only detached frames
+			frm = g;
+			for(Agent agent : scene.inputHandler().agents())
+				agent.removeGrabber(frm);
+			frm.theeye = this;
+			interpolationKfi.setFrame(frm);
+			Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
+			while (itr.hasNext())
+				itr.next().setFrame(frm);
+		}
+	} 
 
 	/**
 	 * Sets the Eye {@link #frame()}.
@@ -359,24 +378,10 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * A {@code null} {@code icf} reference will silently be ignored.
 	 */
-	///*
 	public final void setFrame(GrabberFrame g) {
 		if (g == null || g == frame())
 			return;		
-		if (g.theeye != null)
-			if(g.theeye != this)
-				return;		
-		if(g.theeye == null) {
-			frm = g;
-			for(Agent agent : scene.inputHandler().agents())
-				agent.removeGrabber(frm);
-			frm.theeye = this;
-			interpolationKfi.setFrame(frm);
-			Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
-			while (itr.hasNext())
-				itr.next().setFrame(frm);
-		}
-		else {
+		if(g.theeye == this) {
 			List<Agent> agents = new ArrayList<Agent>();
 			for(Agent agent : scene.inputHandler().agents())
 				if(agent.defaultGrabber() == frame() && agent.defaultGrabber() != null)
@@ -391,6 +396,9 @@ public abstract class Eye implements Copyable {
 					agent.addGrabber(frame());
 				agent.setDefaultGrabber(frame());
 			}
+		}
+		else {
+			System.err.println("Only frames constructed with this Eye may be attached to it.");
 		}
 	}
 
@@ -1748,7 +1756,7 @@ public abstract class Eye implements Copyable {
 		interpolationKfi.addKeyFrame(frame().detach());
 		GrabberFrame originalFrame = frame();
 		GrabberFrame tempFrame = detachFrame();
-		setFrame(tempFrame);
+		replaceFrame(tempFrame);
 		fitScreenRegion(rectangle);
 		setFrame(originalFrame);
 		interpolationKfi.addKeyFrame(tempFrame);
@@ -1772,7 +1780,7 @@ public abstract class Eye implements Copyable {
 		interpolationKfi.addKeyFrame(detachFrame());		
 		GrabberFrame originalFrame = frame();
 		GrabberFrame tempFrame = detachFrame();
-		setFrame(tempFrame);
+		replaceFrame(tempFrame);
 		showEntireScene();
 		setFrame(originalFrame);
 		interpolationKfi.addKeyFrame(tempFrame);

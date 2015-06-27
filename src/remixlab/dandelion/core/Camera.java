@@ -1195,7 +1195,7 @@ public class Camera extends Eye implements Copyable {
 		GrabberFrame originalFrame = frame();
 		GrabberFrame tempFrame = detachFrame();
 		tempFrame.setPosition(Vec.add(Vec.multiply(frame().position(), coef), Vec.multiply(target, (1.0f - coef))));
-		setFrame(tempFrame);
+		replaceFrame(tempFrame);
 		lookAt(target);
 		setFrame(originalFrame);
 
