@@ -1725,45 +1725,6 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 	}
 
-	/*
-	@Override
-	public void drawPickingTargets(boolean keyFrame) {
-		pg().pushStyle();
-		for (Grabber mg : motionAgent().grabbers()) {
-			if (mg instanceof GrabberFrame) {
-				GrabberFrame iF = (GrabberFrame) mg;// downcast needed
-				// frames
-				if (!(iF.isInEyePath() ^ keyFrame) && (!iF.isEyeFrame())) {
-					Vec center = projectedCoordinatesOf(iF.position());
-					// if (iF.grabsInput(motionAgent())) {
-					if (motionAgent().isInputGrabber(mg)) {
-						pg().pushStyle();
-						pg().strokeWeight(2 * pg().strokeWeight);
-						pg().colorMode(HSB, 255);
-						float hue = pg().hue(pg().strokeColor);
-						float saturation = pg().saturation(pg().strokeColor);
-						float brightness = pg().brightness(pg().strokeColor);
-						pg().stroke(hue, saturation * 1.4f, brightness * 1.4f);
-						drawShooterTarget(center, (iF.grabsInputThreshold() + 1));
-						pg().popStyle();
-					}
-					else {
-						pg().pushStyle();
-						pg().colorMode(HSB, 255);
-						float hue = pg().hue(pg().strokeColor);
-						float saturation = pg().saturation(pg().strokeColor);
-						float brightness = pg().brightness(pg().strokeColor);
-						pg().stroke(hue, saturation * 1.4f, brightness);
-						drawShooterTarget(center, iF.grabsInputThreshold());
-						pg().popStyle();
-					}
-				}
-			}
-		}
-		pg().popStyle();
-	}
-	*/
-
 	/**
 	 * Code contributed by Jacques Maire (http://www.alcys.com/) See also:
 	 * http://www.mathcurve.com/courbes3d/solenoidtoric/solenoidtoric.shtml
