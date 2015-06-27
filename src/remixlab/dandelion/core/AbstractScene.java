@@ -1192,45 +1192,17 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			Integer key = itrtr.next();
 			drawPath(eye.keyFrameInterpolatorMap().get(key), 3, is3D() ? 5 : 2, radius());
 		}
-		*/		
+		*/
 		// alternative:
 		// /*
 		KeyFrameInterpolator[] k = eye.keyFrameInterpolatorArray();
 		for(int i=0; i< k.length; i++)
 			drawPath(k[i], 3, 5, radius());
 	    // */ 
+		
 		for(GrabberFrame gFrame : eye.keyFrames())
 			drawPickingTarget(gFrame);
 	}
-
-	/**
-	 * Convenience function that simply calls {@code drawPickingTargets(false)}.
-	 * 
-	 * @see #drawPickingTargets(boolean)
-	 */
-	/*
-	public void drawPickingTargets() {
-		drawPickingTargets(false);
-	}
-	*/
-
-	/**
-	 * Hides all the keyframe eye paths.
-	 * 
-	 * @see #drawEyePaths()
-	 * @see remixlab.dandelion.core.KeyFrameInterpolator#removePathFromMotionAgent()
-	 */
-	/*
-	public void hideEyePaths() {
-//		Iterator<Integer> itrtr = eye.kfi.keySet().iterator();
-//		while (itrtr.hasNext()) {
-//			Integer key = itrtr.next();
-//			eye.detachPath(key);
-//		}
-		//TODO really should go like:
-		eye.detachPaths();
-	}
-	*/	
 
 	/**
 	 * Convenience function that simply calls {@code drawPath(kfi, 1, 6, 100)}.

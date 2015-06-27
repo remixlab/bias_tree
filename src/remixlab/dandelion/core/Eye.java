@@ -1419,7 +1419,9 @@ public abstract class Eye implements Copyable {
 		/*
 		GrabberFrame keyFrame = detachFrame();
 		if(scene.pathsVisualHint())
-			scene.motionAgent().addGrabber(keyFrame);
+			scene.motionAgent().addGrabber(keyFrame);//only works for iFrames
+		// for other frames (MyFrame) it requires to override: 1. MyFrame.detach()
+		// and 2. motionAgent.addGrabber(MyFrame) 
 		//*/
 				
 		///*
@@ -1478,7 +1480,7 @@ public abstract class Eye implements Copyable {
 		List<GrabberFrame> frames = new ArrayList<GrabberFrame>(); 
 		for (KeyFrameInterpolator k : keyFrameInterpolatorMap().values())
 			for(KeyFrame keyFrame : k.keyFrames())
-				//if(scene.motionAgent().hasGrabber(keyFrame.frame()))//TODO test me
+				//if(scene.motionAgent().hasGrabber(keyFrame.frame()))//also works ;)
 				frames.add(keyFrame.frame());
 		return frames;
 	}
