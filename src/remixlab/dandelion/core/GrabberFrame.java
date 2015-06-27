@@ -65,7 +65,6 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	private float								grabsInputThreshold;
 	private boolean							adpThreshold;
-	protected boolean						inEyePath;
 
 	// TODO decide this mode vs constraint! seems overkill
 	// protected boolean rspct2Frame;
@@ -77,9 +76,6 @@ public class GrabberFrame extends Frame implements Grabber {
 				appendSuper(super.hashCode()).
 				append(grabsInputThreshold).
 				append(adpThreshold).
-				append(inEyePath).
-				// append(rspct2Frame).
-				// append(gFrame).
 				append(rotSensitivity).
 				append(transSensitivity).
 				append(sclSensitivity).
@@ -110,9 +106,6 @@ public class GrabberFrame extends Frame implements Grabber {
 				.appendSuper(super.equals(obj))
 				.append(grabsInputThreshold, other.grabsInputThreshold)
 				.append(adpThreshold, other.adpThreshold)
-				.append(inEyePath, other.inEyePath)
-				// .append(rspct2Frame, other.rspct2Frame)
-				// .append(gFrame, other.gFrame)
 				.append(dampFriction, other.dampFriction)
 				.append(sFriction, other.sFriction)
 				.append(rotSensitivity, other.rotSensitivity)
@@ -126,23 +119,6 @@ public class GrabberFrame extends Frame implements Grabber {
 				.append(scnUpVec, other.scnUpVec)
 				.append(lastUpdate, other.lastUpdate)
 				.isEquals();
-	}
-
-	/**
-	 * Ad-hoc constructor needed to make editable an Eye path defined by a KeyFrameInterpolator.
-	 * <p>
-	 * Constructs a Frame from the the {@code iFrame} {@link #translation()}, {@link #rotation()} and {@link #scaling()}
-	 * and immediately adds it to the scene {@link remixlab.bias.core.InputHandler#agents()} pool.
-	 * <p>
-	 * A call on {@link #isInEyePath()} on this Frame will return {@code true}.
-	 * 
-	 * <b>Attention:</b> Internal use. You should not call this constructor in your own applications.
-	 * 
-	 * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
-	 */
-	protected GrabberFrame(AbstractScene scn, GrabberFrame iFrame) {
-		this(scn, iFrame.translation().get(), iFrame.rotation().get(), iFrame.scaling());
-		inEyePath = true;
 	}
 
 	/**
@@ -407,14 +383,9 @@ public class GrabberFrame extends Frame implements Grabber {
 	
 	protected GrabberFrame(GrabberFrame otherFrame) {
 		super(otherFrame);
-		this.scene = otherFrame.scene;
-		
+		this.scene = otherFrame.scene;		
 		this.theeye = otherFrame.theeye;
 		
-		this.inEyePath = otherFrame.inEyePath;
-		// this.rspct2Frame = otherFrame.rspct2Frame;
-		// this.gFrame = otherFrame.gFrame;
-
 		this.spinningTimerTask = new TimingTask() {
 			public void execute() {
 				spinExecution();
@@ -467,31 +438,10 @@ public class GrabberFrame extends Frame implements Grabber {
 	@Override
 	public GrabberFrame detach() {
 		GrabberFrame frame = new GrabberFrame(scene);
+		for(Agent agent : scene.inputHandler().agents())
+			agent.removeGrabber(frame);
 		frame.fromFrame(this);
 		return frame;
-	}
-
-	/*
-	 * // overkill, superseded by Constraints public boolean respectToEye() { return !rspct2Frame; }
-	 * 
-	 * public void setRelativeToEye(boolean relEye) { rspct2Frame = !relEye; }
-	 */
-
-	/*
-	// needed by the eye
-	protected GrabberFrame getDetachedFromEye() {
-		GrabberFrame gFrame = this.get();
-		gFrame.theeye = null;
-		return gFrame;
-	}
-	//*/
-
-	 // non really needed
-	protected GrabberFrame getIntoEyePath() {
-		GrabberFrame gFrame = get();
-		gFrame.theeye = null;
-		gFrame.inEyePath = true;
-		return gFrame; 
 	}
 
 	/**
@@ -2031,14 +1981,6 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	// end decide
-
-	/**
-	 * Returns {@code true} if the InteractiveFrame forms part of an Eye path and {@code false} otherwise.
-	 * 
-	 */
-	public boolean isInEyePath() {
-		return inEyePath;
-	}
 
 	/**
 	 * Returns the grabs input threshold which is used by the interactive frame to {@link #checkIfGrabsInput(BogusEvent)}.

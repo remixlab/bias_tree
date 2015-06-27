@@ -12,7 +12,6 @@ package remixlab.dandelion.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import remixlab.bias.core.*;
@@ -1029,10 +1028,22 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * Sets the display of the camera key frame paths according to {@code draw}
 	 */
 	public void setPathsVisualHint(boolean draw) {
-		if (draw)
-			visualHintMask |= PATHS;
-		else
-			visualHintMask &= ~PATHS;
+		if (draw) {
+			if(eye()!=null) {
+				visualHintMask |= PATHS;
+				eye().attachPaths();
+			}
+			else
+				System.err.println("Warning: null eye, no path attached!");
+		}
+		else {
+			if(eye()!=null) {
+				visualHintMask &= ~PATHS;
+				eye().detachPaths();
+			}
+			else
+				System.err.println("Warning: null eye, no path dettached!");
+		}
 	}
 
 	/**
@@ -1130,8 +1141,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			drawPickingHint();
 		if (pathsVisualHint())
 			drawPathsHint();
-		else
-			hideEyePaths();
 		if (zoomVisualHint())
 			drawZoomWindowHint();
 		if (rotateVisualHint())
@@ -1146,7 +1155,14 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * Internal use.
 	 */
 	protected void drawPickingHint() {
-		drawPickingTargets();
+		List<GrabberFrame> gList = new ArrayList<GrabberFrame>();
+		for (Grabber mg : motionAgent().grabbers())
+			if(mg instanceof GrabberFrame)
+				if( !((GrabberFrame)mg).isEyeFrame() )
+					gList.add((GrabberFrame)mg);
+		gList.removeAll(eye.keyFrames());
+		for(GrabberFrame g : gList)
+			this.drawPickingTarget(g);
 	}
 
 	/**
@@ -1170,7 +1186,21 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * Internal use.
 	 */
 	protected void drawPathsHint() {
-		drawEyePaths();
+		/*
+		Iterator<Integer> itrtr = eye.kfi.keySet().iterator();
+		while (itrtr.hasNext()) {
+			Integer key = itrtr.next();
+			drawPath(eye.keyFrameInterpolatorMap().get(key), 3, is3D() ? 5 : 2, radius());
+		}
+		*/		
+		// alternative:
+		// /*
+		KeyFrameInterpolator[] k = eye.keyFrameInterpolatorArray();
+		for(int i=0; i< k.length; i++)
+			drawPath(k[i], 3, 5, radius());
+	    // */ 
+		for(GrabberFrame gFrame : eye.keyFrames())
+			drawPickingTarget(gFrame);
 	}
 
 	/**
@@ -1178,27 +1208,11 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * 
 	 * @see #drawPickingTargets(boolean)
 	 */
+	/*
 	public void drawPickingTargets() {
 		drawPickingTargets(false);
 	}
-
-	/**
-	 * Draws all keyframe eye paths and makes them editable.
-	 * 
-	 * @see #hideEyePaths()
-	 */
-	public void drawEyePaths() {
-		// /*
-		Iterator<Integer> itrtr = eye.kfi.keySet().iterator();
-		while (itrtr.hasNext()) {
-			Integer key = itrtr.next();
-			drawPath(eye.keyFrameInterpolatorMap().get(key), 3, is3D() ? 5 : 2, radius());
-		}
-		// */
-		// alternative:
-		// KeyFrameInterpolator[] k = eye.keyFrameInterpolatorArray(); for(int i=0; i< k.length; i++) drawPath(k[i], 3, 5,
-		// radius());
-	}
+	*/
 
 	/**
 	 * Hides all the keyframe eye paths.
@@ -1206,13 +1220,17 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * @see #drawEyePaths()
 	 * @see remixlab.dandelion.core.KeyFrameInterpolator#removePathFromMotionAgent()
 	 */
+	/*
 	public void hideEyePaths() {
-		Iterator<Integer> itrtr = eye.kfi.keySet().iterator();
-		while (itrtr.hasNext()) {
-			Integer key = itrtr.next();
-			eye.keyFrameInterpolatorMap().get(key).removePathFromMotionAgent();
-		}
+//		Iterator<Integer> itrtr = eye.kfi.keySet().iterator();
+//		while (itrtr.hasNext()) {
+//			Integer key = itrtr.next();
+//			eye.detachPath(key);
+//		}
+		//TODO really should go like:
+		eye.detachPaths();
 	}
+	*/	
 
 	/**
 	 * Convenience function that simply calls {@code drawPath(kfi, 1, 6, 100)}.
@@ -1617,7 +1635,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * <b>Attention:</b> the target is drawn either if the iFrame is part of camera path and keyFrame is {@code true}, or
 	 * if the iFrame is not part of camera path and keyFrame is {@code false}.
 	 */
-	public abstract void drawPickingTargets(boolean keyFrame);
+	public abstract void drawPickingTarget(GrabberFrame gFrame);
 
 	// end wrapper
 

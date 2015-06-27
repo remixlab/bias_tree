@@ -694,36 +694,10 @@ public class KeyFrameInterpolator implements Copyable {
 	 */
 	public void deletePath() {
 		stopInterpolation();
-		removePathFromMotionAgent();
 		keyFrameList.clear();
 		pathIsValid = false;
 		valuesAreValid = false;
 		currentFrmValid = false;
-	}
-
-	/**
-	 * Removes all the Frames from all the pools of the agents registered at the
-	 * {@link remixlab.dandelion.core.AbstractScene#inputHandler()}.
-	 * 
-	 * @see #addPathToMotionAgent()
-	 */
-	public void removePathFromMotionAgent() {
-		for (int i = 0; i < keyFrameList.size(); ++i)
-			scene.motionAgent().removeGrabber(keyFrameList.get(i).frame());
-	}
-
-	/**
-	 * Re-adds all the Frames to all the pools of the agents registered at the
-	 * {@link remixlab.dandelion.core.AbstractScene#inputHandler()}.
-	 * 
-	 * @see #removePathFromMotionAgent()
-	 */
-	public void addPathToMotionAgent() {
-		for (int i = 0; i < keyFrameList.size(); ++i) {
-			if( i == 0  && scene.motionAgent().hasGrabber(keyFrameList.get(i).frame()))
-				break;
-			scene.motionAgent().addGrabber(keyFrameList.get(i).frame());
-		}
 	}
 
 	protected void updateModifiedFrameValues() {
@@ -743,6 +717,10 @@ public class KeyFrameInterpolator implements Copyable {
 			kf = next;
 		}
 		valuesAreValid = true;
+	}
+	
+	protected List<KeyFrame> keyFrames() {
+		return keyFrameList;
 	}
 
 	/**

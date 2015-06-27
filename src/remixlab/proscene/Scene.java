@@ -1527,9 +1527,7 @@ public class Scene extends AbstractScene implements PConstants {
 						popModelView();
 					}
 			}
-			kfi.addPathToMotionAgent();
 			pg().strokeWeight(pg().strokeWeight / 2f);
-			drawPickingTargets(true);
 		}
 		pg().popStyle();
 	}
@@ -1692,7 +1690,42 @@ public class Scene extends AbstractScene implements PConstants {
 		drawCross(center.x(), center.y(), 0.6f * length);
 		pg().popStyle();
 	}
+	
+	@Override
+	public void drawPickingTarget(GrabberFrame iFrame) {
+		if(iFrame.isEyeFrame()) {
+			System.err.println("eye frames don't have a picking target");
+			return;
+		}
+		if(!motionAgent().hasGrabber(iFrame)) {
+			System.err.println("add iFrame to motionAgent before drawing picking target");
+			return;
+		}
+		Vec center = projectedCoordinatesOf(iFrame.position());
+		if (motionAgent().isInputGrabber(iFrame)) {
+			pg().pushStyle();
+			pg().strokeWeight(2 * pg().strokeWeight);
+			pg().colorMode(HSB, 255);
+			float hue = pg().hue(pg().strokeColor);
+			float saturation = pg().saturation(pg().strokeColor);
+			float brightness = pg().brightness(pg().strokeColor);
+			pg().stroke(hue, saturation * 1.4f, brightness * 1.4f);
+			drawShooterTarget(center, (iFrame.grabsInputThreshold() + 1));
+			pg().popStyle();
+		}
+		else {
+			pg().pushStyle();
+			pg().colorMode(HSB, 255);
+			float hue = pg().hue(pg().strokeColor);
+			float saturation = pg().saturation(pg().strokeColor);
+			float brightness = pg().brightness(pg().strokeColor);
+			pg().stroke(hue, saturation * 1.4f, brightness);
+			drawShooterTarget(center, iFrame.grabsInputThreshold());
+			pg().popStyle();
+		}
+	}
 
+	/*
 	@Override
 	public void drawPickingTargets(boolean keyFrame) {
 		pg().pushStyle();
@@ -1729,6 +1762,7 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 		pg().popStyle();
 	}
+	*/
 
 	/**
 	 * Code contributed by Jacques Maire (http://www.alcys.com/) See also:
@@ -1803,7 +1837,7 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().colorMode(PApplet.RGB, 255);
 		pg().strokeWeight(1);
 		pg().stroke(0, 220, 220);
-		drawEyePaths();
+		super.drawPathsHint();
 		pg().popStyle();
 	}
 
@@ -1816,7 +1850,7 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().colorMode(PApplet.RGB, 255);
 		pg().strokeWeight(1);
 		pg().stroke(220, 220, 220);
-		drawPickingTargets();
+		super.drawPickingHint();
 		pg().popStyle();
 	}
 

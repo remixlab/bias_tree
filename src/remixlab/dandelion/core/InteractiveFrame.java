@@ -270,23 +270,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 
 	/**
-	 * Ad-hoc constructor needed to make editable an Eye path defined by a KeyFrameInterpolator.
-	 * <p>
-	 * Constructs a Frame from the the {@code iFrame} {@link #translation()}, {@link #rotation()} and {@link #scaling()}
-	 * and immediately adds it to the scene {@link remixlab.bias.core.InputHandler#agents()} pool.
-	 * <p>
-	 * A call on {@link #isInEyePath()} on this Frame will return {@code true}.
-	 * 
-	 * <b>Attention:</b> Internal use. You should not call this constructor in your own applications.
-	 * 
-	 * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
-	 */
-	protected InteractiveFrame(AbstractScene scn, GrabberFrame iFrame) {
-		super(scn, iFrame);
-	}
-
-	/**
-	 * Default constructor.
+	 * Default Eye constructor.
 	 * <p>
 	 * {@link #flySpeed()} is set to 0.0 and {@link #sceneUpVector()} is set to the Y-axis. The
 	 * {@link remixlab.dandelion.core.Eye#anchor()} is set to 0.
@@ -298,7 +282,6 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		super(theEye);
 	}
 
-	// TODO needs testing
 	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
 		this.setAction(otherFrame.action());
@@ -319,14 +302,11 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	@Override
 	public InteractiveFrame detach() {
 		InteractiveFrame frame = new InteractiveFrame(scene);
+		for(Agent agent : scene.inputHandler().agents())
+			agent.removeGrabber(frame);
 		frame.fromFrame(this);
 		return frame;
 	}
-
-	/*
-	 * @Override protected InteractiveFrame getIntoEyePath() { InteractiveFrame iFrame = this.get(); iFrame.theeye = null;
-	 * iFrame.eyeFrame = true; return iFrame; }
-	 */
 
 	// grabber implementation
 

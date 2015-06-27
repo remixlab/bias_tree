@@ -11,6 +11,7 @@
 package remixlab.dandelion.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
 import remixlab.bias.core.Agent;
 import remixlab.bias.core.Grabber;
 import remixlab.bias.core.InteractiveGrabber;
+import remixlab.dandelion.core.KeyFrameInterpolator.KeyFrame;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
@@ -598,8 +600,7 @@ public abstract class Eye implements Copyable {
 		setFlySpeed(0.01f * sceneRadius());
 		for (Grabber mg : scene.motionAgent().grabbers()) {
 			if (mg instanceof GrabberFrame)
-				if (!((GrabberFrame) mg).isInEyePath())
-					((GrabberFrame) mg).setFlySpeed(0.01f * sceneRadius());
+				((GrabberFrame) mg).setFlySpeed(0.01f * sceneRadius());
 		}
 	}
 
@@ -1349,12 +1350,16 @@ public abstract class Eye implements Copyable {
 
 	// 7. KEYFRAMED PATHS
 
-	public HashMap<Integer, KeyFrameInterpolator> keyFrameInterpolatorMap() {
+	protected HashMap<Integer, KeyFrameInterpolator> keyFrameInterpolatorMap() {
 		return kfi;
 	}
 
-	public KeyFrameInterpolator[] keyFrameInterpolatorArray() {
+	protected KeyFrameInterpolator[] keyFrameInterpolatorArray() {
 		return kfi.values().toArray(new KeyFrameInterpolator[0]);
+	}
+	
+	protected List<KeyFrameInterpolator> keyFrameInterpolatorList() {
+		return Arrays.asList(keyFrameInterpolatorArray());
 	}
 
 	/**
@@ -1362,7 +1367,7 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * The returned KeyFrameInterpolator may be null (if no path is defined for key {@code key}).
 	 */
-	public KeyFrameInterpolator keyFrameInterpolator(int key) {
+	protected KeyFrameInterpolator keyFrameInterpolator(int key) {
 		return kfi.get(key);
 	}
 
@@ -1411,11 +1416,71 @@ public abstract class Eye implements Copyable {
 			info = false;
 		}
 
-		kfi.get(key).addKeyFrame(frame().getIntoEyePath());
-		//kfi.get(key).addKeyFrame(new InteractiveFrame(scene, frame()));
+		/*
+		GrabberFrame keyFrame = detachFrame();
+		if(scene.pathsVisualHint())
+			scene.motionAgent().addGrabber(keyFrame);
+		//*/
+				
+		///*
+		InteractiveFrame keyFrame = new InteractiveFrame(scene);
+		keyFrame.fromFrame(frame());
+		if(!scene.pathsVisualHint())
+			scene.motionAgent().removeGrabber(keyFrame);
+		// */
+		
+		kfi.get(key).addKeyFrame(keyFrame);
+		
 
 		if (info)
 			System.out.println("Path " + key + ", position " + kfi.get(key).numberOfKeyFrames() + " added");
+	}
+	
+	protected void detachPaths() {
+		for (int key : keyFrameInterpolatorMap().keySet())
+			detachPath(key);
+	}
+	
+	/**
+	 * Removes all the Frames from all the pools of the agents registered at the
+	 * {@link remixlab.dandelion.core.AbstractScene#inputHandler()}.
+	 * 
+	 * @see #addPathToMotionAgent()
+	 */
+	protected void detachPath(int key) {
+		if (kfi.containsKey(key)) {
+			KeyFrameInterpolator k = kfi.get(key);
+			for (int i = 0; i < k.keyFrames().size(); ++i)
+				scene.motionAgent().removeGrabber(k.keyFrames().get(i).frame());
+		}
+	}
+	
+	protected void attachPaths() {
+		for (int key : keyFrameInterpolatorMap().keySet())
+			attachPath(key);
+	}
+
+	/**
+	 * Re-adds all the Frames to all the pools of the agents registered at the
+	 * {@link remixlab.dandelion.core.AbstractScene#inputHandler()}.
+	 * 
+	 * @see #removePathFromMotionAgent()
+	 */
+	protected void attachPath(int key) {
+		if (kfi.containsKey(key)) {
+			KeyFrameInterpolator k = kfi.get(key);
+			for (int i = 0; i < k.keyFrames().size(); ++i)
+				scene.motionAgent().addGrabber(k.keyFrames().get(i).frame());
+		}
+	}
+	
+	protected List<GrabberFrame> keyFrames() {
+		List<GrabberFrame> frames = new ArrayList<GrabberFrame>(); 
+		for (KeyFrameInterpolator k : keyFrameInterpolatorMap().values())
+			for(KeyFrame keyFrame : k.keyFrames())
+				//if(scene.motionAgent().hasGrabber(keyFrame.frame()))//TODO test me
+				frames.add(keyFrame.frame());
+		return frames;
 	}
 
 	/**
@@ -1450,7 +1515,8 @@ public abstract class Eye implements Copyable {
 	public void deletePath(int key) {
 		if (kfi.containsKey(key)) {
 			kfi.get(key).stopInterpolation();
-			kfi.get(key).deletePath();
+			detachPath(key);
+			kfi.get(key).deletePath();			
 			kfi.remove(key);
 			System.out.println("Path " + key + " deleted");
 		}
