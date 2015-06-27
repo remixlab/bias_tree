@@ -1516,9 +1516,9 @@ public abstract class Eye implements Copyable {
 	 */
 	public void deletePath(int key) {
 		if (kfi.containsKey(key)) {
-			kfi.get(key).stopInterpolation();
+			kfi.get(key).stopInterpolation();			
+			kfi.get(key).deletePath();
 			detachPath(key);
-			kfi.get(key).deletePath();			
 			kfi.remove(key);
 			System.out.println("Path " + key + " deleted");
 		}
