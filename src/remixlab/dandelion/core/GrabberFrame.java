@@ -131,9 +131,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye) {
-		this(eye.scene());
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, null, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
@@ -146,9 +144,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, Vec p) {
-		this(eye.scene(), p);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, null, p, eye.scene().is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
@@ -161,9 +157,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, Rotation r) {
-		this(eye.scene(), r);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, null, new Vec(), r, 1);
 	}
 
 	/**
@@ -176,9 +170,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, float s) {
-		this(eye.scene(), s);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, null, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
@@ -191,9 +183,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, Vec p, float s) {
-		this(eye.scene(), p, s);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, null, p, eye.scene().is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
@@ -206,9 +196,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, Vec p, Rotation r) {
-		this(eye.scene(), p, r);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, null, p, r, 1);
 	}
 
 	/**
@@ -221,9 +209,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	public GrabberFrame(Eye eye, Rotation r, float s) {
-		this(eye.scene(), r, s);
-		theeye = eye;
-		setFlySpeed(0.01f * eye().sceneRadius());
+		this(eye, null, new Vec(), r, s);
 	}
 
 	/**
@@ -335,6 +321,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		super(referenceFrame, p, r, s);
 		scene = scn;
 		init(scene, referenceFrame, p, r, s);
+		setFlySpeed(0.01f * scene.eye().sceneRadius());
 		for(Agent agent : scene.inputHandler().agents())
 			if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
 				agent.addGrabber(this);
