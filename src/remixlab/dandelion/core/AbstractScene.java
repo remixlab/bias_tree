@@ -165,7 +165,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	protected void performInteraction(KeyboardEvent event) {
-		Vec trans;
 		switch (referenceAction()) {
 		case ADD_KEYFRAME_TO_PATH_1:
 			eye().addKeyFrameToPath(1);
@@ -193,32 +192,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			break;
 		case INTERPOLATE_TO_FIT:
 			eye().interpolateToFitScene();
-			break;
-		case MOVE_DOWN:
-			trans = eye().frame()
-					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? -10.0f : 10.0f * eye().flySpeed(), 0.0f));
-			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
-			eye().frame().translate(trans);
-			break;
-		case MOVE_LEFT:
-			trans = new Vec(-10.0f * eye().flySpeed(), 0.0f, 0.0f);
-			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
-			eye().frame().translate(eye().frame().inverseTransformOf(trans));
-			break;
-		case MOVE_RIGHT:
-			trans = new Vec(10.0f * eye().flySpeed(), 0.0f, 0.0f);
-			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
-			eye().frame().translate(eye().frame().inverseTransformOf(trans));
-			break;
-		case MOVE_UP:
-			trans = eye().frame()
-					.inverseTransformOf(new Vec(0.0f, isRightHanded() ? 10.0f : -10.0f * eye().flySpeed(), 0.0f));
-			if (this.is3D())
-				trans.divide(camera().frame().magnitude());
-			eye().frame().translate(trans);
 			break;
 		case PLAY_PATH_1:
 			eye().playPath(1);
@@ -274,9 +247,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	protected boolean checkIfGrabsInput(KeyboardEvent event) {
-		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)",
-		// this.getClass().getName());
-		return false;
+		return keyboardAgent().shortcuts().contains(event.shortcut());
 	}
 
 	/**
@@ -1649,11 +1620,16 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		GrabberFrame eyeFrameCopy = avatar().eyeFrame().get();
 		eyeFrameCopy.setMagnitude(avatar().eyeFrame().scaling());
 		eye().interpolateTo(eyeFrameCopy);
-
-		if (avatar() instanceof GrabberFrame)
-			if (!((GrabberFrame) avatar()).isEyeFrame())
-				motionAgent().setDefaultGrabber((GrabberFrame) avatar());
-		motionAgent().disableTracking();
+		
+		if (avatar() instanceof GrabberFrame) {
+			GrabberFrame avatarGrabber = (GrabberFrame)avatar();
+			for(Agent agent : inputHandler().agents()) {
+				if( !(avatarGrabber instanceof InteractiveGrabber) || avatarGrabber instanceof InteractiveFrame) {
+					agent.addGrabber(avatarGrabber);
+					agent.setDefaultGrabber(avatarGrabber);
+				}
+			}
+		}
 	}
 
 	/**
@@ -1663,8 +1639,9 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 */
 	public Trackable unsetAvatar() {
 		Trackable prev = trck;
-		motionAgent().resetDefaultGrabber();
-		motionAgent().enableTracking();
+		for(Agent agent : inputHandler().agents())
+			agent.setDefaultGrabber(eye().frame());
+		//motionAgent().enableTracking();
 		trck = null;
 		return prev;
 	}
@@ -1688,7 +1665,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	/**
 	 * Replaces the current {@link #eye()} with {@code vp}
 	 */
-	///*
 	public void setEye(Eye vp) {
 		if (vp == null)
 			return;
@@ -1697,8 +1673,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			for(Agent agent : inputHandler().agents()) {
 				if( !(eye().frame() instanceof InteractiveGrabber) || eye().frame() instanceof InteractiveFrame) {
 					agent.addGrabber(eye().frame());
-					if(agent instanceof MotionAgent) // resetDefaultGrabber handy here since it avoids condition
-						agent.setDefaultGrabber(eye().frame());
+					agent.setDefaultGrabber(eye().frame());
 				}
 			}
 		}		
@@ -1707,7 +1682,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		eye().setScreenWidthAndHeight(width(), height());
 		showAll();
 	}
-	//*/
 	
 	protected boolean replaceEye(Eye vp) {
 		if (vp == null || vp == eye())
@@ -1730,37 +1704,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		}
 		return false;
 	}
-
-	/**
-	 * Replaces the current {@link #eye()} with {@code vp}
-	 */
-	/*
-	public void setEye(Eye vp) {
-		if (vp == null)
-			return;
-
-		boolean isKeyGrabber = eye().frame() == keyboardAgent().inputGrabber();
-		if (eye() != null) {
-			motionAgent().removeGrabber(eye().frame());
-			keyboardAgent().removeGrabber(eye().frame());
-		}
-
-		vp.setSceneRadius(radius());
-		vp.setSceneCenter(center());
-
-		vp.setScreenWidthAndHeight(width(), height());
-
-		eye = vp;
-		// TODO really pending
-		motionAgent().addGrabber(eye().frame());
-		motionAgent().setDefaultGrabber(eye().frame());
-		keyboardAgent().addGrabber(eye().frame());
-		if (isKeyGrabber)
-			keyboardAgent().setDefaultGrabber(eye().frame());
-
-		showAll();
-	}
-	*/
 
 	/**
 	 * If {@link #isLeftHanded()} calls {@link #setRightHanded()}, otherwise calls {@link #setLeftHanded()}.

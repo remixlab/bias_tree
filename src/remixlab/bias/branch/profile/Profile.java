@@ -10,7 +10,9 @@
 
 package remixlab.bias.branch.profile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -168,6 +170,12 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 		for (Entry<K, A> entry : map.entrySet())
 			if (entry.getKey() != null && entry.getValue() != null)
 				result += entry.getKey().description() + " -> " + entry.getValue().description() + "\n";
+		return result;
+	}
+	
+	public List<K> shorcuts() {
+		List<K> result = new ArrayList<K>();
+		result.addAll(map().keySet());
 		return result;
 	}
 }

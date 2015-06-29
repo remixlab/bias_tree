@@ -37,8 +37,8 @@ public class KeyAgent extends KeyboardAgent {
 		type = e.getAction() == processing.event.KeyEvent.TYPE;
 		currentEvent = new KeyboardEvent(e.getKey(), e.getModifiers(), e.getKeyCode());
 		if (press) {
-			handle(currentEvent);
 			updateTrackedGrabber(currentEvent);
+			handle(currentEvent);
 		}
 	}
 

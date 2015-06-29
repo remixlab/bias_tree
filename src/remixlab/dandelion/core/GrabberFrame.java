@@ -321,6 +321,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		super(referenceFrame, p, r, s);
 		scene = scn;
 		init(scene, referenceFrame, p, r, s);
+		setGrabsInputThreshold(20);
 		setFlySpeed(0.01f * scene.eye().sceneRadius());
 		for(Agent agent : scene.inputHandler().agents())
 			if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
@@ -363,7 +364,6 @@ public class GrabberFrame extends Frame implements Grabber {
 		// end
 
 		// new
-		setGrabsInputThreshold(20);
 		// TODO future versions should go (except for iFrames in eyePath?):
 		// setGrabsInputThreshold(Math.round(scene.radius()/10f), true);			
 	}

@@ -322,24 +322,6 @@ public interface Constants {
 		 */
 		SHOW_ALL("Show the whole scene", true),
 
-		// CAMERA KEYBOARD ACTIONs
-		/**
-		 * Move eye to the left
-		 */
-		MOVE_LEFT("Move eye to the left", true),
-		/**
-		 * Move eye to the right
-		 */
-		MOVE_RIGHT("Move eye to the right", true),
-		/**
-		 * Move eye up
-		 */
-		MOVE_UP("Move eye up", true),
-		/**
-		 * Move eye down
-		 */
-		MOVE_DOWN("Move eye down", true),
-
 		// CUSTOM ACTIONs
 
 		/**
@@ -796,12 +778,6 @@ public interface Constants {
 		TOGGLE_PATHS_VISUAL_HINT(GlobalAction.TOGGLE_PATHS_VISUAL_HINT),
 		TOGGLE_PICKING_VISUAL_HINT(GlobalAction.TOGGLE_PICKING_VISUAL_HINT),
 		SHOW_ALL(GlobalAction.SHOW_ALL),
-
-		// CAMERA KEYBOARD ACTIONs
-		MOVE_LEFT(GlobalAction.MOVE_LEFT),
-		MOVE_RIGHT(GlobalAction.MOVE_RIGHT),
-		MOVE_UP(GlobalAction.MOVE_UP),
-		MOVE_DOWN(GlobalAction.MOVE_DOWN),
 
 		CUSTOM(GlobalAction.CUSTOM);
 

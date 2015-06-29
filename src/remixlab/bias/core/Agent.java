@@ -428,9 +428,11 @@ public class Agent {
 	 * 
 	 * @see #setDefaultGrabber(Grabber)
 	 */
+	/*
 	public void resetDefaultGrabber() {
 		setDefaultGrabber(null);
 	}
+	*/
 	
 	// Char hack from here
 

@@ -10,6 +10,8 @@
 
 package remixlab.bias.branch;
 
+import java.util.List;
+
 import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
@@ -186,6 +188,10 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 		return motionProfile().action(new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, id));
 	}
 	
+	public List<MotionShortcut> motionShortcuts() {
+		return motionProfile().shorcuts();
+	}
+	
 	// click
 	
 	public void setClickBinding(int mask, int button, int ncs, C action) {
@@ -234,5 +240,9 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 
 	public C clickAction(int button) {
 		return clickProfile().action(new ClickShortcut(button, 1));
+	}
+	
+	public List<ClickShortcut> clickShortcuts() {
+		return clickProfile().shorcuts();
 	}
 }

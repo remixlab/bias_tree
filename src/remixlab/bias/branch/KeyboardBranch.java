@@ -10,7 +10,8 @@
 
 package remixlab.bias.branch;
 
-import remixlab.bias.branch.profile.*;
+import java.util.List;
+
 import remixlab.bias.event.shortcut.*;
 import remixlab.bias.core.*;
 
@@ -38,16 +39,20 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	/**
 	 * @return The {@link remixlab.bias.branch.profile.KeyboardProfile}
 	 */
-	public Profile<KeyboardShortcut, A> keyboardProfile() {
+	/*
+	public Profile<KeyboardShortcut, A> profile() {
 		return profile();
 	}
+	*/
 
 	/**
 	 * Sets the The {@link remixlab.bias.branch.profile.KeyboardProfile}.
 	 */
+	/*
 	public void setKeyboardProfile(Profile<KeyboardShortcut, A> kprofile) {
 		setProfile(profile);
 	}
+	*/
 	
 	// high-level api (wrappers around the profile): from here nor really needed
 	
@@ -55,56 +60,56 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	 * Removes all shortcut bindings.
 	 */
 	public void removeBindings() {
-		keyboardProfile().removeBindings();
+		profile().removeBindings();
 	}
 
 	/**
 	 * Returns {@code true} if the keyboard action is bound.
 	 */
 	public boolean isActionBound(A action) {
-		return keyboardProfile().isActionBound(action);
+		return profile().isActionBound(action);
 	}
 	
 	/**
 	 * Binds the vKey (virtual key) shortcut to the (Keyboard) action.
 	 */
 	public void setBinding(int vKey, A action) {
-		keyboardProfile().setBinding(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey), action);
+		profile().setBinding(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey), action);
 	}
 
 	/**
 	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) action.
 	 */
 	public void setBinding(int mask, int vKey, A action) {
-		keyboardProfile().setBinding(new KeyboardShortcut(mask, vKey), action);
+		profile().setBinding(new KeyboardShortcut(mask, vKey), action);
 	}
 
 	/**
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
 	public void removeBinding(int vKey) {
-		keyboardProfile().removeBinding(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
+		profile().removeBinding(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
 	public void removeBinding(int mask, int vKey) {
-		keyboardProfile().removeBinding(new KeyboardShortcut(mask, vKey));
+		profile().removeBinding(new KeyboardShortcut(mask, vKey));
 	}
 
 	/**
 	 * Returns {@code true} if the vKey (virtual key) shortcut is bound to a (Keyboard) action.
 	 */
 	public boolean hasBinding(int vKey) {
-		return keyboardProfile().hasBinding(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
+		return profile().hasBinding(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
 	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) action.
 	 */
 	public boolean hasBinding(int mask, int vKey) {
-		return keyboardProfile().hasBinding(new KeyboardShortcut(mask, vKey));
+		return profile().hasBinding(new KeyboardShortcut(mask, vKey));
 	}
 
 	/**
@@ -112,7 +117,7 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
 	public A action(int vKey) {
-		return keyboardProfile().action(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
+		return profile().action(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
@@ -120,7 +125,7 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
 	public A action(int mask, int vKey) {
-		return keyboardProfile().action(new KeyboardShortcut(mask, vKey));
+		return profile().action(new KeyboardShortcut(mask, vKey));
 	}
 	
 	/**
@@ -169,5 +174,9 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 
 	public A action(int mask, char key) {
 		return action(mask, agent.keyCode(key));
+	}
+	
+	public List<KeyboardShortcut> shortcuts() {
+		return profile().shorcuts();
 	}
 }
