@@ -56,7 +56,7 @@ void draw() {
 
 public void keyPressed() {
   if ( key == 'i')
-    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
+    scene.motionAgent().shiftDefaultGrabber(scene.eyeFrame(), iFrame);
   if ( key == ' ') {
     firstPerson = !firstPerson;
     if ( firstPerson ) {
@@ -67,7 +67,7 @@ public void keyPressed() {
     }
   }
   if(key == '+')
-    scene.eye().frame().setFlySpeed(scene.eye().frame().flySpeed() * 1.1);
+    scene.eyeFrame().setFlySpeed(scene.eyeFrame().flySpeed() * 1.1);
   if(key == '-')
-    scene.eye().frame().setFlySpeed(scene.eye().frame().flySpeed() / 1.1);
+    scene.eyeFrame().setFlySpeed(scene.eyeFrame().flySpeed() / 1.1);
 }

@@ -64,12 +64,12 @@ void setup() {
   f4.rotate(new Quat(new Vec(0, 1, 0), QUARTER_PI));
   f4.scale(0.9);
 
-  f5 = new InteractiveFrame(scene, scene.eye().frame());
+  f5 = new InteractiveFrame(scene, scene.eyeFrame());
   f5.translate(-100, 0, -250);
 
   scene.setRadius(200);
   scene.showAll();
-  scene.eye().frame().setRotationSensitivity(1.3f);
+  scene.eyeFrame().setRotationSensitivity(1.3f);
 
   font16 = loadFont("FreeSans-16.vlw");
   font13 = loadFont("FreeSans-13.vlw");
@@ -104,7 +104,7 @@ void draw() {
 
   //eye
   pushMatrix();
-  scene.applyTransformation(scene.eye().frame());
+  scene.applyTransformation(scene.eyeFrame());
   pushMatrix();
   scene.applyTransformation(f5);
   scene.drawAxes(40);
@@ -283,7 +283,7 @@ void keyPressed() {
   if (key == 'v' || key == 'V')
     scene.flip();
   if (key == '+')
-    scene.eye().frame().setScaling(scene.eye().frame().scaling() * 1.1f);
+    scene.eyeFrame().setScaling(scene.eyeFrame().scaling() * 1.1f);
   if (key == '-')
-    scene.eye().frame().setScaling(scene.eye().frame().scaling() / 1.1f);
+    scene.eyeFrame().setScaling(scene.eyeFrame().scaling() / 1.1f);
 }

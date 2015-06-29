@@ -170,12 +170,4 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 				result += entry.getKey().description() + " -> " + entry.getValue().description() + "\n";
 		return result;
 	}
-	
-	/*
-	public List<K> shorcuts() {
-		List<K> result = new ArrayList<K>();
-		result.addAll(map().keySet());
-		return result;
-	}
-	*/
 }

@@ -125,9 +125,8 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	}
 	
 	protected boolean handle(InteractiveGrabber<E> grabber, BogusEvent event) {
-		if (grabber == null) {
+		if (grabber == null)
 			throw new RuntimeException("iGrabber should never be null. Check your agent implementation!");
-		}
 		if (event == null)
 			return false;
 		Action<E> action = profile().handle(event);

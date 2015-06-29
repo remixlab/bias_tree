@@ -19,8 +19,8 @@ void setup() {
   //Scene instantiation
   scene = new Scene(this);
   // when damping friction = 0 -> spin
-  scene.eye().frame().setDamping(0);
-  //println("spinning sens: " +  scene.eye().frame().spinningSensitivity());
+  scene.eyeFrame().setDamping(0);
+  //println("spinning sens: " +  scene.eyeFrame().spinningSensitivity());
 }
 
 void draw() {
@@ -30,9 +30,9 @@ void draw() {
 }
 
 void keyPressed() {
-  if(scene.eye().frame().damping() == 0)
-    scene.eye().frame().setDamping(0.5);
+  if(scene.eyeFrame().damping() == 0)
+    scene.eyeFrame().setDamping(0.5);
   else
-    scene.eye().frame().setDamping(0);
-  println("Camera damping friction now is " + scene.eye().frame().damping());
+    scene.eyeFrame().setDamping(0);
+  println("Camera damping friction now is " + scene.eyeFrame().damping());
 }

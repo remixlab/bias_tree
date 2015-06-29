@@ -155,10 +155,4 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	public A action(int mask, char key) {
 		return action(mask, agent.keyCode(key));
 	}
-	
-	/*
-	public List<KeyboardShortcut> shortcuts() {
-		return profile().shorcuts();
-	}
-	*/
 }

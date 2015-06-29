@@ -85,7 +85,7 @@ public void draw() {
 
 public void keyPressed() {
   if ( key == 'i')
-    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
+    scene.motionAgent().shiftDefaultGrabber(scene.eyeFrame(), iFrame);
 }
 
 void mousePressed() {
@@ -103,7 +103,7 @@ public class CustomizedScene extends Scene {
     pg().pushStyle();
     pg().colorMode(RGB, 255);
     pg().strokeWeight(1);
-    pg().stroke(0,220,0);
+    pg().stroke(100,220,100);
     drawPickingTargets();
     pg().popStyle();
   }
@@ -145,14 +145,12 @@ public class CustomizedScene extends Scene {
   }
   
   @Override
-  public void drawEyePaths() {    
-    pushStyle();
-    colorMode(RGB, 255);
-    strokeWeight(1);
-    stroke(220,0,220);    
-    KeyFrameInterpolator[] k = eye.keyFrameInterpolatorArray();
-    for(int i=0; i< k.length; i++)
-      drawPath(k[i], 3, 5, radius());      
-    popStyle();
+  protected void drawPathsHint() {
+    pg().pushStyle();
+    pg().colorMode(RGB, 255);
+    pg().strokeWeight(1);
+    pg().stroke(220,0,220);
+    drawPaths();
+    pg().popStyle();
   }
 }

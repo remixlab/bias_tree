@@ -392,6 +392,14 @@ public class Agent {
 	public Grabber defaultGrabber() {
 		return defaultGrabber;
 	}
+	
+	/**
+	 * Same as {@code defaultGrabber() != g1 ? setDefaultGrabber(g1) ? true : setDefaultGrabber(g2) : setDefaultGrabber(g2)} which
+	 * is ubiquitous among the examples.
+	 */
+    public boolean shiftDefaultGrabber(Grabber g1, Grabber g2) {
+    	return defaultGrabber() != g1 ? setDefaultGrabber(g1) ? true : setDefaultGrabber(g2) : setDefaultGrabber(g2); 
+	}
 
 	/**
 	 * Sets the {@link #defaultGrabber()}
@@ -428,11 +436,9 @@ public class Agent {
 	 * 
 	 * @see #setDefaultGrabber(Grabber)
 	 */
-	/*
-	public void resetDefaultGrabber() {
-		setDefaultGrabber(null);
+	public boolean resetDefaultGrabber() {
+		return setDefaultGrabber(null);
 	}
-	*/
 	
 	// Char hack from here
 

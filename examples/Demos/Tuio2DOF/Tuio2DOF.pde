@@ -38,8 +38,8 @@ public void setup() {
 	boxes[i] = new Box(scene);
 	agent.addGrabber(boxes[i].iFrame);
   }
-  agent.addGrabber(scene.eye().frame());
-  agent.setDefaultGrabber(scene.eye().frame());
+  agent.addGrabber(scene.eyeFrame());
+  agent.setDefaultGrabber(scene.eyeFrame());
   tuioClient = new TuioProcessing(this, 3333);
   // 'h' also displays it:
   scene.displayInfo();

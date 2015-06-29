@@ -1126,6 +1126,10 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * Internal use.
 	 */
 	protected void drawPickingHint() {
+		drawPickingTargets();
+	}
+	
+	protected void drawPickingTargets() {
 		List<GrabberFrame> gList = new ArrayList<GrabberFrame>();
 		for (Grabber mg : motionAgent().grabbers())
 			if(mg instanceof GrabberFrame)
@@ -1157,6 +1161,10 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * Internal use.
 	 */
 	protected void drawPathsHint() {
+		drawPaths();
+	}
+	
+	protected void drawPaths() {
 		/*
 		Iterator<Integer> itrtr = eye.kfi.keySet().iterator();
 		while (itrtr.hasNext()) {
@@ -1661,6 +1669,10 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	public Eye eye() {
 		return eye;
 	}
+	
+	public GrabberFrame eyeFrame() {
+		return eye.frame();
+	} 
 	
 	/**
 	 * Replaces the current {@link #eye()} with {@code vp}

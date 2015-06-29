@@ -134,7 +134,7 @@ public void setup() {
   size(640, 360, P3D); 
   scene = new Scene(this);    
 
-  orig = scene.eye().frame();
+  orig = scene.eyeFrame();
   MotionBranch<GlobalAction, MyMotionAction, MyClickAction> mouseBranch = scene.mouseAgent().appendBranch();
   mouseBranch.setClickBinding(LEFT, 1, MyClickAction.ZOOM);
   mouseBranch.setMotionBinding(LEFT, MyMotionAction.TRANSLATE);
@@ -155,7 +155,7 @@ public void draw() {
 
 public void keyPressed() {
   if (key == ' ') {
-    if ( scene.eye().frame() == orig ) {
+    if ( scene.eyeFrame() == orig ) {
       println("setting custom eye");
       scene.eye().setFrame(eyeFrame);
     } else {

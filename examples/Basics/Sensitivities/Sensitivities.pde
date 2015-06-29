@@ -123,7 +123,7 @@ void displayControls() {
     scene.endScreenDrawing();
   }
   else {
-    iFrame = scene.eye().frame();
+    iFrame = scene.eyeFrame();
     scene.beginScreenDrawing();
     displayText("Eye frame sensitivities (Press 'u' to view/set those of Interactive frame)", xM, 30);
     scene.endScreenDrawing();
@@ -158,14 +158,14 @@ void increaseSensitivity(Sensitivity sens) {
   if (isIFrame)
     increaseSensitivity(interactiveFrame, sens);
   else
-    increaseSensitivity(scene.eye().frame(), sens);
+    increaseSensitivity(scene.eyeFrame(), sens);
 }
 
 void decreaseSensitivity(Sensitivity sens) {
   if (isIFrame)
     decreaseSensitivity(interactiveFrame, sens);
   else
-    decreaseSensitivity(scene.eye().frame(), sens);
+    decreaseSensitivity(scene.eyeFrame(), sens);
 }	
 
 void increaseSensitivity(GrabberFrame iFrame, Sensitivity sens) {
@@ -263,8 +263,8 @@ void keyPressed() {
     if ( isIFrame )
       setDefaults( interactiveFrame );
     else
-      setDefaults( scene.eye().frame() );
+      setDefaults( scene.eyeFrame() );
   }
   if ( key == 'i')
-    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == interactiveFrame ? scene.eye().frame() : interactiveFrame);
+    scene.motionAgent().shiftDefaultGrabber(scene.eyeFrame(), interactiveFrame);
 }

@@ -65,21 +65,11 @@ public class KeyboardAgent extends Agent {
 		return scene;
 	}
 	
-	/*
 	@Override
-	public void resetDefaultGrabber() {
+	public boolean resetDefaultGrabber() {
 		addGrabber(scene.eye().frame());
-		setDefaultGrabber(scene.eye().frame());
+		return setDefaultGrabber(scene.eye().frame());
 	}
-	*/
-
-	/*
-	@Override
-	public void resetDefaultGrabber() {
-		addGrabber(scene);
-		setDefaultGrabber(scene);
-	}
-	*/
 
 	public KeyboardBranch<GlobalAction, SceneAction> sceneBranch() {
 		return keySceneBranch;
@@ -98,6 +88,7 @@ public class KeyboardAgent extends Agent {
 		return null;
 	}
 	
+	//TODO discard me, use only next method
 	@Override
 	protected boolean appendBranch(Branch<?, ?, ?> branch) {
 		if (branch instanceof KeyboardBranch)
@@ -259,7 +250,12 @@ public class KeyboardAgent extends Agent {
 	// high level
 	// i. scene
 
+	//TODO make me more general, i.e., take into account all branches
 	public void setBinding(KeyboardShortcut shortcut, SceneAction action) {
+		if( hasBinding(Target.EYE, shortcut) )
+			System.out.println("Warning: scene " + shortcut.description() + " will shadow " + action(Target.EYE, shortcut) + " Eye binding");
+		if( hasBinding(Target.FRAME, shortcut) )
+			System.out.println("Warning: scene " + shortcut.description() + " will shadow " + action(Target.FRAME, shortcut) + " Frame binding");
 		sceneProfile().setBinding(shortcut, action);
 	}
 
@@ -312,12 +308,6 @@ public class KeyboardAgent extends Agent {
 	public KeyboardAction action(Target target, KeyboardShortcut shortcut) {
 		return motionProfile(target).action(shortcut);
 	}
-	
-	/*
-	public List<KeyboardShortcut> shortcuts(Target target) {
-		return motionProfile(target).shorcuts();
-	}
-	*/
 
 	// don't override from here
 

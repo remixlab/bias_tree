@@ -109,5 +109,5 @@ public void keyPressed() {
     println(info);
   }
   if ( key == 'i')
-    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
+    scene.motionAgent().shiftDefaultGrabber(scene.eyeFrame(), iFrame);
 }

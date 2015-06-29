@@ -72,6 +72,7 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		return wSens;
 	}
 	
+	//TODO discard me, use only next method
 	@Override
 	protected boolean appendBranch(Branch<?, ?, ?> branch) {
 		if (branch instanceof MotionBranch)
@@ -96,15 +97,13 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		System.err.println("use addGrabber(G grabber, K MotionBranch) instead");
 		return false;
 	}
-
-	/*
+	
 	@Override
-	public void resetDefaultGrabber() {
+	public boolean resetDefaultGrabber() {
 		addGrabber(scene.eye().frame());
-		setDefaultGrabber(scene.eye().frame());
+		return setDefaultGrabber(scene.eye().frame());
 	}
-	*/
-
+	
 	public MotionBranch<MotionAction, A, ClickAction> eyeBranch() {
 		return eyeBranch;
 	}

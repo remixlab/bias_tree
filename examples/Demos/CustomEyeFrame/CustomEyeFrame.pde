@@ -50,7 +50,7 @@ GrabberFrame orig;
 public void setup() {
   size(640, 360, P3D); 
   scene = new Scene(this);
-  orig = scene.eye().frame();
+  orig = scene.eyeFrame();
   eyeFrame = new CustumEyeFrame(scene.eye());
   scene.mouseAgent().addGrabber(eyeFrame);
   scene.camera().setFieldOfView((float) Math.PI / 3.0f);
@@ -66,7 +66,7 @@ public void draw() {
 
 public void keyPressed() {
   if (key == ' ') {
-    if ( scene.eye().frame() == orig ) {
+    if ( scene.eyeFrame() == orig ) {
       println("setting custom eye");
       scene.eye().setFrame(eyeFrame);
     } else {

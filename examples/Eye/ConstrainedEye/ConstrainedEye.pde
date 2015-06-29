@@ -39,7 +39,7 @@ public void setup() {
   transDir = 0;
   rotDir   = 0;
   activeConstraint = 0;
-  //scene.eye().frame().setConstraint(constraints[activeConstraint]);
+  //scene.eyeFrame().setConstraint(constraints[activeConstraint]);
   //same as the previous line
   scene.setEyeConstraint(constraints[activeConstraint]);
 

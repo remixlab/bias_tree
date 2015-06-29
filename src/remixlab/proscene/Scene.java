@@ -1798,20 +1798,20 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().colorMode(PApplet.RGB, 255);
 		pg().strokeWeight(1);
 		pg().stroke(0, 220, 220);
-		super.drawPathsHint();
+		drawPaths();
 		pg().popStyle();
 	}
 
-	@Override
 	/*
 	 * Copy paste from AbstractScene but we add the style (color, stroke, etc) here.
 	 */
+	@Override
 	protected void drawPickingHint() {
 		pg().pushStyle();
 		pg().colorMode(PApplet.RGB, 255);
 		pg().strokeWeight(1);
 		pg().stroke(220, 220, 220);
-		super.drawPickingHint();
+		drawPickingTargets();
 		pg().popStyle();
 	}
 

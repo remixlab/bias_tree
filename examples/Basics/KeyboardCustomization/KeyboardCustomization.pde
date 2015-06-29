@@ -7,9 +7,6 @@
  * Here we illustrate scene, eye and frame control behavior. That of your custom objects is
  * covered in (yet to come) another example.
  *
- * Press 'p' to pick the eye
- * Press 'q' to pick the frame
- * Press 'r' to pick the scene
  * Press 'i' to switch the interaction between the camera frame and the interactive frame.
  * Press ' ' (the space bar) to randomly change the keyboard scene bindings.
  * Press 'u' to restore the default keyboard bindings
@@ -95,15 +92,8 @@ public void setExoticCustomization() {
 public void keyPressed() {
   if(key == ' ')
     setExoticCustomization();
-  if(key == 'u') {
+  if(key == 'u')
     keyboard.setDefaultBindings();
-  }
   if ( key == 'i')
-    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
-  if(key == 'p')
-    keyboard.setDefaultGrabber(scene.eye().frame());
-  if(key == 'q')
-    keyboard.setDefaultGrabber(iFrame);
-  if(key == 'r')
-    keyboard.setDefaultGrabber(scene);
+    keyboard.shiftDefaultGrabber(scene.eyeFrame(), iFrame);
 }
