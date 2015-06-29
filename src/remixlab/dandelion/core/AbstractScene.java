@@ -247,7 +247,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	protected boolean checkIfGrabsInput(KeyboardEvent event) {
-		return keyboardAgent().shortcuts().contains(event.shortcut());
+		return keyboardAgent().hasBinding(event.shortcut());
 	}
 
 	/**

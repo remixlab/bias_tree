@@ -10,8 +10,6 @@
 
 package remixlab.dandelion.agent;
 
-import java.util.List;
-
 import remixlab.bias.branch.*;
 import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
@@ -211,9 +209,11 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		return motionProfile(target).isActionBound(action);
 	}
 	
+	/*
 	public List<MotionShortcut> motionShortcuts(Target target) {
 		return motionProfile(target).shorcuts();
 	}
+	*/
 
 	/**
 	 * Returns {@code true} if the mouse click action is bound to the given {@code target} (EYE or FRAME).
@@ -222,7 +222,9 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		return clickProfile(target).isActionBound(action);
 	}
 	
+	/*
 	public List<ClickShortcut> clickShortcuts(Target target) {
 		return clickProfile(target).shorcuts();
 	}
+	*/
 }

@@ -10,8 +10,6 @@
 
 package remixlab.bias.branch;
 
-import java.util.List;
-
 import remixlab.bias.event.shortcut.*;
 import remixlab.bias.core.*;
 
@@ -35,24 +33,6 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	public KeyboardBranch<E, A> get() {
 		return new KeyboardBranch<E, A>(this);
 	}
-
-	/**
-	 * @return The {@link remixlab.bias.branch.profile.KeyboardProfile}
-	 */
-	/*
-	public Profile<KeyboardShortcut, A> profile() {
-		return profile();
-	}
-	*/
-
-	/**
-	 * Sets the The {@link remixlab.bias.branch.profile.KeyboardProfile}.
-	 */
-	/*
-	public void setKeyboardProfile(Profile<KeyboardShortcut, A> kprofile) {
-		setProfile(profile);
-	}
-	*/
 	
 	// high-level api (wrappers around the profile): from here nor really needed
 	
@@ -176,7 +156,9 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 		return action(mask, agent.keyCode(key));
 	}
 	
+	/*
 	public List<KeyboardShortcut> shortcuts() {
 		return profile().shorcuts();
 	}
+	*/
 }

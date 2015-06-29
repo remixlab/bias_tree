@@ -10,8 +10,6 @@
 
 package remixlab.dandelion.agent;
 
-import java.util.List;
-
 import remixlab.bias.branch.*;
 import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
@@ -296,7 +294,7 @@ public class KeyboardAgent extends Agent {
 	// ii. Frame
 
 	public void setBinding(Target target, KeyboardShortcut shortcut, KeyboardAction action) {
-		if( shortcuts().contains(shortcut) ) {
+		if( hasBinding(shortcut) ) {
 			System.err.println("No keyboard binding set for target " + target + ". KeyboardShortcut: " + shortcut.description() + " already exists for the scene. Remove it first with removeBinding(KeyboardShortcut shortcut) if you still wanna use it");
 			return;
 		}			
@@ -315,9 +313,11 @@ public class KeyboardAgent extends Agent {
 		return motionProfile(target).action(shortcut);
 	}
 	
+	/*
 	public List<KeyboardShortcut> shortcuts(Target target) {
 		return motionProfile(target).shorcuts();
 	}
+	*/
 
 	// don't override from here
 
@@ -551,7 +551,9 @@ public class KeyboardAgent extends Agent {
 		return action(target, mask, keyCode(key));
 	}
 	
+	/*
 	public List<KeyboardShortcut> shortcuts() {
 		return this.sceneProfile().shorcuts();
 	}
+	*/
 }
