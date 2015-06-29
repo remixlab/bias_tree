@@ -1636,6 +1636,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 					agent.addGrabber(avatarGrabber);
 					agent.setDefaultGrabber(avatarGrabber);
 				}
+				agent.disableTracking();
 			}
 		}
 	}
@@ -1647,9 +1648,10 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 */
 	public Trackable unsetAvatar() {
 		Trackable prev = trck;
-		for(Agent agent : inputHandler().agents())
-			agent.setDefaultGrabber(eye().frame());
-		//motionAgent().enableTracking();
+		for(Agent agent : inputHandler().agents()) {
+			agent.resetDefaultGrabber();
+			agent.enableTracking();
+		}
 		trck = null;
 		return prev;
 	}

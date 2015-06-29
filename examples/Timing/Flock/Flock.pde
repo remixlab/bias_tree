@@ -35,7 +35,7 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 
 Scene scene;
-InteractiveAvatarFrame previousAvatar;
+Trackable lastAvatar;
 //flock bounding box
 int flockWidth = 1280;
 int flockHeight = 720;
@@ -128,14 +128,10 @@ void keyPressed() {
     adjustFrameRate();
     break;
   case ' ':
-    if ( scene.avatar() == null && previousAvatar != null) {
-      scene.setAvatar(previousAvatar);
-      scene.motionAgent().setDefaultGrabber(previousAvatar);
-      scene.motionAgent().disableTracking();
+    if ( scene.avatar() == null && lastAvatar != null) {
+      scene.setAvatar(lastAvatar);
     } else {
-      previousAvatar = (InteractiveAvatarFrame)scene.unsetAvatar();
-      scene.motionAgent().resetDefaultGrabber();
-      scene.motionAgent().enableTracking();
+      lastAvatar = scene.unsetAvatar();
       scene.camera().interpolateToFitScene();
     }
     break;
