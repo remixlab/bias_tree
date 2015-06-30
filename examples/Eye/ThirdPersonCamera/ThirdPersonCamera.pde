@@ -89,7 +89,6 @@ public void keyPressed() {
     else {
       scene.unsetAvatar();
       scene.mouseAgent().dragToArcball();
-      scene.eye().interpolateToFitScene();
     }
   if(key=='i') avatar.setInclination(avatar.inclination() - PI / 64);
   if(key=='I') avatar.setInclination(avatar.inclination() + PI / 64);

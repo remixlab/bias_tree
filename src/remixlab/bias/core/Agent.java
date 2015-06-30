@@ -430,6 +430,10 @@ public class Agent {
 			}
 		return false;
 	}
+	
+	public void resetTrackedGrabber() {
+		trackedGrabber = null;
+	}
 
 	/**
 	 * Resets the {@link #defaultGrabber()}. Convenience function that simply calls: {@code setDefaultGrabber(null)}.

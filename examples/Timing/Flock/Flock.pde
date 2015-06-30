@@ -128,12 +128,10 @@ void keyPressed() {
     adjustFrameRate();
     break;
   case ' ':
-    if ( scene.avatar() == null && lastAvatar != null) {
+    if ( scene.avatar() == null && lastAvatar != null)
       scene.setAvatar(lastAvatar);
-    } else {
+    else
       lastAvatar = scene.unsetAvatar();
-      scene.camera().interpolateToFitScene();
-    }
     break;
   }
 }
