@@ -122,7 +122,7 @@ public class InputHandler {
 	}
 
 	/**
-	 * Returns the agent by its name. The agent mus be {@link #isAgentRegistered(Agent)}.
+	 * Returns the agent by its name. The agent must be {@link #isAgentRegistered(Agent)}.
 	 */
 	public Agent agent(String name) {
 		return agents.get(name);
