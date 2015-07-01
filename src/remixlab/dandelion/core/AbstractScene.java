@@ -1647,11 +1647,13 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 */
 	public Trackable unsetAvatar() {
 		Trackable prev = trck;
-		for(Agent agent : inputHandler().agents()) {
-			agent.resetTrackedGrabber();
-			agent.resetDefaultGrabber();
+		if(prev != null) {
+			for(Agent agent : inputHandler().agents()) {
+				agent.resetTrackedGrabber();
+				agent.resetDefaultGrabber();
+			}
+			eye().interpolateToFitScene();
 		}
-		eye().interpolateToFitScene();
 		trck = null;
 		return prev;
 	}

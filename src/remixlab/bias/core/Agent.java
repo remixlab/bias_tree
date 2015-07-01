@@ -274,17 +274,6 @@ public class Agent {
 	public float[] sensitivities(MotionEvent event) {
 		return new float[] { 1f, 1f, 1f, 1f, 1f, 1f };
 	}
-	
-	/**
-	 * Force a flushed event on the interactive grabber.
-	 */
-	protected boolean flush(BogusEvent event) {
-		return handle(event, true);
-	}
-	
-	protected boolean handle(BogusEvent event) {
-		return handle(event, false);
-	}
 
 	/**
 	 * Main agent method. Parses the {@link #inputGrabber()} using the proper branch to determine the user-defined action
@@ -295,12 +284,12 @@ public class Agent {
 	 * 
 	 * @see #inputGrabber()
 	 */
-	protected boolean handle(BogusEvent event, boolean flush) {
+	protected boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)
 			return false;
 		if (event instanceof MotionEvent)
 			if (((MotionEvent) event).isAbsolute())
-				if (event.isNull() && !flush)
+				if (event.isNull() && !event.flushed())
 					return false;
 		if (event instanceof MotionEvent)
 			((MotionEvent) event).modulate(sensitivities((MotionEvent) event));
@@ -308,9 +297,9 @@ public class Agent {
 		if (inputGrabber != null) {
 			if (inputGrabber instanceof InteractiveGrabber<?>) {
 				Branch<?,?,?> t = trackedGrabber() != null ? trackedGrabberBranch : defaultGrabberBranch;
-				return trackedGrabber() != null ? t.handleTrackedGrabber(flush ? event.flush() : event ) : t.handleDefaultGrabber(flush ? event.flush() : event);
+				return trackedGrabber() != null ? t.handleTrackedGrabber(event) : t.handleDefaultGrabber(event);
 			}
-			return inputHandler().enqueueEventTuple(new EventGrabberTuple(flush ? event.flush() : event, inputGrabber));
+			return inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber));
 		}
 		return false;
 	}
