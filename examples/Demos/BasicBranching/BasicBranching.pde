@@ -9,9 +9,8 @@
  * To set the input grabber object (the object targeted for interaction)
  * for both the mouse and the keyboard press: 
  *
- * Press 't' for the torus with its axes drawn
- * Press 'u' for any of the other toruses
- * Press 'v' for the default grabber
+ * Press 'u' to shift among two single toruses
+ * Press 'v' to reset the default grabber (the scene.eyeFrame)
  *
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
@@ -67,13 +66,9 @@ void draw() {
 }
 
 void keyPressed() {
-  if ( key == 't' ) {
-    scene.keyboardAgent().setDefaultGrabber(toruses[3].iFrame);
-    scene.motionAgent().setDefaultGrabber(toruses[3].iFrame);
-  }
   if ( key == 'u' ) {
-    scene.keyboardAgent().setDefaultGrabber(toruses[2].iFrame);
-    scene.motionAgent().setDefaultGrabber(toruses[2].iFrame);
+    scene.keyboardAgent().shiftDefaultGrabber(toruses[2].iFrame, toruses[3].iFrame);
+    scene.motionAgent().shiftDefaultGrabber(toruses[2].iFrame, toruses[3].iFrame);
   }
   if ( key == 'v' ) {
     scene.keyboardAgent().resetDefaultGrabber();
