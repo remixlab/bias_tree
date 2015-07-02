@@ -21,6 +21,21 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	// protected Agent agent;
 	protected int			id;
 	protected PShape	pshape;
+	
+	// TODO new experimenting with textures
+	protected PImage    tex;
+		
+	public <K extends Branch<E, ?/* extends Action<E> */, ?>> InteractiveModelObject(Scene scn, Agent a, K actionAgent,
+			PShape ps, PImage texture) {
+		scene = scn;
+		pshape = ps;
+		tex = texture;
+		if (scene.addModel(this))
+			a.addGrabber(this, actionAgent);
+		id = ++Scene.modelCount;
+	}
+		
+	//--
 
 	// public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent, PShape ps) {
 	public <K extends Branch<E, ?/* extends Action<E> */, ?>> InteractiveModelObject(Scene scn, Agent a, K actionAgent,
@@ -60,6 +75,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		return action;
 	}
 
+	//TODO decide whether to leave set shape or burn it at construction time (which seems more reasonable if texture is to be included)
 	public void setShape(PShape ps) {
 		pshape = ps;
 	}
@@ -84,6 +100,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		pg.pushStyle();
 		if (pg == scene.pickingBuffer()) {
 			shape().disableStyle();
+			if(tex!=null) shape().noTexture();
 			pg.colorMode(PApplet.RGB, 255);
 			pg.fill(getColor());
 			pg.stroke(getColor());
@@ -91,8 +108,10 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		pg.pushMatrix();
 		pg.shape(shape());
 		pg.popMatrix();
-		if (pg == scene.pickingBuffer())
+		if (pg == scene.pickingBuffer()) {
+			if(tex!=null) shape().texture(tex);
 			shape().enableStyle();
+		}
 		pg.popStyle();
 	}
 

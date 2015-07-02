@@ -52,7 +52,20 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	}
 
 	protected PShape	pshape;
-	protected int			id;
+	protected int		id;
+	
+	// TODO new experimenting with textures
+	protected PImage    tex;
+	
+	public InteractiveModelFrame(Scene scn, PShape ps, PImage texture) {
+		super(scn);
+		((Scene) scene).addModel(this);
+		id = ++Scene.modelCount;
+		pshape = ps;
+		tex = texture;
+	}
+	
+	//--
 
 	public InteractiveModelFrame(Scene scn) {
 		super(scn);
@@ -108,6 +121,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		return pshape;
 	}
 
+	//TODO decide whether to leave set shape or burn it at construction time (which seems more reasonable if texture is to be included)
 	public void setShape(PShape ps) {
 		pshape = ps;
 	}
@@ -138,6 +152,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		pg.pushStyle();
 		if (pg == ((Scene) scene).pickingBuffer()) {
 			shape().disableStyle();
+			if(tex!=null) shape().noTexture();
 			pg.colorMode(PApplet.RGB, 255);
 			pg.fill(getColor());
 			pg.stroke(getColor());
@@ -146,8 +161,10 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		((Scene) scene).applyWorldTransformation(pg, this);
 		pg.shape(shape());
 		pg.popMatrix();
-		if (pg == ((Scene) scene).pickingBuffer())
+		if (pg == ((Scene) scene).pickingBuffer()) {
+			if(tex!=null) shape().texture(tex);
 			shape().enableStyle();
+		}
 		pg.popStyle();
 	}
 
