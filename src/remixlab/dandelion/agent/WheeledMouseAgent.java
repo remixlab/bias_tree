@@ -89,26 +89,26 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Set mouse bindings as 'arcball'. Bindings are as follows:
 	 * <p>
 	 * 1. <b>InteractiveFrame bindings</b><br>
-	 * Left button -> ROTATE<br>
-	 * Center button -> SCALE<br>
-	 * Right button -> TRANSLATE<br>
-	 * Shift + Center button -> SCREEN_TRANSLATE<br>
-	 * Shift + Right button -> SCREEN_ROTATE<br>
+	 * Left button : ROTATE<br>
+	 * Center button : SCALE<br>
+	 * Right button : TRANSLATE<br>
+	 * Shift + Center button : SCREEN_TRANSLATE<br>
+	 * Shift + Right button : SCREEN_ROTATE<br>
 	 * <p>
 	 * 2. <b>InteractiveFrame bindings</b><br>
-	 * Left button -> ROTATE<br>
-	 * Center button -> ZOOM<br>
-	 * Right button -> TRANSLATE<br>
-	 * Shift + Left button -> ZOOM_ON_REGION<br>
-	 * Shift + Center button -> SCREEN_TRANSLATE<br>
-	 * Shift + Right button -> SCREEN_ROTATE.
+	 * Left button : ROTATE<br>
+	 * Center button : ZOOM<br>
+	 * Right button : TRANSLATE<br>
+	 * Shift + Left button : ZOOM_ON_REGION<br>
+	 * Shift + Center button : SCREEN_TRANSLATE<br>
+	 * Shift + Right button : SCREEN_ROTATE.
 	 * <p>
 	 * Also set the following (common) bindings are:
 	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
+	 * 2 left clicks : ALIGN_FRAME<br>
+	 * 2right clicks : CENTER_FRAME<br>
+	 * Wheel in 2D : SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D : SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * 
 	 * @see #dragToFirstPerson()
 	 * @see #dragToThirdPerson()
@@ -137,26 +137,26 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Set mouse bindings as 'arcball'. Bindings are as follows:
 	 * <p>
 	 * 1. <b>InteractiveFrame bindings</b><br>
-	 * No-button -> ROTATE<br>
-	 * Shift + No-button -> SCALE<br>
-	 * Ctrl + No-button -> TRANSLATE<br>
-	 * Center button -> SCREEN_TRANSLATE<br>
-	 * Right button -> SCREEN_ROTATE<br>
+	 * No-button : ROTATE<br>
+	 * Shift + No-button : SCALE<br>
+	 * Ctrl + No-button : TRANSLATE<br>
+	 * Center button : SCREEN_TRANSLATE<br>
+	 * Right button : SCREEN_ROTATE<br>
 	 * <p>
 	 * 2. <b>InteractiveFrame bindings</b><br>
-	 * No-button -> ROTATE<br>
-	 * Shift + No-button -> ZOOM<br>
-	 * Ctrl + No-button -> TRANSLATE<br>
-	 * Ctrl + Shift + No-button -> ZOOM_ON_REGION<br>
-	 * Center button -> SCREEN_TRANSLATE<br>
-	 * Right button -> SCREEN_ROTATE.
+	 * No-button : ROTATE<br>
+	 * Shift + No-button : ZOOM<br>
+	 * Ctrl + No-button : TRANSLATE<br>
+	 * Ctrl + Shift + No-button : ZOOM_ON_REGION<br>
+	 * Center button : SCREEN_TRANSLATE<br>
+	 * Right button : SCREEN_ROTATE.
 	 * <p>
 	 * Also set the following (common) bindings are:
 	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
+	 * 2 left clicks : ALIGN_FRAME<br>
+	 * 2right clicks : CENTER_FRAME<br>
+	 * Wheel in 2D : SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D : SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * <p>
 	 * Note that Alt + No-button is bound to the null action.
 	 * 
@@ -194,27 +194,27 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Set mouse bindings as 'first-person'. Bindings are as follows:
 	 * <p>
 	 * 1. <b>InteractiveFrame bindings</b><br>
-	 * Left button -> ROTATE<br>
-	 * Center button -> SCALE<br>
-	 * Right button -> TRANSLATE<br>
-	 * Shift + Center button -> SCREEN_TRANSLATE<br>
-	 * Shift + Right button -> SCREEN_ROTATE<br>
+	 * Left button : ROTATE<br>
+	 * Center button : SCALE<br>
+	 * Right button : TRANSLATE<br>
+	 * Shift + Center button : SCREEN_TRANSLATE<br>
+	 * Shift + Right button : SCREEN_ROTATE<br>
 	 * <p>
 	 * 2. <b>InteractiveFrame bindings</b><br>
-	 * Left button -> MOVE_FORWARD<br>
-	 * Center button -> LOOK_AROUND<br>
-	 * Right button -> MOVE_BACKWARD<br>
-	 * Shift + Left button -> ROTATE_Z<br>
-	 * Shift + Center button -> DRIVE<br>
-	 * Ctrl + Wheel -> ROLL<br>
-	 * Shift + Wheel -> DRIVE<br>
+	 * Left button : MOVE_FORWARD<br>
+	 * Center button : LOOK_AROUND<br>
+	 * Right button : MOVE_BACKWARD<br>
+	 * Shift + Left button : ROTATE_Z<br>
+	 * Shift + Center button : DRIVE<br>
+	 * Ctrl + Wheel : ROLL<br>
+	 * Shift + Wheel : DRIVE<br>
 	 * <p>
 	 * Also set the following (common) bindings are:
 	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
+	 * 2 left clicks : ALIGN_FRAME<br>
+	 * 2right clicks : CENTER_FRAME<br>
+	 * Wheel in 2D : SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D : SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * 
 	 * @see #dragToArcball()
 	 * @see #dragToThirdPerson()
@@ -245,36 +245,36 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Set mouse bindings as 'first-person'. Bindings are as follows:
 	 * <p>
 	 * 1. <b>InteractiveFrame bindings</b><br>
-	 * No-button -> ROTATE<br>
-	 * Shift + No-button -> SCALE<br>
-	 * Ctrl + No-button -> TRANSLATE<br>
-	 * Center button -> SCREEN_TRANSLATE<br>
-	 * Right button -> SCREEN_ROTATE<br>
+	 * No-button : ROTATE<br>
+	 * Shift + No-button : SCALE<br>
+	 * Ctrl + No-button : TRANSLATE<br>
+	 * Center button : SCREEN_TRANSLATE<br>
+	 * Right button : SCREEN_ROTATE<br>
 	 * <p>
 	 * 2. <b>InteractiveFrame bindings</b><br>
-	 * Ctrl + No-button -> MOVE_FORWARD<br>
-	 * No-button -> LOOK_AROUND<br>
-	 * Shift + No-button -> MOVE_BACKWARD<br>
-	 * Right button -> ROTATE_Z<br>
-	 * Ctrl + Shift + No-button -> DRIVE<br>
-	 * Ctrl + Shift + Wheel -> ROTATE_Z<br>
-	 * Shift + Wheel -> DRIVE<br>
+	 * Ctrl + No-button : MOVE_FORWARD<br>
+	 * No-button : LOOK_AROUND<br>
+	 * Shift + No-button : MOVE_BACKWARD<br>
+	 * Right button : ROTATE_Z<br>
+	 * Ctrl + Shift + No-button : DRIVE<br>
+	 * Ctrl + Shift + Wheel : ROTATE_Z<br>
+	 * Shift + Wheel : DRIVE<br>
 	 * <p>
 	 * Also set the following (common) bindings are:
 	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
+	 * 2 left clicks : ALIGN_FRAME<br>
+	 * 2right clicks : CENTER_FRAME<br>
+	 * Wheel in 2D : SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D : SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * <p>
 	 * Note that Alt + No-button is bound to the null action.
 	 * <p>
 	 * Also set the following (common) bindings are:
 	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
+	 * 2 left clicks : ALIGN_FRAME<br>
+	 * 2right clicks : CENTER_FRAME<br>
+	 * Wheel in 2D : SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D : SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * 
 	 * @see #dragToArcball()
 	 * @see #dragToThirdPerson()
@@ -308,18 +308,18 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Set mouse bindings as 'third-person'. Bindings are as follows: *
 	 * <p>
-	 * Left button -> MOVE_FORWARD<br>
-	 * Center button -> LOOK_AROUND<br>
-	 * Right button -> MOVE_BACKWARD<br>
-	 * Shift + Left button -> ROLL<br>
-	 * Shift + Center button -> DRIVE<br>
+	 * Left button : MOVE_FORWARD<br>
+	 * Center button : LOOK_AROUND<br>
+	 * Right button : MOVE_BACKWARD<br>
+	 * Shift + Left button : ROLL<br>
+	 * Shift + Center button : DRIVE<br>
 	 * <p>
 	 * Also set the following (common) bindings are:
 	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
+	 * 2 left clicks : ALIGN_FRAME<br>
+	 * 2right clicks : CENTER_FRAME<br>
+	 * Wheel in 2D : SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D : SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * 
 	 * @see #dragToArcball()
 	 * @see #dragToFirstPerson()
@@ -343,27 +343,27 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Set mouse bindings as 'third-person'. Bindings are as follows:
 	 * <p>
-	 * Ctrl + No-button -> MOVE_FORWARD<br>
-	 * No-button -> LOOK_AROUND<br>
-	 * Shift + No-button -> MOVE_BACKWARD<br>
-	 * Ctrl + Shift + Wheel -> ROTATE_Z<br>
-	 * Ctrl + Shift + No-button -> DRIVE<br>
+	 * Ctrl + No-button : MOVE_FORWARD<br>
+	 * No-button : LOOK_AROUND<br>
+	 * Shift + No-button : MOVE_BACKWARD<br>
+	 * Ctrl + Shift + Wheel : ROTATE_Z<br>
+	 * Ctrl + Shift + No-button : DRIVE<br>
 	 * <p>
 	 * Also set the following (common) bindings are:
 	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
+	 * 2 left clicks : ALIGN_FRAME<br>
+	 * 2right clicks : CENTER_FRAME<br>
+	 * Wheel in 2D : SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D : SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * <p>
 	 * Note that Alt + No-button is bound to the null action.
 	 * <p>
 	 * Also set the following (common) bindings are:
 	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
+	 * 2 left clicks : ALIGN_FRAME<br>
+	 * 2right clicks : CENTER_FRAME<br>
+	 * Wheel in 2D : SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D : SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * 
 	 * @see #dragToArcball()
 	 * @see #dragToFirstPerson()
@@ -401,10 +401,10 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Set the following (common) bindings:
 	 * <p>
-	 * 2 left clicks -> ALIGN_FRAME<br>
-	 * 2right clicks -> CENTER_FRAME<br>
-	 * Wheel in 2D -> SCALE both, InteractiveFrame and InteractiveFrame<br>
-	 * Wheel in 3D -> SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
+	 * 2 left clicks : ALIGN_FRAME<br>
+	 * 2right clicks : CENTER_FRAME<br>
+	 * Wheel in 2D : SCALE both, InteractiveFrame and InteractiveFrame<br>
+	 * Wheel in 3D : SCALE InteractiveFrame, and ZOOM InteractiveFrame<br>
 	 * <p>
 	 * which are used in {@link #dragToArcball()}, {@link #dragToFirstPerson()} and {@link #dragToThirdPerson()}
 	 */
@@ -421,7 +421,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 
 	// WRAPPERS
 
-	// Gestures -> mouse move
+	// Gestures : mouse move
 
 	/**
 	 * Binds the mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME).
@@ -481,7 +481,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		return action(target, new MotionShortcut(mask, BogusEvent.NO_ID));
 	}
 
-	// Button -> button + drag
+	// Button : button + drag
 
 	/**
 	 * Binds the mask-button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target}

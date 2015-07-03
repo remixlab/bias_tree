@@ -41,6 +41,7 @@ import remixlab.fpstiming.*;
  * <li>A {@link #matrixHelper()} which handles matrix operations either through the
  * {@link remixlab.dandelion.core.MatrixStackHelper} or through a third party matrix stack (like it's done with
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>
+ * </ol>
  */
 public abstract class AbstractScene extends AnimatorObject implements InteractiveGrabber<GlobalAction>, Constants {
 	protected boolean					dottedGrid;
@@ -1479,8 +1480,8 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	/**
 	 * Draws the path used to interpolate the {@link remixlab.dandelion.core.KeyFrameInterpolator#frame()}
 	 * <p>
-	 * {@code mask} controls what is drawn: If ( (mask & 1) != 0 ), the position path is drawn. If ( (mask & 2) != 0 ), a
-	 * camera representation is regularly drawn and if ( (mask & 4) != 0 ), oriented axes are regularly drawn. Examples:
+	 * {@code mask} controls what is drawn: If ( (mask &amp; 1) != 0 ), the position path is drawn. If ( (mask &amp; 2) != 0 ), a
+	 * camera representation is regularly drawn and if ( (mask &amp; 4) != 0 ), oriented axes are regularly drawn. Examples:
 	 * <p>
 	 * {@code drawPath(); // Simply draws the interpolation path} <br>
 	 * {@code drawPath(3); // Draws path and cameras} <br>
