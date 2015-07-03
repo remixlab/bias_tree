@@ -703,7 +703,7 @@ public class Quat implements Linkable, Rotation {
 	 * {@link #eulerAngles()} performs the inverse operation.
 	 * <p>
 	 * Each rotation angle is converted to an axis-angle pair, with the axis corresponding to one of the Euclidean axes.
-	 * The axis-angle pairs are converted to quaternions and multiplied together. The order of the rotations is: y->z->x
+	 * The axis-angle pairs are converted to quaternions and multiplied together. The order of the rotations is: y,z,x
 	 * which follows the convention found here: http://www.euclideanspace.com/maths/geometry/rotations/euler/index.htm.
 	 * 
 	 * @see #eulerAngles()
@@ -733,7 +733,7 @@ public class Quat implements Linkable, Rotation {
 	 * 
 	 * @return the Vec holding the roll (x coordinate of the vector), pitch (y coordinate of the vector) and yaw angles (z
 	 *         coordinate of the vector). <b>Note:</b> The order of the rotations that would produce this Quat (i.e., as
-	 *         with {@code fromEulerAngles(roll, pitch, yaw)}) is: y->z->x.
+	 *         with {@code fromEulerAngles(roll, pitch, yaw)}) is: y,z,x.
 	 * 
 	 * @see #fromEulerAngles(float, float, float)
 	 */

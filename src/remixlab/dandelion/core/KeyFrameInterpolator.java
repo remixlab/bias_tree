@@ -12,6 +12,7 @@ package remixlab.dandelion.core;
 
 import java.util.*;
 
+import remixlab.bias.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
@@ -332,7 +333,6 @@ public class KeyFrameInterpolator implements Copyable {
 		for (KeyFrame element : otherKFI.keyFrameList) {
 			KeyFrame kf = (KeyFrame) element.get();
 			this.keyFrameList.add(kf);
-			scene.motionAgent().removeGrabber(kf.frame());
 		}
 
 		this.currentFrame0 = keyFrameList.listIterator(otherKFI.currentFrame0.nextIndex());
@@ -682,15 +682,13 @@ public class KeyFrameInterpolator implements Copyable {
 		if (interpolationStarted())
 			stopInterpolation();
 		KeyFrame kf = keyFrameList.remove(index);
-		scene.motionAgent().removeGrabber(kf.frm);
+		for(Agent agent : scene.inputHandler().agents())
+			agent.removeGrabber(kf.frm);
 		setInterpolationTime(firstTime());
 	}
 
 	/**
-	 * Removes all keyFrames from the path. Calls {@link #removePathFromMotionAgent()}. The {@link #numberOfKeyFrames()}
-	 * is set to 0.
-	 * 
-	 * @see #removePathFromMotionAgent()
+	 * Removes all keyFrames from the path. The {@link #numberOfKeyFrames()} is set to 0.
 	 */
 	public void deletePath() {
 		stopInterpolation();

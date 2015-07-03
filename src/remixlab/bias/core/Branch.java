@@ -13,17 +13,15 @@ package remixlab.bias.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import remixlab.bias.branch.profile.*;
-import remixlab.bias.event.shortcut.Shortcut;
 import remixlab.util.Copyable;
 
 /**
- * A branch holds some {@link remixlab.bias.branch.profile.Profile}s relating the same reference action set (defined by
- * the enum parameter type). The branch uses the {@link remixlab.bias.event.shortcut.Shortcut} ->
+ * A branch holds some {@link remixlab.bias.core.Profile}s relating the same reference action set (defined by
+ * the enum parameter type). The branch uses the {@link remixlab.bias.core.Shortcut} :
  * {@link remixlab.bias.core.Action} mappings defined by each of its Profiles to parse the
  * {@link remixlab.bias.core.BogusEvent} into an user-defined {@link remixlab.bias.core.Action}.
  * <p>
- * The default implementation here holds only a single {@link remixlab.bias.branch.profile.Profile} (see
+ * The default implementation here holds only a single {@link remixlab.bias.core.Profile} (see
  * {@link #profile()}) attribute (note that we use the type of the Profile to parameterize the Branch). Different
  * profile groups are provided by the {@link remixlab.bias.branch.MotionBranch} and the
  * {@link remixlab.bias.branch.KeyboardBranch} specializations, which roughly represent an HIDevice (like a kinect) and
@@ -36,12 +34,10 @@ import remixlab.util.Copyable;
  * <li>Configure its profiles.
  * <li>Add some grabbers into the branch ({@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, Branch)}).</li>
  * </ul>.
- * 
- * @param <E>
- *          Reference action set used to parameterized the Agent.
- * 
- * @param <P>
- *          {@link remixlab.bias.branch.profile.Profile} to parameterize the Agent with.
+ *
+ * @param <E> Reference action.
+ * @param <A> Action subgroup.
+ * @param <S> Shortcut used to bind the action subgroup.
  */
 public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> implements Copyable {
 	protected Profile<S, A>	profile;
@@ -80,14 +76,14 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	}
 
 	/**
-	 * @return the agents {@link remixlab.bias.branch.profile.Profile} instance.
+	 * @return the agents {@link remixlab.bias.core.Profile} instance.
 	 */
 	public Profile<S, A> profile() {
 		return profile;
 	}
 
 	/**
-	 * Sets the {@link remixlab.bias.branch.profile.Profile}
+	 * Sets the {@link remixlab.bias.core.Profile}
 	 * 
 	 * @param p
 	 */

@@ -11,6 +11,7 @@
 package remixlab.bias.event.shortcut;
 
 import remixlab.bias.core.BogusEvent;
+import remixlab.bias.core.Shortcut;
 import remixlab.util.Copyable;
 
 /**

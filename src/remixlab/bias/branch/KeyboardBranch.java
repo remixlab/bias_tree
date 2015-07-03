@@ -15,10 +15,10 @@ import remixlab.bias.core.*;
 
 /**
  * This class is provided purely for symmetry and style reasons against the events and shortcuts API. Only needed if you
- * plan to implement your own KeyboardAgent.
- * 
- * @param <K>
- *          The {@link remixlab.bias.branch.profile.KeyboardProfile} to parameterize this Agent with.
+ * plan to implement your own KeyboardAgent. 
+ *
+ * @param <E> Reference action enum.
+ * @param <A> Action enum sub-group.
  */
 public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Branch<E, A, KeyboardShortcut> {
 	public KeyboardBranch(Agent pnt, String n) {

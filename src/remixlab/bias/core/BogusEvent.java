@@ -10,14 +10,13 @@
 
 package remixlab.bias.core;
 
-import remixlab.bias.event.shortcut.Shortcut;
 import remixlab.util.Copyable;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
 /**
  * The root event class of all events that are to be handled by an {@link remixlab.bias.core.Agent}. Every BogusEvent
- * encapsulates a {@link remixlab.bias.event.shortcut.Shortcut} which may be bound to an user-defined
+ * encapsulates a {@link remixlab.bias.core.Shortcut} which may be bound to an user-defined
  * {@link remixlab.bias.core.Action} (see {@link #shortcut()}).
  * <p>
  * The following are the main class specializations: {@link remixlab.bias.event.MotionEvent},
@@ -73,7 +72,7 @@ public class BogusEvent implements Copyable {
 	protected int				id;
 
 	/**
-	 * Constructs an event with an "empty" {@link remixlab.bias.event.shortcut.Shortcut}.
+	 * Constructs an event with an "empty" {@link remixlab.bias.core.Shortcut}.
 	 */
 	public BogusEvent() {
 		this.modifiers = NO_MODIFIER_MASK;
@@ -82,7 +81,7 @@ public class BogusEvent implements Copyable {
 	}
 
 	/**
-	 * Constructs an event taking the given {@code modifiers} as a {@link remixlab.bias.event.shortcut.Shortcut}.
+	 * Constructs an event taking the given {@code modifiers} as a {@link remixlab.bias.core.Shortcut}.
 	 */
 	public BogusEvent(int modifiers, int id) {
 		this.modifiers = modifiers;

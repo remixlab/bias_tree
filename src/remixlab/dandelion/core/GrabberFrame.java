@@ -780,7 +780,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * Returns the minimum gesture speed required to make the InteractiveFrame {@link #spin()}. Spinning requires to set
 	 * to {@link #damping()} to 0.
 	 * <p>
-	 * See {@link #spin()}, {@link #spinningRotation()} and {@link #startSpinning(MotionEvent)} for details.
+	 * See  {@link #spin()}, {@link #spinningRotation()} and {@link #startSpinning(MotionEvent, Rotation)} for details.
 	 * <p>
 	 * Gesture speed is expressed in pixels per milliseconds. Default value is 0.3 (300 pixels per second). Use
 	 * {@link #setSpinningSensitivity(float)} to tune this value. A higher value will make spinning more difficult (a
@@ -819,9 +819,9 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * Returns {@code true} when the InteractiveFrame is spinning.
 	 * <p>
 	 * During spinning, {@link #spin()} rotates the InteractiveFrame by its {@link #spinningRotation()} at a frequency
-	 * defined when the InteractiveFrame {@link #startSpinning(MotionEvent)}.
+	 * defined when the InteractiveFrame {@link #startSpinning(MotionEvent, Rotation)}.
 	 * <p>
-	 * Use {@link #startSpinning(MotionEvent)} and {@link #stopSpinning()} to change this state. Default value is
+	 * Use {@link #startSpinning(MotionEvent, Rotation)} and {@link #stopSpinning()} to change this state. Default value is
 	 * {@code false}.
 	 * 
 	 * @see #isFlying()
@@ -842,7 +842,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * <p>
 	 * <b>Attention: </b>Spinning may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
-	 * @see #flightDirection()
+	 * @see #flyDirection()
 	 */
 	public final Rotation spinningRotation() {
 		return spngRotation;
@@ -858,14 +858,13 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Stops the spinning motion started using {@link #startSpinning(MotionEvent)}. {@link #isSpinning()} will return
+	 * Stops the spinning motion started using {@link #startSpinning(MotionEvent, Rotation)}. {@link #isSpinning()} will return
 	 * {@code false} after this call.
 	 * <p>
 	 * <b>Attention: </b>This method may be called by {@link #spin()}, since spinning may be decelerated according to
 	 * {@link #damping()} till it stops completely.
 	 * 
 	 * @see #damping()
-	 * @see #flyDamping()
 	 */
 	public final void stopSpinning() {
 		spinningTimerTask.stop();
@@ -884,7 +883,6 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * <b>Attention: </b>Spinning may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
 	 * @see #damping()
-	 * @see #flyDamping()
 	 */
 	public void startSpinning(Rotation rt, float speed, long delay) {
 		setSpinningRotation(rt);
@@ -930,7 +928,6 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * <b>Attention: </b>Spinning may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
 	 * @see #damping()
-	 * @see #flyDamping()
 	 */
 	protected void spin() {
 		if (isEyeFrame())
@@ -1758,10 +1755,10 @@ public class GrabberFrame extends Frame implements Grabber {
 	/**
 	 * Returns {@code true} when the InteractiveFrame is tossing.
 	 * <p>
-	 * During tossing, {@link #flyDamping()} translates the InteractiveFrame by its {@link #flightDirection()} at a
-	 * frequency defined when the InteractiveFrame {@link #startFlying(MotionEvent)}.
+	 * During tossing, {@link #damping()} translates the InteractiveFrame by its {@link #flyDirection()} at a
+	 * frequency defined when the InteractiveFrame {@link #startFlying(MotionEvent, Vec)}.
 	 * <p>
-	 * Use {@link #startFlying(MotionEvent)} and {@link #stopFlying()} to change this state. Default value is
+	 * Use {@link #startFlying(MotionEvent, Vec)} and {@link #stopFlying()} to change this state. Default value is
 	 * {@code false}.
 	 * 
 	 * {@link #isSpinning()}
@@ -1771,10 +1768,10 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Stops the tossing motion started using {@link #startFlying(MotionEvent)}. {@link #isFlying()} will return
+	 * Stops the tossing motion started using {@link #startFlying(MotionEvent, Vec)}. {@link #isFlying()} will return
 	 * {@code false} after this call.
 	 * <p>
-	 * <b>Attention: </b>This method may be called by {@link #flyDamping()}, since tossing may be decelerated according to
+	 * <b>Attention: </b>This method may be called by {@link #damping()}, since tossing may be decelerated according to
 	 * {@link #damping()} till it stops completely.
 	 * 
 	 * @see #damping()
@@ -1785,7 +1782,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Returns the incremental translation that is applied by {@link #flyDamping()} to the InteractiveFrame position when
+	 * Returns the incremental translation that is applied by {@link #damping()} to the InteractiveFrame position when
 	 * it {@link #isFlying()}.
 	 * <p>
 	 * Default value is no translation. Use {@link #setFlyDirection(Vec)} to change this value.
@@ -1799,7 +1796,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Defines the {@link #flightDirection()} in the reference frame coordinate system.
+	 * Defines the {@link #flyDirection()} in the reference frame coordinate system.
 	 * 
 	 * @see #setSpinningRotation(Rotation)
 	 */
@@ -1810,7 +1807,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	/**
 	 * Starts the tossing of the InteractiveFrame.
 	 * <p>
-	 * This method starts a timer that will call {@link #flyDamping()} every FLY_UPDATE_PERDIOD milliseconds. The
+	 * This method starts a timer that will call {@link #damping()} every FLY_UPDATE_PERDIOD milliseconds. The
 	 * InteractiveFrame {@link #isFlying()} until you call {@link #stopFlying()}.
 	 * <p>
 	 * <b>Attention: </b>Tossing may be decelerated according to {@link #damping()} till it stops completely.
@@ -1829,7 +1826,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Translates the InteractiveFrame by its {@link #flightDirection()}. Invoked by a timer when the InteractiveFrame is
+	 * Translates the InteractiveFrame by its {@link #flyDirection()}. Invoked by a timer when the InteractiveFrame is
 	 * performing the DRIVE, MOVE_BACKWARD or MOVE_FORWARD dandelion actions.
 	 * <p>
 	 * <b>Attention: </b>Tossing may be decelerated according to {@link #damping()} till it stops completely.

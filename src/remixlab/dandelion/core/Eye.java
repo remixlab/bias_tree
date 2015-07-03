@@ -1394,11 +1394,7 @@ public abstract class Eye implements Copyable {
 	}
 
 	/**
-	 * Adds the current Eye {@link #position()} and {@link #orientation()} as a keyFrame to path {@code key}. If
-	 * {@code editablePath} is {@code true}, builds a GrabberFrame (from the current Eye {@link #position()} and
-	 * {@link #orientation()}) before adding it (see
-	 * {@link remixlab.dandelion.core.GrabberFrame#GrabberFrame(AbstractScene, GrabberFrame)} ). In the latter mode the
-	 * resulting created path will be editable.
+	 * Adds the current Eye {@link #position()} and {@link #orientation()} as a keyFrame to path {@code key}.
 	 * <p>
 	 * This method can also be used if you simply want to save an Eye point of view (a path made of a single keyFrame).
 	 * Use {@link #playPath(int)} to make the Eye play the keyFrame path (resp. restore the point of view). Use

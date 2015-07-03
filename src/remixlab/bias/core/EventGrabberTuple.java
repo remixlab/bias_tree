@@ -19,7 +19,7 @@ public class EventGrabberTuple {
 	protected Grabber		grabber;
 
 	/**
-	 * Constructs <{@link remixlab.bias.core.BogusEvent},{@link remixlab.bias.core.Grabber}> tuple.
+	 * Constructs a {@link remixlab.bias.core.BogusEvent},{@link remixlab.bias.core.Grabber} tuple.
 	 * 
 	 * @param e
 	 *          {@link remixlab.bias.core.BogusEvent}

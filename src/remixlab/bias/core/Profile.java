@@ -8,25 +8,20 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.branch.profile;
+package remixlab.bias.core;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import remixlab.bias.core.Action;
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.event.shortcut.*;
-import remixlab.util.Copyable;
-import remixlab.util.EqualsBuilder;
-import remixlab.util.HashCodeBuilder;
+import remixlab.util.*;
 
 /**
- * A mapping between {@link remixlab.bias.event.shortcut.Shortcut}s and user-defined {@link remixlab.bias.core.Action}s,
+ * A mapping between {@link remixlab.bias.core.Shortcut}s and user-defined {@link remixlab.bias.core.Action}s,
  * implemented as a parameterized hash-map wrap.
  * 
  * @param <K>
- *          {@link remixlab.bias.event.shortcut.Shortcut}
+ *          {@link remixlab.bias.core.Shortcut}
  * @param <A>
  *          {@link remixlab.bias.core.Action} : User-defined action.
  */
@@ -102,7 +97,7 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	}
 
 	/**
-	 * Returns the {@link remixlab.bias.core.Action} binding for the given {@link remixlab.bias.event.shortcut.Shortcut}
+	 * Returns the {@link remixlab.bias.core.Action} binding for the given {@link remixlab.bias.core.Shortcut}
 	 * key.
 	 */
 	public A action(Shortcut key) {
@@ -113,7 +108,7 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	 * Defines the shortcut that triggers a given action.
 	 * 
 	 * @param key
-	 *          {@link remixlab.bias.event.shortcut.Shortcut}
+	 *          {@link remixlab.bias.core.Shortcut}
 	 * @param action
 	 *          {@link remixlab.bias.core.Action}
 	 */
@@ -125,7 +120,7 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	 * Removes the shortcut binding.
 	 * 
 	 * @param key
-	 *          {@link remixlab.bias.event.shortcut.Shortcut}
+	 *          {@link remixlab.bias.core.Shortcut}
 	 */
 	public void removeBinding(K key) {
 		map.remove(key);
@@ -142,7 +137,7 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	 * Returns true if this object contains a binding for the specified shortcut.
 	 * 
 	 * @param key
-	 *          {@link remixlab.bias.event.shortcut.Shortcut}
+	 *          {@link remixlab.bias.core.Shortcut}
 	 * @return true if this object contains a binding for the specified shortcut.
 	 */
 	public boolean hasBinding(K key) {

@@ -56,8 +56,7 @@ import java.nio.FloatBuffer;
  * {@link #motionAgent()} (which in the desktop version of proscene defaults to a {@link #mouseAgent()}):
  * <ol>
  * <li><b>The default keyboard agent</b> provides shortcuts to Dandelion keyboard actions such as {@link #drawGrid()} or
- * {@link #drawAxes()}. See {@link #setKeyboardBinding(Character, remixlab.dandelion.core.Constants.SceneAction)} and
- * {@link #setKeyboardBinding(int, int, remixlab.dandelion.core.Constants.SceneAction)}.
+ * {@link #drawAxes()}. See {@link #keyboardAgent()}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame motion actions. Please refer
  * to the different {@code setMouseButtonBinding()}, {@code setMouseClickBinding()}, {@code setMouseWheelBinding()}
  * methods.
@@ -74,6 +73,7 @@ import java.nio.FloatBuffer;
  * an external animation method and then register it at the Scene with {@link #addAnimationHandler(Object, String)}.
  * That method should return {@code void} and have one single {@code Scene} parameter. See the example
  * <i>AnimationHandler</i>.
+ * </ol>
  */
 public class Scene extends AbstractScene implements PConstants {
 	// begin: GWT-incompatible

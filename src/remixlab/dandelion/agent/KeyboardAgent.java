@@ -11,7 +11,6 @@
 package remixlab.dandelion.agent;
 
 import remixlab.bias.branch.*;
-import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.bias.event.shortcut.*;

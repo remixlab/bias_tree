@@ -13,8 +13,8 @@ package remixlab.dandelion.agent;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.BogusEvent;
+import remixlab.bias.core.Profile;
 import remixlab.bias.event.*;
 import remixlab.bias.event.shortcut.*;
 import remixlab.dandelion.core.*;

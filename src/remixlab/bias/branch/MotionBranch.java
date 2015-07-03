@@ -10,37 +10,28 @@
 
 package remixlab.bias.branch;
 
-import remixlab.bias.branch.profile.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.bias.event.shortcut.*;
 
 /**
- * An {@link remixlab.bias.core.Branch} with an extra {@link remixlab.bias.branch.profile.ClickProfile} defining
- * {@link remixlab.bias.event.shortcut.ClickShortcut} -> {@link remixlab.bias.core.Action} mappings.
+ * An {@link remixlab.bias.core.Branch} with an extra {@link remixlab.bias.core.Profile} defining
+ * {@link remixlab.bias.event.shortcut.ClickShortcut} : {@link remixlab.bias.core.Action} mappings.
  * <p>
  * The Agent thus is defined by two profiles: the {@link #motionProfile()} (alias for {@link #profile()} provided for
  * convenience) and the (extra) {@link #clickProfile()}.
- * 
- * @param <M>
- *          {@link remixlab.bias.branch.profile.MotionProfile} to parameterize the Agent with.
- * @param <C>
- *          {@link remixlab.bias.branch.profile.ClickProfile} to parameterize the Agent with.
+ *
+ * @param <E> Reference action enum.
+ * @param <A> Motion action enum sub-group.
+ * @param <C> Click/tap action enum sub-group.
  */
 public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Action<E>> extends
 		Branch<E, A, MotionShortcut> {
 	protected Profile<ClickShortcut, C>	clickProfile;
-
+	
 	/**
-	 * 
-	 * @param p
-	 *          {@link remixlab.bias.branch.profile.MotionProfile} instance
-	 * @param c
-	 *          {@link remixlab.bias.branch.profile.ClickProfile} instance
-	 * @param a
-	 *          {@link remixlab.bias.core.Agent} instance
-	 * @param n
-	 *          the branch name
+	 * @param a {@link remixlab.bias.core.Agent} instance
+	 * @param n the branch name
 	 */
 	public MotionBranch(Agent a, String n) {
 		super(a, n);
@@ -65,21 +56,21 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	}
 
 	/**
-	 * Sets the {@link remixlab.bias.branch.profile.MotionProfile}
+	 * Sets the motion {@link remixlab.bias.core.Profile}
 	 */
 	public void setMotionProfile(Profile<MotionShortcut, A> profile) {
 		setProfile(profile);
 	}
 
 	/**
-	 * Returns the {@link remixlab.bias.branch.profile.ClickProfile} instance.
+	 * Returns the click {@link remixlab.bias.core.Profile} instance.
 	 */
 	public Profile<ClickShortcut, C> clickProfile() {
 		return clickProfile;
 	}
 
 	/**
-	 * Sets the {@link remixlab.bias.branch.profile.ClickProfile}
+	 * Sets the click {@link remixlab.bias.core.Profile}
 	 */
 	public void setClickProfile(Profile<ClickShortcut, C> profile) {
 		clickProfile = profile;

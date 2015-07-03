@@ -13,7 +13,6 @@ package remixlab.dandelion.agent;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import remixlab.bias.branch.profile.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.ClickAction;
