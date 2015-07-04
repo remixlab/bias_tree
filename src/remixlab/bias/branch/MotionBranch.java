@@ -146,20 +146,24 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	//
 	
 	public void setMotionBinding(int mask, int id, A action) {
+		/*
 		for(Branch<?, ?, ?> branch : agent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
 					if(((MotionBranch<?, ?, ?>)branch).hasMotionBinding(mask, id))
 						System.out.println("Warning: MotionShortcut already bound to " + ((MotionBranch<?, ?, ?>)branch).motionAction(mask, id) + " in " + branch.name());
+						//*/
 		motionProfile().setBinding(new MotionShortcut(mask, id), action);
 	}
 
 	public void setMotionBinding(int id, A action) {
+		/*
 		for(Branch<?, ?, ?> branch : agent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
 					if(((MotionBranch<?, ?, ?>)branch).hasMotionBinding(id))
 						System.out.println("Warning: MotionShortcut already bound to " + ((MotionBranch<?, ?, ?>)branch).motionAction(id) + " in " + branch.name());
+		//*/
 		motionProfile().setBinding(new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, id), action);
 	}
 
@@ -190,29 +194,35 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	// click
 	
 	public void setClickBinding(int mask, int button, int ncs, C action) {
+		/*
 		for(Branch<?, ?, ?> branch : agent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
 					if(((MotionBranch<?, ?, ?>)branch).hasClickBinding(mask, button, ncs))
 						System.out.println("Warning: ClickShortcut already bound to " + ((MotionBranch<?, ?, ?>)branch).clickAction(mask, button, ncs) + " in " + branch.name());
+	    //*/
 		clickProfile().setBinding(new ClickShortcut(mask, button, ncs), action);
 	}
 
 	public void setClickBinding(int button, int ncs, C action) {
+		/*
 		for(Branch<?, ?, ?> branch : agent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
 					if(((MotionBranch<?, ?, ?>)branch).hasClickBinding(button, ncs))
 						System.out.println("Warning: ClickShortcut already bound to " + ((MotionBranch<?, ?, ?>)branch).clickAction(button, ncs) + " in " + branch.name());
+		//*/
 		clickProfile().setBinding(new ClickShortcut(button, ncs), action);
 	}
 
 	public void setClickBinding(int button, C action) {
+		/*
 		for(Branch<?, ?, ?> branch : agent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
 					if(((MotionBranch<?, ?, ?>)branch).hasClickBinding(button))
 						System.out.println("Warning: ClickShortcut already bound to " + ((MotionBranch<?, ?, ?>)branch).clickAction(button) + " in " + branch.name());
+		//*/
 		clickProfile().setBinding(new ClickShortcut(button, 1), action);
 	}
 
