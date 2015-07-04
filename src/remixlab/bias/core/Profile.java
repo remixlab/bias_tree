@@ -113,6 +113,13 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	 *          {@link remixlab.bias.core.Action}
 	 */
 	public void setBinding(K key, A action) {
+		if (hasBinding(key)) {
+			A a = action(key);
+			if(a != action)
+				System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
+			else
+				System.out.println("Warning: shortcut already bound to " + a);
+		}
 		map.put(key, action);
 	}
 

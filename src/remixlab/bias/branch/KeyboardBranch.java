@@ -112,6 +112,11 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	 * Binds the key shortcut to the (Keyboard) action.
 	 */
 	public void setBinding(char key, A action) {
+		for(Branch<?, ?, ?> branch : agent.branches())
+			if(branch instanceof KeyboardBranch)
+				if(branch != this)
+					if(((KeyboardBranch<?, ?>)branch).hasBinding(key))
+						System.out.println("Warning: KeyboardShortcut already bound to " + ((KeyboardBranch<?, ?>)branch).action(key) + " in " + branch.name());
 		setBinding(agent.keyCode(key), action);
 	}
 
@@ -119,6 +124,11 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	 * Binds the key shortcut to the (Keyboard) action.
 	 */
 	public void setBinding(int mask, char key, A action) {
+		for(Branch<?, ?, ?> branch : agent.branches())
+			if(branch instanceof KeyboardBranch)
+				if(branch != this)
+					if(((KeyboardBranch<?, ?>)branch).hasBinding(mask, key))
+						System.out.println("Warning: KeyboardShortcut already bound to " + ((KeyboardBranch<?, ?>)branch).action(mask, key) + " in " + branch.name());
 		setBinding(mask, agent.keyCode(key), action);
 	}
 
