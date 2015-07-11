@@ -56,24 +56,10 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	}
 
 	/**
-	 * Sets the motion {@link remixlab.bias.core.Profile}
-	 */
-	public void setMotionProfile(Profile<MotionShortcut, A> profile) {
-		setProfile(profile);
-	}
-
-	/**
 	 * Returns the click {@link remixlab.bias.core.Profile} instance.
 	 */
 	public Profile<ClickShortcut, C> clickProfile() {
 		return clickProfile;
-	}
-
-	/**
-	 * Sets the click {@link remixlab.bias.core.Profile}
-	 */
-	public void setClickProfile(Profile<ClickShortcut, C> profile) {
-		clickProfile = profile;
 	}
 
 	@Override

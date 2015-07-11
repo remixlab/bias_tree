@@ -16,6 +16,11 @@ import java.util.List;
 import remixlab.util.Copyable;
 
 /**
+ * A Branch handles a list of {@link remixlab.bias.core.InteractiveGrabber} objects (see {@link #grabbers()})
+ * implementing the @param <E> action set which is bound to an input entity such as the mouse or a touch screen.
+ * <p>
+ * 
+ * 
  * A branch holds some {@link remixlab.bias.core.Profile}s relating the same reference action set (defined by
  * the enum parameter type). The branch uses the {@link remixlab.bias.core.Shortcut} :
  * {@link remixlab.bias.core.Action} mappings defined by each of its Profiles to parse the
@@ -80,17 +85,6 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	 */
 	public Profile<S, A> profile() {
 		return profile;
-	}
-
-	/**
-	 * Sets the {@link remixlab.bias.core.Profile}
-	 * 
-	 * @param p
-	 */
-	protected void setProfile(Profile<S, A> p) {
-		if (p == null)
-			return;
-		profile = p;
 	}
 
 	public String info() {

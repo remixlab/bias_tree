@@ -13,18 +13,21 @@ package remixlab.bias.core;
 /**
  * Generic interface defining user action (sub)groups.
  * <p>
- * (User-defined) global Actions in bias should be defined by a third-party simply using an Enum. This interface allows
- * grouping items of that global action Enum together, thus possibly forming action sub-groups. Each item in the action
- * sub-group should be mapped back to an item in the global Enum set (see {@link #referenceAction()}).
+ * (User-defined) actions in bias should be defined by a third-party simply using an Enum. This interface allows
+ * grouping items of that 'reference' action Enum ({@link #referenceAction()}) together, thus possibly forming
+ * action sub-groups. Action subgroups are typically bound to different data input kinds
+ * ({@link remixlab.bias.core.BogusEvent}), such as that gathered from tap and drag gestures.
  * <p>
- * <b>Note:</b> User-defined actions subgroups implementing this Interface are used to parameterize
- * {@link remixlab.bias.core.Profile}s which are then used to parameterize {@link remixlab.bias.core.Branch}
- * s. The idea being that user-defined actions may be grouped together according to the BogusEvent type needed to
- * implement them (see {@link remixlab.bias.core.Grabber#performInteraction(remixlab.bias.core.BogusEvent)}). Parsing
- * the BogusEvent thus requires the proper {@link remixlab.bias.core.Agent} type.
+ * Since the {@link #referenceAction()} is used to parameterize an {@link remixlab.bias.core.InteractiveGrabber}
+ * object, each value in the action sub-group should be mapped to a value in the (see {@link #referenceAction()}),
+ * otherwise the {@link remixlab.bias.core.InteractiveGrabber} wouldn't be able to discriminate among different
+ * data input kinds (e.g., a tap from a drag gesture).
  * <p>
- * <b>Observation</b> Enums provide an easy (typical) implementation of this Interface. For example, given the following
- * global Action set:
+ * <b>Note:</b> all data input related to a single entity or device (such as the mouse) that binds an
+ * {@link remixlab.bias.core.InteractiveGrabber} is handled by agent {@link remixlab.bias.core.Branch}es.
+ * <p>
+ * <b>Observation</b> Enums provide an easy (typical) implementation of this Interface. For example, given the
+ * following global Action set:
  * 
  * <pre>
  * {@code
@@ -37,7 +40,8 @@ package remixlab.bias.core;
  * }
  * </pre>
  * 
- * An implementation of an Action group defined with the CHANGE_POSITION and CHANGE_SHAPE items, would look like this:
+ * An implementation of an Action group defined with the CHANGE_POSITION and CHANGE_SHAPE items, would then look
+ * like this:
  * 
  * <pre>
  * {@code
@@ -62,12 +66,11 @@ package remixlab.bias.core;
  * }
  * </pre>
  * 
- * @param <E>
- *          Global enum action set.
+ * @param <E> 'Reference' enum action set.
  */
 public interface Action<E extends Enum<E>> {
 	/**
-	 * Returns group to global action item mappings.
+	 * Returns group to reference-action mappings.
 	 */
 	E referenceAction();
 
