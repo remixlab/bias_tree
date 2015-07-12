@@ -113,39 +113,39 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 
 	// TODO test all protected down here in stable before going on
 
-	protected Profile<MotionShortcut, A> motionProfile(Target target) {
+	protected Profile<MotionAction, MotionShortcut, A> motionProfile(Target target) {
 		return target == Target.EYE ? eyeProfile() : frameProfile();
 	}
 
 	/**
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
 	 */
-	public Profile<MotionShortcut, A> eyeProfile() {
+	public Profile<MotionAction, MotionShortcut, A> eyeProfile() {
 		return eyeBranch().profile();
 	}
 
 	/**
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
 	 */
-	public Profile<MotionShortcut, A> frameProfile() {
+	public Profile<MotionAction, MotionShortcut, A> frameProfile() {
 		return frameBranch().profile();
 	}
 
-	protected Profile<ClickShortcut, ClickAction> clickProfile(Target target) {
+	protected Profile<MotionAction, ClickShortcut, ClickAction> clickProfile(Target target) {
 		return target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 	}
 
 	/**
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.ClickShortcut}s.
 	 */
-	public Profile<ClickShortcut, ClickAction> eyeClickProfile() {
+	public Profile<MotionAction, ClickShortcut, ClickAction> eyeClickProfile() {
 		return eyeBranch().clickProfile();
 	}
 
 	/**
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.ClickShortcut}s.
 	 */
-	public Profile<ClickShortcut, ClickAction> frameClickProfile() {
+	public Profile<MotionAction, ClickShortcut, ClickAction> frameClickProfile() {
 		return frameBranch().clickProfile();
 	}
 

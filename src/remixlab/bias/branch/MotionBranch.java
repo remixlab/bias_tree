@@ -27,7 +27,7 @@ import remixlab.bias.event.shortcut.*;
  */
 public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Action<E>> extends
 		Branch<E, A, MotionShortcut> {
-	protected Profile<ClickShortcut, C>	clickProfile;
+	protected Profile<E, ClickShortcut, C>	clickProfile;
 	
 	/**
 	 * @param a {@link remixlab.bias.core.Agent} instance
@@ -35,7 +35,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	 */
 	public MotionBranch(Agent a, String n) {
 		super(a, n);
-		clickProfile = new Profile<ClickShortcut, C>();
+		clickProfile = new Profile<E, ClickShortcut, C>();
 	}
 
 	protected MotionBranch(MotionBranch<E, A, C> other) {
@@ -51,14 +51,14 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	/**
 	 * Alias for {@link #profile()}.
 	 */
-	public Profile<MotionShortcut, A> motionProfile() {
+	public Profile<E, MotionShortcut, A> motionProfile() {
 		return profile();
 	}
 
 	/**
 	 * Returns the click {@link remixlab.bias.core.Profile} instance.
 	 */
-	public Profile<ClickShortcut, C> clickProfile() {
+	public Profile<E, ClickShortcut, C> clickProfile() {
 		return clickProfile;
 	}
 

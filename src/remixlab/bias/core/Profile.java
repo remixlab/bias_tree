@@ -25,7 +25,7 @@ import remixlab.util.*;
  * @param <A>
  *          {@link remixlab.bias.core.Action} : User-defined action.
  */
-public class Profile<K extends Shortcut, A extends Action<?>> implements Copyable {
+public class Profile<E extends Enum<E>, K extends Shortcut, A extends Action<E>> implements Copyable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).append(map).toHashCode();
@@ -40,7 +40,7 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 		if (obj.getClass() != getClass())
 			return false;
 
-		Profile<?, ?> other = (Profile<?, ?>) obj;
+		Profile<?, ?, ?> other = (Profile<?, ?, ?>) obj;
 		return new EqualsBuilder().append(map, other.map).isEquals();
 	}
 
@@ -59,7 +59,7 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	 * @param other
 	 *          profile to be copied
 	 */
-	protected Profile(Profile<K, A> other) {
+	protected Profile(Profile<E, K, A> other) {
 		map = new HashMap<K, A>();
 		for (Map.Entry<K, A> entry : other.map().entrySet()) {
 			K key = entry.getKey();
@@ -72,8 +72,8 @@ public class Profile<K extends Shortcut, A extends Action<?>> implements Copyabl
 	 * Returns a deep-copy of this profile.
 	 */
 	@Override
-	public Profile<K, A> get() {
-		return new Profile<K, A>(this);
+	public Profile<E, K, A> get() {
+		return new Profile<E, K, A>(this);
 	}
 
 	/**

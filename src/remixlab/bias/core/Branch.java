@@ -45,7 +45,7 @@ import remixlab.util.Copyable;
  * @param <S> Shortcut used to bind the action subgroup.
  */
 public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> implements Copyable {
-	protected Profile<S, A>	profile;
+	protected Profile<E, S, A>	profile;
 	protected List<InteractiveGrabber<E>> grabbers;
 	protected Agent					agent;
 	protected String				name;
@@ -54,7 +54,7 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	public Branch(Agent pnt, String n) {
 		name = n;
 		agent = pnt;
-		profile = new Profile<S, A>();
+		profile = new Profile<E, S, A>();
 		grabbers = new ArrayList<InteractiveGrabber<E>>();
 		agent.appendBranch(this);
 	}
@@ -83,7 +83,7 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	/**
 	 * @return the agents {@link remixlab.bias.core.Profile} instance.
 	 */
-	public Profile<S, A> profile() {
+	public Profile<E, S, A> profile() {
 		return profile;
 	}
 

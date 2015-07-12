@@ -579,7 +579,7 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 */
 	public void removeWheelBindings(Target target) {
 		// bit of a hack ;)
-		Profile<MotionShortcut, DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
+		Profile<MotionAction, MotionShortcut, DOF2Action> profile = target == Target.EYE ? eyeProfile() : frameProfile();
 		Iterator<Entry<MotionShortcut, DOF2Action>> it = profile.map().entrySet().iterator();
 		while (it.hasNext()) {
 			Entry<MotionShortcut, DOF2Action> entry = it.next();

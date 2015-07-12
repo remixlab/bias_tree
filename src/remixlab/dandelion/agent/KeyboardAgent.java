@@ -103,19 +103,19 @@ public class KeyboardAgent extends Agent {
 		return new KeyboardBranch<E, A>(this, "my_key_branch");
 	}
 
-	protected Profile<KeyboardShortcut, SceneAction> sceneProfile() {
+	protected Profile<GlobalAction, KeyboardShortcut, SceneAction> sceneProfile() {
 		return sceneBranch().profile();
 	}
 
-	protected Profile<KeyboardShortcut, KeyboardAction> eyeProfile() {
+	protected Profile<MotionAction, KeyboardShortcut, KeyboardAction> eyeProfile() {
 		return eyeBranch().profile();
 	}
 
-	protected Profile<KeyboardShortcut, KeyboardAction> frameProfile() {
+	protected Profile<MotionAction, KeyboardShortcut, KeyboardAction> frameProfile() {
 		return frameBranch().profile();
 	}
 
-	protected Profile<KeyboardShortcut, KeyboardAction> motionProfile(Target target) {
+	protected Profile<MotionAction, KeyboardShortcut, KeyboardAction> motionProfile(Target target) {
 		return target == Target.EYE ? eyeProfile() : frameProfile();
 	}
 
