@@ -11,14 +11,12 @@
 package remixlab.bias.event;
 
 import remixlab.bias.core.BogusEvent;
-import remixlab.bias.event.shortcut.*;
-import remixlab.util.EqualsBuilder;
-import remixlab.util.HashCodeBuilder;
+import remixlab.util.*;
 
 /**
  * Base class of all DOF_n_Events: {@link remixlab.bias.core.BogusEvent}s defined from DOFs (degrees-of-freedom).
  * <p>
- * A MotionEvent encapsulates a {@link remixlab.bias.event.shortcut.MotionShortcut}. MotionEvents may be relative or
+ * A MotionEvent encapsulates a {@link remixlab.bias.event.MotionShortcut}. MotionEvents may be relative or
  * absolute (see {@link #isRelative()}, {@link #isAbsolute()}) depending whether or not they're defined from a previous
  * MotionEvent (see {@link #setPreviousEvent(MotionEvent)}). While relative motion events have {@link #distance()},
  * {@link #speed()}, and {@link #delay()}, absolute motion events don't.
@@ -61,7 +59,7 @@ public class MotionEvent extends BogusEvent {
 	protected boolean	rel;
 
 	/**
-	 * Constructs a MotionEvent with an "empty" {@link remixlab.bias.event.shortcut.MotionShortcut}.
+	 * Constructs a MotionEvent with an "empty" {@link remixlab.bias.event.MotionShortcut}.
 	 */
 	public MotionEvent() {
 		super();
@@ -69,7 +67,7 @@ public class MotionEvent extends BogusEvent {
 
 	/**
 	 * Constructs a MotionEvent taking the given {@code modifiers} as a
-	 * {@link remixlab.bias.event.shortcut.MotionShortcut}.
+	 * {@link remixlab.bias.event.MotionShortcut}.
 	 */
 	public MotionEvent(int modifiers) {
 		super(modifiers, NO_ID);
@@ -77,7 +75,7 @@ public class MotionEvent extends BogusEvent {
 
 	/**
 	 * Constructs a MotionEvent taking the given {@code modifiers} and {@code modifiers} as a
-	 * {@link remixlab.bias.event.shortcut.MotionShortcut}.
+	 * {@link remixlab.bias.event.MotionShortcut}.
 	 */
 	public MotionEvent(int modifiers, int button) {
 		super(modifiers, button);

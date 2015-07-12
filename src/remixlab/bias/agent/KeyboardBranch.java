@@ -8,9 +8,9 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.branch;
+package remixlab.bias.agent;
 
-import remixlab.bias.event.shortcut.*;
+import remixlab.bias.event.*;
 import remixlab.bias.core.*;
 
 /**
@@ -21,8 +21,10 @@ import remixlab.bias.core.*;
  * @param <A> Action enum sub-group.
  */
 public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Branch<E, A, KeyboardShortcut> {
-	public KeyboardBranch(Agent pnt, String n) {
+	InteractiveKeyboardAgent keyAgent;
+	public KeyboardBranch(InteractiveKeyboardAgent pnt, String n) {
 		super(pnt, n);
+		keyAgent = pnt;
 	}
 
 	protected KeyboardBranch(KeyboardBranch<E, A> other) {
@@ -112,46 +114,46 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	 * Binds the key shortcut to the (Keyboard) action.
 	 */
 	public void setBinding(char key, A action) {
-		for(Branch<?, ?, ?> branch : agent.branches())
+		for(Branch<?, ?, ?> branch : keyAgent.branches())
 			if(branch instanceof KeyboardBranch)
 				if(branch != this)
 					if(((KeyboardBranch<?, ?>)branch).hasBinding(key))
 						System.out.println("Warning: KeyboardShortcut already bound to " + ((KeyboardBranch<?, ?>)branch).action(key) + " in " + branch.name());
-		setBinding(agent.keyCode(key), action);
+		setBinding(keyAgent.keyCode(key), action);
 	}
 
 	/**
 	 * Binds the key shortcut to the (Keyboard) action.
 	 */
 	public void setBinding(int mask, char key, A action) {
-		for(Branch<?, ?, ?> branch : agent.branches())
+		for(Branch<?, ?, ?> branch : keyAgent.branches())
 			if(branch instanceof KeyboardBranch)
 				if(branch != this)
 					if(((KeyboardBranch<?, ?>)branch).hasBinding(mask, key))
 						System.out.println("Warning: KeyboardShortcut already bound to " + ((KeyboardBranch<?, ?>)branch).action(mask, key) + " in " + branch.name());
-		setBinding(mask, agent.keyCode(key), action);
+		setBinding(mask, keyAgent.keyCode(key), action);
 	}
 
 	/**
 	 * Removes key shortcut binding (if present).
 	 */
 	public void removeBinding(char key) {
-		removeBinding(agent.keyCode(key));
+		removeBinding(keyAgent.keyCode(key));
 	}
 
 	public void removeBinding(int mask, char key) {
-		removeBinding(mask, agent.keyCode(key));
+		removeBinding(mask, keyAgent.keyCode(key));
 	}
 
 	/**
 	 * Returns {@code true} if the key shortcut is bound to a (Keyboard) action.
 	 */
 	public boolean hasBinding(char key) {
-		return hasBinding(agent.keyCode(key));
+		return hasBinding(keyAgent.keyCode(key));
 	}
 
 	public boolean hasBinding(int mask, char key) {
-		return hasBinding(mask, agent.keyCode(key));
+		return hasBinding(mask, keyAgent.keyCode(key));
 	}
 
 	/**
@@ -159,10 +161,10 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	 * is bound to the given shortcut.
 	 */
 	public A action(char key) {
-		return action(agent.keyCode(key));
+		return action(keyAgent.keyCode(key));
 	}
 
 	public A action(int mask, char key) {
-		return action(mask, agent.keyCode(key));
+		return action(mask, keyAgent.keyCode(key));
 	}
 }

@@ -10,14 +10,13 @@
 
 package remixlab.dandelion.agent;
 
-import remixlab.bias.branch.*;
+import remixlab.bias.agent.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.event.shortcut.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-public class MotionAgent<A extends Action<MotionAction>> extends Agent {
+public class MotionAgent<A extends Action<MotionAction>> extends InteractiveMotionAgent {
 	protected AbstractScene																scene;
 	protected MotionBranch<MotionAction, A, ClickAction>	eyeBranch;
 	protected MotionBranch<MotionAction, A, ClickAction>	frameBranch;
@@ -71,22 +70,6 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 		return wSens;
 	}
 	
-	//TODO discard me, use only next method
-	@Override
-	protected boolean appendBranch(Branch<?, ?, ?> branch) {
-		if (branch instanceof MotionBranch)
-			return super.appendBranch(branch);
-		else {
-			System.out.println("Branch should be instanceof MotionBranch to be appended");
-			return false;
-		}
-	}
-	
-	//TODO what would be the method signature in Agent class this method overrides? (might allow to make all branch constructors protected)
-	public <E extends Enum<E>, B extends Action<E>, C extends Action<E>> MotionBranch<E, B, C> appendBranch() {
-		return new MotionBranch<E, B, C>(this, "my_motion_branch");
-	}
-	
 	@Override
 	public boolean addGrabber(Grabber frame) {
 		if (frame instanceof InteractiveFrame)
@@ -118,14 +101,14 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	}
 
 	/**
-	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
+	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.MotionShortcut}s.
 	 */
 	public Profile<MotionAction, MotionShortcut, A> eyeProfile() {
 		return eyeBranch().profile();
 	}
 
 	/**
-	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.MotionShortcut}s.
+	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.MotionShortcut}s.
 	 */
 	public Profile<MotionAction, MotionShortcut, A> frameProfile() {
 		return frameBranch().profile();
@@ -136,14 +119,14 @@ public class MotionAgent<A extends Action<MotionAction>> extends Agent {
 	}
 
 	/**
-	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.ClickShortcut}s.
+	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.ClickShortcut}s.
 	 */
 	public Profile<MotionAction, ClickShortcut, ClickAction> eyeClickProfile() {
 		return eyeBranch().clickProfile();
 	}
 
 	/**
-	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.shortcut.ClickShortcut}s.
+	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.ClickShortcut}s.
 	 */
 	public Profile<MotionAction, ClickShortcut, ClickAction> frameClickProfile() {
 		return frameBranch().clickProfile();

@@ -11,12 +11,11 @@
 package remixlab.bias.event;
 
 import remixlab.bias.core.BogusEvent;
-import remixlab.bias.event.shortcut.ClickShortcut;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
 /**
- * A click event encapsulates a {@link remixlab.bias.event.shortcut.ClickShortcut} and it's defined by the number of
+ * A click event encapsulates a {@link remixlab.bias.event.ClickShortcut} and it's defined by the number of
  * clicks. A click event holds the position where the event occurred ({@link #x()} and {@link #y()}).
  * 
  */

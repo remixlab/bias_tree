@@ -28,8 +28,8 @@ import remixlab.util.Copyable;
  * <p>
  * The default implementation here holds only a single {@link remixlab.bias.core.Profile} (see
  * {@link #profile()}) attribute (note that we use the type of the Profile to parameterize the Branch). Different
- * profile groups are provided by the {@link remixlab.bias.branch.MotionBranch} and the
- * {@link remixlab.bias.branch.KeyboardBranch} specializations, which roughly represent an HIDevice (like a kinect) and
+ * profile groups are provided by the {@link remixlab.bias.agent.MotionBranch} and the
+ * {@link remixlab.bias.agent.KeyboardBranch} specializations, which roughly represent an HIDevice (like a kinect) and
  * a generic keyboard, respectively.
  * <p>
  * Third-parties implementations should "simply":

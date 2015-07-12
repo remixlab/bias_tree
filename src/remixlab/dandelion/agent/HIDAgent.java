@@ -12,7 +12,6 @@ package remixlab.dandelion.agent;
 
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
-import remixlab.bias.event.shortcut.MotionShortcut;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 

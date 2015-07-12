@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.event.shortcut;
+package remixlab.bias.event;
 
 import remixlab.bias.core.Shortcut;
 import remixlab.util.Copyable;

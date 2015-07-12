@@ -432,11 +432,4 @@ public class Agent {
 	public boolean resetDefaultGrabber() {
 		return setDefaultGrabber(null);
 	}
-	
-	// Char hack from here
-
-	public int keyCode(char key) {
-		System.err.println("keyCode(char) should be implemented by your Agent derived class");
-		return BogusEvent.NO_ID;
-	}
 }

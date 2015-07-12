@@ -11,11 +11,10 @@
 package remixlab.bias.event;
 
 import remixlab.bias.core.BogusEvent;
-import remixlab.bias.event.shortcut.KeyboardShortcut;
 
 /**
  * A keyboard event is a {@link remixlab.bias.core.BogusEvent} specialization that encapsulates a
- * {@link remixlab.bias.event.shortcut.KeyboardShortcut}. Keyboard shortcuts may be of one form out of two: 1. A single
+ * {@link remixlab.bias.event.KeyboardShortcut}. Keyboard shortcuts may be of one form out of two: 1. A single
  * Character; or, 2. A modifier mask (such as: (B_ALT | B_SHIFT)) plus a virtual.
  * <p>
  * <b>Note</b> that virtual key codes are used to report which keyboard key has been pressed, rather than a character
@@ -35,7 +34,7 @@ public class KeyboardEvent extends BogusEvent {
 
 	/**
 	 * Constructs a keyboard event with the <b>modifiers</b> and <b>vk</b> defining its
-	 * {@link remixlab.bias.event.shortcut.KeyboardShortcut}.
+	 * {@link remixlab.bias.event.KeyboardShortcut}.
 	 */
 	public KeyboardEvent(int modifiers, int vk) {
 		super(modifiers, vk);
@@ -48,7 +47,7 @@ public class KeyboardEvent extends BogusEvent {
 	}
 
 	/**
-	 * Constructs a keyboard event with <b>c</b> defining its {@link remixlab.bias.event.shortcut.KeyboardShortcut}.
+	 * Constructs a keyboard event with <b>c</b> defining its {@link remixlab.bias.event.KeyboardShortcut}.
 	 */
 	public KeyboardEvent(int vk) {
 		super(NO_MODIFIER_MASK, vk);

@@ -8,15 +8,14 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.branch;
+package remixlab.bias.agent;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.event.shortcut.*;
 
 /**
  * An {@link remixlab.bias.core.Branch} with an extra {@link remixlab.bias.core.Profile} defining
- * {@link remixlab.bias.event.shortcut.ClickShortcut} : {@link remixlab.bias.core.Action} mappings.
+ * {@link remixlab.bias.event.ClickShortcut} : {@link remixlab.bias.core.Action} mappings.
  * <p>
  * The Agent thus is defined by two profiles: the {@link #motionProfile()} (alias for {@link #profile()} provided for
  * convenience) and the (extra) {@link #clickProfile()}.
@@ -25,16 +24,17 @@ import remixlab.bias.event.shortcut.*;
  * @param <A> Motion action enum sub-group.
  * @param <C> Click/tap action enum sub-group.
  */
-public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Action<E>> extends
-		Branch<E, A, MotionShortcut> {
+public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Action<E>> extends Branch<E, A, MotionShortcut> {
+	InteractiveMotionAgent motionAgent;
 	protected Profile<E, ClickShortcut, C>	clickProfile;
 	
 	/**
 	 * @param a {@link remixlab.bias.core.Agent} instance
 	 * @param n the branch name
 	 */
-	public MotionBranch(Agent a, String n) {
+	public MotionBranch(InteractiveMotionAgent a, String n) {
 		super(a, n);
+		motionAgent = a;
 		clickProfile = new Profile<E, ClickShortcut, C>();
 	}
 
@@ -82,7 +82,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	protected boolean handle(InteractiveGrabber<E> grabber, BogusEvent event) {
 		//TODO testing
 		if (grabber == null) {
-			throw new RuntimeException("InteractiveGrabber should never be null. Check your agent implementation!");
+			throw new RuntimeException("InteractiveGrabber should never be null. Check your motionAgent implementation!");
 		}
 		if (event == null)
 			return false;
@@ -104,7 +104,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 		
 		if (action == null)
 			return false;
-		return agent.inputHandler().enqueueEventTuple(new InteractiveEventGrabberTuple<E>(event, grabber, action));
+		return motionAgent.inputHandler().enqueueEventTuple(new InteractiveEventGrabberTuple<E>(event, grabber, action));
 	}
 
 	// high-level api (wrappers around the profile): from here nor really needed
@@ -133,7 +133,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	
 	public void setMotionBinding(int mask, int id, A action) {
 		/*
-		for(Branch<?, ?, ?> branch : agent.branches())
+		for(Branch<?, ?, ?> branch : motionAgent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
 					if(((MotionBranch<?, ?, ?>)branch).hasMotionBinding(mask, id))
@@ -144,7 +144,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 
 	public void setMotionBinding(int id, A action) {
 		/*
-		for(Branch<?, ?, ?> branch : agent.branches())
+		for(Branch<?, ?, ?> branch : motionAgent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
 					if(((MotionBranch<?, ?, ?>)branch).hasMotionBinding(id))
@@ -181,7 +181,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	
 	public void setClickBinding(int mask, int button, int ncs, C action) {
 		/*
-		for(Branch<?, ?, ?> branch : agent.branches())
+		for(Branch<?, ?, ?> branch : motionAgent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
 					if(((MotionBranch<?, ?, ?>)branch).hasClickBinding(mask, button, ncs))
@@ -192,7 +192,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 
 	public void setClickBinding(int button, int ncs, C action) {
 		/*
-		for(Branch<?, ?, ?> branch : agent.branches())
+		for(Branch<?, ?, ?> branch : motionAgent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
 					if(((MotionBranch<?, ?, ?>)branch).hasClickBinding(button, ncs))
@@ -203,7 +203,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 
 	public void setClickBinding(int button, C action) {
 		/*
-		for(Branch<?, ?, ?> branch : agent.branches())
+		for(Branch<?, ?, ?> branch : motionAgent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
 					if(((MotionBranch<?, ?, ?>)branch).hasClickBinding(button))
