@@ -93,12 +93,9 @@ public class Branch<E extends Enum<E>> implements Copyable {
 		String description = new String();
 		description += name();
 		description += "\n";
-		int i=0;
 		for(Profile<E, ?, ?>  profile : profiles())
-			if (profile.description().length() != 0) {
-				description += "Profile " + ++i + " shortcuts\n";
+			if (profile.description().length() != 0)
 				description += profile.description();
-			}
 		return description;
 	}
 

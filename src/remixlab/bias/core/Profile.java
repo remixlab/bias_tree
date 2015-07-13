@@ -167,9 +167,15 @@ public class Profile<E extends Enum<E>, K extends Shortcut, A extends Action<E>>
 	 */
 	public String description() {
 		String result = new String();
+		boolean title = false;
 		for (Entry<K, A> entry : map.entrySet())
-			if (entry.getKey() != null && entry.getValue() != null)
+			if (entry.getKey() != null && entry.getValue() != null) {
+				if(!title) {
+				  result += entry.getKey().getClass().getSimpleName() + "s:\n";
+				  title = true;
+				}
 				result += entry.getKey().description() + " -> " + entry.getValue().description() + "\n";
+			}
 		return result;
 	}
 }
