@@ -31,8 +31,8 @@ public class MotionAgent<A extends Action<MotionAction>> extends InteractiveMoti
 	public MotionAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		eyeBranch = new MotionBranch<MotionAction, A, ClickAction>(this, (n + "_eye_mouse_branch"));
-		frameBranch = new MotionBranch<MotionAction, A, ClickAction>(this, (n + "_frame_mouse_branch"));
+		eyeBranch = appendBranch(n + "_eye_mouse_branch");
+		frameBranch = appendBranch(n + "_frame_mouse_branch");
 		setPickingMode(PickingMode.MOVE);
 	}
 

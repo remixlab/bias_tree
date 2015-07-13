@@ -17,7 +17,7 @@
 
 import remixlab.proscene.*;
 import remixlab.bias.core.*;
-import remixlab.bias.branch.*;
+import remixlab.bias.agent.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
@@ -40,7 +40,7 @@ void setup() {
   for (int i = 0; i < toruses.length; i++)
     toruses[i] = new InteractiveTorus(scene);
     
-  iMotionBranch = scene.motionAgent().appendBranch();
+  iMotionBranch = scene.motionAgent().appendBranch("iMotionBranch");
   //iMotionBranch = scene.mouseAgent().frameBranch().get();//deep copy may be possible
   iMotionBranch.setMotionBinding(LEFT, DOF2Action.TRANSLATE);
   iMotionBranch.setMotionBinding(RIGHT, DOF2Action.ROTATE);
@@ -49,7 +49,7 @@ void setup() {
   
   // 2. Creating a (keyboard) branch
   //iKeyBranch = new KeyboardBranch<MotionAction, KeyboardAction>(scene.keyboardAgent(), "my_key_branch");
-  iKeyBranch = scene.keyboardAgent().appendBranch();
+  iKeyBranch = scene.keyboardAgent().appendBranch("iKeyBranch");
   iKeyBranch.setBinding('y', KeyboardAction.TRANSLATE_Y_POS);
   iKeyBranch.setBinding(Event.SHIFT, 'y', KeyboardAction.TRANSLATE_Y_NEG);
   iKeyBranch.setBinding('x', KeyboardAction.TRANSLATE_X_POS);

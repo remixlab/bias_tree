@@ -7,7 +7,6 @@ public class InteractiveKeyboardAgent extends Agent {
 		super(inputHandler, name);
 	}
 	
-	//TODO discard me, use only next method
 	@Override
 	protected boolean appendBranch(Branch<?> branch) {
 		if (branch instanceof KeyboardBranch)
@@ -18,12 +17,10 @@ public class InteractiveKeyboardAgent extends Agent {
 		}
 	}
 		
-	//TODO what would be the method signature in Agent class this method overrides? (might allow to make all branch constructors protected)
-	public <E extends Enum<E>, A extends Action<E>> KeyboardBranch<E, A> appendBranch() {
-		return new KeyboardBranch<E, A>(this, "my_key_branch");
+	public <E extends Enum<E>, A extends Action<E>> KeyboardBranch<E, A> appendBranch(String name) {
+		return new KeyboardBranch<E, A>(this, name);
 	}
 	
-	// Char hack from here
 	public int keyCode(char key) {
 		System.err.println("keyCode(char) should be implemented by your Agent derived class");
 		return BogusEvent.NO_ID;

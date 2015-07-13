@@ -33,7 +33,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	 * @param a {@link remixlab.bias.core.Agent} instance
 	 * @param n the branch name
 	 */
-	public MotionBranch(InteractiveMotionAgent a, String n) {
+	protected MotionBranch(InteractiveMotionAgent a, String n) {
 		super(a, n);
 		motionAgent = a;
 		motionProfile = new Profile<E, MotionShortcut, A>();

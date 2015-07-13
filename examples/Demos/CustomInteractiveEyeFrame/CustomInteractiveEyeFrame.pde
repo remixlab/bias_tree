@@ -14,7 +14,7 @@
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.branch.*;
+import remixlab.bias.agent.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.proscene.*;
@@ -135,7 +135,7 @@ public void setup() {
   scene = new Scene(this);    
 
   orig = scene.eyeFrame();
-  MotionBranch<GlobalAction, MyMotionAction, MyClickAction> mouseBranch = scene.mouseAgent().appendBranch();
+  MotionBranch<GlobalAction, MyMotionAction, MyClickAction> mouseBranch = scene.mouseAgent().appendBranch("mouseBranch");
   mouseBranch.setClickBinding(LEFT, 1, MyClickAction.ZOOM);
   mouseBranch.setMotionBinding(LEFT, MyMotionAction.TRANSLATE);
   mouseBranch.setMotionBinding(RIGHT, MyMotionAction.ROTATE);

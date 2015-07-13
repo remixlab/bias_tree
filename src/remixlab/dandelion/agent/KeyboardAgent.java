@@ -25,10 +25,10 @@ public class KeyboardAgent extends InteractiveKeyboardAgent {
 
 	public KeyboardAgent(AbstractScene scn, String n) {
 		super(scn.inputHandler(), n);
-		scene = scn;
-		keySceneBranch = new KeyboardBranch<GlobalAction, SceneAction>(this, "scene_keyboard_branch");
-		keyFrameBranch = new KeyboardBranch<MotionAction, KeyboardAction>(this, "frame_keyboard_branch");
-		keyEyeBranch = new KeyboardBranch<MotionAction, KeyboardAction>(this, "eye_keyboard_branch");
+		scene = scn;		
+		keySceneBranch = appendBranch("scene_keyboard_branch");
+		keyFrameBranch = appendBranch("frame_keyboard_branch");
+		keyEyeBranch = appendBranch("eye_keyboard_branch");
 		//resetDefaultGrabber();
 		addGrabber(scene);
 		setDefaultBindings();

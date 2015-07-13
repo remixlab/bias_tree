@@ -23,7 +23,7 @@ import remixlab.bias.core.*;
 public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Branch<E> {
 	InteractiveKeyboardAgent keyAgent;
 	protected Profile<E, KeyboardShortcut, A> keyProfile;
-	public KeyboardBranch(InteractiveKeyboardAgent pnt, String n) {
+	protected KeyboardBranch(InteractiveKeyboardAgent pnt, String n) {
 		super(pnt, n);
 		keyAgent = pnt;
 		keyProfile = new Profile<E, KeyboardShortcut, A>();
