@@ -44,9 +44,9 @@ import remixlab.util.Copyable;
  * @param <A> Action subgroup.
  * @param <S> Shortcut used to bind the action subgroup.
  */
-public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> implements Copyable {
-	protected Profile<E, S, A>	profile;
+public class Branch<E extends Enum<E>> implements Copyable {
 	protected List<InteractiveGrabber<E>> grabbers;
+	protected List<Profile<E, ?, ?>> profiles;
 	protected Agent					agent;
 	protected String				name;
 	protected InteractiveGrabber<E> trackedGrabber, defaultGrabber;
@@ -54,22 +54,23 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	public Branch(Agent pnt, String n) {
 		name = n;
 		agent = pnt;
-		profile = new Profile<E, S, A>();
 		grabbers = new ArrayList<InteractiveGrabber<E>>();
+		profiles = new ArrayList<Profile<E, ?, ?>>();
 		agent.appendBranch(this);
 	}
 
-	protected Branch(Branch<E, A, S> other) {
+	protected Branch(Branch<E> other) {
 		name = other.name() + "_deep-copy";
 		agent = other.agent();
-		profile = other.profile().get();
 		grabbers = new ArrayList<InteractiveGrabber<E>>();
+		for(Profile<E, ?, ?>  profile : other.profiles)
+			this.profiles.add(profile.get());
 		agent.appendBranch(this);
 	}
 
 	@Override
-	public Branch<E, A, S> get() {
-		return new Branch<E, A, S>(this);
+	public Branch<E> get() {
+		return new Branch<E>(this);
 	}
 
 	public String name() {
@@ -83,18 +84,20 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 	/**
 	 * @return the agents {@link remixlab.bias.core.Profile} instance.
 	 */
-	public Profile<E, S, A> profile() {
-		return profile;
+	public List<Profile<E, ?, ?>> profiles() {
+		return profiles;
 	}
 
 	public String info() {
 		String description = new String();
 		description += name();
 		description += "\n";
-		if (profile().description().length() != 0) {
-			description += "Shortcuts\n";
-			description += profile().description();
-		}
+		int i=0;
+		for(Profile<E, ?, ?>  profile : profiles())
+			if (profile.description().length() != 0) {
+				description += "Profile " + ++i + " shortcuts\n";
+				description += profile.description();
+			}
 		return description;
 	}
 
@@ -119,10 +122,15 @@ public class Branch<E extends Enum<E>, A extends Action<E>, S extends Shortcut> 
 			throw new RuntimeException("iGrabber should never be null. Check your agent implementation!");
 		if (event == null)
 			return false;
-		Action<E> action = profile().handle(event);
-		if (action == null)
-			return false;
-		return agent.inputHandler().enqueueEventTuple(new InteractiveEventGrabberTuple<E>(event, grabber, action));
+		
+		Action<E> action = null;
+		for(Profile<E, ?, ?>  profile : profiles()) {		
+			action = profile.handle(event);
+			if (action != null)
+				return agent.inputHandler().enqueueEventTuple(new InteractiveEventGrabberTuple<E>(event, grabber, action));
+		}
+		
+		return false;
 	}
 	
 	public boolean addGrabber(InteractiveGrabber<E> grabber) {

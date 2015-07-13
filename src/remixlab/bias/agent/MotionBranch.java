@@ -24,8 +24,9 @@ import remixlab.bias.event.*;
  * @param <A> Motion action enum sub-group.
  * @param <C> Click/tap action enum sub-group.
  */
-public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Action<E>> extends Branch<E, A, MotionShortcut> {
+public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Action<E>> extends Branch<E> {
 	InteractiveMotionAgent motionAgent;
+	protected Profile<E, MotionShortcut, A>	motionProfile;
 	protected Profile<E, ClickShortcut, C>	clickProfile;
 	
 	/**
@@ -35,7 +36,10 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	public MotionBranch(InteractiveMotionAgent a, String n) {
 		super(a, n);
 		motionAgent = a;
+		motionProfile = new Profile<E, MotionShortcut, A>();
+		profiles.add(motionProfile);
 		clickProfile = new Profile<E, ClickShortcut, C>();
+		profiles.add(clickProfile);
 	}
 
 	protected MotionBranch(MotionBranch<E, A, C> other) {
@@ -52,7 +56,7 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	 * Alias for {@link #profile()}.
 	 */
 	public Profile<E, MotionShortcut, A> motionProfile() {
-		return profile();
+		return motionProfile;
 	}
 
 	/**
@@ -60,51 +64,6 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	 */
 	public Profile<E, ClickShortcut, C> clickProfile() {
 		return clickProfile;
-	}
-
-	@Override
-	public String info() {
-		String description = new String();
-		description += name();
-		description += "\n";
-		if (clickProfile().description().length() != 0) {
-			description += "Click shortcuts\n";
-			description += clickProfile().description();
-		}
-		if (motionProfile().description().length() != 0) {
-			description += "Motion shortcuts\n";
-			description += motionProfile().description();
-		}
-		return description;
-	}
-	
-	@Override
-	protected boolean handle(InteractiveGrabber<E> grabber, BogusEvent event) {
-		//TODO testing
-		if (grabber == null) {
-			throw new RuntimeException("InteractiveGrabber should never be null. Check your motionAgent implementation!");
-		}
-		if (event == null)
-			return false;
-		
-        Action<E> action = null;
-		
-		///*
-		if (event instanceof MotionEvent)
-			action = profile().handle(event);
-		if (event instanceof ClickEvent)
-			action = clickProfile.handle(event);
-		//*/
-		
-		/*
-		action = profile().handle(event);
-		if (action == null)
-			action = clickProfile.handle(event);
-		//*/
-		
-		if (action == null)
-			return false;
-		return motionAgent.inputHandler().enqueueEventTuple(new InteractiveEventGrabberTuple<E>(event, grabber, action));
 	}
 
 	// high-level api (wrappers around the profile): from here nor really needed

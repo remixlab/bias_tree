@@ -87,15 +87,15 @@ public class KeyboardAgent extends InteractiveKeyboardAgent {
 	}
 
 	protected Profile<GlobalAction, KeyboardShortcut, SceneAction> sceneProfile() {
-		return sceneBranch().profile();
+		return sceneBranch().keyboardProfile();
 	}
 
 	protected Profile<MotionAction, KeyboardShortcut, KeyboardAction> eyeProfile() {
-		return eyeBranch().profile();
+		return eyeBranch().keyboardProfile();
 	}
 
 	protected Profile<MotionAction, KeyboardShortcut, KeyboardAction> frameProfile() {
-		return frameBranch().profile();
+		return frameBranch().keyboardProfile();
 	}
 
 	protected Profile<MotionAction, KeyboardShortcut, KeyboardAction> motionProfile(Target target) {

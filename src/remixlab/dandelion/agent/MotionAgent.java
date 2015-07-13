@@ -104,14 +104,14 @@ public class MotionAgent<A extends Action<MotionAction>> extends InteractiveMoti
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.MotionShortcut}s.
 	 */
 	public Profile<MotionAction, MotionShortcut, A> eyeProfile() {
-		return eyeBranch().profile();
+		return eyeBranch().motionProfile();
 	}
 
 	/**
 	 * Profile defining InteractiveFrame action bindings from {@link remixlab.bias.event.MotionShortcut}s.
 	 */
 	public Profile<MotionAction, MotionShortcut, A> frameProfile() {
-		return frameBranch().profile();
+		return frameBranch().motionProfile();
 	}
 
 	protected Profile<MotionAction, ClickShortcut, ClickAction> clickProfile(Target target) {

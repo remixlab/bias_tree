@@ -20,15 +20,22 @@ import remixlab.bias.core.*;
  * @param <E> Reference action enum.
  * @param <A> Action enum sub-group.
  */
-public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Branch<E, A, KeyboardShortcut> {
+public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Branch<E> {
 	InteractiveKeyboardAgent keyAgent;
+	protected Profile<E, KeyboardShortcut, A> keyProfile;
 	public KeyboardBranch(InteractiveKeyboardAgent pnt, String n) {
 		super(pnt, n);
 		keyAgent = pnt;
+		keyProfile = new Profile<E, KeyboardShortcut, A>();
+		profiles().add(keyProfile);
 	}
 
 	protected KeyboardBranch(KeyboardBranch<E, A> other) {
 		super(other);
+	}
+	
+	public Profile<E, KeyboardShortcut, A> keyboardProfile() {
+		return keyProfile;
 	}
 
 	@Override
@@ -42,56 +49,56 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	 * Removes all shortcut bindings.
 	 */
 	public void removeBindings() {
-		profile().removeBindings();
+		keyboardProfile().removeBindings();
 	}
 
 	/**
 	 * Returns {@code true} if the keyboard action is bound.
 	 */
 	public boolean isActionBound(A action) {
-		return profile().isActionBound(action);
+		return keyboardProfile().isActionBound(action);
 	}
 	
 	/**
 	 * Binds the vKey (virtual key) shortcut to the (Keyboard) action.
 	 */
 	public void setBinding(int vKey, A action) {
-		profile().setBinding(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey), action);
+		keyboardProfile().setBinding(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey), action);
 	}
 
 	/**
 	 * Binds the mask-vKey (virtual key) shortcut to the (Keyboard) action.
 	 */
 	public void setBinding(int mask, int vKey, A action) {
-		profile().setBinding(new KeyboardShortcut(mask, vKey), action);
+		keyboardProfile().setBinding(new KeyboardShortcut(mask, vKey), action);
 	}
 
 	/**
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
 	public void removeBinding(int vKey) {
-		profile().removeBinding(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
+		keyboardProfile().removeBinding(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
 	 * Removes mask-vKey (virtual key) shortcut binding (if present).
 	 */
 	public void removeBinding(int mask, int vKey) {
-		profile().removeBinding(new KeyboardShortcut(mask, vKey));
+		keyboardProfile().removeBinding(new KeyboardShortcut(mask, vKey));
 	}
 
 	/**
 	 * Returns {@code true} if the vKey (virtual key) shortcut is bound to a (Keyboard) action.
 	 */
 	public boolean hasBinding(int vKey) {
-		return profile().hasBinding(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
+		return keyboardProfile().hasBinding(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
 	 * Returns {@code true} if the mask-vKey (virtual key) shortcut is bound to a (Keyboard) action.
 	 */
 	public boolean hasBinding(int mask, int vKey) {
-		return profile().hasBinding(new KeyboardShortcut(mask, vKey));
+		return keyboardProfile().hasBinding(new KeyboardShortcut(mask, vKey));
 	}
 
 	/**
@@ -99,7 +106,7 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
 	public A action(int vKey) {
-		return profile().action(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
+		return keyboardProfile().action(new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey));
 	}
 
 	/**
@@ -107,14 +114,14 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	 * {@code null} if no action is bound to the given shortcut.
 	 */
 	public A action(int mask, int vKey) {
-		return profile().action(new KeyboardShortcut(mask, vKey));
+		return keyboardProfile().action(new KeyboardShortcut(mask, vKey));
 	}
 	
 	/**
 	 * Binds the key shortcut to the (Keyboard) action.
 	 */
 	public void setBinding(char key, A action) {
-		for(Branch<?, ?, ?> branch : keyAgent.branches())
+		for(Branch<?> branch : keyAgent.branches())
 			if(branch instanceof KeyboardBranch)
 				if(branch != this)
 					if(((KeyboardBranch<?, ?>)branch).hasBinding(key))
@@ -126,7 +133,7 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	 * Binds the key shortcut to the (Keyboard) action.
 	 */
 	public void setBinding(int mask, char key, A action) {
-		for(Branch<?, ?, ?> branch : keyAgent.branches())
+		for(Branch<?> branch : keyAgent.branches())
 			if(branch instanceof KeyboardBranch)
 				if(branch != this)
 					if(((KeyboardBranch<?, ?>)branch).hasBinding(mask, key))

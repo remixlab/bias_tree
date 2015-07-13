@@ -25,7 +25,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	// TODO new experimenting with textures
 	protected PImage    tex;
 		
-	public <K extends Branch<E, ?/* extends Action<E> */, ?>> InteractiveModelObject(Scene scn, Agent a, K actionAgent,
+	public <K extends Branch<E>> InteractiveModelObject(Scene scn, Agent a, K actionAgent,
 			PShape ps, PImage texture) {
 		scene = scn;
 		pshape = ps;
@@ -38,7 +38,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	//--
 
 	// public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent, PShape ps) {
-	public <K extends Branch<E, ?/* extends Action<E> */, ?>> InteractiveModelObject(Scene scn, Agent a, K actionAgent,
+	public <K extends Branch<E>> InteractiveModelObject(Scene scn, Agent a, K actionAgent,
 			PShape ps) {
 		scene = scn;
 		pshape = ps;
@@ -47,7 +47,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		id = ++Scene.modelCount;
 	}
 
-	public <K extends Branch<E, ?/* extends Action<E> */, ?>> InteractiveModelObject(Scene scn, Agent a, K actionAgent) {
+	public <K extends Branch<E>> InteractiveModelObject(Scene scn, Agent a, K actionAgent) {
 		// public ActionModelObject(Scene scn, Agent a, ActionAgent<E, ? extends Action<E>> actionAgent) {
 		scene = scn;
 		if (scene.addModel(this))

@@ -12,7 +12,7 @@ public class InteractiveMotionAgent extends Agent {
 	
 	//TODO discard me, use only next method
 	@Override
-	protected boolean appendBranch(Branch<?, ?, ?> branch) {
+	protected boolean appendBranch(Branch<?> branch) {
 		if (branch instanceof MotionBranch)
 			return super.appendBranch(branch);
 		else {

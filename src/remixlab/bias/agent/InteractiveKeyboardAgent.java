@@ -9,7 +9,7 @@ public class InteractiveKeyboardAgent extends Agent {
 	
 	//TODO discard me, use only next method
 	@Override
-	protected boolean appendBranch(Branch<?, ?, ?> branch) {
+	protected boolean appendBranch(Branch<?> branch) {
 		if (branch instanceof KeyboardBranch)
 			return super.appendBranch(branch);
 		else {
