@@ -48,7 +48,6 @@ void setup() {
   //scene.mouseAgent().addGrabber(toruses[3].iFrame, iMotionBranch);//same as prev line
   
   // 2. Creating a (keyboard) branch
-  //iKeyBranch = new KeyboardBranch<MotionAction, KeyboardAction>(scene.keyboardAgent(), "my_key_branch");
   iKeyBranch = scene.keyboardAgent().appendBranch("iKeyBranch");
   iKeyBranch.setBinding('y', KeyboardAction.TRANSLATE_Y_POS);
   iKeyBranch.setBinding(Event.SHIFT, 'y', KeyboardAction.TRANSLATE_Y_NEG);

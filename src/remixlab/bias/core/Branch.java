@@ -63,6 +63,7 @@ public class Branch<E extends Enum<E>> implements Copyable {
 		name = other.name() + "_deep-copy";
 		agent = other.agent();
 		grabbers = new ArrayList<InteractiveGrabber<E>>();
+		profiles = new ArrayList<Profile<E, ?, ?>>();
 		for(Profile<E, ?, ?>  profile : other.profiles)
 			this.profiles.add(profile.get());
 		agent.appendBranch(this);

@@ -32,15 +32,18 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 
 	protected KeyboardBranch(KeyboardBranch<E, A> other) {
 		super(other);
-	}
-	
-	public Profile<E, KeyboardShortcut, A> keyboardProfile() {
-		return keyProfile;
+		profiles.clear();
+		keyProfile = other.keyboardProfile().get();
+		profiles.add(keyProfile);
 	}
 
 	@Override
 	public KeyboardBranch<E, A> get() {
 		return new KeyboardBranch<E, A>(this);
+	}
+	
+	public Profile<E, KeyboardShortcut, A> keyboardProfile() {
+		return keyProfile;
 	}
 	
 	// high-level api (wrappers around the profile): from here nor really needed

@@ -36,7 +36,6 @@ package remixlab.bias.core;
  * <pre>
  * {@code
  * public class MyInteractiveObject extends InteractiveGrabber<GlobalAction> {
- *   @Override
  *   public void performInteraction(BogusEvent event) {
  *     switch (action().referenceAction()) {
  *       case CHANGE_COLOR:
@@ -62,7 +61,6 @@ public interface InteractiveGrabber<E extends Enum<E>> extends Grabber {
 	 * 
 	 * <pre>
      * {@code
-	 * @Override
 	 * public void setAction(Action<E> a) {
 	 *	 action = a;
 	 * }
@@ -77,7 +75,6 @@ public interface InteractiveGrabber<E extends Enum<E>> extends Grabber {
 	 * 
 	 * <pre>
      * {@code
-	 * @Override
 	 * public Action<E> action() {
 	 *   return action;
 	 * }
