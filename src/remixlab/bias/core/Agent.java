@@ -179,7 +179,6 @@ public class Agent {
 			setDefaultGrabber(null);
 		if(branch == this.trackedGrabberBranch)
 			trackedGrabber = null;
-			//tGrabberBranch = null;
 	}
 
 	public void resetBranches() {
@@ -208,7 +207,7 @@ public class Agent {
 		String description = new String();
 		description += name();
 		description += "\n";
-		description += "ActionAgents' info\n";
+		description += "Branches' info\n";
 		int index = 1;
 		for (Branch<?> branch : brnchs) {
 			description += index;

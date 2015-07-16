@@ -16,42 +16,37 @@ import java.util.List;
 import remixlab.util.Copyable;
 
 /**
- * A Branch handles a list of {@link remixlab.bias.core.InteractiveGrabber} objects (see {@link #grabbers()})
- * implementing the @param <E> action set which is bound to an input entity such as the mouse or a touch screen.
+ * A Branch handles a list of {@link remixlab.bias.core.InteractiveGrabber} objects ({@link #grabbers()},
+ * implementing the same reference action set which is used to parameterize the branch.
+ * A branch, in turn, is handled by the {@link remixlab.bias.core.Agent} to which it's appended (e.g.,
+ * {@link remixlab.bias.agent.InteractiveMotionAgent#appendBranch(String)} or
+ * {@link remixlab.bias.agent.InteractiveKeyboardAgent#appendBranch(String)}).
  * <p>
- * 
- * 
- * A branch holds some {@link remixlab.bias.core.Profile}s relating the same reference action set (defined by
- * the enum parameter type). The branch uses the {@link remixlab.bias.core.Shortcut} :
- * {@link remixlab.bias.core.Action} mappings defined by each of its Profiles to parse the
- * {@link remixlab.bias.core.BogusEvent} into an user-defined {@link remixlab.bias.core.Action}.
+ * To add/remove an {@link remixlab.bias.core.InteractiveGrabber} object to/from a Branch, use 
+ * {@link #addGrabber(InteractiveGrabber)} and {@link #removeGrabber(Grabber)}), respectively. The same
+ * operations may be performed directly from the agent to which the branch is appended (see
+ * {@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, Branch)}
+ * and {@link remixlab.bias.core.Agent#removeGrabber(Grabber)}. 
  * <p>
- * The default implementation here holds only a single {@link remixlab.bias.core.Profile} (see
- * {@link #profile()}) attribute (note that we use the type of the Profile to parameterize the Branch). Different
- * profile groups are provided by the {@link remixlab.bias.agent.MotionBranch} and the
- * {@link remixlab.bias.agent.KeyboardBranch} specializations, which roughly represent an HIDevice (like a kinect) and
- * a generic keyboard, respectively.
- * <p>
- * Third-parties implementations should "simply":
- * <ul>
- * <li>Derive from the Branch above that best fits their needs and add it into an agent (
- * {@link remixlab.bias.core.Agent#appendBranch(Branch)}).</li>
- * <li>Configure its profiles.
- * <li>Add some grabbers into the branch ({@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, Branch)}).</li>
- * </ul>.
+ * <b>Note</b> that the {@link remixlab.bias.agent.MotionBranch} and the
+ * {@link remixlab.bias.agent.KeyboardBranch} branch specializations cover all
+ * {@link remixlab.bias.core.BogusEvent} / {@link remixlab.bias.core.Shortcut} types provided in bias.
+ * While a {@link remixlab.bias.agent.InteractiveMotionAgent} handles the former, a
+ * {@link remixlab.bias.agent.InteractiveKeyboardAgent} handles the latter.
  *
- * @param <E> Reference action.
- * @param <A> Action subgroup.
- * @param <S> Shortcut used to bind the action subgroup.
+ * @param <E> 'Reference' enum action set.
  */
 public class Branch<E extends Enum<E>> implements Copyable {
+	// TODO: describe in the api above how to implement custom branches (BogusEvent-> Shortcut-> CustomBranch,
+	//see KeyboardBranch)
+	
 	protected List<InteractiveGrabber<E>> grabbers;
 	protected List<Profile<E, ?, ?>> profiles;
 	protected Agent					agent;
 	protected String				name;
 	protected InteractiveGrabber<E> trackedGrabber, defaultGrabber;
 
-	public Branch(Agent pnt, String n) {
+	protected Branch(Agent pnt, String n) {
 		name = n;
 		agent = pnt;
 		grabbers = new ArrayList<InteractiveGrabber<E>>();
@@ -74,21 +69,27 @@ public class Branch<E extends Enum<E>> implements Copyable {
 		return new Branch<E>(this);
 	}
 
+	/**
+	 * @return branch name
+	 */
 	public String name() {
 		return name;
 	}
 
+	/**
+	 * Returns the {@link remixlab.bias.core.Agent} to which this branch is appended.
+	 */
 	public Agent agent() {
 		return agent;
 	}
 
-	/**
-	 * @return the agents {@link remixlab.bias.core.Profile} instance.
-	 */
-	public List<Profile<E, ?, ?>> profiles() {
+	protected List<Profile<E, ?, ?>> profiles() {
 		return profiles;
 	}
 
+	/**
+	 * Returns a description of the branch bindings.
+	 */
 	public String info() {
 		String description = new String();
 		description += name();
@@ -100,21 +101,33 @@ public class Branch<E extends Enum<E>> implements Copyable {
 	}
 
 	/**
-	 * The {@link #profile()} is used to parse the event into an user-defined action which is then set into the grabber
-	 * (see {@link remixlab.bias.core.InteractiveGrabber#setAction(Action)}) and returned.
-	 */
+	 * Internal use.
+	 * <p>
+	 * Same as {@code return handle(trackedGrabber, event)}.
+	 */	
 	protected boolean handleTrackedGrabber(BogusEvent event) {
 		if(trackedGrabber != agent.trackedGrabber())
 			throw new RuntimeException("faulty tracked-grabber in branch!");
 		return handle(trackedGrabber, event);
 	}
 	
+	/**
+	 * Internal use.
+	 * <p>
+	 * Same as {@code return handle(defaultGrabber, event)}.
+	 */
 	protected boolean handleDefaultGrabber(BogusEvent event) {
 		if(defaultGrabber != agent.defaultGrabber())
 			throw new RuntimeException("faulty default-grabber in branch!");
 		return handle(defaultGrabber, event);
 	}
 	
+	/**
+	 * Parses the {@link remixlab.bias.core.BogusEvent} (i.e., see if it carries an {@link remixlab.bias.core.Action})
+	 * using the branch {@link #profiles()}.
+	 * <p>
+	 * Returns true if a non-null action is enqueued for later execution (see {@link remixlab.bias.core.InputHandler#handle()}). 
+	 */
 	protected boolean handle(InteractiveGrabber<E> grabber, BogusEvent event) {
 		if (grabber == null)
 			throw new RuntimeException("iGrabber should never be null. Check your agent implementation!");
@@ -131,6 +144,10 @@ public class Branch<E extends Enum<E>> implements Copyable {
 		return false;
 	}
 	
+	/**
+	 * Adds grabber to the branch. If the {@link #agent()} to which the branch is appended  , the grabber
+	 * is first remove, i.e., the grabber is re-branched.
+	 */
 	public boolean addGrabber(InteractiveGrabber<E> grabber) {
 		if (grabber == null || this.hasGrabber(grabber))
 			return false;
@@ -140,14 +157,23 @@ public class Branch<E extends Enum<E>> implements Copyable {
 		return grabbers.add(grabber);
 	}
 	
+	/**
+	 * Removes the grabber to the branch.
+	 */
 	public boolean removeGrabber(Grabber grabber) {
 		return grabbers.remove(grabber);
 	}
 	
+	/**
+	 * Returns the list of {@link remixlab.bias.core.InteractiveGrabber} objects handled by this branch.
+	 */
 	public List<InteractiveGrabber<E>> grabbers() {
 		return grabbers;
 	}
 	
+	/**
+	 * Returns true if the given grabber is in the {@link #grabbers()} list and false otherwise.
+	 */
 	public boolean hasGrabber(Grabber grabber) {
 		if (grabber == null)
 			return false;
@@ -160,10 +186,16 @@ public class Branch<E extends Enum<E>> implements Copyable {
 		// */
 	}
 	
+	/**
+	 * Remove all  {@link remixlab.bias.core.InteractiveGrabber} objects from this branch.
+	 */
 	public void reset() {
 		grabbers.clear();
 	}
 	
+	/**
+	 * Internal use, issued by the agent.
+	 */
 	protected InteractiveGrabber<E> updateTrackedGrabber(BogusEvent event) {
 		//trackedGrabber = null;
 		for (InteractiveGrabber<E> g : grabbers())
@@ -175,6 +207,9 @@ public class Branch<E extends Enum<E>> implements Copyable {
 		return null;
 	}
 	
+	/**
+	 * Internal use, issued by the agent.
+	 */
 	protected boolean setDefaultGrabber(Grabber grabber) {
 		//defaultGrabber = null;
 		for (InteractiveGrabber<E> g : grabbers())

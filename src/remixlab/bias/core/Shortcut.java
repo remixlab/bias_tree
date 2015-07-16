@@ -15,10 +15,24 @@ import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
 /**
- * Shortcuts are BogusEvent means to bind user-defined actions.
+ * Shortcuts are {@link remixlab.bias.core.BogusEvent} means to bind user-defined actions.
+ * Note that shortcut/{@link remixlab.bias.core.Action} bindings are handled by a
+ * {@link remixlab.bias.core.Profile}.
  * <p>
- * Shortcuts can represent, for instance, the button being dragged and the modifier key pressed at the very moment an
- * user interaction takes place, such as when she/he drags a giving mouse button while pressing the 'CTRL' modifier key.
+ * Every {@link remixlab.bias.core.BogusEvent} instance has a shortcut which can represent, for instance,
+ * the button being dragged and the modifier key pressed at the very moment an user interaction takes place,
+ * such as when she/he drags a giving mouse button while pressing the 'CTRL' modifier key.
+ * <p>
+ * Different bogus event types are related to different shortcuts. Our current implementation supports the
+ * following event/shortcut types:
+ * <ol>
+ * <li>{@link remixlab.bias.event.MotionEvent} / {@link remixlab.bias.event.MotionShortcut}.
+ * Note that motion-event derived classes: {@link remixlab.bias.event.DOF1Event},
+ * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event},
+ * {@link remixlab.bias.event.DOF6Event}, are also related to motion shortcuts.</li>
+ * <li>{@link remixlab.bias.event.ClickEvent} / {@link remixlab.bias.event.ClickShortcut}</li>
+ * <li>{@link remixlab.bias.event.KeyboardEvent} / {@link remixlab.bias.event.KeyboardShortcut}</li>
+ * </ol>
  */
 public class Shortcut implements Copyable {
 	@Override

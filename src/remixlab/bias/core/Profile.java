@@ -20,10 +20,11 @@ import remixlab.util.*;
  * A mapping between {@link remixlab.bias.core.Shortcut}s and user-defined {@link remixlab.bias.core.Action}s,
  * implemented as a parameterized hash-map wrap.
  * 
- * @param <K>
- *          {@link remixlab.bias.core.Shortcut}
- * @param <A>
- *          {@link remixlab.bias.core.Action} : User-defined action.
+ * @param <E> 'Reference' enum action set, used to parameterize the user-defined action.
+ * 
+ * @param <K> {@link remixlab.bias.core.Shortcut}
+ * 
+ * @param <A> User-defined {@link remixlab.bias.core.Action}.
  */
 public class Profile<E extends Enum<E>, K extends Shortcut, A extends Action<E>> implements Copyable {
 	@Override

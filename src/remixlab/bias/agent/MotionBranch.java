@@ -14,11 +14,10 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
 /**
- * An {@link remixlab.bias.core.Branch} with an extra {@link remixlab.bias.core.Profile} defining
- * {@link remixlab.bias.event.ClickShortcut} : {@link remixlab.bias.core.Action} mappings.
+ * A {@link remixlab.bias.core.Branch} with a {@link #motionProfile()} and a {@link #clickProfile()}.
  * <p>
- * The Agent thus is defined by two profiles: the {@link #motionProfile()} and the 
- * {@link #clickProfile()}.
+ * <b>Note</b> that all the methods provided here are simply wrappers to the {@link #motionProfile()} and
+ * {@link #clickProfile()}. See {@link remixlab.bias.core.Profile}.
  *
  * @param <E> Reference action enum.
  * @param <A> Motion action enum sub-group.
@@ -29,10 +28,6 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	protected Profile<E, MotionShortcut, A>	motionProfile;
 	protected Profile<E, ClickShortcut, C>	clickProfile;
 	
-	/**
-	 * @param a {@link remixlab.bias.core.Agent} instance
-	 * @param n the branch name
-	 */
 	protected MotionBranch(InteractiveMotionAgent a, String n) {
 		super(a, n);
 		motionAgent = a;
@@ -94,6 +89,9 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	
 	//
 	
+	/**
+	 * Binds the mask-id shortcut to the (motion) action.
+	 */
 	public void setMotionBinding(int mask, int id, A action) {
 		/*
 		for(Branch<?> branch : motionAgent.branches())
@@ -105,6 +103,9 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 		motionProfile().setBinding(new MotionShortcut(mask, id), action);
 	}
 
+	/**
+	 * Binds the id shortcut to the (motion) action.
+	 */
 	public void setMotionBinding(int id, A action) {
 		/*
 		for(Branch<?> branch : motionAgent.branches())
@@ -116,98 +117,157 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 		motionProfile().setBinding(new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, id), action);
 	}
 
+	/**
+	 * Removes the mask-id binding (if present).
+	 */
 	public void removeMotionBinding(int mask, int id) {
 		motionProfile().removeBinding(new MotionShortcut(mask, id));
 	}
 
+	/**
+	 * Removes id shortcut binding (if present).
+	 */
 	public void removeMotionBinding(int id) {
 		motionProfile().removeBinding(new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, id));
 	}
 
+	/**
+	 * Returns {@code true} if the mask-id binds a (motion) action.
+	 */
 	public boolean hasMotionBinding(int mask, int id) {
 		return motionProfile().hasBinding(new MotionShortcut(mask, id));
 	}
 
+	/**
+	 * Returns {@code true} if the id binds a (motion) action.
+	 */
 	public boolean hasMotionBinding(int id) {
 		return motionProfile().hasBinding(new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, id));
 	}
 
+	/**
+	 * Returns the (motion) action that is bound to the given mask-id. Returns
+	 * {@code null} if no action is bound.
+	 */
 	public A motionAction(int mask, int id) {
 		return motionProfile().action(new MotionShortcut(mask, id));
 	}
 
+	/**
+	 * Returns the (motion) action that is bound to the given id. Returns
+	 * {@code null} if no action is bound.
+	 */
 	public A motionAction(int id) {
 		return motionProfile().action(new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, id));
 	}
 	
 	// click
 	
-	public void setClickBinding(int mask, int button, int ncs, C action) {
+	/**
+	 * Binds the mask/id/click-count shortcut to the (click) action.
+	 */
+	public void setClickBinding(int mask, int id, int ncs, C action) {
 		/*
 		for(Branch<?> branch : motionAgent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
-					if(((MotionBranch<?, ?, ?>)branch).hasClickBinding(mask, button, ncs))
-						System.out.println("Warning: ClickShortcut already bound to " + ((MotionBranch<?, ?, ?>)branch).clickAction(mask, button, ncs) + " in " + branch.name());
+					if(((MotionBranch<?, ?, ?>)branch).hasClickBinding(mask, id, ncs))
+						System.out.println("Warning: ClickShortcut already bound to " + ((MotionBranch<?, ?, ?>)branch).clickAction(mask, id, ncs) + " in " + branch.name());
 	    //*/
-		clickProfile().setBinding(new ClickShortcut(mask, button, ncs), action);
+		clickProfile().setBinding(new ClickShortcut(mask, id, ncs), action);
 	}
 
-	public void setClickBinding(int button, int ncs, C action) {
+	/**
+	 * Binds the id/click-count shortcut to the (click) action.
+	 */
+	public void setClickBinding(int id, int ncs, C action) {
 		/*
 		for(Branch<?> branch : motionAgent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
-					if(((MotionBranch<?, ?, ?>)branch).hasClickBinding(button, ncs))
-						System.out.println("Warning: ClickShortcut already bound to " + ((MotionBranch<?, ?, ?>)branch).clickAction(button, ncs) + " in " + branch.name());
+					if(((MotionBranch<?, ?, ?>)branch).hasClickBinding(id, ncs))
+						System.out.println("Warning: ClickShortcut already bound to " + ((MotionBranch<?, ?, ?>)branch).clickAction(id, ncs) + " in " + branch.name());
 		//*/
-		clickProfile().setBinding(new ClickShortcut(button, ncs), action);
+		clickProfile().setBinding(new ClickShortcut(id, ncs), action);
 	}
 
-	public void setClickBinding(int button, C action) {
+	/**
+	 * Binds id to the (click) action.
+	 */
+	public void setClickBinding(int id, C action) {
 		/*
 		for(Branch<?> branch : motionAgent.branches())
 			if(branch instanceof MotionBranch)
 				if(branch != this)
-					if(((MotionBranch<?, ?, ?>)branch).hasClickBinding(button))
-						System.out.println("Warning: ClickShortcut already bound to " + ((MotionBranch<?, ?, ?>)branch).clickAction(button) + " in " + branch.name());
+					if(((MotionBranch<?, ?, ?>)branch).hasClickBinding(id))
+						System.out.println("Warning: ClickShortcut already bound to " + ((MotionBranch<?, ?, ?>)branch).clickAction(id) + " in " + branch.name());
 		//*/
-		clickProfile().setBinding(new ClickShortcut(button, 1), action);
+		clickProfile().setBinding(new ClickShortcut(id, 1), action);
 	}
 
-	public void removeClickBinding(int mask, int button, int ncs) {
-		clickProfile().removeBinding(new ClickShortcut(mask, button, ncs));
+	/**
+	 * Removes the mask/id/click-count binding (if present).
+	 */
+	public void removeClickBinding(int mask, int id, int ncs) {
+		clickProfile().removeBinding(new ClickShortcut(mask, id, ncs));
 	}
 
-	public void removeClickBinding(int button, int ncs) {
-		clickProfile().removeBinding(new ClickShortcut(button, ncs));
+	/**
+	 * Removes the id/click-count binding (if present).
+	 */
+	public void removeClickBinding(int id, int ncs) {
+		clickProfile().removeBinding(new ClickShortcut(id, ncs));
 	}
 
-	public void removeClickBinding(int button) {
-		clickProfile().removeBinding(new ClickShortcut(button, 1));
+	/**
+	 * Removes the id binding (if present).
+	 */
+	public void removeClickBinding(int id) {
+		clickProfile().removeBinding(new ClickShortcut(id, 1));
 	}
 
-	public boolean hasClickBinding(int mask, int button, int ncs) {
-		return clickProfile().hasBinding(new ClickShortcut(mask, button, ncs));
+	/**
+	 * Returns {@code true} if the mask/id/click-count binds a (click) action.
+	 */
+	public boolean hasClickBinding(int mask, int id, int ncs) {
+		return clickProfile().hasBinding(new ClickShortcut(mask, id, ncs));
 	}
 
-	public boolean hasClickBinding(int button, int ncs) {
-		return clickProfile().hasBinding(new ClickShortcut(button, ncs));
+	/**
+	 * Returns {@code true} if the id/click-count binds a (click) action.
+	 */
+	public boolean hasClickBinding(int id, int ncs) {
+		return clickProfile().hasBinding(new ClickShortcut(id, ncs));
 	}
 
-	public boolean hasClickBinding(int button) {
-		return clickProfile().hasBinding(new ClickShortcut(button, 1));
+	/**
+	 * Returns {@code true} if id binds a (click) action.
+	 */
+	public boolean hasClickBinding(int id) {
+		return clickProfile().hasBinding(new ClickShortcut(id, 1));
 	}
 
-	public C clickAction(int mask, int button, int ncs) {
-		return clickProfile().action(new ClickShortcut(mask, button, ncs));
+	/**
+	 * Returns the (click) action that is bound to the given mask/id/click-count shortcut. Returns
+	 * {@code null} if no action is bound.
+	 */
+	public C clickAction(int mask, int id, int ncs) {
+		return clickProfile().action(new ClickShortcut(mask, id, ncs));
 	}
 
-	public C clickAction(int button, int ncs) {
-		return clickProfile().action(new ClickShortcut(button, ncs));
+	/**
+	 * Returns the (click) action that is bound to the given id/click-count shortcut. Returns
+	 * {@code null} if no action is bound.
+	 */
+	public C clickAction(int id, int ncs) {
+		return clickProfile().action(new ClickShortcut(id, ncs));
 	}
 
-	public C clickAction(int button) {
-		return clickProfile().action(new ClickShortcut(button, 1));
+	/**
+	 * Returns the (click) action that is bound to the given id. Returns
+	 * {@code null} if no action is bound.
+	 */
+	public C clickAction(int id) {
+		return clickProfile().action(new ClickShortcut(id, 1));
 	}
 }
