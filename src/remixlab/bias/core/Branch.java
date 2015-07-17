@@ -17,22 +17,27 @@ import remixlab.util.Copyable;
 
 /**
  * A Branch handles a list of {@link remixlab.bias.core.InteractiveGrabber} objects ({@link #grabbers()},
- * implementing the same reference action set which is used to parameterize the branch.
- * A branch, in turn, is handled by the {@link remixlab.bias.core.Agent} to which it's appended (e.g.,
- * {@link remixlab.bias.agent.InteractiveMotionAgent#appendBranch(String)} or
- * {@link remixlab.bias.agent.InteractiveKeyboardAgent#appendBranch(String)}).
+ * implementing the same reference action set used to parameterize it. A branch, in turn, is handled by
+ * the agent to which it is appended, see:
+ * {@link remixlab.bias.agent.InteractiveMotionAgent#appendBranch(String)} and
+ * {@link remixlab.bias.agent.InteractiveKeyboardAgent#appendBranch(String)}.
+ * Branches are used by agents to parse a {@link remixlab.bias.core.BogusEvent} into
+ * an {@link remixlab.bias.core.InteractiveGrabber} object {@link remixlab.bias.core.Action}
+ * (see {@link #handle(InteractiveGrabber, BogusEvent)}).
  * <p>
  * To add/remove an {@link remixlab.bias.core.InteractiveGrabber} object to/from a Branch, use 
  * {@link #addGrabber(InteractiveGrabber)} and {@link #removeGrabber(Grabber)}), respectively. The same
- * operations may be performed directly from the agent to which the branch is appended (see
+ * operations may be performed directly from the agent (to which the branch is appended): 
  * {@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, Branch)}
- * and {@link remixlab.bias.core.Agent#removeGrabber(Grabber)}. 
+ * and {@link remixlab.bias.core.Agent#removeGrabber(Grabber)}.
  * <p>
- * <b>Note</b> that the {@link remixlab.bias.agent.MotionBranch} and the
- * {@link remixlab.bias.agent.KeyboardBranch} branch specializations cover all
- * {@link remixlab.bias.core.BogusEvent} / {@link remixlab.bias.core.Shortcut} types provided in bias.
- * While a {@link remixlab.bias.agent.InteractiveMotionAgent} handles the former, a
- * {@link remixlab.bias.agent.InteractiveKeyboardAgent} handles the latter.
+ * <b>Observation</b>: to parse bogus-events branches internally use some {@link remixlab.bias.core.Profile}s
+ * (see {@link #profiles()}). For instance, the {@link remixlab.bias.agent.MotionBranch} has a
+ * {@link remixlab.bias.agent.MotionBranch#motionProfile()} and a
+ * {@link remixlab.bias.agent.MotionBranch#clickProfile()}) to be able to parse
+ * {@link remixlab.bias.event.MotionEvent}s and {@link remixlab.bias.event.ClickEvent}s, resp. Similarly, to
+ * parse {@link remixlab.bias.event.KeyboardEvent}s, a {@link remixlab.bias.agent.KeyboardBranch} uses a
+ * {@link remixlab.bias.agent.KeyboardBranch#keyboardProfile()}.
  *
  * @param <E> 'Reference' enum action set.
  */

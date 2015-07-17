@@ -21,9 +21,10 @@ import remixlab.util.HashCodeBuilder;
  * <p>
  * Every {@link remixlab.bias.core.BogusEvent} instance has a shortcut which can represent, for instance,
  * the button being dragged and the modifier key pressed at the very moment an user interaction takes place,
- * such as when she/he drags a giving mouse button while pressing the 'CTRL' modifier key.
+ * such as when she/he drags a giving mouse button while pressing the 'CTRL' modifier key (see
+ * {@link remixlab.bias.core.BogusEvent#shortcut()}).
  * <p>
- * Different bogus event types are related to different shortcuts. Our current implementation supports the
+ * Different bogus event types are related to different shortcuts. The current implementation supports the
  * following event/shortcut types:
  * <ol>
  * <li>{@link remixlab.bias.event.MotionEvent} / {@link remixlab.bias.event.MotionShortcut}.

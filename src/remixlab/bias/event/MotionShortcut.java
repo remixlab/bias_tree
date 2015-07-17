@@ -14,7 +14,7 @@ import remixlab.bias.core.Shortcut;
 import remixlab.util.Copyable;
 
 /**
- * This class represents button shortcuts.
+ * This class represents {@link remixlab.bias.event.MotionEvent} shortcuts.
  * <p>
  * Button shortcuts can be of one of two forms: 1. Buttons (e.g., 'LEFT' , or even 'B_NOBUTTON'); 2. Button + modifier
  * key combinations (e.g., 'RIGHT' + 'CTRL').

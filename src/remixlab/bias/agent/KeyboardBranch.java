@@ -14,7 +14,10 @@ import remixlab.bias.event.*;
 import remixlab.bias.core.*;
 
 /**
- * A {@link remixlab.bias.core.Branch} with a single {@link #keyboardProfile()}.
+ * A {@link remixlab.bias.core.Branch} with a single {@link #keyboardProfile()}, defining
+ * some {@link remixlab.bias.event.KeyboardShortcut} / (keyboard) action mappings. Keyboard
+ * branches may be appended only to an {@link remixlab.bias.agent.InteractiveKeyboardAgent}. See
+ * {@link remixlab.bias.agent.InteractiveKeyboardAgent#appendBranch(String)}.
  * <p>
  * <b>Note</b> that all the methods provided here are simply wrappers to the {@link #keyboardProfile()}.
  * See {@link remixlab.bias.core.Profile}.

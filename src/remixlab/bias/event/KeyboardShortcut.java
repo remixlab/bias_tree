@@ -15,7 +15,7 @@ import remixlab.bias.core.Shortcut;
 import remixlab.util.Copyable;
 
 /**
- * This class represents keyboard shortcuts.
+ * This class represents {@link remixlab.bias.event.KeyboardEvent} shortcuts.
  * <p>
  * Keyboard shortcuts can be of one out of two forms: 1. Characters (e.g., 'a'); 2. Virtual keys (e.g., right arrow
  * key); or, 2. Key combinations (e.g., CTRL key + virtual key representing 'a').

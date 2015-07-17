@@ -11,8 +11,10 @@
 package remixlab.bias.core;
 
 /**
- * The root of {@link remixlab.bias.core.Grabber} objects that may implement user-defined actions from
- * different sorts of input data (see {@link #performInteraction(BogusEvent)}).
+ * The root of {@link remixlab.bias.core.Grabber} objects that may implement user-defined actions specified
+ * by an enum type. Note that InteractiveGrabber objects are handled through agent
+ * {@link remixlab.bias.core.Branch}es (see
+ * {@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, Branch)}).
  * <p>
  * User-defined actions to be performed by an InteractiveGrabber object should be defined by a third-party
  * from the Enum that parameterizes this object. Note that the enum value may be queried

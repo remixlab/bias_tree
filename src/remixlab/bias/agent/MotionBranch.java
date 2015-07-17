@@ -14,7 +14,11 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
 /**
- * A {@link remixlab.bias.core.Branch} with a {@link #motionProfile()} and a {@link #clickProfile()}.
+ * A {@link remixlab.bias.core.Branch} with a {@link #motionProfile()}, defining some
+ * {@link remixlab.bias.event.MotionShortcut} / (motion) action mappings; and a {@link #clickProfile()},
+ * defining some {@link remixlab.bias.event.ClickShortcut} / (click) action mappings. Motion branches
+ * may be appended only to an {@link remixlab.bias.agent.InteractiveMotionAgent}. See
+ * {@link remixlab.bias.agent.InteractiveMotionAgent#appendBranch(String)}.
  * <p>
  * <b>Note</b> that all the methods provided here are simply wrappers to the {@link #motionProfile()} and
  * {@link #clickProfile()}. See {@link remixlab.bias.core.Profile}.

@@ -16,6 +16,29 @@ import java.util.List;
 
 import remixlab.bias.event.*;
 
+/**
+ * Agents gather data from different sources --mostly from input devices such touch surfaces or simple mice--
+ * and reduce them into a rather simple but quite 'useful' set of interface events ({@link remixlab.bias.core.BogusEvent})
+ * for third party objects ({@link remixlab.bias.core.Grabber} objects) to consume them ({@link #handle(BogusEvent)}).
+ * Agents thus effectively open up a channel between all kinds of input data sources and user-space objects. To add/remove
+ * a grabber to/from the #grabbers() collection issue #addGrabber(Grabber) / #removeGrabber(Grabber) calls.
+ * <p>
+ * The agent may send bogus-events to its #inputGrabber() which may be regarded as the agent's grabber target. The
+ * {@link #inputGrabber()} may be set by querying each grabber object in {@link #grabbers()} to check if its
+ * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)}) condition is met
+ * (see {@link #updateTrackedGrabber(BogusEvent)}). The first grabber meeting the condition, namely the
+ * {@link #trackedGrabber()}), will then be set as the {@link #inputGrabber()}. When no grabber meets the condition, the
+ * {@link #trackedGrabber()} is then set to null. In this case, a non-null {@link #inputGrabber()} may still be set with
+ * {@link #setDefaultGrabber(Grabber)} (see also {@link #defaultGrabber()}).
+ * <p>
+ * Agents may be extended by appending branches to them, see
+ * {@link remixlab.bias.agent.InteractiveMotionAgent#appendBranch(String)},
+ * {@link remixlab.bias.agent.InteractiveKeyboardAgent#appendBranch(String)}. For branch handling refer to methods such
+ * as {@link #pruneBranch(Branch)}, {@link #branches()}, {@link #branch(Grabber)} and others. Branches enable the agent
+ * to parse bogus-events into {@link remixlab.bias.core.InteractiveGrabber} object {@link remixlab.bias.core.Action}s
+ * (see {@link #addGrabber(InteractiveGrabber, Branch)}). Please refer to the {@link remixlab.bias.core.Branch} and the
+ * {@link remixlab.bias.core.InteractiveGrabber} documentations for details.
+ */
 public class Agent {
 	protected String										nm;
 	protected List<Branch<?>>			brnchs;
@@ -38,16 +61,23 @@ public class Agent {
 	}
 
 	/**
-	 * @return Agents name
+	 * @return agent's name
 	 */
 	public String name() {
 		return nm;
 	}
+	
+	// 1. Grabbers
 
 	/**
 	 * Removes the grabber from the {@link #grabbers()} list.
-	 * <p>
-	 * See {@link #addGrabber(Grabber)} for details. Removing a grabber that is not in {@link #grabbers()} has no effect.
+	 * 
+	 * @see #removeGrabbers()
+	 * @see #addGrabber(Grabber)
+	 * @see #addGrabber(InteractiveGrabber, Branch)
+	 * @see #hasGrabber(Grabber)
+	 * @see #grabbers()
+	 * @see #grabbers(Branch)
 	 */	
 	public boolean removeGrabber(Grabber grabber) {
 		if(defaultGrabber() == grabber)
@@ -68,6 +98,13 @@ public class Agent {
 
 	/**
 	 * Clears the {@link #grabbers()} list.
+	 * 
+	 * @see #removeGrabber(Grabber)
+	 * @see #addGrabber(Grabber)
+	 * @see #addGrabber(InteractiveGrabber, Branch)
+	 * @see #hasGrabber(Grabber)
+	 * @see #grabbers()
+	 * @see #grabbers(Branch)
 	 */	
 	public void removeGrabbers() {
 		setDefaultGrabber(null);
@@ -78,6 +115,16 @@ public class Agent {
 			it.next().reset();
 	}
 	
+	/**
+	 * Returns the list of grabber (and interactive-grabber) objects handled by this agent.
+	 * 
+	 * @see #removeGrabber(Grabber)
+	 * @see #addGrabber(Grabber)
+	 * @see #addGrabber(InteractiveGrabber, Branch)
+	 * @see #hasGrabber(Grabber)
+	 * @see #removeGrabbers()
+	 * @see #grabbers(Branch)
+	 */
 	public List<Grabber> grabbers() {
 		List<Grabber> pool = new ArrayList<Grabber>();		
 		pool.removeAll(grabberList);
@@ -91,10 +138,13 @@ public class Agent {
 
 	/**
 	 * Returns true if the grabber is currently in the agents {@link #grabbers()} list.
-	 * <p>
-	 * When set to false using {@link #removeGrabber(Grabber)}, the handler no longer
-	 * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} on this grabber. Use {@link #addGrabber(Grabber)}
-	 * to insert it back.
+	 * 
+	 * @see #removeGrabber(Grabber)
+	 * @see #addGrabber(Grabber)
+	 * @see #addGrabber(InteractiveGrabber, Branch)
+	 * @see #grabbers()
+	 * @see #grabbers(Branch)
+	 * @see #removeGrabbers()
 	 */
 	public boolean hasGrabber(Grabber grabber) {
 		if (grabber == null)
@@ -109,11 +159,14 @@ public class Agent {
 	}
 
 	/**
-	 * Adds the grabber in the {@link #grabbers()}.
-	 * <p>
-	 * Use {@link #removeGrabber(Grabber)} to remove the grabber from the pool, so that it is no longer tested with
-	 * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)} by the handler, and hence can no longer grab the
-	 * agent focus. Use {@link #hasGrabber(Grabber)} to know the current state of the grabber.
+	 * Adds the grabber in {@link #grabbers()}.
+	 * 
+	 * @see #removeGrabber(Grabber)
+	 * @see #hasGrabber(Grabber)
+	 * @see #addGrabber(InteractiveGrabber, Branch)
+	 * @see #grabbers()
+	 * @see #grabbers(Branch)
+	 * @see #removeGrabbers()
 	 */
 	public boolean addGrabber(Grabber grabber) {
 		if (grabber == null)
@@ -127,10 +180,30 @@ public class Agent {
 		return grabberList.add(grabber);
 	}
 	
+	/**
+	 * Returns the branch list of interactive-grabber objects.
+	 * 
+	 * @see #addGrabber(InteractiveGrabber, Branch)
+	 * @see #removeGrabber(Grabber)
+	 * @see #addGrabber(Grabber)
+	 * @see #hasGrabber(Grabber)
+	 * @see #removeGrabbers()
+	 * @see #grabbers()
+	 */
 	public <E extends Enum<E>> List<InteractiveGrabber<E>> grabbers(Branch<E> branch) {
 		return branch.grabbers();
 	}
 	
+	/**
+	 * Adds grabber to branch. 
+	 *
+	 * @see #removeGrabber(Grabber)
+	 * @see #addGrabber(Grabber)
+	 * @see #hasGrabber(Grabber)
+	 * @see #removeGrabbers()
+	 * @see #grabbers()
+	 * @see #grabbers(Branch)
+	 */
 	public <E extends Enum<E>, K extends Branch<E>, G extends InteractiveGrabber<E>> boolean addGrabber(G grabber, K branch) {
 		if(branch == null)
 			return false;
@@ -141,6 +214,8 @@ public class Agent {
 		}
 		return branch.addGrabber(grabber);
 	}
+	
+	// 2. Branches
 
 	public Branch<?> branch(Grabber g) {
 		for (Branch<?> b : brnchs)
@@ -164,8 +239,9 @@ public class Agent {
 	}
 	
 	/*
-	public <E extends Enum<E>> Branch<E> appendBranch() {
-		return new Branch<E>(this, "my_branch");
+	// produces a name clash with iAgents
+	public <E extends Enum<E>> Branch<E> appendBranch(String name) {
+		return new Branch<E>(this, name);
 	}
 	//*/
 
@@ -201,7 +277,7 @@ public class Agent {
 	}
 
 	/**
-	 * Returns a detailed description of this Agent as a String.
+	 * Returns a String with a detailed description of this Agent.
 	 */
 	public String info() {
 		String description = new String();
@@ -220,8 +296,8 @@ public class Agent {
 
 	/**
 	 * Callback (user-space) event reduction routine. Obtains data from the outside world and returns a BogusEvent i.e.,
-	 * reduces external data into a BogusEvent. Automatically call by the main event loop (
-	 * {@link remixlab.bias.core.InputHandler#handle()}). See ProScene's Space-Navigator example.
+	 * reduces external data into a BogusEvent. Automatically call by the main event loop
+	 * ({@link remixlab.bias.core.InputHandler#handle()}). See ProScene's Space-Navigator example.
 	 * 
 	 * @see remixlab.bias.core.InputHandler#handle()
 	 */

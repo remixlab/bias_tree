@@ -17,14 +17,17 @@ import java.util.Map.Entry;
 import remixlab.util.*;
 
 /**
- * A mapping between {@link remixlab.bias.core.Shortcut}s and user-defined {@link remixlab.bias.core.Action}s,
- * implemented as a parameterized hash-map wrap.
+ * A mapping defining {@link remixlab.bias.core.Shortcut} to {@link remixlab.bias.core.Action}
+ * bindings, implemented as a parameterized hash-map wrap. Profiles are internally used by
+ * {@link remixlab.bias.core.Branch}es to parse {@link remixlab.bias.core.BogusEvent}s into
+ * {@link remixlab.bias.core.InteractiveGrabber} object {@link remixlab.bias.core.Action}s.
+ *
+ * @param <A> User-defined {@link remixlab.bias.core.Action}.
  * 
  * @param <E> 'Reference' enum action set, used to parameterize the user-defined action.
  * 
  * @param <K> {@link remixlab.bias.core.Shortcut}
- * 
- * @param <A> User-defined {@link remixlab.bias.core.Action}.
+ *
  */
 public class Profile<E extends Enum<E>, K extends Shortcut, A extends Action<E>> implements Copyable {
 	@Override

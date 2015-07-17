@@ -17,7 +17,7 @@ import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
 /**
- * This class represents click shortcuts.
+ * This class represents {@link remixlab.bias.event.ClickEvent} shortcuts.
  * <p>
  * Click shortcuts are defined with a specific number of clicks and can be of one out of two forms: 1. A button; and, 2.
  * A button plus a key-modifier (such as the CTRL key).
