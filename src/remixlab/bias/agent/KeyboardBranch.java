@@ -16,8 +16,8 @@ import remixlab.bias.core.*;
 /**
  * A {@link remixlab.bias.core.Branch} with a single {@link #keyboardProfile()}, defining
  * some {@link remixlab.bias.event.KeyboardShortcut} / (keyboard) action mappings. Keyboard
- * branches may be appended only to an {@link remixlab.bias.agent.InteractiveKeyboardAgent}. See
- * {@link remixlab.bias.agent.InteractiveKeyboardAgent#appendBranch(String)}.
+ * branches may be appended only to an {@link remixlab.bias.agent.AbstractKeyboardAgent}. See
+ * {@link remixlab.bias.agent.AbstractKeyboardAgent#appendBranch(String)}.
  * <p>
  * <b>Note</b> that all the methods provided here are simply wrappers to the {@link #keyboardProfile()}.
  * See {@link remixlab.bias.core.Profile}.
@@ -27,9 +27,9 @@ import remixlab.bias.core.*;
  * @param <A> Action enum sub-group.
  */
 public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Branch<E> {
-	InteractiveKeyboardAgent keyAgent;
+	AbstractKeyboardAgent keyAgent;
 	protected Profile<E, KeyboardShortcut, A> keyProfile;
-	protected KeyboardBranch(InteractiveKeyboardAgent a, String n) {
+	protected KeyboardBranch(AbstractKeyboardAgent a, String n) {
 		super(a, n);
 		keyAgent = a;
 		keyProfile = new Profile<E, KeyboardShortcut, A>();

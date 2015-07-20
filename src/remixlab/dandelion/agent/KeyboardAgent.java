@@ -16,7 +16,7 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-public class KeyboardAgent extends InteractiveKeyboardAgent {
+public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	public static int LEFT_KEY	= 1, RIGHT_KEY = 2, UP_KEY = 3, DOWN_KEY = 4;
 	
 	protected AbstractScene															scene;

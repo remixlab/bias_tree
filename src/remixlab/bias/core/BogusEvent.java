@@ -17,7 +17,8 @@ import remixlab.util.HashCodeBuilder;
 /**
  * The root event class of all events that are to be handled by an {@link remixlab.bias.core.Agent}. Every BogusEvent
  * encapsulates a {@link remixlab.bias.core.Shortcut} which may be bound to an user-defined
- * {@link remixlab.bias.core.Action} (see {@link #shortcut()}).
+ * {@link remixlab.bias.core.Action} (see {@link #shortcut()}). A {@link #flushed()} event encapsulates a gesture
+ * termination message which may be of the interest of {@link remixlab.bias.core.Grabber} objects.
  * <p>
  * The following are the main class specializations: {@link remixlab.bias.event.MotionEvent},
  * {@link remixlab.bias.event.ClickEvent}, and {@link remixlab.bias.event.KeyboardEvent}. Please refer to their
@@ -100,12 +101,22 @@ public class BogusEvent implements Copyable {
 		return new BogusEvent(this);
 	}
 	
+	/**
+	 * Same as {@code this.get()} but sets the {@link #flush()} to true. Only agents may call this.
+	 * 
+	 * @see #flushed()
+	 */
 	public BogusEvent flush() {
-		BogusEvent message = this.get();
-		message.flush = true;
-		return message;
+		BogusEvent bogusevent = this.get();
+		bogusevent.flush = true;
+		return bogusevent;
 	}
 	
+	/**
+	 * Returns true if this is a 'flushed' event. Flushed events indicate gesture (or action) termination,
+	 * such as when a mouse-release is being part of a mouse-press / mouse-move(or mouse-drag) interaction
+	 * (mouse-release can then point to gesture termination).
+	 */
 	public boolean flushed() {
 		return flush;
 	}

@@ -19,8 +19,8 @@ import remixlab.util.Copyable;
  * A Branch handles a list of {@link remixlab.bias.core.InteractiveGrabber} objects ({@link #grabbers()},
  * implementing the same reference action set used to parameterize it. A branch, in turn, is handled by
  * the agent to which it is appended, see:
- * {@link remixlab.bias.agent.InteractiveMotionAgent#appendBranch(String)} and
- * {@link remixlab.bias.agent.InteractiveKeyboardAgent#appendBranch(String)}.
+ * {@link remixlab.bias.agent.AbstractMotionAgent#appendBranch(String)} and
+ * {@link remixlab.bias.agent.AbstractKeyboardAgent#appendBranch(String)}.
  * Branches are used by agents to parse a {@link remixlab.bias.core.BogusEvent} into
  * an {@link remixlab.bias.core.InteractiveGrabber} object {@link remixlab.bias.core.Action}
  * (see {@link #handle(InteractiveGrabber, BogusEvent)}).

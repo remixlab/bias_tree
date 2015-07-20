@@ -16,7 +16,7 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-public class MotionAgent<A extends Action<MotionAction>> extends InteractiveMotionAgent {
+public class MotionAgent<A extends Action<MotionAction>> extends AbstractMotionAgent {
 	protected AbstractScene																scene;
 	protected MotionBranch<MotionAction, A, ClickAction>	eyeBranch;
 	protected MotionBranch<MotionAction, A, ClickAction>	frameBranch;

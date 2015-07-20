@@ -12,11 +12,20 @@ package remixlab.bias.core;
 
 import remixlab.bias.event.*;
 
-public abstract class InteractiveGrabberObject<E extends Enum<E>> implements InteractiveGrabber<E>
-/*
- * , Grabber //
+/**
+ * Default implementation of the {@link remixlab.bias.core.InteractiveGrabber} interface which eases implementation.
+ * <p>
+ * Based on the event type, this InteractiveGrabber implementation splits both, the {@link #checkIfGrabsInput(BogusEvent)}
+ * and the {@link #performInteraction(BogusEvent)} methods by calling the proper more specific methods, e.g.,
+ * {@link #checkIfGrabsInput(ClickEvent)}, {@link #checkIfGrabsInput(DOF3Event)},
+ * {@link #performInteraction(DOF6Event)}, {@link #performInteraction(KeyboardEvent)} and so on. Thus 
+ * allowing implementations of this abstract GrabberObject to override only those method signatures that might
+ * be of their interest.
+ * <p>
+ * This InteractiveGrabber implementation also provided al algorithm to parse an {@link remixlab.bias.core.Action}
+ * sequence from an init action variable, see {@link #processEvent(BogusEvent)}.
  */
-{
+public abstract class InteractiveGrabberObject<E extends Enum<E>> implements InteractiveGrabber<E> {
 	Action<E>	action;
 
 	/**
@@ -30,8 +39,8 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	 * 
 	 * @see remixlab.bias.core.Agent#grabbers()
 	 */
-	public InteractiveGrabberObject(Agent agent, Branch<E> actionAgent) {
-		agent.addGrabber(this, actionAgent);
+	public InteractiveGrabberObject(Agent agent, Branch<E> branch) {
+		agent.addGrabber(this, branch);
 	}
 
 	public E referenceAction() {
@@ -68,17 +77,31 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 			performInteraction((MotionEvent) event);
 	}
 
-	// TODO : deal with warnings
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.KeyboardEvent}. 
+	 */
 	protected void performInteraction(KeyboardEvent event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(KeyboardEvent event)",
 		// this.getClass().getName());
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.ClickEvent}. 
+	 */
 	protected void performInteraction(ClickEvent event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)",
 		// this.getClass().getName());
 	}
 
+	/**
+	 * Calls performInteraction() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
+	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
+	 * <p>
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.MotionEvent}. 
+	 */
 	protected void performInteraction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			performInteraction((DOF1Event) event);
@@ -90,18 +113,34 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 			performInteraction((DOF6Event) event);
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.DOF1Event}. 
+	 */
 	protected void performInteraction(DOF1Event event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.DOF2Event}. 
+	 */
 	protected void performInteraction(DOF2Event event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.DOF3Event}. 
+	 */
 	protected void performInteraction(DOF3Event event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.DOF6Event}. 
+	 */
 	protected void performInteraction(DOF6Event event) {
 		// AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
 	}
@@ -117,17 +156,27 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.KeyboardEvent}. 
+	 */
 	protected boolean checkIfGrabsInput(KeyboardEvent event) {
 		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)",
 		// this.getClass().getName());
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.ClickEvent}. 
+	 */
 	protected boolean checkIfGrabsInput(ClickEvent event) {
 		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
 
+	/**
+	 * Calls checkIfGrabsInput() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
+	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
+	 */
 	public boolean checkIfGrabsInput(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			return checkIfGrabsInput((DOF1Event) event);
@@ -140,18 +189,30 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF1Event}. 
+	 */
 	protected boolean checkIfGrabsInput(DOF1Event event) {
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF2Event}. 
+	 */
 	protected boolean checkIfGrabsInput(DOF2Event event) {
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF3Event}. 
+	 */
 	protected boolean checkIfGrabsInput(DOF3Event event) {
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF6Event}. 
+	 */
 	protected boolean checkIfGrabsInput(DOF6Event event) {
 		return false;
 	}
@@ -159,11 +220,17 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	Action<E>	initAction;
 
 	/**
-	 * TODO: fix docs as the following is only partially true Should always return true after calling
-	 * {@link #flushAction(BogusEvent)}. Otherwise the null action may be enqueued to
-	 * {@link #performInteraction(BogusEvent)} which will then causes the infamous null pointer exception.
+	 * Internal use. Algorithm to parse an {@link remixlab.bias.core.Action} sequence from an initAction variable.
+	 * <p>
+	 * Filters the bogus-event in {@link #performInteraction(BogusEvent)}, by properly calling:
+	 * <ol>
+     * <li>{@link #initAction(BogusEvent)}: sets the initAction, called when initAction == null.</li>
+     * <li>{@link #execAction(BogusEvent)}: continues action execution, called when initAction == action() (current action)</li>
+     * <li>{@link #flushAction(BogusEvent)}: ends action, called when {@link remixlab.bias.core.BogusEvent#flushed()} is true
+     * or when initAction != action()</li>
+     * </ol> 
 	 */
-	public final boolean processEvent(BogusEvent event) {
+	protected final boolean processEvent(BogusEvent event) {
 		if (initAction == null) {
 			if (!event.flushed()) {
 				return initAction(event);// start action
@@ -190,6 +257,9 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		return true;// i.e., if initAction == action() == null -> ignore :)
 	}
 
+	/**
+	 * Calls initAction() on the proper event type. Returns true when succeeded and false otherwise.
+	 */
 	protected boolean initAction(BogusEvent event) {
 		initAction = action();
 		if (event instanceof KeyboardEvent)
@@ -201,18 +271,33 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to init an action from a
+	 * {@link remixlab.bias.event.KeyboardEvent}. 
+	 */
 	protected boolean initAction(KeyboardEvent event) {
 		// AbstractScene.showMissingImplementationWarning("initAction(KeyboardEvent event)",
 		// this.getClass().getName());
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to init an action from a
+	 * {@link remixlab.bias.event.ClickEvent}. 
+	 */
 	protected boolean initAction(ClickEvent event) {
 		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
 
-	public boolean initAction(MotionEvent event) {
+	/**
+	 * Calls initAction() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
+	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
+	 * <p>
+	 * Override this method when you want the object to init an action from a
+	 * {@link remixlab.bias.event.ClickEvent}. 
+	 */
+	protected boolean initAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			return initAction((DOF1Event) event);
 		if (event instanceof DOF2Event)
@@ -224,22 +309,41 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to init an action from a
+	 * {@link remixlab.bias.event.DOF1Event}. 
+	 */
 	protected boolean initAction(DOF1Event event) {
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to init an action from a
+	 * {@link remixlab.bias.event.DOF2Event}. 
+	 */
 	protected boolean initAction(DOF2Event event) {
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to init an action from a
+	 * {@link remixlab.bias.event.DOF3Event}. 
+	 */
 	protected boolean initAction(DOF3Event event) {
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to init an action from a
+	 * {@link remixlab.bias.event.DOF6Event}. 
+	 */
 	protected boolean initAction(DOF6Event event) {
 		return false;
 	}
 
+	/**
+	 * Calls execAction() on the proper event type. Returns true when succeeded and false otherwise.
+	 */
 	protected boolean execAction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
 			return execAction((KeyboardEvent) event);
@@ -250,17 +354,32 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to execute an action from a
+	 * {@link remixlab.bias.event.DOF1Event}. 
+	 */
 	protected boolean execAction(KeyboardEvent event) {
 		// AbstractScene.showMissingImplementationWarning("execAction(KeyboardEvent event)",
 		// this.getClass().getName());
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to execute an action from a
+	 * {@link remixlab.bias.event.ClickEvent}. 
+	 */
 	protected boolean execAction(ClickEvent event) {
 		// AbstractScene.showMissingImplementationWarning("execAction(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
 
+	/**
+	 * Calls execAction() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
+	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
+	 * <p>
+	 * Override this method when you want the object to execute an action from a
+	 * {@link remixlab.bias.event.MotionEvent}. 
+	 */
 	public boolean execAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			return execAction((DOF1Event) event);
@@ -273,24 +392,41 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to execute an action from a
+	 * {@link remixlab.bias.event.DOF1Event}. 
+	 */
 	protected boolean execAction(DOF1Event event) {
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to execute an action from a
+	 * {@link remixlab.bias.event.DOF2Event}. 
+	 */
 	protected boolean execAction(DOF2Event event) {
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to execute an action from a
+	 * {@link remixlab.bias.event.DOF3Event}. 
+	 */
 	protected boolean execAction(DOF3Event event) {
 		return false;
 	}
 
+	/**
+	 * Override this method when you want the object to execute an action from a
+	 * {@link remixlab.bias.event.DOF6Event}. 
+	 */
 	protected boolean execAction(DOF6Event event) {
 		return false;
 	}
 
-	/**
-	 * {@link #processEvent(BogusEvent)} should always return true after calling this one.
+	/** 
+	 * Calls flushAction() on the proper event type. For consistency {@link #processEvent(BogusEvent)} should
+	 * always return true after calling this one.
 	 */
 	protected void flushAction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
@@ -301,12 +437,27 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 			flushAction((MotionEvent) event);
 	}
 
+	/**
+	 * Override this method when you want the object to flush an action from a
+	 * {@link remixlab.bias.event.KeyboardEvent}. 
+	 */
 	protected void flushAction(KeyboardEvent event) {
 	}
 
+	/**
+	 * Override this method when you want the object to flush an action from a
+	 * {@link remixlab.bias.event.ClickEvent}. 
+	 */
 	protected void flushAction(ClickEvent event) {
 	}
 
+	/**
+	 * Calls flushAction() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
+	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
+	 * <p>
+	 * Override this method when you want the object to flush an action from a
+	 * {@link remixlab.bias.event.MotionEvent}. 
+	 */
 	public void flushAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			flushAction((DOF1Event) event);
@@ -318,18 +469,34 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 			flushAction((DOF6Event) event);
 	}
 
+	/**
+	 * Override this method when you want the object to flush an action from a
+	 * {@link remixlab.bias.event.DOF1Event}. 
+	 */
 	protected void flushAction(DOF1Event event) {
 
 	}
 
+	/**
+	 * Override this method when you want the object to flush an action from a
+	 * {@link remixlab.bias.event.DOF2Event}. 
+	 */
 	protected void flushAction(DOF2Event event) {
 
 	}
 
+	/**
+	 * Override this method when you want the object to flush an action from a
+	 * {@link remixlab.bias.event.DOF3Event}. 
+	 */
 	protected void flushAction(DOF3Event event) {
 
 	}
 
+	/**
+	 * Override this method when you want the object to flush an action from a
+	 * {@link remixlab.bias.event.DOF6Event}. 
+	 */
 	protected void flushAction(DOF6Event event) {
 
 	}

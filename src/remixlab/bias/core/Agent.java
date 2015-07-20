@@ -32,8 +32,8 @@ import remixlab.bias.event.*;
  * {@link #setDefaultGrabber(Grabber)} (see also {@link #defaultGrabber()}).
  * <p>
  * Agents may be extended by appending branches to them, see
- * {@link remixlab.bias.agent.InteractiveMotionAgent#appendBranch(String)},
- * {@link remixlab.bias.agent.InteractiveKeyboardAgent#appendBranch(String)}. For branch handling refer to methods such
+ * {@link remixlab.bias.agent.AbstractMotionAgent#appendBranch(String)},
+ * {@link remixlab.bias.agent.AbstractKeyboardAgent#appendBranch(String)}. For branch handling refer to methods such
  * as {@link #pruneBranch(Branch)}, {@link #branches()}, {@link #branch(Grabber)} and others. Branches enable the agent
  * to parse bogus-events into {@link remixlab.bias.core.InteractiveGrabber} object {@link remixlab.bias.core.Action}s
  * (see {@link #addGrabber(InteractiveGrabber, Branch)}). Please refer to the {@link remixlab.bias.core.Branch} and the
@@ -217,6 +217,16 @@ public class Agent {
 	
 	// 2. Branches
 
+	/**
+	 * Returns the Branch to which the grabber belongs. May be null.
+	 * 
+	 * @see #hasBranch(Branch)
+	 * @see #resetBranch(Branch)
+	 * @see #pruneBranch(Branch)
+	 * @see #branches()
+	 * @see #resetBranches()
+	 * @see #pruneBranches()
+	 */
 	public Branch<?> branch(Grabber g) {
 		for (Branch<?> b : brnchs)
 			if (b.hasGrabber(g))
@@ -224,10 +234,23 @@ public class Agent {
 		return null;
 	}
 	
+	/**
+	 * Returns the list of appended branches.
+	 * 
+	 * @see #hasBranch(Branch)
+	 * @see #resetBranch(Branch)
+	 * @see #pruneBranch(Branch)
+	 * @see #branch(Grabber)
+	 * @see #resetBranches()
+	 * @see #pruneBranches()
+	 */
 	public List<Branch<?>> branches() {
 		return brnchs;
 	}
 
+	/**
+	 * Internal use. Branches should be appended through derived agents.
+	 */
 	protected boolean appendBranch(Branch<?> branch) {
 		if (branch == null)
 			return false;
@@ -244,11 +267,31 @@ public class Agent {
 		return new Branch<E>(this, name);
 	}
 	//*/
-
+	
+	/**
+	 * Returns true if branch is appended to the agent and false otherwise.
+	 * 
+	 * @see #branches()
+	 * @see #resetBranch(Branch)
+	 * @see #pruneBranch(Branch)
+	 * @see #branch(Grabber)
+	 * @see #resetBranches()
+	 * @see #pruneBranches()
+	 */
 	public boolean hasBranch(Branch<?> branch) {
 		return brnchs.contains(branch);
 	}
-	
+
+	/**
+	 * Removes all interactive grabber objects from branch.
+	 * 
+	 * @see #hasBranch(Branch)
+	 * @see #resetBranches()
+	 * @see #pruneBranch(Branch)
+	 * @see #branch(Grabber)
+	 * @see #hasBranch(Branch)
+	 * @see #pruneBranches()
+	 */
 	public void resetBranch(Branch<?> branch) {
 		branch.reset();
 		if(branch == this.defaultGrabberBranch)
@@ -256,12 +299,32 @@ public class Agent {
 		if(branch == this.trackedGrabberBranch)
 			trackedGrabber = null;
 	}
-
+	
+	/**
+	 * Removes all interactive grabber objects from all branches appended to this agent.
+	 * 
+	 * @see #hasBranch(Branch)
+	 * @see #resetBranch(Branch)
+	 * @see #pruneBranch(Branch)
+	 * @see #branch(Grabber)
+	 * @see #hasBranch(Branch)
+	 * @see #pruneBranches()
+	 */
 	public void resetBranches() {
 		for (Branch<?> branch : brnchs)
 			resetBranch(branch);
 	}
 
+	/**
+	 * Calls {@link #resetBranch(Branch)} and then removes the branch from the agent.
+	 * 
+	 * @see #hasBranch(Branch)
+	 * @see #resetBranch(Branch)
+	 * @see #resetBranches()
+	 * @see #branch(Grabber)
+	 * @see #hasBranch(Branch)
+	 * @see #pruneBranches()
+	 */
 	public boolean pruneBranch(Branch<?> branch) {
 		if (brnchs.contains(branch)) {
 			this.resetBranch(branch);
@@ -271,6 +334,16 @@ public class Agent {
 		return false;
 	}
 
+	/**
+	 * Calls {@link #resetBranch(Branch)} on all branches appended to this agent and the removes them.
+	 * 
+	 * @see #hasBranch(Branch)
+	 * @see #resetBranch(Branch)
+	 * @see #resetBranches()
+	 * @see #branch(Grabber)
+	 * @see #hasBranch(Branch)
+	 * @see #pruneBranch(Branch)
+	 */
 	public void pruneBranches() {
 		resetBranches();
 		brnchs.clear();
@@ -295,8 +368,8 @@ public class Agent {
 	}
 
 	/**
-	 * Callback (user-space) event reduction routine. Obtains data from the outside world and returns a BogusEvent i.e.,
-	 * reduces external data into a BogusEvent. Automatically call by the main event loop
+	 * Callback (user-space) event reduction routine. Obtains input data and returns a BogusEvent i.e.,
+	 * reduces external input data into a BogusEvent. Automatically call by the main event loop
 	 * ({@link remixlab.bias.core.InputHandler#handle()}). See ProScene's Space-Navigator example.
 	 * 
 	 * @see remixlab.bias.core.InputHandler#handle()
@@ -313,18 +386,18 @@ public class Agent {
 	}	
 
 	/**
-	 * If {@link #isTracking()} is enabled and the agent is registered at the {@link #inputHandler()} then queries each
+	 * If {@link #isTracking()} and the agent is registered at the {@link #inputHandler()} then queries each
 	 * object in the {@link #grabbers()} to check if the {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)})
 	 * condition is met. The first object meeting the condition will be set as the {@link #inputGrabber()} and returned.
 	 * Note that a null grabber means that no object in the {@link #grabbers()} met the condition. A
 	 * {@link #inputGrabber()} may also be enforced simply with {@link #setDefaultGrabber(Grabber)}.
 	 * 
-	 * @param event
-	 *          to query the {@link #grabbers()}
+	 * @param event to query the {@link #grabbers()}
 	 * @return the new grabber which may be null.
 	 * 
 	 * @see #setDefaultGrabber(Grabber)
 	 * @see #isTracking()
+	 * @see #handle(BogusEvent)
 	 */
 	protected Grabber updateTrackedGrabber(BogusEvent event) {
 		if (event == null || !inputHandler().isAgentRegistered(this) || !isTracking())
@@ -354,18 +427,25 @@ public class Agent {
 		return trackedGrabber();
 	}
 
+	/**
+	 * Returns the sensitivities used in {@link #handle(BogusEvent)} to {@link remixlab.bias.event.MotionEvent#modulate(float[])}.
+	 */
 	public float[] sensitivities(MotionEvent event) {
 		return new float[] { 1f, 1f, 1f, 1f, 1f, 1f };
 	}
 
 	/**
-	 * Main agent method. Parses the {@link #inputGrabber()} using the proper branch to determine the user-defined action
-	 * the {@link #inputGrabber()} should perform. Calls
-	 * {@code inputHandler().enqueueEventTuple(new EventGrabberTuple(event, grabber()))}.
+	 * Enqueues an EventGrabberTuple(event, inputGrabber()) on the {@link remixlab.bias.core.InputHandler#eventTupleQueue()},
+	 * thus enabling a call on the {@link #inputGrabber()} {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)} method
+	 * (which is scheduled for execution till the end of this main event loop iteration, see
+	 * {@link remixlab.bias.core.InputHandler#enqueueEventTuple(EventGrabberTuple)} for details).
 	 * <p>
-	 * <b>Note</b> that the agent must be registered at the {@link #inputHandler()} for this method to take effect.
+	 * If {@link #inputGrabber()} is instance of {@link remixlab.bias.core.InteractiveGrabber} an
+	 * InteractiveEventGrabberTuple<E>(event, grabber, action) is enqueued instead. Note that the agent
+	 * uses its branches to find the action that's is to be enqueued in this case.
 	 * 
 	 * @see #inputGrabber()
+	 * @see #updateTrackedGrabber(BogusEvent)
 	 */
 	protected boolean handle(BogusEvent event) {
 		if (event == null || !handler.isAgentRegistered(this) || inputHandler() == null)

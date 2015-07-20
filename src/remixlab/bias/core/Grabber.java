@@ -19,12 +19,15 @@ public interface Grabber {
 	/**
 	 * Defines the rules to set the grabber as an agent input-grabber.
 	 * 
+	 * @see remixlab.bias.core.Agent#updateTrackedGrabber(BogusEvent)
 	 * @see remixlab.bias.core.Agent#inputGrabber()
 	 */
 	boolean checkIfGrabsInput(BogusEvent event);
 
 	/**
 	 * Defines how the grabber should react according to the given bogus-event.
+	 * 
+	 * @see remixlab.bias.core.Agent#handle(BogusEvent)
 	 */
 	void performInteraction(BogusEvent event);
 }

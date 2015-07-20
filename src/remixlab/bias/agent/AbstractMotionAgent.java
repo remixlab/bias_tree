@@ -19,8 +19,8 @@ import remixlab.bias.core.InputHandler;
  * An {@link remixlab.bias.core.Agent} that handles {@link remixlab.bias.agent.MotionBranch}es (see
  * {@link #appendBranch(String)}).
  */
-public class InteractiveMotionAgent extends Agent {
-	public InteractiveMotionAgent(InputHandler inputHandler, String name) {
+public abstract class AbstractMotionAgent extends Agent {
+	public AbstractMotionAgent(InputHandler inputHandler, String name) {
 		super(inputHandler, name);
 	}
 	

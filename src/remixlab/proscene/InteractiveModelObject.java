@@ -251,7 +251,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	 * {@link #flushAction(BogusEvent)}. Otherwise the null action may be enqueued to
 	 * {@link #performInteraction(BogusEvent)} which will then causes the infamous null pointer exception.
 	 */
-	public final boolean processEvent(BogusEvent event) {
+	protected final boolean processEvent(BogusEvent event) {
 		if (initAction == null) {
 			if (!event.flushed()) {
 				return initAction(event);// start action
@@ -300,7 +300,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		return false;
 	}
 
-	public boolean initAction(MotionEvent event) {
+	protected boolean initAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			return initAction((DOF1Event) event);
 		if (event instanceof DOF2Event)

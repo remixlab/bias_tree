@@ -16,8 +16,8 @@ import remixlab.bias.core.*;
  * An {@link remixlab.bias.core.Agent} to which {@link remixlab.bias.agent.KeyboardBranch}es may be appended
  * (see {@link #appendBranch(String)}).
  */
-public class InteractiveKeyboardAgent extends Agent {
-	public InteractiveKeyboardAgent(InputHandler inputHandler, String name) {
+public abstract class AbstractKeyboardAgent extends Agent {
+	public AbstractKeyboardAgent(InputHandler inputHandler, String name) {
 		super(inputHandler, name);
 	}
 	
@@ -44,8 +44,5 @@ public class InteractiveKeyboardAgent extends Agent {
 	 * @param key
 	 * @return key code for the given key
 	 */
-	public int keyCode(char key) {
-		System.err.println("keyCode(char) should be implemented by your Agent derived class");
-		return BogusEvent.NO_ID;
-	}
+	public abstract int keyCode(char key);
 }

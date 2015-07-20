@@ -11,8 +11,12 @@
 package remixlab.bias.core;
 
 /**
- * [{@link remixlab.bias.core.BogusEvent},{@link remixlab.bias.core.Grabber}] tuples which encapsulate message passing
- * from {@link remixlab.bias.core.BogusEvent} to {@link remixlab.bias.core.Grabber} to perform actions.
+ * A [{@link remixlab.bias.core.BogusEvent},{@link remixlab.bias.core.Grabber}] tuple. An enqueued tuple
+ * fires {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)} call from the event in the tuple.
+ * <p>
+ * Tuples are typically enqueued by an agent (see {@link remixlab.bias.core.Agent#handle(BogusEvent)}),
+ * but may be enqueued manually, see
+ * {@link remixlab.bias.core.InputHandler#enqueueEventTuple(EventGrabberTuple)}.
  */
 public class EventGrabberTuple {
 	protected BogusEvent	event;

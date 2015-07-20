@@ -15,9 +15,9 @@ import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
 /**
- * Shortcuts are {@link remixlab.bias.core.BogusEvent} means to bind user-defined actions.
- * Note that shortcut/{@link remixlab.bias.core.Action} bindings are handled by a
- * {@link remixlab.bias.core.Profile}.
+ * Shortcuts are {@link remixlab.bias.core.BogusEvent} means to bind user-defined actions from a 
+ * {@link remixlab.bias.core.BogusEvent}. Shortcut/{@link remixlab.bias.core.Action} bindings are handled
+ * by a {@link remixlab.bias.core.Profile}.
  * <p>
  * Every {@link remixlab.bias.core.BogusEvent} instance has a shortcut which can represent, for instance,
  * the button being dragged and the modifier key pressed at the very moment an user interaction takes place,

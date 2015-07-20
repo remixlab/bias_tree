@@ -17,8 +17,8 @@ import remixlab.bias.event.*;
  * A {@link remixlab.bias.core.Branch} with a {@link #motionProfile()}, defining some
  * {@link remixlab.bias.event.MotionShortcut} / (motion) action mappings; and a {@link #clickProfile()},
  * defining some {@link remixlab.bias.event.ClickShortcut} / (click) action mappings. Motion branches
- * may be appended only to an {@link remixlab.bias.agent.InteractiveMotionAgent}. See
- * {@link remixlab.bias.agent.InteractiveMotionAgent#appendBranch(String)}.
+ * may be appended only to an {@link remixlab.bias.agent.AbstractMotionAgent}. See
+ * {@link remixlab.bias.agent.AbstractMotionAgent#appendBranch(String)}.
  * <p>
  * <b>Note</b> that all the methods provided here are simply wrappers to the {@link #motionProfile()} and
  * {@link #clickProfile()}. See {@link remixlab.bias.core.Profile}.
@@ -28,11 +28,11 @@ import remixlab.bias.event.*;
  * @param <C> Click/tap action enum sub-group.
  */
 public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Action<E>> extends Branch<E> {
-	InteractiveMotionAgent motionAgent;
+	AbstractMotionAgent motionAgent;
 	protected Profile<E, MotionShortcut, A>	motionProfile;
 	protected Profile<E, ClickShortcut, C>	clickProfile;
 	
-	protected MotionBranch(InteractiveMotionAgent a, String n) {
+	protected MotionBranch(AbstractMotionAgent a, String n) {
 		super(a, n);
 		motionAgent = a;
 		motionProfile = new Profile<E, MotionShortcut, A>();
