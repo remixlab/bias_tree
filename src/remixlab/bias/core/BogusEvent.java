@@ -27,7 +27,7 @@ import remixlab.util.HashCodeBuilder;
  * <b>Note</b> BogusEvent detection/reduction could happened in several different ways. For instance, in the context of
  * Java-based application, it typically takes place when implementing a mouse listener interface. In Processing, it does
  * it when registering at the PApplet the so called mouseEvent and KeyEvent methods. Moreover, the
- * {@link remixlab.bias.core.Agent#feed()} provides a callback alternative when none of these mechanisms are available
+ * {@link remixlab.bias.core.Agent#handleFeed()} provides a callback alternative when none of these mechanisms are available
  * (as it often happens when dealing with specialized, non-default input hardware).
  */
 public class BogusEvent implements Copyable {

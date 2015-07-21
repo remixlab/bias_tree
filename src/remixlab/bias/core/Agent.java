@@ -22,14 +22,15 @@ import remixlab.bias.event.*;
  * for third party objects ({@link remixlab.bias.core.Grabber} objects) to consume them ({@link #handle(BogusEvent)}).
  * Agents thus effectively open up a channel between all kinds of input data sources and user-space objects. To add/remove
  * a grabber to/from the #grabbers() collection issue #addGrabber(Grabber) / #removeGrabber(Grabber) calls.
+ * Derive from this agent and either call {@link #handle(BogusEvent)} or override {@link #handleFeed()}.
  * <p>
  * The agent may send bogus-events to its #inputGrabber() which may be regarded as the agent's grabber target. The
  * {@link #inputGrabber()} may be set by querying each grabber object in {@link #grabbers()} to check if its
  * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)}) condition is met
- * (see {@link #updateTrackedGrabber(BogusEvent)}). The first grabber meeting the condition, namely the
- * {@link #trackedGrabber()}), will then be set as the {@link #inputGrabber()}. When no grabber meets the condition, the
- * {@link #trackedGrabber()} is then set to null. In this case, a non-null {@link #inputGrabber()} may still be set with
- * {@link #setDefaultGrabber(Grabber)} (see also {@link #defaultGrabber()}).
+ * (see {@link #updateTrackedGrabber(BogusEvent)}, {@link #updateTrackedGrabberFeed()}). The first grabber meeting
+ * the condition, namely the {@link #trackedGrabber()}), will then be set as the {@link #inputGrabber()}. When no
+ * grabber meets the condition, the {@link #trackedGrabber()} is then set to null. In this case, a non-null
+ * {@link #inputGrabber()} may still be set with {@link #setDefaultGrabber(Grabber)} (see also {@link #defaultGrabber()}).
  * <p>
  * Agents may be extended by appending branches to them, see
  * {@link remixlab.bias.agent.AbstractMotionAgent#appendBranch(String)},
@@ -39,7 +40,7 @@ import remixlab.bias.event.*;
  * (see {@link #addGrabber(InteractiveGrabber, Branch)}). Please refer to the {@link remixlab.bias.core.Branch} and the
  * {@link remixlab.bias.core.InteractiveGrabber} documentations for details.
  */
-public class Agent {
+public abstract class Agent {
 	protected String										nm;
 	protected List<Branch<?>>			brnchs;
 	protected List<Grabber>	grabberList;
@@ -368,13 +369,31 @@ public class Agent {
 	}
 
 	/**
-	 * Callback (user-space) event reduction routine. Obtains input data and returns a BogusEvent i.e.,
-	 * reduces external input data into a BogusEvent. Automatically call by the main event loop
-	 * ({@link remixlab.bias.core.InputHandler#handle()}). See ProScene's Space-Navigator example.
+	 * Feeds {@link #handle(BogusEvent)} with the returned event. Returns null by default.
+	 * <p>
+	 * Automatically call by the main event loop ({@link remixlab.bias.core.InputHandler#handle()}).
+	 * See ProScene's Space-Navigator example.
 	 * 
 	 * @see remixlab.bias.core.InputHandler#handle()
+	 * @see #updateTrackedGrabberFeed()
+	 * @see #handle(BogusEvent)
+	 * @see #updateTrackedGrabber(BogusEvent)
 	 */
-	public BogusEvent feed() {
+	protected BogusEvent handleFeed() {
+		return null;
+	}
+	
+	/**
+	 * Feeds {@link #updateTrackedGrabber(BogusEvent)} with the returned event. Returns null by default.
+	 * <p>
+	 * Automatically call by the main event loop ({@link remixlab.bias.core.InputHandler#handle()}).
+	 * 
+	 * @see remixlab.bias.core.InputHandler#handle()
+	 * @see #handleFeed()
+	 * @see #handle(BogusEvent)
+	 * @see #updateTrackedGrabber(BogusEvent)
+	 */
+	protected BogusEvent updateTrackedGrabberFeed() {
 		return null;
 	}
 
@@ -398,6 +417,9 @@ public class Agent {
 	 * @see #setDefaultGrabber(Grabber)
 	 * @see #isTracking()
 	 * @see #handle(BogusEvent)
+	 * @see #trackedGrabber()
+	 * @see #defaultGrabber()
+	 * @see #inputGrabber()
 	 */
 	protected Grabber updateTrackedGrabber(BogusEvent event) {
 		if (event == null || !inputHandler().isAgentRegistered(this) || !isTracking())

@@ -27,7 +27,7 @@ import remixlab.util.*;
 /**
  * A specialization of {@link remixlab.dandelion.agent.HIDAgent} that handles touch surfaces.
  */
-public class MultiTouchAgent extends HIDAgent {
+public abstract class MultiTouchAgent extends HIDAgent {
 
 	protected DOF6Event				event, prevEvent;
 	protected TouchProcessor	touchProcessor;

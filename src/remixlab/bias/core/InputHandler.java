@@ -46,16 +46,18 @@ public class InputHandler {
 	 * <p>
 	 * 1. {@link remixlab.bias.core.EventGrabberTuple} producer loop which for each registered agent calls:
 	 * {@link remixlab.bias.core.Agent#handle(BogusEvent)}. Note that the bogus event is obtained from the agents callback
-	 * {@link remixlab.bias.core.Agent#feed()} method.<br>
+	 * {@link remixlab.bias.core.Agent#handleFeed()} method.<br>
 	 * 2. User-defined action consumer loop: which for each {@link remixlab.bias.core.EventGrabberTuple} calls
 	 * {@link remixlab.bias.core.EventGrabberTuple#perform()}.<br>
 	 */
 	public void handle() {
-		// 1. Agents
+		// 1. Agents update
 		for (Agent agent : agents.values())
-			agent.handle(agent.feed());
-
-		// 2. Low level events
+			agent.updateTrackedGrabber(agent.updateTrackedGrabberFeed());
+		// 2. Agents handle
+		for (Agent agent : agents.values())
+			agent.handle(agent.handleFeed());
+		// 3. Low level events
 		while (!eventTupleQueue.isEmpty())
 			eventTupleQueue.remove().perform();
 	}

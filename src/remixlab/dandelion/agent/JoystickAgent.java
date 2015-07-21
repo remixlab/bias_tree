@@ -14,7 +14,7 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-public class JoystickAgent extends MotionAgent<DOF3Action> {
+public abstract class JoystickAgent extends MotionAgent<DOF3Action> {
 	protected float	xSens	= 1f;
 	protected float	ySens	= 1f;
 	protected float	zSens	= 1f;
@@ -24,7 +24,12 @@ public class JoystickAgent extends MotionAgent<DOF3Action> {
 	}
 
 	@Override
-	public DOF6Event feed() {
+	protected DOF3Event handleFeed() {
+		return null;
+	}
+	
+	@Override
+	protected DOF3Event updateTrackedGrabberFeed() {
 		return null;
 	}
 

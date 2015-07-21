@@ -18,16 +18,25 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
+/**
+ * An agent representing a wheeled mouse, i.e., a {@link remixlab.dandelion.agent.MotionAgent}
+ * supporting up to two DOF's.
+ * <p>
+ * @see remixlab.dandelion.core.Constants.DOF1Action
+ * @see remixlab.dandelion.core.Constants.DOF2Action
+ */
+public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	public static int	LEFT_ID	= 1, CENTER_ID = 2, RIGHT_ID = 3, WHEEL_ID = 4;
 
 	protected float		xSens		= 1f;
 	protected float		ySens		= 1f;
 
+	/**
+	 * Creates a mouse agent and appends the {@link #eyeBranch()} and {@link #frameBranch()} to it.
+	 * The mouse agent is added to the {@link remixlab.dandelion.core.AbstractScene#inputHandler()}.
+	 */
 	public WheeledMouseAgent(AbstractScene scn, String n) {
 		super(scn, n);
-		// todo pending
-		// this.setWheelSensitivity(20.0f);
 	}
 
 	@Override
@@ -77,7 +86,12 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	}
 
 	@Override
-	public DOF2Event feed() {
+	protected DOF2Event handleFeed() {
+		return null;
+	}
+	
+	@Override
+	protected DOF2Event updateTrackedGrabberFeed() {
 		return null;
 	}
 
@@ -384,12 +398,28 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		setCommonBindings();
 	}
 
+	/**
+	 * Calls {@code removeMotionBindings(Target.EYE)}, {@code removeClickBindings(Target.EYE)} and
+	 * {@code removeWheelBindings(Target.EYE)}
+	 * 
+	 * @see #removeMotionBindings(Target)
+	 * @see #removeClickBindings(Target)
+	 * @see #removeWheelBindings(Target)
+	 */
 	public void removeEyeBindings() {
 		removeMotionBindings(Target.EYE);
 		removeClickBindings(Target.EYE);
 		removeWheelBindings(Target.EYE);
 	}
 
+	/**
+	 * Calls {@code removeMotionBindings(Target.FRAME)}, {@code removeClickBindings(Target.FRAME)} and
+	 * {@code removeWheelBindings(Target.FRAME)}
+	 * 
+	 * @see #removeMotionBindings(Target)
+	 * @see #removeClickBindings(Target)
+	 * @see #removeWheelBindings(Target)
+	 */
 	public void removeFrameBindings() {
 		removeMotionBindings(Target.FRAME);
 		removeClickBindings(Target.FRAME);
@@ -422,58 +452,72 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	// Gestures : mouse move
 
 	/**
-	 * Binds the mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME).
+	 * Same as {@code setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action)}.
+	 *
+	 * @see remixlab.dandelion.agent.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setGestureBinding(Target target, DOF2Action action) {
 		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action);
 	}
 
 	/**
-	 * Binds the mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME).
+	 * Same as {@code setBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID), action)}.
+	 * 
+	 * @see remixlab.dandelion.agent.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setGestureBinding(Target target, int mask, DOF2Action action) {
 		setBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID), action);
 	}
 
 	/**
-	 * Removes the mouse shortcut binding from the given {@code target} (EYE or FRAME).
+	 * Same as {@code removeBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID))}.
+	 * 
+	 * @see #removeBinding(Target, MotionShortcut)
 	 */
 	public void removeGestureBinding(Target target) {
 		removeBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID));
 	}
 
 	/**
-	 * Removes the mouse shortcut binding from the given {@code target} (EYE or FRAME).
+	 * Same as {@code removeBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID))}.
+	 * 
+	 * @see #removeBinding(Target, MotionShortcut)
 	 */
 	public void removeGestureBinding(Target target, int mask) {
 		removeBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID));
 	}
 
 	/**
-	 * Returns {@code true} if the mouse shortcut is bound to the given {@code target} (EYE or FRAME).
+	 * Same as {@code return hasBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID))}.
+	 * 
+	 * @see #hasBinding(Target, MotionShortcut)
 	 */
 	public boolean hasGestureBinding(Target target) {
 		return hasBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID));
 	}
 
 	/**
-	 * Returns {@code true} if the mouse shortcut is bound to the given {@code target} (EYE or FRAME).
+	 * Same as {@code return hasBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID))}.
+	 * 
+	 * @see #hasBinding(Target, MotionShortcut)
 	 */
 	public boolean hasGestureBinding(Target target, int mask) {
 		return hasBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID));
 	}
 
 	/**
-	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 * Same as {@code return action(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID))}.
+	 * 
+	 * @see #action(Target, MotionShortcut)
 	 */
 	public DOF2Action gestureAction(Target target) {
 		return action(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID));
 	}
 
 	/**
-	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 * Same as {@code return action(target, new MotionShortcut(mask, BogusEvent.NO_ID))}.
+	 * 
+	 * @see #action(Target, MotionShortcut)
 	 */
 	public DOF2Action gestureAction(Target target, int mask) {
 		return action(target, new MotionShortcut(mask, BogusEvent.NO_ID));
@@ -482,60 +526,72 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	// Button : button + drag
 
 	/**
-	 * Binds the mask-button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target}
-	 * (EYE or FRAME).
+	 * Same as {@code setBinding(target, new MotionShortcut(mask, button), action)}.
+	 * 
+	 * @see remixlab.dandelion.agent.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setButtonBinding(Target target, int mask, int button, DOF2Action action) {
 		setBinding(target, new MotionShortcut(mask, button), action);
 	}
 
 	/**
-	 * Binds the button mouse shortcut to the (DOF2) dandelion action to be performed by the given {@code target} (EYE or
-	 * FRAME).
+	 * Same as {@code setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, button), action)}.
+	 * 
+	 * @see remixlab.dandelion.agent.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setButtonBinding(Target target, int button, DOF2Action action) {
 		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, button), action);
 	}
 
 	/**
-	 * Removes the mask-button mouse shortcut binding from the given {@code target} (EYE or FRAME).
+	 * Same as {@code removeBinding(target, new MotionShortcut(mask, button))}.
+	 * 
+	 * @see #removeBinding(Target, MotionShortcut)
 	 */
 	public void removeButtonBinding(Target target, int mask, int button) {
 		removeBinding(target, new MotionShortcut(mask, button));
 	}
 
 	/**
-	 * Removes the button mouse shortcut binding from the given {@code target} (EYE or FRAME).
+	 * Same as {@code removeBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, button))}.
+	 * 
+	 * @see #removeBinding(Target, MotionShortcut)
 	 */
 	public void removeButtonBinding(Target target, int button) {
 		removeBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, button));
 	}
 
 	/**
-	 * Returns {@code true} if the mask-button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
+	 * Same as {@code return hasBinding(target, new MotionShortcut(mask, button))}.
+	 * 
+	 * @see #hasBinding(Target, MotionShortcut)
 	 */
 	public boolean hasButtonBinding(Target target, int mask, int button) {
 		return hasBinding(target, new MotionShortcut(mask, button));
 	}
 
 	/**
-	 * Returns {@code true} if the button mouse shortcut is bound to the given {@code target} (EYE or FRAME).
+	 * Same as {@code return hasBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, button))}.
+	 * 
+	 * @see #hasBinding(Target, MotionShortcut)
 	 */
 	public boolean hasButtonBinding(Target target, int button) {
 		return hasBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, button));
 	}
 
 	/**
-	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given mask-button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 * Same as {@code return action(target, new MotionShortcut(mask, button))}.
+	 * 
+	 * @see #action(Target, MotionShortcut)
 	 */
 	public DOF2Action buttonAction(Target target, int mask, int button) {
 		return action(target, new MotionShortcut(mask, button));
 	}
 
 	/**
-	 * Returns the (DOF2) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given button mouse shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 * Same as {@code return action(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, button))}.
+	 * 
+	 * @see #action(Target, MotionShortcut)
 	 */
 	public DOF2Action buttonAction(Target target, int button) {
 		return action(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, button));
@@ -544,36 +600,43 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	// wheel here
 
 	/**
-	 * Binds the mask-wheel shortcut to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or
-	 * FRAME).
+	 * Same as {@code setBinding(target, new MotionShortcut(mask, WHEEL_ID), action.dof2Action())}.
+	 * 
+	 * @see remixlab.dandelion.agent.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setWheelBinding(Target target, int mask, DOF1Action action) {
 		setBinding(target, new MotionShortcut(mask, WHEEL_ID), action.dof2Action());
 	}
 
 	/**
-	 * Binds the wheel to the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME).
+	 * Same as {@code setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID), action.dof2Action())}.
+	 * 
+	 * @see remixlab.dandelion.agent.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setWheelBinding(Target target, DOF1Action action) {
 		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID), action.dof2Action());
 	}
 
 	/**
-	 * Removes the mask-wheel shortcut binding from the given {@code target} (EYE or FRAME).
+	 * Same as {@code removeBinding(target, new MotionShortcut(mask, WHEEL_ID))}.
+	 * 
+	 * @see #removeBinding(Target, MotionShortcut)
 	 */
 	public void removeWheelBinding(Target target, int mask) {
 		removeBinding(target, new MotionShortcut(mask, WHEEL_ID));
 	}
 
 	/**
-	 * Removes the wheel binding from the given {@code target} (EYE or FRAME).
+	 * Same as {@code removeBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID))}.
+	 * 
+	 * @see #removeBinding(Target, MotionShortcut)
 	 */
 	public void removeWheelBinding(Target target) {
 		removeBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID));
 	}
 
 	/**
-	 * Removes all wheel bindings from the given {@code target} (EYE or FRAME).
+	 * Remove all wheel (DOF1) action bindings.
 	 */
 	public void removeWheelBindings(Target target) {
 		// bit of a hack ;)
@@ -587,37 +650,45 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	}
 
 	/**
-	 * Returns {@code true} if the mask-wheel shortcut is bound to the given {@code target} (EYE or FRAME).
+	 * Same as {@code return hasBinding(target, new MotionShortcut(mask, WHEEL_ID))}.
+	 * 
+	 * @see #hasBinding(Target, MotionShortcut)
 	 */
 	public boolean hasWheelBinding(Target target, int mask) {
 		return hasBinding(target, new MotionShortcut(mask, WHEEL_ID));
 	}
 
 	/**
-	 * Returns {@code true} if the wheel is bound to the given {@code target} (EYE or FRAME).
+	 * Same as {@code return hasBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID))}.
+	 * 
+	 * @see #hasBinding(Target, MotionShortcut)
 	 */
 	public boolean hasWheelBinding(Target target) {
 		return hasBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID));
 	}
 
 	/**
-	 * Returns {@code true} if the mouse wheel action is bound to the given {@code target} (EYE or FRAME).
+	 * Same as {@code return isActionBound(target, action.dof2Action())}.
+	 * 
+	 * @see remixlab.dandelion.agent.MotionAgent#isActionBound(Target, Action)
 	 */
 	public boolean isWheelActionBound(Target target, DOF1Action action) {
 		return isActionBound(target, action.dof2Action());
 	}
 
 	/**
-	 * Returns the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given mask-wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 * Same as {@code return action(target, new MotionShortcut(mask, WHEEL_ID)).dof1Action()}.
+	 * 
+	 * @see #action(Target, MotionShortcut)
 	 */
 	public DOF1Action wheelAction(Target target, int mask) {
 		return action(target, new MotionShortcut(mask, WHEEL_ID)).dof1Action();
 	}
 
 	/**
-	 * Returns the (DOF1) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to the
-	 * given wheel shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 * Same as {@code return action(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID)).dof1Action()}.
+	 * 
+	 * @see #action(Target, MotionShortcut)
 	 */
 	public DOF1Action wheelAction(Target target) {
 		return action(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID)).dof1Action();
@@ -626,96 +697,108 @@ public class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	// click
 
 	/**
-	 * Binds the mask-button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action to be performed by the
-	 * given {@code target} (EYE or FRAME).
+	 * Same as {@code setBinding(target, new ClickShortcut(mask, button, ncs), action)}.
+	 * 
+	 * @see #setBinding(Target, ClickShortcut, ClickAction)
 	 */
 	public void setClickBinding(Target target, int mask, int button, int ncs, ClickAction action) {
 		setBinding(target, new ClickShortcut(mask, button, ncs), action);
 	}
 
 	/**
-	 * Binds the button-ncs (number-of-clicks) click-shortcut to the (click) dandelion action to be performed by the given
-	 * {@code target} (EYE or FRAME).
+	 * Same as {@code setBinding(target, new ClickShortcut(button, ncs), action)}.
+	 * 
+	 * @see #setBinding(Target, ClickShortcut, ClickAction)
 	 */
 	public void setClickBinding(Target target, int button, int ncs, ClickAction action) {
 		setBinding(target, new ClickShortcut(button, ncs), action);
 	}
 
 	/**
-	 * Binds the single-clicked button shortcut to the (click) dandelion action to be performed by the given
-	 * {@code target} (EYE or FRAME).
+	 * Same as {@code setBinding(target, new ClickShortcut(button, 1), action)}.
+	 * 
+	 * @see #setBinding(Target, ClickShortcut, ClickAction)
 	 */
 	public void setClickBinding(Target target, int button, ClickAction action) {
 		setBinding(target, new ClickShortcut(button, 1), action);
 	}
 
 	/**
-	 * Removes the mask-button-ncs (number-of-clicks) click-shortcut binding from the
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code true}) or from the
-	 * {@link remixlab.dandelion.core.InteractiveFrame} (if {@code eye} is {@code false}).
+	 * Same as {@code removeBinding(target, new ClickShortcut(mask, button, ncs))}.
+	 * 
+	 * @see #removeBinding(Target, ClickShortcut)
 	 */
 	public void removeClickBinding(Target target, int mask, int button, int ncs) {
 		removeBinding(target, new ClickShortcut(mask, button, ncs));
 	}
 
 	/**
-	 * Removes the button-ncs (number-of-clicks) click-shortcut binding from the given {@code target} (EYE or FRAME).
+	 * Same as {@code removeBinding(target, new ClickShortcut(button, ncs))}.
+	 * 
+	 * @see #removeBinding(Target, ClickShortcut)
 	 */
 	public void removeClickBinding(Target target, int button, int ncs) {
 		removeBinding(target, new ClickShortcut(button, ncs));
 	}
 
 	/**
-	 * Removes the single-clicked button shortcut binding from the given {@code target} (EYE or FRAME).
+	 * Same as {@code removeBinding(target, new ClickShortcut(button, 1))}.
+	 * 
+	 * @see #removeBinding(Target, ClickShortcut)
 	 */
 	public void removeClickBinding(Target target, int button) {
 		removeBinding(target, new ClickShortcut(button, 1));
 	}
 
 	/**
-	 * Returns {@code true} if the mask-button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target}
-	 * (EYE or FRAME).
+	 * Same as {@code return hasBinding(target, new ClickShortcut(mask, button, ncs))}.
+	 * 
+	 * @see #hasBinding(Target, ClickShortcut)
 	 */
 	public boolean hasClickBinding(Target target, int mask, int button, int ncs) {
 		return hasBinding(target, new ClickShortcut(mask, button, ncs));
 	}
 
 	/**
-	 * Returns {@code true} if the button-ncs (number-of-clicks) click-shortcut is bound to the given {@code target} (EYE
-	 * or FRAME).
+	 * Same as {@code return hasBinding(target, new ClickShortcut(button, ncs))}.
+	 * 
+	 * @see #hasBinding(Target, ClickShortcut)
 	 */
 	public boolean hasClickBinding(Target target, int button, int ncs) {
 		return hasBinding(target, new ClickShortcut(button, ncs));
 	}
 
 	/**
-	 * Returns {@code true} if the single-clicked button shortcut is bound to the given {@code target} (EYE or FRAME).
+	 * Same as {@code return hasBinding(target, new ClickShortcut(button, 1))}.
+	 * 
+	 * @see #hasBinding(Target, ClickShortcut)
 	 */
 	public boolean hasClickBinding(Target target, int button) {
 		return hasBinding(target, new ClickShortcut(button, 1));
 	}
 
 	/**
-	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
-	 * the given mask-button-ncs (number-of-clicks) click-shortcut. Returns {@code null} if no action is bound to the
-	 * given shortcut.
+	 * Same as {@code return action(target, new ClickShortcut(mask, button, ncs))}.
+	 * 
+	 * @see #action(Target, ClickShortcut)
 	 */
 	public ClickAction clickAction(Target target, int mask, int button, int ncs) {
 		return action(target, new ClickShortcut(mask, button, ncs));
 	}
 
 	/**
-	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
-	 * the given button-ncs (number-of-clicks) click-shortcut. Returns {@code null} if no action is bound to the given
-	 * shortcut.
+	 * Same as {@code return action(target, new ClickShortcut(button, ncs))}.
+	 * 
+	 * @see #action(Target, ClickShortcut)
 	 */
 	public ClickAction clickAction(Target target, int button, int ncs) {
 		return action(target, new ClickShortcut(button, ncs));
 	}
 
 	/**
-	 * Returns the (click) dandelion action to be performed by the given {@code target} (EYE or FRAME) that is bound to
-	 * the given single-clicked button shortcut. Returns {@code null} if no action is bound to the given shortcut.
+	 * Same as {@code return action(target, new ClickShortcut(button, 1))}.
+	 * 
+	 * @see #action(Target, ClickShortcut)
 	 */
 	public ClickAction clickAction(Target target, int button) {
 		return action(target, new ClickShortcut(button, 1));

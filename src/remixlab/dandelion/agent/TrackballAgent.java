@@ -14,7 +14,7 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-public class TrackballAgent extends MotionAgent<DOF1Action> {
+public abstract class TrackballAgent extends MotionAgent<DOF1Action> {
 	protected float	xSens	= 1f;
 
 	public TrackballAgent(AbstractScene scn, String n) {
@@ -22,7 +22,12 @@ public class TrackballAgent extends MotionAgent<DOF1Action> {
 	}
 
 	@Override
-	public DOF1Event feed() {
+	protected DOF1Event handleFeed() {
+		return null;
+	}
+	
+	@Override
+	protected DOF1Event updateTrackedGrabberFeed() {
 		return null;
 	}
 

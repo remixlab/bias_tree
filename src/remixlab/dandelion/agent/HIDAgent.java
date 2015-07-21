@@ -15,7 +15,7 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
-public class HIDAgent extends MotionAgent<DOF6Action> {
+public abstract class HIDAgent extends MotionAgent<DOF6Action> {
 	protected float	xSens		= 1f;
 	protected float	ySens		= 1f;
 	protected float	zSens		= 1f;
@@ -34,7 +34,12 @@ public class HIDAgent extends MotionAgent<DOF6Action> {
 	}
 
 	@Override
-	public DOF6Event feed() {
+	protected DOF6Event handleFeed() {
+		return null;
+	}
+	
+	@Override
+	protected DOF6Event updateTrackedGrabberFeed() {
 		return null;
 	}
 
