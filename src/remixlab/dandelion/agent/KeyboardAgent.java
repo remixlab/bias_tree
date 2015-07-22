@@ -48,8 +48,8 @@ import remixlab.dandelion.core.Constants.*;
  * frame (see {@link remixlab.dandelion.core.Eye#frame()}) (note that {@link #resetDefaultGrabber()}
  * will thus defaults to the eye frame too).
  * 
- * @see remixlab.dandelion.core.Constants.GlobalAction
- * @see remixlab.dandelion.core.Constants.MotionAction
+ * @see remixlab.dandelion.core.Constants.SceneAction
+ * @see remixlab.dandelion.core.Constants.KeyboardAction
  */
 
 public abstract class KeyboardAgent extends AbstractKeyboardAgent {
@@ -143,8 +143,12 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 
 	/**
 	 * Same as {@code return sceneBranch().keyboardProfile()}.
+	 * <p>
+	 * The profile defines customizable {@link remixlab.bias.core.KeyboardShortcut} to
+	 * {@link remixlab.dandelion.core.Constants.SceneAction} mappings (bindings).
 	 * 
 	 * @see #sceneBranch()
+	 * @see #remixlab.bias.core.Profile
 	 */
 	protected Profile<GlobalAction, KeyboardShortcut, SceneAction> sceneProfile() {
 		return sceneBranch().keyboardProfile();
@@ -152,6 +156,10 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 
 	/**
 	 * Same as {@code eyeBranch().keyboardProfile()}.
+	 * <p>
+	 * The profile defines customizable {@link remixlab.bias.core.KeyboardShortcut} to
+	 * {@link remixlab.dandelion.core.Constants.KeyboardAction} mappings (bindings) for
+	 * the {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} instance.
 	 * 
 	 * @see #eyeBranch()
 	 */
@@ -161,6 +169,10 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 
 	/**
 	 * Same as {@code return frameBranch().keyboardProfile()}.
+	 * <p>
+	 * The profile defines customizable {@link remixlab.bias.core.KeyboardShortcut} to
+	 * {@link remixlab.dandelion.core.Constants.KeyboardAction} mappings (bindings) for interactive-frame instances
+	 * different than the {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}.
 	 * 
 	 * @see #frameBranch()
 	 */
@@ -168,6 +180,17 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 		return frameBranch().keyboardProfile();
 	}
 
+	/**
+	 * Same as {@code return target == Target.EYE ? eyeProfile() : frameProfile()}.
+	 * <p>
+	 * The profile defines customizable {@link remixlab.bias.core.KeyboardShortcut} to
+	 * {@link remixlab.dandelion.core.Constants.KeyboardAction} mappings (bindings) either the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} (for {@link remixlab.dandelion.core.Constants.Target#EYE});
+	 * or, for other interactive-frame instances (for {@link remixlab.dandelion.core.Constants.Target#FRAME}).
+	 * 
+	 * @see #eyeProfile()
+	 * @see #frameProfile()
+	 */
 	protected Profile<MotionAction, KeyboardShortcut, KeyboardAction> motionProfile(Target target) {
 		return target == Target.EYE ? eyeProfile() : frameProfile();
 	}
@@ -207,7 +230,6 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	 * @see remixlab.dandelion.agent.KeyboardAgent#setKeyCodeToPlayPath(int, int)
 	 */
 	public void setDefaultBindings() {
-		// TODO docs pending
 		removeBindings();
 		removeBindings(Target.EYE);
 		removeBindings(Target.FRAME);
@@ -306,7 +328,7 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	// i. scene
 
 	/**
-	 * Same as {@code }.
+	 * Defines a scene keyboard-shortcut binding. Same as {@code sceneProfile().setBinding(shortcut, action)}.
 	 * 
 	 * @see #sceneProfile()
 	 */
@@ -319,7 +341,7 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	}
 
 	/**
-	 * Same as {@code }.
+	 * Removes the scene keyboard-shortcut binding. Same as {@code sceneProfile().removeBinding(shortcut)}.
 	 * 
 	 * @see #sceneProfile()
 	 */
@@ -328,7 +350,8 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	}
 
 	/**
-	 * Same as {@code }.
+	 * Checks if the scene keyboard-shortcut binding exists (true/false).
+	 * Same as {@code return sceneProfile().hasBinding(shortcut)}.
 	 * 
 	 * @see #sceneProfile()
 	 */
@@ -337,7 +360,8 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	}
 
 	/**
-	 * Same as {@code }.
+	 * Returns the scene action that is bound to the keyboard shortcut (may be null).
+	 * Same as {@code return sceneProfile().action(shortcut)}.
 	 * 
 	 * @see #sceneProfile()
 	 */
@@ -348,14 +372,17 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	// don't override from here
 
 	/**
-	 * Removes all shortcut bindings.
+	 * Removes all the scene keyboard-shortcut bindings. Same as {@code sceneProfile().removeBindings()}.
+	 * 
+	 * @see #sceneProfile()
 	 */
 	public void removeBindings() {
 		sceneProfile().removeBindings();
 	}
 
 	/**
-	 * Same as {@code }.
+	 * Checks if the scene action is bound to a keyboard-shortcut (true/false).
+	 * Same as {@code return sceneProfile().isActionBound(action)}.
 	 * 
 	 * @see #sceneProfile()
 	 */
@@ -366,7 +393,11 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	// ii. Frame
 
 	/**
-	 * Same as {@code motionProfile(target).setBinding(shortcut, action)}.
+	 * Defines a keyboard-shortcut binding for the target interactive-frame. Same as {@code motionProfile(target).setBinding(shortcut, action)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
 	 */
@@ -379,7 +410,11 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	}
 
 	/**
-	 * Same as {@code motionProfile(target).removeBinding(shortcut)}.
+	 * Removes the target interactive-frame keyboard-shortcut binding. Same as {@code motionProfile(target).removeBinding(shortcut)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
 	 */
@@ -388,7 +423,12 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	}
 
 	/**
-	 * Same as {@code return motionProfile(target).hasBinding(shortcut)}.
+	 * Checks if the target interactive-frame or other frames keyboard-shortcut binding exists (true/false). Same as
+	 * {@code return motionProfile(target).hasBinding(shortcut)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
 	 */
@@ -397,7 +437,12 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	}
 
 	/**
-	 * Same as {@code return motionProfile(target).action(shortcut)}.
+	 * Returns the target interactive-frame action that is bound to the keyboard shortcut (may be null). Same as
+	 * {@code return motionProfile(target).action(shortcut)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
 	 */
@@ -408,7 +453,11 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	// don't override from here
 
 	/**
-	 * Same as {@code motionProfile(target).removeBindings()}.
+	 * Removes all the target interactive-frame keyboard-shortcut bindings. Same as {@code motionProfile(target).removeBindings()}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
 	 */
@@ -417,7 +466,12 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	}
 
 	/**
-	 * Same as {@code return motionProfile(target).isActionBound(action)}.
+	 * Checks if the target interactive-frame action is bound to a keyboard-shortcut (true/false). Same as
+	 * {@code return motionProfile(target).isActionBound(action)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
 	 */
@@ -499,7 +553,7 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 		return action(new KeyboardShortcut(mask, vKey));
 	}
 	
-	// char hack
+	// char
 	
 	/**
 	 * Same as {@code setBinding(keyCode(key), action)}.
@@ -579,7 +633,6 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	}
 
 	// FRAMEs
-	// TODO DOCs are broken (since they were copied/pasted from above)
 
 	/**
 	 * Same as {@code setBinding(target, new KeyboardShortcut(BogusEvent.NO_MODIFIER_MASK, vKey), action)}.

@@ -47,17 +47,11 @@ import remixlab.dandelion.core.Constants.*;
  * The agent's {@link #defaultGrabber()} is the {@link remixlab.dandelion.core.AbstractScene#eye()}
  * frame (see {@link remixlab.dandelion.core.Eye#frame()}) (note that {@link #resetDefaultGrabber()}
  * will thus defaults to the eye frame too).
- * <p>
- * The motion agent defines two picking modes (for selecting {@link remixlab.bias.core.Grabber}
- * objects, see {@link #setPickingMode(PickingMode)} and {@link #pickingMode()}):
- * <ol>
- * <li>{@link remixlab.dandelion.agent.MotionAgent.PickingMode#MOVE}: object selection happens
- * during a drag gesture.</li>
- * <li>{@link remixlab.dandelion.agent.MotionAgent.PickingMode#CLICK}: object selection happens
- * from a click gesture.</li>
- * </ol>
  * 
- * @param <A> Motion Action used the parameterize the agent. It defined the agent DOFs.
+ * @param <A> Motion Action used the parameterize the agent. It defines the maximum degrees-of-freedom
+ * (DOFs) that the agent supports. See {@link remixlab.dandelion.agent.TrackballAgent},
+ * {@link remixlab.dandelion.agent.WheeledMouseAgent}, {@link remixlab.dandelion.agent.JoystickAgent}
+ * and {@link remixlab.dandelion.agent.HIDAgent}.
  * 
  * @see remixlab.dandelion.core.Constants.MotionAction
  * @see remixlab.dandelion.core.Constants.ClickAction
@@ -66,11 +60,6 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	protected AbstractScene																scene;
 	protected MotionBranch<MotionAction, A, ClickAction>	eyeBranch;
 	protected MotionBranch<MotionAction, A, ClickAction>	frameBranch;
-	protected PickingMode																	pMode;
-
-	public enum PickingMode {
-		MOVE, CLICK
-	}; // this actually affect all grabbers!
 
 	protected float	wSens	= 1f;
 
@@ -83,7 +72,6 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 		scene = scn;
 		eyeBranch = appendBranch(n + "_eye_mouse_branch");
 		frameBranch = appendBranch(n + "_frame_mouse_branch");
-		setPickingMode(PickingMode.MOVE);
 	}
 
 	/**
@@ -135,6 +123,10 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	
 	/**
 	 * Returns the eye {@code MotionBranch<MotionAction, A, ClickAction>}.
+	 * <p>
+	 * {@code A} is the ({@code Action<MotionAction>}) used to parameterize the agent. See
+	 * {@link remixlab.dandelion.agent.TrackballAgent}, {@link remixlab.dandelion.agent.WheeledMouseAgent},
+	 * {@link remixlab.dandelion.agent.JoystickAgent} and {@link remixlab.dandelion.agent.HIDAgent}.
 	 */
 	public MotionBranch<MotionAction, A, ClickAction> eyeBranch() {
 		return eyeBranch;
@@ -142,85 +134,115 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 
 	/**
 	 * Returns the frame {@code MotionBranch<MotionAction, A, ClickAction>}.
+	 * <p>
+	 * {@code A} is the ({@code Action<MotionAction>}) used to parameterize the agent. See
+	 * {@link remixlab.dandelion.agent.TrackballAgent}, {@link remixlab.dandelion.agent.WheeledMouseAgent},
+	 * {@link remixlab.dandelion.agent.JoystickAgent} and {@link remixlab.dandelion.agent.HIDAgent}.
 	 */
 	public MotionBranch<MotionAction, A, ClickAction> frameBranch() {
 		return frameBranch;
 	}
 
 	/**
-	 * Same as {@code return target == Target.EYE ? eyeProfile() : frameProfile()}
+	 * Same as {@code return target == Target.EYE ? eyeProfile() : frameProfile()}.
+	 * <p>
+	 * The profile defines customizable {@link remixlab.bias.core.KeyboardShortcut} to
+	 * to (action) {@code A} mappings (bindings) either the {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}
+	 * (for {@link remixlab.dandelion.core.Constants.Target#EYE}); or, for other interactive-frame instances
+	 * (for {@link remixlab.dandelion.core.Constants.Target#FRAME}).
+	 * <p>
+	 * {@code A} is the ({@code Action<MotionAction>}) used to parameterize the agent. See
+	 * {@link remixlab.dandelion.agent.TrackballMouseAgent}, {@link remixlab.dandelion.agent.WheeledMouseAgent},
+	 * {@link remixlab.dandelion.agent.JoystickMouseAgent} and {@link remixlab.dandelion.agent.HIDMouseAgent}.
+	 * 
+	 * @see #eyeProfile()
+	 * @see #frameProfile()
 	 */
 	protected Profile<MotionAction, MotionShortcut, A> motionProfile(Target target) {
 		return target == Target.EYE ? eyeProfile() : frameProfile();
 	}
 	
 	/**
-	 * Same as {@code return eyeBranch().motionProfile()}
+	 * Same as {@code return eyeBranch().motionProfile()}.
+	 * <p>
+	 * The profile defines customizable {@link remixlab.bias.core.MotionShortcut} to (action) {@code A} mappings (bindings)
+	 * for the {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} instance.
+	 * <p>
+	 * {@code A} is the ({@code Action<MotionAction>}) used to parameterize the agent. See
+	 * {@link remixlab.dandelion.agent.TrackballMouseAgent}, {@link remixlab.dandelion.agent.WheeledMouseAgent},
+	 * {@link remixlab.dandelion.agent.JoystickMouseAgent} and {@link remixlab.dandelion.agent.HIDMouseAgent}.
 	 * 
 	 * @see #eyeBranch()
 	 */
-	public Profile<MotionAction, MotionShortcut, A> eyeProfile() {
+	protected Profile<MotionAction, MotionShortcut, A> eyeProfile() {
 		return eyeBranch().motionProfile();
 	}
 
 	/**
-	 * Same as {@code return frameBranch().motionProfile()}
+	 * Same as {@code return frameBranch().motionProfile()}.
+	 * <p>
+	 * The profile defines customizable {@link remixlab.bias.core.MotionShortcut} to (action) {@code A} mappings (bindings)
+	 * for interactive-frame instances different than the {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}.
+	 * <p>
+	 * {@code A} is the ({@code Action<MotionAction>}) used to parameterize the agent. See
+	 * {@link remixlab.dandelion.agent.TrackballMouseAgent}, {@link remixlab.dandelion.agent.WheeledMouseAgent},
+	 * {@link remixlab.dandelion.agent.JoystickMouseAgent} and {@link remixlab.dandelion.agent.HIDMouseAgent}.
 	 * 
 	 * @see #frameBranch()
 	 */
-	public Profile<MotionAction, MotionShortcut, A> frameProfile() {
+	protected Profile<MotionAction, MotionShortcut, A> frameProfile() {
 		return frameBranch().motionProfile();
 	}
 
 	/**
-	 * Same as {@code return target == Target.EYE ? eyeClickProfile() : frameClickProfile()}
+	 * Same as {@code return target == Target.EYE ? eyeClickProfile() : frameClickProfile()}.
+	 * <p>
+	 * The profile defines customizable {@link remixlab.bias.core.ClickShortcut} to
+	 * to {@link remixlab.dandelion.core.Constants.ClickAction} mappings (bindings) either the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} (for {@link remixlab.dandelion.core.Constants.Target#EYE});
+	 * or, for other interactive-frame instances (for {@link remixlab.dandelion.core.Constants.Target#FRAME}).
 	 */
 	protected Profile<MotionAction, ClickShortcut, ClickAction> clickProfile(Target target) {
 		return target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 	}
 	
 	/**
-	 * Same as {@code return eyeBranch().clickProfile()}
+	 * Same as {@code return eyeBranch().clickProfile()}.
+	 * <p>
+	 * The profile defines customizable {@link remixlab.bias.core.ClickShortcut} to
+	 * {@link remixlab.dandelion.core.Constants.ClickAction} mappings (bindings) for the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} instance.
 	 * 
 	 * @see #eyeBranch()
 	 */
-	public Profile<MotionAction, ClickShortcut, ClickAction> eyeClickProfile() {
+	protected Profile<MotionAction, ClickShortcut, ClickAction> eyeClickProfile() {
 		return eyeBranch().clickProfile();
 	}
 
 	/**
-	 * Same as {@code return frameBranch().clickProfile()}
+	 * Same as {@code return frameBranch().clickProfile()}.
+	 * <p>
+	 * The profile defines customizable {@link remixlab.bias.core.ClickShortcut} to
+	 * {@link remixlab.dandelion.core.Constants.ClickAction} mappings (bindings) for interactive-frame instances
+	 * different that the {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}.
 	 * 
 	 * @see #frameBranch()
 	 */
-	public Profile<MotionAction, ClickShortcut, ClickAction> frameClickProfile() {
+	protected Profile<MotionAction, ClickShortcut, ClickAction> frameClickProfile() {
 		return frameBranch().clickProfile();
 	}
 
 	// common api
-	
-	/**
-	 * Sets the agent {@link #pickingMode()}. Either {@link PickingMode#MOVE} or {@link PickingMode#CLICK}.
-	 * 
-	 * @see #pickingMode()
-	 */
-	public void setPickingMode(PickingMode mode) {
-		pMode = mode;
-	}
-
-	/**
-	 * Returns the agent {@link #pickingMode()}. Either {@link PickingMode#MOVE} or {@link PickingMode#CLICK}.
-	 * 
-	 * @see #setPickingMode(PickingMode)
-	 */
-	public PickingMode pickingMode() {
-		return pMode;
-	}
 
 	// high level (new) with plain shortcuts
 
-	/**
-	 * Same as {@code motionProfile(target).setBinding(shortcut, action)}.
+	/** 
+	 * Defines a motion-shortcut binding for the target interactive-frame. Same as
+	 * {@code motionProfile(target).setBinding(shortcut, action)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
 	 */
@@ -229,7 +251,12 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	}
 
 	/**
-	 * Same as {@code clickProfile(target).setBinding(shortcut, action)}.
+	 * Defines a click-shortcut binding for the target interactive-frame. Same as
+	 * {@code clickProfile(target).setBinding(shortcut, action)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #clickProfile(Target)
 	 */
@@ -238,7 +265,12 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	}
 
 	/**
-	 * Same as {@code motionProfile(target).removeBinding(shortcut)}.
+	 * Removes the target interactive-frame motion-shortcut binding. Same as
+	 * {@code motionProfile(target).removeBinding(shortcut)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
 	 */
@@ -247,7 +279,11 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	}
 
 	/**
-	 * Same as {@code clickProfile(target).removeBinding(shortcut)}.
+	 * Removes the target interactive-frame click-shortcut binding. Same as {@code clickProfile(target).removeBinding(shortcut)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #clickProfile(Target)
 	 */
@@ -256,7 +292,12 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	}
 
 	/**
+	 * Checks if the target interactive-frame or other frames motion-shortcut binding exists (true/false).
 	 * Same as {@code return motionProfile(target).hasBinding(shortcut)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
 	 */
@@ -265,7 +306,12 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	}
 
 	/**
+	 * Checks if the target interactive-frame or other frames click-shortcut binding exists (true/false).
 	 * Same as {@code return clickProfile(target).hasBinding(shortcut)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #clickProfile(Target)
 	 */
@@ -274,7 +320,12 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	}
 
 	/**
+	 * Returns the target interactive-frame action that is bound to the motion-shortcut (may be null).
 	 * Same as {@code return motionProfile(target).action(shortcut)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
 	 */
@@ -283,7 +334,12 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	}
 
 	/**
+	 * Returns the target interactive-frame action that is bound to the click-shortcut (may be null).
 	 * Same as {@code return clickProfile(target).action(shortcut)}.
+	 * <p>
+	 * The {@code target} may be either ({@link remixlab.dandelion.core.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}, or {@link remixlab.dandelion.core.Constants.Target#FRAME} to specify
+	 * the remaining interactive-frames.
 	 * 
 	 * @see #clickProfile(Target)
 	 */

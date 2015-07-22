@@ -14,6 +14,14 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
+/**
+ * A {@code MotionAgent<DOF1Action>}, such as a trackball, supporting
+ * {@link remixlab.dandelion.core.Constants.ClickAction}s, and 
+ * {@link remixlab.dandelion.core.Constants.DOF1Action}s actions.
+ * <p>
+ * @see remixlab.dandelion.core.Constants.ClickAction
+ * @see remixlab.dandelion.core.Constants.DOF1Action
+ */
 public abstract class TrackballAgent extends MotionAgent<DOF1Action> {
 	protected float	xSens	= 1f;
 

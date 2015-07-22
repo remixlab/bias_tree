@@ -24,7 +24,7 @@ import remixlab.bias.event.*;
  * a grabber to/from the #grabbers() collection issue #addGrabber(Grabber) / #removeGrabber(Grabber) calls.
  * Derive from this agent and either call {@link #handle(BogusEvent)} or override {@link #handleFeed()}.
  * <p>
- * The agent may send bogus-events to its #inputGrabber() which may be regarded as the agent's grabber target. The
+ * The agent may send bogus-events to its {@link #inputGrabber()} which may be regarded as the agent's grabber target. The
  * {@link #inputGrabber()} may be set by querying each grabber object in {@link #grabbers()} to check if its
  * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)}) condition is met
  * (see {@link #updateTrackedGrabber(BogusEvent)}, {@link #updateTrackedGrabberFeed()}). The first grabber meeting

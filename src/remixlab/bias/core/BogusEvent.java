@@ -114,8 +114,8 @@ public class BogusEvent implements Copyable {
 	
 	/**
 	 * Returns true if this is a 'flushed' event. Flushed events indicate gesture (or action) termination,
-	 * such as when a mouse-release is being part of a mouse-press / mouse-move(or mouse-drag) interaction
-	 * (mouse-release can then point to gesture termination).
+	 * such as a mouse-release within a mouse-press / mouse-move(or mouse-drag) interaction (mouse-release
+	 * can then point to gesture termination).
 	 */
 	public boolean flushed() {
 		return flush;

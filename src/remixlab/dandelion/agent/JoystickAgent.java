@@ -14,6 +14,16 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
+/**
+ * A {@code MotionAgent<DOF3Action>}, such most joystick, supporting
+ * {@link remixlab.dandelion.core.Constants.ClickAction}s, and up to
+ * {@link remixlab.dandelion.core.Constants.DOF3Action}s actions.
+ * <p>
+ * @see remixlab.dandelion.core.Constants.ClickAction
+ * @see remixlab.dandelion.core.Constants.DOF1Action
+ * @see remixlab.dandelion.core.Constants.DOF2Action
+ * @see remixlab.dandelion.core.Constants.DOF3Action
+ */
 public abstract class JoystickAgent extends MotionAgent<DOF3Action> {
 	protected float	xSens	= 1f;
 	protected float	ySens	= 1f;

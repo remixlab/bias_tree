@@ -19,10 +19,9 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 /**
- * An agent representing a wheeled mouse, i.e., a {@link remixlab.dandelion.agent.MotionAgent}
- * supporting {@link remixlab.dandelion.core.Constants.ClickAction},
- * {@link remixlab.dandelion.core.Constants.DOF1Action} and
- * {@link remixlab.dandelion.core.Constants.DOF2Action} actions.
+ * A {@code MotionAgent<DOF2Action>}, such as most mice, supporting
+ * {@link remixlab.dandelion.core.Constants.ClickAction}s, and up to
+ * {@link remixlab.dandelion.core.Constants.DOF2Action}s actions.
  * <p>
  * @see remixlab.dandelion.core.Constants.ClickAction
  * @see remixlab.dandelion.core.Constants.DOF1Action
