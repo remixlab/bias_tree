@@ -225,6 +225,10 @@ public class Frame implements Copyable {
 		return new Frame(this);
 	}
 	
+	/**
+	 * Returns a copy of this frame preserving its {@link #position()}, {@link #orientation()} and
+	 * {@link #magnitude()}, but discarding its {@link #referenceFrame()} and {@link #children()}. 
+	 */
 	public Frame detach() {
 		Frame frame = get();
 		Iterator<Frame> iterator = frame.childrenList.iterator();

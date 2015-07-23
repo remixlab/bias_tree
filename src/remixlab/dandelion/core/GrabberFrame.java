@@ -17,11 +17,69 @@ import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
 
 /**
- * The frame is loosely-coupled with the scene object used to instantiate it, i.e., the transformation it represents may
+ * A {@link remixlab.dandelion.geom.Frame} implementing the {@link remixlab.bias.core.Grabber} interface, which
+ * converts user gestures into translation, rotation and scaling {@link remixlab.dandelion.geom.Frame}
+ * updates (see {@link #translationSensitivity()}, {@link #rotationSensitivity()} and {@link #scalingSensitivity()}).
+ * A grabber-frame may thus be attached to some of your scene objects to control their motion through an
+ * {@link remixlab.bias.core.Agent}, such as the {@link remixlab.dandelion.core.AbstractScene#motionAgent()} and
+ * the {@link remixlab.dandelion.core.AbstractScene#keyboardAgent()} (see {@link #GrabberFrame(AbstractScene)} and all
+ * the constructors that take an scene parameter). To attach a grabber-frame to {@code MyObject} use code like this:
+ * <pre>
+ * {@code
+ * public class MyObject {
+ *   public GrabberFrame gFrame;
+ *   public void draw() {
+ *     gFrame.scene().pushModelView();
+ *     gFrame.applyWorldTransformation();
+ *     drawMyObject();
+ *     gFrame.scene().popModelView();
+ *   }
+ * }
+ * }
+ * </pre>
+ * See {@link #applyTransformation()}, {@link #applyTransformation()}, {@link #scene()},
+ * {@link remixlab.dandelion.core.AbstractScene#pushModelView()} and
+ * {@link remixlab.dandelion.core.AbstractScene#popModelView()}
+ * <p>
+ * A grabber-frame may also be attached to an {@link remixlab.dandelion.core.Eye}, such as the
+ * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} which is attached to the
+ * {@link remixlab.dandelion.core.AbstractScene#eye()} (see {@link #isEyeFrame()}). Some user gestures are then 
+ * interpreted in a negated way, respect to eye detached frames. For instance, with a move-to-the-right user gesture the
+ * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} has to go to the <i>left</i>, so that the <i>scene</i> seems
+ * to move to the right. A grabber-frame can be attached to an eye only at construction times (see {@link #GrabberFrame(Eye)} and
+ * all the constructors that take an eye parameter). An eye may have more than one grabber-frame attached to it. To set
+ * one of them as the {@link remixlab.dandelion.core.Eye#frame()}, call
+ * {@link remixlab.dandelion.core.Eye#setFrame(GrabberFrame)}. Note that a grabber-frame may at any time be detached from
+ * the eye, see {@link #detach()}.
+ * <p>
+ * This class provides several gesture-to-motion converting methods, such as: {@link #gestureArcball(MotionEvent)},
+ * {@link #gestureMoveForward(DOF2Event, boolean)}, {@link #gestureTranslateX(KeyboardEvent, boolean)}, etc. To use them,
+ * derive from this class and override the version of {@code performInteraction} with the (bogus-event) parameter type you want
+ * to customize (see {@link #performInteraction(MotionEvent)}, {@link #performInteraction(KeyboardEvent)}, etc.). For example,
+ * with the following code:
+ * <pre>
+ * {@code
+ * public void performInteraction(DOF2Event event) {
+ *   if(event.id() == LEFT)
+ *     gestureArcball(event);
+ *   if(event.id() == RIGHT)
+ *     gestureTranslateXY(event);
+ * }
+ * }
+ * </pre>
+ * your custom grabber-frame will then accordingly react to the mouse LEFT and RIGHT buttons, provided it's added to
+ * the mouse-agent first (see {@link remixlab.dandelion.agent.MotionAgent#addGrabber(Grabber)} and also
+ * {@link remixlab.dandelion.agent.KeyboardAgent#addGrabber(Grabber)}). Note that the
+ * {@link remixlab.dandelion.core.InteractiveFrame} provides an {@link remixlab.bias.core.Action}-based convenient
+ * implementation.
+ * <p>
+ * TODO: Describe picking policy
+ * <p>
+ * A grabber-frame is loosely-coupled with the scene object used to instantiate it, i.e., the transformation it represents may
  * be applied to a different scene. See {@link #applyTransformation()} and {@link #applyTransformation(AbstractScene)}.
  * <p>
- * Two frames can be synced together ({@link #sync(GrabberFrame, GrabberFrame)}), meaning that they will share their
- * global parameters (position, orientation and magnitude) taken the one that has been most recently updated. Syncing
+ * Two grabber-frames can be synced together ({@link #sync(GrabberFrame, GrabberFrame)}), meaning that they will share
+ * their global parameters (position, orientation and magnitude) taken the one that has been most recently updated. Syncing
  * can be useful to share frames among different off-screen scenes (see ProScene's CameraCrane and the AuxiliarViewer
  * examples).
  */
@@ -130,6 +188,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
+	/**
+	 * Same as {@code this(eye, null, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), 1)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye) {
 		this(eye, null, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), 1);
 	}
@@ -143,6 +206,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
+	/**
+	 * Same as {@code this(eye, null, p, eye.scene().is3D() ? new Quat() : new Rot(), 1)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye, Vec p) {
 		this(eye, null, p, eye.scene().is3D() ? new Quat() : new Rot(), 1);
 	}
@@ -156,6 +224,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, null, new Vec(), r, 1);
 	}
 
+	/**
+	 * Same as {@code this(eye, null, new Vec(), r, 1)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye, Rotation r) {
 		this(eye, null, new Vec(), r, 1);
 	}
@@ -169,6 +242,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
+	/**
+	 * Same as {@code this(eye, null, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), s)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye, float s) {
 		this(eye, null, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), s);
 	}
@@ -182,6 +260,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
+	/**
+	 * Same as {@code this(eye, null, p, eye.scene().is3D() ? new Quat() : new Rot(), s)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye, Vec p, float s) {
 		this(eye, null, p, eye.scene().is3D() ? new Quat() : new Rot(), s);
 	}
@@ -195,6 +278,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, null, p, r, 1);
 	}
 
+	/**
+	 * Same as {@code this(eye, null, p, r, 1)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye, Vec p, Rotation r) {
 		this(eye, null, p, r, 1);
 	}
@@ -208,6 +296,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, null, new Vec(), r, s);
 	}
 
+	/**
+	 * Same as {@code this(eye, null, new Vec(), r, s)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye, Rotation r, float s) {
 		this(eye, null, new Vec(), r, s);
 	}
@@ -243,6 +336,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
+	/**
+	 * Same as {@code this(eye, referenceFrame, p, eye.scene().is3D() ? new Quat() : new Rot(), 1)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p) {
 		this(eye, referenceFrame, p, eye.scene().is3D() ? new Quat() : new Rot(), 1);
 	}
@@ -256,6 +354,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, referenceFrame, new Vec(), r, 1);
 	}
 
+	/**
+	 * Same as {@code this(eye, referenceFrame, new Vec(), r, 1)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye, Frame referenceFrame, Rotation r) {
 		this(eye, referenceFrame, new Vec(), r, 1);
 	}
@@ -269,6 +372,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
+	/**
+	 * Same as {@code this(eye, referenceFrame, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), s)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye, Frame referenceFrame, float s) {
 		this(eye, referenceFrame, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), s);
 	}
@@ -282,6 +390,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
+	/**
+	 * Same as {@code this(eye, referenceFrame, p, eye.scene().is3D() ? new Quat() : new Rot(), s)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, float s) {
 		this(eye, referenceFrame, p, eye.scene().is3D() ? new Quat() : new Rot(), s);
 	}
@@ -295,6 +408,11 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, referenceFrame, p, r, 1);
 	}
 
+	/**
+	 * Same as {@code this(eye, referenceFrame, p, r, 1)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r) {
 		this(eye, referenceFrame, p, r, 1);
 	}
@@ -308,14 +426,30 @@ public class GrabberFrame extends Frame implements Grabber {
 		this(scn, referenceFrame, new Vec(), r, s);
 	}
 
+	/**
+	 * Same as {@code this(eye, referenceFrame, new Vec(), r, s)}.
+	 * 
+	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
+	 */
 	public GrabberFrame(Eye eye, Frame referenceFrame, Rotation r, float s) {
 		this(eye, referenceFrame, new Vec(), r, s);
 	}
 
 	/**
-	 * Creates a Frame bound to {@code scn} with {@code referenceFrame} as {@link #referenceFrame()}, and {@code p},
+	 * Creates a scene Frame with {@code referenceFrame} as {@link #referenceFrame()}, and {@code p},
 	 * {@code r} and {@code s} as the frame {@link #translation()}, {@link #rotation()} and {@link #scaling()},
 	 * respectively.
+	 * <p>
+	 * The {@link remixlab.dandelion.core.AbstractScene#inputHandler()} will attempt to the
+	 * grabber-frame to all its {@link remixlab.bias.core.InputHandler#agents()}, such as the
+	 * {@link remixlab.dandelion.core.AbstractScene#motionAgent()} and the
+	 * {@link remixlab.dandelion.core.AbstractScene#keyboardAgent()}.
+	 * <p>
+	 * The grabber-frame sensitivities are set to their default values, see {@link #spinningSensitivity()},
+	 * {@link #wheelSensitivity()}, {@link #keyboardSensitivity()}, {@link #rotationSensitivity()},
+	 * {@link #translationSensitivity()} and {@link #scalingSensitivity()}.
+	 * <p>
+	 * After object creation a call to {@link #isEyeFrame()} will return {@code false}.
 	 */
 	public GrabberFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(referenceFrame, p, r, s);
@@ -328,6 +462,21 @@ public class GrabberFrame extends Frame implements Grabber {
 				agent.addGrabber(this);
 	}
 
+	/**
+	 * Creates an eye frame with {@code referenceFrame} as {@link #referenceFrame()}, and {@code p},
+	 * {@code r} and {@code s} as the frame {@link #translation()}, {@link #rotation()} and {@link #scaling()},
+	 * respectively.
+	 * <p>
+	 * The grabber-frame isn't added to any of the {@link remixlab.dandelion.core.AbstractScene#inputHandler()}
+	 * {@link remixlab.bias.core.InputHandler#agents()}. A call to
+	 * {@link remixlab.dandelion.core.AbstractScene#setEye(Eye)} will do it.
+	 * <p>
+	 * The grabber-frame sensitivities are set to their default values, see {@link #spinningSensitivity()},
+	 * {@link #wheelSensitivity()}, {@link #keyboardSensitivity()}, {@link #rotationSensitivity()},
+	 * {@link #translationSensitivity()} and {@link #scalingSensitivity()}.
+	 * <p>
+	 * After object creation a call to {@link #isEyeFrame()} will return {@code true}.
+	 */
 	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(referenceFrame, p, r, s);
 		scene = eye.scene();
@@ -432,16 +581,32 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Returns the scene this object belongs to
+	 * Returns the scene this object belongs to.
+	 * <p>
+	 * Note that if this {@link #isEyeFrame()} then returns {@code eye().scene()}.
+	 * 
+	 * @see #eye()
+	 * @see remixlab.dandelion.core.Eye#scene()
 	 */
 	public AbstractScene scene() {
 		return scene;
 	}
 
+	/**
+	 * Returns the eye object this grabber-frame is attached to. May be null if the grabber-frame is not attach to an eye.
+	 * 
+	 * @see #isEyeFrame()
+	 */
 	public Eye eye() {
 		return theeye;
 	}
 
+	/**
+	 * Returns true if the grabber-frame is attached to an eye, and false otherwise. Grabber-frames can only be attached
+	 * to an eye at construction times. Refer to the grabber-frame constructors that take an eye parameter.
+	 * 
+	 * @see #eye()
+	 */
 	public boolean isEyeFrame() {
 		return theeye != null;
 	}
@@ -721,20 +886,22 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Defines the {@link #wheelSensitivity()}.
+	 * Defines the {@link #keyboardSensitivity()}.
 	 */
 	public final void setKeyboardSensitivity(float sensitivity) {
 		keySensitivity = sensitivity;
 	}
 
 	/**
-	 * Returns the influence of a gesture displacement on the InteractiveFrame rotation.
+	 * Returns the influence of a gesture displacement on the grabber-frame rotation.
 	 * <p>
 	 * Default value is 1.0 (which matches an identical mouse displacement), a higher value will generate a larger
 	 * rotation (and inversely for lower values). A 0.0 value will forbid rotation (see also {@link #constraint()}).
 	 * 
 	 * @see #setRotationSensitivity(float)
 	 * @see #translationSensitivity()
+	 * @see #scalingSensitivity()
+	 * @see #keyboardSensitivity()
 	 * @see #spinningSensitivity()
 	 * @see #wheelSensitivity()
 	 */
@@ -743,7 +910,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Returns the influence of a gesture displacement on the InteractiveFrame scaling.
+	 * Returns the influence of a gesture displacement on the grabber-frame scaling.
 	 * <p>
 	 * Default value is 1.0, a higher value will generate a larger scaling (and inversely for lower values). A 0.0 value
 	 * will forbid scaling (see also {@link #constraint()}).
@@ -751,6 +918,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * @see #setScalingSensitivity(float)
 	 * @see #setRotationSensitivity(float)
 	 * @see #translationSensitivity()
+	 * @see #keyboardSensitivity()
 	 * @see #spinningSensitivity()
 	 * @see #wheelSensitivity()
 	 */
@@ -759,9 +927,9 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Returns the influence of a gesture displacement on the InteractiveFrame translation.
+	 * Returns the influence of a gesture displacement on the grabber-frame translation.
 	 * <p>
-	 * Default value is 1.0 which in the case of a mouse interaction makes the InteractiveFrame precisely stays under the
+	 * Default value is 1.0 which in the case of a mouse interaction makes the grabber-frame precisely stays under the
 	 * mouse cursor.
 	 * <p>
 	 * With an identical gesture displacement, a higher value will generate a larger translation (and inversely for lower
@@ -769,6 +937,8 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * 
 	 * @see #setTranslationSensitivity(float)
 	 * @see #rotationSensitivity()
+	 * @see #scalingSensitivity()
+	 * @see #keyboardSensitivity()
 	 * @see #spinningSensitivity()
 	 * @see #wheelSensitivity()
 	 */
@@ -777,7 +947,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Returns the minimum gesture speed required to make the InteractiveFrame {@link #spin()}. Spinning requires to set
+	 * Returns the minimum gesture speed required to make the grabber-frame {@link #spin()}. Spinning requires to set
 	 * to {@link #damping()} to 0.
 	 * <p>
 	 * See  {@link #spin()}, {@link #spinningRotation()} and {@link #startSpinning(MotionEvent, Rotation)} for details.
@@ -789,6 +959,8 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * @see #setSpinningSensitivity(float)
 	 * @see #translationSensitivity()
 	 * @see #rotationSensitivity()
+	 * @see #scalingSensitivity()
+	 * @see #keyboardSensitivity()
 	 * @see #wheelSensitivity()
 	 * @see #setDamping(float)
 	 */
@@ -800,26 +972,40 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * Returns the wheel sensitivity.
 	 * <p>
 	 * Default value is 5.0. A higher value will make the wheel action more efficient (usually meaning faster motion). Use
-	 * a negative value to invert the zoom in and out directions.
+	 * a negative value to invert the operation direction.
 	 * 
 	 * @see #setWheelSensitivity(float)
 	 * @see #translationSensitivity()
 	 * @see #rotationSensitivity()
+	 * @see #scalingSensitivity()
+	 * @see #keyboardSensitivity()
 	 * @see #spinningSensitivity()
 	 */
 	public float wheelSensitivity() {
 		return wheelSensitivity;
 	}
 
+	/**
+	 * Returns the keyboard sensitivity.
+	 * <p>
+	 * Default value is 1.0. A higher value will make the keyboard more efficient (usually meaning faster motion).
+	 * 
+	 * @see #setKeyboardSensitivity(float)
+	 * @see #translationSensitivity()
+	 * @see #rotationSensitivity()
+	 * @see #scalingSensitivity()
+	 * @see #wheelSensitivity()
+	 * @see #setDamping(float)
+	 */
 	public float keyboardSensitivity() {
 		return keySensitivity;
 	}
 
 	/**
-	 * Returns {@code true} when the InteractiveFrame is spinning.
+	 * Returns {@code true} when the grabber-frame is spinning.
 	 * <p>
-	 * During spinning, {@link #spin()} rotates the InteractiveFrame by its {@link #spinningRotation()} at a frequency
-	 * defined when the InteractiveFrame {@link #startSpinning(MotionEvent, Rotation)}.
+	 * During spinning, {@link #spin()} rotates the grabber-frame by its {@link #spinningRotation()} at a frequency
+	 * defined when the grabber-frame {@link #startSpinning(MotionEvent, Rotation)}.
 	 * <p>
 	 * Use {@link #startSpinning(MotionEvent, Rotation)} and {@link #stopSpinning()} to change this state. Default value is
 	 * {@code false}.
@@ -831,12 +1017,12 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Returns the incremental rotation that is applied by {@link #spin()} to the InteractiveFrame orientation when it
+	 * Returns the incremental rotation that is applied by {@link #spin()} to the grabber-frame orientation when it
 	 * {@link #isSpinning()}.
 	 * <p>
 	 * Default value is a {@code null} rotation. Use {@link #setSpinningRotation(Rotation)} to change this value.
 	 * <p>
-	 * The {@link #spinningRotation()} axis is defined in the InteractiveFrame coordinate system. You can use
+	 * The {@link #spinningRotation()} axis is defined in the grabber-frame coordinate system. You can use
 	 * {@link remixlab.dandelion.geom.Frame#transformOfFrom(Vec, Frame)} to convert this axis from another Frame
 	 * coordinate system.
 	 * <p>
@@ -849,7 +1035,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Defines the {@link #spinningRotation()}. Its axis is defined in the InteractiveFrame coordinate system.
+	 * Defines the {@link #spinningRotation()}. Its axis is defined in the grabber-frame coordinate system.
 	 * 
 	 * @see #setFlyDirection(Vec)
 	 */
@@ -875,10 +1061,10 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Starts the spinning of the InteractiveFrame.
+	 * Starts the spinning of the grabber-frame.
 	 * <p>
 	 * This method starts a timer that will call {@link #spin()} every {@code updateInterval} milliseconds. The
-	 * InteractiveFrame {@link #isSpinning()} until you call {@link #stopSpinning()}.
+	 * grabber-frame {@link #isSpinning()} until you call {@link #stopSpinning()}.
 	 * <p>
 	 * <b>Attention: </b>Spinning may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
@@ -922,7 +1108,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	/**
 	 * Rotates the scene-frame by its {@link #spinningRotation()} or around the
 	 * {@link remixlab.dandelion.core.Eye#anchor()} when this scene-frame is the
-	 * {@link remixlab.dandelion.core.AbstractScene#eye()}. Called by a timer when the InteractiveFrame
+	 * {@link remixlab.dandelion.core.AbstractScene#eye()}. Called by a timer when the grabber-frame
 	 * {@link #isSpinning()}.
 	 * <p>
 	 * <b>Attention: </b>Spinning may be decelerated according to {@link #damping()} till it stops completely.
@@ -1584,18 +1770,44 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	// Quite nice
 
+	/**
+	 * Same as {@code return screenToVec(new Vec(x, y, z))}.
+	 * 
+	 * @see #screenToVec(Vec)
+	 */
 	public Vec screenToVec(float x, float y, float z) {
 		return screenToVec(new Vec(x, y, z));
 	}
 
+	/**
+	 * Same as {@code return eyeToReferenceFrame(screenToEye(trns))}. Transforms the vector from screen
+	 * (device) coordinates to {@link #referenceFrame()} coordinates. 
+	 * 
+	 * @see #screenToEye(Vec)
+	 * @see #eyeToReferenceFrame(Vec)
+	 */
 	public Vec screenToVec(Vec trns) {
 		return eyeToReferenceFrame(screenToEye(trns));
 	}
 
+	/**
+	 * Same as {@code return eyeToReferenceFrame(new Vec(x, y, z))}.
+	 * 
+	 * @see #eyeToReferenceFrame(Vec)
+	 */
 	public Vec eyeToReferenceFrame(float x, float y, float z) {
 		return eyeToReferenceFrame(new Vec(x, y, z));
 	}
 
+	/**
+	 * Converts the vector from eye coordinates to {@link #referenceFrame()} coordinates.
+	 * <p>
+	 * It's worth noting that all gesture to grabber-frame motion converting methods, are implemented from just
+	 * {@link #screenToEye(Vec)}, {@link #eyeToReferenceFrame(Vec)} and {@link #screenToQuat(float, float, float)}. 
+	 * 
+	 * @see #screenToEye(Vec)
+	 * @see #screenToQuat(float, float, float)
+	 */
 	public Vec eyeToReferenceFrame(Vec trns) {
 		GrabberFrame gFrame = isEyeFrame() ? this : /* respectToEye() ? */scene.eye().frame() /* : this */;
 		Vec t = gFrame.inverseTransformOf(trns);
@@ -1604,10 +1816,24 @@ public class GrabberFrame extends Frame implements Grabber {
 		return t;
 	}
 
+	/**
+	 * Same as {@code return screenToEye(new Vec(x, y, z))}.
+	 * 
+	 * @see #screenToEye(Vec)
+	 */
 	public Vec screenToEye(float x, float y, float z) {
 		return screenToEye(new Vec(x, y, z));
 	}
 
+	/**
+	 * Converts the vector from screen (device) coordinates into eye coordinates.
+	 * <p>
+	 * It's worth noting that all gesture to grabber-frame motion converting methods, are implemented from just
+	 * {@link #screenToEye(Vec)}, {@link #eyeToReferenceFrame(Vec)} and {@link #screenToQuat(float, float, float)}.
+	 * 
+	 * @see #eyeToReferenceFrame(Vec)
+	 * @see #screenToQuat(float, float, float)
+	 */
 	public Vec screenToEye(Vec trns) {
 		Vec eyeVec = trns.get();
 		// Scale to fit the screen relative event displacement
@@ -1649,28 +1875,29 @@ public class GrabberFrame extends Frame implements Grabber {
 		return eyeVec;
 	}
 
-	/*
-	 * public void setGFrame(Frame frame) { gFrame = frame; }
+	/**
+	 * Same as {@code return screenToQuat(angles.vec[0], angles.vec[1], angles.vec[2])}.
 	 * 
-	 * public Frame gFrame() { return gFrame; }
-	 * 
-	 * public void unsetGFrame() { gFrame = null; }
+	 * @see #screenToQuat(float, float, float)
 	 */
-
 	public Quat screenToQuat(Vec angles) {
 		return screenToQuat(angles.vec[0], angles.vec[1], angles.vec[2]);
 	}
 
 	/**
-	 * <a href="http://en.wikipedia.org/wiki/Euler_angles#Extrinsic_rotations">Extrinsic rotation</a> about the
-	 * {@link remixlab.dandelion.core.AbstractScene#eye()} {@link remixlab.dandelion.core.InteractiveFrame} axes.
+	 * Reduces the screen (device)
+	 * <a href="http://en.wikipedia.org/wiki/Euler_angles#Extrinsic_rotations">Extrinsic rotation</a>
+	 * into a {@link remixlab.dandelion.geom.Quat}.
+	 * <p>
+	 * It's worth noting that all gesture to grabber-frame motion converting methods, are implemented from just
+	 * {@link #screenToEye(Vec)}, {@link #eyeToReferenceFrame(Vec)} and {@link #screenToQuat(float, float, float)}.
 	 * 
 	 * @param roll
-	 *          Rotation angle in radians around the Eye x-Axis
+	 *          Rotation angle in radians around the screen x-Axis
 	 * @param pitch
-	 *          Rotation angle in radians around the Eye y-Axis
+	 *          Rotation angle in radians around the screen y-Axis
 	 * @param yaw
-	 *          Rotation angle in radians around the Eye z-Axis
+	 *          Rotation angle in radians around the screen z-Axis
 	 * 
 	 * @see remixlab.dandelion.geom.Quat#fromEulerAngles(float, float, float)
 	 */
@@ -1717,14 +1944,12 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Returns the up vector used in fly mode, expressed in the world coordinate system.
+	 * Returns the up vector used in {@link #gestureMoveForward(MotionEvent)} in which horizontal displacements of the
+	 * motion device (e.g., mouse) rotate grabber-frame around this vector. Vertical displacements rotate always
+	 * around the grabber-frame {@code X} axis.
 	 * <p>
-	 * Fly mode corresponds to the MOVE_FORWARD and MOVE_BACKWARD action bindings. In these modes, horizontal
-	 * displacements of the mouse rotate the InteractiveFrame around this vector. Vertical displacements rotate always
-	 * around the frame {@code X} axis.
-	 * <p>
-	 * This value is also used within the CAD_ROTATE action to define the up vector (and incidentally the 'horizon' plane)
-	 * around which the camera will rotate.
+	 * This value is also used within {@link #gestureRotateCAD(MotionEvent)} to define the up vector (and incidentally
+	 * the 'horizon' plane) around which the grabber-frame will rotate.
 	 * <p>
 	 * Default value is (0,1,0), but it is updated by the Eye when set as its {@link remixlab.dandelion.core.Eye#frame()}.
 	 * {@link remixlab.dandelion.core.Eye#setOrientation(Rotation)} and
@@ -1753,10 +1978,10 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Returns {@code true} when the InteractiveFrame is tossing.
+	 * Returns {@code true} when the grabber-frame is tossing.
 	 * <p>
-	 * During tossing, {@link #damping()} translates the InteractiveFrame by its {@link #flyDirection()} at a
-	 * frequency defined when the InteractiveFrame {@link #startFlying(MotionEvent, Vec)}.
+	 * During tossing, {@link #damping()} translates the grabber-frame by its {@link #flyDirection()} at a
+	 * frequency defined when the grabber-frame {@link #startFlying(MotionEvent, Vec)}.
 	 * <p>
 	 * Use {@link #startFlying(MotionEvent, Vec)} and {@link #stopFlying()} to change this state. Default value is
 	 * {@code false}.
@@ -1782,7 +2007,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Returns the incremental translation that is applied by {@link #damping()} to the InteractiveFrame position when
+	 * Returns the incremental translation that is applied by {@link #damping()} to the grabber-frame position when
 	 * it {@link #isFlying()}.
 	 * <p>
 	 * Default value is no translation. Use {@link #setFlyDirection(Vec)} to change this value.
@@ -1805,10 +2030,10 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Starts the tossing of the InteractiveFrame.
+	 * Starts the tossing of the grabber-frame.
 	 * <p>
 	 * This method starts a timer that will call {@link #damping()} every FLY_UPDATE_PERDIOD milliseconds. The
-	 * InteractiveFrame {@link #isFlying()} until you call {@link #stopFlying()}.
+	 * grabber-frame {@link #isFlying()} until you call {@link #stopFlying()}.
 	 * <p>
 	 * <b>Attention: </b>Tossing may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
@@ -1826,8 +2051,8 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Translates the InteractiveFrame by its {@link #flyDirection()}. Invoked by a timer when the InteractiveFrame is
-	 * performing the DRIVE, MOVE_BACKWARD or MOVE_FORWARD dandelion actions.
+	 * Translates the grabber-frame by its {@link #flyDirection()}. Invoked by 
+	 * {@link #gestureMoveForward(MotionEvent, boolean)} and {@link #gestureDrive(MotionEvent)}.
 	 * <p>
 	 * <b>Attention: </b>Tossing may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
@@ -1840,10 +2065,10 @@ public class GrabberFrame extends Frame implements Grabber {
 	/**
 	 * Returns the fly speed, expressed in virtual scene units.
 	 * <p>
-	 * It corresponds to the incremental displacement that is periodically applied to the InteractiveFrame position when a
-	 * MOVE_FORWARD or MOVE_BACKWARD action is proceeded.
+	 * It corresponds to the incremental displacement that is periodically applied to the grabber-frame by
+	 * {@link #gestureMoveForward(MotionEvent, boolean)}.
 	 * <p>
-	 * <b>Attention:</b> When the InteractiveFrame is set as the {@link remixlab.dandelion.core.Eye#frame()} or when it is
+	 * <b>Attention:</b> When the grabber-frame is set as the {@link remixlab.dandelion.core.Eye#frame()} or when it is
 	 * set as the {@link remixlab.dandelion.core.AbstractScene#avatar()} (which indeed is an instance of the
 	 * InteractiveAvatarFrame class), this value is set according to the
 	 * {@link remixlab.dandelion.core.AbstractScene#radius()} by
@@ -1857,8 +2082,8 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * Sets the {@link #flySpeed()}, defined in virtual scene units.
 	 * <p>
 	 * Default value is 0.0, but it is modified according to the {@link remixlab.dandelion.core.AbstractScene#radius()}
-	 * when the InteractiveFrame is set as the {@link remixlab.dandelion.core.Eye#frame()} (which indeed is an instance of
-	 * the InteractiveFrame class) or when the InteractiveFrame is set as the
+	 * when the grabber-frame is set as the {@link remixlab.dandelion.core.Eye#frame()} (which indeed is an instance of
+	 * the grabber-frame class) or when the grabber-frame is set as the
 	 * {@link remixlab.dandelion.core.AbstractScene#avatar()} (which indeed is an instance of the InteractiveAvatarFrame
 	 * class).
 	 */

@@ -17,8 +17,8 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 /**
- * The root of all dandelion motion agents representing an HID (which may have a wheel), such as
- * a mouse or a touch-screen. This agent specializes in handling
+ * The root of all dandelion motion agents (which may have a wheel), such as a mouse or a
+ * touch-screen. This agent specializes in handling
  * {@link remixlab.dandelion.core.InteractiveFrame} objects, but it can also handle third-party
  * {@link remixlab.bias.core.Grabber} or {@link remixlab.bias.core.InteractiveGrabber} object
  * instances. In the latter case, third-parties should implement their own

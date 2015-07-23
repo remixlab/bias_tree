@@ -17,12 +17,12 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 /**
- * The root of all dandelion keyboard agents representing a (virtual or actual) keyboard.
- * This agent specializes in handling {@link remixlab.dandelion.core.InteractiveFrame} and
- * {@link remixlab.dandelion.core.AbstractScene} objects,
- * but it can also handle third-party {@link remixlab.bias.core.Grabber} or
- * {@link remixlab.bias.core.InteractiveGrabber} object instances. In the latter case,
- * third-parties should implement their own {@link remixlab.bias.agent.KeyboardBranch}es.
+ * The root of all dandelion keyboard agents. This agent specializes in handling
+ * {@link remixlab.dandelion.core.InteractiveFrame} and
+ * {@link remixlab.dandelion.core.AbstractScene} objects, but it can also handle third-party
+ * {@link remixlab.bias.core.Grabber} or {@link remixlab.bias.core.InteractiveGrabber} object
+ * instances. In the latter case, third-parties should implement their own
+ * {@link remixlab.bias.agent.KeyboardBranch}es.
  * <p>
  * The agent has a {@code KeyboardBranch<GlobalAction, SceneAction>} branch to handle scene instances: the
  * {@link #sceneBranch()}; and two branches of the type {@code MotionBranch<MotionAction, A, ClickAction>}

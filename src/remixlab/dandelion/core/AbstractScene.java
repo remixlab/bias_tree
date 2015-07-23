@@ -23,7 +23,9 @@ import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
 
 /**
- * A 2D or 3D interactive abstract Scene. Main package class representing an interface between Dandelion and the outside
+ * A 2D or 3D interactive abstract Scene. //TODO: see iFrame intro api docs
+ * 
+ * Main package class representing an interface between Dandelion and the outside
  * world. For an introduction to DANDELION please refer to <a
  * href="http://nakednous.github.io/projects/dandelion">this</a>.
  * <p>
@@ -1680,7 +1682,11 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	} 
 	
 	/**
-	 * Replaces the current {@link #eye()} with {@code vp}
+	 * Replaces the current {@link #eye()} with {@code vp}.
+	 * <p>
+	 * The {@link #inputHandler()} will attempt to the {@link #eyeFrame()} to all
+	 * its {@link remixlab.bias.core.InputHandler#agents()}, such as the {@link #motionAgent()}
+	 * and {@link #keyboardAgent()}.
 	 */
 	public void setEye(Eye vp) {
 		if (vp == null)

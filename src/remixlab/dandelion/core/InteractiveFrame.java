@@ -17,34 +17,19 @@ import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
 /**
- * An InteractiveFrame is a Frame that can be rotated, translated and scaled by user interaction means.
- * <p>
- * An InteractiveFrame converts user gestures into translation, rotation and scaling updates. An InteractiveFrame is
- * used to move an object in the scene (and thus it's tightly-coupled with it). Combined with object selection, its
- * Grabber properties and a dynamic update of the scene, the InteractiveFrame introduces a great reactivity to your
- * dandelion-based applications.
- * <p>
- * The possible actions that can interactively be performed by the InteractiveFrame are
- * {@link remixlab.dandelion.core.Constants.ClickAction}, {@link remixlab.dandelion.core.Constants.DOF1Action},
- * {@link remixlab.dandelion.core.Constants.DOF2Action}, {@link remixlab.dandelion.core.Constants.DOF3Action} and
- * {@link remixlab.dandelion.core.Constants.DOF6Action}. The {@link remixlab.dandelion.core.AbstractScene#motionAgent()}
+ * An interactive-frame is a {@link remixlab.dandelion.core.GrabberFrame} that implements the
+ * {@link remixlab.bias.core.InteractiveGrabber} interface. An interactive-frame implements the following actions
+ * by means of the grabber-frame gesture converting methods (such as {@link #gestureArcball(MotionEvent)}
+ * {@link #gestureDrive(MotionEvent)}, etc):
+ * {@link remixlab.dandelion.core.Constants.KeyboardAction}, {@link remixlab.dandelion.core.Constants.ClickAction},
+ * {@link remixlab.dandelion.core.Constants.DOF1Action}, {@link remixlab.dandelion.core.Constants.DOF2Action},
+ * {@link remixlab.dandelion.core.Constants.DOF3Action} and {@link remixlab.dandelion.core.Constants.DOF6Action}.
+ * The {@link remixlab.dandelion.core.AbstractScene#motionAgent()}
  * provides high-level methods to handle some of these actions, e.g., a
  * {@link remixlab.dandelion.agent.WheeledMouseAgent} can handle up to
  * {@link remixlab.dandelion.core.Constants.DOF2Action}s
  * <p>
- * <b>Note:</b> Once created, the InteractiveFrame is automatically added to the scene
- * {@link remixlab.bias.core.InputHandler#agents()} pool.
- */
-
-/**
- * The InteractiveFrame class represents an InteractiveFrame with Eye specific gesture bindings.
- * <p>
- * An InteractiveFrame is a specialization of an InteractiveFrame that is designed to be set as the {@link Eye#frame()}.
- * Some user gestures (those reduced as DOF2Events) are interpreted in a negated way (respect to those defined for the
- * InteractiveFrame). For instance, with a move-to-the-right user gesture the InteractiveFrame has to go to the
- * <i>left</i>, so that the <i>scene</i> seems to move to the right.
- * <p>
- * Depending on the Dandelion action an InteractiveFrame rotates either around the
+ * Depending on the action an interactive-frame rotates either around the
  * {@link remixlab.dandelion.core.Eye#anchor()} (e.g., ROTATE, HINGE), or its {@link #sceneUpVector()} (e.g.,
  * ROTATE_CAD). In the latter case the {@link #sceneUpVector()} defines a 'vertical' direction around which the camera
  * rotates. The camera can rotate left or right, around this axis. It can also be moved up or down to show the 'top' and
@@ -52,17 +37,6 @@ import remixlab.util.*;
  * the horizon is preserved and stays projected along the camera's horizontal axis. Use
  * {@link remixlab.dandelion.core.Camera#setUpVector(Vec)} to define the {@link #sceneUpVector()} and align the camera
  * before starting a ROTATE_CAD action to ensure these invariants are preserved.
- * <p>
- * The possible actions that can interactively be performed by the InteractiveFrame are
- * {@link remixlab.dandelion.core.Constants.ClickAction}, {@link remixlab.dandelion.core.Constants.DOF1Action},
- * {@link remixlab.dandelion.core.Constants.DOF2Action}, {@link remixlab.dandelion.core.Constants.DOF3Action} and
- * {@link remixlab.dandelion.core.Constants.DOF6Action}. The {@link remixlab.dandelion.core.AbstractScene#motionAgent()}
- * provides high-level methods to handle some these actions, e.g., a {@link remixlab.dandelion.agent.WheeledMouseAgent}
- * can handle up to {@link remixlab.dandelion.core.Constants.DOF2Action}s.
- * <p>
- * <b>Observation: </b> The InteractiveFrame is not added to the
- * {@link remixlab.dandelion.core.AbstractScene#inputHandler()} {@link remixlab.bias.core.InputHandler#agents()} pool
- * upon creation.
  */
 public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber<MotionAction>, Copyable,
 		Constants {
@@ -257,26 +231,18 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 
 	/**
-	 * The {@link #translation()} is set to 0, with an identity {@link #rotation()} and no {@link #scaling()} (see Frame
-	 * constructor for details). The different sensitivities are set to their default values (see
-	 * {@link #rotationSensitivity()} , {@link #translationSensitivity()}, {@link #spinningSensitivity()} and
-	 * {@link #wheelSensitivity()}). {@link #damping()} is set to 0.5.
-	 * <p>
-	 * <b>Note:</b> the InteractiveFrame is automatically added to the {@link remixlab.bias.core.InputHandler#agents()}
-	 * pool.
+	 * Same as {@code super(scn, referenceFrame, p, r, s)}.
+	 * 
+	 * @see remixlab.dandelion.core.GrabberFrame#GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
 	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(scn, referenceFrame, p, r, s);
 	}
 
 	/**
-	 * Default Eye constructor.
-	 * <p>
-	 * {@link #flySpeed()} is set to 0.0 and {@link #sceneUpVector()} is set to the Y-axis. The
-	 * {@link remixlab.dandelion.core.Eye#anchor()} is set to 0.
-	 * <p>
-	 * <b>Attention:</b> Created object is removed from the {@link remixlab.dandelion.core.AbstractScene#inputHandler()}
-	 * {@link remixlab.bias.core.InputHandler#agents()} pool.
+	 * Default interactive-frame eye constructor (See {@link #isEyeFrame()}). Same as {@code super(theEye)}.
+	 * 
+	 * @see remixlab.dandelion.core.GrabberFrame#GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
 	public InteractiveFrame(Eye theEye) {
 		super(theEye);
@@ -312,6 +278,11 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	protected Action<MotionAction>	action;
 
+	/**
+	 * Returns the {@link #action()} reference action. 
+	 * 
+	 * @see remixlab.bias.core.Action#referenceAction()
+	 */
 	public MotionAction referenceAction() {
 		return action != null ? action.referenceAction() : null;
 	}
@@ -573,15 +544,15 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	// two tempi actions workflow divert from 'normal' (single tempi) actions which just require
 	// either updateTrackeGrabber(event) or handle(event).
 
-	public MotionEvent initMotionEvent() {
+	protected MotionEvent initMotionEvent() {
 		return initMotionEvent;
 	}
 
-	public MotionEvent currentMotionEvent() {
+	protected MotionEvent currentMotionEvent() {
 		return currMotionEvent;
 	}
 
-	public final boolean processEvent(BogusEvent event) {
+	protected final boolean processEvent(BogusEvent event) {
 		if (initAction == null) {
 			if (!event.flushed()) {
 				return initAction(event);// start action
