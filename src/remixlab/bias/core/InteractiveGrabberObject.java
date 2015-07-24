@@ -220,15 +220,33 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	Action<E>	initAction;
 
 	/**
-	 * Internal use. Algorithm to parse an {@link remixlab.bias.core.Action} sequence from an initAction variable.
+	 * Internal use. Algorithm to split a gesture flow into a 'three-tempi' {@link remixlab.bias.core.Action} sequence.
+	 * Call it like this (see {@link #performInteraction(BogusEvent)}):
+	 * <pre>
+     * {@code
+	 * public void performInteraction(BogusEvent event) {
+	 *	if (processEvent(event))
+	 *		return;
+	 *	if (event instanceof KeyboardEvent)
+	 *		performInteraction((KeyboardEvent) event);
+	 *	if (event instanceof ClickEvent)
+	 *		performInteraction((ClickEvent) event);
+	 *	if (event instanceof MotionEvent)
+	 *		performInteraction((MotionEvent) event);
+	 * }
+     * }
+     * </pre>
 	 * <p>
-	 * Filters the bogus-event in {@link #performInteraction(BogusEvent)}, by properly calling:
+	 * The algorithm parses the bogus-event in {@link #performInteraction(BogusEvent)} and then decide what to call:
 	 * <ol>
-     * <li>{@link #initAction(BogusEvent)}: sets the initAction, called when initAction == null.</li>
-     * <li>{@link #execAction(BogusEvent)}: continues action execution, called when initAction == action() (current action)</li>
-     * <li>{@link #flushAction(BogusEvent)}: ends action, called when {@link remixlab.bias.core.BogusEvent#flushed()} is true
-     * or when initAction != action()</li>
-     * </ol> 
+     * <li>{@link #initAction(BogusEvent)} (1st tempi): sets the initAction, called when initAction == null.</li>
+     * <li>{@link #execAction(BogusEvent)} (2nd tempi): continues action execution, called when initAction == action()
+     * (current action)</li>
+     * <li>{@link #flushAction(BogusEvent)} (3rd): ends action, called when {@link remixlab.bias.core.BogusEvent#flushed()}
+     * is true or when initAction != action()</li>
+     * </ol>
+     * <p>
+     * Useful to parse multiple-tempi gestures, such as a mouse press/move/drag/release flow.
 	 */
 	protected final boolean processEvent(BogusEvent event) {
 		if (initAction == null) {
@@ -292,10 +310,7 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 
 	/**
 	 * Calls initAction() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
-	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
-	 * <p>
-	 * Override this method when you want the object to init an action from a
-	 * {@link remixlab.bias.event.ClickEvent}. 
+	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}. 
 	 */
 	protected boolean initAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
@@ -376,9 +391,6 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	/**
 	 * Calls execAction() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
 	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
-	 * <p>
-	 * Override this method when you want the object to execute an action from a
-	 * {@link remixlab.bias.event.MotionEvent}. 
 	 */
 	public boolean execAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
@@ -454,9 +466,6 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	/**
 	 * Calls flushAction() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
 	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
-	 * <p>
-	 * Override this method when you want the object to flush an action from a
-	 * {@link remixlab.bias.event.MotionEvent}. 
 	 */
 	public void flushAction(MotionEvent event) {
 		if (event instanceof DOF1Event)

@@ -1684,7 +1684,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	/**
 	 * Replaces the current {@link #eye()} with {@code vp}.
 	 * <p>
-	 * The {@link #inputHandler()} will attempt to the {@link #eyeFrame()} to all
+	 * The {@link #inputHandler()} will attempt to add the {@link #eyeFrame()} to all
 	 * its {@link remixlab.bias.core.InputHandler#agents()}, such as the {@link #motionAgent()}
 	 * and {@link #keyboardAgent()}.
 	 */

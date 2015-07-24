@@ -20,7 +20,7 @@ import remixlab.util.*;
  * A {@link remixlab.dandelion.geom.Frame} implementing the {@link remixlab.bias.core.Grabber} interface, which
  * converts user gestures into translation, rotation and scaling {@link remixlab.dandelion.geom.Frame}
  * updates (see {@link #translationSensitivity()}, {@link #rotationSensitivity()} and {@link #scalingSensitivity()}).
- * A grabber-frame may thus be attached to some of your scene objects to control their motion through an
+ * A grabber-frame may thus be attached to some of your scene objects to control their motion using an
  * {@link remixlab.bias.core.Agent}, such as the {@link remixlab.dandelion.core.AbstractScene#motionAgent()} and
  * the {@link remixlab.dandelion.core.AbstractScene#keyboardAgent()} (see {@link #GrabberFrame(AbstractScene)} and all
  * the constructors that take an scene parameter). To attach a grabber-frame to {@code MyObject} use code like this:
@@ -49,8 +49,8 @@ import remixlab.util.*;
  * to move to the right. A grabber-frame can be attached to an eye only at construction times (see {@link #GrabberFrame(Eye)} and
  * all the constructors that take an eye parameter). An eye may have more than one grabber-frame attached to it. To set
  * one of them as the {@link remixlab.dandelion.core.Eye#frame()}, call
- * {@link remixlab.dandelion.core.Eye#setFrame(GrabberFrame)}. Note that a grabber-frame may at any time be detached from
- * the eye, see {@link #detach()}.
+ * {@link remixlab.dandelion.core.Eye#setFrame(GrabberFrame)}. Note that a grabber-frame may be detached from the eye at any time,
+ * see {@link #detach()}.
  * <p>
  * This class provides several gesture-to-motion converting methods, such as: {@link #gestureArcball(MotionEvent)},
  * {@link #gestureMoveForward(DOF2Event, boolean)}, {@link #gestureTranslateX(KeyboardEvent, boolean)}, etc. To use them,
@@ -73,7 +73,9 @@ import remixlab.util.*;
  * {@link remixlab.dandelion.core.InteractiveFrame} provides an {@link remixlab.bias.core.Action}-based convenient
  * implementation.
  * <p>
- * TODO: Describe picking policy
+ * Picking a grabber-frame is simply by checking if the pointer is within a circled area around the frame
+ * {@link #center()} screen projection (see {@link #checkIfGrabsInput(float, float)},
+ * {@link #setGrabsInputThreshold(float, boolean)} and {@link #adaptiveGrabsInputThreshold()}).
  * <p>
  * A grabber-frame is loosely-coupled with the scene object used to instantiate it, i.e., the transformation it represents may
  * be applied to a different scene. See {@link #applyTransformation()} and {@link #applyTransformation(AbstractScene)}.
@@ -436,11 +438,11 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Creates a scene Frame with {@code referenceFrame} as {@link #referenceFrame()}, and {@code p},
+	 * Creates a scene grabber-frame with {@code referenceFrame} as {@link #referenceFrame()}, and {@code p},
 	 * {@code r} and {@code s} as the frame {@link #translation()}, {@link #rotation()} and {@link #scaling()},
 	 * respectively.
 	 * <p>
-	 * The {@link remixlab.dandelion.core.AbstractScene#inputHandler()} will attempt to the
+	 * The {@link remixlab.dandelion.core.AbstractScene#inputHandler()} will attempt to add the
 	 * grabber-frame to all its {@link remixlab.bias.core.InputHandler#agents()}, such as the
 	 * {@link remixlab.dandelion.core.AbstractScene#motionAgent()} and the
 	 * {@link remixlab.dandelion.core.AbstractScene#keyboardAgent()}.
@@ -463,7 +465,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
-	 * Creates an eye frame with {@code referenceFrame} as {@link #referenceFrame()}, and {@code p},
+	 * Creates an eye grabber-frame with {@code referenceFrame} as {@link #referenceFrame()}, and {@code p},
 	 * {@code r} and {@code s} as the frame {@link #translation()}, {@link #rotation()} and {@link #scaling()},
 	 * respectively.
 	 * <p>
@@ -610,15 +612,19 @@ public class GrabberFrame extends Frame implements Grabber {
 	public boolean isEyeFrame() {
 		return theeye != null;
 	}
-
+	
 	@Override
 	public boolean checkIfGrabsInput(BogusEvent event) {
-		if (isEyeFrame())
-			return false;
 		if (event instanceof KeyboardEvent)
 			return checkIfGrabsInput((KeyboardEvent) event);
 		if (event instanceof ClickEvent)
 			return checkIfGrabsInput((ClickEvent) event);
+		if (event instanceof MotionEvent)
+			return checkIfGrabsInput((MotionEvent) event);
+		return false;
+	}
+
+	public boolean checkIfGrabsInput(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			return checkIfGrabsInput((DOF1Event) event);
 		if (event instanceof DOF2Event)
@@ -652,6 +658,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		return checkIfGrabsInput(event.x(), event.y());
 	}
 
+	/**
+	 * Picks the grabber-frame 
+	 */
 	public boolean checkIfGrabsInput(float x, float y) {
 		Vec proj = scene.eye().projectedCoordinatesOf(position());
 		float halfThreshold = grabsInputThreshold() / 2;
@@ -1056,7 +1065,13 @@ public class GrabberFrame extends Frame implements Grabber {
 		spinningTimerTask.stop();
 	}
 
-	public void startSpinning(MotionEvent event, Rotation rt) {
+	/**
+	 * Internal use. Same as {@code startSpinning(rt, event.speed(), event.delay())}.
+	 * 
+	 * @see #startFlying(MotionEvent, Vec)
+	 * @see #startSpinning(Rotation, float, long)
+	 */
+	protected void startSpinning(MotionEvent event, Rotation rt) {
 		startSpinning(rt, event.speed(), event.delay());
 	}
 
@@ -1069,6 +1084,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * <b>Attention: </b>Spinning may be decelerated according to {@link #damping()} till it stops completely.
 	 * 
 	 * @see #damping()
+	 * @see #startFlying(Vec, float)
 	 */
 	public void startSpinning(Rotation rt, float speed, long delay) {
 		setSpinningRotation(rt);
@@ -1253,6 +1269,10 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	//
 
+	/**
+	 * Wrapper method for {@link #alignWithFrame(Frame, boolean, float)} that discriminates between eye and
+	 * non-eye frames.
+	 */
 	public void align() {
 		if (isEyeFrame())
 			alignWithFrame(null, true);
@@ -1260,6 +1280,9 @@ public class GrabberFrame extends Frame implements Grabber {
 			alignWithFrame(scene.eye().frame());
 	}
 
+	/**
+	 * Centers the grabber-frame into the scene.
+	 */
 	public void center() {
 		if (isEyeFrame())
 			eye().centerScene();
@@ -1269,49 +1292,79 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	//
 
+	/**
+	 * User gesture into x-translation conversion routine.
+	 */
 	protected void gestureTranslateX(MotionEvent event) {
 		gestureTranslateX(event, true);
 	}
 
+	/**
+	 * User gesture into x-translation conversion routine.
+	 */
 	protected void gestureTranslateX(MotionEvent event, boolean fromX) {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			gestureTranslateX(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
 
+	/**
+	 * User gesture into x-translation conversion routine.
+	 */
 	protected void gestureTranslateX(DOF1Event event, float sens) {
 		translate(screenToVec(Vec.multiply(new Vec(isEyeFrame() ? -event.dx() : event.dx(), 0, 0), sens)));
 	}
 
+	/**
+	 * User gesture into x-translation conversion routine.
+	 */
 	protected void gestureTranslateX(KeyboardEvent event, boolean up) {
 		translate(screenToVec(Vec.multiply(new Vec(1, 0), (up ^ this.isEyeFrame()) ? keyboardSensitivity()
 				: -keyboardSensitivity())));
 	}
 
+	/**
+	 * User gesture into x-translation conversion routine.
+	 */
 	protected void gestureTranslateY(MotionEvent event) {
 		gestureTranslateY(event, false);
 	}
 
+	/**
+	 * User gesture into y-translation conversion routine.
+	 */
 	protected void gestureTranslateY(MotionEvent event, boolean fromX) {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			gestureTranslateY(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
 
+	/**
+	 * User gesture into y-translation conversion routine.
+	 */
 	protected void gestureTranslateY(DOF1Event event, float sens) {
 		translate(screenToVec(Vec.multiply(new Vec(0, isEyeFrame() ^ scene.isRightHanded() ? -event.dx() : event.dx()),
 				sens)));
 	}
 
+	/**
+	 * User gesture into y-translation conversion routine.
+	 */
 	protected void gestureTranslateY(KeyboardEvent event, boolean up) {
 		translate(screenToVec(Vec.multiply(new Vec(0, (up ^ this.isEyeFrame() ^ scene.isLeftHanded()) ? 1 : -1),
 				this.keyboardSensitivity())));
 	}
 
+	/**
+	 * User gesture into z-translation conversion routine.
+	 */
 	protected void gestureTranslateZ(MotionEvent event) {
 		gestureTranslateZ(event, true);
 	}
 
+	/**
+	 * User gesture into z-translation conversion routine.
+	 */
 	protected void gestureTranslateZ(MotionEvent event, boolean fromX) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureTranslateZ");
@@ -1322,10 +1375,16 @@ public class GrabberFrame extends Frame implements Grabber {
 			gestureTranslateZ(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
 
+	/**
+	 * User gesture into z-translation conversion routine.
+	 */
 	protected void gestureTranslateZ(DOF1Event event, float sens) {
 		translate(screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, isEyeFrame() ? -event.dx() : event.dx()), sens)));
 	}
 
+	/**
+	 * User gesture into z-translation conversion routine.
+	 */
 	protected void gestureTranslateZ(KeyboardEvent event, boolean up) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureTranslateZ");
@@ -1335,10 +1394,16 @@ public class GrabberFrame extends Frame implements Grabber {
 				: keyboardSensitivity())));
 	}
 
+	/**
+	 * User gesture into xy-translation conversion routine.
+	 */
 	protected void gestureTranslateXY(MotionEvent event) {
 		gestureTranslateXY(event, true);
 	}
 
+	/**
+	 * User gesture into xy-translation conversion routine.
+	 */
 	protected void gestureTranslateXY(MotionEvent event, boolean fromX) {
 		DOF2Event dof2Event = MotionEvent.dof2Event(event, fromX);
 		if (dof2Event != null)
@@ -1347,11 +1412,17 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("gestureTranslateXY", 2);
 	}
 
+	/**
+	 * User gesture into xy-translation conversion routine.
+	 */
 	protected void gestureTranslateXY(DOF2Event event) {
 		translate(screenToVec(Vec.multiply(new Vec(isEyeFrame() ? -event.dx() : event.dx(),
 				(scene.isRightHanded() ^ isEyeFrame()) ? -event.dy() : event.dy(), 0.0f), this.translationSensitivity())));
 	}
 
+	/**
+	 * User gesture into xyz-translation conversion routine.
+	 */
 	protected void gestureTranslateXYZ(MotionEvent event) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureTranslateXYZ");
@@ -1364,22 +1435,40 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("gestureTranslateXYZ", 3);
 	}
 
+	/**
+	 * User gesture into xyz-translation conversion routine.
+	 */
 	protected void gestureTranslateXYZ(DOF3Event event) {
 		translate(screenToVec(Vec.multiply(
 				new Vec(event.dx(), scene.isRightHanded() ? -event.dy() : event.dy(), -event.dz()),
 				this.translationSensitivity())));
 	}
 
+	/**
+	 * User gesture into zoom-on-anchor conversion routine.
+	 * 
+	 * @see remixlab.dandelion.core.Eye#anchor()
+	 */
 	protected void gestureZoomOnAnchor(MotionEvent event) {
 		gestureZoomOnAnchor(event, true);
 	}
 
+	/**
+	 * User gesture into zoom-on-anchor conversion routine.
+	 * 
+	 * @see remixlab.dandelion.core.Eye#anchor()
+	 */
 	protected void gestureZoomOnAnchor(MotionEvent event, boolean fromX) {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			gestureZoomOnAnchor(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
 
+	/**
+	 * User gesture into zoom-on-anchor conversion routine.
+	 * 
+	 * @see remixlab.dandelion.core.Eye#anchor()
+	 */
 	protected void gestureZoomOnAnchor(DOF1Event event, float sens) {
 		Vec direction = Vec.subtract(scene.eye().anchor(), position());
 		if (referenceFrame() != null)
@@ -1389,6 +1478,11 @@ public class GrabberFrame extends Frame implements Grabber {
 			translate(Vec.multiply(direction, delta));
 	}
 
+	/**
+	 * User gesture into zoom-on-anchor conversion routine.
+	 * 
+	 * @see remixlab.dandelion.core.Eye#anchor()
+	 */
 	protected void gestureZoomOnAnchor(KeyboardEvent event, boolean in) {
 		Vec direction = Vec.subtract(scene.eye().anchor(), position());
 		if (referenceFrame() != null)
@@ -1398,6 +1492,9 @@ public class GrabberFrame extends Frame implements Grabber {
 			translate(Vec.multiply(direction, delta));
 	}
 
+	/**
+	 * User gesture into zoom-on-region conversion routine.
+	 */
 	protected void gestureZoomOnRegion(MotionEvent event) {
 		if (!isEyeFrame()) {
 			AbstractScene.showOnlyEyeWarning("gestureZoomOnRegion");
@@ -1414,6 +1511,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		gestureZoomOnRegion(dof2);
 	}
 
+	/**
+	 * User gesture into zoom-on-region conversion routine.
+	 */
 	protected void gestureZoomOnRegion(DOF2Event event) {
 		int w = (int) Math.abs(event.dx());
 		int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
@@ -1422,10 +1522,16 @@ public class GrabberFrame extends Frame implements Grabber {
 		eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
 	}
 
+	/**
+	 * User gesture into x-rotation conversion routine.
+	 */
 	protected void gestureRotateX(MotionEvent event) {
 		gestureRotateX(event, false);
 	}
 
+	/**
+	 * User gesture into x-rotation conversion routine.
+	 */
 	protected void gestureRotateX(MotionEvent event, boolean fromX) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateX");
@@ -1436,6 +1542,9 @@ public class GrabberFrame extends Frame implements Grabber {
 			gestureRotateX(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
 	}
 
+	/**
+	 * User gesture into x-rotation conversion routine.
+	 */
 	protected void gestureRotateX(DOF1Event event, float sens) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateX");
@@ -1444,6 +1553,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		spin(screenToQuat(computeAngle(event) * (isEyeFrame() ? -sens : sens), 0, 0), event.speed(), event.delay());
 	}
 
+	/**
+	 * User gesture into x-rotation conversion routine.
+	 */
 	protected void gestureRotateX(KeyboardEvent event, boolean up) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateX");
@@ -1452,10 +1564,16 @@ public class GrabberFrame extends Frame implements Grabber {
 		rotate(screenToQuat(computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0, 0));
 	}
 
+	/**
+	 * User gesture into y-rotation conversion routine.
+	 */
 	protected void gestureRotateY(MotionEvent event) {
 		gestureRotateY(event, true);
 	}
 
+	/**
+	 * User gesture into y-rotation conversion routine.
+	 */
 	protected void gestureRotateY(MotionEvent event, boolean fromX) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateY");
@@ -1466,6 +1584,9 @@ public class GrabberFrame extends Frame implements Grabber {
 			gestureRotateY(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
 	}
 
+	/**
+	 * User gesture into y-rotation conversion routine.
+	 */
 	protected void gestureRotateY(DOF1Event event, float sens) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateY");
@@ -1474,6 +1595,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		spin(screenToQuat(0, computeAngle(event) * (isEyeFrame() ? -sens : sens), 0), event.speed(), event.delay());
 	}
 
+	/**
+	 * User gesture into y-rotation conversion routine.
+	 */
 	protected void gestureRotateY(KeyboardEvent event, boolean up) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateY");
@@ -1483,16 +1607,25 @@ public class GrabberFrame extends Frame implements Grabber {
 		rotate(rt);
 	}
 
+	/**
+	 * User gesture into z-rotation conversion routine.
+	 */
 	protected void gestureRotateZ(MotionEvent event) {
 		gestureRotateZ(event, false);
 	}
 
+	/**
+	 * User gesture into z-rotation conversion routine.
+	 */
 	protected void gestureRotateZ(MotionEvent event, boolean fromX) {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event);
 		if (dof1Event != null)
 			gestureRotateZ(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
 	}
 
+	/**
+	 * User gesture into z-rotation conversion routine.
+	 */
 	protected void gestureRotateZ(DOF1Event event, float sens) {
 		Rotation rt;
 		if (isEyeFrame())
@@ -1507,6 +1640,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		spin(rt, event.speed(), event.delay());
 	}
 
+	/**
+	 * User gesture into z-rotation conversion routine.
+	 */
 	protected void gestureRotateZ(KeyboardEvent event, boolean up) {
 		Rotation rt;
 		if (is2D())
@@ -1516,6 +1652,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		rotate(rt);
 	}
 
+	/**
+	 * User gesture into xyz-rotation conversion routine.
+	 */
 	protected void gestureRotateXYZ(MotionEvent event) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateXYZ");
@@ -1528,11 +1667,17 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("gestureRotateXYZ", 2);
 	}
 
+	/**
+	 * User gesture into xyz-rotation conversion routine.
+	 */
 	protected void gestureRotateXYZ(DOF3Event event) {
 		rotate(screenToQuat(Vec.multiply(
 				new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz())), rotationSensitivity())));
 	}
 
+	/**
+	 * User gesture into arcball-rotation conversion routine.
+	 */
 	protected void gestureArcball(MotionEvent event) {
 		DOF2Event dof2Event = MotionEvent.dof2Event(event);
 		if (dof2Event != null)
@@ -1541,6 +1686,9 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("arcball", 2);
 	}
 
+	/**
+	 * User gesture into arcball-rotation conversion routine.
+	 */
 	protected void gestureArcball(DOF2Event event) {
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("deformedBallRotation");
@@ -1565,12 +1713,18 @@ public class GrabberFrame extends Frame implements Grabber {
 		spin(rt, event.speed(), event.delay());
 	}
 
+	/**
+	 * User gesture into scaling conversion routine.
+	 */
 	protected void gestureScale(MotionEvent event) {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event);
 		if (dof1Event != null)
 			gestureScale(dof1Event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
 	}
 
+	/**
+	 * User gesture into scaling conversion routine.
+	 */
 	protected void gestureScale(DOF1Event event, float sens) {
 		if (isEyeFrame()) {
 			float delta = event.dx() * sens;
@@ -1584,15 +1738,24 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 	}
 
+	/**
+	 * User gesture into scaling conversion routine.
+	 */
 	protected void gestureScale(KeyboardEvent event, boolean up) {
 		float s = 1 + Math.abs(keyboardSensitivity()) / (isEyeFrame() ? (float) -scene.height() : (float) scene.height());
 		scale(up ? s : 1 / s);
 	}
 
+	/**
+	 * User gesture into move-forward conversion routine.
+	 */
 	protected void gestureMoveForward(MotionEvent event) {
 		gestureMoveForward(event, true);
 	}
 
+	/**
+	 * User gesture into move-forward conversion routine.
+	 */
 	protected void gestureMoveForward(MotionEvent event, boolean forward) {
 		DOF2Event dof2Event = MotionEvent.dof2Event(event);
 		if (dof2Event != null)
@@ -1601,6 +1764,9 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("moveForward", 2);
 	}
 
+	/**
+	 * User gesture into move-forward conversion routine.
+	 */
 	protected void gestureMoveForward(DOF2Event event, boolean forward) {
 		Vec trns;
 		float fSpeed = forward ? -flySpeed() : flySpeed();
@@ -1618,6 +1784,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		}
 	}
 
+	/**
+	 * User gesture into drive conversion routine.
+	 */
 	protected void gestureDrive(MotionEvent event) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("drive");
@@ -1630,6 +1799,9 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("drive", 2);
 	}
 
+	/**
+	 * User gesture into drive conversion routine.
+	 */
 	protected void gestureDrive(DOF2Event event) {
 		Vec trns;
 		rotate(turnQuaternion(event.dof1Event(), scene.camera()));
@@ -1638,6 +1810,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		startFlying(event, trns);
 	}
 
+	/**
+	 * User gesture into CAD-rotation conversion routine.
+	 */
 	protected void gestureRotateCAD(MotionEvent event) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateCAD");
@@ -1650,7 +1825,9 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("gestureRotateCAD", 2);
 	}
 
-	// TODO merge with arcball
+	/**
+	 * User gesture into CAD-rotation conversion routine.
+	 */
 	protected void gestureRotateCAD(DOF2Event event) {
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("gestureRotateCAD");
@@ -1668,6 +1845,9 @@ public class GrabberFrame extends Frame implements Grabber {
 				event.delay());
 	}
 
+	/**
+	 * User gesture into hinge conversion routine.
+	 */
 	protected void gestureHinge(MotionEvent event) {
 		if (scene.is2D()) {
 			AbstractScene.showDepthWarning("hinge");
@@ -1684,6 +1864,9 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("hinge", 6);
 	}
 
+	/**
+	 * User gesture into hinge conversion routine.
+	 */
 	protected void gestureHinge(DOF6Event event) {
 		// aka google earth navigation
 		// 1. Relate the eye reference frame:
@@ -1725,6 +1908,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		setOrientation(o);
 	}
 
+	/**
+	 * User gesture screen-rotation conversion routine.
+	 */
 	protected void gestureScreenRotate(MotionEvent event) {
 		DOF2Event dof2Event = MotionEvent.dof2Event(event);
 		if (dof2Event != null)
@@ -1733,6 +1919,9 @@ public class GrabberFrame extends Frame implements Grabber {
 			AbstractScene.showMinDOFsWarning("screenRotate", 2);
 	}
 
+	/**
+	 * User gesture screen-rotation conversion routine.
+	 */
 	protected void gestureScreenRotate(DOF2Event event) {
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("gestureScreenRotate");
@@ -2030,6 +2219,16 @@ public class GrabberFrame extends Frame implements Grabber {
 	}
 
 	/**
+	 * Internal use. Same as {@code startFlying(direction, event.speed())}.
+	 * 
+	 * @see #startFlying(Vec, float)
+	 * @see #startSpinning(MotionEvent, Rotation)
+	 */
+	protected void startFlying(MotionEvent event, Vec direction) {
+		startFlying(direction, event.speed());
+	}
+
+	/**
 	 * Starts the tossing of the grabber-frame.
 	 * <p>
 	 * This method starts a timer that will call {@link #damping()} every FLY_UPDATE_PERDIOD milliseconds. The
@@ -2039,11 +2238,9 @@ public class GrabberFrame extends Frame implements Grabber {
 	 * 
 	 * @see #damping()
 	 * @see #spin()
+	 * @see #startFlying(MotionEvent, Vec)
+	 * @see #startSpinning(Rotation, float, long)
 	 */
-	public void startFlying(MotionEvent event, Vec direction) {
-		startFlying(direction, event.speed());
-	}
-
 	public void startFlying(Vec direction, float speed) {
 		eventSpeed = speed;
 		setFlyDirection(direction);
@@ -2184,7 +2381,7 @@ public class GrabberFrame extends Frame implements Grabber {
 	/**
 	 * Returns a Quaternion that is a rotation around Y-axis, proportional to the horizontal event X-displacement.
 	 */
-	public Quat turnQuaternion(DOF1Event event, Camera camera) {
+	protected Quat turnQuaternion(DOF1Event event, Camera camera) {
 		float deltaX = event.dx();
 		return new Quat(new Vec(0.0f, 1.0f, 0.0f), rotationSensitivity() * (-deltaX) / camera.screenWidth());
 	}

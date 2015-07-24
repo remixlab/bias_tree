@@ -19,24 +19,26 @@ import remixlab.util.*;
 /**
  * An interactive-frame is a {@link remixlab.dandelion.core.GrabberFrame} that implements the
  * {@link remixlab.bias.core.InteractiveGrabber} interface. An interactive-frame implements the following actions
- * by means of the grabber-frame gesture converting methods (such as {@link #gestureArcball(MotionEvent)}
- * {@link #gestureDrive(MotionEvent)}, etc):
- * {@link remixlab.dandelion.core.Constants.KeyboardAction}, {@link remixlab.dandelion.core.Constants.ClickAction},
- * {@link remixlab.dandelion.core.Constants.DOF1Action}, {@link remixlab.dandelion.core.Constants.DOF2Action},
- * {@link remixlab.dandelion.core.Constants.DOF3Action} and {@link remixlab.dandelion.core.Constants.DOF6Action}.
- * The {@link remixlab.dandelion.core.AbstractScene#motionAgent()}
- * provides high-level methods to handle some of these actions, e.g., a
- * {@link remixlab.dandelion.agent.WheeledMouseAgent} can handle up to
- * {@link remixlab.dandelion.core.Constants.DOF2Action}s
+ * on top of the grabber-frame gesture converting methods (such as {@link #gestureArcball(MotionEvent)},
+ * {@link #gestureDrive(MotionEvent)}, etc): {@link remixlab.dandelion.core.Constants.KeyboardAction},
+ * {@link remixlab.dandelion.core.Constants.ClickAction}, {@link remixlab.dandelion.core.Constants.DOF1Action},
+ * {@link remixlab.dandelion.core.Constants.DOF2Action}, {@link remixlab.dandelion.core.Constants.DOF3Action} and
+ * {@link remixlab.dandelion.core.Constants.DOF6Action}. The {@link remixlab.dandelion.core.AbstractScene#motionAgent()}
+ * and the {@link remixlab.dandelion.core.AbstractScene#keyboardAgent()} provide high-level methods to define custom
+ * action bindings.
  * <p>
- * Depending on the action an interactive-frame rotates either around the
- * {@link remixlab.dandelion.core.Eye#anchor()} (e.g., ROTATE, HINGE), or its {@link #sceneUpVector()} (e.g.,
- * ROTATE_CAD). In the latter case the {@link #sceneUpVector()} defines a 'vertical' direction around which the camera
- * rotates. The camera can rotate left or right, around this axis. It can also be moved up or down to show the 'top' and
- * 'bottom' views of the scene. As a result, the {@link #sceneUpVector()} will always appear vertical in the scene, and
- * the horizon is preserved and stays projected along the camera's horizontal axis. Use
- * {@link remixlab.dandelion.core.Camera#setUpVector(Vec)} to define the {@link #sceneUpVector()} and align the camera
- * before starting a ROTATE_CAD action to ensure these invariants are preserved.
+ * An interactive-frame rotates either around the {@link remixlab.dandelion.core.Eye#anchor()} (e.g.,
+ * {@link remixlab.dandelion.core.Constants.DOF2Action#ROTATE}, {@link remixlab.dandelion.core.Constants.DOF6Action#HINGE}),
+ * or its {@link #sceneUpVector()} (e.g., {@link remixlab.dandelion.core.Constants.DOF2Action#ROTATE_CAD}). In the latter
+ * case, the {@link #sceneUpVector()} defines a 'vertical' direction around which the camera rotates. The camera can
+ * rotate left or right, around this axis. It can also be moved up or down to show the 'top' and 'bottom' views of the
+ * scene. As a result, the {@link #sceneUpVector()} will always appear vertical in the scene, and the horizon is preserved
+ * and stays projected along the camera's horizontal axis. Use {@link remixlab.dandelion.core.Camera#setUpVector(Vec)} to
+ * define the {@link #sceneUpVector()} and align the camera before starting a
+ * {@link remixlab.dandelion.core.Constants.DOF2Action#ROTATE_CAD} action to ensure these invariants are preserved.
+ * 
+ * @see remixlab.dandelion.agent.MotionAgent
+ * @see remixlab.dandelion.agent.KeyboardAgent
  */
 public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber<MotionAction>, Copyable,
 		Constants {
@@ -505,15 +507,24 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	// Custom
 
+	/**
+	 * Override me when implementing the {@link remixlab.dandelion.core.Constants.KeyboardAction#CUSTOM} action. 
+	 */
 	protected void performCustomAction(KeyboardEvent event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass()
 				.getName());
 	}
 
+	/**
+	 * Override me when implementing the {@link remixlab.dandelion.core.Constants.ClickAction#CUSTOM} action. 
+	 */
 	protected void performCustomAction(ClickEvent event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(ClickEvent event)", this.getClass().getName());
 	}
 
+	/**
+	 * Internal use. Bogus event decomposition. 
+	 */
 	protected void performCustomAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			performCustomAction((DOF1Event) event);
@@ -524,19 +535,31 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		if (event instanceof DOF6Event)
 			performCustomAction((DOF6Event) event);
 	}
-
+	
+	/**
+	 * Override me when implementing the {@link remixlab.dandelion.core.Constants.DOF6Action#CUSTOM} action. 
+	 */
 	protected void performCustomAction(DOF1Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF1Event event)", this.getClass().getName());
 	}
 
+	/**
+	 * Override me when implementing the {@link remixlab.dandelion.core.Constants.DOF6Action#CUSTOM} action. 
+	 */
 	protected void performCustomAction(DOF2Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF2Event event)", this.getClass().getName());
 	}
 
+	/**
+	 * Override me when implementing the {@link remixlab.dandelion.core.Constants.DOF6Action#CUSTOM} action. 
+	 */
 	protected void performCustomAction(DOF3Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF3Event event)", this.getClass().getName());
 	}
 
+	/**
+	 * Override me when implementing the {@link remixlab.dandelion.core.Constants.DOF6Action#CUSTOM} action. 
+	 */
 	protected void performCustomAction(DOF6Event event) {
 		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF6Event event)", this.getClass().getName());
 	}
@@ -552,6 +575,43 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		return currMotionEvent;
 	}
 
+	/**
+	 * Internal use. Algorithm to split a gesture flow into a 'three-tempi' {@link remixlab.bias.core.Action} sequence.
+	 * Call it like this (see {@link #performInteraction(BogusEvent)}):
+	 * <pre>
+     * {@code
+	 * public void performInteraction(BogusEvent event) {
+	 *	if (processEvent(event))
+	 *		return;
+	 *	if (event instanceof KeyboardEvent)
+	 *		performInteraction((KeyboardEvent) event);
+	 *	if (event instanceof ClickEvent)
+	 *		performInteraction((ClickEvent) event);
+	 *	if (event instanceof MotionEvent)
+	 *		performInteraction((MotionEvent) event);
+	 * }
+     * }
+     * </pre>
+	 * <p>
+	 * The algorithm parses the bogus-event in {@link #performInteraction(BogusEvent)} and then decide what to call:
+	 * <ol>
+     * <li>{@link #initAction(BogusEvent)} (1st tempi): sets the initAction, called when initAction == null.</li>
+     * <li>{@link #execAction(BogusEvent)} (2nd tempi): continues action execution, called when initAction == action()
+     * (current action)</li>
+     * <li>{@link #flushAction(BogusEvent)} (3rd): ends action, called when {@link remixlab.bias.core.BogusEvent#flushed()}
+     * is true or when initAction != action()</li>
+     * </ol>
+     * <p>
+     * Useful to parse multiple-tempi gestures, such as a mouse press/move/drag/release flow.
+     * <p>
+     * The following motion-actions have been implemented using the aforementioned technique:
+	 * {@link remixlab.dandelion.core.Constants.DOF2Action#SCREEN_ROTATE},
+	 * {@link remixlab.dandelion.core.Constants.DOF2Action#ZOOM_ON_REGION},
+	 * {@link remixlab.dandelion.core.Constants.DOF2Action#MOVE_BACKWARD}, and
+	 * {@link remixlab.dandelion.core.Constants.DOF2Action#MOVE_FORWARD}.
+	 * <p>
+     * Current implementation only supports {@link remixlab.bias.event.MotionEvent}s.
+	 */
 	protected final boolean processEvent(BogusEvent event) {
 		if (initAction == null) {
 			if (!event.flushed()) {
@@ -579,6 +639,11 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	// init domain
 
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected boolean initAction(BogusEvent event) {
 		initAction = action();
 		if (event instanceof KeyboardEvent)
@@ -590,30 +655,44 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		return false;
 	}
 
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected boolean initAction(ClickEvent event) {
-		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
 	
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected boolean initAction(KeyboardEvent event) {
-		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
 
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected boolean initAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			return false;
 		return initAction(MotionEvent.dof2Event(event));
 	}
 
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected boolean initAction(DOF2Event event) {
 		initMotionEvent = event.get();
 		currMotionEvent = event;
 		stopSpinning();
-		//TODO (see the same note on Agent)
-		//1. what to do with the action in event.flush.
-		//2. what to do with EventGrabberTuple
-		// are those two related somehow?
 		MotionAction twotempi = action().referenceAction();
 		if (twotempi == MotionAction.SCREEN_TRANSLATE)
 			dirIsFixed = false;
@@ -644,6 +723,11 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	// exec domain
 
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected boolean execAction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
 			return execAction((KeyboardEvent) event);
@@ -654,12 +738,22 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		return false;
 	}
 
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected boolean execAction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			return false;
 		return execAction(MotionEvent.dof2Event(event));
 	}
 
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected boolean execAction(DOF2Event event) {
 		currMotionEvent = event;
 		if (zor != null) {
@@ -678,8 +772,12 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		return false;
 	}
 
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected boolean execAction(ClickEvent event) {
-		// AbstractScene.showMissingImplementationWarning("initAction(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
 	
@@ -689,6 +787,11 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	// flushDomain
 
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected void flushAction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
 			flushAction((KeyboardEvent) event);
@@ -698,18 +801,37 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			flushAction((MotionEvent) event);
 	}
 
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected void flushAction(MotionEvent event) {
 		if (!(event instanceof DOF1Event))
 			flushAction(MotionEvent.dof2Event(event));
 	}
 	
-	// key
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected void flushAction(KeyboardEvent event) {		
 	}
 
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected void flushAction(ClickEvent event) {
 	}
 
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
 	protected void flushAction(DOF2Event event) {
 		if (rotateHint) {
 			scene.setRotateVisualHint(false);
