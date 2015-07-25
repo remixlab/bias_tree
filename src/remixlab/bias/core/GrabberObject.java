@@ -20,10 +20,11 @@ import remixlab.bias.event.MotionEvent;
 import remixlab.dandelion.core.AbstractScene;
 
 /**
- * Default implementation of the {@link remixlab.bias.core.Grabber} interface which eases implementation.
+ * {@link remixlab.bias.core.Grabber} object which eases third-party implementation of the
+ * {@link remixlab.bias.core.Grabber} interface.
  * <p>
- * Based on the event type, this Grabber implementation splits both, the {@link #checkIfGrabsInput(BogusEvent)}
- * and the {@link #performInteraction(BogusEvent)} methods by calling the proper more specific methods, e.g.,
+ * Based on the concrete event type, this model object splits the {@link #checkIfGrabsInput(BogusEvent)} and the
+ * {@link #performInteraction(BogusEvent)} methods into more specific versions of them, e.g., 
  * {@link #checkIfGrabsInput(ClickEvent)}, {@link #checkIfGrabsInput(DOF3Event)},
  * {@link #performInteraction(DOF6Event)}, {@link #performInteraction(KeyboardEvent)} and so on. Thus 
  * allowing implementations of this abstract GrabberObject to override only those method signatures that might

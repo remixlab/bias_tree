@@ -15,10 +15,24 @@ import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
 
+/**
+ * Proscene key-agent. A {@link remixlab.dandelion.agent.KeyboardAgent} specialization
+ * which handles Processing key-events.
+ * 
+ * @see remixlab.dandelion.agent.KeyboardAgent
+ * @see remixlab.proscene.MouseAgent
+ * @see remixlab.proscene.DroidKeyAgent
+ * @see remixlab.proscene.DroidTouchAgent
+ */
 public class KeyAgent extends KeyboardAgent {
 	protected boolean				press, release, type;
 	protected KeyboardEvent	currentEvent;
 
+	/**
+	 * Calls super on (scn,n) and sets default keyboard shortcuts.
+	 * 
+	 * @see #setDefaultBindings()
+	 */
 	public KeyAgent(AbstractScene scn, String n) {
 		super(scn, n);
 		LEFT_KEY = PApplet.LEFT;

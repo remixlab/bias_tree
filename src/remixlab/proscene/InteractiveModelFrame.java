@@ -22,8 +22,10 @@ import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
 /**
- * An InteractiveModelFrame is an InteractiveFrame implementing the model interface: It provides default 2D/3D
- * high-level precise picking &amp; interaction to pshapes.
+ * A {@link remixlab.proscene.Model} {@link remixlab.dandelion.core.InteractiveFrame}.
+ * 
+ * @see remixlab.proscene.Model
+ * @see remixlab.dandelion.core.InteractiveFrame
  */
 public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	// TODO complete hashCode and equals, once the rest is done
@@ -66,24 +68,46 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	}
 	
 	//--
-
+	
+	/**
+	 * Constructs a interactive-model-frame with a null {@link #shape()} and adds it to the
+	 * {@link remixlab.proscene.Scene#models()} collection. Don't forget to call {@link #setShape(PShape)}.
+	 * Calls {@code super(scn}.
+	 * 
+	 * @see remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene)
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see #shape()
+	 * @see #setShape(PShape)
+	 */
 	public InteractiveModelFrame(Scene scn) {
 		super(scn);
 		((Scene) scene).addModel(this);
 		id = ++Scene.modelCount;
 	}
-
+	
+	/**
+	 * Constructs a interactive-model-frame with a null {@link #shape()} and adds it to the
+	 * {@link remixlab.proscene.Scene#models()} collection. Don't forget to call {@link #setShape(PShape)}.
+	 * Calls {@code super(scn, referenceFrame}.
+	 * 
+	 * @see remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene, Frame)
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see #shape()
+	 * @see #setShape(PShape)
+	 */
 	public InteractiveModelFrame(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		((Scene) scene).addModel(this);
 		id = ++Scene.modelCount;
 	}
 
-	/*
-	 * protected InteractiveModelFrame(Scene scn, InteractiveFrame iFrame) { super(scn, iFrame); ((Scene)
-	 * scene).addModel(this); id = ++Scene.modelCount; }
+	/**
+	 * Wraps the pshape into this interactive-model-frame and adds it to the
+	 * {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn}.
+	 * 
+	 * @see remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene)
+	 * @see remixlab.proscene.Scene#addModel(Model)
 	 */
-
 	public InteractiveModelFrame(Scene scn, PShape ps) {
 		super(scn);
 		((Scene) scene).addModel(this);
@@ -91,6 +115,13 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		pshape = ps;
 	}
 
+	/**
+	 * Wraps the pshape into this interactive-model-frame and adds it to the
+	 * {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn, referenceFrame}.
+	 * 
+	 * @see remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene, Frame)
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 */
 	public InteractiveModelFrame(Scene scn, PShape ps, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		((Scene) scene).addModel(this);
@@ -98,13 +129,6 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		pshape = ps;
 	}
 
-	// TODO: is needed?
-	/*
-	 * protected InteractiveModelFrame(Scene scn, PShape ps, InteractiveFrame iFrame) { super(scn, iFrame); ((Scene)
-	 * scene).addModel(this); id = ++Scene.modelCount; pshape = ps; }
-	 */
-
-	// TODO fix when implementation is complete
 	protected InteractiveModelFrame(InteractiveModelFrame otherFrame) {
 		super(otherFrame);
 		this.pshape = otherFrame.pshape;
@@ -121,11 +145,20 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		return pshape;
 	}
 
-	//TODO decide whether to leave set shape or burn it at construction time (which seems more reasonable if texture is to be included)
+	/**
+	 * Replaces previous {@link #shape()} with {@code ps}.
+	 */
 	public void setShape(PShape ps) {
 		pshape = ps;
 	}
 
+
+	/**
+	 * An interactive-model-frame is selected using <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
+     * with a color buffer (see {@link remixlab.proscene.Scene#pickingBuffer()}). This method compares the color of 
+     * the {@link remixlab.proscene.Scene#pickingBuffer()} at at {@code (x,y)} with {@link #getColor()}.
+     * Returns true if both colors are the same, and false otherwise.
+	 */
 	@Override
 	public final boolean checkIfGrabsInput(float x, float y) {
 		((Scene) scene).pickingBuffer().pushStyle();
@@ -137,6 +170,11 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		return false;
 	}
 
+	/**
+	 * Same as {@code draw(scene.pg())}.
+	 * 
+	 * @see remixlab.proscene.Scene#drawModels(PGraphics)
+	 */
 	public void draw() {
 		if (shape() == null)
 			return;
@@ -144,7 +182,6 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		draw(pg);
 	}
 
-	// TODO doc: remember to mention bind(false);
 	@Override
 	public void draw(PGraphics pg) {
 		if (shape() == null)
@@ -168,19 +205,37 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		pg.popStyle();
 	}
 
+	/**
+	 * Same as {@code ((Scene) scene).applyTransformation(pg, this)}.
+	 * 
+	 * @see remixlab.proscene.Scene#applyTransformation(PGraphics, Frame)
+	 */
 	public void applyTransformation(PGraphics pg) {
 		((Scene) scene).applyTransformation(pg, this);
 	}
 
+	/**
+	 * Same as {@code ((Scene) scene).applyWorldTransformation(pg, this)}.
+	 * 
+	 * @see remixlab.proscene.Scene#applyWorldTransformation(PGraphics, Frame)
+	 */
 	public void applyWorldTransformation(PGraphics pg) {
 		((Scene) scene).applyWorldTransformation(pg, this);
 	}
 
+	/**
+	 * Internal use. Model color to use in the {@link remixlab.proscene.Scene#pickingBuffer()}.
+	 */
 	protected int getColor() {
 		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
 		return ((Scene) scene).pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
 	}
 
+	/**
+	 * Same as {@code return agent.inputGrabber() == this}.
+	 * 
+	 * @see remixlab.bias.core.Agent#inputGrabber()
+	 */
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}

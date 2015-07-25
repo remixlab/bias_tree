@@ -222,6 +222,13 @@ public class Scene extends AbstractScene implements PConstants {
 		return pgraphics;
 	}
 
+	/**
+	 * Returns the {@link #models()} <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
+	 * color buffer.
+	 * 
+	 * @see #drawModels()
+	 * @see #drawModels(PGraphics)
+	 */
 	public PGraphics pickingBuffer() {
 		return pickingBuffer;
 	}
@@ -951,9 +958,13 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
-	 * Draw all scene {@link #models()}. Shader chaining may be accomplished by {@link #drawModels(PGraphics)}.
+	 * Draw all scene {@link #models()}. Same as: {@code for (Model model : models()) model.draw(pg());}.
+	 * <p>
+	 * Note that {@code drawModels()} should be call by you, most likely from within your sketch main
+	 * drawing loop (i.e., The P).
 	 * 
 	 * @see #models()
+	 * @see #pg()
 	 * @see #drawModels(PGraphics)
 	 * @see #addModel(Model)
 	 * @see #removeModel(Model)
@@ -964,10 +975,11 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	/**
-	 * Draw all {@link #models()} into the given pgraphics without calling {@code pgraphics.beginDraw()/endDraw()} (which
-	 * should be called manually).
-	 * <p>
+	 * Draw all {@link #models()} into the given pgraphics. No {@code pgraphics.beginDraw()/endDraw()} calls take place.
 	 * This method allows shader chaining.
+	 * <p>
+	 * Note that {@code drawModels(pickingBuffer())} (which enables 'picking' of the models using a
+	 * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> technique is called by {@link #post()}.
 	 * 
 	 * @param pgraphics
 	 * 

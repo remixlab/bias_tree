@@ -16,12 +16,23 @@ import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
 
 /**
- * Proscene {@link remixlab.dandelion.agent.WheeledMouseAgent}.
+ * Proscene mouse-agent. A {@link remixlab.dandelion.agent.WheeledMouseAgent} specialization
+ * which handles Processing mouse-events. 
+ *
+ * @see remixlab.dandelion.agent.WheeledMouseAgent
+ * @see remixlab.proscene.KeyAgent
+ * @see remixlab.proscene.DroidKeyAgent
+ * @see remixlab.proscene.DroidTouchAgent
  */
 public class MouseAgent extends WheeledMouseAgent {
 	protected DOF2Event	currentEvent, prevEvent;
 	protected boolean		move, press, drag, release;
 
+	/**
+	 * Calls super on (scn,n) and sets {@link #dragToArcball()} bindings.
+	 * 
+	 * @see #dragToArcball()
+	 */
 	public MouseAgent(Scene scn, String n) {
 		super(scn, n);
 		LEFT_ID = PApplet.LEFT;

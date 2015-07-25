@@ -12,6 +12,12 @@ package remixlab.proscene;
 
 import remixlab.bias.core.InteractiveGrabber;
 
-//TODO should really think whether or not this interface is public
+/**
+ * {@link remixlab.proscene.Model} and {@link remixlab.bias.core.InteractiveGrabber} linking interface.
+ *
+ * @param <E> Reference action used to parameterize the {@link remixlab.bias.core.InteractiveGrabber}
+ * @see remixlab.proscene.Model
+ * @see remixlab.bias.core.InteractiveGrabber
+ */
 public interface InteractiveModel<E extends Enum<E>> extends Model, InteractiveGrabber<E> {
 }

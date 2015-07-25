@@ -15,14 +15,14 @@ import remixlab.bias.event.*;
 /**
  * Default implementation of the {@link remixlab.bias.core.InteractiveGrabber} interface which eases implementation.
  * <p>
- * Based on the event type, this InteractiveGrabber implementation splits both, the {@link #checkIfGrabsInput(BogusEvent)}
- * and the {@link #performInteraction(BogusEvent)} methods by calling the proper more specific methods, e.g.,
+ * Based on the concrete event type, this interactive grabber object splits the {@link #checkIfGrabsInput(BogusEvent)}
+ * and the {@link #performInteraction(BogusEvent)} methods into more specific versions of them, e.g.,
  * {@link #checkIfGrabsInput(ClickEvent)}, {@link #checkIfGrabsInput(DOF3Event)},
  * {@link #performInteraction(DOF6Event)}, {@link #performInteraction(KeyboardEvent)} and so on. Thus 
- * allowing implementations of this abstract GrabberObject to override only those method signatures that might
- * be of their interest.
+ * allowing implementations of this abstract interactive grabber object to override only those method signatures
+ * that might be of their interest.
  * <p>
- * This InteractiveGrabber implementation also provided al algorithm to parse an {@link remixlab.bias.core.Action}
+ * This interactive grabber object implementation also provided an algorithm to parse an {@link remixlab.bias.core.Action}
  * sequence from an init action variable, see {@link #processEvent(BogusEvent)}.
  */
 public abstract class InteractiveGrabberObject<E extends Enum<E>> implements InteractiveGrabber<E> {

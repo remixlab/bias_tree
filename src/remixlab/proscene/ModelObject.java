@@ -16,13 +16,13 @@ import remixlab.bias.event.*;
 import remixlab.dandelion.core.AbstractScene;
 
 /**
- * Default basic implementation of the Model interface provided for convenience.
+ * {@link remixlab.proscene.Model} object which eases third-party implementation of the
+ * {@link remixlab.proscene.Model} interface.
  * <p>
- * ModelObjects provides default precise picking to pshapes without interactive behavior, i.e., third-parties should
- * implement that behavior ({@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}) to provide pshapes with
- * interactivity. Refer to examples.
- * <p>
- * Refer to examples.Model.ApplicationControl for a nice illustration.
+ * Based on the concrete event type, this model object splits the {@link #performInteraction(BogusEvent)} method
+ * into more specific versions of it, e.g., {@link #performInteraction(DOF6Event)},
+ * {@link #performInteraction(KeyboardEvent)} and so on. Thus allowing implementations of this abstract
+ * ModelObject to override only those method signatures that might be of their interest.
  * 
  * @see remixlab.bias.core.Grabber#performInteraction(BogusEvent)
  */
@@ -41,9 +41,12 @@ public abstract class ModelObject implements Model {
 		scene.addModel(this);
 		id = ++Scene.modelCount;
 	}
-	
-	// --
 
+	/**
+	 * Wraps the pshape into this model-object and adds it to the {@link remixlab.proscene.Scene#models()} collection. 
+	 * 
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 */
 	public ModelObject(Scene scn, PShape ps) {
 		scene = scn;
 		pshape = ps;
@@ -51,13 +54,23 @@ public abstract class ModelObject implements Model {
 		id = ++Scene.modelCount;
 	}
 
+	/**
+	 * Constructs a ModelObject with a null {@link #shape()} and adds it to the
+	 * {@link remixlab.proscene.Scene#models()} collection. Don't forget to call {@link #setShape(PShape)}
+	 * 
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see #shape()
+	 * @see #setShape(PShape)
+	 */
 	public ModelObject(Scene scn) {
 		scene = scn;
 		scene.addModel(this);
 		id = ++Scene.modelCount;
 	}
 
-	//TODO decide whether to leave set shape or burn it at construction time (which seems more reasonable if texture is to be included)
+	/**
+	 * Replaces previous {@link #shape()} with {@code ps}.
+	 */
 	public void setShape(PShape ps) {
 		pshape = ps;
 	}
@@ -67,6 +80,11 @@ public abstract class ModelObject implements Model {
 		return pshape;
 	}
 
+	/**
+	 * Same as {@code draw(scene.pg())}.
+	 * 
+	 * @see remixlab.proscene.Scene#drawModels(PGraphics)
+	 */
 	public void draw() {
 		if (shape() == null)
 			return;
@@ -74,7 +92,6 @@ public abstract class ModelObject implements Model {
 		draw(pg);
 	}
 
-	// TODO doc: remember to mention bind(false);
 	@Override
 	public void draw(PGraphics pg) {
 		if (shape() == null)
@@ -96,13 +113,23 @@ public abstract class ModelObject implements Model {
 		}
 		pg.popStyle();
 	}
-
+	
 	@Override
 	public boolean checkIfGrabsInput(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
 			return checkIfGrabsInput((KeyboardEvent) event);
 		if (event instanceof ClickEvent)
 			return checkIfGrabsInput((ClickEvent) event);
+		if (event instanceof MotionEvent)
+			return checkIfGrabsInput((MotionEvent) event);
+		return false;
+	}
+	
+	/**
+	 * Calls checkIfGrabsInput() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
+	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
+	 */
+	public boolean checkIfGrabsInput(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			return checkIfGrabsInput((DOF1Event) event);
 		if (event instanceof DOF2Event)
@@ -114,20 +141,38 @@ public abstract class ModelObject implements Model {
 		return false;
 	}
 
+	/**
+	 * Same as {@code return checkIfGrabsInput(event.x(), event.y())}.
+	 * 
+	 * @see #checkIfGrabsInput(float, float)
+	 */
 	protected boolean checkIfGrabsInput(ClickEvent event) {
 		return checkIfGrabsInput(event.x(), event.y());
 	}
 
+	/**
+	 * Selection with a picking buffer requires a MotionEvernt with at least two degrees-of-freedom.
+	 */
 	protected boolean checkIfGrabsInput(KeyboardEvent event) {
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
 		return false;
 	}
 
+	/**
+	 * Selection with a picking buffer requires at least two degrees-of-freedom.
+	 * 
+	 * @see #checkIfGrabsInput(float, float)
+	 */
 	protected boolean checkIfGrabsInput(DOF1Event event) {
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
 
+	/**
+	 * Same as return {@code checkIfGrabsInput(event.x(), event.y())}.
+	 * 
+	 * @see #checkIfGrabsInput(float, float)
+	 */
 	protected boolean checkIfGrabsInput(DOF2Event event) {
 		if (event.isAbsolute()) {
 			System.out.println("Grabbing a modelObject is only possible from a relative MotionEvent or from a ClickEvent");
@@ -135,7 +180,27 @@ public abstract class ModelObject implements Model {
 		}
 		return checkIfGrabsInput(event.x(), event.y());
 	}
+	
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF3Event}. 
+	 */
+	protected boolean checkIfGrabsInput(DOF3Event event) {
+		return false;
+	}
 
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF6Event}. 
+	 */
+	protected boolean checkIfGrabsInput(DOF6Event event) {
+		return false;
+	}
+
+	/**
+	 * A model object is selected using <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
+     * with a color buffer (see {@link remixlab.proscene.Scene#pickingBuffer()}). This method compares the color of 
+     * the {@link remixlab.proscene.Scene#pickingBuffer()} at at {@code (x,y)} with {@link #getColor()}.
+     * Returns true if both colors are the same, and false otherwise.
+	 */
 	public final boolean checkIfGrabsInput(float x, float y) {
 		scene.pickingBuffer().pushStyle();
 		scene.pickingBuffer().colorMode(PApplet.RGB, 255);
@@ -146,6 +211,10 @@ public abstract class ModelObject implements Model {
 		return false;
 	}
 
+	/**
+	 * Check if this object is the {@link remixlab.bias.core.Agent#inputGrabber()}. Returns {@code true} if this object
+	 * grabs the agent and {@code false} otherwise.
+	 */
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
@@ -160,13 +229,25 @@ public abstract class ModelObject implements Model {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public void performInteraction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
 			performInteraction((KeyboardEvent) event);
 		if (event instanceof ClickEvent)
 			performInteraction((ClickEvent) event);
+		if (event instanceof MotionEvent)
+			performInteraction((MotionEvent) event);
+	}
+	
+	/**
+	 * Calls performInteraction() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
+	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
+	 * <p>
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.MotionEvent}. 
+	 */
+	protected void performInteraction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			performInteraction((DOF1Event) event);
 		if (event instanceof DOF2Event)
@@ -176,32 +257,59 @@ public abstract class ModelObject implements Model {
 		if (event instanceof DOF6Event)
 			performInteraction((DOF6Event) event);
 	}
-
+	
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.KeyboardEvent}. 
+	 */
 	protected void performInteraction(KeyboardEvent event) {
 		AbstractScene
 				.showMissingImplementationWarning("performInteraction(KeyboardEvent event)", this.getClass().getName());
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.ClickEvent}. 
+	 */
 	protected void performInteraction(ClickEvent event) {
 		AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.DOF1Event}. 
+	 */
 	protected void performInteraction(DOF1Event event) {
 		AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.DOF2Event}. 
+	 */
 	protected void performInteraction(DOF2Event event) {
 		AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.DOF3Event}. 
+	 */
 	protected void performInteraction(DOF3Event event) {
 		AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.DOF6Event}. 
+	 */
 	protected void performInteraction(DOF6Event event) {
 		AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
 	}
 
+	/**
+	 * Internal use. Model color to use in the {@link remixlab.proscene.Scene#pickingBuffer()}.
+	 */
 	protected int getColor() {
 		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
 		return scene.pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
