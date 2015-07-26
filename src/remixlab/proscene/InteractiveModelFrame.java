@@ -151,8 +151,20 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	public void setShape(PShape ps) {
 		pshape = ps;
 	}
-
-
+	
+	/*
+	// doesn't work as expected. Does nothing with objs and shape.createShape(BOX, 60)  
+	public void shiftShape(PVector shift) {
+		if(shape() != null) {			
+			for (int i = 0; i < shape().getVertexCount(); i++) {
+				//System.out.println("Shape vertex count: " + shape().getVertexCount());
+				PVector vertex = shape().getVertex(i);
+				shape().setVertex(i,PVector.add(vertex, shift));
+			}
+		}
+	}
+	//*/
+	
 	/**
 	 * An interactive-model-frame is selected using <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
      * with a color buffer (see {@link remixlab.proscene.Scene#pickingBuffer()}). This method compares the color of 

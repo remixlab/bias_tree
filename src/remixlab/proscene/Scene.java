@@ -50,16 +50,14 @@ import java.nio.FloatBuffer;
  * are multiple viewers sharing the same drawing code. See the example <i>StandardCamera</i>.
  * </ol>
  * <h3>Interactivity mechanisms</h3>
- * 
  * ProScene provides powerful interactivity mechanisms allowing a wide range of scene setups ranging from very simple to
  * complex ones. For convenience, two interaction mechanisms are provided by default: {@link #keyboardAgent()}, and
  * {@link #motionAgent()} (which in the desktop version of proscene defaults to a {@link #mouseAgent()}):
  * <ol>
- * <li><b>The default keyboard agent</b> provides shortcuts to Dandelion keyboard actions such as {@link #drawGrid()} or
+ * <li><b>The default keyboard agent</b> provides shortcuts to global keyboard actions such as {@link #drawGrid()} or
  * {@link #drawAxes()}. See {@link #keyboardAgent()}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame motion actions. Please refer
- * to the different {@code setMouseButtonBinding()}, {@code setMouseClickBinding()}, {@code setMouseWheelBinding()}
- * methods.
+ * to the {@link remixlab.dandelion.agent.MotionAgent} and {@link remixlab.dandelion.agent.KeyboardAgent} API's.
  * </ol>
  * <h3>Animation mechanisms</h3>
  * ProScene provides three animation mechanisms to define how your scene evolves over time:
@@ -74,6 +72,13 @@ import java.nio.FloatBuffer;
  * That method should return {@code void} and have one single {@code Scene} parameter. See the example
  * <i>AnimationHandler</i>.
  * </ol>
+ * <h3>Scene models</h3>
+ * Each scene instance has a collection of models (see {@link #models()}). A {@link remixlab.proscene.Model} is a PSshape
+ * wrapper {@link remixlab.bias.core.Grabber} (it may thus be manipulated by any {@link remixlab.bias.core.Agent}),
+ * implementing a <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> with a color buffer (see
+ * {@link #pickingBuffer()}) technique for easy and precise object selection. Use {@link #models()}, {@link #addModel(Model)},
+ * {@link #removeModels()}, {@link #hasModel(Model)}, {@link #removeModel(Model)}, {@link #removeModels()},
+ * {@link #drawModels()} and {@link #drawModels(PGraphics)} for model handling.
  */
 public class Scene extends AbstractScene implements PConstants {
 	// begin: GWT-incompatible
