@@ -152,18 +152,17 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		pshape = ps;
 	}
 	
-	/*
-	// doesn't work as expected. Does nothing with objs and shape.createShape(BOX, 60)  
+	/**
+	 * Same as {@code for (int i = 0; i < shape().getVertexCount(); i++)
+	 * shape().setVertex(i,PVector.add(shape().getVertex(i), shift));} which shifts all {@link #shape()} vertices.
+	 * <p>
+	 * Works only when PShape has been created with the {@code beginSahpe()}/ {@code endShpae()} command.
+	 */
 	public void shiftShape(PVector shift) {
-		if(shape() != null) {			
-			for (int i = 0; i < shape().getVertexCount(); i++) {
-				//System.out.println("Shape vertex count: " + shape().getVertexCount());
-				PVector vertex = shape().getVertex(i);
-				shape().setVertex(i,PVector.add(vertex, shift));
-			}
-		}
+		if(shape() != null)
+			for (int i = 0; i < shape().getVertexCount(); i++)
+				shape().setVertex(i,PVector.add(shape().getVertex(i), shift));
 	}
-	//*/
 	
 	/**
 	 * An interactive-model-frame is selected using <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
