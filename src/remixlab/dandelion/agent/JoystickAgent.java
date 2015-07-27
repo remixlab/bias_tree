@@ -34,16 +34,6 @@ public abstract class JoystickAgent extends MotionAgent<DOF3Action> {
 	}
 
 	@Override
-	protected DOF3Event handleFeed() {
-		return null;
-	}
-	
-	@Override
-	protected DOF3Event updateTrackedGrabberFeed() {
-		return null;
-	}
-
-	@Override
 	public float[] sensitivities(MotionEvent event) {
 		if (event instanceof DOF3Event)
 			return new float[] { xSens, ySens, zSens, 1f, 1f, 1f };

@@ -131,16 +131,6 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 		return keyFrameBranch;
 	}
 
-	@Override
-	protected KeyboardEvent handleFeed() {
-		return null;
-	}
-	
-	@Override
-	protected KeyboardEvent updateTrackedGrabberFeed() {
-		return null;
-	}
-
 	/**
 	 * Same as {@code return sceneBranch().keyboardProfile()}.
 	 * <p>

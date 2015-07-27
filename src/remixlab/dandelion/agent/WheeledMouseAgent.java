@@ -87,16 +87,6 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 		return ySens;
 	}
 
-	@Override
-	protected DOF2Event handleFeed() {
-		return null;
-	}
-	
-	@Override
-	protected DOF2Event updateTrackedGrabberFeed() {
-		return null;
-	}
-
 	// high-level API
 
 	/**

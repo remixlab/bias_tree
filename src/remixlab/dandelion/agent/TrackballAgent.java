@@ -30,16 +30,6 @@ public abstract class TrackballAgent extends MotionAgent<DOF1Action> {
 	}
 
 	@Override
-	protected DOF1Event handleFeed() {
-		return null;
-	}
-	
-	@Override
-	protected DOF1Event updateTrackedGrabberFeed() {
-		return null;
-	}
-
-	@Override
 	public float[] sensitivities(MotionEvent event) {
 		if (event instanceof DOF3Event)
 			return new float[] { xSens, 1f, 1f, 1f, 1f, 1f };

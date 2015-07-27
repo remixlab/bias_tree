@@ -44,19 +44,25 @@ public class InputHandler {
 	 * <p>
 	 * The handle comprises the following two loops:
 	 * <p>
-	 * 1. {@link remixlab.bias.core.EventGrabberTuple} producer loop which for each registered agent calls:
-	 * {@link remixlab.bias.core.Agent#handle(BogusEvent)}. Note that the bogus event is obtained from the agents callback
-	 * {@link remixlab.bias.core.Agent#handleFeed()} method.<br>
+	 * 1. {@link remixlab.bias.core.EventGrabberTuple} producer loop which for each registered agent calls: a.
+	 * {@link remixlab.bias.core.Agent#updateTrackedGrabber(BogusEvent)}; and, b. {@link remixlab.bias.core.Agent#handle(BogusEvent)}.
+	 * Note that the bogus event are obtained from the agents callback {@link remixlab.bias.core.Agent#updateTrackedGrabberFeed()}
+	 * and {@link remixlab.bias.core.Agent#handleFeed()} methods, respectively. The bogus event may also be obtained from
+	 * {@link remixlab.bias.core.Agent#handleFeed()} which may replace both of the previous feeds when they are null.<br>
 	 * 2. User-defined action consumer loop: which for each {@link remixlab.bias.core.EventGrabberTuple} calls
 	 * {@link remixlab.bias.core.EventGrabberTuple#perform()}.<br>
+	 * 
+	 * @see remixlab.bias.core.Agent#feed()
+	 * @see remixlab.bias.core.Agent#updateTrackedGrabberFeed()
+	 * @see remixlab.bias.core.Agent#handleFeed()
 	 */
 	public void handle() {
 		// 1. Agents update
 		for (Agent agent : agents.values())
-			agent.updateTrackedGrabber(agent.updateTrackedGrabberFeed());
+			agent.updateTrackedGrabber(agent.updateTrackedGrabberFeed() != null ? agent.updateTrackedGrabberFeed() : agent.feed());
 		// 2. Agents handle
 		for (Agent agent : agents.values())
-			agent.handle(agent.handleFeed());
+			agent.handle(agent.handleFeed() != null ? agent.handleFeed() : agent.feed());
 		// 3. Low level events
 		while (!eventTupleQueue.isEmpty())
 			eventTupleQueue.remove().perform();

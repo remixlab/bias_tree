@@ -45,16 +45,6 @@ public abstract class HIDAgent extends MotionAgent<DOF6Action> {
 	}
 
 	@Override
-	protected DOF6Event handleFeed() {
-		return null;
-	}
-	
-	@Override
-	protected DOF6Event updateTrackedGrabberFeed() {
-		return null;
-	}
-
-	@Override
 	public float[] sensitivities(MotionEvent event) {
 		if (event instanceof DOF6Event)
 			return new float[] { xSens, ySens, zSens, xrSens, yrSens, zrSens };

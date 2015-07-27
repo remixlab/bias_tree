@@ -16,7 +16,6 @@
 package remixlab.proscene;
 
 import processing.core.*;
-import remixlab.bias.core.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
@@ -28,7 +27,6 @@ import remixlab.util.*;
  * @see remixlab.dandelion.core.InteractiveFrame
  */
 public class InteractiveModelFrame extends InteractiveFrame implements Model {
-	// TODO complete hashCode and equals, once the rest is done
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -156,7 +154,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	 * Same as {@code for (int i = 0; i < shape().getVertexCount(); i++)
 	 * shape().setVertex(i,PVector.add(shape().getVertex(i), shift));} which shifts all {@link #shape()} vertices.
 	 * <p>
-	 * Works only when PShape has been created with the {@code beginSahpe()}/ {@code endShpae()} command.
+	 * Works only when PShape has been created with the {@code beginShape()}/ {@code endShapa()} command.
 	 */
 	public void shiftShape(PVector shift) {
 		if(shape() != null)
@@ -240,14 +238,5 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	protected int getColor() {
 		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
 		return ((Scene) scene).pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
-	}
-
-	/**
-	 * Same as {@code return agent.inputGrabber() == this}.
-	 * 
-	 * @see remixlab.bias.core.Agent#inputGrabber()
-	 */
-	public boolean grabsInput(Agent agent) {
-		return agent.inputGrabber() == this;
 	}
 }

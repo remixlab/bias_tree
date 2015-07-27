@@ -367,14 +367,34 @@ public abstract class Agent {
 		}
 		return description;
 	}
-
+	
 	/**
-	 * Feeds {@link #handle(BogusEvent)} with the returned event. Returns null by default.
+	 * Feeds {@link #updateTrackedGrabber(BogusEvent)} and {@link #handle(BogusEvent)} with the returned event.
+	 * Returns null by default. Use it in place of {@link #updateTrackedGrabberFeed()} and/or {@link #handleFeed()}
+	 * which take higher-precedence.
 	 * <p>
 	 * Automatically call by the main event loop ({@link remixlab.bias.core.InputHandler#handle()}).
 	 * See ProScene's Space-Navigator example.
 	 * 
 	 * @see remixlab.bias.core.InputHandler#handle()
+	 * @see #handleFeed()
+	 * @see #updateTrackedGrabberFeed()
+	 * @see #handle(BogusEvent)
+	 * @see #updateTrackedGrabber(BogusEvent)
+	 */
+	protected BogusEvent feed() {
+		return null;
+	}
+
+	/**
+	 * Feeds {@link #handle(BogusEvent)} with the returned event. Returns null by default. Use it in place of
+	 * {@link #feed()} which takes lower-precedence.
+	 * <p>
+	 * Automatically call by the main event loop ({@link remixlab.bias.core.InputHandler#handle()}).
+	 * See ProScene's Space-Navigator example.
+	 * 
+	 * @see remixlab.bias.core.InputHandler#handle()
+	 * @see #feed()
 	 * @see #updateTrackedGrabberFeed()
 	 * @see #handle(BogusEvent)
 	 * @see #updateTrackedGrabber(BogusEvent)
@@ -384,11 +404,13 @@ public abstract class Agent {
 	}
 	
 	/**
-	 * Feeds {@link #updateTrackedGrabber(BogusEvent)} with the returned event. Returns null by default.
+	 * Feeds {@link #updateTrackedGrabber(BogusEvent)} with the returned event. Returns null by default.  Use it
+	 * in place of {@link #feed()} which takes lower-precedence.
 	 * <p>
 	 * Automatically call by the main event loop ({@link remixlab.bias.core.InputHandler#handle()}).
 	 * 
 	 * @see remixlab.bias.core.InputHandler#handle()
+	 * @see #feed()
 	 * @see #handleFeed()
 	 * @see #handle(BogusEvent)
 	 * @see #updateTrackedGrabber(BogusEvent)
