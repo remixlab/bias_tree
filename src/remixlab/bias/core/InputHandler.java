@@ -57,13 +57,12 @@ public class InputHandler {
 	 * @see remixlab.bias.core.Agent#handleFeed()
 	 */
 	public void handle() {
-		// 1. Agents update
-		for (Agent agent : agents.values())
+		// 1. Agents
+		for (Agent agent : agents.values()) {
 			agent.updateTrackedGrabber(agent.updateTrackedGrabberFeed() != null ? agent.updateTrackedGrabberFeed() : agent.feed());
-		// 2. Agents handle
-		for (Agent agent : agents.values())
 			agent.handle(agent.handleFeed() != null ? agent.handleFeed() : agent.feed());
-		// 3. Low level events
+		}	
+		// 2. Low level events
 		while (!eventTupleQueue.isEmpty())
 			eventTupleQueue.remove().perform();
 	}
