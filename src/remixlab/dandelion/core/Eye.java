@@ -16,9 +16,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import remixlab.bias.core.Agent;
-import remixlab.bias.core.Grabber;
-import remixlab.bias.core.InteractiveGrabber;
+import remixlab.bias.core.*;
+import remixlab.bias.event.*;
+import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.KeyFrameInterpolator.KeyFrame;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
@@ -51,6 +51,113 @@ import remixlab.util.*;
  * An Eye can also be used outside of an Scene for its coordinate system conversion capabilities.
  */
 public abstract class Eye implements Copyable {
+	class GrabberEyeFrame extends GrabberFrame {
+		public GrabberEyeFrame(AbstractScene _scene) {
+			super(_scene);
+		}
+
+		public GrabberEyeFrame(Eye _eye) {
+			super(_eye);
+		}
+
+		protected GrabberEyeFrame(GrabberEyeFrame otherFrame) {
+			super(otherFrame);
+		}
+
+		@Override
+		public GrabberEyeFrame detach() {
+			GrabberEyeFrame frame = new GrabberEyeFrame(scene);
+			for (Agent agent : scene.inputHandler().agents())
+				agent.removeGrabber(frame);
+			frame.fromFrame(this);
+			return frame;
+		}
+
+		@Override
+		public GrabberEyeFrame get() {
+			return new GrabberEyeFrame(this);
+		}
+
+		@Override
+		public void performInteraction(DOF1Event event) {
+			if(event.isShiftDown())
+				gestureRotateZ(event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
+			else if(scene.is2D())
+				gestureScale(event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
+			else
+				gestureTranslateZ(event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
+		}
+
+		@Override
+		public void performInteraction(DOF2Event event) {
+			if(event.isShiftDown()) {
+				if (event.id() == WheeledMouseAgent.LEFT_ID)
+					gestureMoveForward(event, true);
+				if (event.id() == WheeledMouseAgent.RIGHT_ID)
+					gestureMoveForward(event, false);
+				if (event.id() == WheeledMouseAgent.CENTER_ID)
+					if(scene.is3D())
+						rotate(rollPitchQuaternion(event, scene.camera()));
+			}
+			else {
+				if (event.id() == WheeledMouseAgent.LEFT_ID)
+					gestureArcball(event);
+				if (event.id() == WheeledMouseAgent.RIGHT_ID)
+					gestureTranslateXY(event);
+			}
+		}
+		
+		@Override
+		public void performInteraction(DOF3Event event) {
+			if(event.isShiftDown())
+				gestureTranslateXYZ(event);
+			else
+				gestureRotateXYZ(event);
+		}
+		
+		@Override
+		public void performInteraction(DOF6Event event) {
+			gestureTranslateXYZ(event);
+			gestureRotateXYZ(event);
+		}
+
+		@Override
+		public void performInteraction(ClickEvent event) {
+			if (event.clickCount() == 2) {
+				if (event.id() == WheeledMouseAgent.LEFT_ID)
+					center();
+				if (event.id() == WheeledMouseAgent.RIGHT_ID)
+					align();
+			}
+		}
+		
+		@Override
+		public void performInteraction(KeyboardEvent event) {
+			if( event.isShiftDown() ) {
+				if(event.id()  == KeyboardAgent.UP_KEY)
+					gestureTranslateY(event, true);
+				if(event.id()  == KeyboardAgent.DOWN_KEY)
+					gestureTranslateY(event, false);
+				if(event.id()  == KeyboardAgent.LEFT_KEY)
+					gestureTranslateX(event, false);
+				if(event.id()  == KeyboardAgent.RIGHT_KEY)
+					gestureTranslateX(event, true);
+			}
+			else {
+				if(event.id()  == KeyboardAgent.UP_KEY)
+					if(scene.is3D())
+						gestureRotateX(event, true);
+				if(event.id()  == KeyboardAgent.DOWN_KEY)
+					if(scene.is3D())
+						gestureRotateY(event, false);
+				if(event.id()  == KeyboardAgent.LEFT_KEY)
+					gestureRotateZ(event, false);
+				if(event.id()  == KeyboardAgent.RIGHT_KEY)
+					gestureRotateZ(event, true);
+			}
+		}
+	}
+	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -187,7 +294,7 @@ public abstract class Eye implements Copyable {
 		};
 		this.scene.registerTimingTask(timerFx);
 
-		setFrame(new InteractiveFrame(this));
+		setFrame(new GrabberEyeFrame(this));
 		setSceneRadius(100);
 		setSceneCenter(new Vec(0.0f, 0.0f, 0.0f));
 		setScreenWidthAndHeight(scene.width(), scene.height());
@@ -389,6 +496,8 @@ public abstract class Eye implements Copyable {
 				if(agent.defaultGrabber() == frame() && agent.defaultGrabber() != null)
 					agents.add(agent);			
 			frm = g;			
+			if(scene.is3D())
+				((Camera)this).setFocusDistance(sceneRadius() / (float) Math.tan(((Camera)this).fieldOfView() / 2.0f));
 			interpolationKfi.setFrame(frm);
 			Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
 			while (itr.hasNext())
@@ -1412,7 +1521,7 @@ public abstract class Eye implements Copyable {
 			info = false;
 		}
 
-		/*
+		///*
 		GrabberFrame keyFrame = detachFrame();
 		if(scene.pathsVisualHint())
 			scene.motionAgent().addGrabber(keyFrame);//only works for iFrames
@@ -1420,7 +1529,7 @@ public abstract class Eye implements Copyable {
 		// and 2. motionAgent.addGrabber(MyFrame) 
 		//*/
 				
-		///*
+		/*
 		InteractiveFrame keyFrame = new InteractiveFrame(scene);
 		keyFrame.fromFrame(frame());
 		if(!scene.pathsVisualHint())

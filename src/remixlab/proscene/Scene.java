@@ -198,6 +198,7 @@ public class Scene extends AbstractScene implements PConstants {
 		width = pg.width;
 		height = pg.height;
 		eye = is3D() ? new Camera(this) : new Window(this);
+		eye.setFrame(new InteractiveFrame(eye));
 		setEye(eye());// calls showAll();
 
 		// 6. Misc stuff:

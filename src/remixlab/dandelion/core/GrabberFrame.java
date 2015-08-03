@@ -485,6 +485,9 @@ public class GrabberFrame extends Frame implements Grabber {
 		theeye = eye;
 		init(scene, referenceFrame, p, r, s);
 		setFlySpeed(0.01f * eye().sceneRadius());
+		//fov =  Math.PI / 3.0f
+		if(scene.is3D())
+			setMagnitude((float) Math.tan(((float) Math.PI / 3.0f) / 2.0f));
 	}
 	
 	protected void init(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
@@ -712,7 +715,7 @@ public class GrabberFrame extends Frame implements Grabber {
 
 	/**
 	 * Override this method when you want the object to perform an interaction from a
-	 * {@link remixlab.bias.event.DOF2Event}. 
+	 * {@link remixlab.bias.event.DOF2Event}.
 	 */
 	protected void performInteraction(DOF2Event event) {
 	}
@@ -1349,8 +1352,8 @@ public class GrabberFrame extends Frame implements Grabber {
 	/**
 	 * User gesture into x-translation conversion routine.
 	 */
-	protected void gestureTranslateX(KeyboardEvent event, boolean up) {
-		translate(screenToVec(Vec.multiply(new Vec(1, 0), (up ^ this.isEyeFrame()) ? keyboardSensitivity()
+	protected void gestureTranslateX(KeyboardEvent event, boolean right) {
+		translate(screenToVec(Vec.multiply(new Vec(1, 0), (right ^ this.isEyeFrame()) ? keyboardSensitivity()
 				: -keyboardSensitivity())));
 	}
 

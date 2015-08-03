@@ -128,7 +128,7 @@ public class Camera extends Eye implements Copyable {
 
 		// fldOfView = (float) Math.PI / 3.0f; //in Proscene 1.x it was Pi/4
 		// setFieldOfView((float) Math.PI / 2.0f);//fov yMagnitude -> 1
-		setFieldOfView((float) Math.PI / 3.0f);
+		//setFieldOfView((float) Math.PI / 3.0f);
 		// Initial value (only scaled after this)
 		// orthoCoef = (float)Math.tan(fieldOfView() / 2.0f);
 

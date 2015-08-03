@@ -72,8 +72,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	protected int							width, height;
 
 	// offscreen
-	// TODO should be protected
-	public Point							upperLeftCorner;
+	protected Point							upperLeftCorner;
 	protected boolean					offscreen;
 	protected long						lastEqUpdate;
 
