@@ -577,7 +577,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	/**
 	 * Internal use. Algorithm to split a gesture flow into a 'three-tempi' {@link remixlab.bias.core.Action} sequence.
-	 * Call it like this (see {@link #performInteraction(BogusEvent)}):
+	 * It's called like this (see {@link #performInteraction(BogusEvent)}):
 	 * <pre>
      * {@code
 	 * public void performInteraction(BogusEvent event) {

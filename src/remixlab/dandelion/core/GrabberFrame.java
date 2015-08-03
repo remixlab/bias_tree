@@ -67,13 +67,13 @@ import remixlab.util.*;
  * }
  * }
  * </pre>
- * your custom grabber-frame will then accordingly react to the mouse LEFT and RIGHT buttons, provided it's added to
+ * your custom grabber-frame will then accordingly react to the LEFT and RIGHT mouse buttons, provided it's added to
  * the mouse-agent first (see {@link remixlab.dandelion.agent.MotionAgent#addGrabber(Grabber)} and also
  * {@link remixlab.dandelion.agent.KeyboardAgent#addGrabber(Grabber)}). Note that the
  * {@link remixlab.dandelion.core.InteractiveFrame} provides an {@link remixlab.bias.core.Action}-based convenient
  * implementation.
  * <p>
- * Picking a grabber-frame is simply by checking if the pointer is within a circled area around the frame
+ * Picking a grabber-frame is simply done by checking if the pointer is within a circled area around the frame
  * {@link #center()} screen projection (see {@link #checkIfGrabsInput(float, float)},
  * {@link #setGrabsInputThreshold(float, boolean)} and {@link #adaptiveGrabsInputThreshold()}).
  * <p>
@@ -685,6 +685,13 @@ public class GrabberFrame extends Frame implements Grabber {
 			performInteraction((KeyboardEvent) event);
 	}
 
+	/**
+	 * Calls performInteraction() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
+	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
+	 * <p>
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.MotionEvent}. 
+	 */
 	protected void performInteraction(MotionEvent event) {
 		if (event instanceof DOF1Event)
 			performInteraction((DOF1Event) event);
@@ -696,21 +703,45 @@ public class GrabberFrame extends Frame implements Grabber {
 			performInteraction((DOF6Event) event);
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.DOF1Event}. 
+	 */
 	protected void performInteraction(DOF1Event event) {
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.DOF2Event}. 
+	 */
 	protected void performInteraction(DOF2Event event) {
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.DOF3Event}. 
+	 */
 	protected void performInteraction(DOF3Event event) {
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.DOF6Event}. 
+	 */
 	protected void performInteraction(DOF6Event event) {
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.ClickEvent}. 
+	 */
 	protected void performInteraction(ClickEvent event) {
 	}
 
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.KeyboardEvent}. 
+	 */
 	protected void performInteraction(KeyboardEvent event) {
 	}
 

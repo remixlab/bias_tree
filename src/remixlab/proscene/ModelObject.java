@@ -198,7 +198,7 @@ public abstract class ModelObject implements Model {
 	/**
 	 * A model object is selected using <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
      * with a color buffer (see {@link remixlab.proscene.Scene#pickingBuffer()}). This method compares the color of 
-     * the {@link remixlab.proscene.Scene#pickingBuffer()} at at {@code (x,y)} with {@link #getColor()}.
+     * the {@link remixlab.proscene.Scene#pickingBuffer()} at {@code (x,y)} with {@link #getColor()}.
      * Returns true if both colors are the same, and false otherwise.
 	 */
 	public final boolean checkIfGrabsInput(float x, float y) {
