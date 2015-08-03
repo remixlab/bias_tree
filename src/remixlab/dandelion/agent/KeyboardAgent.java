@@ -52,9 +52,7 @@ import remixlab.dandelion.core.Constants.*;
  * @see remixlab.dandelion.core.Constants.KeyboardAction
  */
 
-public abstract class KeyboardAgent extends AbstractKeyboardAgent {
-	public static int LEFT_KEY	= 1, RIGHT_KEY = 2, UP_KEY = 3, DOWN_KEY = 4;
-	
+public abstract class KeyboardAgent extends AbstractKeyboardAgent {	
 	protected AbstractScene															scene;
 	protected KeyboardBranch<GlobalAction, SceneAction>	keySceneBranch;
 	protected KeyboardBranch<MotionAction, KeyboardAction>	keyFrameBranch, keyEyeBranch;

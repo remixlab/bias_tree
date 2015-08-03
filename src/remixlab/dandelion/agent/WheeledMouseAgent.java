@@ -28,8 +28,6 @@ import remixlab.dandelion.core.Constants.*;
  * @see remixlab.dandelion.core.Constants.DOF2Action
  */
 public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
-	public static int	LEFT_ID	= 1, CENTER_ID = 2, RIGHT_ID = 3, WHEEL_ID = 4;
-
 	protected float		xSens		= 1f;
 	protected float		ySens		= 1f;
 

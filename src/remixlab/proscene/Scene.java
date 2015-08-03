@@ -14,6 +14,7 @@ import processing.core.*;
 import processing.opengl.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.DOF2Event;
+import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
@@ -118,6 +119,9 @@ public class Scene extends AbstractScene implements PConstants {
 
 	// E X C E P T I O N H A N D L I N G
 	protected int								beginOffScreenDrawingCalls;
+	
+	protected MotionAgent<?>	defMotionAgent;
+	protected KeyboardAgent		defKeyboardAgent;
 
 	// CONSTRUCTORS
 
@@ -193,7 +197,7 @@ public class Scene extends AbstractScene implements PConstants {
 		if (platform() == Platform.PROCESSING_DESKTOP)
 			pApplet().registerMethod("post", this);// -> handle picking buffer
 
-		// 5. (TODO prev 4.) Eye
+		// 5. Eye
 		setLeftHanded();
 		width = pg.width;
 		height = pg.height;
@@ -386,10 +390,9 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #enableKeyboardAgent()
 	 */
 	@Override
-	public Agent disableMotionAgent() {
-		if (isMotionAgentEnabled()) {
-			parent.unregisterMethod("mouseEvent", motionAgent());
-			return inputHandler().unregisterAgent(motionAgent());
+	public MotionAgent<?> disableMotionAgent() {
+		if (inputHandler().isAgentRegistered(motionAgent())) {
+			return (MotionAgent<?>) inputHandler().unregisterAgent(motionAgent());
 		}
 		return motionAgent();
 	}
@@ -457,6 +460,21 @@ public class Scene extends AbstractScene implements PConstants {
 			return (KeyboardAgent) inputHandler().unregisterAgent(keyboardAgent());
 		}
 		return keyboardAgent();
+	}
+	
+	@Override
+	public KeyboardAgent keyboardAgent() {
+		return defKeyboardAgent;
+	}
+	
+	@Override
+	public MotionAgent<?> motionAgent() {
+		return defMotionAgent;
+	}
+	
+	@Override
+	protected boolean checkIfGrabsInput(KeyboardEvent event) {
+		return keyboardAgent().hasBinding(event.shortcut());
 	}
 
 	// INFO

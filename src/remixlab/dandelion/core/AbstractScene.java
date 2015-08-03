@@ -79,9 +79,8 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	// FRAME SYNC requires this:
 	protected final long			deltaCount;
 
-	protected MotionAgent<?>	defMotionAgent;
-	protected KeyboardAgent		defKeyboardAgent;
-
+	protected Agent defMotionAgent, defKeyboardAgent;
+	
 	/**
 	 * Visual hints as "the last shall be first"
 	 */
@@ -247,10 +246,8 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			return checkIfGrabsInput((KeyboardEvent) event);
 		return false;
 	}
-
-	protected boolean checkIfGrabsInput(KeyboardEvent event) {
-		return keyboardAgent().hasBinding(event.shortcut());
-	}
+	
+	protected abstract boolean checkIfGrabsInput(KeyboardEvent event);
 
 	/**
 	 * Returns the upper left corner of the Scene window. It's always (0,0) for on-screen scenes, but off-screen scenes
@@ -281,7 +278,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * 
 	 * @see #motionAgent()
 	 */
-	public KeyboardAgent keyboardAgent() {
+	public Agent keyboardAgent() {
 		return defKeyboardAgent;
 	}
 
@@ -316,7 +313,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * @see #enableKeyboardAgent()
 	 * @see #disableMotionAgent()
 	 */
-	public KeyboardAgent disableKeyboardAgent() {
+	public Agent disableKeyboardAgent() {
 		if (inputHandler().isAgentRegistered(keyboardAgent())) {
 			return (KeyboardAgent) inputHandler().unregisterAgent(keyboardAgent());
 		}
@@ -445,7 +442,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * 
 	 * @see #keyboardAgent()
 	 */
-	public MotionAgent<?> motionAgent() {
+	public Agent motionAgent() {
 		return defMotionAgent;
 	}
 

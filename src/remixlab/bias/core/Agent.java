@@ -41,6 +41,9 @@ import remixlab.bias.event.*;
  * {@link remixlab.bias.core.InteractiveGrabber} documentations for details.
  */
 public abstract class Agent {
+	public static int LEFT_ID	= 1, CENTER_ID = 2, RIGHT_ID = 3, WHEEL_ID = 4;
+	public static int LEFT_KEY	= 1, RIGHT_KEY = 2, UP_KEY = 3, DOWN_KEY = 4;
+	
 	protected String										nm;
 	protected List<Branch<?>>			brnchs;
 	protected List<Grabber>	grabberList;

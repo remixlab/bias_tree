@@ -18,7 +18,6 @@ import java.util.List;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.KeyFrameInterpolator.KeyFrame;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
@@ -80,6 +79,8 @@ public abstract class Eye implements Copyable {
 
 		@Override
 		public void performInteraction(DOF1Event event) {
+			if(event.flushed())
+				stopFlying();
 			if(event.isShiftDown())
 				gestureRotateZ(event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
 			else if(scene.is2D())
@@ -90,25 +91,29 @@ public abstract class Eye implements Copyable {
 
 		@Override
 		public void performInteraction(DOF2Event event) {
+			if(event.flushed())
+				stopFlying();
 			if(event.isShiftDown()) {
-				if (event.id() == WheeledMouseAgent.LEFT_ID)
+				if (event.id() == Agent.LEFT_ID)
 					gestureMoveForward(event, true);
-				if (event.id() == WheeledMouseAgent.RIGHT_ID)
+				if (event.id() == Agent.RIGHT_ID)
 					gestureMoveForward(event, false);
-				if (event.id() == WheeledMouseAgent.CENTER_ID)
+				if (event.id() == Agent.CENTER_ID)
 					if(scene.is3D())
 						rotate(rollPitchQuaternion(event, scene.camera()));
 			}
 			else {
-				if (event.id() == WheeledMouseAgent.LEFT_ID)
+				if (event.id() == Agent.LEFT_ID)
 					gestureArcball(event);
-				if (event.id() == WheeledMouseAgent.RIGHT_ID)
+				if (event.id() == Agent.RIGHT_ID)
 					gestureTranslateXY(event);
 			}
 		}
 		
 		@Override
 		public void performInteraction(DOF3Event event) {
+			if(event.flushed())
+				stopFlying();
 			if(event.isShiftDown())
 				gestureTranslateXYZ(event);
 			else
@@ -117,6 +122,8 @@ public abstract class Eye implements Copyable {
 		
 		@Override
 		public void performInteraction(DOF6Event event) {
+			if(event.flushed())
+				stopFlying();
 			gestureTranslateXYZ(event);
 			gestureRotateXYZ(event);
 		}
@@ -124,9 +131,9 @@ public abstract class Eye implements Copyable {
 		@Override
 		public void performInteraction(ClickEvent event) {
 			if (event.clickCount() == 2) {
-				if (event.id() == WheeledMouseAgent.LEFT_ID)
+				if (event.id() == Agent.LEFT_ID)
 					center();
-				if (event.id() == WheeledMouseAgent.RIGHT_ID)
+				if (event.id() == Agent.RIGHT_ID)
 					align();
 			}
 		}
@@ -134,25 +141,25 @@ public abstract class Eye implements Copyable {
 		@Override
 		public void performInteraction(KeyboardEvent event) {
 			if( event.isShiftDown() ) {
-				if(event.id()  == KeyboardAgent.UP_KEY)
+				if(event.id()  == Agent.UP_KEY)
 					gestureTranslateY(event, true);
-				if(event.id()  == KeyboardAgent.DOWN_KEY)
+				if(event.id()  == Agent.DOWN_KEY)
 					gestureTranslateY(event, false);
-				if(event.id()  == KeyboardAgent.LEFT_KEY)
+				if(event.id()  == Agent.LEFT_KEY)
 					gestureTranslateX(event, false);
-				if(event.id()  == KeyboardAgent.RIGHT_KEY)
+				if(event.id()  == Agent.RIGHT_KEY)
 					gestureTranslateX(event, true);
 			}
 			else {
-				if(event.id()  == KeyboardAgent.UP_KEY)
+				if(event.id()  == Agent.UP_KEY)
 					if(scene.is3D())
 						gestureRotateX(event, true);
-				if(event.id()  == KeyboardAgent.DOWN_KEY)
+				if(event.id()  == Agent.DOWN_KEY)
 					if(scene.is3D())
 						gestureRotateY(event, false);
-				if(event.id()  == KeyboardAgent.LEFT_KEY)
+				if(event.id()  == Agent.LEFT_KEY)
 					gestureRotateZ(event, false);
-				if(event.id()  == KeyboardAgent.RIGHT_KEY)
+				if(event.id()  == Agent.RIGHT_KEY)
 					gestureRotateZ(event, true);
 			}
 		}
