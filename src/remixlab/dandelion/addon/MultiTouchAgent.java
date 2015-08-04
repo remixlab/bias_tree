@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.agent;
+package remixlab.dandelion.addon;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,7 +25,7 @@ import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
 /**
- * A specialization of {@link remixlab.dandelion.agent.HIDAgent} that handles touch surfaces.
+ * A specialization of {@link remixlab.dandelion.addon.HIDAgent} that handles touch surfaces.
  */
 public abstract class MultiTouchAgent extends HIDAgent {
 

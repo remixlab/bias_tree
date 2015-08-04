@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.agent;
+package remixlab.dandelion.addon;
 
 import remixlab.bias.core.*;
 import remixlab.bias.agent.*;
@@ -18,7 +18,7 @@ import remixlab.dandelion.core.Constants.*;
 
 /**
  * The root of all dandelion keyboard agents. This agent specializes in handling
- * {@link remixlab.dandelion.core.InteractiveFrame} and
+ * {@link remixlab.dandelion.addon.InteractiveFrame} and
  * {@link remixlab.dandelion.core.AbstractScene} objects, but it can also handle third-party
  * {@link remixlab.bias.core.Grabber} or {@link remixlab.bias.core.InteractiveGrabber} object
  * instances. In the latter case, third-parties should implement their own
@@ -26,7 +26,7 @@ import remixlab.dandelion.core.Constants.*;
  * <p>
  * The agent has a {@code KeyboardBranch<GlobalAction, SceneAction>} branch to handle scene instances: the
  * {@link #sceneBranch()}; and two branches of the type {@code MotionBranch<MotionAction, A, ClickAction>}
- * to handle {@link remixlab.dandelion.core.InteractiveFrame} object instances: {@link #eyeBranch()}, for
+ * to handle {@link remixlab.dandelion.addon.InteractiveFrame} object instances: {@link #eyeBranch()}, for
  * {@link remixlab.dandelion.core.Constants.Target#EYE} (which typically has one one single instance, that
  * of the {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}); and {@link #frameBranch()}, for
  * {@link remixlab.dandelion.core.Constants.Target#FRAME} (which may have several instances, see
@@ -41,7 +41,7 @@ import remixlab.dandelion.core.Constants.*;
  * provided by this agent, such as {@link #setBinding(char, SceneAction)} or
  * {@link #setBinding(Target, int, KeyboardAction)} and so on. Note that to discriminate between the
  * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} from other 
- * {@link remixlab.dandelion.core.InteractiveFrame} instances, some methods take an extra
+ * {@link remixlab.dandelion.addon.InteractiveFrame} instances, some methods take an extra
  * {@link remixlab.dandelion.core.Constants.Target} parameter.
  * <p>
  * The agent's {@link #defaultGrabber()} is the {@link remixlab.dandelion.core.AbstractScene#eye()}
@@ -214,8 +214,8 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	 * {@code setKeyCodeToPlayPath('2', 2)} and
 	 * {@code setKeyCodeToPlayPath('3', 3)} to play the paths.
 	 * 
-	 * @see remixlab.dandelion.agent.KeyboardAgent#setDefaultBindings()
-	 * @see remixlab.dandelion.agent.KeyboardAgent#setKeyCodeToPlayPath(int, int)
+	 * @see remixlab.dandelion.addon.KeyboardAgent#setDefaultBindings()
+	 * @see remixlab.dandelion.addon.KeyboardAgent#setKeyCodeToPlayPath(int, int)
 	 */
 	public void setDefaultBindings() {
 		removeBindings();

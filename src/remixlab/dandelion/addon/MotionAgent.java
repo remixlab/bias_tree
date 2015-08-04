@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.agent;
+package remixlab.dandelion.addon;
 
 import remixlab.bias.agent.*;
 import remixlab.bias.core.*;
@@ -19,13 +19,13 @@ import remixlab.dandelion.core.Constants.*;
 /**
  * The root of all dandelion motion agents (which may have a wheel), such as a mouse or a
  * touch-screen. This agent specializes in handling
- * {@link remixlab.dandelion.core.InteractiveFrame} objects, but it can also handle third-party
+ * {@link remixlab.dandelion.addon.InteractiveFrame} objects, but it can also handle third-party
  * {@link remixlab.bias.core.Grabber} or {@link remixlab.bias.core.InteractiveGrabber} object
  * instances. In the latter case, third-parties should implement their own
  * {@link remixlab.bias.agent.MotionBranch}es.
  * <p>
  * The agent has two branches of the type {@code MotionBranch<MotionAction, A, ClickAction>} to handle
- * {@link remixlab.dandelion.core.InteractiveFrame} object instances: {@link #eyeBranch()}, for
+ * {@link remixlab.dandelion.addon.InteractiveFrame} object instances: {@link #eyeBranch()}, for
  * {@link remixlab.dandelion.core.Constants.Target#EYE} (which typically has one one single
  * instance, that of the {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}); and {@link #frameBranch()}, for
  * {@link remixlab.dandelion.core.Constants.Target#FRAME} (which may have several instances, see
@@ -49,9 +49,9 @@ import remixlab.dandelion.core.Constants.*;
  * will thus defaults to the eye frame too).
  * 
  * @param <A> Motion Action used the parameterize the agent. It defines the maximum degrees-of-freedom
- * (DOFs) that the agent supports. See {@link remixlab.dandelion.agent.TrackballAgent},
- * {@link remixlab.dandelion.agent.WheeledMouseAgent}, {@link remixlab.dandelion.agent.JoystickAgent}
- * and {@link remixlab.dandelion.agent.HIDAgent}.
+ * (DOFs) that the agent supports. See {@link remixlab.dandelion.addon.TrackballAgent},
+ * {@link remixlab.dandelion.addon.WheeledMouseAgent}, {@link remixlab.dandelion.addon.JoystickAgent}
+ * and {@link remixlab.dandelion.addon.HIDAgent}.
  * 
  * @see remixlab.dandelion.core.Constants.MotionAction
  * @see remixlab.dandelion.core.Constants.ClickAction
@@ -125,8 +125,8 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	 * Returns the eye {@code MotionBranch<MotionAction, A, ClickAction>}.
 	 * <p>
 	 * {@code A} is the ({@code Action<MotionAction>}) used to parameterize the agent. See
-	 * {@link remixlab.dandelion.agent.TrackballAgent}, {@link remixlab.dandelion.agent.WheeledMouseAgent},
-	 * {@link remixlab.dandelion.agent.JoystickAgent} and {@link remixlab.dandelion.agent.HIDAgent}.
+	 * {@link remixlab.dandelion.addon.TrackballAgent}, {@link remixlab.dandelion.addon.WheeledMouseAgent},
+	 * {@link remixlab.dandelion.addon.JoystickAgent} and {@link remixlab.dandelion.addon.HIDAgent}.
 	 */
 	public MotionBranch<MotionAction, A, ClickAction> eyeBranch() {
 		return eyeBranch;
@@ -136,8 +136,8 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	 * Returns the frame {@code MotionBranch<MotionAction, A, ClickAction>}.
 	 * <p>
 	 * {@code A} is the ({@code Action<MotionAction>}) used to parameterize the agent. See
-	 * {@link remixlab.dandelion.agent.TrackballAgent}, {@link remixlab.dandelion.agent.WheeledMouseAgent},
-	 * {@link remixlab.dandelion.agent.JoystickAgent} and {@link remixlab.dandelion.agent.HIDAgent}.
+	 * {@link remixlab.dandelion.addon.TrackballAgent}, {@link remixlab.dandelion.addon.WheeledMouseAgent},
+	 * {@link remixlab.dandelion.addon.JoystickAgent} and {@link remixlab.dandelion.addon.HIDAgent}.
 	 */
 	public MotionBranch<MotionAction, A, ClickAction> frameBranch() {
 		return frameBranch;
@@ -152,7 +152,7 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	 * (for {@link remixlab.dandelion.core.Constants.Target#FRAME}).
 	 * <p>
 	 * {@code A} is the ({@code Action<MotionAction>}) used to parameterize the agent. See
-	 * {@link remixlab.dandelion.agent.TrackballMouseAgent}, {@link remixlab.dandelion.agent.WheeledMouseAgent},
+	 * {@link remixlab.dandelion.agent.TrackballMouseAgent}, {@link remixlab.dandelion.addon.WheeledMouseAgent},
 	 * {@link remixlab.dandelion.agent.JoystickMouseAgent} and {@link remixlab.dandelion.agent.HIDMouseAgent}.
 	 * 
 	 * @see #eyeProfile()
@@ -169,7 +169,7 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	 * for the {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} instance.
 	 * <p>
 	 * {@code A} is the ({@code Action<MotionAction>}) used to parameterize the agent. See
-	 * {@link remixlab.dandelion.agent.TrackballMouseAgent}, {@link remixlab.dandelion.agent.WheeledMouseAgent},
+	 * {@link remixlab.dandelion.agent.TrackballMouseAgent}, {@link remixlab.dandelion.addon.WheeledMouseAgent},
 	 * {@link remixlab.dandelion.agent.JoystickMouseAgent} and {@link remixlab.dandelion.agent.HIDMouseAgent}.
 	 * 
 	 * @see #eyeBranch()
@@ -185,7 +185,7 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	 * for interactive-frame instances different than the {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}.
 	 * <p>
 	 * {@code A} is the ({@code Action<MotionAction>}) used to parameterize the agent. See
-	 * {@link remixlab.dandelion.agent.TrackballMouseAgent}, {@link remixlab.dandelion.agent.WheeledMouseAgent},
+	 * {@link remixlab.dandelion.agent.TrackballMouseAgent}, {@link remixlab.dandelion.addon.WheeledMouseAgent},
 	 * {@link remixlab.dandelion.agent.JoystickMouseAgent} and {@link remixlab.dandelion.agent.HIDMouseAgent}.
 	 * 
 	 * @see #frameBranch()

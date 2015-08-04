@@ -12,12 +12,12 @@ package remixlab.proscene;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.agent.*;
+import remixlab.dandelion.addon.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 
 /**
- * Proscene {@link remixlab.dandelion.agent.MultiTouchAgent}.
+ * Proscene {@link remixlab.dandelion.addon.MultiTouchAgent}.
  */
 public class DroidTouchAgent extends MultiTouchAgent {
 	Scene	scene;

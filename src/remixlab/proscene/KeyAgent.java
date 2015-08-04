@@ -12,14 +12,14 @@ package remixlab.proscene;
 
 import processing.core.PApplet;
 import remixlab.bias.event.KeyboardEvent;
-import remixlab.dandelion.agent.*;
+import remixlab.dandelion.addon.*;
 import remixlab.dandelion.core.*;
 
 /**
- * Proscene key-agent. A {@link remixlab.dandelion.agent.KeyboardAgent} specialization
+ * Proscene key-agent. A {@link remixlab.dandelion.addon.KeyboardAgent} specialization
  * which handles Processing key-events.
  * 
- * @see remixlab.dandelion.agent.KeyboardAgent
+ * @see remixlab.dandelion.addon.KeyboardAgent
  * @see remixlab.proscene.MouseAgent
  * @see remixlab.proscene.DroidKeyAgent
  * @see remixlab.proscene.DroidTouchAgent

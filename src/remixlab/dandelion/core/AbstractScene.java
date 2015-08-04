@@ -17,7 +17,7 @@ import java.util.List;
 import remixlab.bias.core.*;
 import remixlab.dandelion.core.Constants.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.agent.*;
+import remixlab.dandelion.addon.*;
 import remixlab.dandelion.constraint.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
@@ -274,7 +274,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	// Keyboard
 
 	/**
-	 * Returns the default {@link remixlab.dandelion.agent.KeyboardAgent} keyboard agent.
+	 * Returns the default {@link remixlab.dandelion.addon.KeyboardAgent} keyboard agent.
 	 * 
 	 * @see #motionAgent()
 	 */
@@ -307,7 +307,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	/**
-	 * Disables the default {@link remixlab.dandelion.agent.KeyboardAgent} and returns it.
+	 * Disables the default {@link remixlab.dandelion.addon.KeyboardAgent} and returns it.
 	 * 
 	 * @see #isKeyboardAgentEnabled()
 	 * @see #enableKeyboardAgent()
@@ -1580,7 +1580,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 
 	/**
 	 * Draws all InteractiveFrames' picking targets: a shooter target visual hint of
-	 * {@link remixlab.dandelion.core.InteractiveFrame#grabsInputThreshold()} pixels size.
+	 * {@link remixlab.dandelion.addon.InteractiveFrame#grabsInputThreshold()} pixels size.
 	 * 
 	 * <b>Attention:</b> the target is drawn either if the iFrame is part of camera path and keyFrame is {@code true}, or
 	 * if the iFrame is not part of camera path and keyFrame is {@code false}.
@@ -1787,7 +1787,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	/**
 	 * Same as {@code eye().frame().setConstraint(constraint)}.
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveFrame#setConstraint(Constraint)
+	 * @see remixlab.dandelion.addon.InteractiveFrame#setConstraint(Constraint)
 	 */
 	public void setEyeConstraint(Constraint constraint) {
 		eye().frame().setConstraint(constraint);

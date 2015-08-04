@@ -15,7 +15,7 @@ import processing.opengl.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.DOF2Event;
 import remixlab.bias.event.KeyboardEvent;
-import remixlab.dandelion.agent.*;
+import remixlab.dandelion.addon.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
@@ -58,7 +58,7 @@ import java.nio.FloatBuffer;
  * <li><b>The default keyboard agent</b> provides shortcuts to global keyboard actions such as {@link #drawGrid()} or
  * {@link #drawAxes()}. See {@link #keyboardAgent()}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame motion actions. Please refer
- * to the {@link remixlab.dandelion.agent.MotionAgent} and {@link remixlab.dandelion.agent.KeyboardAgent} API's.
+ * to the {@link remixlab.dandelion.addon.MotionAgent} and {@link remixlab.dandelion.addon.KeyboardAgent} API's.
  * </ol>
  * <h3>Animation mechanisms</h3>
  * ProScene provides three animation mechanisms to define how your scene evolves over time:
@@ -202,7 +202,7 @@ public class Scene extends AbstractScene implements PConstants {
 		width = pg.width;
 		height = pg.height;
 		eye = is3D() ? new Camera(this) : new Window(this);
-		eye.setFrame(new InteractiveFrame(eye));
+		eye.setFrame(new remixlab.dandelion.addon.InteractiveFrame(eye));
 		setEye(eye());// calls showAll();
 
 		// 6. Misc stuff:
@@ -1876,7 +1876,7 @@ public class Scene extends AbstractScene implements PConstants {
 	protected void drawScreenRotateHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
-		if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
+		if (!(motionAgent().inputGrabber() instanceof remixlab.dandelion.addon.InteractiveFrame))
 			return;
 
 		pg().pushStyle();
@@ -1904,9 +1904,9 @@ public class Scene extends AbstractScene implements PConstants {
 	protected void drawZoomWindowHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
-		if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
+		if (!(motionAgent().inputGrabber() instanceof remixlab.dandelion.addon.InteractiveFrame))
 			return;
-		InteractiveFrame iFrame = (InteractiveFrame) motionAgent().inputGrabber();
+		remixlab.dandelion.addon.InteractiveFrame iFrame = (remixlab.dandelion.addon.InteractiveFrame) motionAgent().inputGrabber();
 		if (!(iFrame.initMotionEvent instanceof DOF2Event))
 			return;
 

@@ -16,15 +16,16 @@
 package remixlab.proscene;
 
 import processing.core.*;
+import remixlab.dandelion.addon.InteractiveFrame;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
 /**
- * A {@link remixlab.proscene.Model} {@link remixlab.dandelion.core.InteractiveFrame}.
+ * A {@link remixlab.proscene.Model} {@link remixlab.dandelion.addon.InteractiveFrame}.
  * 
  * @see remixlab.proscene.Model
- * @see remixlab.dandelion.core.InteractiveFrame
+ * @see remixlab.dandelion.addon.InteractiveFrame
  */
 public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	@Override
@@ -72,7 +73,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	 * {@link remixlab.proscene.Scene#models()} collection. Don't forget to call {@link #setShape(PShape)}.
 	 * Calls {@code super(scn}.
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene)
+	 * @see remixlab.dandelion.addon.InteractiveFrame#InteractiveFrame(AbstractScene)
 	 * @see remixlab.proscene.Scene#addModel(Model)
 	 * @see #shape()
 	 * @see #setShape(PShape)
@@ -88,7 +89,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	 * {@link remixlab.proscene.Scene#models()} collection. Don't forget to call {@link #setShape(PShape)}.
 	 * Calls {@code super(scn, referenceFrame}.
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene, Frame)
+	 * @see remixlab.dandelion.addon.InteractiveFrame#InteractiveFrame(AbstractScene, Frame)
 	 * @see remixlab.proscene.Scene#addModel(Model)
 	 * @see #shape()
 	 * @see #setShape(PShape)
@@ -103,7 +104,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	 * Wraps the pshape into this interactive-model-frame and adds it to the
 	 * {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn}.
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene)
+	 * @see remixlab.dandelion.addon.InteractiveFrame#InteractiveFrame(AbstractScene)
 	 * @see remixlab.proscene.Scene#addModel(Model)
 	 */
 	public InteractiveModelFrame(Scene scn, PShape ps) {
@@ -117,7 +118,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	 * Wraps the pshape into this interactive-model-frame and adds it to the
 	 * {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn, referenceFrame}.
 	 * 
-	 * @see remixlab.dandelion.core.InteractiveFrame#InteractiveFrame(AbstractScene, Frame)
+	 * @see remixlab.dandelion.addon.InteractiveFrame#InteractiveFrame(AbstractScene, Frame)
 	 * @see remixlab.proscene.Scene#addModel(Model)
 	 */
 	public InteractiveModelFrame(Scene scn, PShape ps, Frame referenceFrame) {

@@ -16,7 +16,7 @@ import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 
 /**
- * Proscene {@link remixlab.dandelion.agent.KeyboardAgent}.
+ * Proscene {@link remixlab.dandelion.addon.KeyboardAgent}.
  */
 public class DroidKeyAgent extends KeyAgent {
 	Scene	scene;

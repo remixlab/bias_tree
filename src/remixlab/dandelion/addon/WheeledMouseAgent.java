@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.agent;
+package remixlab.dandelion.addon;
 
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -444,7 +444,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action)}.
 	 *
-	 * @see remixlab.dandelion.agent.MotionAgent#setBinding(Target, MotionShortcut, Action)
+	 * @see remixlab.dandelion.addon.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setGestureBinding(Target target, DOF2Action action) {
 		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action);
@@ -453,7 +453,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code setBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID), action)}.
 	 * 
-	 * @see remixlab.dandelion.agent.MotionAgent#setBinding(Target, MotionShortcut, Action)
+	 * @see remixlab.dandelion.addon.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setGestureBinding(Target target, int mask, DOF2Action action) {
 		setBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID), action);
@@ -518,7 +518,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code setBinding(target, new MotionShortcut(mask, button), action)}.
 	 * 
-	 * @see remixlab.dandelion.agent.MotionAgent#setBinding(Target, MotionShortcut, Action)
+	 * @see remixlab.dandelion.addon.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setButtonBinding(Target target, int mask, int button, DOF2Action action) {
 		setBinding(target, new MotionShortcut(mask, button), action);
@@ -527,7 +527,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, button), action)}.
 	 * 
-	 * @see remixlab.dandelion.agent.MotionAgent#setBinding(Target, MotionShortcut, Action)
+	 * @see remixlab.dandelion.addon.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setButtonBinding(Target target, int button, DOF2Action action) {
 		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, button), action);
@@ -592,7 +592,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code setBinding(target, new MotionShortcut(mask, WHEEL_ID), action.dof2Action())}.
 	 * 
-	 * @see remixlab.dandelion.agent.MotionAgent#setBinding(Target, MotionShortcut, Action)
+	 * @see remixlab.dandelion.addon.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setWheelBinding(Target target, int mask, DOF1Action action) {
 		setBinding(target, new MotionShortcut(mask, WHEEL_ID), action.dof2Action());
@@ -601,7 +601,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID), action.dof2Action())}.
 	 * 
-	 * @see remixlab.dandelion.agent.MotionAgent#setBinding(Target, MotionShortcut, Action)
+	 * @see remixlab.dandelion.addon.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setWheelBinding(Target target, DOF1Action action) {
 		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID), action.dof2Action());
@@ -660,7 +660,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code return isActionBound(target, action.dof2Action())}.
 	 * 
-	 * @see remixlab.dandelion.agent.MotionAgent#isActionBound(Target, Action)
+	 * @see remixlab.dandelion.addon.MotionAgent#isActionBound(Target, Action)
 	 */
 	public boolean isWheelActionBound(Target target, DOF1Action action) {
 		return isActionBound(target, action.dof2Action());

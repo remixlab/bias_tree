@@ -11,15 +11,15 @@
 package remixlab.proscene;
 
 import processing.core.PApplet;
-import remixlab.dandelion.agent.*;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
+import remixlab.dandelion.addon.*;
 
 /**
- * Proscene mouse-agent. A {@link remixlab.dandelion.agent.WheeledMouseAgent} specialization
+ * Proscene mouse-agent. A {@link remixlab.dandelion.addon.WheeledMouseAgent} specialization
  * which handles Processing mouse-events. 
  *
- * @see remixlab.dandelion.agent.WheeledMouseAgent
+ * @see remixlab.dandelion.addon.WheeledMouseAgent
  * @see remixlab.proscene.KeyAgent
  * @see remixlab.proscene.DroidKeyAgent
  * @see remixlab.proscene.DroidTouchAgent

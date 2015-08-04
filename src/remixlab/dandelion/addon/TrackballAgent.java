@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.agent;
+package remixlab.dandelion.addon;
 
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;

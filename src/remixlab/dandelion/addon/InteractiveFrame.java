@@ -8,8 +8,9 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.core;
+package remixlab.dandelion.addon;
 
+import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
@@ -37,8 +38,8 @@ import remixlab.util.*;
  * define the {@link #sceneUpVector()} and align the camera before starting a
  * {@link remixlab.dandelion.core.Constants.DOF2Action#ROTATE_CAD} action to ensure these invariants are preserved.
  * 
- * @see remixlab.dandelion.agent.MotionAgent
- * @see remixlab.dandelion.agent.KeyboardAgent
+ * @see remixlab.dandelion.addon.MotionAgent
+ * @see remixlab.dandelion.addon.KeyboardAgent
  */
 public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber<MotionAction>, Copyable,
 		Constants {

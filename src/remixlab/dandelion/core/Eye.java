@@ -18,6 +18,7 @@ import java.util.List;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.dandelion.addon.InteractiveFrame;
 import remixlab.dandelion.core.KeyFrameInterpolator.KeyFrame;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
@@ -29,7 +30,7 @@ import remixlab.util.*;
  * An Eye defines some intrinsic parameters ({@link #position()}, {@link #viewDirection()}, {@link #upVector()}...) and
  * useful positioning tools that ease its placement ({@link #showEntireScene()}, {@link #fitBall(Vec, float)},
  * {@link #lookAt(Vec)}...). It exports its associated projection and view matrices and it can interactively be modified
- * using any interaction mechanism you can think of (see {@link remixlab.dandelion.core.InteractiveFrame} class).
+ * using any interaction mechanism you can think of (see {@link remixlab.dandelion.addon.InteractiveFrame} class).
  * <p>
  * An Eye holds a collection of paths ({@link #keyFrameInterpolator(int key)}) each of which can be interpolated (
  * {@link #playPath}). It also provides visibility routines ({@link #isPointVisible(Vec)},
@@ -37,7 +38,7 @@ import remixlab.util.*;
  * techniques can be implemented.
  * <p>
  * The {@link #position()} and {@link #orientation()} of the Eye are defined by an
- * {@link remixlab.dandelion.core.InteractiveFrame} (retrieved using {@link #frame()}). These methods are just
+ * {@link remixlab.dandelion.addon.InteractiveFrame} (retrieved using {@link #frame()}). These methods are just
  * convenient wrappers to the equivalent Frame methods. This also means that the Eye {@link #frame()} can be attached to
  * a {@link remixlab.dandelion.geom.Frame#referenceFrame()} which enables complex Eye setups. An Eye has its own
  * magnitude, different from that of the scene (i.e., {@link remixlab.dandelion.geom.Frame#magnitude()} doesn't

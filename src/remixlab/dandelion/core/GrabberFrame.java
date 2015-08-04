@@ -12,6 +12,7 @@ package remixlab.dandelion.core;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.dandelion.addon.InteractiveFrame;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
@@ -68,9 +69,9 @@ import remixlab.util.*;
  * }
  * </pre>
  * your custom grabber-frame will then accordingly react to the LEFT and RIGHT mouse buttons, provided it's added to
- * the mouse-agent first (see {@link remixlab.dandelion.agent.MotionAgent#addGrabber(Grabber)} and also
- * {@link remixlab.dandelion.agent.KeyboardAgent#addGrabber(Grabber)}). Note that the
- * {@link remixlab.dandelion.core.InteractiveFrame} provides an {@link remixlab.bias.core.Action}-based convenient
+ * the mouse-agent first (see {@link remixlab.dandelion.addon.MotionAgent#addGrabber(Grabber)} and also
+ * {@link remixlab.dandelion.addon.KeyboardAgent#addGrabber(Grabber)}). Note that the
+ * {@link remixlab.dandelion.addon.InteractiveFrame} provides an {@link remixlab.bias.core.Action}-based convenient
  * implementation.
  * <p>
  * Picking a grabber-frame is simply done by checking if the pointer is within a circled area around the frame
