@@ -8,8 +8,13 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.core;
+package remixlab.dandelion.agent;
 
+import remixlab.dandelion.core.AbstractScene;
+import remixlab.dandelion.core.Eye;
+import remixlab.dandelion.core.GrabberFrame;
+import remixlab.dandelion.core.InteractiveFrame;
+import remixlab.dandelion.core.Trackable;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
