@@ -8,12 +8,12 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.agent;
+package remixlab.bias.addon;
 
 import remixlab.bias.core.*;
 
 /**
- * An {@link remixlab.bias.core.Agent} that handles {@link remixlab.bias.agent.MotionBranch}es (see
+ * An {@link remixlab.bias.core.Agent} that handles {@link remixlab.bias.addon.MotionBranch}es (see
  * {@link #appendBranch(String)}).
  * <p>
  * The motion agent defines two picking modes (for selecting {@link remixlab.bias.core.Grabber}
@@ -23,7 +23,7 @@ import remixlab.bias.core.*;
  * <li>{@link PickingMode#CLICK}: object selection happens from a click gesture.</li>
  * </ol>
  */
-public abstract class AbstractMotionAgent extends Agent {
+public abstract class MotionBranchAgent extends BranchAgent {
 	protected PickingMode pMode;
 
 	public enum PickingMode {
@@ -34,7 +34,7 @@ public abstract class AbstractMotionAgent extends Agent {
 	 * Constructs a motion agent, registers it at the {@link #inputHandler()} and sets its {@link #pickingMode()}
 	 * to {@link PickingMode#MOVE}.
 	 */
-	public AbstractMotionAgent(InputHandler inputHandler, String name) {
+	public MotionBranchAgent(InputHandler inputHandler, String name) {
 		super(inputHandler, name);
 		setPickingMode(PickingMode.MOVE);
 	}
@@ -66,9 +66,9 @@ public abstract class AbstractMotionAgent extends Agent {
 	}
 
 	/**
-	 * @param name of the {@link remixlab.bias.agent.MotionBranch} to be appended.
+	 * @param name of the {@link remixlab.bias.addon.MotionBranch} to be appended.
 	 * 
-	 * @return the appended {@link remixlab.bias.agent.MotionBranch}.
+	 * @return the appended {@link remixlab.bias.addon.MotionBranch}.
 	 */
 	public <E extends Enum<E>, B extends Action<E>, C extends Action<E>> MotionBranch<E, B, C> appendBranch(String name) {
 		return new MotionBranch<E, B, C>(this, name);

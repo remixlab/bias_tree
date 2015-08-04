@@ -11,6 +11,7 @@
 package remixlab.proscene;
 
 import processing.core.*;
+import remixlab.bias.addon.Action;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.AbstractScene;
@@ -25,7 +26,7 @@ import remixlab.dandelion.core.AbstractScene;
  * InteractiveModelObject to override only those method signatures that might be of their interest.
  * <p>
  * This interactive model object implementation also provided an algorithm to parse an
- * {@link remixlab.bias.core.Action} sequence from an init action variable, see {@link #processEvent(BogusEvent)}.
+ * {@link remixlab.bias.addon.Action} sequence from an init action variable, see {@link #processEvent(BogusEvent)}.
  *
  * @param <E> Reference action used to parameterize the {@link remixlab.proscene.InteractiveModel}
  */
@@ -43,7 +44,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	 * Constructs a interactive-model-object with a null {@link #shape()} and adds it to the
 	 * {@link remixlab.proscene.Scene#models()} collection. Don't forget to call {@link #setShape(PShape)}.
 	 * Third-parties should also add the interactive-model-object into some agents, see
-	 * {@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, Branch)}.
+	 * {@link remixlab.bias.addon.BranchAgent#addGrabber(InteractiveGrabber, Branch)}.
 	 * 
 	 * @see remixlab.proscene.Scene#addModel(Model)
 	 * @see #shape()
@@ -58,7 +59,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	/**
 	 * Wraps the pshape into this interactive-model-object and adds it to the
 	 * {@link remixlab.proscene.Scene#models()} collection. Third-parties should add the interactive-model-object
-	 * into some agents, see {@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, Branch)}.
+	 * into some agents, see {@link remixlab.bias.addon.BranchAgent#addGrabber(InteractiveGrabber, Branch)}.
 	 * 
 	 * @see remixlab.proscene.Scene#addModel(Model)
 	 */
@@ -330,7 +331,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	Action<E>	initAction;
 	
 	/**
-	 * Internal use. Algorithm to split a gesture flow into a 'three-tempi' {@link remixlab.bias.core.Action} sequence.
+	 * Internal use. Algorithm to split a gesture flow into a 'three-tempi' {@link remixlab.bias.addon.Action} sequence.
 	 * Call it like this (see {@link #performInteraction(BogusEvent)}):
 	 * <pre>
      * {@code

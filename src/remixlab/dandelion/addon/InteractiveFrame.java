@@ -12,6 +12,7 @@ package remixlab.dandelion.addon;
 
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
+import remixlab.bias.addon.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.geom.*;
@@ -19,7 +20,7 @@ import remixlab.util.*;
 
 /**
  * An interactive-frame is a {@link remixlab.dandelion.core.GrabberFrame} that implements the
- * {@link remixlab.bias.core.InteractiveGrabber} interface. An interactive-frame implements the following actions
+ * {@link remixlab.bias.addon.InteractiveGrabber} interface. An interactive-frame implements the following actions
  * on top of the grabber-frame gesture converting methods (such as {@link #gestureArcball(MotionEvent)},
  * {@link #gestureDrive(MotionEvent)}, etc): {@link remixlab.dandelion.core.Constants.KeyboardAction},
  * {@link remixlab.dandelion.core.Constants.ClickAction}, {@link remixlab.dandelion.core.Constants.DOF1Action},
@@ -46,7 +47,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	// TODO pending cloning and hash
 	// Multiple tempo actions require this:
-	Action<MotionAction>	initAction;
+	remixlab.bias.addon.Action<MotionAction>	initAction;
 	// private MotionAction twotempi;
 	// private A a;//TODO study make me an attribute to com between init and end
 	protected boolean			need4Spin;
@@ -279,24 +280,24 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 
 	// grabber implementation
 
-	protected Action<MotionAction>	action;
+	protected remixlab.bias.addon.Action<MotionAction>	action;
 
 	/**
 	 * Returns the {@link #action()} reference action. 
 	 * 
-	 * @see remixlab.bias.core.Action#referenceAction()
+	 * @see remixlab.bias.addon.Action#referenceAction()
 	 */
 	public MotionAction referenceAction() {
 		return action != null ? action.referenceAction() : null;
 	}
 
 	@Override
-	public void setAction(Action<MotionAction> a) {
+	public void setAction(remixlab.bias.addon.Action<MotionAction> a) {
 		action = a;
 	}
 
 	@Override
-	public Action<MotionAction> action() {
+	public remixlab.bias.addon.Action<MotionAction> action() {
 		return action;
 	}
 
@@ -577,7 +578,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 
 	/**
-	 * Internal use. Algorithm to split a gesture flow into a 'three-tempi' {@link remixlab.bias.core.Action} sequence.
+	 * Internal use. Algorithm to split a gesture flow into a 'three-tempi' {@link remixlab.bias.addon.Action} sequence.
 	 * It's called like this (see {@link #performInteraction(BogusEvent)}):
 	 * <pre>
      * {@code

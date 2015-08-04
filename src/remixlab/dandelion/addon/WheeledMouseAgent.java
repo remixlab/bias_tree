@@ -13,6 +13,7 @@ package remixlab.dandelion.addon;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import remixlab.bias.addon.Profile;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;

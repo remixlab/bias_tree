@@ -10,6 +10,7 @@
 
 package remixlab.proscene;
 
+import remixlab.bias.addon.Action;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.addon.*;

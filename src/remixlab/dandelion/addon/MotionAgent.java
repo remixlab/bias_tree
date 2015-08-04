@@ -10,7 +10,7 @@
 
 package remixlab.dandelion.addon;
 
-import remixlab.bias.agent.*;
+import remixlab.bias.addon.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
@@ -20,9 +20,9 @@ import remixlab.dandelion.core.Constants.*;
  * The root of all dandelion motion agents (which may have a wheel), such as a mouse or a
  * touch-screen. This agent specializes in handling
  * {@link remixlab.dandelion.addon.InteractiveFrame} objects, but it can also handle third-party
- * {@link remixlab.bias.core.Grabber} or {@link remixlab.bias.core.InteractiveGrabber} object
+ * {@link remixlab.bias.core.Grabber} or {@link remixlab.bias.addon.InteractiveGrabber} object
  * instances. In the latter case, third-parties should implement their own
- * {@link remixlab.bias.agent.MotionBranch}es.
+ * {@link remixlab.bias.addon.MotionBranch}es.
  * <p>
  * The agent has two branches of the type {@code MotionBranch<MotionAction, A, ClickAction>} to handle
  * {@link remixlab.dandelion.addon.InteractiveFrame} object instances: {@link #eyeBranch()}, for
@@ -30,10 +30,10 @@ import remixlab.dandelion.core.Constants.*;
  * instance, that of the {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}); and {@link #frameBranch()}, for
  * {@link remixlab.dandelion.core.Constants.Target#FRAME} (which may have several instances, see
  * {@link #addGrabber(Grabber)}). Note that through the aforementioned branches the following
- * agent {@link remixlab.bias.core.Profile}s are available:
+ * agent {@link remixlab.bias.addon.Profile}s are available:
  * {@link #eyeProfile()}, {@link #frameProfile()}, {@link #eyeClickProfile()}
- * and {@link #frameClickProfile()}. Refer to the {@link remixlab.bias.core.Branch} and
- * {@link remixlab.bias.core.Profile} for details.
+ * and {@link #frameClickProfile()}. Refer to the {@link remixlab.bias.addon.Branch} and
+ * {@link remixlab.bias.addon.Profile} for details.
  * <p>
  * 'Interaction customization', i.e., binding motion and click event shortcuts (see
  * {@link remixlab.bias.event.MotionShortcut}) to dandelion click and motion actions, may
@@ -56,7 +56,7 @@ import remixlab.dandelion.core.Constants.*;
  * @see remixlab.dandelion.core.Constants.MotionAction
  * @see remixlab.dandelion.core.Constants.ClickAction
  */
-public abstract class MotionAgent<A extends Action<MotionAction>> extends AbstractMotionAgent {
+public abstract class MotionAgent<A extends remixlab.bias.addon.Action<MotionAction>> extends MotionBranchAgent {
 	protected AbstractScene																scene;
 	protected MotionBranch<MotionAction, A, ClickAction>	eyeBranch;
 	protected MotionBranch<MotionAction, A, ClickAction>	frameBranch;
@@ -109,7 +109,7 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	public boolean addGrabber(Grabber frame) {
 		if (frame instanceof InteractiveFrame)
 			return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? eyeBranch : frameBranch);
-		if (!(frame instanceof InteractiveGrabber))
+		if (!(frame instanceof remixlab.bias.addon.InteractiveGrabber))
 			return super.addGrabber(frame);
 		System.err.println("use addGrabber(G grabber, K MotionBranch) instead");
 		return false;
@@ -158,7 +158,7 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	 * @see #eyeProfile()
 	 * @see #frameProfile()
 	 */
-	protected Profile<MotionAction, MotionShortcut, A> motionProfile(Target target) {
+	protected remixlab.bias.addon.Profile<MotionAction, MotionShortcut, A> motionProfile(Target target) {
 		return target == Target.EYE ? eyeProfile() : frameProfile();
 	}
 	
@@ -174,7 +174,7 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	 * 
 	 * @see #eyeBranch()
 	 */
-	protected Profile<MotionAction, MotionShortcut, A> eyeProfile() {
+	protected remixlab.bias.addon.Profile<MotionAction, MotionShortcut, A> eyeProfile() {
 		return eyeBranch().motionProfile();
 	}
 
@@ -190,7 +190,7 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	 * 
 	 * @see #frameBranch()
 	 */
-	protected Profile<MotionAction, MotionShortcut, A> frameProfile() {
+	protected remixlab.bias.addon.Profile<MotionAction, MotionShortcut, A> frameProfile() {
 		return frameBranch().motionProfile();
 	}
 
@@ -202,7 +202,7 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	 * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} (for {@link remixlab.dandelion.core.Constants.Target#EYE});
 	 * or, for other interactive-frame instances (for {@link remixlab.dandelion.core.Constants.Target#FRAME}).
 	 */
-	protected Profile<MotionAction, ClickShortcut, ClickAction> clickProfile(Target target) {
+	protected remixlab.bias.addon.Profile<MotionAction, ClickShortcut, ClickAction> clickProfile(Target target) {
 		return target == Target.EYE ? eyeClickProfile() : frameClickProfile();
 	}
 	
@@ -215,7 +215,7 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	 * 
 	 * @see #eyeBranch()
 	 */
-	protected Profile<MotionAction, ClickShortcut, ClickAction> eyeClickProfile() {
+	protected remixlab.bias.addon.Profile<MotionAction, ClickShortcut, ClickAction> eyeClickProfile() {
 		return eyeBranch().clickProfile();
 	}
 
@@ -228,7 +228,7 @@ public abstract class MotionAgent<A extends Action<MotionAction>> extends Abstra
 	 * 
 	 * @see #frameBranch()
 	 */
-	protected Profile<MotionAction, ClickShortcut, ClickAction> frameClickProfile() {
+	protected remixlab.bias.addon.Profile<MotionAction, ClickShortcut, ClickAction> frameClickProfile() {
 		return frameBranch().clickProfile();
 	}
 

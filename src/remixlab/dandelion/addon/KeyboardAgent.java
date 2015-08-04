@@ -10,8 +10,8 @@
 
 package remixlab.dandelion.addon;
 
+import remixlab.bias.addon.*;
 import remixlab.bias.core.*;
-import remixlab.bias.agent.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.Constants.*;
@@ -20,9 +20,9 @@ import remixlab.dandelion.core.Constants.*;
  * The root of all dandelion keyboard agents. This agent specializes in handling
  * {@link remixlab.dandelion.addon.InteractiveFrame} and
  * {@link remixlab.dandelion.core.AbstractScene} objects, but it can also handle third-party
- * {@link remixlab.bias.core.Grabber} or {@link remixlab.bias.core.InteractiveGrabber} object
+ * {@link remixlab.bias.core.Grabber} or {@link remixlab.bias.addon.InteractiveGrabber} object
  * instances. In the latter case, third-parties should implement their own
- * {@link remixlab.bias.agent.KeyboardBranch}es.
+ * {@link remixlab.bias.addon.KeyboardBranch}es.
  * <p>
  * The agent has a {@code KeyboardBranch<GlobalAction, SceneAction>} branch to handle scene instances: the
  * {@link #sceneBranch()}; and two branches of the type {@code MotionBranch<MotionAction, A, ClickAction>}
@@ -31,9 +31,9 @@ import remixlab.dandelion.core.Constants.*;
  * of the {@link remixlab.dandelion.core.AbstractScene#eyeFrame()}); and {@link #frameBranch()}, for
  * {@link remixlab.dandelion.core.Constants.Target#FRAME} (which may have several instances, see
  * {@link #addGrabber(Grabber)}). Note that through the aforementioned branches the following
- * {@link remixlab.bias.core.Profile}s are available: {@link #sceneProfile()},
- * {@link #eyeProfile()} and {@link #frameProfile()}. Refer to the {@link remixlab.bias.core.Branch} and
- * {@link remixlab.bias.core.Profile} for details.
+ * {@link remixlab.bias.addon.Profile}s are available: {@link #sceneProfile()},
+ * {@link #eyeProfile()} and {@link #frameProfile()}. Refer to the {@link remixlab.bias.addon.Branch} and
+ * {@link remixlab.bias.addon.Profile} for details.
  * <p>
  * 'Interaction customization', i.e., binding keyboard shortcuts (see
  * {@link remixlab.bias.event.KeyboardShortcut}) to dandelion global and motion actions, may
@@ -52,7 +52,7 @@ import remixlab.dandelion.core.Constants.*;
  * @see remixlab.dandelion.core.Constants.KeyboardAction
  */
 
-public abstract class KeyboardAgent extends AbstractKeyboardAgent {	
+public abstract class KeyboardAgent extends KeyboardBranchAgent {	
 	protected AbstractScene															scene;
 	protected KeyboardBranch<GlobalAction, SceneAction>	keySceneBranch;
 	protected KeyboardBranch<MotionAction, KeyboardAction>	keyFrameBranch, keyEyeBranch;
@@ -80,7 +80,7 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 		if (frame instanceof InteractiveFrame)
 			return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? keyEyeBranch
 					: keyFrameBranch);
-		if (!(frame instanceof InteractiveGrabber))
+		if (!(frame instanceof remixlab.bias.addon.InteractiveGrabber))
 			return super.addGrabber(frame);
 		System.err.println("use addGrabber(G grabber, K KeyboardBranch) instead");
 		return false;
@@ -138,7 +138,7 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	 * @see #sceneBranch()
 	 * @see #remixlab.bias.core.Profile
 	 */
-	protected Profile<GlobalAction, KeyboardShortcut, SceneAction> sceneProfile() {
+	protected remixlab.bias.addon.Profile<GlobalAction, KeyboardShortcut, SceneAction> sceneProfile() {
 		return sceneBranch().keyboardProfile();
 	}
 
@@ -151,7 +151,7 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	 * 
 	 * @see #eyeBranch()
 	 */
-	protected Profile<MotionAction, KeyboardShortcut, KeyboardAction> eyeProfile() {
+	protected remixlab.bias.addon.Profile<MotionAction, KeyboardShortcut, KeyboardAction> eyeProfile() {
 		return eyeBranch().keyboardProfile();
 	}
 
@@ -164,7 +164,7 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	 * 
 	 * @see #frameBranch()
 	 */
-	protected Profile<MotionAction, KeyboardShortcut, KeyboardAction> frameProfile() {
+	protected remixlab.bias.addon.Profile<MotionAction, KeyboardShortcut, KeyboardAction> frameProfile() {
 		return frameBranch().keyboardProfile();
 	}
 
@@ -179,7 +179,7 @@ public abstract class KeyboardAgent extends AbstractKeyboardAgent {
 	 * @see #eyeProfile()
 	 * @see #frameProfile()
 	 */
-	protected Profile<MotionAction, KeyboardShortcut, KeyboardAction> motionProfile(Target target) {
+	protected remixlab.bias.addon.Profile<MotionAction, KeyboardShortcut, KeyboardAction> motionProfile(Target target) {
 		return target == Target.EYE ? eyeProfile() : frameProfile();
 	}
 

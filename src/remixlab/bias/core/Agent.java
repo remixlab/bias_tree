@@ -11,7 +11,6 @@
 package remixlab.bias.core;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import remixlab.bias.event.*;
@@ -31,23 +30,13 @@ import remixlab.bias.event.*;
  * the condition, namely the {@link #trackedGrabber()}), will then be set as the {@link #inputGrabber()}. When no
  * grabber meets the condition, the {@link #trackedGrabber()} is then set to null. In this case, a non-null
  * {@link #inputGrabber()} may still be set with {@link #setDefaultGrabber(Grabber)} (see also {@link #defaultGrabber()}).
- * <p>
- * Agents may be extended by appending branches to them, see
- * {@link remixlab.bias.agent.AbstractMotionAgent#appendBranch(String)},
- * {@link remixlab.bias.agent.AbstractKeyboardAgent#appendBranch(String)}. For branch handling refer to methods such
- * as {@link #pruneBranch(Branch)}, {@link #branches()}, {@link #branch(Grabber)} and others. Branches enable the agent
- * to parse bogus-events into {@link remixlab.bias.core.InteractiveGrabber} object {@link remixlab.bias.core.Action}s
- * (see {@link #addGrabber(InteractiveGrabber, Branch)}). Please refer to the {@link remixlab.bias.core.Branch} and the
- * {@link remixlab.bias.core.InteractiveGrabber} documentations for details.
  */
 public abstract class Agent {
 	public static int LEFT_ID	= 1, CENTER_ID = 2, RIGHT_ID = 3, WHEEL_ID = 4;
 	public static int LEFT_KEY	= 1, RIGHT_KEY = 2, UP_KEY = 3, DOWN_KEY = 4;
 	
-	protected String										nm;
-	protected List<Branch<?>>			brnchs;
-	protected List<Grabber>	grabberList;
-	protected Branch<?>				trackedGrabberBranch, defaultGrabberBranch;
+	protected String										nm;	
+	protected List<Grabber>	grabberList;	
 	protected Grabber trackedGrabber, defaultGrabber;
 	protected boolean							agentTrckn;
 	protected InputHandler							handler;
@@ -58,7 +47,6 @@ public abstract class Agent {
 	public Agent(InputHandler inputHandler, String name) {
 		nm = name;
 		grabberList = new ArrayList<Grabber>();
-		brnchs = new ArrayList<Branch<?>>();
 		setTracking(true);
 		handler = inputHandler;
 		handler.registerAgent(this);
@@ -78,10 +66,8 @@ public abstract class Agent {
 	 * 
 	 * @see #removeGrabbers()
 	 * @see #addGrabber(Grabber)
-	 * @see #addGrabber(InteractiveGrabber, Branch)
 	 * @see #hasGrabber(Grabber)
 	 * @see #grabbers()
-	 * @see #grabbers(Branch)
 	 */	
 	public boolean removeGrabber(Grabber grabber) {
 		if(defaultGrabber() == grabber)
@@ -90,13 +76,6 @@ public abstract class Agent {
 			trackedGrabber = null;
 		if(grabberList.remove(grabber))
 			return true;
-		for (int i = 0; i < brnchs.size(); i++) {
-			if(brnchs.get(i).removeGrabber(grabber)) {
-				//if(grabber == this.trackedGrabber())
-					//tGrabberBranch = null;
-				return true;
-			}
-		}
 		return false;
 	}
 
@@ -105,18 +84,14 @@ public abstract class Agent {
 	 * 
 	 * @see #removeGrabber(Grabber)
 	 * @see #addGrabber(Grabber)
-	 * @see #addGrabber(InteractiveGrabber, Branch)
 	 * @see #hasGrabber(Grabber)
 	 * @see #grabbers()
-	 * @see #grabbers(Branch)
 	 */	
 	public void removeGrabbers() {
 		setDefaultGrabber(null);
 		trackedGrabber = null;
 		//tGrabberBranch = null;		
-		grabberList.clear();		
-		for (Iterator<Branch<?>> it = brnchs.iterator(); it.hasNext();)
-			it.next().reset();
+		grabberList.clear();
 	}
 	
 	/**
@@ -124,19 +99,13 @@ public abstract class Agent {
 	 * 
 	 * @see #removeGrabber(Grabber)
 	 * @see #addGrabber(Grabber)
-	 * @see #addGrabber(InteractiveGrabber, Branch)
 	 * @see #hasGrabber(Grabber)
 	 * @see #removeGrabbers()
-	 * @see #grabbers(Branch)
 	 */
 	public List<Grabber> grabbers() {
 		List<Grabber> pool = new ArrayList<Grabber>();		
 		pool.removeAll(grabberList);
-		pool.addAll(grabberList);		
-		for (int i = 0; i < brnchs.size(); i++) {
-			pool.removeAll(brnchs.get(i).grabbers());
-			pool.addAll(brnchs.get(i).grabbers());
-		}		
+		pool.addAll(grabberList);
 		return pool;
 	}
 
@@ -145,9 +114,7 @@ public abstract class Agent {
 	 * 
 	 * @see #removeGrabber(Grabber)
 	 * @see #addGrabber(Grabber)
-	 * @see #addGrabber(InteractiveGrabber, Branch)
 	 * @see #grabbers()
-	 * @see #grabbers(Branch)
 	 * @see #removeGrabbers()
 	 */
 	public boolean hasGrabber(Grabber grabber) {
@@ -167,9 +134,7 @@ public abstract class Agent {
 	 * 
 	 * @see #removeGrabber(Grabber)
 	 * @see #hasGrabber(Grabber)
-	 * @see #addGrabber(InteractiveGrabber, Branch)
 	 * @see #grabbers()
-	 * @see #grabbers(Branch)
 	 * @see #removeGrabbers()
 	 */
 	public boolean addGrabber(Grabber grabber) {
@@ -177,180 +142,7 @@ public abstract class Agent {
 			return false;
 		if (hasGrabber(grabber))
 			return false;
-		if (grabber instanceof InteractiveGrabber) {
-			System.err.println("use addGrabber(G grabber, K Branch) instead");
-			return false;
-		}
 		return grabberList.add(grabber);
-	}
-	
-	/**
-	 * Returns the branch list of interactive-grabber objects.
-	 * 
-	 * @see #addGrabber(InteractiveGrabber, Branch)
-	 * @see #removeGrabber(Grabber)
-	 * @see #addGrabber(Grabber)
-	 * @see #hasGrabber(Grabber)
-	 * @see #removeGrabbers()
-	 * @see #grabbers()
-	 */
-	public <E extends Enum<E>> List<InteractiveGrabber<E>> grabbers(Branch<E> branch) {
-		return branch.grabbers();
-	}
-	
-	/**
-	 * Adds grabber to branch. 
-	 *
-	 * @see #removeGrabber(Grabber)
-	 * @see #addGrabber(Grabber)
-	 * @see #hasGrabber(Grabber)
-	 * @see #removeGrabbers()
-	 * @see #grabbers()
-	 * @see #grabbers(Branch)
-	 */
-	public <E extends Enum<E>, K extends Branch<E>, G extends InteractiveGrabber<E>> boolean addGrabber(G grabber, K branch) {
-		if(branch == null)
-			return false;
-		if (!hasBranch(branch)) {
-			if (!this.appendBranch(branch))
-				return false;
-			return false;
-		}
-		return branch.addGrabber(grabber);
-	}
-	
-	// 2. Branches
-
-	/**
-	 * Returns the Branch to which the grabber belongs. May be null.
-	 * 
-	 * @see #hasBranch(Branch)
-	 * @see #resetBranch(Branch)
-	 * @see #pruneBranch(Branch)
-	 * @see #branches()
-	 * @see #resetBranches()
-	 * @see #pruneBranches()
-	 */
-	public Branch<?> branch(Grabber g) {
-		for (Branch<?> b : brnchs)
-			if (b.hasGrabber(g))
-					return b;
-		return null;
-	}
-	
-	/**
-	 * Returns the list of appended branches.
-	 * 
-	 * @see #hasBranch(Branch)
-	 * @see #resetBranch(Branch)
-	 * @see #pruneBranch(Branch)
-	 * @see #branch(Grabber)
-	 * @see #resetBranches()
-	 * @see #pruneBranches()
-	 */
-	public List<Branch<?>> branches() {
-		return brnchs;
-	}
-
-	/**
-	 * Internal use. Branches should be appended through derived agents.
-	 */
-	protected boolean appendBranch(Branch<?> branch) {
-		if (branch == null)
-			return false;
-		if (!brnchs.contains(branch)) {
-			this.brnchs.add(branch);
-			return true;
-		}
-		return false;
-	}
-	
-	/*
-	// produces a name clash with iAgents
-	public <E extends Enum<E>> Branch<E> appendBranch(String name) {
-		return new Branch<E>(this, name);
-	}
-	//*/
-	
-	/**
-	 * Returns true if branch is appended to the agent and false otherwise.
-	 * 
-	 * @see #branches()
-	 * @see #resetBranch(Branch)
-	 * @see #pruneBranch(Branch)
-	 * @see #branch(Grabber)
-	 * @see #resetBranches()
-	 * @see #pruneBranches()
-	 */
-	public boolean hasBranch(Branch<?> branch) {
-		return brnchs.contains(branch);
-	}
-
-	/**
-	 * Removes all interactive grabber objects from branch.
-	 * 
-	 * @see #hasBranch(Branch)
-	 * @see #resetBranches()
-	 * @see #pruneBranch(Branch)
-	 * @see #branch(Grabber)
-	 * @see #hasBranch(Branch)
-	 * @see #pruneBranches()
-	 */
-	public void resetBranch(Branch<?> branch) {
-		branch.reset();
-		if(branch == this.defaultGrabberBranch)
-			setDefaultGrabber(null);
-		if(branch == this.trackedGrabberBranch)
-			trackedGrabber = null;
-	}
-	
-	/**
-	 * Removes all interactive grabber objects from all branches appended to this agent.
-	 * 
-	 * @see #hasBranch(Branch)
-	 * @see #resetBranch(Branch)
-	 * @see #pruneBranch(Branch)
-	 * @see #branch(Grabber)
-	 * @see #hasBranch(Branch)
-	 * @see #pruneBranches()
-	 */
-	public void resetBranches() {
-		for (Branch<?> branch : brnchs)
-			resetBranch(branch);
-	}
-
-	/**
-	 * Calls {@link #resetBranch(Branch)} and then removes the branch from the agent.
-	 * 
-	 * @see #hasBranch(Branch)
-	 * @see #resetBranch(Branch)
-	 * @see #resetBranches()
-	 * @see #branch(Grabber)
-	 * @see #hasBranch(Branch)
-	 * @see #pruneBranches()
-	 */
-	public boolean pruneBranch(Branch<?> branch) {
-		if (brnchs.contains(branch)) {
-			this.resetBranch(branch);
-			this.brnchs.remove(branch);
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Calls {@link #resetBranch(Branch)} on all branches appended to this agent and the removes them.
-	 * 
-	 * @see #hasBranch(Branch)
-	 * @see #resetBranch(Branch)
-	 * @see #resetBranches()
-	 * @see #branch(Grabber)
-	 * @see #hasBranch(Branch)
-	 * @see #pruneBranch(Branch)
-	 */
-	public void pruneBranches() {
-		resetBranches();
-		brnchs.clear();
 	}
 
 	/**
@@ -360,14 +152,6 @@ public abstract class Agent {
 		String description = new String();
 		description += name();
 		description += "\n";
-		description += "Branches' info\n";
-		int index = 1;
-		for (Branch<?> branch : brnchs) {
-			description += index;
-			description += ". ";
-			description += branch.info();
-			index++;
-		}
 		return description;
 	}
 	
@@ -462,15 +246,6 @@ public abstract class Agent {
 				return trackedGrabber();
 			}
 		}
-		trackedGrabberBranch = null;//this seems an important line :p 
-		for (Branch<?> branch : brnchs) {
-			InteractiveGrabber<?> iGrabber = branch.updateTrackedGrabber(event);
-			if(iGrabber != null) {
-				trackedGrabber = iGrabber;
-				this.trackedGrabberBranch = branch;
-				return trackedGrabber();
-			}
-		}
 		return trackedGrabber();
 	}
 
@@ -487,7 +262,7 @@ public abstract class Agent {
 	 * (which is scheduled for execution till the end of this main event loop iteration, see
 	 * {@link remixlab.bias.core.InputHandler#enqueueEventTuple(EventGrabberTuple)} for details).
 	 * <p>
-	 * If {@link #inputGrabber()} is instance of {@link remixlab.bias.core.InteractiveGrabber} an
+	 * If {@link #inputGrabber()} is instance of {@link remixlab.bias.addon.InteractiveGrabber} an
 	 * InteractiveEventGrabberTuple<E>(event, grabber, action) is enqueued instead. Note that the agent
 	 * uses its branches to find the action that's is to be enqueued in this case.
 	 * 
@@ -504,13 +279,8 @@ public abstract class Agent {
 		if (event instanceof MotionEvent)
 			((MotionEvent) event).modulate(sensitivities((MotionEvent) event));
 		Grabber inputGrabber = inputGrabber();
-		if (inputGrabber != null) {
-			if (inputGrabber instanceof InteractiveGrabber<?>) {
-				Branch<?> t = trackedGrabber() != null ? trackedGrabberBranch : defaultGrabberBranch;
-				return trackedGrabber() != null ? t.handleTrackedGrabber(event) : t.handleDefaultGrabber(event);
-			}
+		if (inputGrabber != null)
 			return inputHandler().enqueueEventTuple(new EventGrabberTuple(event, inputGrabber));
-		}
 		return false;
 	}
 
@@ -608,7 +378,6 @@ public abstract class Agent {
 	public boolean setDefaultGrabber(Grabber grabber) {
 		if (grabber == null) {
 			this.defaultGrabber = null;
-			//this.dGrabberBranch = null;
 			return true;
 		}
 		if( ! hasGrabber(grabber) ) {
@@ -617,19 +386,14 @@ public abstract class Agent {
 		}
 		if(grabberList.contains(grabber)) {
 			this.defaultGrabber = grabber;
-			//this.dGrabberBranch = null;
 			return true;
 		}
-		//this.defaultGrabberBranch = null;// not needed since hasGrabber already checked
-		for (Branch<?> b : brnchs)
-			if( b.setDefaultGrabber(grabber) ) {
-				this.defaultGrabber = grabber;
-				this.defaultGrabberBranch = b;
-				return true;
-			}
 		return false;
 	}
 	
+	/**
+	 * Sets the {@link #trackedGrabber()} to {@code null}.
+	 */
 	public void resetTrackedGrabber() {
 		trackedGrabber = null;
 	}

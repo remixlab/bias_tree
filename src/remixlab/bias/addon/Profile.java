@@ -8,21 +8,23 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.core;
+package remixlab.bias.addon;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import remixlab.bias.core.BogusEvent;
+import remixlab.bias.core.Shortcut;
 import remixlab.util.*;
 
 /**
- * A mapping defining {@link remixlab.bias.core.Shortcut} to {@link remixlab.bias.core.Action}
+ * A mapping defining {@link remixlab.bias.core.Shortcut} to {@link remixlab.bias.addon.Action}
  * bindings, implemented as a parameterized hash-map wrap. Profiles are internally used by
- * {@link remixlab.bias.core.Branch}es to parse {@link remixlab.bias.core.BogusEvent}s into
- * {@link remixlab.bias.core.InteractiveGrabber} object {@link remixlab.bias.core.Action}s.
+ * {@link remixlab.bias.addon.Branch}es to parse {@link remixlab.bias.core.BogusEvent}s into
+ * {@link remixlab.bias.addon.InteractiveGrabber} object {@link remixlab.bias.addon.Action}s.
  *
- * @param <A> User-defined {@link remixlab.bias.core.Action}.
+ * @param <A> User-defined {@link remixlab.bias.addon.Action}.
  * 
  * @param <E> 'Reference' enum action set, used to parameterize the user-defined action.
  * 
@@ -101,7 +103,7 @@ public class Profile<E extends Enum<E>, K extends Shortcut, A extends Action<E>>
 	}
 
 	/**
-	 * Returns the {@link remixlab.bias.core.Action} binding for the given {@link remixlab.bias.core.Shortcut}
+	 * Returns the {@link remixlab.bias.addon.Action} binding for the given {@link remixlab.bias.core.Shortcut}
 	 * key.
 	 */
 	public A action(Shortcut key) {
@@ -114,7 +116,7 @@ public class Profile<E extends Enum<E>, K extends Shortcut, A extends Action<E>>
 	 * @param key
 	 *          {@link remixlab.bias.core.Shortcut}
 	 * @param action
-	 *          {@link remixlab.bias.core.Action}
+	 *          {@link remixlab.bias.addon.Action}
 	 */
 	public void setBinding(K key, A action) {
 		if (hasBinding(key)) {
@@ -159,7 +161,7 @@ public class Profile<E extends Enum<E>, K extends Shortcut, A extends Action<E>>
 	 * Returns true if this object maps one or more shortcuts to the specified action.
 	 * 
 	 * @param action
-	 *          {@link remixlab.bias.core.Action}
+	 *          {@link remixlab.bias.addon.Action}
 	 * @return true if this object maps one or more shortcuts to the specified action.
 	 */
 	public boolean isActionBound(A action) {

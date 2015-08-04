@@ -8,12 +8,14 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.core;
+package remixlab.bias.addon;
 
+import remixlab.bias.core.Agent;
+import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
 
 /**
- * Default implementation of the {@link remixlab.bias.core.InteractiveGrabber} interface which eases implementation.
+ * Default implementation of the {@link remixlab.bias.addon.InteractiveGrabber} interface which eases implementation.
  * <p>
  * Based on the concrete event type, this interactive grabber object splits the {@link #checkIfGrabsInput(BogusEvent)}
  * and the {@link #performInteraction(BogusEvent)} methods into more specific versions of them, e.g.,
@@ -22,7 +24,7 @@ import remixlab.bias.event.*;
  * allowing implementations of this abstract interactive grabber object to override only those method signatures
  * that might be of their interest.
  * <p>
- * This interactive grabber object implementation also provided an algorithm to parse an {@link remixlab.bias.core.Action}
+ * This interactive grabber object implementation also provided an algorithm to parse an {@link remixlab.bias.addon.Action}
  * sequence from an init action variable, see {@link #processEvent(BogusEvent)}.
  */
 public abstract class InteractiveGrabberObject<E extends Enum<E>> implements InteractiveGrabber<E> {
@@ -39,7 +41,7 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	 * 
 	 * @see remixlab.bias.core.Agent#grabbers()
 	 */
-	public InteractiveGrabberObject(Agent agent, Branch<E> branch) {
+	public InteractiveGrabberObject(BranchAgent agent, Branch<E> branch) {
 		agent.addGrabber(this, branch);
 	}
 
@@ -220,7 +222,7 @@ public abstract class InteractiveGrabberObject<E extends Enum<E>> implements Int
 	Action<E>	initAction;
 
 	/**
-	 * Internal use. Algorithm to split a gesture flow into a 'three-tempi' {@link remixlab.bias.core.Action} sequence.
+	 * Internal use. Algorithm to split a gesture flow into a 'three-tempi' {@link remixlab.bias.addon.Action} sequence.
 	 * Call it like this (see {@link #performInteraction(BogusEvent)}):
 	 * <pre>
      * {@code

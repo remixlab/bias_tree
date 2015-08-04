@@ -10,7 +10,7 @@
 
 package remixlab.dandelion.core;
 
-import remixlab.bias.core.Action;
+import remixlab.bias.addon.Action;
 
 //TODO fix docs
 public interface Constants {

@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import remixlab.bias.addon.Action;
+import remixlab.bias.addon.InteractiveGrabber;
 import remixlab.bias.core.*;
 import remixlab.dandelion.core.Constants.*;
 import remixlab.bias.event.*;

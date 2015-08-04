@@ -202,7 +202,7 @@ public class Scene extends AbstractScene implements PConstants {
 		width = pg.width;
 		height = pg.height;
 		eye = is3D() ? new Camera(this) : new Window(this);
-		eye.setFrame(new remixlab.dandelion.addon.InteractiveFrame(eye));
+		eye.setFrame(new InteractiveFrame(eye));
 		setEye(eye());// calls showAll();
 
 		// 6. Misc stuff:
@@ -1876,7 +1876,7 @@ public class Scene extends AbstractScene implements PConstants {
 	protected void drawScreenRotateHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
-		if (!(motionAgent().inputGrabber() instanceof remixlab.dandelion.addon.InteractiveFrame))
+		if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
 			return;
 
 		pg().pushStyle();
@@ -1904,9 +1904,9 @@ public class Scene extends AbstractScene implements PConstants {
 	protected void drawZoomWindowHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
-		if (!(motionAgent().inputGrabber() instanceof remixlab.dandelion.addon.InteractiveFrame))
+		if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
 			return;
-		remixlab.dandelion.addon.InteractiveFrame iFrame = (remixlab.dandelion.addon.InteractiveFrame) motionAgent().inputGrabber();
+		InteractiveFrame iFrame = (InteractiveFrame) motionAgent().inputGrabber();
 		if (!(iFrame.initMotionEvent instanceof DOF2Event))
 			return;
 

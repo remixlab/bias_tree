@@ -17,7 +17,7 @@ import remixlab.util.HashCodeBuilder;
 /**
  * The root of all events that are to be handled by an {@link remixlab.bias.core.Agent}. Every BogusEvent
  * encapsulates a {@link remixlab.bias.core.Shortcut} which may be bound to an user-defined
- * {@link remixlab.bias.core.Action} (see {@link #shortcut()}). A {@link #flushed()} event encapsulates a gesture
+ * {@link remixlab.bias.addon.Action} (see {@link #shortcut()}). A {@link #flushed()} event encapsulates a gesture
  * termination message which may be of the interest of {@link remixlab.bias.core.Grabber} objects.
  * <p>
  * The following are the main class specializations: {@link remixlab.bias.event.MotionEvent},

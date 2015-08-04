@@ -8,17 +8,19 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.core;
+package remixlab.bias.addon;
+
+import remixlab.bias.core.*;
 
 /**
  * The root of {@link remixlab.bias.core.Grabber} objects that may implement user-defined actions specified
  * by an enum type. Note that InteractiveGrabber objects are handled through agent
- * {@link remixlab.bias.core.Branch}es (see
- * {@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, Branch)}).
+ * {@link remixlab.bias.addon.Branch}es (see
+ * {@link remixlab.bias.addon.BranchAgent#addGrabber(InteractiveGrabber, Branch)}).
  * <p>
  * User-defined actions to be performed by an InteractiveGrabber object should be defined by a third-party
  * from the Enum that parameterizes this object. Note that the enum value may be queried
- * with {@link remixlab.bias.core.Action#referenceAction()} (see {@link #action()}).
+ * with {@link remixlab.bias.addon.Action#referenceAction()} (see {@link #action()}).
  * <p>
  * An InteractiveGrabber can then implement each action by overriding the
  * {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)} method, simply switching among the Enum
@@ -57,9 +59,9 @@ package remixlab.bias.core;
  */
 public interface InteractiveGrabber<E extends Enum<E>> extends Grabber {
 	/**
-	 * Sets the current {@link remixlab.bias.core.Action} value. Called by
-	 * {@link remixlab.bias.core.InteractiveEventGrabberTuple#perform()}. Should be implemented simply
-	 * as (see {@link remixlab.bias.core.InteractiveGrabberObject#setAction(Action)}):
+	 * Sets the current {@link remixlab.bias.addon.Action} value. Called by
+	 * {@link remixlab.bias.addon.InteractiveEventGrabberTuple#perform()}. Should be implemented simply
+	 * as (see {@link remixlab.bias.addon.InteractiveGrabberObject#setAction(Action)}):
 	 * 
 	 * <pre>
      * {@code
@@ -72,7 +74,7 @@ public interface InteractiveGrabber<E extends Enum<E>> extends Grabber {
 	public void setAction(Action<E> action);
 
 	/**
-	 * Returns the current {@link remixlab.bias.core.Action} value. Should be implemented simply as
+	 * Returns the current {@link remixlab.bias.addon.Action} value. Should be implemented simply as
 	 * ({see @link remixlab.bias.core.InteractiveGrabberObject#action()}):
 	 * 
 	 * <pre>
@@ -83,7 +85,7 @@ public interface InteractiveGrabber<E extends Enum<E>> extends Grabber {
      * }
      * </pre> 
      * 
-     * <b>Note</b> that the action mapped 'reference' value may be retrieved by {@link remixlab.bias.core.Action#referenceAction()}.
+     * <b>Note</b> that the action mapped 'reference' value may be retrieved by {@link remixlab.bias.addon.Action#referenceAction()}.
 	 */
 	public Action<E> action();
 }

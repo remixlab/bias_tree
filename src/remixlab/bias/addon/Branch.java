@@ -8,36 +8,37 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.core;
+package remixlab.bias.addon;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import remixlab.bias.core.*;
 import remixlab.util.Copyable;
 
 /**
- * A Branch handles a list of {@link remixlab.bias.core.InteractiveGrabber} objects ({@link #grabbers()},
+ * A Branch handles a list of {@link remixlab.bias.addon.InteractiveGrabber} objects ({@link #grabbers()},
  * implementing the same reference action set used to parameterize it. A branch, in turn, is handled by
  * the agent to which it is appended, see:
- * {@link remixlab.bias.agent.AbstractMotionAgent#appendBranch(String)} and
- * {@link remixlab.bias.agent.AbstractKeyboardAgent#appendBranch(String)}.
+ * {@link remixlab.bias.addon.MotionBranchAgent#appendBranch(String)} and
+ * {@link remixlab.bias.addon.KeyboardBranchAgent#appendBranch(String)}.
  * Branches are used by agents to parse a {@link remixlab.bias.core.BogusEvent} into
- * an {@link remixlab.bias.core.InteractiveGrabber} object {@link remixlab.bias.core.Action}
+ * an {@link remixlab.bias.addon.InteractiveGrabber} object {@link remixlab.bias.addon.Action}
  * (see {@link #handle(InteractiveGrabber, BogusEvent)}).
  * <p>
- * To add/remove an {@link remixlab.bias.core.InteractiveGrabber} object to/from a Branch, use 
+ * To add/remove an {@link remixlab.bias.addon.InteractiveGrabber} object to/from a Branch, use 
  * {@link #addGrabber(InteractiveGrabber)} and {@link #removeGrabber(Grabber)}), respectively. The same
  * operations may be performed directly from the agent (to which the branch is appended): 
- * {@link remixlab.bias.core.Agent#addGrabber(InteractiveGrabber, Branch)}
+ * {@link remixlab.bias.addon.BranchAgent#addGrabber(InteractiveGrabber, Branch)}
  * and {@link remixlab.bias.core.Agent#removeGrabber(Grabber)}.
  * <p>
- * <b>Observation</b>: to parse bogus-events branches internally use some {@link remixlab.bias.core.Profile}s
- * (see {@link #profiles()}). For instance, the {@link remixlab.bias.agent.MotionBranch} has a
- * {@link remixlab.bias.agent.MotionBranch#motionProfile()} and a
- * {@link remixlab.bias.agent.MotionBranch#clickProfile()}) to be able to parse
+ * <b>Observation</b>: to parse bogus-events branches internally use some {@link remixlab.bias.addon.Profile}s
+ * (see {@link #profiles()}). For instance, the {@link remixlab.bias.addon.MotionBranch} has a
+ * {@link remixlab.bias.addon.MotionBranch#motionProfile()} and a
+ * {@link remixlab.bias.addon.MotionBranch#clickProfile()}) to be able to parse
  * {@link remixlab.bias.event.MotionEvent}s and {@link remixlab.bias.event.ClickEvent}s, resp. Similarly, to
- * parse {@link remixlab.bias.event.KeyboardEvent}s, a {@link remixlab.bias.agent.KeyboardBranch} uses a
- * {@link remixlab.bias.agent.KeyboardBranch#keyboardProfile()}.
+ * parse {@link remixlab.bias.event.KeyboardEvent}s, a {@link remixlab.bias.addon.KeyboardBranch} uses a
+ * {@link remixlab.bias.addon.KeyboardBranch#keyboardProfile()}.
  *
  * @param <E> 'Reference' enum action set.
  */
@@ -47,11 +48,11 @@ public class Branch<E extends Enum<E>> implements Copyable {
 	
 	protected List<InteractiveGrabber<E>> grabbers;
 	protected List<Profile<E, ?, ?>> profiles;
-	protected Agent					agent;
+	protected BranchAgent					agent;
 	protected String				name;
 	protected InteractiveGrabber<E> trackedGrabber, defaultGrabber;
 
-	protected Branch(Agent pnt, String n) {
+	protected Branch(BranchAgent pnt, String n) {
 		name = n;
 		agent = pnt;
 		grabbers = new ArrayList<InteractiveGrabber<E>>();
@@ -84,7 +85,7 @@ public class Branch<E extends Enum<E>> implements Copyable {
 	/**
 	 * Returns the {@link remixlab.bias.core.Agent} to which this branch is appended.
 	 */
-	public Agent agent() {
+	public BranchAgent agent() {
 		return agent;
 	}
 
@@ -128,7 +129,7 @@ public class Branch<E extends Enum<E>> implements Copyable {
 	}
 	
 	/**
-	 * Parses the {@link remixlab.bias.core.BogusEvent} (i.e., see if it carries an {@link remixlab.bias.core.Action})
+	 * Parses the {@link remixlab.bias.core.BogusEvent} (i.e., see if it carries an {@link remixlab.bias.addon.Action})
 	 * using the branch {@link #profiles()}.
 	 * <p>
 	 * Returns true if a non-null action is enqueued for later execution (see {@link remixlab.bias.core.InputHandler#handle()}). 
@@ -170,7 +171,7 @@ public class Branch<E extends Enum<E>> implements Copyable {
 	}
 	
 	/**
-	 * Returns the list of {@link remixlab.bias.core.InteractiveGrabber} objects handled by this branch.
+	 * Returns the list of {@link remixlab.bias.addon.InteractiveGrabber} objects handled by this branch.
 	 */
 	public List<InteractiveGrabber<E>> grabbers() {
 		return grabbers;
@@ -192,7 +193,7 @@ public class Branch<E extends Enum<E>> implements Copyable {
 	}
 	
 	/**
-	 * Remove all  {@link remixlab.bias.core.InteractiveGrabber} objects from this branch.
+	 * Remove all  {@link remixlab.bias.addon.InteractiveGrabber} objects from this branch.
 	 */
 	public void reset() {
 		grabbers.clear();

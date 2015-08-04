@@ -1,11 +1,13 @@
-package remixlab.bias.core;
+package remixlab.bias.addon;
+
+import remixlab.bias.core.*;
 
 /**
- * A [{@link remixlab.bias.core.BogusEvent},{@link remixlab.bias.core.InteractiveGrabber},
- * {@link remixlab.bias.core.Action}] tuple. An enqueued tuple
- * fires a {@link remixlab.bias.core.InteractiveGrabber#performInteraction(BogusEvent)}
+ * A [{@link remixlab.bias.core.BogusEvent},{@link remixlab.bias.addon.InteractiveGrabber},
+ * {@link remixlab.bias.addon.Action}] tuple. An enqueued tuple
+ * fires a {@link remixlab.bias.addon.InteractiveGrabber#performInteraction(BogusEvent)}
  * call from the event in the tuple. For details refer to the
- * {@link remixlab.bias.core.InteractiveGrabber} documentation.
+ * {@link remixlab.bias.addon.InteractiveGrabber} documentation.
  * <p>
  * Tuples are typically enqueued by an agent (through their branches, see
  * {@link remixlab.bias.core.Agent#handle(BogusEvent)}), but may be enqueued
@@ -19,9 +21,9 @@ public class InteractiveEventGrabberTuple<E extends Enum<E>> extends EventGrabbe
 	 * @param e
 	 *          {@link remixlab.bias.core.BogusEvent}
 	 * @param g
-	 *          {@link remixlab.bias.core.InteractiveGrabber}
+	 *          {@link remixlab.bias.addon.InteractiveGrabber}
 	 * @param a
-	 *          {@link remixlab.bias.core.Action}
+	 *          {@link remixlab.bias.addon.Action}
 	 */
 	public InteractiveEventGrabberTuple(BogusEvent e, InteractiveGrabber<E> g, Action<E> a) {
 		super(e, g);
