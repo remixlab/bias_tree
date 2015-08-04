@@ -10,10 +10,8 @@
 
 package remixlab.dandelion.core;
 
-import remixlab.bias.addon.InteractiveGrabber;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.addon.InteractiveFrame;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
@@ -462,8 +460,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		setGrabsInputThreshold(20);
 		setFlySpeed(0.01f * scene.eye().sceneRadius());
 		for(Agent agent : scene.inputHandler().agents())
-			if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
-				agent.addGrabber(this);
+			agent.addGrabber(this);
 	}
 
 	/**
@@ -569,8 +566,7 @@ public class GrabberFrame extends Frame implements Grabber {
 		if(!this.isEyeFrame())
 			for(Agent agent : scene.inputHandler().agents())
 				if(agent.hasGrabber(otherFrame))
-					if((!(this instanceof InteractiveGrabber) ) || this instanceof InteractiveFrame)
-						agent.addGrabber(this);
+					agent.addGrabber(this);
 	}
 
 	@Override

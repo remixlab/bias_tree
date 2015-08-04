@@ -19,8 +19,8 @@ import java.util.List;
  * The InputHandler object is the high level package handler which holds a collection of {@link #agents()}, and an event
  * dispatcher queue of {@link remixlab.bias.core.EventGrabberTuple}s ({@link #eventTupleQueue()}). Such tuple represents
  * a message passing to application objects, allowing an object to be instructed to perform a particular user-defined
- * {@link remixlab.bias.addon.Action} from a given {@link remixlab.bias.core.BogusEvent}. For an introduction to BIAS
- * please refer to <a href="http://nakednous.github.io/projects/bias">this</a>.
+ * action from a given {@link remixlab.bias.core.BogusEvent}. For an introduction to BIAS please refer to
+ * <a href="http://nakednous.github.io/projects/bias">this</a>.
  * <p>
  * At runtime, the input handler should continuously run the two loops defined in {@link #handle()}. Therefore, simply
  * attach a call to {@link #handle()} at the end of your main event (drawing) loop for that to take effect (like it's

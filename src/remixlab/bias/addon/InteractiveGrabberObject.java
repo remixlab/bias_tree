@@ -10,8 +10,7 @@
 
 package remixlab.bias.addon;
 
-import remixlab.bias.core.Agent;
-import remixlab.bias.core.BogusEvent;
+import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
 /**

@@ -261,10 +261,6 @@ public abstract class Agent {
 	 * thus enabling a call on the {@link #inputGrabber()} {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)} method
 	 * (which is scheduled for execution till the end of this main event loop iteration, see
 	 * {@link remixlab.bias.core.InputHandler#enqueueEventTuple(EventGrabberTuple)} for details).
-	 * <p>
-	 * If {@link #inputGrabber()} is instance of {@link remixlab.bias.addon.InteractiveGrabber} an
-	 * InteractiveEventGrabberTuple<E>(event, grabber, action) is enqueued instead. Note that the agent
-	 * uses its branches to find the action that's is to be enqueued in this case.
 	 * 
 	 * @see #inputGrabber()
 	 * @see #updateTrackedGrabber(BogusEvent)
