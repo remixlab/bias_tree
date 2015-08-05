@@ -10,6 +10,7 @@
 
 package remixlab.dandelion.addon;
 
+import remixlab.bias.core.Agent;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
@@ -92,6 +93,15 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 	@Override
 	public InteractiveAvatarFrame get() {
 		return new InteractiveAvatarFrame(this);
+	}
+	
+	@Override
+	public InteractiveAvatarFrame detach() {
+		InteractiveAvatarFrame frame = new InteractiveAvatarFrame((InteractiveScene)scene);
+		for(Agent agent : scene.inputHandler().agents())
+			agent.removeGrabber(frame);
+		frame.fromFrame(this);
+		return frame;
 	}
 
 	/**
