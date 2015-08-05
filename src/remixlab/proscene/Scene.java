@@ -384,11 +384,13 @@ public class Scene extends InteractiveScene implements PConstants {
 	 * @see #isMotionAgentEnabled()
 	 * @see #enableMotionAgent()
 	 * @see #enableKeyboardAgent()
+	 * @see #disableKeyboardAgent()
 	 */
 	@Override
-	public MotionAgent<?> disableMotionAgent() {
-		if (inputHandler().isAgentRegistered(motionAgent())) {
-			return (MotionAgent<?>) inputHandler().unregisterAgent(motionAgent());
+	public Agent disableMotionAgent() {
+		if (isMotionAgentEnabled()) {
+			parent.unregisterMethod("mouseEvent", motionAgent());
+			return inputHandler().unregisterAgent(motionAgent());
 		}
 		return motionAgent();
 	}

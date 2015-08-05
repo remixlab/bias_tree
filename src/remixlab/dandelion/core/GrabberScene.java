@@ -239,7 +239,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	 * @see #isMotionAgentEnabled()
 	 */
 	public boolean isKeyboardAgentEnabled() {
-		return inputHandler().isAgentRegistered(defKeyboardAgent);
+		return inputHandler().isAgentRegistered(keyboardAgent());
 	}
 
 	/**
@@ -389,7 +389,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	 * @see #isKeyboardAgentEnabled()
 	 */
 	public boolean isMotionAgentEnabled() {
-		return inputHandler().isAgentRegistered(defMotionAgent);
+		return inputHandler().isAgentRegistered(motionAgent());
 	}
 
 	/**
