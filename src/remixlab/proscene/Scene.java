@@ -156,7 +156,7 @@ public class Scene extends InteractiveScene implements PConstants {
 	 * on-screen Scene, see also {@link #isOffscreen()}), the values of x and y are meaningless (both are set to 0 to be
 	 * taken as dummy values).
 	 * 
-	 * @see remixlab.dandelion.core.GrabberScene#AbstractScene()
+	 * @see remixlab.dandelion.addon.InteractiveScene#InteractiveScene()
 	 * @see #Scene(PApplet)
 	 * @see #Scene(PApplet, PGraphics)
 	 */

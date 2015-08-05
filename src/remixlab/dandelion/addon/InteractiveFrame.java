@@ -44,11 +44,7 @@ import remixlab.util.*;
  */
 public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber<MotionAction>, Copyable,
 		Constants {
-	
-	//TODO pending
-	//protected GrabberScene			scene;
 
-	// TODO pending cloning and hash
 	// Multiple tempi actions require this:
 	remixlab.bias.addon.Action<MotionAction>	initAction;
 	// private MotionAction twotempi;
@@ -105,135 +101,135 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	/**
 	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn) {
+	public InteractiveFrame(InteractiveScene scn) {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Vec p) {
+	public InteractiveFrame(InteractiveScene scn, Vec p) {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, new Vec(), r, 1)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Rotation r) {
+	public InteractiveFrame(InteractiveScene scn, Rotation r) {
 		this(scn, null, new Vec(), r, 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, float s) {
+	public InteractiveFrame(InteractiveScene scn, float s) {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Vec p, float s) {
+	public InteractiveFrame(InteractiveScene scn, Vec p, float s) {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, r, 1)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Vec p, Rotation r) {
+	public InteractiveFrame(InteractiveScene scn, Vec p, Rotation r) {
 		this(scn, null, p, r, 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, new Vec(), r, s)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Rotation r, float s) {
+	public InteractiveFrame(InteractiveScene scn, Rotation r, float s) {
 		this(scn, null, new Vec(), r, s);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, r, s)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Vec p, Rotation r, float s) {
+	public InteractiveFrame(InteractiveScene scn, Vec p, Rotation r, float s) {
 		this(scn, null, p, r, s);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Frame referenceFrame) {
+	public InteractiveFrame(InteractiveScene scn, Frame referenceFrame) {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, Vec p) {
+	public InteractiveFrame(InteractiveScene scn, Frame referenceFrame, Vec p) {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), r, 1)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, Rotation r) {
+	public InteractiveFrame(InteractiveScene scn, Frame referenceFrame, Rotation r) {
 		this(scn, referenceFrame, new Vec(), r, 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, float s) {
+	public InteractiveFrame(InteractiveScene scn, Frame referenceFrame, float s) {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, Vec p, float s) {
+	public InteractiveFrame(InteractiveScene scn, Frame referenceFrame, Vec p, float s) {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, r, 1)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, Vec p, Rotation r) {
+	public InteractiveFrame(InteractiveScene scn, Frame referenceFrame, Vec p, Rotation r) {
 		this(scn, referenceFrame, p, r, 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), r, s)}.
 	 * 
-	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(InteractiveScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, Rotation r, float s) {
+	public InteractiveFrame(InteractiveScene scn, Frame referenceFrame, Rotation r, float s) {
 		this(scn, referenceFrame, new Vec(), r, s);
 	}
 
@@ -242,7 +238,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	 * 
 	 * @see remixlab.dandelion.core.GrabberFrame#GrabberFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
+	public InteractiveFrame(InteractiveScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(scn, referenceFrame, p, r, s);
 	}
 
@@ -274,7 +270,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	
 	@Override
 	public InteractiveFrame detach() {
-		InteractiveFrame frame = new InteractiveFrame(scene);
+		InteractiveFrame frame = new InteractiveFrame((InteractiveScene)scene);
 		for(Agent agent : scene.inputHandler().agents())
 			agent.removeGrabber(frame);
 		frame.fromFrame(this);
