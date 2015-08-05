@@ -93,7 +93,7 @@ public abstract class Eye implements Copyable {
 		public void performInteraction(DOF2Event event) {
 			if(event.flushed())
 				stopFlying();
-			if(event.isShiftDown()) {
+			else if(event.isShiftDown()) {
 				if (event.id() == Agent.LEFT_ID)
 					gestureMoveForward(event, true);
 				if (event.id() == Agent.RIGHT_ID)

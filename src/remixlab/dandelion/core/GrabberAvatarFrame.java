@@ -1,30 +1,11 @@
-/*********************************************************************************
- * dandelion_tree
- * Copyright (c) 2014 National University of Colombia, https://github.com/remixlab
- * @author Jean Pierre Charalambos, http://otrolado.info/
- *
- * All rights reserved. Library that eases the creation of interactive
- * scenes, released under the terms of the GNU Public License v3.0
- * which is available at http://www.gnu.org/licenses/gpl.html
- *********************************************************************************/
-
-package remixlab.dandelion.addon;
+package remixlab.dandelion.core;
 
 import remixlab.bias.core.Agent;
-import remixlab.dandelion.core.*;
+import remixlab.bias.event.*;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
-/**
- * The InteractiveAvatarFrame class represents an InteractiveFrame that can be tracked by an Eye, i.e., it implements
- * the Trackable interface.
- * <p>
- * The {@link #eyeFrame()} of the camera that is to be tracking the frame (see the documentation of the Trackable
- * interface) is defined in spherical coordinates ({@link #azimuth()}, {@link #inclination()} and
- * {@link #trackingDistance()}) respect to the {@link #position()} (which defines the
- * {@link remixlab.dandelion.core.Eye#at()} Vec).
- */
-public class InteractiveAvatarFrame extends InteractiveFrame implements Trackable, Copyable {
+public class GrabberAvatarFrame extends GrabberFrame implements Trackable, Copyable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -42,26 +23,19 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 		if (obj.getClass() != getClass())
 			return false;
 
-		InteractiveAvatarFrame other = (InteractiveAvatarFrame) obj;
+		GrabberAvatarFrame other = (GrabberAvatarFrame) obj;
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(eFrame, other.eFrame)
 				.isEquals();
 	}
-
+	
 	protected GrabberFrame	eFrame;
-
 	private Rotation				q;
-	private float						trackingDist;
-
-	/**
-	 * Constructs an InteractiveAvatarFrame and sets its {@link #trackingDistance()} to
-	 * {@link remixlab.dandelion.core.GrabberScene#radius()}/5, {@link #azimuth()} to 0, and {@link #inclination()} to 0.
-	 * 
-	 * @see remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)
-	 */
-	public InteractiveAvatarFrame(InteractiveScene scn) {
-		super(scn);
+	private float					trackingDist;
+	
+	public GrabberAvatarFrame(GrabberScene _scene) {
+		super(_scene);
 		eFrame = new GrabberFrame(scene());
 		scene().motionAgent().removeGrabber(eFrame);
 		scene().keyboardAgent().removeGrabber(eFrame);
@@ -71,39 +45,43 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 		updateEyeFrame();
 	}
 
-	/**
-	 * Copy constructor.
-	 * 
-	 * @param otherFrame
-	 *          the other interactive avatar frame
-	 */
-	protected InteractiveAvatarFrame(InteractiveAvatarFrame otherFrame) {
+	protected GrabberAvatarFrame(GrabberAvatarFrame otherFrame) {
 		super(otherFrame);
-		this.eFrame = otherFrame.eyeFrame().get();
-		this.q = otherFrame.q.get();
-		this.setTrackingDistance(otherFrame.trackingDistance());
 	}
 
-	/**
-	 * Calls {@link #InteractiveAvatarFrame(InteractiveAvatarFrame)} (which is protected) and returns a copy of
-	 * {@code this} object.
-	 * 
-	 * @see #InteractiveAvatarFrame(InteractiveAvatarFrame)
-	 */
 	@Override
-	public InteractiveAvatarFrame get() {
-		return new InteractiveAvatarFrame(this);
-	}
-	
-	@Override
-	public InteractiveAvatarFrame detach() {
-		InteractiveAvatarFrame frame = new InteractiveAvatarFrame((InteractiveScene)scene());
-		for(Agent agent : scene().inputHandler().agents())
+	public GrabberAvatarFrame detach() {
+		GrabberAvatarFrame frame = new GrabberAvatarFrame(scene());
+		for (Agent agent : scene().inputHandler().agents())
 			agent.removeGrabber(frame);
 		frame.fromFrame(this);
 		return frame;
 	}
 
+	@Override
+	public GrabberAvatarFrame get() {
+		return new GrabberAvatarFrame(this);
+	}
+	
+	@Override
+	public void performInteraction(DOF2Event event) {
+		if(event.flushed())
+			stopFlying();
+		else if(event.isShiftDown()) {
+			gestureRotateZ(event, event.id() != Agent.LEFT_ID);
+			gestureDrive(event);
+		}
+		else {
+			if (event.id() == Agent.LEFT_ID)
+				gestureMoveForward(event, true);
+			if (event.id() == Agent.RIGHT_ID)
+				gestureMoveForward(event, false);
+			if (event.id() == Agent.CENTER_ID)
+				if(scene().is3D())
+					rotate(rollPitchQuaternion(event, scene().camera()));			
+		}
+	}
+	
 	/**
 	 * Returns the distance between the frame and the tracking camera.
 	 */
