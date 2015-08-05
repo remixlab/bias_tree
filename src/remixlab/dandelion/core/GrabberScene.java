@@ -223,7 +223,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	// Keyboard
 
 	/**
-	 * Returns the default {@link remixlab.dandelion.addon.KeyboardAgent} keyboard agent.
+	 * Returns the default {@link remixlab.bias.core.Agent} keyboard agent.
 	 * 
 	 * @see #motionAgent()
 	 */
@@ -406,7 +406,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	}
 	
 	/**
-	 * Disables the default {@link remixlab.dandelion.addon.KeyboardAgent} and returns it.
+	 * Disables the default {@link remixlab.bias.core.Agent} and returns it.
 	 * 
 	 * @see #isKeyboardAgentEnabled()
 	 * @see #enableKeyboardAgent()
@@ -1528,8 +1528,8 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	public abstract void drawShooterTarget(Vec center, float length);
 
 	/**
-	 * Draws all InteractiveFrames' picking targets: a shooter target visual hint of
-	 * {@link remixlab.dandelion.addon.InteractiveFrame#grabsInputThreshold()} pixels size.
+	 * Draws all GrabberFrames' picking targets: a shooter target visual hint of
+	 * {@link remixlab.dandelion.core.GrabberFrame#grabsInputThreshold()} pixels size.
 	 * 
 	 * <b>Attention:</b> the target is drawn either if the iFrame is part of camera path and keyFrame is {@code true}, or
 	 * if the iFrame is not part of camera path and keyFrame is {@code false}.
@@ -1731,7 +1731,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	/**
 	 * Same as {@code eye().frame().setConstraint(constraint)}.
 	 * 
-	 * @see remixlab.dandelion.addon.InteractiveFrame#setConstraint(Constraint)
+	 * @see remixlab.dandelion.core.GrabberFrame#setConstraint(Constraint)
 	 */
 	public void setEyeConstraint(Constraint constraint) {
 		eye().frame().setConstraint(constraint);

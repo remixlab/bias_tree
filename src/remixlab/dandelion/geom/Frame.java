@@ -94,9 +94,9 @@ import remixlab.util.*;
  * 
  * <h3>Derived classes</h3>
  * 
- * The {@link remixlab.dandelion.addon.InteractiveFrame} class inherits Frame and implements all sorts of motion actions
- * (see {@link remixlab.dandelion.addon.Constants}), so that a Frame (and hence an object) can be manipulated in the
- * scene by whatever user interaction means you can imagine.
+ * The {@link remixlab.dandelion.core.GrabberFrame} class inherits Frame and implements all sorts of motion actions,
+ * so that a Frame (and hence an object) can be manipulated in the scene by whatever user interaction means you can
+ * imagine.
  */
 public class Frame implements Copyable {
 	@Override
