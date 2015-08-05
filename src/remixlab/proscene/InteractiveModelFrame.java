@@ -17,7 +17,6 @@ package remixlab.proscene;
 
 import processing.core.*;
 import remixlab.dandelion.addon.InteractiveFrame;
-import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 

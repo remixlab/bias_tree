@@ -30,7 +30,7 @@ public class MatrixStackHelper extends MatrixHelper {
 
 	Mat													projection, modelview;
 
-	public MatrixStackHelper(AbstractScene scn) {
+	public MatrixStackHelper(GrabberScene scn) {
 		super(scn);
 		modelview = new Mat();
 		projection = new Mat();

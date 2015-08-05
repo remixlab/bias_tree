@@ -13,7 +13,6 @@ package remixlab.proscene;
 import processing.core.PApplet;
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.addon.*;
-import remixlab.dandelion.core.*;
 
 /**
  * Proscene key-agent. A {@link remixlab.dandelion.addon.KeyboardAgent} specialization
@@ -33,7 +32,7 @@ public class KeyAgent extends KeyboardAgent {
 	 * 
 	 * @see #setDefaultBindings()
 	 */
-	public KeyAgent(AbstractScene scn, String n) {
+	public KeyAgent(InteractiveScene scn, String n) {
 		super(scn, n);
 		LEFT_KEY = PApplet.LEFT;
 		RIGHT_KEY = PApplet.RIGHT;

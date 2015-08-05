@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * in the latter case).
  * <p>
  * The near and far planes of the Camera are fitted to the scene and determined from the
- * {@link remixlab.dandelion.core.AbstractScene#radius()}, {@link remixlab.dandelion.core.AbstractScene#center()} and
+ * {@link remixlab.dandelion.core.GrabberScene#radius()}, {@link remixlab.dandelion.core.GrabberScene#center()} and
  * {@link #zClippingCoefficient()} by the {@link #zNear()} and {@link #zFar()}. Reasonable values on the scene extends
  * thus have to be provided to the Scene in order for the Camera to correctly display the scene. High level positioning
  * methods also use this information ({@link #showEntireScene()}, {@link #centerScene()}, ...).
@@ -116,7 +116,7 @@ public class Camera extends Eye implements Copyable {
 	 * See {@link #IODistance()}, {@link #physicalDistanceToScreen()}, {@link #physicalScreenWidth()} and
 	 * {@link #focusDistance()} documentations for default stereo parameter values.
 	 */
-	public Camera(AbstractScene scn) {
+	public Camera(GrabberScene scn) {
 		super(scn);
 
 		if (scene.is2D())
@@ -349,7 +349,7 @@ public class Camera extends Eye implements Copyable {
 
 	/**
 	 * Changes the Camera {@link #fieldOfView()} so that the entire scene (defined by
-	 * {@link remixlab.dandelion.core.AbstractScene#center()} and {@link remixlab.dandelion.core.AbstractScene#radius()}
+	 * {@link remixlab.dandelion.core.GrabberScene#center()} and {@link remixlab.dandelion.core.GrabberScene#radius()}
 	 * is visible from the Camera {@link #position()}.
 	 * <p>
 	 * The {@link #position()} and {@link #orientation()} of the Camera are not modified and you first have to orientate
@@ -423,7 +423,7 @@ public class Camera extends Eye implements Copyable {
 	 * See also the {@link #zFar()}, {@link #zClippingCoefficient()} and {@link #zNearCoefficient()} documentations.
 	 * <p>
 	 * If you need a completely different zNear computation, overload the {@link #zNear()} and {@link #zFar()} methods in
-	 * a new class that publicly inherits from Camera and use {@link remixlab.dandelion.core.AbstractScene#setEye(Eye)}.
+	 * a new class that publicly inherits from Camera and use {@link remixlab.dandelion.core.GrabberScene#setEye(Eye)}.
 	 * <p>
 	 * <b>Attention:</b> The value is always positive although the clipping plane is positioned at a negative z value in
 	 * the Camera coordinate system. This follows the {@code gluPerspective} standard.
@@ -702,8 +702,8 @@ public class Camera extends Eye implements Copyable {
 	/**
 	 * Returns {@code true} if the given face is back-facing the camera. Otherwise returns {@code false}.
 	 * <p>
-	 * Vertices must given in clockwise order if {@link remixlab.dandelion.core.AbstractScene#isLeftHanded()} or in
-	 * counter-clockwise order if {@link remixlab.dandelion.core.AbstractScene#isRightHanded()}.
+	 * Vertices must given in clockwise order if {@link remixlab.dandelion.core.GrabberScene#isLeftHanded()} or in
+	 * counter-clockwise order if {@link remixlab.dandelion.core.GrabberScene#isRightHanded()}.
 	 * 
 	 * @param a
 	 *          first face vertex
@@ -988,7 +988,7 @@ public class Camera extends Eye implements Copyable {
 	/**
 	 * Same as {@code setAnchor(new Vec(x,y,z))}.
 	 * 
-	 * @see AbstractScene#setAnchor(Vec)
+	 * @see GrabberScene#setAnchor(Vec)
 	 */
 	public void setAnchor(float x, float y, float z) {
 		setAnchor(new Vec(x,y,z));

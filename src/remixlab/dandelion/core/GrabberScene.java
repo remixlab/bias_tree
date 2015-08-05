@@ -14,24 +14,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import remixlab.bias.addon.Action;
-import remixlab.bias.addon.InteractiveGrabber;
 import remixlab.bias.core.*;
-import remixlab.dandelion.core.Constants.*;
-import remixlab.bias.event.*;
-import remixlab.dandelion.addon.*;
+import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.constraint.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
 
 /**
- * A 2D or 3D interactive abstract Scene. //TODO: see iFrame intro api docs
+ * A 2D or 3D {@link remixlab.bias.core.Grabber} scene.
  * 
  * Main package class representing an interface between Dandelion and the outside
  * world. For an introduction to DANDELION please refer to <a
  * href="http://nakednous.github.io/projects/dandelion">this</a>.
  * <p>
- * Each AbstractScene provides the following main object instances:
+ * Each GrabberScene provides the following main object instances:
  * <ol>
  * <li>An {@link #eye()} which represents the 2D ({@link remixlab.dandelion.core.Window}) or 3D (
  * {@link remixlab.dandelion.core.Camera}) controlling object. For details please refer to the
@@ -46,8 +42,21 @@ import remixlab.fpstiming.*;
  * {@link remixlab.dandelion.core.MatrixStackHelper} or through a third party matrix stack (like it's done with
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>
  * </ol>
+ * A grabber scene implements the {@link remixlab.bias.core.Grabber} interface and thus can react to
+ * user (keyboard) gestures, (see {@link #performInteraction(KeyboardEvent)} and
+ * {@link #checkIfGrabsInput(KeyboardEvent)}). For example, with the following code:
+ * <pre>
+ * {@code
+ * protected void performInteraction(KeyboardEvent event) {
+ *   if(event.key() == 'z')
+ *     toggleCameraType();
+ * }
+ * }
+ * </pre>
+ * your custom grabber-scene will {@link #toggleCameraType()} when the key 'z' is pressed (provided that
+ * grabber-scene is the {@link #keyboardAgent()} {@link remixlab.bias.core.Agent#inputGrabber()}).
  */
-public abstract class AbstractScene extends AnimatorObject implements InteractiveGrabber<GlobalAction>, Constants {
+public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	protected boolean					dottedGrid;
 
 	// O B J E C T S
@@ -126,7 +135,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 * @see #setVisualHints(int)
 	 * @see #setEye(Eye)
 	 */
-	public AbstractScene() {
+	public GrabberScene() {
 		setPlatform();
 		setTimingHandler(new TimingHandler(this));
 		deltaCount = frameCount;
@@ -136,110 +145,13 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		setVisualHints(AXES | GRID);
 		upperLeftCorner = new Point(0, 0);
 	}
-
-	// grabber implementation
-
-	protected Action<GlobalAction>	action;
-
-	public GlobalAction referenceAction() {
-		return action.referenceAction();
-	}
-
-	@Override
-	public void setAction(Action<GlobalAction> a) {
-		action = a;
-	}
-
-	@Override
-	public Action<GlobalAction> action() {
-		return action;
-	}
-
-	public boolean grabsInput(Agent agent) {
-		return agent.inputGrabber() == this;
-	}
+	
+	// Grabber Implementation
 
 	@Override
 	public void performInteraction(BogusEvent event) {
-		//if (processAction(event)) // may call performInteraction(KeyboardEvent event) by setting the action() :o
-			//return;
 		if (event instanceof KeyboardEvent)
 			performInteraction((KeyboardEvent) event);
-	}
-
-	protected void performInteraction(KeyboardEvent event) {
-		switch (referenceAction()) {
-		case ADD_KEYFRAME_TO_PATH_1:
-			eye().addKeyFrameToPath(1);
-			break;
-		case ADD_KEYFRAME_TO_PATH_2:
-			eye().addKeyFrameToPath(2);
-			break;
-		case ADD_KEYFRAME_TO_PATH_3:
-			eye().addKeyFrameToPath(3);
-			break;
-		case CUSTOM:
-			performCustomAction(event);
-			break;
-		case DELETE_PATH_1:
-			eye().deletePath(1);
-			break;
-		case DELETE_PATH_2:
-			eye().deletePath(2);
-			break;
-		case DELETE_PATH_3:
-			eye().deletePath(3);
-			break;
-		case DISPLAY_INFO:
-			displayInfo();
-			break;
-		case INTERPOLATE_TO_FIT:
-			eye().interpolateToFitScene();
-			break;
-		case PLAY_PATH_1:
-			eye().playPath(1);
-			break;
-		case PLAY_PATH_2:
-			eye().playPath(2);
-			break;
-		case PLAY_PATH_3:
-			eye().playPath(3);
-			break;
-		case RESET_ANCHOR:
-			eye().setAnchor(new Vec(0, 0, 0));
-			// looks horrible, but works ;)
-			eye().anchorFlag = true;
-			eye().timerFx.runOnce(1000);
-			break;
-		case SHOW_ALL:
-			showAll();
-			break;
-		case TOGGLE_ANIMATION:
-			toggleAnimation();
-			break;
-		case TOGGLE_AXES_VISUAL_HINT:
-			toggleAxesVisualHint();
-			break;
-		case TOGGLE_CAMERA_TYPE:
-			toggleCameraType();
-			break;
-		case TOGGLE_GRID_VISUAL_HINT:
-			toggleGridVisualHint();
-			break;
-		case TOGGLE_PATHS_VISUAL_HINT:
-			togglePathsVisualHint();
-			break;
-		case TOGGLE_PICKING_VISUAL_HINT:
-			togglePickingVisualhint();
-			break;
-		default:
-			break;
-		}
-	}
-
-	protected void performCustomAction(KeyboardEvent event) {
-		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass()
-				.getName());
 	}
 
 	@Override
@@ -249,7 +161,42 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		return false;
 	}
 	
-	protected abstract boolean checkIfGrabsInput(KeyboardEvent event);
+	/**
+	 * Override this method when you want the object to perform an interaction from a
+	 * {@link remixlab.bias.event.KeyboardEvent}. 
+	 */
+	protected void performInteraction(KeyboardEvent event) {
+		GrabberScene.showMissingImplementationWarning("performInteraction(KeyboardEvent event)", this.getClass().getName());
+	}
+	
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.KeyboardEvent}. 
+	 */
+	protected boolean checkIfGrabsInput(KeyboardEvent event) {
+		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
+		return false;
+	}
+	
+	/**
+	 * Check if this object is the {@link remixlab.bias.core.Agent#inputGrabber()}. Returns {@code true} if this object
+	 * grabs the agent and {@code false} otherwise.
+	 */
+	public boolean grabsInput(Agent agent) {
+		return agent.inputGrabber() == this;
+	}
+	
+	/**
+	 * Checks if the scene grabs input from any agent registered at the input handler.
+	 */
+	public boolean grabsInput() {
+		for(Agent agent : inputHandler().agents()) {
+			if(agent.inputGrabber() == this)
+				return true;
+		}
+		return false;
+	}
+	
+	//
 
 	/**
 	 * Returns the upper left corner of the Scene window. It's always (0,0) for on-screen scenes, but off-screen scenes
@@ -306,20 +253,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		if (!inputHandler().isAgentRegistered(keyboardAgent())) {
 			inputHandler().registerAgent(keyboardAgent());
 		}
-	}
-
-	/**
-	 * Disables the default {@link remixlab.dandelion.addon.KeyboardAgent} and returns it.
-	 * 
-	 * @see #isKeyboardAgentEnabled()
-	 * @see #enableKeyboardAgent()
-	 * @see #disableMotionAgent()
-	 */
-	public Agent disableKeyboardAgent() {
-		if (inputHandler().isAgentRegistered(keyboardAgent())) {
-			return (KeyboardAgent) inputHandler().unregisterAgent(keyboardAgent());
-		}
-		return keyboardAgent();
 	}
 
 	// TODO decide whether to include this wrappers or not
@@ -471,6 +404,20 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			inputHandler().registerAgent(motionAgent());
 		}
 	}
+	
+	/**
+	 * Disables the default {@link remixlab.dandelion.addon.KeyboardAgent} and returns it.
+	 * 
+	 * @see #isKeyboardAgentEnabled()
+	 * @see #enableKeyboardAgent()
+	 * @see #disableMotionAgent()
+	 */
+	public Agent disableKeyboardAgent() {
+		if (inputHandler().isAgentRegistered(keyboardAgent())) {
+			return inputHandler().unregisterAgent(keyboardAgent());
+		}
+		return keyboardAgent();
+	}
 
 	/**
 	 * Disables the default motion agent and returns it.
@@ -583,7 +530,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		if (onConsole)
 			System.out.println(info());
 		else
-			AbstractScene.showMissingImplementationWarning("displayInfo", getClass().getName());
+			GrabberScene.showMissingImplementationWarning("displayInfo", getClass().getName());
 	}
 
 	// 1. Scene overloaded
@@ -1633,10 +1580,8 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		if (avatar() instanceof GrabberFrame) {
 			GrabberFrame avatarGrabber = (GrabberFrame)avatar();
 			for(Agent agent : inputHandler().agents()) {
-				if( !(avatarGrabber instanceof InteractiveGrabber) || avatarGrabber instanceof InteractiveFrame) {
-					agent.addGrabber(avatarGrabber);
-					agent.setDefaultGrabber(avatarGrabber);
-				}
+				agent.addGrabber(avatarGrabber);
+				agent.setDefaultGrabber(avatarGrabber);
 			}
 		}
 	}
@@ -1692,10 +1637,8 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 		if(!replaceEye(vp)) {
 			eye = vp;			
 			for(Agent agent : inputHandler().agents()) {
-				if( !(eye().frame() instanceof InteractiveGrabber) || eye().frame() instanceof InteractiveFrame) {
-					agent.addGrabber(eye().frame());
-					agent.setDefaultGrabber(eye().frame());
-				}
+				agent.addGrabber(eye().frame());
+				agent.setDefaultGrabber(eye().frame());
 			}
 		}		
 		eye().setSceneRadius(radius());
@@ -1716,8 +1659,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 			}
 			eye = vp;
 			for(Agent agent : inputHandler().agents())
-				if( !(eye().frame() instanceof InteractiveGrabber) || eye().frame() instanceof InteractiveFrame)
-				  agent.addGrabber(eye().frame());
+				agent.addGrabber(eye().frame());
 			for(Agent agent : agents)
 				agent.setDefaultGrabber(eye().frame());
 			
@@ -1900,7 +1842,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 */
 	public void toggleCameraType() {
 		if (this.is2D()) {
-			AbstractScene.showDepthWarning("toggleCameraType");
+			GrabberScene.showDepthWarning("toggleCameraType");
 			return;
 		}
 		else {
@@ -1920,7 +1862,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 */
 	public boolean isFaceBackFacing(Vec a, Vec b, Vec c) {
 		if (this.is2D()) {
-			AbstractScene.showDepthWarning("isFaceBackFacing");
+			GrabberScene.showDepthWarning("isFaceBackFacing");
 			return false;
 		}
 		return camera().isFaceBackFacing(a, b, c);
@@ -1935,7 +1877,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 */
 	public boolean isConeBackFacing(Vec vertex, Vec[] normals) {
 		if (this.is2D()) {
-			AbstractScene.showDepthWarning("isConeBackFacing");
+			GrabberScene.showDepthWarning("isConeBackFacing");
 			return false;
 		}
 		return camera().isConeBackFacing(vertex, normals);
@@ -1950,7 +1892,7 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 */
 	public boolean isConeBackFacing(Vec vertex, Vec axis, float angle) {
 		if (this.is2D()) {
-			AbstractScene.showDepthWarning("isConeBackFacing");
+			GrabberScene.showDepthWarning("isConeBackFacing");
 			return false;
 		}
 		return camera().isConeBackFacing(vertex, axis, angle);
@@ -2187,16 +2129,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	/**
-	 * Display a warning that the specified Action is only available with 3D.
-	 * 
-	 * @param action
-	 *          the action name (no parentheses)
-	 */
-	static public void showDepthWarning(MotionAction action) {
-		showWarning(action.name() + " is not available in 2D.");
-	}
-
-	/**
 	 * Display a warning that the specified method lacks implementation.
 	 */
 	static public void showMissingImplementationWarning(String method, String theclass) {
@@ -2204,38 +2136,10 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	}
 
 	/**
-	 * Display a warning that the specified Action lacks implementation.
-	 */
-	static public void showMissingImplementationWarning(MotionAction action, String theclass) {
-		showWarning(action.name() + " should be implemented by your " + theclass + " derived class.");
-	}
-
-	/**
-	 * Display a warning that the specified Action can only be implemented from a relative bogus event.
-	 */
-	static public void showEventVariationWarning(MotionAction action) {
-		showWarning(action.name() + " can only be performed using a relative event.");
-	}
-
-	/**
 	 * Display a warning that the specified method can only be implemented from a relative bogus event.
 	 */
 	static public void showEventVariationWarning(String method) {
 		showWarning(method + " can only be performed using a relative event.");
-	}
-
-	static public void showOnlyEyeWarning(MotionAction action) {
-		showOnlyEyeWarning(action, true);
-	}
-
-	/**
-	 * Display a warning that the specified Action is only available for the Eye frame.
-	 */
-	static public void showOnlyEyeWarning(MotionAction action, boolean eye) {
-		if (eye)
-			showWarning(action.name() + " can only be performed when frame is attached to an eye.");
-		else
-			showWarning(action.name() + " can only be performed when frame is detached from an eye.");
 	}
 
 	static public void showOnlyEyeWarning(String method) {
@@ -2257,18 +2161,6 @@ public abstract class AbstractScene extends AnimatorObject implements Interactiv
 	 */
 	static public void showPlatformVariationWarning(String themethod, Platform platform) {
 		showWarning(themethod + " is not available under the " + platform + " platform.");
-	}
-
-	static public void showClickWarning(MotionAction action) {
-		showWarning(action.name() + " cannot be performed from a ClickEvent.");
-	}
-
-	static public void showMotionWarning(MotionAction action) {
-		showWarning(action.name() + " cannot be performed from a MotionEvent.");
-	}
-
-	static public void showKeyboardWarning(MotionAction action) {
-		showWarning(action.name() + " cannot only be performed from a KeyboardEvent.");
 	}
 
 	static public void showMinDOFsWarning(String themethod, int dofs) {

@@ -260,16 +260,16 @@ public class KeyFrameInterpolator implements Copyable {
 	// private Vec sv1, sv2;
 
 	// S C E N E
-	protected AbstractScene					scene;
+	protected GrabberScene					scene;
 
 	/**
 	 * Convenience constructor that simply calls {@code this(scn, new Frame())}.
 	 * <p>
 	 * Creates an anonymous {@link #frame()} to be interpolated by this KeyFrameInterpolator.
 	 * 
-	 * @see #KeyFrameInterpolator(AbstractScene, Frame)
+	 * @see #KeyFrameInterpolator(GrabberScene, Frame)
 	 */
-	public KeyFrameInterpolator(AbstractScene scn) {
+	public KeyFrameInterpolator(GrabberScene scn) {
 		this(scn, new Frame());
 	}
 
@@ -281,7 +281,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * {@link #interpolationTime()}, {@link #interpolationSpeed()} and {@link #interpolationPeriod()} are set to their
 	 * default values.
 	 */
-	public KeyFrameInterpolator(AbstractScene scn, Frame frame) {
+	public KeyFrameInterpolator(GrabberScene scn, Frame frame) {
 		scene = scn;
 		keyFrameList = new ArrayList<KeyFrame>();
 		path = new ArrayList<Frame>();
@@ -358,7 +358,7 @@ public class KeyFrameInterpolator implements Copyable {
 	/**
 	 * Returns the scene this object belongs to
 	 */
-	public AbstractScene scene() {
+	public GrabberScene scene() {
 		return scene;
 	}
 
@@ -726,7 +726,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * <p>
 	 * Use it in your KeyFrameInterpolator path drawing routine.
 	 * 
-	 * @see remixlab.dandelion.core.AbstractScene#drawPath(KeyFrameInterpolator, int, int, float)
+	 * @see remixlab.dandelion.core.GrabberScene#drawPath(KeyFrameInterpolator, int, int, float)
 	 */
 	public List<Frame> path() {
 		updatePath();

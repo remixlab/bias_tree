@@ -15,16 +15,16 @@ package remixlab.dandelion.core;
  * <p>
  * <h3>How does it work ?</h3>
  * 
- * All objects that are to be tracked by the {@link remixlab.dandelion.core.AbstractScene#eye()} (known as avatars)
+ * All objects that are to be tracked by the {@link remixlab.dandelion.core.GrabberScene#eye()} (known as avatars)
  * should implement this interface. To setup an avatar you should call
- * {@link remixlab.dandelion.core.AbstractScene#setAvatar(Trackable)}. The avatar will then be tracked by the
- * {@link remixlab.dandelion.core.AbstractScene#eye()}.
+ * {@link remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)}. The avatar will then be tracked by the
+ * {@link remixlab.dandelion.core.GrabberScene#eye()}.
  */
 
 public interface Trackable {
 	/**
 	 * Returns the eye frame that will track the object. This frame (position and orientation) will represent the
-	 * {@link remixlab.dandelion.core.Eye#frame()} once {@link remixlab.dandelion.core.AbstractScene#setAvatar(Trackable)}
+	 * {@link remixlab.dandelion.core.Eye#frame()} once {@link remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)}
 	 * is called.
 	 * 
 	 * @return Frame representing the Eye Frame.

@@ -10,8 +10,8 @@
 
 package remixlab.dandelion.addon;
 
+import remixlab.dandelion.addon.Constants.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.core.Constants.*;
 import remixlab.bias.addon.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
@@ -22,31 +22,34 @@ import remixlab.util.*;
  * An interactive-frame is a {@link remixlab.dandelion.core.GrabberFrame} that implements the
  * {@link remixlab.bias.addon.InteractiveGrabber} interface. An interactive-frame implements the following actions
  * on top of the grabber-frame gesture converting methods (such as {@link #gestureArcball(MotionEvent)},
- * {@link #gestureDrive(MotionEvent)}, etc): {@link remixlab.dandelion.core.Constants.KeyboardAction},
- * {@link remixlab.dandelion.core.Constants.ClickAction}, {@link remixlab.dandelion.core.Constants.DOF1Action},
- * {@link remixlab.dandelion.core.Constants.DOF2Action}, {@link remixlab.dandelion.core.Constants.DOF3Action} and
- * {@link remixlab.dandelion.core.Constants.DOF6Action}. The {@link remixlab.dandelion.core.AbstractScene#motionAgent()}
- * and the {@link remixlab.dandelion.core.AbstractScene#keyboardAgent()} provide high-level methods to define custom
+ * {@link #gestureDrive(MotionEvent)}, etc): {@link remixlab.dandelion.addon.Constants.KeyboardAction},
+ * {@link remixlab.dandelion.addon.Constants.ClickAction}, {@link remixlab.dandelion.addon.Constants.DOF1Action},
+ * {@link remixlab.dandelion.addon.Constants.DOF2Action}, {@link remixlab.dandelion.addon.Constants.DOF3Action} and
+ * {@link remixlab.dandelion.addon.Constants.DOF6Action}. The {@link remixlab.dandelion.core.GrabberScene#motionAgent()}
+ * and the {@link remixlab.dandelion.core.GrabberScene#keyboardAgent()} provide high-level methods to define custom
  * action bindings.
  * <p>
  * An interactive-frame rotates either around the {@link remixlab.dandelion.core.Eye#anchor()} (e.g.,
- * {@link remixlab.dandelion.core.Constants.DOF2Action#ROTATE}, {@link remixlab.dandelion.core.Constants.DOF6Action#HINGE}),
- * or its {@link #sceneUpVector()} (e.g., {@link remixlab.dandelion.core.Constants.DOF2Action#ROTATE_CAD}). In the latter
+ * {@link remixlab.dandelion.addon.Constants.DOF2Action#ROTATE}, {@link remixlab.dandelion.addon.Constants.DOF6Action#HINGE}),
+ * or its {@link #sceneUpVector()} (e.g., {@link remixlab.dandelion.addon.Constants.DOF2Action#ROTATE_CAD}). In the latter
  * case, the {@link #sceneUpVector()} defines a 'vertical' direction around which the camera rotates. The camera can
  * rotate left or right, around this axis. It can also be moved up or down to show the 'top' and 'bottom' views of the
  * scene. As a result, the {@link #sceneUpVector()} will always appear vertical in the scene, and the horizon is preserved
  * and stays projected along the camera's horizontal axis. Use {@link remixlab.dandelion.core.Camera#setUpVector(Vec)} to
  * define the {@link #sceneUpVector()} and align the camera before starting a
- * {@link remixlab.dandelion.core.Constants.DOF2Action#ROTATE_CAD} action to ensure these invariants are preserved.
+ * {@link remixlab.dandelion.addon.Constants.DOF2Action#ROTATE_CAD} action to ensure these invariants are preserved.
  * 
  * @see remixlab.dandelion.addon.MotionAgent
  * @see remixlab.dandelion.addon.KeyboardAgent
  */
 public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber<MotionAction>, Copyable,
 		Constants {
+	
+	//TODO pending
+	//protected GrabberScene			scene;
 
 	// TODO pending cloning and hash
-	// Multiple tempo actions require this:
+	// Multiple tempi actions require this:
 	remixlab.bias.addon.Action<MotionAction>	initAction;
 	// private MotionAction twotempi;
 	// private A a;//TODO study make me an attribute to com between init and end
@@ -102,144 +105,144 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	/**
 	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn) {
+	public InteractiveFrame(GrabberScene scn) {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Vec p) {
+	public InteractiveFrame(GrabberScene scn, Vec p) {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, new Vec(), r, 1)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Rotation r) {
+	public InteractiveFrame(GrabberScene scn, Rotation r) {
 		this(scn, null, new Vec(), r, 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, float s) {
+	public InteractiveFrame(GrabberScene scn, float s) {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Vec p, float s) {
+	public InteractiveFrame(GrabberScene scn, Vec p, float s) {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, r, 1)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Vec p, Rotation r) {
+	public InteractiveFrame(GrabberScene scn, Vec p, Rotation r) {
 		this(scn, null, p, r, 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, new Vec(), r, s)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Rotation r, float s) {
+	public InteractiveFrame(GrabberScene scn, Rotation r, float s) {
 		this(scn, null, new Vec(), r, s);
 	}
 
 	/**
 	 * Same as {@code this(scn, null, p, r, s)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Vec p, Rotation r, float s) {
+	public InteractiveFrame(GrabberScene scn, Vec p, Rotation r, float s) {
 		this(scn, null, p, r, s);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame) {
+	public InteractiveFrame(GrabberScene scn, Frame referenceFrame) {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p) {
+	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, Vec p) {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), r, 1)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Rotation r) {
+	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, Rotation r) {
 		this(scn, referenceFrame, new Vec(), r, 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, float s) {
+	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, float s) {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, float s) {
+	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, Vec p, float s) {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, p, r, 1)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r) {
+	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, Vec p, Rotation r) {
 		this(scn, referenceFrame, p, r, 1);
 	}
 
 	/**
 	 * Same as {@code this(scn, referenceFrame, new Vec(), r, s)}.
 	 * 
-	 * @see #InteractiveFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see #InteractiveFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Rotation r, float s) {
+	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, Rotation r, float s) {
 		this(scn, referenceFrame, new Vec(), r, s);
 	}
 
 	/**
 	 * Same as {@code super(scn, referenceFrame, p, r, s)}.
 	 * 
-	 * @see remixlab.dandelion.core.GrabberFrame#GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
+	 * @see remixlab.dandelion.core.GrabberFrame#GrabberFrame(GrabberScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
+	public InteractiveFrame(GrabberScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(scn, referenceFrame, p, r, s);
 	}
 
@@ -331,7 +334,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			break;
 		case ANCHOR_FROM_PIXEL:
 			if (!isEyeFrame()) {
-				AbstractScene.showOnlyEyeWarning(referenceAction());
+				InteractiveScene.showOnlyEyeWarning(referenceAction());
 				break;
 			}
 			eye().setAnchorFromPixel(new Point(event.x(), event.y()));
@@ -341,13 +344,13 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			break;
 		case ZOOM_ON_PIXEL:
 			if (!isEyeFrame()) {
-				AbstractScene.showOnlyEyeWarning(referenceAction());
+				InteractiveScene.showOnlyEyeWarning(referenceAction());
 				break;
 			}
 			eye().interpolateToZoomOnPixel(new Point(event.x(), event.y()));
 			break;
 		default:
-			AbstractScene.showClickWarning(referenceAction());
+			InteractiveScene.showClickWarning(referenceAction());
 			break;
 		}
 	}
@@ -436,7 +439,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			// gestureZoomOnRegion(event);
 			break;
 		default:
-			AbstractScene.showMotionWarning(referenceAction());
+			InteractiveScene.showMotionWarning(referenceAction());
 			break;
 		}
 	}
@@ -502,7 +505,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			gestureTranslateZ(event, false);
 			break;
 		default:
-			AbstractScene.showKeyboardWarning(referenceAction());
+			InteractiveScene.showKeyboardWarning(referenceAction());
 			break;
 		}
 	}
@@ -510,18 +513,18 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	// Custom
 
 	/**
-	 * Override me when implementing the {@link remixlab.dandelion.core.Constants.KeyboardAction#CUSTOM} action. 
+	 * Override me when implementing the {@link remixlab.dandelion.addon.Constants.KeyboardAction#CUSTOM} action. 
 	 */
 	protected void performCustomAction(KeyboardEvent event) {
-		AbstractScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass()
+		GrabberScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass()
 				.getName());
 	}
 
 	/**
-	 * Override me when implementing the {@link remixlab.dandelion.core.Constants.ClickAction#CUSTOM} action. 
+	 * Override me when implementing the {@link remixlab.dandelion.addon.Constants.ClickAction#CUSTOM} action. 
 	 */
 	protected void performCustomAction(ClickEvent event) {
-		AbstractScene.showMissingImplementationWarning("performCustomAction(ClickEvent event)", this.getClass().getName());
+		GrabberScene.showMissingImplementationWarning("performCustomAction(ClickEvent event)", this.getClass().getName());
 	}
 
 	/**
@@ -539,31 +542,31 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	}
 	
 	/**
-	 * Override me when implementing the {@link remixlab.dandelion.core.Constants.DOF6Action#CUSTOM} action. 
+	 * Override me when implementing the {@link remixlab.dandelion.addon.Constants.DOF6Action#CUSTOM} action. 
 	 */
 	protected void performCustomAction(DOF1Event event) {
-		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF1Event event)", this.getClass().getName());
+		GrabberScene.showMissingImplementationWarning("performCustomAction(DOF1Event event)", this.getClass().getName());
 	}
 
 	/**
-	 * Override me when implementing the {@link remixlab.dandelion.core.Constants.DOF6Action#CUSTOM} action. 
+	 * Override me when implementing the {@link remixlab.dandelion.addon.Constants.DOF6Action#CUSTOM} action. 
 	 */
 	protected void performCustomAction(DOF2Event event) {
-		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF2Event event)", this.getClass().getName());
+		GrabberScene.showMissingImplementationWarning("performCustomAction(DOF2Event event)", this.getClass().getName());
 	}
 
 	/**
-	 * Override me when implementing the {@link remixlab.dandelion.core.Constants.DOF6Action#CUSTOM} action. 
+	 * Override me when implementing the {@link remixlab.dandelion.addon.Constants.DOF6Action#CUSTOM} action. 
 	 */
 	protected void performCustomAction(DOF3Event event) {
-		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF3Event event)", this.getClass().getName());
+		GrabberScene.showMissingImplementationWarning("performCustomAction(DOF3Event event)", this.getClass().getName());
 	}
 
 	/**
-	 * Override me when implementing the {@link remixlab.dandelion.core.Constants.DOF6Action#CUSTOM} action. 
+	 * Override me when implementing the {@link remixlab.dandelion.addon.Constants.DOF6Action#CUSTOM} action. 
 	 */
 	protected void performCustomAction(DOF6Event event) {
-		AbstractScene.showMissingImplementationWarning("performCustomAction(DOF6Event event)", this.getClass().getName());
+		GrabberScene.showMissingImplementationWarning("performCustomAction(DOF6Event event)", this.getClass().getName());
 	}
 
 	// two tempi actions workflow divert from 'normal' (single tempi) actions which just require
@@ -607,10 +610,10 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
      * Useful to parse multiple-tempi gestures, such as a mouse press/move/drag/release flow.
      * <p>
      * The following motion-actions have been implemented using the aforementioned technique:
-	 * {@link remixlab.dandelion.core.Constants.DOF2Action#SCREEN_ROTATE},
-	 * {@link remixlab.dandelion.core.Constants.DOF2Action#ZOOM_ON_REGION},
-	 * {@link remixlab.dandelion.core.Constants.DOF2Action#MOVE_BACKWARD}, and
-	 * {@link remixlab.dandelion.core.Constants.DOF2Action#MOVE_FORWARD}.
+	 * {@link remixlab.dandelion.addon.Constants.DOF2Action#SCREEN_ROTATE},
+	 * {@link remixlab.dandelion.addon.Constants.DOF2Action#ZOOM_ON_REGION},
+	 * {@link remixlab.dandelion.addon.Constants.DOF2Action#MOVE_BACKWARD}, and
+	 * {@link remixlab.dandelion.addon.Constants.DOF2Action#MOVE_FORWARD}.
 	 * <p>
      * Current implementation only supports {@link remixlab.bias.event.MotionEvent}s.
 	 */

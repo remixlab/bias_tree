@@ -69,7 +69,7 @@ import remixlab.util.*;
  * <b>global</b> ({@link #position()}, {@link #orientation()} and {@link #magnitude()}) definitions is used in all the
  * methods' names and should be sufficient to prevent ambiguities. These notions are obviously identical when the
  * {@link #referenceFrame()} is {@code null}, i.e., when the Frame is defined in the world coordinate system (the one
- * you are left with after calling {@link remixlab.dandelion.core.AbstractScene#preDraw()}).
+ * you are left with after calling {@link remixlab.dandelion.core.GrabberScene#preDraw()}).
  * <p>
  * Frames can hence easily be organized in a tree hierarchy, which root is the world coordinate system. A loop in the
  * hierarchy would result in an inconsistent (multiple) Frame definition. Therefore
@@ -95,7 +95,7 @@ import remixlab.util.*;
  * <h3>Derived classes</h3>
  * 
  * The {@link remixlab.dandelion.addon.InteractiveFrame} class inherits Frame and implements all sorts of motion actions
- * (see {@link remixlab.dandelion.core.Constants}), so that a Frame (and hence an object) can be manipulated in the
+ * (see {@link remixlab.dandelion.addon.Constants}), so that a Frame (and hence an object) can be manipulated in the
  * scene by whatever user interaction means you can imagine.
  */
 public class Frame implements Copyable {
@@ -1115,7 +1115,7 @@ public class Frame implements Copyable {
 	 * Returns the {@link remixlab.dandelion.geom.Mat} associated with this Frame.
 	 * <p>
 	 * This method could be used in conjunction with {@code applyMatrix()} to modify the
-	 * {@link remixlab.dandelion.core.AbstractScene#modelView()} matrix from a Frame hierarchy. For example, with this
+	 * {@link remixlab.dandelion.core.GrabberScene#modelView()} matrix from a Frame hierarchy. For example, with this
 	 * Frame hierarchy:
 	 * <p>
 	 * {@code Frame body = new Frame();} <br>
@@ -1182,7 +1182,7 @@ public class Frame implements Copyable {
 	 * Returns the transformation matrix represented by the Frame.
 	 * <p>
 	 * This method should be used in conjunction with {@code applyMatrix()} to modify the
-	 * {@link remixlab.dandelion.core.AbstractScene#modelView()} matrix from a Frame:
+	 * {@link remixlab.dandelion.core.GrabberScene#modelView()} matrix from a Frame:
 	 * <p>
 	 * {@code // Here the modelview matrix corresponds to the world coordinate system.} <br>
 	 * {@code Frame fr = new Frame(pos, Rotation(from, to));} <br>

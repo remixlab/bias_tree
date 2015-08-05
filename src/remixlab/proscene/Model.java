@@ -15,8 +15,8 @@ import remixlab.bias.core.*;
 
 /**
  * A model is a PSshape wrapper {@link remixlab.bias.core.Grabber}. It may thus be manipulated by any
- * {@link remixlab.bias.core.Agent}, such as the {@link remixlab.dandelion.core.AbstractScene#motionAgent()} or
- * the {@link remixlab.dandelion.core.AbstractScene#keyboardAgent()}.
+ * {@link remixlab.bias.core.Agent}, such as the {@link remixlab.dandelion.core.GrabberScene#motionAgent()} or
+ * the {@link remixlab.dandelion.core.GrabberScene#keyboardAgent()}.
  * <p>
  * A model is selected using <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
  * with a color buffer (see {@link remixlab.proscene.Scene#pickingBuffer()}). For an implementation, see

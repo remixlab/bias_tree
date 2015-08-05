@@ -26,7 +26,7 @@ public class Window extends Eye implements Copyable {
 	static final float	FAKED_ZNEAR	= -10;
 	static final float	FAKED_ZFAR	= 10;
 
-	public Window(AbstractScene scn) {
+	public Window(GrabberScene scn) {
 		super(scn);
 		if (scene.is3D())
 			throw new RuntimeException("Use Window only for a 2D Scene");
@@ -342,7 +342,7 @@ public class Window extends Eye implements Copyable {
 	/**
 	 * Same as {@code setAnchor(new Vec(x,y))}.
 	 * 
-	 * @see AbstractScene#setAnchor(Vec)
+	 * @see GrabberScene#setAnchor(Vec)
 	 */
 	public void setAnchor(float x, float y) {
 		setAnchor(new Vec(x,y));

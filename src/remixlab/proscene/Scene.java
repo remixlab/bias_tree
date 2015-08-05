@@ -14,7 +14,6 @@ import processing.core.*;
 import processing.opengl.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.DOF2Event;
-import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.addon.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
@@ -35,7 +34,7 @@ import java.nio.FloatBuffer;
 
 /**
  * A 2D or 3D interactive Processing Scene. The Scene is a specialization of the
- * {@link remixlab.dandelion.core.AbstractScene}, providing an interface between Dandelion and Processing.
+ * {@link remixlab.dandelion.core.GrabberScene}, providing an interface between Dandelion and Processing.
  * <p>
  * <h3>Usage</h3>
  * To use a Scene you have three choices:
@@ -81,7 +80,7 @@ import java.nio.FloatBuffer;
  * {@link #removeModels()}, {@link #hasModel(Model)}, {@link #removeModel(Model)}, {@link #removeModels()},
  * {@link #drawModels()} and {@link #drawModels(PGraphics)} for model handling.
  */
-public class Scene extends AbstractScene implements PConstants {
+public class Scene extends InteractiveScene implements PConstants {
 	// begin: GWT-incompatible
 	// /*
 	// Reflection
@@ -119,9 +118,6 @@ public class Scene extends AbstractScene implements PConstants {
 
 	// E X C E P T I O N H A N D L I N G
 	protected int								beginOffScreenDrawingCalls;
-	
-	protected MotionAgent<?>	defMotionAgent;
-	protected KeyboardAgent		defKeyboardAgent;
 
 	// CONSTRUCTORS
 
@@ -160,7 +156,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * on-screen Scene, see also {@link #isOffscreen()}), the values of x and y are meaningless (both are set to 0 to be
 	 * taken as dummy values).
 	 * 
-	 * @see remixlab.dandelion.core.AbstractScene#AbstractScene()
+	 * @see remixlab.dandelion.core.GrabberScene#AbstractScene()
 	 * @see #Scene(PApplet)
 	 * @see #Scene(PApplet, PGraphics)
 	 */
@@ -460,21 +456,6 @@ public class Scene extends AbstractScene implements PConstants {
 			return (KeyboardAgent) inputHandler().unregisterAgent(keyboardAgent());
 		}
 		return keyboardAgent();
-	}
-	
-	@Override
-	public KeyboardAgent keyboardAgent() {
-		return defKeyboardAgent;
-	}
-	
-	@Override
-	public MotionAgent<?> motionAgent() {
-		return defMotionAgent;
-	}
-	
-	@Override
-	protected boolean checkIfGrabsInput(KeyboardEvent event) {
-		return keyboardAgent().hasBinding(event.shortcut());
 	}
 
 	// INFO
@@ -1132,7 +1113,7 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void drawCylinder(float w, float h) {
 		if (is2D()) {
-			AbstractScene.showDepthWarning("drawCylinder");
+			GrabberScene.showDepthWarning("drawCylinder");
 			return;
 		}
 
@@ -1171,7 +1152,7 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void drawHollowCylinder(int detail, float w, float h, Vec m, Vec n) {
 		if (is2D()) {
-			AbstractScene.showDepthWarning("drawHollowCylinder");
+			GrabberScene.showDepthWarning("drawHollowCylinder");
 			return;
 		}
 
@@ -1208,7 +1189,7 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void drawCone(int detail, float x, float y, float r, float h) {
 		if (is2D()) {
-			AbstractScene.showDepthWarning("drawCone");
+			GrabberScene.showDepthWarning("drawCone");
 			return;
 		}
 		pg().pushStyle();
@@ -1236,7 +1217,7 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void drawCone(int detail, float x, float y, float r1, float r2, float h) {
 		if (is2D()) {
-			AbstractScene.showDepthWarning("drawCone");
+			GrabberScene.showDepthWarning("drawCone");
 			return;
 		}
 		pg().pushStyle();

@@ -14,13 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import remixlab.bias.event.*;
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.core.Constants.ClickAction;
-import remixlab.dandelion.core.Constants.DOF1Action;
-import remixlab.dandelion.core.Constants.DOF2Action;
-import remixlab.dandelion.core.Constants.DOF3Action;
-import remixlab.dandelion.core.Constants.DOF6Action;
-import remixlab.dandelion.core.Constants.Target;
+import remixlab.dandelion.addon.Constants.*;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
@@ -28,7 +22,6 @@ import remixlab.util.*;
  * A specialization of {@link remixlab.dandelion.addon.HIDAgent} that handles touch surfaces.
  */
 public abstract class MultiTouchAgent extends HIDAgent {
-
 	protected DOF6Event				event, prevEvent;
 	protected TouchProcessor	touchProcessor;
 
@@ -69,7 +62,7 @@ public abstract class MultiTouchAgent extends HIDAgent {
 		}
 	}
 
-	public MultiTouchAgent(AbstractScene scn, String n) {
+	public MultiTouchAgent(InteractiveScene scn, String n) {
 		super(scn, n);
 		touchProcessor = new TouchProcessor();
 	}

@@ -33,7 +33,7 @@ public class MouseAgent extends WheeledMouseAgent {
 	 * 
 	 * @see #dragToArcball()
 	 */
-	public MouseAgent(Scene scn, String n) {
+	public MouseAgent(InteractiveScene scn, String n) {
 		super(scn, n);
 		LEFT_ID = PApplet.LEFT;
 		CENTER_ID = PApplet.CENTER;

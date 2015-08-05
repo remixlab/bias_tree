@@ -51,7 +51,7 @@ import remixlab.util.*;
  */
 public abstract class Eye implements Copyable {
 	class GrabberEyeFrame extends GrabberFrame {
-		public GrabberEyeFrame(AbstractScene _scene) {
+		public GrabberEyeFrame(GrabberScene _scene) {
 			super(_scene);
 		}
 
@@ -230,7 +230,7 @@ public abstract class Eye implements Copyable {
 	protected GrabberFrame														frm;
 
 	// S C E N E O B J E C T
-	protected AbstractScene														scene;
+	protected GrabberScene														scene;
 
 	// C a m e r a p a r a m e t e r s
 	protected int																			scrnWidth, scrnHeight;											// size of the window,
@@ -271,7 +271,7 @@ public abstract class Eye implements Copyable {
 	public Vec																				pupVec;
 	protected TimingTask															timerFx;
 
-	public Eye(AbstractScene scn) {
+	public Eye(GrabberScene scn) {
 		scene = scn;
 
 		if (scene.is2D()) {
@@ -383,7 +383,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Returns the scene this object belongs to
 	 */
-	public AbstractScene scene() {
+	public GrabberScene scene() {
 		return scene;
 	}
 
@@ -395,6 +395,13 @@ public abstract class Eye implements Copyable {
 	protected void unSetTimerFlag() {
 		anchorFlag = false;
 		pupFlag = false;
+	}
+	
+	/**
+	 * Internal use. Run the reset anchor hint timer according to {@code period}.
+	 */
+	public void runResetAnchorHintTimer(long period) {
+		timerFx.runOnce(period);
 	}
 
 	/**
@@ -454,7 +461,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Same as {@code scene.flip()}.
 	 * 
-	 * @see remixlab.dandelion.core.AbstractScene#flip()
+	 * @see remixlab.dandelion.core.GrabberScene#flip()
 	 */
 	public void flip() {
 		scene.flip();
@@ -690,8 +697,8 @@ public abstract class Eye implements Copyable {
 	 * can adapt its {@link remixlab.dandelion.core.Camera#zNear()} and {@link remixlab.dandelion.core.Camera#zFar()}
 	 * values. See the {@link #sceneCenter()} documentation.
 	 * <p>
-	 * Note that {@link remixlab.dandelion.core.AbstractScene#radius()} (resp.
-	 * {@link remixlab.dandelion.core.AbstractScene#setRadius(float)} simply call this method on its associated Eye.
+	 * Note that {@link remixlab.dandelion.core.GrabberScene#radius()} (resp.
+	 * {@link remixlab.dandelion.core.GrabberScene#setRadius(float)} simply call this method on its associated Eye.
 	 * 
 	 * @see #setSceneBoundingBox(Vec, Vec)
 	 */
@@ -1217,7 +1224,7 @@ public abstract class Eye implements Copyable {
 	 * window. The z coordinate ranges between 0.0 (near plane) and 1.0 (excluded, far plane). See the {@code gluProject}
 	 * man page for details.
 	 * <p>
-	 * Use {@link remixlab.dandelion.core.AbstractScene#projectedCoordinatesOf(Vec)} which is simpler and has been
+	 * Use {@link remixlab.dandelion.core.GrabberScene#projectedCoordinatesOf(Vec)} which is simpler and has been
 	 * optimized by caching the Projection x View matrix.
 	 * <p>
 	 * <b>Attention:</b> This method only uses the intrinsic Eye parameters (see {@link #getView()},
@@ -1557,7 +1564,7 @@ public abstract class Eye implements Copyable {
 	
 	/**
 	 * Removes all the Frames from all the pools of the agents registered at the
-	 * {@link remixlab.dandelion.core.AbstractScene#inputHandler()}.
+	 * {@link remixlab.dandelion.core.GrabberScene#inputHandler()}.
 	 * 
 	 * @see #addPathToMotionAgent()
 	 */
@@ -1576,7 +1583,7 @@ public abstract class Eye implements Copyable {
 
 	/**
 	 * Re-adds all the Frames to all the pools of the agents registered at the
-	 * {@link remixlab.dandelion.core.AbstractScene#inputHandler()}.
+	 * {@link remixlab.dandelion.core.GrabberScene#inputHandler()}.
 	 * 
 	 * @see #removePathFromMotionAgent()
 	 */
@@ -1688,7 +1695,7 @@ public abstract class Eye implements Copyable {
 	 * {@code computeFrustumPlanesCoefficients(new float [6][4])}.
 	 * <p>
 	 * <b>Attention:</b> You should not call this method explicitly, unless you need the frustum equations to be updated
-	 * only occasionally (rare). Use {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()} which
+	 * only occasionally (rare). Use {@link remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()} which
 	 * automatically update the frustum equations every frame instead.
 	 * 
 	 * @see #computeBoundaryEquations(float[][])
@@ -1724,7 +1731,7 @@ public abstract class Eye implements Copyable {
 	 * {@code gl.glClipPlane(GL.GL_CLIP_PLANE1, coef[3]);}<br>
 	 * <p>
 	 * <b>Attention:</b> You should not call this method explicitly, unless you need the frustum equations to be updated
-	 * only occasionally (rare). Use {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()} which
+	 * only occasionally (rare). Use {@link remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()} which
 	 * automatically update the frustum equations every frame instead.
 	 * 
 	 * @see #computeBoundaryEquations()
@@ -1756,7 +1763,7 @@ public abstract class Eye implements Copyable {
 	 * {@link #computeBoundaryEquations()}.
 	 * <p>
 	 * <b>Attention:</b> You should not call this method explicitly, unless you need the boundary equations to be updated
-	 * only occasionally (rare). Use {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()} which
+	 * only occasionally (rare). Use {@link remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()} which
 	 * automatically update the boundary equations every frame instead.
 	 * 
 	 * @see #distanceToBoundary(int, Vec)
@@ -1765,7 +1772,7 @@ public abstract class Eye implements Copyable {
 	 * @see #boxVisibility(Vec, Vec)
 	 * @see #computeBoundaryEquations()
 	 * @see #getBoundaryEquations()
-	 * @see remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()
+	 * @see remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()
 	 */
 	public void updateBoundaryEquations() {
 		if (lastUpdate() != lastFPCoeficientsUpdateIssued) {
@@ -1786,7 +1793,7 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * <b>Attention:</b> The eye boundary plane equations should be updated before calling this method. You may compute
 	 * them explicitly (by calling {@link #computeBoundaryEquations()} ) or enable them to be automatic updated in your
-	 * Scene setup (with {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()}).
+	 * Scene setup (with {@link remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()}).
 	 * 
 	 * @see #distanceToBoundary(int, Vec)
 	 * @see #isPointVisible(Vec)
@@ -1794,7 +1801,7 @@ public abstract class Eye implements Copyable {
 	 * @see #boxVisibility(Vec, Vec)
 	 * @see #computeBoundaryEquations()
 	 * @see #updateBoundaryEquations()
-	 * @see remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()
+	 * @see remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()
 	 */
 	public float[][] getBoundaryEquations() {
 		if (!scene.areBoundaryEquationsEnabled())
@@ -1813,7 +1820,7 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * <b>Attention:</b> The eye boundary plane equations should be updated before calling this method. You may compute
 	 * them explicitly (by calling {@link #computeBoundaryEquations()} ) or enable them to be automatic updated in your
-	 * Scene setup (with {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()}).
+	 * Scene setup (with {@link remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()}).
 	 * 
 	 * @see #isPointVisible(Vec)
 	 * @see #ballVisibility(Vec, float)
@@ -1821,7 +1828,7 @@ public abstract class Eye implements Copyable {
 	 * @see #computeBoundaryEquations()
 	 * @see #updateBoundaryEquations()
 	 * @see #getBoundaryEquations()
-	 * @see remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()
+	 * @see remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()
 	 */
 	public float distanceToBoundary(int index, Vec pos) {
 		if (!scene.areBoundaryEquationsEnabled())
@@ -1837,7 +1844,7 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * <b>Attention:</b> The Eye boundary plane equations should be updated before calling this method. You may compute
 	 * them explicitly (by calling {@link #computeBoundaryEquations()} ) or enable them to be automatic updated in your
-	 * Scene setup (with {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()}).
+	 * Scene setup (with {@link remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()}).
 	 * 
 	 * @see #distanceToBoundary(int, Vec)
 	 * @see #ballVisibility(Vec, float)
@@ -1845,7 +1852,7 @@ public abstract class Eye implements Copyable {
 	 * @see #computeBoundaryEquations()
 	 * @see #updateBoundaryEquations()
 	 * @see #getBoundaryEquations()
-	 * @see remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()
+	 * @see remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()
 	 */
 	public abstract boolean isPointVisible(Vec point);
 
@@ -1857,7 +1864,7 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * <b>Attention:</b> The Eye boundary plane equations should be updated before calling this method. You may compute
 	 * them explicitly (by calling {@link #computeBoundaryEquations()} ) or enable them to be automatic updated in your
-	 * Scene setup (with {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()}).
+	 * Scene setup (with {@link remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()}).
 	 * 
 	 * @see #distanceToBoundary(int, Vec)
 	 * @see #isPointVisible(Vec)
@@ -1865,7 +1872,7 @@ public abstract class Eye implements Copyable {
 	 * @see #computeBoundaryEquations()
 	 * @see #updateBoundaryEquations()
 	 * @see #getBoundaryEquations()
-	 * @see remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()
+	 * @see remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()
 	 */
 	public abstract Visibility ballVisibility(Vec center, float radius);
 
@@ -1877,7 +1884,7 @@ public abstract class Eye implements Copyable {
 	 * <p>
 	 * <b>Attention:</b> The Eye boundary plane equations should be updated before calling this method. You may compute
 	 * them explicitly (by calling {@link #computeBoundaryEquations()} ) or enable them to be automatic updated in your
-	 * Scene setup (with {@link remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()}).
+	 * Scene setup (with {@link remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()}).
 	 * 
 	 * @see #distanceToBoundary(int, Vec)
 	 * @see #isPointVisible(Vec)
@@ -1885,7 +1892,7 @@ public abstract class Eye implements Copyable {
 	 * @see #computeBoundaryEquations()
 	 * @see #updateBoundaryEquations()
 	 * @see #getBoundaryEquations()
-	 * @see remixlab.dandelion.core.AbstractScene#enableBoundaryEquations()
+	 * @see remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()
 	 */
 	public abstract Visibility boxVisibility(Vec p1, Vec p2);
 

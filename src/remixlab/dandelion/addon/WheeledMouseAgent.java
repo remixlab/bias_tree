@@ -16,17 +16,16 @@ import java.util.Map.Entry;
 import remixlab.bias.addon.Profile;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.core.Constants.*;
+import remixlab.dandelion.addon.Constants.*;
 
 /**
  * A {@code MotionAgent<DOF2Action>}, such as most mice, supporting
- * {@link remixlab.dandelion.core.Constants.ClickAction}s, and up to
- * {@link remixlab.dandelion.core.Constants.DOF2Action}s actions.
+ * {@link remixlab.dandelion.addon.Constants.ClickAction}s, and up to
+ * {@link remixlab.dandelion.addon.Constants.DOF2Action}s actions.
  * <p>
- * @see remixlab.dandelion.core.Constants.ClickAction
- * @see remixlab.dandelion.core.Constants.DOF1Action
- * @see remixlab.dandelion.core.Constants.DOF2Action
+ * @see remixlab.dandelion.addon.Constants.ClickAction
+ * @see remixlab.dandelion.addon.Constants.DOF1Action
+ * @see remixlab.dandelion.addon.Constants.DOF2Action
  */
 public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	protected float		xSens		= 1f;
@@ -34,9 +33,9 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 
 	/**
 	 * Creates a mouse agent and appends the {@link #eyeBranch()} and {@link #frameBranch()} to it.
-	 * The mouse agent is added to the {@link remixlab.dandelion.core.AbstractScene#inputHandler()}.
+	 * The mouse agent is added to the {@link remixlab.dandelion.core.GrabberScene#inputHandler()}.
 	 */
-	public WheeledMouseAgent(AbstractScene scn, String n) {
+	public WheeledMouseAgent(InteractiveScene scn, String n) {
 		super(scn, n);
 	}
 

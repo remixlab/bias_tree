@@ -14,7 +14,7 @@ import processing.core.*;
 import remixlab.bias.addon.Action;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.core.AbstractScene;
+import remixlab.dandelion.core.GrabberScene;
 
 /**
  * {@link remixlab.proscene.InteractiveModel} object which eases third-party implementation of the
@@ -168,7 +168,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.KeyboardEvent}. 
 	 */
 	protected boolean checkIfGrabsInput(KeyboardEvent event) {
-		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
+		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
 		return false;
 	}
 
@@ -176,7 +176,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF1Event}. 
 	 */
 	protected boolean checkIfGrabsInput(DOF1Event event) {
-		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
+		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
 

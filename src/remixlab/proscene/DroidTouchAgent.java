@@ -14,8 +14,8 @@ import remixlab.bias.addon.Action;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.addon.*;
+import remixlab.dandelion.addon.Constants.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.core.Constants.*;
 
 /**
  * Proscene {@link remixlab.dandelion.addon.MultiTouchAgent}.

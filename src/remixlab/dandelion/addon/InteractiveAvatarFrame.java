@@ -55,11 +55,11 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 
 	/**
 	 * Constructs an InteractiveAvatarFrame and sets its {@link #trackingDistance()} to
-	 * {@link remixlab.dandelion.core.AbstractScene#radius()}/5, {@link #azimuth()} to 0, and {@link #inclination()} to 0.
+	 * {@link remixlab.dandelion.core.GrabberScene#radius()}/5, {@link #azimuth()} to 0, and {@link #inclination()} to 0.
 	 * 
-	 * @see remixlab.dandelion.core.AbstractScene#setAvatar(Trackable)
+	 * @see remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)
 	 */
-	public InteractiveAvatarFrame(AbstractScene scn) {
+	public InteractiveAvatarFrame(InteractiveScene scn) {
 		super(scn);
 		eFrame = new GrabberFrame(scene);
 		scene.motionAgent().removeGrabber(eFrame);
@@ -123,7 +123,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 		if (scene.is3D())
 			return ((Quat) q).taitBryanAngles().vec[1];
 		else {
-			AbstractScene.showDepthWarning("azimuth");
+			GrabberScene.showDepthWarning("azimuth");
 			return 0;
 		}
 	}
@@ -138,7 +138,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 			updateEyeFrame();
 		}
 		else
-			AbstractScene.showDepthWarning("setAzimuth");
+			GrabberScene.showDepthWarning("setAzimuth");
 	}
 
 	/**
