@@ -16,25 +16,38 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.proscene.*;
 
-public class CustumEyeFrame extends GrabberFrame {
-  public CustumEyeFrame(Eye _eye) {
+public class CustomFrame extends GrabberFrame {
+  public CustomFrame(Scene _scn) {
+    super(_scn);
+  }
+  
+  public CustomFrame(Eye _eye) {
     super(_eye);
   }
 
-  protected CustumEyeFrame(CustumEyeFrame otherFrame) {
+  protected CustomFrame(CustomFrame otherFrame) {
     super(otherFrame);
   }
 
   @Override
-  public CustumEyeFrame get() {
-    return new CustumEyeFrame(this);
+  public CustomFrame get() {
+    return new CustomFrame(this);
+  }
+
+  @Override
+  public CustomFrame detach() {
+    CustomFrame frame = new CustomFrame(scene);
+    for (Agent agent : scene.inputHandler().agents())
+      agent.removeGrabber(frame);
+    frame.fromFrame(this);
+    return frame;
   }
 
   @Override
   public void performInteraction(DOF2Event event) {
-    if(event.id() == LEFT)
+    if (event.id() == LEFT)
       gestureArcball(event);
-    if(event.id() == RIGHT)
+    if (event.id() == RIGHT)
       gestureTranslateXY(event);
   }
 
@@ -44,14 +57,14 @@ public class CustumEyeFrame extends GrabberFrame {
   }
 }
 
-Scene              scene;
-CustumEyeFrame  eyeFrame;
+Scene scene;
+CustomFrame  eyeFrame;
 GrabberFrame orig;
 public void setup() {
   size(640, 360, P3D); 
   scene = new Scene(this);
   orig = scene.eyeFrame();
-  eyeFrame = new CustumEyeFrame(scene.eye());
+  eyeFrame = new CustomFrame(scene.eye());
   scene.mouseAgent().addGrabber(eyeFrame);
   scene.camera().setFieldOfView((float) Math.PI / 3.0f);
   scene.eye().setFrame(eyeFrame);

@@ -6,20 +6,22 @@
  * 
  * Note that the precision of the z-Buffer highly depends on how the zNear()
  * and zFar() values are fitted to your scene (as it is done with the default PROSCENE
- * camera). Loose boundaries will result in imprecision along the viewing direction.
+ * camera). Loose boundaries will result in imprecision along the viewing direction. //<>//
  * 
  * Press 't' in the main viewer (the upper one) to toggle the camera kind.
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 
-import remixlab.dandelion.core.Constants.*;
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
+import remixlab.dandelion.addon.*;
+import remixlab.dandelion.addon.Constants.*;
 
 Scene scene, auxScene;
 PGraphics canvas, auxCanvas;
-StdCamera cam;
+StdCamera stdCam;
+Camera origCam;
 
 void setup() {
   size(640, 720, P3D);
@@ -27,8 +29,8 @@ void setup() {
   canvas = createGraphics(640, 360, P3D);
   scene = new Scene(this, canvas);
 
-  cam = new StdCamera(scene);
-  scene.setCamera(cam);
+  stdCam = new StdCamera(scene);
+  scene.setCamera(stdCam);
 
   scene.setRadius(200);
   scene.showAll();
@@ -111,7 +113,7 @@ void handleMouse() {
 
 void keyPressed() {
   if (key == 't') {
-    cam.toggleMode();
+    stdCam.toggleMode();
     this.redraw();
   }
   if ( key == 'u' )
@@ -123,8 +125,11 @@ void keyPressed() {
 public class StdCamera extends Camera {
   boolean standard;
 
-  public StdCamera(AbstractScene scn) {
+  public StdCamera(Scene scn) {
     super(scn);
+    // camera frame is a gFrame by default, but we want an iFrame
+    // to bind 'u' and 'v' actions to it
+    setFrame(new InteractiveFrame(this));
     standard = false;
   }
 

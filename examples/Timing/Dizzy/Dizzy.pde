@@ -11,6 +11,7 @@
 import remixlab.proscene.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.addon.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 

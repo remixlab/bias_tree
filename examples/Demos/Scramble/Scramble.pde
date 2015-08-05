@@ -12,7 +12,8 @@
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.core.Constants.*;
+import remixlab.dandelion.addon.*;
+import remixlab.dandelion.addon.Constants.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
@@ -57,7 +58,7 @@ public void drawText() {
   text(board.isOrdered() && board.getMoves() > 0 ? "COMPLETED!" : "", 5, 28);
 }
 
-void keyTyped() {
+void keyPressed() {
   if (key == 'i' || key == 'I') {
     board.scramble();
   } 

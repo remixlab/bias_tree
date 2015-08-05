@@ -21,8 +21,8 @@
 
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.core.Constants.*;
-import remixlab.dandelion.agent.*;
+import remixlab.dandelion.addon.*;
+import remixlab.dandelion.addon.Constants.*;
 
 Scene scene;
 MouseAgent mouse;

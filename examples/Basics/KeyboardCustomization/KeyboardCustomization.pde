@@ -15,8 +15,8 @@
 
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.core.Constants.*;
-import remixlab.dandelion.agent.*;
+import remixlab.dandelion.addon.*;
+import remixlab.dandelion.addon.Constants.*;
 
 Scene scene;
 KeyboardAgent keyboard;
@@ -72,7 +72,7 @@ public void setExoticCustomization() {
   // 1a. Randomless:
   keyboard.setBinding(Event.CTRL, 'a', SceneAction.TOGGLE_GRID_VISUAL_HINT);
   // 1b. Random
-  keyboard.setBinding('a', randomAction(SceneAction.class));
+  keyboard.setBinding('a', randomAction(SceneAction.class)); //<>//
   // 2. Frame:
   keyboard.setBinding(Target.FRAME, 'x', KeyboardAction.ROTATE_X_POS);
   keyboard.setBinding(Target.FRAME, Event.SHIFT, 'x', KeyboardAction.ROTATE_X_NEG);

@@ -11,7 +11,7 @@ import remixlab.proscene.*;
 
 MyScene scene;
 //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
-String renderer = JAVA2D;
+String renderer = P2D;
 
 void setup() {
   size(640, 360, renderer);

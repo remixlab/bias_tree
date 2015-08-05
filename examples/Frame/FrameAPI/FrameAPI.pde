@@ -24,6 +24,7 @@
  */
 
 import remixlab.proscene.*;
+import remixlab.dandelion.addon.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 
@@ -259,7 +260,7 @@ void drawArrow(Frame frame, Vec from, Vec to) {
 }
 
 void keyPressed() {
-  if (key == ' ')
+  if (key == ' ') //<>//
     switch (mode) {
     case m1:
       mode = Mode.m2;

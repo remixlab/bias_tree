@@ -10,7 +10,7 @@
  *
  * If you want your screen drawing to appear on top of your 3d scene then draw
  * first all your 3d before doing any call to a beginScreenDrawing().
- * 
+ *  //<>//
  * Press 'x' to toggle the screen drawing.
  * Press 'y' to clean your screen drawing.
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
@@ -19,6 +19,7 @@
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
+import remixlab.dandelion.addon.*;
 
 Scene scene;
 InteractiveTorus [] toruses;

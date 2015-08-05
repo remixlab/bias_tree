@@ -13,6 +13,7 @@
  
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.addon.*;
 
 PShape base_robot; 
 PShape link_one;

@@ -12,9 +12,9 @@
 import java.util.Vector;
 
 import TUIO.*;
-import remixlab.dandelion.agent.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.core.Constants.*;
+import remixlab.dandelion.addon.*;
+import remixlab.dandelion.addon.Constants.*;
 import remixlab.dandelion.geom.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
@@ -26,7 +26,7 @@ TUIOAgent agent;
 TuioProcessing tuioClient;
 
 public void setup() {
-  size(640, 360, P3D);
+  size(640, 360, P3D); //<>//
   scene = new Scene(this);
   agent = new TUIOAgent(scene, "MyTuioAgent");
   scene.setRadius(150);

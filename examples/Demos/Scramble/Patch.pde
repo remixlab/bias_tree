@@ -121,7 +121,7 @@ public class Patch extends InteractiveFrame {
     return pointInsideQuad(scene);
   }
 
-  private boolean pointInsideQuad(AbstractScene scene) {
+  private boolean pointInsideQuad(Scene scene) {
     Vec v1 = scene.projectedCoordinatesOf(new Vec((-getSize() / 2) + position().x(), (-getSize() / 2) + position().y()));
     Vec v2 = scene.projectedCoordinatesOf(new Vec((-getSize() / 2) + position().x(), (getSize() / 2) + position().y()));
     Vec v3 = scene.projectedCoordinatesOf(new Vec((getSize() / 2) + position().x(), (getSize() / 2) + position().y()));

@@ -17,16 +17,17 @@
 
 import remixlab.proscene.*;
 import remixlab.bias.core.*;
-import remixlab.bias.agent.*;
+import remixlab.bias.addon.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.core.Constants.*;
+import remixlab.dandelion.addon.*;
+import remixlab.dandelion.addon.Constants.*;
 
 Scene scene;
 InteractiveTorus [] toruses;
 MotionBranch<MotionAction, DOF2Action, ClickAction> iMotionBranch;
 KeyboardBranch<MotionAction, KeyboardAction> iKeyBranch;
-
+ //<>//
 //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
 String renderer = P3D;
 	

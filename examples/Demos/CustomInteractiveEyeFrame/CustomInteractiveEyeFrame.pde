@@ -6,7 +6,7 @@
  * user defined actions which requires to extend from the GrabberFrame
  * and implement: 1. Some of the performInteraction() methods on the
  * event types the new frame needs to support (see the CustomEyeFrame
- * example); and, 2. The InteractiveGrabber interface.
+ * example); and, 2. The InteractiveGrabber interface. //<>//
  *
  * Press ' ' to switch between the custom eye frame and the default one.
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
@@ -14,8 +14,9 @@
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.agent.*;
+import remixlab.bias.addon.*;
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.addon.*;
 import remixlab.dandelion.geom.*;
 import remixlab.proscene.*;
 

@@ -8,9 +8,9 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.core.*;
+import remixlab.dandelion.addon.*;
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.core.Constants.*;
+import remixlab.dandelion.addon.Constants.*;
 
 Scene scene;
 InteractiveAvatarFrame iFrame;

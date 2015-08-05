@@ -22,8 +22,8 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.addon.*;
 
 Scene scene;
 InteractiveFrame keyFrame[];

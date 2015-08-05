@@ -1,6 +1,6 @@
 /**
  * Constrained Frame.
- * by Jean Pierre Charalambos.
+ * by Jean Pierre Charalambos. //<>//
  * 
  * This example illustrates how to add constrains (see Constraint related classes)
  * to your frames to limit their motion. All possible constraints are tested here
@@ -11,6 +11,7 @@
  */
 
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.addon.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.constraint.*;
 import remixlab.proscene.*;

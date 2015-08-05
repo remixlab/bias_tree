@@ -13,8 +13,8 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.geom.*;
-import remixlab.dandelion.core.Constants.*;
+import remixlab.dandelion.geom.*; //<>//
+import remixlab.dandelion.addon.Constants.*;
 
 Scene scene;
 Point screenPoint = new Point();

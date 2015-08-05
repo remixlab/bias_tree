@@ -5,13 +5,14 @@
  * This example illustrates some basic Frame properties, particularly how to orient them.
  * Select and move the sphere (holding the right mouse button pressed) to see how the
  * boxes will immediately be oriented towards it. You can also pick and move the boxes
- * and still they will be oriented towards the sphere.
+ * and still they will be oriented towards the sphere. //<>//
  *
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.addon.*;
 import remixlab.dandelion.geom.*;
 
 Scene scene;
