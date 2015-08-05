@@ -270,8 +270,8 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	
 	@Override
 	public InteractiveFrame detach() {
-		InteractiveFrame frame = new InteractiveFrame((InteractiveScene)scene);
-		for(Agent agent : scene.inputHandler().agents())
+		InteractiveFrame frame = new InteractiveFrame((InteractiveScene)gScene);
+		for(Agent agent : gScene.inputHandler().agents())
 			agent.removeGrabber(frame);
 		frame.fromFrame(this);
 		return frame;
@@ -364,7 +364,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			gestureHinge(event);
 			break;
 		case LOOK_AROUND:
-			rotate(rollPitchQuaternion(event, scene.camera()));
+			rotate(rollPitchQuaternion(event, gScene.camera()));
 			break;
 		case MOVE_BACKWARD:
 			gestureMoveForward(event, false);
@@ -700,9 +700,9 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		boolean rotateMode = ((twotempi == MotionAction.ROTATE) || (twotempi == MotionAction.ROTATE_XYZ)
 				|| (twotempi == MotionAction.ROTATE_CAD)
 				|| (twotempi == MotionAction.SCREEN_ROTATE) || (twotempi == MotionAction.TRANSLATE_XYZ_ROTATE_XYZ));
-		if (rotateMode && scene.is3D())
-			scene.camera().cadRotationIsReversed = scene.camera().frame()
-					.transformOf(scene.camera().frame().sceneUpVector()).y() < 0.0f;
+		if (rotateMode && gScene.is3D())
+			gScene.camera().cadRotationIsReversed = gScene.camera().frame()
+					.transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
 		need4Spin = (rotateMode && (damping() == 0));
 		drive = (twotempi == MotionAction.DRIVE);
 		if (drive)
@@ -713,9 +713,9 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			updateSceneUpVector();
 		rotateHint = twotempi == MotionAction.SCREEN_ROTATE;
 		if (rotateHint)
-			scene.setRotateVisualHint(true);
+			gScene.setRotateVisualHint(true);
 		if (isEyeFrame() && twotempi == MotionAction.ZOOM_ON_REGION) {
-			scene.setZoomVisualHint(true);
+			gScene.setZoomVisualHint(true);
 			zor = event.get();
 			return true;
 		}
@@ -767,7 +767,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 			return true;
 		}
 		if (drive) {
-			setFlySpeed(0.01f * scene.radius() * 0.01f * (event.y() - event.y()));
+			setFlySpeed(0.01f * gScene.radius() * 0.01f * (event.y() - event.y()));
 			return false;
 		}
 		return false;
@@ -835,7 +835,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 	 */
 	protected void flushAction(DOF2Event event) {
 		if (rotateHint) {
-			scene.setRotateVisualHint(false);
+			gScene.setRotateVisualHint(false);
 			rotateHint = false;
 		}
 		if (currentMotionEvent() != null) {
@@ -846,7 +846,7 @@ public class InteractiveFrame extends GrabberFrame implements InteractiveGrabber
 		if (zor != null) {
 			// the problem is that depending on the order the button and the modifiers are released,
 			// different actions maybe triggered, so we go for sure ;) :
-			scene.setZoomVisualHint(false);
+			gScene.setZoomVisualHint(false);
 			gestureZoomOnRegion(zor);// now action need to be executed on event
 			zor = null;
 		}

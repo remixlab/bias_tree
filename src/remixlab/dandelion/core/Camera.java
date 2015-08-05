@@ -119,7 +119,7 @@ public class Camera extends Eye implements Copyable {
 	public Camera(GrabberScene scn) {
 		super(scn);
 
-		if (scene.is2D())
+		if (gScene.is2D())
 			throw new RuntimeException("Use Camera only for a 3D Scene");
 
 		// dist = new float[6];
@@ -173,7 +173,7 @@ public class Camera extends Eye implements Copyable {
 	public void setUpVector(Vec up, boolean noMove) {
 		Quat q = new Quat(new Vec(0.0f, 1.0f, 0.0f), frame().transformOf(up));
 
-		if (!noMove && scene.is3D())
+		if (!noMove && gScene.is3D())
 			frame().setPosition(Vec.subtract(anchor(),
 					(Quat.multiply((Quat) frame().orientation(), q)).rotate(frame().coordinatesOf(anchor()))));
 
@@ -531,7 +531,7 @@ public class Camera extends Eye implements Copyable {
 
 	@Override
 	public boolean isPointVisible(Vec point) {
-		if (!scene.areBoundaryEquationsEnabled())
+		if (!gScene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by pointIsVisible) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
 					+ "with Scene.enableBoundaryEquations()");
@@ -552,7 +552,7 @@ public class Camera extends Eye implements Copyable {
 
 	@Override
 	public Visibility ballVisibility(Vec center, float radius) {
-		if (!scene.areBoundaryEquationsEnabled())
+		if (!gScene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by sphereIsVisible) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
 					+ "with Scene.enableBoundaryEquations()");
@@ -571,7 +571,7 @@ public class Camera extends Eye implements Copyable {
 
 	@Override
 	public Visibility boxVisibility(Vec p1, Vec p2) {
-		if (!scene.areBoundaryEquationsEnabled())
+		if (!gScene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by aaBoxIsVisible) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
 					+ "with Scene.enableBoundaryEquations()");
@@ -716,7 +716,7 @@ public class Camera extends Eye implements Copyable {
 	 * @see #isConeBackFacing(Vec, Vec, float)
 	 */
 	public boolean isFaceBackFacing(Vec a, Vec b, Vec c) {
-		return isFaceBackFacing(a, scene.isLeftHanded() ? Vec.subtract(b, a).cross(Vec.subtract(c, a)) : Vec.subtract(c, a)
+		return isFaceBackFacing(a, gScene.isLeftHanded() ? Vec.subtract(b, a).cross(Vec.subtract(c, a)) : Vec.subtract(c, a)
 				.cross(Vec.subtract(b, a)));
 	}
 
@@ -917,7 +917,7 @@ public class Camera extends Eye implements Copyable {
 	 * found under pixel.
 	 */
 	public Vec pointUnderPixel(Point pixel) {
-		return scene.pointUnderPixel(pixel);
+		return gScene.pointUnderPixel(pixel);
 	}
 
 	// 8. MATRICES
@@ -1003,7 +1003,7 @@ public class Camera extends Eye implements Copyable {
 		case PERSPECTIVE:
 			// #CONNECTION# all non null coefficients were set to 0.0 in constructor.
 			projectionMat.mat[0] = 1 / (frame().magnitude() * this.aspectRatio());
-			projectionMat.mat[5] = 1 / (scene.isLeftHanded() ? -frame().magnitude() : frame().magnitude());
+			projectionMat.mat[5] = 1 / (gScene.isLeftHanded() ? -frame().magnitude() : frame().magnitude());
 			projectionMat.mat[10] = (ZNear + ZFar) / (ZNear - ZFar);
 			projectionMat.mat[11] = -1.0f;
 			projectionMat.mat[14] = 2.0f * ZNear * ZFar / (ZNear - ZFar);
@@ -1013,7 +1013,7 @@ public class Camera extends Eye implements Copyable {
 		case ORTHOGRAPHIC:
 			float[] wh = getBoundaryWidthHeight();
 			projectionMat.mat[0] = 1.0f / wh[0];
-			projectionMat.mat[5] = (scene.isLeftHanded() ? -1.0f : 1.0f) / wh[1];
+			projectionMat.mat[5] = (gScene.isLeftHanded() ? -1.0f : 1.0f) / wh[1];
 			projectionMat.mat[10] = -2.0f / (ZFar - ZNear);
 			projectionMat.mat[11] = 0.0f;
 			projectionMat.mat[14] = -(ZFar + ZNear) / (ZFar - ZNear);
@@ -1050,7 +1050,7 @@ public class Camera extends Eye implements Copyable {
 		Point pixel = new Point(pixelInput.x(), pixelInput.y());
 
 		// lef-handed coordinate system correction
-		if (scene.isLeftHanded())
+		if (gScene.isLeftHanded())
 			pixel.setY(screenHeight() - pixelInput.y());
 
 		switch (type()) {
@@ -1190,7 +1190,7 @@ public class Camera extends Eye implements Copyable {
 
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(detachFrame());
-		interpolationKfi.addKeyFrame(new GrabberFrame(scene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame().orientation(), frame().magnitude()).detach(), 0.4f);
+		interpolationKfi.addKeyFrame(new GrabberFrame(gScene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame().orientation(), frame().magnitude()).detach(), 0.4f);
 
 		GrabberFrame originalFrame = frame();
 		GrabberFrame tempFrame = detachFrame();

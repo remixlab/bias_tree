@@ -62,12 +62,12 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 	 */
 	public InteractiveAvatarFrame(InteractiveScene scn) {
 		super(scn);
-		eFrame = new GrabberFrame(scene);
-		scene.motionAgent().removeGrabber(eFrame);
-		scene.keyboardAgent().removeGrabber(eFrame);
-		q = scene.is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
+		eFrame = new GrabberFrame(gScene);
+		gScene.motionAgent().removeGrabber(eFrame);
+		gScene.keyboardAgent().removeGrabber(eFrame);
+		q = gScene.is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
 		eFrame.setReferenceFrame(this);
-		setTrackingDistance(scene.radius() / 5);
+		setTrackingDistance(gScene.radius() / 5);
 		updateEyeFrame();
 	}
 
@@ -97,8 +97,8 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 	
 	@Override
 	public InteractiveAvatarFrame detach() {
-		InteractiveAvatarFrame frame = new InteractiveAvatarFrame((InteractiveScene)scene);
-		for(Agent agent : scene.inputHandler().agents())
+		InteractiveAvatarFrame frame = new InteractiveAvatarFrame((InteractiveScene)gScene);
+		for(Agent agent : gScene.inputHandler().agents())
 			agent.removeGrabber(frame);
 		frame.fromFrame(this);
 		return frame;
@@ -130,7 +130,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 	 */
 	public float azimuth() {
 		// azimuth <-> pitch
-		if (scene.is3D())
+		if (gScene.is3D())
 			return ((Quat) q).taitBryanAngles().vec[1];
 		else {
 			GrabberScene.showDepthWarning("azimuth");
@@ -142,7 +142,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 	 * Sets the {@link #azimuth()} of the tracking camera.
 	 */
 	public void setAzimuth(float a) {
-		if (scene.is3D()) {
+		if (gScene.is3D()) {
 			float roll = ((Quat) q).taitBryanAngles().vec[0];
 			((Quat) q).fromTaitBryan(roll, a, 0);
 			updateEyeFrame();
@@ -156,7 +156,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 	 */
 	public float inclination() {
 		// inclination <-> roll
-		if (scene.is3D())
+		if (gScene.is3D())
 			return ((Quat) q).taitBryanAngles().vec[0];
 		else
 			return q.angle();
@@ -166,7 +166,7 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 	 * Sets the {@link #inclination()} of the tracking camera.
 	 */
 	public void setInclination(float i) {
-		if (scene.is3D()) {
+		if (gScene.is3D()) {
 			float pitch = ((Quat) q).taitBryanAngles().vec[1];
 			((Quat) q).fromTaitBryan(i, pitch, 0);
 		}
@@ -181,20 +181,20 @@ public class InteractiveAvatarFrame extends InteractiveFrame implements Trackabl
 	 * {@link #trackingDistance()}) respect to the Frame {@link #position()}.
 	 */
 	public void updateEyeFrame() {
-		if (scene.is3D()) {
+		if (gScene.is3D()) {
 			Vec p = q.rotate(new Vec(0, 0, 1));
 			p.multiply(trackingDistance() / magnitude());
 			eFrame.setTranslation(p);
 			eFrame.setYAxis(yAxis());
 			eFrame.setZAxis(inverseTransformOf(p));
-			eFrame.setScaling(scene.eye().frame().scaling());
+			eFrame.setScaling(gScene.eye().frame().scaling());
 		}
 		else {
 			Vec p = q.rotate(new Vec(0, 1));
 			p.multiply(trackingDistance() / magnitude());
 			eFrame.setTranslation(p);
 			eFrame.setYAxis(yAxis());
-			float size = Math.min(scene.width(), scene.height());
+			float size = Math.min(gScene.width(), gScene.height());
 			eFrame.setScaling((2.5f * trackingDistance() / size)); // window.fitBall which sets the scaling
 		}
 	}

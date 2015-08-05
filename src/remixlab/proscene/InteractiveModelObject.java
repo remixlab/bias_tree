@@ -32,7 +32,7 @@ import remixlab.dandelion.core.GrabberScene;
  */
 public abstract class InteractiveModelObject<E extends Enum<E>> implements InteractiveModel<E> {
 	Action<E>					action;
-	protected Scene		scene;
+	protected Scene		proScene;
 	// protected Agent agent;
 	protected int			id;
 	protected PShape	pshape;
@@ -51,8 +51,8 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	 * @see #setShape(PShape)
 	 */
 	public InteractiveModelObject(Scene scn) {
-		scene = scn;
-		if (scene.addModel(this))
+		proScene = scn;
+		if (proScene.addModel(this))
 			id = ++Scene.modelCount;
 	}
 	
@@ -64,9 +64,9 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	 * @see remixlab.proscene.Scene#addModel(Model)
 	 */
 	public InteractiveModelObject(Scene scn, PShape ps) {
-		scene = scn;
+		proScene = scn;
 		pshape = ps;
-		if (scene.addModel(this))
+		if (proScene.addModel(this))
 			id = ++Scene.modelCount;
 	}
 
@@ -104,7 +104,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	public void draw() {
 		if (shape() == null)
 			return;
-		PGraphics pg = scene.pg();
+		PGraphics pg = proScene.pg();
 		draw(pg);
 	}
 
@@ -113,7 +113,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		if (shape() == null)
 			return;
 		pg.pushStyle();
-		if (pg == scene.pickingBuffer()) {
+		if (pg == proScene.pickingBuffer()) {
 			shape().disableStyle();
 			if(tex!=null) shape().noTexture();
 			pg.colorMode(PApplet.RGB, 255);
@@ -123,7 +123,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		pg.pushMatrix();
 		pg.shape(shape());
 		pg.popMatrix();
-		if (pg == scene.pickingBuffer()) {
+		if (pg == proScene.pickingBuffer()) {
 			if(tex!=null) shape().texture(tex);
 			shape().enableStyle();
 		}
@@ -199,12 +199,12 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
      * Returns true if both colors are the same, and false otherwise.
 	 */
 	public final boolean checkIfGrabsInput(float x, float y) {
-		scene.pickingBuffer().pushStyle();
-		scene.pickingBuffer().colorMode(PApplet.RGB, 255);
-		int index = (int) y * scene.width() + (int) x;
-		if ((0 <= index) && (index < scene.pickingBuffer().pixels.length))
-			return scene.pickingBuffer().pixels[index] == getColor();
-		scene.pickingBuffer().popStyle();
+		proScene.pickingBuffer().pushStyle();
+		proScene.pickingBuffer().colorMode(PApplet.RGB, 255);
+		int index = (int) y * proScene.width() + (int) x;
+		if ((0 <= index) && (index < proScene.pickingBuffer().pixels.length))
+			return proScene.pickingBuffer().pixels[index] == getColor();
+		proScene.pickingBuffer().popStyle();
 		return false;
 	}
 
@@ -234,7 +234,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	 * Checks if the frame grabs input from any agent registered at the scene input handler.
 	 */
 	public boolean grabsInput() {
-		for(Agent agent : scene.inputHandler().agents()) {
+		for(Agent agent : proScene.inputHandler().agents()) {
 			if(agent.inputGrabber() == this)
 				return true;
 		}
@@ -243,7 +243,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 
 	protected int getColor() {
 		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
-		return scene.pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
+		return proScene.pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
 	}
 
 	// new is good

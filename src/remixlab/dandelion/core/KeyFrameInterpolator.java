@@ -260,7 +260,7 @@ public class KeyFrameInterpolator implements Copyable {
 	// private Vec sv1, sv2;
 
 	// S C E N E
-	protected GrabberScene					scene;
+	protected GrabberScene					gScene;
 
 	/**
 	 * Convenience constructor that simply calls {@code this(scn, new Frame())}.
@@ -282,7 +282,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * default values.
 	 */
 	public KeyFrameInterpolator(GrabberScene scn, Frame frame) {
-		scene = scn;
+		gScene = scn;
 		keyFrameList = new ArrayList<KeyFrame>();
 		path = new ArrayList<Frame>();
 		mainFrame = null;
@@ -306,11 +306,11 @@ public class KeyFrameInterpolator implements Copyable {
 				update();
 			}
 		};
-		scene.registerTimingTask(interpolationTimerTask);
+		gScene.registerTimingTask(interpolationTimerTask);
 	}
 
 	protected KeyFrameInterpolator(KeyFrameInterpolator otherKFI) {
-		this.scene = otherKFI.scene;
+		this.gScene = otherKFI.gScene;
 		this.path = new ArrayList<Frame>();
 		ListIterator<Frame> frameIt = otherKFI.path.listIterator();
 		while (frameIt.hasNext()) {
@@ -345,7 +345,7 @@ public class KeyFrameInterpolator implements Copyable {
 				update();
 			}
 		};
-		scene.registerTimingTask(interpolationTimerTask);
+		gScene.registerTimingTask(interpolationTimerTask);
 
 		this.invalidateValues();
 	}
@@ -359,14 +359,14 @@ public class KeyFrameInterpolator implements Copyable {
 	 * Returns the scene this object belongs to
 	 */
 	public GrabberScene scene() {
-		return scene;
+		return gScene;
 	}
 
 	/**
 	 * Internal use. Updates the last frame path was updated. Called by {@link #checkValidity()}.
 	 */
 	protected void checked() {
-		lUpdate = scene.timingHandler().frameCount();
+		lUpdate = gScene.timingHandler().frameCount();
 	}
 
 	/**
@@ -657,7 +657,7 @@ public class KeyFrameInterpolator implements Copyable {
 		if ((!keyFrameList.isEmpty()) && (keyFrameList.get(keyFrameList.size() - 1).time() > time))
 			System.out.println("Error in KeyFrameInterpolator.addKeyFrame: time is not monotone");
 		else {
-			if (scene.is3D())
+			if (gScene.is3D())
 				keyFrameList.add(new KeyFrame3D(frame, time));
 			else
 				keyFrameList.add(new KeyFrame2D(frame, time));
@@ -682,7 +682,7 @@ public class KeyFrameInterpolator implements Copyable {
 		if (interpolationStarted())
 			stopInterpolation();
 		KeyFrame kf = keyFrameList.remove(index);
-		for(Agent agent : scene.inputHandler().agents())
+		for(Agent agent : gScene.inputHandler().agents())
 			agent.removeGrabber(kf.frm);
 		setInterpolationTime(firstTime());
 	}
@@ -776,7 +776,7 @@ public class KeyFrameInterpolator implements Copyable {
 						float alpha = step / (float) nbSteps;
 						frame.setPosition(Vec.add(kf[1].position(), Vec.multiply(
 								Vec.add(kf[1].tgP(), Vec.multiply(Vec.add(pvec1, Vec.multiply(pvec2, alpha)), alpha)), alpha)));
-						if (scene.is3D()) {
+						if (gScene.is3D()) {
 							frame.setOrientation(Quat.squad((Quat) kf[1].orientation(), ((KeyFrame3D) kf[1]).tgQ(),
 									((KeyFrame3D) kf[2]).tgQ(), (Quat) kf[2].orientation(), alpha));
 						}
@@ -988,7 +988,7 @@ public class KeyFrameInterpolator implements Copyable {
 				keyFrameList.get(currentFrame2.nextIndex()).magnitude(), alpha);
 
 		Rotation q;
-		if (scene.is3D()) {
+		if (gScene.is3D()) {
 			q = Quat.squad((Quat) keyFrameList.get(currentFrame1.nextIndex()).orientation(),
 					((KeyFrame3D) keyFrameList.get(currentFrame1.nextIndex())).tgQ(),
 					((KeyFrame3D) keyFrameList.get(currentFrame2.nextIndex())).tgQ(),

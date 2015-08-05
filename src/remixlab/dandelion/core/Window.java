@@ -28,7 +28,7 @@ public class Window extends Eye implements Copyable {
 
 	public Window(GrabberScene scn) {
 		super(scn);
-		if (scene.is3D())
+		if (gScene.is3D())
 			throw new RuntimeException("Use Window only for a 2D Scene");
 		computeProjection();
 	}
@@ -76,7 +76,7 @@ public class Window extends Eye implements Copyable {
 	public void computeProjection() {
 		float[] wh = getBoundaryWidthHeight();
 		projectionMat.mat[0] = 1.0f / wh[0];
-		projectionMat.mat[5] = (scene.isLeftHanded() ? -1.0f : 1.0f) / wh[1];
+		projectionMat.mat[5] = (gScene.isLeftHanded() ? -1.0f : 1.0f) / wh[1];
 		projectionMat.mat[10] = -2.0f / (FAKED_ZFAR - FAKED_ZNEAR);
 		projectionMat.mat[11] = 0.0f;
 		projectionMat.mat[14] = -(FAKED_ZFAR + FAKED_ZNEAR) / (FAKED_ZFAR - FAKED_ZNEAR);
@@ -153,7 +153,7 @@ public class Window extends Eye implements Copyable {
 
 	@Override
 	public void fitBall(Vec center, float radius) {
-		float size = Math.min(scene.width(), scene.height());
+		float size = Math.min(gScene.width(), gScene.height());
 		frame().setMagnitude(2 * radius / size);
 
 		lookAt(center);
@@ -238,7 +238,7 @@ public class Window extends Eye implements Copyable {
 
 	@Override
 	public float distanceToBoundary(int index, Vec pos) {
-		if (!scene.areBoundaryEquationsEnabled())
+		if (!gScene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by distanceToBoundary) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
 					+ "with Scene.enableBoundaryEquations()");
@@ -251,7 +251,7 @@ public class Window extends Eye implements Copyable {
 
 	@Override
 	public Visibility boxVisibility(Vec p1, Vec p2) {
-		if (!scene.areBoundaryEquationsEnabled())
+		if (!gScene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by aaBoxIsVisible) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
 					+ "with Scene.enableBoundaryEquations()");
@@ -281,7 +281,7 @@ public class Window extends Eye implements Copyable {
 
 	@Override
 	public Visibility ballVisibility(Vec center, float radius) {
-		if (!scene.areBoundaryEquationsEnabled())
+		if (!gScene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by sphereIsVisible) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
 					+ "with Scene.enableBoundaryEquations()");
@@ -300,7 +300,7 @@ public class Window extends Eye implements Copyable {
 
 	@Override
 	public boolean isPointVisible(Vec point) {
-		if (!scene.areBoundaryEquationsEnabled())
+		if (!gScene.areBoundaryEquationsEnabled())
 			System.out.println("The camera frustum plane equations (needed by pointIsVisible) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
 					+ "with Scene.enableBoundaryEquations()");

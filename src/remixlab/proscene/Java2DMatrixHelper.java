@@ -21,15 +21,15 @@ import remixlab.dandelion.geom.Vec;
  * Internal {@link remixlab.dandelion.core.MatrixHelper} based on PGraphicsJava2D graphics transformations.
  */
 class Java2DMatrixHelper extends MatrixHelper {
-	protected PGraphics	pg;
+	protected PGraphics	pgr;
 
 	public Java2DMatrixHelper(Scene scn, PGraphics renderer) {
 		super(scn);
-		pg = renderer;
+		pgr = renderer;
 	}
 
 	public PGraphics pg() {
-		return pg;
+		return pgr;
 	}
 
 	// Comment the above line and uncomment this one to develop the driver:
@@ -38,23 +38,23 @@ class Java2DMatrixHelper extends MatrixHelper {
 	@Override
 	public void bind(boolean recompute) {
 		if (recompute) {
-			scene.eye().computeProjection();
-			scene.eye().computeView();
+			gScene.eye().computeProjection();
+			gScene.eye().computeView();
 			cacheProjectionView();
 		}
-		Vec pos = scene.eye().position();
-		Rotation o = scene.eye().frame().orientation();
-		translate(scene.width() / 2, scene.height() / 2);
-		if (scene.isRightHanded())
+		Vec pos = gScene.eye().position();
+		Rotation o = gScene.eye().frame().orientation();
+		translate(gScene.width() / 2, gScene.height() / 2);
+		if (gScene.isRightHanded())
 			scale(1, -1);
-		scale(1 / scene.eye().frame().magnitude(), 1 / scene.eye().frame().magnitude());
+		scale(1 / gScene.eye().frame().magnitude(), 1 / gScene.eye().frame().magnitude());
 		rotate(-o.angle());
 		translate(-pos.x(), -pos.y());
 	}
 
 	@Override
 	protected void cacheProjectionView() {
-		Mat.multiply(scene.eye().getProjection(), scene.eye().getView(), projectionViewMat);
+		Mat.multiply(gScene.eye().getProjection(), gScene.eye().getView(), projectionViewMat);
 		if (isProjectionViewInverseCached()) {
 			if (projectionViewInverseMat == null)
 				projectionViewInverseMat = new Mat();
@@ -64,16 +64,16 @@ class Java2DMatrixHelper extends MatrixHelper {
 
 	@Override
 	public void beginScreenDrawing() {
-		Vec pos = scene.eye().position();
-		Rotation o = scene.eye().frame().orientation();
+		Vec pos = gScene.eye().position();
+		Rotation o = gScene.eye().frame().orientation();
 
 		pushModelView();
 		translate(pos.x(), pos.y());
 		rotate(o.angle());
-		scale(scene.window().frame().magnitude(), scene.window().frame().magnitude());
-		if (scene.isRightHanded())
+		scale(gScene.window().frame().magnitude(), gScene.window().frame().magnitude());
+		if (gScene.isRightHanded())
 			scale(1, -1);
-		translate(-scene.width() / 2, -scene.height() / 2);
+		translate(-gScene.width() / 2, -gScene.height() / 2);
 	}
 
 	@Override

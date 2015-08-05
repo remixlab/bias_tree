@@ -109,12 +109,12 @@ public class Scene extends InteractiveScene implements PConstants {
 
 	// P R O C E S S I N G A P P L E T A N D O B J E C T S
 	protected PApplet						parent;
-	protected PGraphics					pgraphics;
+	protected PGraphics					mainPGgraphics;
 
 	// Models
 	protected static int				modelCount;
-	protected PGraphics					pickingBuffer;
-	protected List<Model>				models;
+	protected PGraphics					pBuffer;
+	protected List<Model>				modelList;
 
 	// E X C E P T I O N H A N D L I N G
 	protected int								beginOffScreenDrawingCalls;
@@ -163,7 +163,7 @@ public class Scene extends InteractiveScene implements PConstants {
 	public Scene(PApplet p, PGraphics pg, int x, int y) {
 		// 1. P5 objects
 		parent = p;
-		pgraphics = pg;
+		mainPGgraphics = pg;
 		offscreen = pg != p.g;
 		upperLeftCorner = offscreen ? new Point(x, y) : new Point(0, 0);
 
@@ -171,8 +171,8 @@ public class Scene extends InteractiveScene implements PConstants {
 		setMatrixHelper(matrixHelper(pg));
 
 		// 3. Models & picking buffer
-		models = new ArrayList<Model>();
-		pickingBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width,
+		modelList = new ArrayList<Model>();
+		pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width,
 				pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height,
 				JAVA2D);
 
@@ -225,7 +225,7 @@ public class Scene extends InteractiveScene implements PConstants {
 	 * an user-defined if the Scene {@link #isOffscreen()}.
 	 */
 	public PGraphics pg() {
-		return pgraphics;
+		return mainPGgraphics;
 	}
 
 	/**
@@ -236,7 +236,7 @@ public class Scene extends InteractiveScene implements PConstants {
 	 * @see #drawModels(PGraphics)
 	 */
 	public PGraphics pickingBuffer() {
-		return pickingBuffer;
+		return pBuffer;
 	}
 
 	@Override
@@ -253,7 +253,7 @@ public class Scene extends InteractiveScene implements PConstants {
 
 	@Override
 	public boolean is3D() {
-		return (pgraphics instanceof PGraphics3D);
+		return (mainPGgraphics instanceof PGraphics3D);
 	}
 
 	// CHOOSE PLATFORM
@@ -916,7 +916,7 @@ public class Scene extends InteractiveScene implements PConstants {
 	 * @see #removeModel(Model)
 	 */
 	public List<Model> models() {
-		return models;
+		return modelList;
 	}
 
 	/**

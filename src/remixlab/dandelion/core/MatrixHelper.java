@@ -18,7 +18,7 @@ import remixlab.util.Util;
  * {@link remixlab.dandelion.core.MatrixStackHelper}.
  */
 public abstract class MatrixHelper {
-	protected GrabberScene	scene;
+	protected GrabberScene	gScene;
 
 	protected Mat						projectionViewMat, projectionViewInverseMat;
 	protected boolean				isProjViwInvCached, projectionViewMatHasInv;
@@ -30,7 +30,7 @@ public abstract class MatrixHelper {
 	 * @param scn
 	 */
 	public MatrixHelper(GrabberScene scn) {
-		scene = scn;
+		gScene = scn;
 		projectionViewMat = new Mat();
 		isProjViwInvCached = false;
 	}
@@ -39,7 +39,7 @@ public abstract class MatrixHelper {
 	 * Returns the scene this object belongs to
 	 */
 	public GrabberScene scene() {
-		return scene;
+		return gScene;
 	}
 
 	public void bind(boolean recompute) {
@@ -109,7 +109,7 @@ public abstract class MatrixHelper {
 
 	// TODO doc me
 	public void loadProjection(boolean recompute) {
-		setProjection(scene.eye().getProjection(recompute));
+		setProjection(gScene.eye().getProjection(recompute));
 	}
 
 	/**
@@ -124,7 +124,7 @@ public abstract class MatrixHelper {
 
 	// TODO doc me
 	public void loadModelView(boolean recompute) {
-		setModelView(scene.eye().getView(recompute));
+		setModelView(gScene.eye().getView(recompute));
 	}
 
 	/**
@@ -350,14 +350,14 @@ public abstract class MatrixHelper {
 	// see: http://www.opengl.org/archives/resources/faq/technical/transformations.htm
 	// "9.030 How do I draw 2D controls over my 3D rendering?"
 	protected void ortho2D() {
-		float cameraZ = (scene.height() / 2.0f) / (float) Math.tan((float) Math.PI / 8);
+		float cameraZ = (gScene.height() / 2.0f) / (float) Math.tan((float) Math.PI / 8);
 		float cameraNear = cameraZ / 2.0f;
 		float cameraFar = cameraZ * 2.0f;
 
-		float left = -scene.width() / 2;
-		float right = scene.width() / 2;
-		float bottom = -scene.height() / 2;
-		float top = scene.height() / 2;
+		float left = -gScene.width() / 2;
+		float right = gScene.width() / 2;
+		float bottom = -gScene.height() / 2;
+		float top = gScene.height() / 2;
 		float near = cameraNear;
 		float far = cameraFar;
 
@@ -378,11 +378,11 @@ public abstract class MatrixHelper {
 
 	// as it's done in P5:
 	protected void resetViewPoint() {
-		float eyeX = scene.width() / 2f;
-		float eyeY = scene.height() / 2f;
-		float eyeZ = (scene.height() / 2f) / (float) Math.tan((float) Math.PI * 60 / 360);
-		float centerX = scene.width() / 2f;
-		float centerY = scene.height() / 2f;
+		float eyeX = gScene.width() / 2f;
+		float eyeY = gScene.height() / 2f;
+		float eyeZ = (gScene.height() / 2f) / (float) Math.tan((float) Math.PI * 60 / 360);
+		float centerX = gScene.width() / 2f;
+		float centerY = gScene.height() / 2f;
 		float centerZ = 0;
 		float upX = 0;
 		float upY = 1;

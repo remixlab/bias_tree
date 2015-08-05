@@ -65,8 +65,8 @@ public abstract class Eye implements Copyable {
 
 		@Override
 		public GrabberEyeFrame detach() {
-			GrabberEyeFrame frame = new GrabberEyeFrame(scene);
-			for (Agent agent : scene.inputHandler().agents())
+			GrabberEyeFrame frame = new GrabberEyeFrame(gScene);
+			for (Agent agent : gScene.inputHandler().agents())
 				agent.removeGrabber(frame);
 			frame.fromFrame(this);
 			return frame;
@@ -83,7 +83,7 @@ public abstract class Eye implements Copyable {
 				stopFlying();
 			if(event.isShiftDown())
 				gestureRotateZ(event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
-			else if(scene.is2D())
+			else if(gScene.is2D())
 				gestureScale(event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
 			else
 				gestureTranslateZ(event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
@@ -99,8 +99,8 @@ public abstract class Eye implements Copyable {
 				if (event.id() == Agent.RIGHT_ID)
 					gestureMoveForward(event, false);
 				if (event.id() == Agent.CENTER_ID)
-					if(scene.is3D())
-						rotate(rollPitchQuaternion(event, scene.camera()));
+					if(gScene.is3D())
+						rotate(rollPitchQuaternion(event, gScene.camera()));
 			}
 			else {
 				if (event.id() == Agent.LEFT_ID)
@@ -152,10 +152,10 @@ public abstract class Eye implements Copyable {
 			}
 			else {
 				if(event.id()  == Agent.UP_KEY)
-					if(scene.is3D())
+					if(gScene.is3D())
 						gestureRotateX(event, true);
 				if(event.id()  == Agent.DOWN_KEY)
-					if(scene.is3D())
+					if(gScene.is3D())
 						gestureRotateY(event, false);
 				if(event.id()  == Agent.LEFT_KEY)
 					gestureRotateZ(event, false);
@@ -174,7 +174,7 @@ public abstract class Eye implements Copyable {
 				append(lastNonFrameUpdate).
 				append(lastFPCoeficientsUpdateIssued).
 				append(fpCoefficients).
-				append(frm).
+				append(gFrame).
 				append(interpolationKfi).
 				append(viewMat).
 				append(projectionMat).
@@ -202,7 +202,7 @@ public abstract class Eye implements Copyable {
 				.append(fpCoefficientsUpdate, other.fpCoefficientsUpdate)
 				.append(normal, other.normal)
 				.append(dist, other.dist)
-				.append(frm, other.frm)
+				.append(gFrame, other.gFrame)
 				.append(lastNonFrameUpdate, other.lastNonFrameUpdate)
 				.append(lastFPCoeficientsUpdateIssued, other.lastFPCoeficientsUpdateIssued)
 				.append(fpCoefficients, other.fpCoefficients)
@@ -227,10 +227,10 @@ public abstract class Eye implements Copyable {
 	};
 
 	// F r a m e
-	protected GrabberFrame														frm;
+	protected GrabberFrame														gFrame;
 
 	// S C E N E O B J E C T
-	protected GrabberScene														scene;
+	protected GrabberScene														gScene;
 
 	// C a m e r a p a r a m e t e r s
 	protected int																			scrnWidth, scrnHeight;											// size of the window,
@@ -272,9 +272,9 @@ public abstract class Eye implements Copyable {
 	protected TimingTask															timerFx;
 
 	public Eye(GrabberScene scn) {
-		scene = scn;
+		gScene = scn;
 
-		if (scene.is2D()) {
+		if (gScene.is2D()) {
 			fpCoefficients = new float[4][3];
 			normal = new Vec[4];
 			for (int i = 0; i < normal.length; i++)
@@ -290,7 +290,7 @@ public abstract class Eye implements Copyable {
 		}
 
 		enableBoundaryEquations(false);
-		interpolationKfi = new KeyFrameInterpolator(scene, frame());
+		interpolationKfi = new KeyFrameInterpolator(gScene, frame());
 		kfi = new HashMap<Integer, KeyFrameInterpolator>();
 		anchorPnt = new Vec(0.0f, 0.0f, 0.0f);
 
@@ -299,12 +299,12 @@ public abstract class Eye implements Copyable {
 				unSetTimerFlag();
 			}
 		};
-		this.scene.registerTimingTask(timerFx);
+		this.gScene.registerTimingTask(timerFx);
 
 		setFrame(new GrabberEyeFrame(this));
 		setSceneRadius(100);
 		setSceneCenter(new Vec(0.0f, 0.0f, 0.0f));
-		setScreenWidthAndHeight(scene.width(), scene.height());
+		setScreenWidthAndHeight(gScene.width(), gScene.height());
 
 		viewMat = new Mat();
 		projectionMat = new Mat();
@@ -312,13 +312,13 @@ public abstract class Eye implements Copyable {
 	}
 
 	protected Eye(Eye oVP) {
-		this.scene = oVP.scene;
+		this.gScene = oVP.gScene;
 		this.fpCoefficientsUpdate = oVP.fpCoefficientsUpdate;
 
 		this.anchorPnt = new Vec();
 		this.anchorPnt.set(oVP.anchorPnt);
 
-		if (scene.is2D()) {
+		if (gScene.is2D()) {
 			this.fpCoefficients = new float[4][3];
 			for (int i = 0; i < 4; i++)
 				for (int j = 0; j < 3; j++)
@@ -348,9 +348,9 @@ public abstract class Eye implements Copyable {
 				unSetTimerFlag();
 			}
 		};
-		this.scene.registerTimingTask(timerFx);
+		this.gScene.registerTimingTask(timerFx);
 
-		this.frm = oVP.frame().get();
+		this.gFrame = oVP.frame().get();
 		this.interpolationKfi = oVP.interpolationKfi.get();
 		this.kfi = new HashMap<Integer, KeyFrameInterpolator>();
 
@@ -377,14 +377,14 @@ public abstract class Eye implements Copyable {
 	 * displacement. Set using {@link #setFrame(GrabberFrame)}.
 	 */
 	public GrabberFrame frame() {
-		return frm;
+		return gFrame;
 	}
 
 	/**
 	 * Returns the scene this object belongs to
 	 */
 	public GrabberScene scene() {
-		return scene;
+		return gScene;
 	}
 
 	// 2. Local timer
@@ -433,7 +433,7 @@ public abstract class Eye implements Copyable {
 	}
 
 	protected void modified() {
-		lastNonFrameUpdate = scene.timingHandler().frameCount();
+		lastNonFrameUpdate = gScene.timingHandler().frameCount();
 	}
 
 	/**
@@ -464,7 +464,7 @@ public abstract class Eye implements Copyable {
 	 * @see remixlab.dandelion.core.GrabberScene#flip()
 	 */
 	public void flip() {
-		scene.flip();
+		gScene.flip();
 	}
 	
 	public final GrabberFrame detachFrame() {
@@ -479,14 +479,14 @@ public abstract class Eye implements Copyable {
 		if (g == null || g == frame())
 			return;			
 		if(g.theeye == null) {//only detached frames
-			frm = g;
-			for(Agent agent : scene.inputHandler().agents())
-				agent.removeGrabber(frm);
-			frm.theeye = this;
-			interpolationKfi.setFrame(frm);
+			gFrame = g;
+			for(Agent agent : gScene.inputHandler().agents())
+				agent.removeGrabber(gFrame);
+			gFrame.theeye = this;
+			interpolationKfi.setFrame(gFrame);
 			Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
 			while (itr.hasNext())
-				itr.next().setFrame(frm);
+				itr.next().setFrame(gFrame);
 		}
 	} 
 
@@ -506,18 +506,18 @@ public abstract class Eye implements Copyable {
 			return;		
 		if(g.theeye == this) {
 			List<Agent> agents = new ArrayList<Agent>();
-			for(Agent agent : scene.inputHandler().agents())
+			for(Agent agent : gScene.inputHandler().agents())
 				if(agent.defaultGrabber() == frame() && agent.defaultGrabber() != null)
 					agents.add(agent);			
-			frm = g;			
-			if(scene.is3D())
+			gFrame = g;			
+			if(gScene.is3D())
 				((Camera)this).setFocusDistance(sceneRadius() / (float) Math.tan(((Camera)this).fieldOfView() / 2.0f));
-			interpolationKfi.setFrame(frm);
+			interpolationKfi.setFrame(gFrame);
 			Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
 			while (itr.hasNext())
-				itr.next().setFrame(frm);			
+				itr.next().setFrame(gFrame);			
 			for(Agent agent : agents) {
-				if(this == scene.eye())
+				if(this == gScene.eye())
 					agent.addGrabber(frame());
 				agent.setDefaultGrabber(frame());
 			}
@@ -721,7 +721,7 @@ public abstract class Eye implements Copyable {
 		}
 		scnRadius = radius;
 		setFlySpeed(0.01f * sceneRadius());
-		for (Grabber mg : scene.motionAgent().grabbers()) {
+		for (Grabber mg : gScene.motionAgent().grabbers()) {
 			if (mg instanceof GrabberFrame)
 				((GrabberFrame) mg).setFlySpeed(0.01f * sceneRadius());
 		}
@@ -814,7 +814,7 @@ public abstract class Eye implements Copyable {
 	 */
 	public void setAnchor(Vec refP) {
 		anchorPnt = refP;
-		if (scene.is2D())
+		if (gScene.is2D())
 			anchorPnt.setZ(0);
 	}
 
@@ -1504,10 +1504,10 @@ public abstract class Eye implements Copyable {
 		if (keyFInterpolator != null) {
 			if (frame() != keyFInterpolator.frame())
 				keyFInterpolator.setFrame(frame());
-			if (keyFInterpolator.scene != scene) {
-				keyFInterpolator.scene = scene;
+			if (keyFInterpolator.gScene != gScene) {
+				keyFInterpolator.gScene = gScene;
 				for (int i = 0; i < keyFInterpolator.numberOfKeyFrames(); ++i)
-					keyFInterpolator.keyFrame(i).scene = scene;
+					keyFInterpolator.keyFrame(i).gScene = gScene;
 			}
 			kfi.put(key, keyFInterpolator);
 			System.out.println("Path " + key + " set");
@@ -1530,15 +1530,15 @@ public abstract class Eye implements Copyable {
 	public void addKeyFrameToPath(int key) {
 		boolean info = true;
 		if (!kfi.containsKey(key)) {
-			setKeyFrameInterpolator(key, new KeyFrameInterpolator(scene, frame()));
+			setKeyFrameInterpolator(key, new KeyFrameInterpolator(gScene, frame()));
 			System.out.println("Position " + key + " saved");
 			info = false;
 		}
 
 		///*
 		GrabberFrame keyFrame = detachFrame();
-		if(scene.pathsVisualHint())
-			scene.motionAgent().addGrabber(keyFrame);//only works for iFrames
+		if(gScene.pathsVisualHint())
+			gScene.motionAgent().addGrabber(keyFrame);//only works for iFrames
 		// for other frames (MyFrame) it requires to override: 1. MyFrame.detach()
 		// and 2. motionAgent.addGrabber(MyFrame)
 		//*/
@@ -1572,7 +1572,7 @@ public abstract class Eye implements Copyable {
 		if (kfi.containsKey(key)) {
 			KeyFrameInterpolator k = kfi.get(key);
 			for (int i = 0; i < k.keyFrames().size(); ++i)
-				scene.motionAgent().removeGrabber(k.keyFrames().get(i).frame());
+				gScene.motionAgent().removeGrabber(k.keyFrames().get(i).frame());
 		}
 	}
 	
@@ -1591,7 +1591,7 @@ public abstract class Eye implements Copyable {
 		if (kfi.containsKey(key)) {
 			KeyFrameInterpolator k = kfi.get(key);
 			for (int i = 0; i < k.keyFrames().size(); ++i)
-				scene.motionAgent().addGrabber(k.keyFrames().get(i).frame());
+				gScene.motionAgent().addGrabber(k.keyFrames().get(i).frame());
 		}
 	}
 	
@@ -1804,7 +1804,7 @@ public abstract class Eye implements Copyable {
 	 * @see remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()
 	 */
 	public float[][] getBoundaryEquations() {
-		if (!scene.areBoundaryEquationsEnabled())
+		if (!gScene.areBoundaryEquationsEnabled())
 			System.out.println("The viewpoint boundary equations may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
 					+ "with Scene.enableBoundaryEquations()");
@@ -1831,7 +1831,7 @@ public abstract class Eye implements Copyable {
 	 * @see remixlab.dandelion.core.GrabberScene#enableBoundaryEquations()
 	 */
 	public float distanceToBoundary(int index, Vec pos) {
-		if (!scene.areBoundaryEquationsEnabled())
+		if (!gScene.areBoundaryEquationsEnabled())
 			System.out.println("The viewpoint boundary equations (needed by distanceToBoundary) may be outdated. Please "
 					+ "enable automatic updates of the equations in your PApplet.setup "
 					+ "with Scene.enableBoundaryEquations()");

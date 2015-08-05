@@ -13,13 +13,13 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 
 	public GrabberModelFrame(Scene scn) {
 		super(scn);
-		((Scene) scene).addModel(this);
+		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 	}
 
 	public GrabberModelFrame(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
-		((Scene) scene).addModel(this);
+		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 	}
 
@@ -34,19 +34,19 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 
 	@Override
 	public boolean checkIfGrabsInput(float x, float y) {
-		((Scene) scene).pickingBuffer().pushStyle();
-		((Scene) scene).pickingBuffer().colorMode(PApplet.RGB, 255);
-		int index = (int) y * scene.width() + (int) x;
-		if ((0 <= index) && (index < ((Scene) scene).pickingBuffer().pixels.length))
-			return ((Scene) scene).pickingBuffer().pixels[index] == getColor();
-		((Scene) scene).pickingBuffer().popStyle();
+		((Scene) gScene).pickingBuffer().pushStyle();
+		((Scene) gScene).pickingBuffer().colorMode(PApplet.RGB, 255);
+		int index = (int) y * gScene.width() + (int) x;
+		if ((0 <= index) && (index < ((Scene) gScene).pickingBuffer().pixels.length))
+			return ((Scene) gScene).pickingBuffer().pixels[index] == getColor();
+		((Scene) gScene).pickingBuffer().popStyle();
 		return false;
 	}
 
 	public void draw() {
 		if (shape() == null)
 			return;
-		PGraphics pg = ((Scene) scene).pg();
+		PGraphics pg = ((Scene) gScene).pg();
 		draw(pg);
 	}
 
@@ -56,31 +56,31 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 		if (shape() == null)
 			return;
 		pg.pushStyle();
-		if (pg == ((Scene) scene).pickingBuffer()) {
+		if (pg == ((Scene) gScene).pickingBuffer()) {
 			shape().disableStyle();
 			pg.colorMode(PApplet.RGB, 255);
 			pg.fill(getColor());
 			pg.stroke(getColor());
 		}
 		pg.pushMatrix();
-		((Scene) scene).applyWorldTransformation(pg, this);
+		((Scene) gScene).applyWorldTransformation(pg, this);
 		pg.shape(shape());
 		pg.popMatrix();
-		if (pg == ((Scene) scene).pickingBuffer())
+		if (pg == ((Scene) gScene).pickingBuffer())
 			shape().enableStyle();
 		pg.popStyle();
 	}
 
 	public void applyTransformation(PGraphics pg) {
-		((Scene) scene).applyTransformation(pg, this);
+		((Scene) gScene).applyTransformation(pg, this);
 	}
 
 	public void applyWorldTransformation(PGraphics pg) {
-		((Scene) scene).applyWorldTransformation(pg, this);
+		((Scene) gScene).applyWorldTransformation(pg, this);
 	}
 
 	protected int getColor() {
 		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
-		return ((Scene) scene).pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
+		return ((Scene) gScene).pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
 	}
 }
