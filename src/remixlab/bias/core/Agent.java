@@ -74,9 +74,7 @@ public abstract class Agent {
 			setDefaultGrabber(null);
 		if(trackedGrabber() == grabber)
 			trackedGrabber = null;
-		if(grabberList.remove(grabber))
-			return true;
-		return false;
+		return grabberList.remove(grabber);
 	}
 
 	/**

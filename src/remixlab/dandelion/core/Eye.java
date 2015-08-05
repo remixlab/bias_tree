@@ -1540,11 +1540,11 @@ public abstract class Eye implements Copyable {
 		if(scene.pathsVisualHint())
 			scene.motionAgent().addGrabber(keyFrame);//only works for iFrames
 		// for other frames (MyFrame) it requires to override: 1. MyFrame.detach()
-		// and 2. motionAgent.addGrabber(MyFrame) 
+		// and 2. motionAgent.addGrabber(MyFrame)
 		//*/
 				
 		/*
-		InteractiveFrame keyFrame = new InteractiveFrame(scene);
+		remixlab.dandelion.addon.InteractiveFrame keyFrame = new remixlab.dandelion.addon.InteractiveFrame((remixlab.dandelion.addon.InteractiveScene)scene);
 		keyFrame.fromFrame(frame());
 		if(!scene.pathsVisualHint())
 			scene.motionAgent().removeGrabber(keyFrame);
@@ -1635,9 +1635,9 @@ public abstract class Eye implements Copyable {
 	 */
 	public void deletePath(int key) {
 		if (kfi.containsKey(key)) {
-			kfi.get(key).stopInterpolation();			
-			kfi.get(key).deletePath();
+			kfi.get(key).stopInterpolation();
 			detachPath(key);
+			kfi.get(key).deletePath();
 			kfi.remove(key);
 			System.out.println("Path " + key + " deleted");
 		}

@@ -405,7 +405,7 @@ public class Scene extends InteractiveScene implements PConstants {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			throw new RuntimeException("Proscene mouseAgent() is not available in Android mode");
 		}
-		return (MouseAgent) defMotionAgent;
+		return (MouseAgent) motionAgent();
 	}
 
 	/**
@@ -417,7 +417,7 @@ public class Scene extends InteractiveScene implements PConstants {
 		if (platform() == Platform.PROCESSING_DESKTOP) {
 			throw new RuntimeException("Proscene touchAgent() is not available in Desktop mode");
 		}
-		return (DroidTouchAgent) defMotionAgent;
+		return (DroidTouchAgent) motionAgent();
 	}
 
 	// TODO doc me and re-add me
