@@ -10,15 +10,13 @@
 
 package remixlab.proscene;
 
-import remixlab.bias.addon.Action;
-import remixlab.bias.core.*;
+import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
 import remixlab.dandelion.addon.*;
+import remixlab.bias.addon.*;
 import remixlab.dandelion.addon.Constants.*;
-import remixlab.dandelion.core.*;
-
 /**
- * Proscene {@link remixlab.dandelion.addon.MultiTouchAgent}.
+ * Proscene {@link remixlab.dandelion.agent.MultiTouchAgent}.
  */
 public class DroidTouchAgent extends MultiTouchAgent {
 	Scene	scene;
@@ -31,26 +29,23 @@ public class DroidTouchAgent extends MultiTouchAgent {
 	}
 
 	public void setDefaultBinding() {
-		// TODO adapt me, broken api
-		/*
-		 * eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_ONE_ID.id(), DOF6Action.ROTATE);
-		 * frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_ONE_ID.id(), DOF6Action.ROTATE);
-		 * eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_TWO_ID.id(), DOF6Action.TRANSLATE);
-		 * frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.DRAG_TWO_ID.id(), DOF6Action.TRANSLATE);
-		 * eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.PINCH_TWO_ID.id(), scene.is3D() ?
-		 * DOF6Action.TRANSLATE_Z : DOF6Action.SCALE); frameProfile().setBinding(DOF6Event.NO_MODIFIER_MASK,
-		 * Gestures.PINCH_TWO_ID.id(), scene.is3D() ? DOF6Action.TRANSLATE_Z : DOF6Action.SCALE);
-		 * eyeProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.TURN_TWO_ID.id(), DOF6Action.ROTATE_Z);
-		 * frameProfile().setBinding(MotionEvent.NO_MODIFIER_MASK, Gestures.TURN_TWO_ID.id(), DOF6Action.ROTATE_Z);
-		 */
+		
+		setGestureBinding(Target.EYE,  Gestures.DRAG_ONE_ID, DOF2Action.ROTATE);
+		setGestureBinding(Target.EYE,  Gestures.DRAG_TWO_ID, DOF2Action.TRANSLATE);
+		setGestureBinding(Target.EYE,  Gestures.TURN_TWO_ID, DOF2Action.ROTATE_Z);
+		setGestureBinding(Target.EYE, Gestures.PINCH_TWO_ID, scene.is3D() ? DOF2Action.TRANSLATE_Z : DOF2Action.SCALE);
+		
+		setGestureBinding(Target.FRAME,  Gestures.DRAG_ONE_ID, DOF2Action.ROTATE);
+		setGestureBinding(Target.FRAME,  Gestures.DRAG_TWO_ID, DOF2Action.TRANSLATE);
+		setGestureBinding(Target.FRAME,  Gestures.TURN_TWO_ID, DOF2Action.ROTATE_Z);
+		setGestureBinding(Target.FRAME, Gestures.PINCH_TWO_ID, scene.is3D() ? DOF2Action.TRANSLATE_Z : DOF2Action.SCALE);
 	}
 
 	public void touchEvent(android.view.MotionEvent e) {
 		int action = e.getAction();
-		int turnOrientation;
 		int code = action & android.view.MotionEvent.ACTION_MASK;
 		int index = action >> android.view.MotionEvent.ACTION_POINTER_ID_SHIFT;
-
+		int turnOrientation;
 		float x = e.getX(index);
 		float y = e.getY(index);
 		int id = e.getPointerId(index);
@@ -71,9 +66,22 @@ public class DroidTouchAgent extends MultiTouchAgent {
 					0,
 					MotionEvent.NO_MODIFIER_MASK,
 					e.getPointerCount());
-			if (e.getPointerCount() == 1)
-				updateTrackedGrabber(event);
+			
 			prevEvent = event.get();
+			event = new DOF6Event(prevEvent,
+					touchProcessor.getCx(),
+					touchProcessor.getCy(),
+					0,
+					0,
+					0,
+					0,
+					MotionEvent.NO_MODIFIER_MASK,
+					e.getPointerCount());
+			
+			if (e.getPointerCount() == 1){
+				updateTrackedGrabber(event);
+			}
+			
 		}
 		else if (code == android.view.MotionEvent.ACTION_UP || code == android.view.MotionEvent.ACTION_POINTER_UP) {
 			// PApplet.print("up");
@@ -147,8 +155,8 @@ public class DroidTouchAgent extends MultiTouchAgent {
 					case PINCH_TWO_ID:
 					case PINCH_THREE_ID: // Pinch
 						event = new DOF6Event(prevEvent,
-								0,
 								touchProcessor.getZ(),
+								0,
 								0,
 								0,
 								0,
@@ -159,8 +167,8 @@ public class DroidTouchAgent extends MultiTouchAgent {
 						break;
 					case TURN_TWO_ID:
 					case TURN_THREE_ID: // Rotate
+						turnOrientation = 1;
 						// TODO needs testing
-						turnOrientation = -1;
 						if (inputGrabber() instanceof InteractiveFrame)
 							turnOrientation = ((InteractiveFrame) inputGrabber()).isEyeFrame() ? -1 : 1;
 						event = new DOF6Event(prevEvent,
