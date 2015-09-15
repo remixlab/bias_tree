@@ -54,16 +54,18 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 
 	protected PShape	pshape;
 	protected int		id;
+	protected PVector shift;
 	
 	// TODO new experimenting with textures
-	protected PImage    tex;
 	
+	protected PImage    tex;	
 	public InteractiveModelFrame(Scene scn, PShape ps, PImage texture) {
 		super(scn);
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		pshape = ps;
 		tex = texture;
+		shift = new PVector();
 	}
 	
 	//--
@@ -82,6 +84,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		super(scn);
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
+		shift = new PVector();
 	}
 	
 	/**
@@ -98,6 +101,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		super(scn, referenceFrame);
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
+		shift = new PVector();
 	}
 
 	/**
@@ -112,6 +116,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		pshape = ps;
+		shift = new PVector();
 	}
 
 	/**
@@ -126,12 +131,14 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		pshape = ps;
+		shift = new PVector();
 	}
 
 	protected InteractiveModelFrame(InteractiveModelFrame otherFrame) {
 		super(otherFrame);
 		this.pshape = otherFrame.pshape;
 		this.id = otherFrame.id;
+		this.shift = otherFrame.shift;
 	}
 
 	@Override
@@ -161,15 +168,21 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 	}
 	
 	/**
-	 * Same as {@code for (int i = 0; i < shape().getVertexCount(); i++)
-	 * shape().setVertex(i,PVector.add(shape().getVertex(i), shift));} which shifts all {@link #shape()} vertices.
-	 * <p>
-	 * Works only when PShape has been created with the {@code beginShape()}/ {@code endShapa()} command.
+	 * Shifts the {@link #shape()} respect to the frame {@link #position()}. Default value is zero.
+	 * 
+	 * @see #shift()
 	 */
 	public void shiftShape(PVector shift) {
-		if(shape() != null)
-			for (int i = 0; i < shape().getVertexCount(); i++)
-				shape().setVertex(i,PVector.add(shape().getVertex(i), shift));
+		this.shift = shift;
+	}
+	
+	/**
+	 * Returns the {@link #shape()} shift.
+	 * 
+	 * @see #shiftShape(PVector)
+	 */
+	public PVector shift() {
+		return shift;
 	}
 	
 	/**
@@ -215,6 +228,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model {
 		}
 		pg.pushMatrix();
 		((Scene) gScene).applyWorldTransformation(pg, this);
+		pg.translate(shift.x, shift.y, shift.z);
 		pg.shape(shape());
 		pg.popMatrix();
 		if (pg == ((Scene) gScene).pickingBuffer()) {
