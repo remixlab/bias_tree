@@ -22,7 +22,7 @@ ArrayList buttons;
 InteractiveFrame message1;
 InteractiveFrame message2;
 InteractiveFrame image;
-int h;
+float h;
 int fSize = 16;
 
 public void setup() {

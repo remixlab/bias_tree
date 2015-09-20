@@ -35,7 +35,7 @@ import remixlab.bias.event.*;
 
 Scene scene;
 ArrayList buttons;
-int h;
+float h;
 PFont buttonFont;
 
 void setup() {

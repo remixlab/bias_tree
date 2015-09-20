@@ -7,11 +7,11 @@
  */
 
 public abstract class Button2D extends GrabberObject {
-  public Scene scene;
+  public Scene scene;  
   String myText;
   PFont myFont;
-  public int myWidth;
-  public int myHeight;
+  float myWidth;
+  float myHeight;
   PVector position;
 
   public Button2D(Scene scn, PVector p, PFont font) {
@@ -31,8 +31,8 @@ public abstract class Button2D extends GrabberObject {
 
   public void setText(String text) {
     myText = text;
-    myWidth = (int) textWidth(myText);
-    myHeight = (int) (textAscent() + textDescent());
+    myWidth = textWidth(myText);
+    myHeight = textAscent() + textDescent();
   }
 
   public void display() {
@@ -41,17 +41,17 @@ public abstract class Button2D extends GrabberObject {
     if (grabsInput(scene.motionAgent()))
       fill(255);
     else
-      fill(0,255,0);
+      fill(100);
     scene.beginScreenDrawing();
-    text(myText, position.x, position.y, myWidth, myHeight);
+    text(myText, position.x, position.y, myWidth+1, myHeight);
     scene.endScreenDrawing();
     popStyle();
   }
-
+  
   @Override
   public boolean checkIfGrabsInput(DOF2Event event) {
-    float x = ((DOF2Event)event).x();
-    float y = ((DOF2Event)event).y();
+    float x = event.x();
+    float y = event.y();
     return ((position.x <= x) && (x <= position.x + myWidth) && (position.y <= y) && (y <= position.y + myHeight));
   }
 }

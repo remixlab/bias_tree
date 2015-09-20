@@ -49,7 +49,7 @@ public void setup() {
 public void draw() {
   background(0);
   for (int i = 0; i < toruses.size(); i++) {
-    InteractiveTorus box = (InteractiveTorus) toruses.get(i);
+    InteractiveTorus box = toruses.get(i);
     box.draw(true);
   }
   button1.display();
