@@ -82,7 +82,7 @@ import remixlab.util.*;
  * can be useful to share frames among different off-screen scenes (see ProScene's CameraCrane and the AuxiliarViewer
  * examples).
  */
-public class GrabberFrame extends Frame implements Grabber {
+public class GrabberFrame extends Frame implements Grabber, Trackable {
 	// according to space-nav fine tuning it turned out that the space-nav is right handed
 	// we thus define our gesture physical space as right-handed as follows:
 	// hid.sens should be non-negative for the space-nav to behave as expected from the physical interface
@@ -515,7 +515,7 @@ public class GrabberFrame extends Frame implements Grabber {
 
 		// new
 		// TODO future versions should go (except for iFrames in eyePath?):
-		// setGrabsInputThreshold(Math.round(scene.radius()/10f), true);			
+		// setGrabsInputThreshold(Math.round(scene.radius()/10f), true);
 	}
 	
 	protected GrabberFrame(GrabberFrame otherFrame) {
@@ -2507,5 +2507,53 @@ public class GrabberFrame extends Frame implements Grabber {
 				return true;
 		}
 		return false;
+	}
+	
+	//TODO pending avatar
+	
+	// Trackable Interface implementation
+
+	/**
+	 * Overloading of {@link remixlab.dandelion.core.Trackable#eyeFrame()}. Returns the world coordinates of the camera
+	 * position computed in {@link #updateEyeFrame()}.
+	 */
+	@Override
+	public GrabberFrame eyeFrame() {
+		GrabberFrame eFrame = new GrabberFrame(scene());
+		scene().motionAgent().removeGrabber(eFrame);
+		scene().keyboardAgent().removeGrabber(eFrame);
+		eFrame.setReferenceFrame(this);
+		//Rotation q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
+		Rotation q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
+		
+		if(scene().is3D()) {
+			float azimuth = (float) - Math.PI / 2; // flock: (float) - Math.PI / 2
+			q = new Quat();
+			float roll = ((Quat) q).taitBryanAngles().vec[0];
+			((Quat) q).fromTaitBryan(roll, azimuth, 0);
+			float inclination =  (float) Math.PI / 6;// flock: (float) Math.PI * (4/5)
+			float pitch = ((Quat) q).taitBryanAngles().vec[1];
+			((Quat) q).fromTaitBryan(inclination, pitch, 0);
+		}
+		
+		float trackingDistance = scene().radius() / 3;
+		
+		if (scene().is3D()) {
+			Vec p = q.rotate(new Vec(0, 0, 1));
+			p.multiply(trackingDistance / magnitude());
+			eFrame.setTranslation(p);
+			eFrame.setYAxis(yAxis());
+			eFrame.setZAxis(inverseTransformOf(p));
+			eFrame.setScaling(scene().eye().frame().scaling());
+		}
+		else {
+			Vec p = q.rotate(new Vec(0, 1));
+			p.multiply(trackingDistance / magnitude());
+			eFrame.setTranslation(p);
+			eFrame.setYAxis(yAxis());
+			float size = Math.min(scene().width(), scene().height());
+			eFrame.setScaling((2.5f * trackingDistance / size)); // window.fitBall which sets the scaling
+		}
+		return eFrame;
 	}
 }

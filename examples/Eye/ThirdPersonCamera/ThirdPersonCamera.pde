@@ -29,7 +29,7 @@ import remixlab.dandelion.addon.*;
 import remixlab.dandelion.constraint.*;
 
 Scene scene;
-InteractiveAvatarFrame avatar;
+InteractiveFrame avatar;
 
 public void setup() {
   size(640, 360, P3D);
@@ -40,13 +40,10 @@ public void setup() {
   scene.setAxesVisualHint(false);
   // press 'f' to display frame selection hints
 
-  avatar = new InteractiveAvatarFrame(scene);
+  avatar = new InteractiveFrame(scene);
   // we simply take the box longest edge here:
   avatar.setGrabsInputThreshold(30, true);
-  avatar.setTrackingDistance(300);
-  avatar.setAzimuth(PI/12);
-  avatar.setInclination(PI/6);
-
+  
   WorldConstraint baseConstraint = new WorldConstraint();
   baseConstraint.setTranslationConstraint(AxisPlaneConstraint.Type.PLANE, new Vec(0.0f, 1.0f, 0.0f));
   baseConstraint.setRotationConstraint(AxisPlaneConstraint.Type.AXIS, new Vec(0.0f, 1.0f, 0.0f));
@@ -90,12 +87,7 @@ public void keyPressed() {
       scene.unsetAvatar();
       scene.mouseAgent().dragToArcball();
     }
-  if(key=='i') avatar.setInclination(avatar.inclination() - PI / 64);
-  if(key=='I') avatar.setInclination(avatar.inclination() + PI / 64);
-  if(key=='z') avatar.setAzimuth(avatar.azimuth() - PI / 64);
-  if(key=='Z') avatar.setAzimuth(avatar.azimuth() + PI / 64);
-  if(key=='t') avatar.setTrackingDistance(avatar.trackingDistance() - scene.radius() / 50);
-  if(key=='T') avatar.setTrackingDistance(avatar.trackingDistance() + scene.radius() / 50);
+
   if(key=='p') avatar.setFlySpeed(avatar.flySpeed() / 1.2f);
   if(key=='P') avatar.setFlySpeed(avatar.flySpeed() * 1.2f);
 }

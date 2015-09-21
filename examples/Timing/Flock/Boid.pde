@@ -1,6 +1,6 @@
 class Boid {
   Scene scene;
-  InteractiveAvatarFrame frame;
+  InteractiveFrame frame;
   Quat q;
   int grabsMouseColor;//color
   int avatarColor;
@@ -22,11 +22,8 @@ class Boid {
     avatarColor = color(255, 0, 0);    
     pos = new PVector();
     pos.set(inPos);
-    frame = new InteractiveAvatarFrame(scene);  
+    frame = new InteractiveFrame(scene);  
     frame.setPosition(new Vec(pos.x, pos.y, pos.z));
-    frame.setAzimuth(-PApplet.HALF_PI);
-    frame.setInclination(PApplet.PI*(4/5));
-    frame.setTrackingDistance(scene.radius()/10);
     vel = new PVector(random(-1, 1), random(-1, 1), random(1, -1));
     acc = new PVector(0, 0, 0);
     neighborhoodRadius = 100;
@@ -38,10 +35,8 @@ class Boid {
     avatarColor = color(255, 0, 0);
     pos = new PVector();
     pos.set(inPos);
-    frame = new InteractiveAvatarFrame(scene);
+    frame = new InteractiveFrame(scene);
     frame.setPosition(new Vec(pos.x, pos.y, pos.z));
-    frame.setAzimuth(-PApplet.HALF_PI);
-    frame.setTrackingDistance(scene.radius()/10);
     vel = new PVector();
     vel.set(inVel);
     acc = new PVector(0, 0);
