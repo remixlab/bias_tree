@@ -993,9 +993,13 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	 */
 	public void preDraw() {
 		if (avatar() != null && (!eye().anyInterpolationStarted())) {
+			/*
 			eye().frame().setPosition(avatar().eyeFrame().position());
 			eye().frame().setOrientation(avatar().eyeFrame().orientation());
 			eye().frame().setScaling(avatar().eyeFrame().scaling());
+			*/
+			//eye().frame().fromFrame(avatar().eyeFrame());
+			GrabberFrame.sync(eye().frame(), avatar().eyeFrame());
 		}
 
 		bindMatrices();

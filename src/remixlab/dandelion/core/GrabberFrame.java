@@ -452,11 +452,10 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 	 */
 	public GrabberFrame(GrabberScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(referenceFrame, p, r, s);
-		gScene = scn;
-		init(gScene, referenceFrame, p, r, s);
+		init(scn);
 		setGrabsInputThreshold(20);
-		setFlySpeed(0.01f * gScene.eye().sceneRadius());
-		for(Agent agent : gScene.inputHandler().agents())
+		setFlySpeed(0.01f * scene().eye().sceneRadius());
+		for(Agent agent : scene().inputHandler().agents())
 			agent.addGrabber(this);
 	}
 
@@ -477,16 +476,16 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 	 */
 	public GrabberFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(referenceFrame, p, r, s);
-		gScene = eye.scene();
 		theeye = eye;
-		init(gScene, referenceFrame, p, r, s);
+		init(theeye.scene());
 		setFlySpeed(0.01f * eye().sceneRadius());
 		//fov =  Math.PI / 3.0f
-		if(gScene.is3D())
+		if(scene().is3D())
 			setMagnitude((float) Math.tan(((float) Math.PI / 3.0f) / 2.0f));
 	}
 	
-	protected void init(GrabberScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
+	protected void init(GrabberScene scn) {
+		gScene = scn;
 		setRotationSensitivity(1.0f);
 		setScalingSensitivity(1.0f);
 		setTranslationSensitivity(1.0f);
@@ -501,7 +500,7 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 				spinExecution();
 			}
 		};
-		gScene.registerTimingTask(spinningTimerTask);
+		scene().registerTimingTask(spinningTimerTask);
 
 		scnUpVec = new Vec(0.0f, 1.0f, 0.0f);
 		flyDisp = new Vec(0.0f, 0.0f, 0.0f);
@@ -510,7 +509,7 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 				fly();
 			}
 		};
-		gScene.registerTimingTask(flyTimerTask);
+		scene().registerTimingTask(flyTimerTask);
 		// end
 
 		// new
@@ -841,6 +840,8 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 	 * @see #fromFrame(Frame)
 	 */
 	public static void sync(GrabberFrame f1, GrabberFrame f2) {
+		if(f1 == null || f2 == null)
+			return;
 		if (f1.lastGlobalUpdate() == f2.lastGlobalUpdate())
 			return;
 		GrabberFrame source = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f1 : f2;
@@ -2519,10 +2520,14 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 	 */
 	@Override
 	public GrabberFrame eyeFrame() {
-		GrabberFrame eFrame = new GrabberFrame(scene());
-		scene().motionAgent().removeGrabber(eFrame);
-		scene().keyboardAgent().removeGrabber(eFrame);
-		eFrame.setReferenceFrame(this);
+		//if(eFrame == null) {
+			//*
+			GrabberFrame eFrame = new GrabberFrame(scene());
+			scene().motionAgent().removeGrabber(eFrame);
+			scene().keyboardAgent().removeGrabber(eFrame);
+			eFrame.setReferenceFrame(this);
+			// */
+		//}
 		//Rotation q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
 		Rotation q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
 		
@@ -2536,7 +2541,7 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 			((Quat) q).fromTaitBryan(inclination, pitch, 0);
 		}
 		
-		float trackingDistance = scene().radius() / 3;
+		float trackingDistance = scene().radius() / 5;
 		
 		if (scene().is3D()) {
 			Vec p = q.rotate(new Vec(0, 0, 1));

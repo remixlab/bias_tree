@@ -1297,6 +1297,8 @@ public class Frame implements Copyable {
 	 * {@link #referenceFrame()}.
 	 */
 	public void fromFrame(Frame otherFrame, Frame referenceFrame) {
+		if(otherFrame == null)
+			return;
 		if (referenceFrame == null) {
 			setPosition(otherFrame.position());
 			setOrientation(otherFrame.orientation());
