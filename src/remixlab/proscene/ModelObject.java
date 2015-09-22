@@ -81,6 +81,12 @@ public abstract class ModelObject implements Model {
 	public void setShape(PShape ps) {
 		pshape = ps;
 	}
+	
+	public PShape unsetShape() {
+		PShape prev = pshape;
+		pshape = null;
+		return prev;
+	}
 
 	@Override
 	public PShape shape() {
@@ -307,6 +313,8 @@ public abstract class ModelObject implements Model {
      * Returns true if both colors are the same, and false otherwise.
 	 */
 	public final boolean checkIfGrabsInput(float x, float y) {
+		if (shape() == null && !this.hasGraphicsHandler())
+			return false;
 		scene.pickingBuffer().pushStyle();
 		scene.pickingBuffer().colorMode(PApplet.RGB, 255);
 		int index = (int) y * scene.width() + (int) x;

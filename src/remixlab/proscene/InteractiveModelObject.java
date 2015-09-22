@@ -10,6 +10,8 @@
 
 package remixlab.proscene;
 
+import java.lang.reflect.Method;
+
 import processing.core.*;
 import remixlab.bias.addon.Action;
 import remixlab.bias.core.*;
@@ -37,8 +39,10 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	protected int			id;
 	protected PShape	pshape;
 	
-	// TODO new experimenting with textures
-	protected PImage    tex;
+	// Draw	
+	protected Object						drawHandlerObject;
+	protected Method						drawHandlerMethod;
+	protected String						drawHandlerMethodName;
 		
 	/**
 	 * Constructs a interactive-model-object with a null {@link #shape()} and adds it to the
@@ -90,6 +94,12 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	public void setShape(PShape ps) {
 		pshape = ps;
 	}
+	
+	public PShape unsetShape() {
+		PShape prev = pshape;
+		pshape = null;
+		return prev;
+	}
 
 	@Override
 	public PShape shape() {
@@ -108,6 +118,7 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		draw(pg);
 	}
 
+	/*
 	@Override
 	public void draw(PGraphics pg) {
 		if (shape() == null)
@@ -126,6 +137,34 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		if (pg == proScene.pickingBuffer()) {
 			if(tex!=null) shape().texture(tex);
 			shape().enableStyle();
+		}
+		pg.popStyle();
+	}*/
+	
+	//TODO experimental
+	@Override
+	public void draw(PGraphics pg) {
+		if (shape() == null && !this.hasGraphicsHandler())
+			return;
+		pg.pushStyle();
+		if (pg == proScene.pickingBuffer()) {
+			if(shape()!=null) {
+				shape().disableStyle();
+			}
+			pg.colorMode(PApplet.RGB, 255);
+			pg.fill(getColor());
+			pg.stroke(getColor());
+		}
+		pg.pushMatrix();
+		if(shape()!=null)
+			pg.shape(shape());
+		if( this.hasGraphicsHandler() )
+			this.invokeGraphicsHandler(pg);
+		pg.popMatrix();
+		if (pg == proScene.pickingBuffer()) {
+			if(shape()!=null) {
+				shape().enableStyle();
+			}
 		}
 		pg.popStyle();
 	}
@@ -199,6 +238,8 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
      * Returns true if both colors are the same, and false otherwise.
 	 */
 	public final boolean checkIfGrabsInput(float x, float y) {
+		if (shape() == null  && ! this.hasGraphicsHandler())
+			return false;
 		proScene.pickingBuffer().pushStyle();
 		proScene.pickingBuffer().colorMode(PApplet.RGB, 255);
 		int index = (int) y * proScene.width() + (int) x;
@@ -244,6 +285,71 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	protected int getColor() {
 		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
 		return proScene.pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
+	}
+	
+	// DRAW METHOD REG
+	
+	protected boolean invokeGraphicsHandler(PGraphics pg) {
+		// 3. Draw external registered method
+		if (drawHandlerObject != null) {
+			try {
+				drawHandlerMethod.invoke(drawHandlerObject, new Object[] { pg });
+				return true;
+			} catch (Exception e) {
+				PApplet.println("Something went wrong when invoking your " + drawHandlerMethodName + " method");
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Attempt to add a 'draw' handler method to the InteractiveFrame. The default event handler is a method that returns void and
+	 * has one single PGraphics parameter.
+	 * 
+	 * @param obj
+	 *          the object to handle the event
+	 * @param methodName
+	 *          the method to execute in the object handler class
+	 * 
+	 * @see #removeGraphicsHandler()
+	 * @see #invokeGraphicsHandler()
+	 */
+	public void addGraphicsHandler(Object obj, String methodName) {
+		try {
+			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+			//drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { });
+			drawHandlerObject = obj;
+			drawHandlerMethodName = methodName;
+		} catch (Exception e) {
+			PApplet.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Unregisters the 'draw' handler method (if any has previously been added to the Scene).
+	 * 
+	 * @see #addGraphicsHandler(Object, String)
+	 * @see #invokeGraphicsHandler()
+	 */
+	public void removeGraphicsHandler() {
+		drawHandlerMethod = null;
+		drawHandlerObject = null;
+		drawHandlerMethodName = null;
+	}
+
+	/**
+	 * Returns {@code true} if the user has registered a 'draw' handler method to the Scene and {@code false} otherwise.
+	 * 
+	 * @see #addGraphicsHandler(Object, String)
+	 * @see #invokeGraphicsHandler()
+	 */
+	public boolean hasGraphicsHandler() {
+		if (drawHandlerMethodName == null)
+			return false;
+		return true;
 	}
 
 	// new is good

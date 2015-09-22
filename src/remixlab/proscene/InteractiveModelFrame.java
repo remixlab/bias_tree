@@ -145,7 +145,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model, Co
 		super(otherFrame);
 		this.pshape = otherFrame.pshape;
 		this.id = otherFrame.id;
-		this.shift = otherFrame.shift;
+		this.shift = otherFrame.shift.copy();
 		this.drawHandlerObject = otherFrame.drawHandlerObject;
 		this.drawHandlerMethod = otherFrame.drawHandlerMethod;
 		this.drawHandlerMethodName = otherFrame.drawHandlerMethodName;
@@ -260,6 +260,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model, Co
 		draw(pg);
 	}
 
+	//TODO important once debugged draw should be re-implemented at all Model* classes
 	@Override
 	public void draw(PGraphics pg) {
 		if (shape() == null && !this.hasGraphicsHandler())
