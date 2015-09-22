@@ -187,7 +187,7 @@ public abstract class ModelObject implements Model {
 	 *          the method to execute in the object handler class
 	 * 
 	 * @see #removeGraphicsHandler()
-	 * @see #invokeGraphicsHandler()
+	 * @see #invokeGraphicsHandler(PGraphics)
 	 */
 	public void addGraphicsHandler(Object obj, String methodName) {
 		try {
@@ -205,7 +205,7 @@ public abstract class ModelObject implements Model {
 	 * Unregisters the 'draw' handler method (if any has previously been added to the Scene).
 	 * 
 	 * @see #addGraphicsHandler(Object, String)
-	 * @see #invokeGraphicsHandler()
+	 * @see #invokeGraphicsHandler(PGraphics)
 	 */
 	public void removeGraphicsHandler() {
 		drawHandlerMethod = null;
@@ -217,7 +217,7 @@ public abstract class ModelObject implements Model {
 	 * Returns {@code true} if the user has registered a 'draw' handler method to the Scene and {@code false} otherwise.
 	 * 
 	 * @see #addGraphicsHandler(Object, String)
-	 * @see #invokeGraphicsHandler()
+	 * @see #invokeGraphicsHandler(PGraphics)
 	 */
 	public boolean hasGraphicsHandler() {
 		if (drawHandlerMethodName == null)

@@ -320,7 +320,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model, Co
 	 *          the method to execute in the object handler class
 	 * 
 	 * @see #removeGraphicsHandler()
-	 * @see #invokeGraphicsHandler()
+	 * @see #invokeGraphicsHandler(PGraphics)
 	 */
 	public void addGraphicsHandler(Object obj, String methodName) {
 		try {
@@ -338,7 +338,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model, Co
 	 * Unregisters the 'draw' handler method (if any has previously been added to the Scene).
 	 * 
 	 * @see #addGraphicsHandler(Object, String)
-	 * @see #invokeGraphicsHandler()
+	 * @see #invokeGraphicsHandler(PGraphics)
 	 */
 	public void removeGraphicsHandler() {
 		drawHandlerMethod = null;
@@ -350,7 +350,7 @@ public class InteractiveModelFrame extends InteractiveFrame implements Model, Co
 	 * Returns {@code true} if the user has registered a 'draw' handler method to the Scene and {@code false} otherwise.
 	 * 
 	 * @see #addGraphicsHandler(Object, String)
-	 * @see #invokeGraphicsHandler()
+	 * @see #invokeGraphicsHandler(PGraphics)
 	 */
 	public boolean hasGraphicsHandler() {
 		if (drawHandlerMethodName == null)

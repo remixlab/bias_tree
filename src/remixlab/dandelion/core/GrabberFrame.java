@@ -2516,6 +2516,8 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 	//TODO pending avatar
 	
 	// Trackable Interface implementation
+	
+	//TODO fix docs
 
 	/**
 	 * Overloading of {@link remixlab.dandelion.core.Trackable#eyeFrame()}. Returns the world coordinates of the camera
