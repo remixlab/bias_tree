@@ -833,7 +833,6 @@ public class Scene extends InteractiveScene implements PConstants {
 		postDraw();
 	}
 
-	// Android: remove this method if needed to compile the project
 	public void post() {
 		// draw into picking buffer
 		pickingBuffer().beginDraw();

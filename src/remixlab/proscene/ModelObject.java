@@ -10,6 +10,8 @@
 
 package remixlab.proscene;
 
+import java.lang.reflect.Method;
+
 import processing.core.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
@@ -29,7 +31,12 @@ import remixlab.dandelion.core.GrabberScene;
 public abstract class ModelObject implements Model {
 	protected Scene		scene;
 	protected int			id;
-	protected PShape	pshape;	
+	protected PShape	pshape;
+	
+	// Draw	
+	protected Object						drawHandlerObject;
+	protected Method						drawHandlerMethod;
+	protected String						drawHandlerMethodName;
 	
 	// TODO new experimenting with textures
 	protected PImage    tex;
@@ -92,6 +99,7 @@ public abstract class ModelObject implements Model {
 		draw(pg);
 	}
 
+	/*
 	@Override
 	public void draw(PGraphics pg) {
 		if (shape() == null)
@@ -112,6 +120,103 @@ public abstract class ModelObject implements Model {
 			shape().enableStyle();
 		}
 		pg.popStyle();
+	}
+	*/
+	
+	//TODO experimental
+	@Override
+	public void draw(PGraphics pg) {
+		if (shape() == null && !this.hasGraphicsHandler())
+			return;
+		pg.pushStyle();
+		if (pg == scene.pickingBuffer()) {
+			if(shape()!=null) {
+				shape().disableStyle();
+				if(tex!=null) shape().noTexture();
+			}
+			pg.colorMode(PApplet.RGB, 255);
+			pg.fill(getColor());
+			pg.stroke(getColor());
+		}
+		pg.pushMatrix();
+		if(shape()!=null)
+			pg.shape(shape());
+		if( this.hasGraphicsHandler() )
+			this.invokeGraphicsHandler(pg);
+		pg.popMatrix();
+		if (pg == scene.pickingBuffer()) {
+			if(shape()!=null) {
+				if(tex!=null)
+					shape().texture(tex);
+				shape().enableStyle();
+			}
+		}
+		pg.popStyle();
+	}
+	
+	// DRAW METHOD REG
+	
+	protected boolean invokeGraphicsHandler(PGraphics pg) {
+		// 3. Draw external registered method
+		if (drawHandlerObject != null) {
+			try {
+				drawHandlerMethod.invoke(drawHandlerObject, new Object[] { pg });
+				return true;
+			} catch (Exception e) {
+				PApplet.println("Something went wrong when invoking your " + drawHandlerMethodName + " method");
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Attempt to add a 'draw' handler method to the InteractiveFrame. The default event handler is a method that returns void and
+	 * has one single PGraphics parameter.
+	 * 
+	 * @param obj
+	 *          the object to handle the event
+	 * @param methodName
+	 *          the method to execute in the object handler class
+	 * 
+	 * @see #removeGraphicsHandler()
+	 * @see #invokeGraphicsHandler()
+	 */
+	public void addGraphicsHandler(Object obj, String methodName) {
+		try {
+			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
+			//drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { });
+			drawHandlerObject = obj;
+			drawHandlerMethodName = methodName;
+		} catch (Exception e) {
+			PApplet.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Unregisters the 'draw' handler method (if any has previously been added to the Scene).
+	 * 
+	 * @see #addGraphicsHandler(Object, String)
+	 * @see #invokeGraphicsHandler()
+	 */
+	public void removeGraphicsHandler() {
+		drawHandlerMethod = null;
+		drawHandlerObject = null;
+		drawHandlerMethodName = null;
+	}
+
+	/**
+	 * Returns {@code true} if the user has registered a 'draw' handler method to the Scene and {@code false} otherwise.
+	 * 
+	 * @see #addGraphicsHandler(Object, String)
+	 * @see #invokeGraphicsHandler()
+	 */
+	public boolean hasGraphicsHandler() {
+		if (drawHandlerMethodName == null)
+			return false;
+		return true;
 	}
 	
 	@Override
