@@ -2527,7 +2527,7 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 	@Override
 	public void scale(float s) {
 		super.scale(s);
-		updateTrackingEyeFrame();
+		//updateTrackingEyeFrame();
 	}
 	
 	/**
@@ -2575,8 +2575,6 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 	 */
 	public void setTrackingEyeAzimuth(float a) {
 		if (scene().is3D()) {
-			//TODO experimental
-			trackingDist = scene().radius() / 5;
 			float roll = ((Quat) q).taitBryanAngles().vec[0];
 			((Quat) q).fromTaitBryan(roll, a, 0);
 			updateTrackingEyeFrame();
@@ -2608,8 +2606,6 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 	 */
 	public void setTrackingEyeInclination(float i) {
 		if (scene().is3D()) {
-			//TODO experimental
-			trackingDist = scene().radius() / 5;
 			float pitch = ((Quat) q).taitBryanAngles().vec[1];
 			((Quat) q).fromTaitBryan(i, pitch, 0);
 		}
@@ -2627,7 +2623,6 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 	 * @see remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)
 	 */
 	protected void updateTrackingEyeFrame() {
-		System.out.println("updateTrackingEyeFrame called!");
 		if(eFrame == null) {
 			eFrame = new GrabberFrame(scene(), this);
 			scene().motionAgent().removeGrabber(eFrame);
