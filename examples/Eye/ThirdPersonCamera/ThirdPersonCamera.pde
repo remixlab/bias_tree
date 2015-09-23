@@ -25,7 +25,6 @@
 
 import remixlab.proscene.*;
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.addon.*;
 import remixlab.dandelion.constraint.*;
 
 Scene scene;
@@ -43,6 +42,9 @@ public void setup() {
   avatar = new InteractiveFrame(scene);
   // we simply take the box longest edge here:
   avatar.setGrabsInputThreshold(30, true);
+  avatar.setTrackingEyeDistance(300);
+  avatar.setTrackingEyeAzimuth(PI/12);
+  avatar.setTrackingEyeInclination(PI/6);
   
   WorldConstraint baseConstraint = new WorldConstraint();
   baseConstraint.setTranslationConstraint(AxisPlaneConstraint.Type.PLANE, new Vec(0.0f, 1.0f, 0.0f));

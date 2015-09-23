@@ -29,5 +29,5 @@ public interface Trackable {
 	 * 
 	 * @return Frame representing the Eye Frame.
 	 */
-	public GrabberFrame eyeFrame();
+	public GrabberFrame trackingEyeFrame();
 }

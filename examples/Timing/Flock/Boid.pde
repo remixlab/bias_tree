@@ -23,24 +23,13 @@ class Boid {
     pos = new PVector();
     pos.set(inPos);
     frame = new InteractiveFrame(scene);  
-    frame.setPosition(new Vec(pos.x, pos.y, pos.z));
+    frame.setPosition(new Vec(pos.x, pos.y, pos.z));    
+    frame.setTrackingEyeAzimuth(-PApplet.HALF_PI);
+    frame.setTrackingEyeInclination(PApplet.PI*(4/5));
+    frame.setTrackingEyeDistance(scene.radius()/10);
     vel = new PVector(random(-1, 1), random(-1, 1), random(1, -1));
     acc = new PVector(0, 0, 0);
     neighborhoodRadius = 100;
-  }
-
-  Boid(Scene scn, PVector inPos, PVector inVel, float r) {
-    scene = scn;
-    grabsMouseColor = color(0, 0, 255);
-    avatarColor = color(255, 0, 0);
-    pos = new PVector();
-    pos.set(inPos);
-    frame = new InteractiveFrame(scene);
-    frame.setPosition(new Vec(pos.x, pos.y, pos.z));
-    vel = new PVector();
-    vel.set(inVel);
-    acc = new PVector(0, 0);
-    neighborhoodRadius = r;
   }
 
   void run(ArrayList bl) {

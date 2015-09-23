@@ -81,6 +81,10 @@ import remixlab.util.*;
  * their global parameters (position, orientation and magnitude) taken the one that has been most recently updated. Syncing
  * can be useful to share frames among different off-screen scenes (see ProScene's CameraCrane and the AuxiliarViewer
  * examples).
+ * <p>
+ * Finally, a grabber-frame can be followed by an {@link remixlab.dandelion.core.Eye}, defining a 'third-person' eye
+ * mode, see {@link remixlab.dandelion.core.Trackable} documentation. See also {@link #setTrackingEyeDistance(float)},
+ * {@link #setTrackingEyeAzimuth(float)} and {@link #setTrackingEyeInclination(float)}.
  */
 public class GrabberFrame extends Frame implements Grabber, Trackable {
 	// according to space-nav fine tuning it turned out that the space-nav is right handed
@@ -484,9 +488,6 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 			setMagnitude((float) Math.tan(((float) Math.PI / 3.0f) / 2.0f));
 	}
 	
-	//TODO experimental
-	GrabberFrame eFrame;
-	
 	protected void init(GrabberScene scn) {
 		gScene = scn;
 		setRotationSensitivity(1.0f);
@@ -518,6 +519,10 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 		// new
 		// TODO future versions should go (except for iFrames in eyePath?):
 		// setGrabsInputThreshold(Math.round(scene.radius()/10f), true);
+		
+		//TODO experimental
+		q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
+		//updateTrackingEyeFrame();
 	}
 	
 	protected GrabberFrame(GrabberFrame otherFrame) {
@@ -2513,44 +2518,124 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 		return false;
 	}
 	
-	//TODO pending avatar
-	
 	// Trackable Interface implementation
 	
-	//TODO fix docs
+	protected GrabberFrame eFrame;
+	protected Rotation				q;
+	protected float					trackingDist;
+	
+	@Override
+	public void scale(float s) {
+		super.scale(s);
+		updateTrackingEyeFrame();
+	}
+	
+	/**
+	 * Returns the distance between the frame and the tracking camera. Only meaningful when this frame
+	 * has been set as the scene avatar.
+	 * 
+	 * @see remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)
+	 */
+	public float trackingEyeDistance() {
+		return trackingDist;
+	}
 
 	/**
-	 * Overloading of {@link remixlab.dandelion.core.Trackable#eyeFrame()}. Returns the world coordinates of the camera
-	 * position computed in {@link #updateEyeFrame()}.
+	 * Sets the distance between the frame and the tracking camera. Only meaningful when this frame
+	 * has been set as the scene avatar.
+	 * 
+	 * @see remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)
 	 */
-	@Override
-	public GrabberFrame eyeFrame() {
+	public void setTrackingEyeDistance(float d) {
+		trackingDist = d;
+		updateTrackingEyeFrame();
+	}
+
+	/**
+	 * Returns the azimuth of the tracking camera measured respect to the frame's {@link #zAxis()}.
+	 * Only meaningful when this frame has been set as the scene avatar.
+	 * 
+	 * @see remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)
+	 */
+	public float trackingEyeAzimuth() {
+		// azimuth <-> pitch
+		if (scene().is3D())
+			return ((Quat) q).taitBryanAngles().vec[1];
+		else {
+			GrabberScene.showDepthWarning("azimuth");
+			return 0;
+		}
+	}
+
+	/**
+	 * Sets the {@link #trackingEyeAzimuth()} of the tracking camera. Only meaningful when this frame
+	 * has been set as the scene avatar.
+	 * 
+	 * @see remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)
+	 */
+	public void setTrackingEyeAzimuth(float a) {
+		if (scene().is3D()) {
+			//TODO experimental
+			trackingDist = scene().radius() / 5;
+			float roll = ((Quat) q).taitBryanAngles().vec[0];
+			((Quat) q).fromTaitBryan(roll, a, 0);
+			updateTrackingEyeFrame();
+		}
+		else
+			GrabberScene.showDepthWarning("setAzimuth");
+	}
+
+	/**
+	 * Returns the inclination of the tracking camera measured respect to the frame's {@link #yAxis()}.
+	 * Only meaningful when this frame
+	 * has been set as the scene avatar.
+	 * 
+	 * @see remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)
+	 */
+	public float trackingEyeInclination() {
+		// inclination <-> roll
+		if (scene().is3D())
+			return ((Quat) q).taitBryanAngles().vec[0];
+		else
+			return q.angle();
+	}
+
+	/**
+	 * Sets the {@link #trackingEyeInclination()} of the tracking camera. Only meaningful when this frame
+	 * has been set as the scene avatar.
+	 * 
+	 * @see remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)
+	 */
+	public void setTrackingEyeInclination(float i) {
+		if (scene().is3D()) {
+			//TODO experimental
+			trackingDist = scene().radius() / 5;
+			float pitch = ((Quat) q).taitBryanAngles().vec[1];
+			((Quat) q).fromTaitBryan(i, pitch, 0);
+		}
+		else
+			q = new Rot(i);
+		updateTrackingEyeFrame();
+	}
+
+	/**
+	 * The {@link #trackingEyeFrame()} of the Eye that is to be tracking the frame (see the documentation of the Trackable
+	 * interface) is defined in spherical coordinates by means of the {@link #trackingEyeAzimuth()}, the {@link #trackingEyeInclination()} and
+	 * {@link #trackingEyeDistance()}) respect to the Frame {@link #position()}. Only meaningful when this frame
+	 * has been set as the scene avatar.
+	 * 
+	 * @see remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)
+	 */
+	protected void updateTrackingEyeFrame() {
+		System.out.println("updateTrackingEyeFrame called!");
 		if(eFrame == null) {
-			//*
-			eFrame = new GrabberFrame(scene());
+			eFrame = new GrabberFrame(scene(), this);
 			scene().motionAgent().removeGrabber(eFrame);
 			scene().keyboardAgent().removeGrabber(eFrame);
-			eFrame.setReferenceFrame(this);
-			// */
 		}
-		//Rotation q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
-		Rotation q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
-		
-		if(scene().is3D()) {
-			float azimuth = (float) - Math.PI / 2; // flock: (float) - Math.PI / 2
-			q = new Quat();
-			float roll = ((Quat) q).taitBryanAngles().vec[0];
-			((Quat) q).fromTaitBryan(roll, azimuth, 0);
-			float inclination =  (float) Math.PI / 6;// flock: (float) Math.PI * (4/5)
-			float pitch = ((Quat) q).taitBryanAngles().vec[1];
-			((Quat) q).fromTaitBryan(inclination, pitch, 0);
-		}
-		
-		float trackingDistance = scene().radius() / 3;
-		
 		if (scene().is3D()) {
 			Vec p = q.rotate(new Vec(0, 0, 1));
-			p.multiply(trackingDistance / magnitude());
+			p.multiply(trackingEyeDistance() / magnitude());
 			eFrame.setTranslation(p);
 			eFrame.setYAxis(yAxis());
 			eFrame.setZAxis(inverseTransformOf(p));
@@ -2558,12 +2643,25 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 		}
 		else {
 			Vec p = q.rotate(new Vec(0, 1));
-			p.multiply(trackingDistance / magnitude());
+			p.multiply(trackingEyeDistance() / magnitude());
 			eFrame.setTranslation(p);
 			eFrame.setYAxis(yAxis());
 			float size = Math.min(scene().width(), scene().height());
-			eFrame.setScaling((2.5f * trackingDistance / size)); // window.fitBall which sets the scaling
+			eFrame.setScaling((2.5f * trackingEyeDistance() / size)); // window.fitBall which sets the scaling
 		}
+	}
+
+	// Interface implementation
+
+	/**
+	 * Overloading of {@link remixlab.dandelion.core.Trackable#trackingEyeFrame()}. Returns the world coordinates of the camera
+	 * position computed in {@link #updateTrackingEyeFrame()}. Only meaningful when this frame
+	 * has been set as the scene avatar.
+	 * 
+	 * @see remixlab.dandelion.core.GrabberScene#setAvatar(Trackable)
+	 */
+	@Override
+	public GrabberFrame trackingEyeFrame() {
 		return eFrame;
 	}
 }

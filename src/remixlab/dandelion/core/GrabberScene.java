@@ -999,7 +999,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 			eye().frame().setScaling(avatar().eyeFrame().scaling());
 			*/
 			//eye().frame().fromFrame(avatar().eyeFrame());
-			GrabberFrame.sync(eye().frame(), avatar().eyeFrame());
+			GrabberFrame.sync(eye().frame(), avatar().trackingEyeFrame());
 		}
 
 		bindMatrices();
@@ -1577,8 +1577,8 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 		if (eye().anyInterpolationStarted())
 			eye().stopInterpolations();
 		// eye().interpolateTo(avatar().eyeFrame());//works only when eyeFrame scaling = magnitude
-		GrabberFrame eyeFrameCopy = avatar().eyeFrame().get();
-		eyeFrameCopy.setMagnitude(avatar().eyeFrame().scaling());
+		GrabberFrame eyeFrameCopy = avatar().trackingEyeFrame().get();
+		eyeFrameCopy.setMagnitude(avatar().trackingEyeFrame().scaling());
 		eye().interpolateTo(eyeFrameCopy);
 		
 		if (avatar() instanceof GrabberFrame) {
