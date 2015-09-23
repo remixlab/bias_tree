@@ -8,28 +8,28 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.addon;
+package remixlab.bias.branch;
 
 import remixlab.bias.event.*;
 import remixlab.bias.core.*;
 
 /**
- * A {@link remixlab.bias.addon.Branch} with a single {@link #keyboardProfile()}, defining
+ * A {@link remixlab.bias.branch.Branch} with a single {@link #keyboardProfile()}, defining
  * some {@link remixlab.bias.event.KeyboardShortcut} / (keyboard) action mappings. Keyboard
- * branches may be appended only to an {@link remixlab.bias.addon.KeyboardBranchAgent}. See
- * {@link remixlab.bias.addon.KeyboardBranchAgent#appendBranch(String)}.
+ * branches may be appended only to an {@link remixlab.bias.branch.GenericKeyboardAgent}. See
+ * {@link remixlab.bias.branch.GenericKeyboardAgent#appendBranch(String)}.
  * <p>
  * <b>Note</b> that all the methods provided here are simply wrappers to the {@link #keyboardProfile()}.
- * See {@link remixlab.bias.addon.Profile}.
+ * See {@link remixlab.bias.branch.Profile}.
  *
  * @param <E> Reference action enum.
  * 
  * @param <A> Action enum sub-group.
  */
 public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Branch<E> {
-	KeyboardBranchAgent keyAgent;
+	GenericKeyboardAgent keyAgent;
 	protected Profile<E, KeyboardShortcut, A> keyProfile;
-	protected KeyboardBranch(KeyboardBranchAgent a, String n) {
+	protected KeyboardBranch(GenericKeyboardAgent a, String n) {
 		super(a, n);
 		keyAgent = a;
 		keyProfile = new Profile<E, KeyboardShortcut, A>();
@@ -49,7 +49,7 @@ public class KeyboardBranch<E extends Enum<E>, A extends Action<E>> extends Bran
 	}
 	
 	/**
-	 * @return Keyboard {@link remixlab.bias.addon.Profile}.
+	 * @return Keyboard {@link remixlab.bias.branch.Profile}.
 	 */
 	public Profile<E, KeyboardShortcut, A> keyboardProfile() {
 		return keyProfile;

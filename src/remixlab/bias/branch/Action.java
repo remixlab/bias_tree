@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.addon;
+package remixlab.bias.branch;
 
 /**
  * Generic interface defining user action (sub)groups.
@@ -18,13 +18,13 @@ package remixlab.bias.addon;
  * action sub-groups. Action subgroups are typically bound to different data input kinds
  * ({@link remixlab.bias.core.BogusEvent}), such as that gathered from tap and drag gestures.
  * <p>
- * Since the {@link #referenceAction()} is used to parameterize an {@link remixlab.bias.addon.InteractiveGrabber}
+ * Since the {@link #referenceAction()} is used to parameterize an {@link remixlab.bias.branch.GenericGrabber}
  * object, each value in the action sub-group should be mapped to a value in the (see {@link #referenceAction()}),
- * otherwise the {@link remixlab.bias.addon.InteractiveGrabber} wouldn't be able to discriminate among different
+ * otherwise the {@link remixlab.bias.branch.GenericGrabber} wouldn't be able to discriminate among different
  * data input kinds (e.g., a tap from a drag gesture).
  * <p>
  * <b>Note:</b> all data input related to a single entity or device (such as the mouse) that binds an
- * {@link remixlab.bias.addon.InteractiveGrabber} is handled by agent {@link remixlab.bias.addon.Branch}es.
+ * {@link remixlab.bias.branch.GenericGrabber} is handled by agent {@link remixlab.bias.branch.Branch}es.
  * <p>
  * <b>Observation</b> Enums provide an easy (typical) implementation of this Interface. For example, given the
  * following global Action set:

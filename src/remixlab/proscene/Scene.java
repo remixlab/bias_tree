@@ -14,7 +14,7 @@ import processing.core.*;
 import processing.opengl.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.DOF2Event;
-import remixlab.dandelion.addon.*;
+import remixlab.dandelion.branch.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
@@ -57,7 +57,7 @@ import java.nio.FloatBuffer;
  * <li><b>The default keyboard agent</b> provides shortcuts to global keyboard actions such as {@link #drawGrid()} or
  * {@link #drawAxes()}. See {@link #keyboardAgent()}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame motion actions. Please refer
- * to the {@link remixlab.dandelion.addon.MotionAgent} and {@link remixlab.dandelion.addon.KeyboardAgent} API's.
+ * to the {@link remixlab.dandelion.branch.MotionAgent} and {@link remixlab.dandelion.branch.KeyboardAgent} API's.
  * </ol>
  * <h3>Animation mechanisms</h3>
  * ProScene provides three animation mechanisms to define how your scene evolves over time:
@@ -80,7 +80,7 @@ import java.nio.FloatBuffer;
  * {@link #removeModels()}, {@link #hasModel(Model)}, {@link #removeModel(Model)}, {@link #removeModels()},
  * {@link #drawModels()} and {@link #drawModels(PGraphics)} for model handling.
  */
-public class Scene extends InteractiveScene implements PConstants {
+public class Scene extends GenericScene implements PConstants {
 	// begin: GWT-incompatible
 	// /*
 	// Reflection
@@ -156,7 +156,7 @@ public class Scene extends InteractiveScene implements PConstants {
 	 * on-screen Scene, see also {@link #isOffscreen()}), the values of x and y are meaningless (both are set to 0 to be
 	 * taken as dummy values).
 	 * 
-	 * @see remixlab.dandelion.addon.InteractiveScene#InteractiveScene()
+	 * @see remixlab.dandelion.branch.GenericScene#GenericScene()
 	 * @see #Scene(PApplet)
 	 * @see #Scene(PApplet, PGraphics)
 	 */
@@ -198,7 +198,7 @@ public class Scene extends InteractiveScene implements PConstants {
 		width = pg.width;
 		height = pg.height;
 		eye = is3D() ? new Camera(this) : new Window(this);
-		eye.setFrame(new InteractiveFrame(eye));
+		eye.setFrame(new GenericFrame(eye));
 		setEye(eye());// calls showAll();
 
 		// 6. Misc stuff:
@@ -1858,7 +1858,7 @@ public class Scene extends InteractiveScene implements PConstants {
 	protected void drawScreenRotateHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
-		if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
+		if (!(motionAgent().inputGrabber() instanceof GenericFrame))
 			return;
 
 		pg().pushStyle();
@@ -1886,9 +1886,9 @@ public class Scene extends InteractiveScene implements PConstants {
 	protected void drawZoomWindowHint() {
 		if (!(motionAgent() instanceof WheeledMouseAgent))
 			return;
-		if (!(motionAgent().inputGrabber() instanceof InteractiveFrame))
+		if (!(motionAgent().inputGrabber() instanceof GenericFrame))
 			return;
-		InteractiveFrame iFrame = (InteractiveFrame) motionAgent().inputGrabber();
+		GenericFrame iFrame = (GenericFrame) motionAgent().inputGrabber();
 		if (!(iFrame.initMotionEvent instanceof DOF2Event))
 			return;
 

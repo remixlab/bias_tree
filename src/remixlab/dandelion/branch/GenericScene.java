@@ -8,26 +8,25 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.addon;
+package remixlab.dandelion.branch;
 
+import remixlab.dandelion.branch.Constants.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.Vec;
-import remixlab.dandelion.addon.Constants.*;
-
-import remixlab.bias.addon.*;
+import remixlab.bias.branch.*;
 import remixlab.bias.event.KeyboardEvent;
 
 /**
  * An interactive-scene is a {@link remixlab.dandelion.core.GrabberScene} that implements the 
- * {@link remixlab.bias.addon.InteractiveGrabber} interface. An interactive-scene implements the
- * {@link remixlab.dandelion.addon.Constants.SceneAction} on top of the grabber-scene api
+ * {@link remixlab.bias.branch.GenericGrabber} interface. An interactive-scene implements the
+ * {@link remixlab.dandelion.branch.Constants.SceneAction} on top of the grabber-scene api
  * (such as {@link #toggleAxesVisualHint()}, {@link #toggleCameraType()}, etc). The
  * {@link remixlab.dandelion.core.GrabberScene#keyboardAgent()} provide high-level methods to define
  * custom action bindings.
  * 
- * @see remixlab.dandelion.addon.KeyboardAgent
+ * @see remixlab.dandelion.branch.KeyboardAgent
  */
-public abstract class InteractiveScene extends GrabberScene implements InteractiveGrabber<GlobalAction>, Constants {	
+public abstract class GenericScene extends GrabberScene implements GenericGrabber<GlobalAction>, Constants {	
 	// grabber implementation
 	
 	protected MotionAgent<?>	defMotionAgent;
@@ -129,7 +128,7 @@ public abstract class InteractiveScene extends GrabberScene implements Interacti
 	}
 	
 	/**
-	 * Callback method bound to {@link remixlab.dandelion.addon.Constants.GlobalAction#CUSTOM}.
+	 * Callback method bound to {@link remixlab.dandelion.branch.Constants.GlobalAction#CUSTOM}.
 	 */
 	protected void performCustomAction(KeyboardEvent event) {
 		GrabberScene.showMissingImplementationWarning("performCustomAction(KeyboardEvent event)", this.getClass()

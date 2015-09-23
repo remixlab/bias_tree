@@ -9,7 +9,7 @@ import remixlab.dandelion.geom.*;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
-public class GrabberModelFrame extends GrabberFrame implements Model {
+public class ModelFrame extends GrabberFrame implements Model {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -27,7 +27,7 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 		if (obj.getClass() != getClass())
 			return false;
 
-		GrabberModelFrame other = (GrabberModelFrame) obj;
+		ModelFrame other = (ModelFrame) obj;
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(id, other.id)
@@ -43,21 +43,97 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 	protected Method						drawHandlerMethod;
 	protected String						drawHandlerMethodName;
 
-	public GrabberModelFrame(Scene scn) {
+	/**
+	 * Constructs a model-frame and adds to the {@link remixlab.proscene.Scene#models()} collection.
+	 * Calls {@code super(scn}.
+	 * 
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see #shape()
+	 * @see #setShape(PShape)
+	 * @see #addGraphicsHandler(Object, String)
+	 */
+	public ModelFrame(Scene scn) {
 		super(scn);
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		shift = new PVector();
 	}
 
-	public GrabberModelFrame(Scene scn, Frame referenceFrame) {
+	/**
+	 * Constructs an grabber-frame as a child of reference frame, and adds it to the
+	 * {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn, referenceFrame}.
+	 *
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see #shape()
+	 * @see #setShape(PShape)
+	 * @see #addGraphicsHandler(Object, String)
+	 */
+	public ModelFrame(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		shift = new PVector();
 	}
 	
-	protected GrabberModelFrame(GrabberModelFrame otherFrame) {
+	/**
+	 * Wraps the pshape into this model-frame which is then added to the
+	 * {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn}.
+	 * 
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 */
+	public ModelFrame(Scene scn, PShape ps) {
+		super(scn);
+		((Scene) gScene).addModel(this);
+		id = ++Scene.modelCount;
+		shift = new PVector();
+		pshape = ps;
+	}
+	
+	/**
+	 * Wraps the pshape into this model-frame which is created as a child of reference frame and then added
+	 * to the {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn, referenceFrame)}.
+	 * 
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 */
+	public ModelFrame(Scene scn, Frame referenceFrame, PShape ps) {
+		super(scn, referenceFrame);
+		((Scene) gScene).addModel(this);
+		id = ++Scene.modelCount;
+		shift = new PVector();
+		pshape = ps;
+	}
+	
+	/**
+	 * Wraps the function object procedure into this model-frame which is then added it to the
+	 * {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn}.
+	 * 
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see #addGraphicsHandler(Object, String)
+	 */
+	public ModelFrame(Scene scn, Object obj, String methodName) {
+		super(scn);
+		((Scene) gScene).addModel(this);
+		id = ++Scene.modelCount;
+		shift = new PVector();
+		this.addGraphicsHandler(obj, methodName);
+	}
+	
+	/**
+	 * Wraps the the function object procedure into this model-frame which is is created as a child of reference frame
+	 * and then added to the {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn, referenceFrame}.
+	 * 
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see #addGraphicsHandler(Object, String)
+	 */
+	public ModelFrame(Scene scn, Frame referenceFrame, Object obj, String methodName) {
+		super(scn, referenceFrame);
+		((Scene) gScene).addModel(this);
+		id = ++Scene.modelCount;
+		shift = new PVector();
+		this.addGraphicsHandler(obj, methodName);
+	}
+	
+	protected ModelFrame(ModelFrame otherFrame) {
 		super(otherFrame);
 		this.pshape = otherFrame.pshape;
 		this.id = otherFrame.id;
@@ -68,32 +144,53 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 	}
 
 	@Override
-	public GrabberModelFrame get() {
-		return new GrabberModelFrame(this);
+	public ModelFrame get() {
+		return new ModelFrame(this);
 	}
 	
+	/**
+	 * Same as {@code ((Scene) scene).applyTransformation(pg, this)}.
+	 * 
+	 * @see remixlab.proscene.Scene#applyTransformation(PGraphics, Frame)
+	 */
 	public void applyTransformation(PGraphics pg) {
 		((Scene) gScene).applyTransformation(pg, this);
 	}
 
+	/**
+	 * Same as {@code ((Scene) scene).applyWorldTransformation(pg, this)}.
+	 * 
+	 * @see remixlab.proscene.Scene#applyWorldTransformation(PGraphics, Frame)
+	 */
 	public void applyWorldTransformation(PGraphics pg) {
 		((Scene) gScene).applyWorldTransformation(pg, this);
 	}
 
+	/**
+	 * Internal use. Model color to use in the {@link remixlab.proscene.Scene#pickingBuffer()}.
+	 */
 	protected int getColor() {
 		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
 		return ((Scene) gScene).pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
 	}
 
-	@Override
+	/**
+	 * Returns the shape wrap by this interactive-frame.
+	 */
 	public PShape shape() {
 		return pshape;
 	}
 
+	/**
+	 * Replaces previous {@link #shape()} with {@code ps}.
+	 */
 	public void setShape(PShape ps) {
 		pshape = ps;
 	}
 	
+	/**
+	 * Unsets the shape which is wrapped by this interactive-frame.
+	 */
 	public PShape unsetShape() {
 		PShape prev = pshape;
 		pshape = null;
@@ -103,18 +200,18 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 	/**
 	 * Shifts the {@link #shape()} respect to the frame {@link #position()}. Default value is zero.
 	 * 
-	 * @see #shift()
+	 * @see #modelShift()
 	 */
-	public void shiftShape(PVector shift) {
+	public void shiftModel(PVector shift) {
 		this.shift = shift;
 	}
 	
 	/**
 	 * Returns the {@link #shape()} shift.
 	 * 
-	 * @see #shiftShape(PVector)
+	 * @see #shiftModel(PVector)
 	 */
-	public PVector shift() {
+	public PVector modelShift() {
 		return shift;
 	}
 
@@ -208,8 +305,9 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 	}
 	
 	/**
-	 * Attempt to add a 'draw' handler method to the InteractiveFrame. The default event handler is a method that returns void and
-	 * has one single PGraphics parameter.
+	 * Attempt to add a graphics handler method to the InteractiveFrame. The default event handler is a method that
+	 * returns void and has one single PGraphics parameter. Note that the method should only deal with geometry and
+	 * that not coloring procedure may be specified within it.
 	 * 
 	 * @param obj
 	 *          the object to handle the event
@@ -232,7 +330,7 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 	}
 
 	/**
-	 * Unregisters the 'draw' handler method (if any has previously been added to the Scene).
+	 * Unregisters the graphics handler method (if any has previously been added to the Scene).
 	 * 
 	 * @see #addGraphicsHandler(Object, String)
 	 * @see #invokeGraphicsHandler(PGraphics)
@@ -244,7 +342,7 @@ public class GrabberModelFrame extends GrabberFrame implements Model {
 	}
 
 	/**
-	 * Returns {@code true} if the user has registered a 'draw' handler method to the Scene and {@code false} otherwise.
+	 * Returns {@code true} if the user has registered a graphics handler method to the Scene and {@code false} otherwise.
 	 * 
 	 * @see #addGraphicsHandler(Object, String)
 	 * @see #invokeGraphicsHandler(PGraphics)

@@ -8,13 +8,13 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.addon;
+package remixlab.dandelion.branch;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import remixlab.dandelion.addon.Constants.*;
 import remixlab.bias.event.*;
+import remixlab.dandelion.branch.Constants.*;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
@@ -62,7 +62,7 @@ public class MultiTouchAgent extends HIDAgent {
 		}
 	}
 
-	public MultiTouchAgent(InteractiveScene scn, String n) {
+	public MultiTouchAgent(GenericScene scn, String n) {
 		super(scn, n);
 		touchProcessor = new TouchProcessor();
 	}

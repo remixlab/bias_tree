@@ -48,22 +48,10 @@ public abstract class ModelObject implements Model {
 		scene.addModel(this);
 		id = ++Scene.modelCount;
 	}
-
-	/**
-	 * Wraps the pshape into this model-object and adds it to the {@link remixlab.proscene.Scene#models()} collection. 
-	 * 
-	 * @see remixlab.proscene.Scene#addModel(Model)
-	 */
-	public ModelObject(Scene scn, PShape ps) {
-		scene = scn;
-		pshape = ps;
-		scene.addModel(this);
-		id = ++Scene.modelCount;
-	}
-
+	
 	/**
 	 * Constructs a ModelObject with a null {@link #shape()} and adds it to the
-	 * {@link remixlab.proscene.Scene#models()} collection. Don't forget to call {@link #setShape(PShape)}
+	 * {@link remixlab.proscene.Scene#models()} collection.
 	 * 
 	 * @see remixlab.proscene.Scene#addModel(Model)
 	 * @see #shape()
@@ -76,21 +64,52 @@ public abstract class ModelObject implements Model {
 	}
 
 	/**
+	 * Wraps the pshape into this model-object which is then added to the {@link remixlab.proscene.Scene#models()} collection. 
+	 * 
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see #addGraphicsHandler(Object, String)
+	 */
+	public ModelObject(Scene scn, PShape ps) {
+		scene = scn;
+		scene.addModel(this);
+		id = ++Scene.modelCount;
+		pshape = ps;
+	}
+
+	/**
+	 * Wraps the pshape into this model-object which is then added to the {@link remixlab.proscene.Scene#models()} collection. 
+	 * 
+	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see #setShape(PShape)
+	 */
+	public ModelObject(Scene scn, Object obj, String methodName) {
+		scene = scn;
+		scene.addModel(this);
+		id = ++Scene.modelCount;
+		this.addGraphicsHandler(obj, methodName);
+	}
+
+	/**
+	 * Returns the shape wrap by this interactive-frame.
+	 */
+	public PShape shape() {
+		return pshape;
+	}
+
+	/**
 	 * Replaces previous {@link #shape()} with {@code ps}.
 	 */
 	public void setShape(PShape ps) {
 		pshape = ps;
 	}
 	
+	/**
+	 * Unsets the shape which is wrapped by this interactive-frame.
+	 */
 	public PShape unsetShape() {
 		PShape prev = pshape;
 		pshape = null;
 		return prev;
-	}
-
-	@Override
-	public PShape shape() {
-		return pshape;
 	}
 
 	/**
@@ -178,8 +197,9 @@ public abstract class ModelObject implements Model {
 	}
 	
 	/**
-	 * Attempt to add a 'draw' handler method to the InteractiveFrame. The default event handler is a method that returns void and
-	 * has one single PGraphics parameter.
+	 * Attempt to add a graphics handler method to the InteractiveFrame. The default event handler is a method that
+	 * returns void and has one single PGraphics parameter. Note that the method should only deal with geometry and
+	 * that not coloring procedure may be specified within it.
 	 * 
 	 * @param obj
 	 *          the object to handle the event
@@ -202,7 +222,7 @@ public abstract class ModelObject implements Model {
 	}
 
 	/**
-	 * Unregisters the 'draw' handler method (if any has previously been added to the Scene).
+	 * Unregisters the graphics handler method (if any has previously been added to the Scene).
 	 * 
 	 * @see #addGraphicsHandler(Object, String)
 	 * @see #invokeGraphicsHandler(PGraphics)
@@ -214,7 +234,7 @@ public abstract class ModelObject implements Model {
 	}
 
 	/**
-	 * Returns {@code true} if the user has registered a 'draw' handler method to the Scene and {@code false} otherwise.
+	 * Returns {@code true} if the user has registered a graphics handler method to the Scene and {@code false} otherwise.
 	 * 
 	 * @see #addGraphicsHandler(Object, String)
 	 * @see #invokeGraphicsHandler(PGraphics)

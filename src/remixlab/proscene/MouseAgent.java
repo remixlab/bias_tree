@@ -13,13 +13,13 @@ package remixlab.proscene;
 import processing.core.PApplet;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
-import remixlab.dandelion.addon.*;
+import remixlab.dandelion.branch.*;
 
 /**
- * Proscene mouse-agent. A {@link remixlab.dandelion.addon.WheeledMouseAgent} specialization
+ * Proscene mouse-agent. A {@link remixlab.dandelion.branch.WheeledMouseAgent} specialization
  * which handles Processing mouse-events. 
  *
- * @see remixlab.dandelion.addon.WheeledMouseAgent
+ * @see remixlab.dandelion.branch.WheeledMouseAgent
  * @see remixlab.proscene.KeyAgent
  * @see remixlab.proscene.DroidKeyAgent
  * @see remixlab.proscene.DroidTouchAgent
@@ -33,7 +33,7 @@ public class MouseAgent extends WheeledMouseAgent {
 	 * 
 	 * @see #dragToArcball()
 	 */
-	public MouseAgent(InteractiveScene scn, String n) {
+	public MouseAgent(GenericScene scn, String n) {
 		super(scn, n);
 		LEFT_ID = PApplet.LEFT;
 		CENTER_ID = PApplet.CENTER;

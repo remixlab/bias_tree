@@ -10,14 +10,14 @@
 
 package remixlab.proscene;
 
-import remixlab.bias.addon.InteractiveGrabber;
+import remixlab.bias.branch.GenericGrabber;
 
 /**
- * {@link remixlab.proscene.Model} and {@link remixlab.bias.addon.InteractiveGrabber} linking interface.
+ * {@link remixlab.proscene.Model} and {@link remixlab.bias.branch.GenericGrabber} linking interface.
  *
- * @param <E> Reference action used to parameterize the {@link remixlab.bias.addon.InteractiveGrabber}
+ * @param <E> Reference action used to parameterize the {@link remixlab.bias.branch.GenericGrabber}
  * @see remixlab.proscene.Model
- * @see remixlab.bias.addon.InteractiveGrabber
+ * @see remixlab.bias.branch.GenericGrabber
  */
-public interface InteractiveModel<E extends Enum<E>> extends Model, InteractiveGrabber<E> {
+public interface GenericModel<E extends Enum<E>> extends Model, GenericGrabber<E> {
 }

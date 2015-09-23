@@ -8,16 +8,16 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.addon;
+package remixlab.bias.branch;
 
 import remixlab.bias.core.*;
 
 /**
- * An {@link remixlab.bias.core.Agent} to which {@link remixlab.bias.addon.KeyboardBranch}es may be appended
+ * An {@link remixlab.bias.core.Agent} to which {@link remixlab.bias.branch.KeyboardBranch}es may be appended
  * (see {@link #appendBranch(String)}).
  */
-public abstract class KeyboardBranchAgent extends BranchAgent {
-	public KeyboardBranchAgent(InputHandler inputHandler, String name) {
+public abstract class GenericKeyboardAgent extends GenericAgent {
+	public GenericKeyboardAgent(InputHandler inputHandler, String name) {
 		super(inputHandler, name);
 	}
 	
@@ -30,9 +30,9 @@ public abstract class KeyboardBranchAgent extends BranchAgent {
 	}
 	
 	/**
-	 * @param name of the {@link remixlab.bias.addon.KeyboardBranch} to be appended.
+	 * @param name of the {@link remixlab.bias.branch.KeyboardBranch} to be appended.
 	 * 
-	 * @return the appended {@link remixlab.bias.addon.KeyboardBranch}.
+	 * @return the appended {@link remixlab.bias.branch.KeyboardBranch}.
 	 */
 	public <E extends Enum<E>, A extends Action<E>> KeyboardBranch<E, A> appendBranch(String name) {
 		return new KeyboardBranch<E, A>(this, name);

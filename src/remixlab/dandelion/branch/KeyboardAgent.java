@@ -8,32 +8,32 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.addon;
+package remixlab.dandelion.branch;
 
-import remixlab.bias.addon.*;
+import remixlab.bias.branch.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.addon.Constants.*;
+import remixlab.dandelion.branch.Constants.*;
 import remixlab.dandelion.core.*;
 
 /**
  * The root of all dandelion keyboard agents. This agent specializes in handling
- * {@link remixlab.dandelion.addon.InteractiveFrame} and
+ * {@link remixlab.dandelion.branch.GenericFrame} and
  * {@link remixlab.dandelion.core.GrabberScene} objects, but it can also handle third-party
- * {@link remixlab.bias.core.Grabber} or {@link remixlab.bias.addon.InteractiveGrabber} object
+ * {@link remixlab.bias.core.Grabber} or {@link remixlab.bias.branch.GenericGrabber} object
  * instances. In the latter case, third-parties should implement their own
- * {@link remixlab.bias.addon.KeyboardBranch}es.
+ * {@link remixlab.bias.branch.KeyboardBranch}es.
  * <p>
  * The agent has a {@code KeyboardBranch<GlobalAction, SceneAction>} branch to handle scene instances: the
  * {@link #sceneBranch()}; and two branches of the type {@code MotionBranch<MotionAction, A, ClickAction>}
- * to handle {@link remixlab.dandelion.addon.InteractiveFrame} object instances: {@link #eyeBranch()}, for
- * {@link remixlab.dandelion.addon.Constants.Target#EYE} (which typically has one one single instance, that
+ * to handle {@link remixlab.dandelion.branch.GenericFrame} object instances: {@link #eyeBranch()}, for
+ * {@link remixlab.dandelion.branch.Constants.Target#EYE} (which typically has one one single instance, that
  * of the {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}); and {@link #frameBranch()}, for
- * {@link remixlab.dandelion.addon.Constants.Target#FRAME} (which may have several instances, see
+ * {@link remixlab.dandelion.branch.Constants.Target#FRAME} (which may have several instances, see
  * {@link #addGrabber(Grabber)}). Note that through the aforementioned branches the following
- * {@link remixlab.bias.addon.Profile}s are available: {@link #sceneProfile()},
- * {@link #eyeProfile()} and {@link #frameProfile()}. Refer to the {@link remixlab.bias.addon.Branch} and
- * {@link remixlab.bias.addon.Profile} for details.
+ * {@link remixlab.bias.branch.Profile}s are available: {@link #sceneProfile()},
+ * {@link #eyeProfile()} and {@link #frameProfile()}. Refer to the {@link remixlab.bias.branch.Branch} and
+ * {@link remixlab.bias.branch.Profile} for details.
  * <p>
  * 'Interaction customization', i.e., binding keyboard shortcuts (see
  * {@link remixlab.bias.event.KeyboardShortcut}) to dandelion global and motion actions, may
@@ -41,19 +41,19 @@ import remixlab.dandelion.core.*;
  * provided by this agent, such as {@link #setBinding(char, SceneAction)} or
  * {@link #setBinding(Target, int, KeyboardAction)} and so on. Note that to discriminate between the
  * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()} from other 
- * {@link remixlab.dandelion.addon.InteractiveFrame} instances, some methods take an extra
- * {@link remixlab.dandelion.addon.Constants.Target} parameter.
+ * {@link remixlab.dandelion.branch.GenericFrame} instances, some methods take an extra
+ * {@link remixlab.dandelion.branch.Constants.Target} parameter.
  * <p>
  * The agent's {@link #defaultGrabber()} is the {@link remixlab.dandelion.core.GrabberScene#eye()}
  * frame (see {@link remixlab.dandelion.core.Eye#frame()}) (note that {@link #resetDefaultGrabber()}
  * will thus defaults to the eye frame too).
  * 
- * @see remixlab.dandelion.addon.Constants.SceneAction
- * @see remixlab.dandelion.addon.Constants.KeyboardAction
+ * @see remixlab.dandelion.branch.Constants.SceneAction
+ * @see remixlab.dandelion.branch.Constants.KeyboardAction
  */
 
-public abstract class KeyboardAgent extends KeyboardBranchAgent {	
-	protected InteractiveScene															scene;
+public abstract class KeyboardAgent extends GenericKeyboardAgent {	
+	protected GenericScene															scene;
 	protected KeyboardBranch<GlobalAction, SceneAction>	keySceneBranch;
 	protected KeyboardBranch<MotionAction, KeyboardAction>	keyFrameBranch, keyEyeBranch;
 
@@ -62,7 +62,7 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	 * {@link #frameBranch()} to it. The keyboard agent is added to the
 	 * {@link remixlab.dandelion.core.GrabberScene#inputHandler()}.
 	 */
-	public KeyboardAgent(InteractiveScene scn, String n) {
+	public KeyboardAgent(GenericScene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;		
 		keySceneBranch = appendBranch("scene_keyboard_branch");
@@ -77,10 +77,10 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	public boolean addGrabber(Grabber frame) {
 		if (frame instanceof GrabberScene)
 			return addGrabber(scene, keySceneBranch);
-		if (frame instanceof InteractiveFrame)
-			return addGrabber((InteractiveFrame) frame, ((InteractiveFrame) frame).isEyeFrame() ? keyEyeBranch
+		if (frame instanceof GenericFrame)
+			return addGrabber((GenericFrame) frame, ((GenericFrame) frame).isEyeFrame() ? keyEyeBranch
 					: keyFrameBranch);
-		if (!(frame instanceof remixlab.bias.addon.InteractiveGrabber))
+		if (!(frame instanceof remixlab.bias.branch.GenericGrabber))
 			return super.addGrabber(frame);
 		System.err.println("use addGrabber(G grabber, K KeyboardBranch) instead");
 		return false;
@@ -133,12 +133,12 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	 * Same as {@code return sceneBranch().keyboardProfile()}.
 	 * <p>
 	 * The profile defines customizable {@link remixlab.bias.core.KeyboardShortcut} to
-	 * {@link remixlab.dandelion.addon.Constants.SceneAction} mappings (bindings).
+	 * {@link remixlab.dandelion.branch.Constants.SceneAction} mappings (bindings).
 	 * 
 	 * @see #sceneBranch()
 	 * @see #remixlab.bias.core.Profile
 	 */
-	protected remixlab.bias.addon.Profile<GlobalAction, KeyboardShortcut, SceneAction> sceneProfile() {
+	protected remixlab.bias.branch.Profile<GlobalAction, KeyboardShortcut, SceneAction> sceneProfile() {
 		return sceneBranch().keyboardProfile();
 	}
 
@@ -146,12 +146,12 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	 * Same as {@code eyeBranch().keyboardProfile()}.
 	 * <p>
 	 * The profile defines customizable {@link remixlab.bias.core.KeyboardShortcut} to
-	 * {@link remixlab.dandelion.addon.Constants.KeyboardAction} mappings (bindings) for
+	 * {@link remixlab.dandelion.branch.Constants.KeyboardAction} mappings (bindings) for
 	 * the {@link remixlab.dandelion.core.GrabberScene#eyeFrame()} instance.
 	 * 
 	 * @see #eyeBranch()
 	 */
-	protected remixlab.bias.addon.Profile<MotionAction, KeyboardShortcut, KeyboardAction> eyeProfile() {
+	protected remixlab.bias.branch.Profile<MotionAction, KeyboardShortcut, KeyboardAction> eyeProfile() {
 		return eyeBranch().keyboardProfile();
 	}
 
@@ -159,12 +159,12 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	 * Same as {@code return frameBranch().keyboardProfile()}.
 	 * <p>
 	 * The profile defines customizable {@link remixlab.bias.core.KeyboardShortcut} to
-	 * {@link remixlab.dandelion.addon.Constants.KeyboardAction} mappings (bindings) for interactive-frame instances
+	 * {@link remixlab.dandelion.branch.Constants.KeyboardAction} mappings (bindings) for interactive-frame instances
 	 * different than the {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}.
 	 * 
 	 * @see #frameBranch()
 	 */
-	protected remixlab.bias.addon.Profile<MotionAction, KeyboardShortcut, KeyboardAction> frameProfile() {
+	protected remixlab.bias.branch.Profile<MotionAction, KeyboardShortcut, KeyboardAction> frameProfile() {
 		return frameBranch().keyboardProfile();
 	}
 
@@ -172,14 +172,14 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	 * Same as {@code return target == Target.EYE ? eyeProfile() : frameProfile()}.
 	 * <p>
 	 * The profile defines customizable {@link remixlab.bias.core.KeyboardShortcut} to
-	 * {@link remixlab.dandelion.addon.Constants.KeyboardAction} mappings (bindings) either the
-	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()} (for {@link remixlab.dandelion.addon.Constants.Target#EYE});
-	 * or, for other interactive-frame instances (for {@link remixlab.dandelion.addon.Constants.Target#FRAME}).
+	 * {@link remixlab.dandelion.branch.Constants.KeyboardAction} mappings (bindings) either the
+	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()} (for {@link remixlab.dandelion.branch.Constants.Target#EYE});
+	 * or, for other interactive-frame instances (for {@link remixlab.dandelion.branch.Constants.Target#FRAME}).
 	 * 
 	 * @see #eyeProfile()
 	 * @see #frameProfile()
 	 */
-	protected remixlab.bias.addon.Profile<MotionAction, KeyboardShortcut, KeyboardAction> motionProfile(Target target) {
+	protected remixlab.bias.branch.Profile<MotionAction, KeyboardShortcut, KeyboardAction> motionProfile(Target target) {
 		return target == Target.EYE ? eyeProfile() : frameProfile();
 	}
 
@@ -214,8 +214,8 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	 * {@code setKeyCodeToPlayPath('2', 2)} and
 	 * {@code setKeyCodeToPlayPath('3', 3)} to play the paths.
 	 * 
-	 * @see remixlab.dandelion.addon.KeyboardAgent#setDefaultBindings()
-	 * @see remixlab.dandelion.addon.KeyboardAgent#setKeyCodeToPlayPath(int, int)
+	 * @see remixlab.dandelion.branch.KeyboardAgent#setDefaultBindings()
+	 * @see remixlab.dandelion.branch.KeyboardAgent#setKeyCodeToPlayPath(int, int)
 	 */
 	public void setDefaultBindings() {
 		removeBindings();
@@ -383,8 +383,8 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	/**
 	 * Defines a keyboard-shortcut binding for the target interactive-frame. Same as {@code motionProfile(target).setBinding(shortcut, action)}.
 	 * <p>
-	 * The {@code target} may be either ({@link remixlab.dandelion.addon.Constants.Target#EYE} to point out the
-	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}, or {@link remixlab.dandelion.addon.Constants.Target#FRAME} to specify
+	 * The {@code target} may be either ({@link remixlab.dandelion.branch.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}, or {@link remixlab.dandelion.branch.Constants.Target#FRAME} to specify
 	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
@@ -400,8 +400,8 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	/**
 	 * Removes the target interactive-frame keyboard-shortcut binding. Same as {@code motionProfile(target).removeBinding(shortcut)}.
 	 * <p>
-	 * The {@code target} may be either ({@link remixlab.dandelion.addon.Constants.Target#EYE} to point out the
-	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}, or {@link remixlab.dandelion.addon.Constants.Target#FRAME} to specify
+	 * The {@code target} may be either ({@link remixlab.dandelion.branch.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}, or {@link remixlab.dandelion.branch.Constants.Target#FRAME} to specify
 	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
@@ -414,8 +414,8 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	 * Checks if the target interactive-frame or other frames keyboard-shortcut binding exists (true/false). Same as
 	 * {@code return motionProfile(target).hasBinding(shortcut)}.
 	 * <p>
-	 * The {@code target} may be either ({@link remixlab.dandelion.addon.Constants.Target#EYE} to point out the
-	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}, or {@link remixlab.dandelion.addon.Constants.Target#FRAME} to specify
+	 * The {@code target} may be either ({@link remixlab.dandelion.branch.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}, or {@link remixlab.dandelion.branch.Constants.Target#FRAME} to specify
 	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
@@ -428,8 +428,8 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	 * Returns the target interactive-frame action that is bound to the keyboard shortcut (may be null). Same as
 	 * {@code return motionProfile(target).action(shortcut)}.
 	 * <p>
-	 * The {@code target} may be either ({@link remixlab.dandelion.addon.Constants.Target#EYE} to point out the
-	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}, or {@link remixlab.dandelion.addon.Constants.Target#FRAME} to specify
+	 * The {@code target} may be either ({@link remixlab.dandelion.branch.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}, or {@link remixlab.dandelion.branch.Constants.Target#FRAME} to specify
 	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
@@ -443,8 +443,8 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	/**
 	 * Removes all the target interactive-frame keyboard-shortcut bindings. Same as {@code motionProfile(target).removeBindings()}.
 	 * <p>
-	 * The {@code target} may be either ({@link remixlab.dandelion.addon.Constants.Target#EYE} to point out the
-	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}, or {@link remixlab.dandelion.addon.Constants.Target#FRAME} to specify
+	 * The {@code target} may be either ({@link remixlab.dandelion.branch.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}, or {@link remixlab.dandelion.branch.Constants.Target#FRAME} to specify
 	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)
@@ -457,8 +457,8 @@ public abstract class KeyboardAgent extends KeyboardBranchAgent {
 	 * Checks if the target interactive-frame action is bound to a keyboard-shortcut (true/false). Same as
 	 * {@code return motionProfile(target).isActionBound(action)}.
 	 * <p>
-	 * The {@code target} may be either ({@link remixlab.dandelion.addon.Constants.Target#EYE} to point out the
-	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}, or {@link remixlab.dandelion.addon.Constants.Target#FRAME} to specify
+	 * The {@code target} may be either ({@link remixlab.dandelion.branch.Constants.Target#EYE} to point out the
+	 * {@link remixlab.dandelion.core.GrabberScene#eyeFrame()}, or {@link remixlab.dandelion.branch.Constants.Target#FRAME} to specify
 	 * the remaining interactive-frames.
 	 * 
 	 * @see #motionProfile(Target)

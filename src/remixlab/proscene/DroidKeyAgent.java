@@ -11,7 +11,7 @@
 package remixlab.proscene;
 
 import remixlab.bias.event.KeyboardEvent;
-import remixlab.dandelion.addon.KeyboardAgent;
+import remixlab.dandelion.branch.KeyboardAgent;
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 

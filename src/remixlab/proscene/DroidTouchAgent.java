@@ -10,11 +10,11 @@
 
 package remixlab.proscene;
 
+import remixlab.bias.branch.*;
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
-import remixlab.dandelion.addon.*;
-import remixlab.bias.addon.*;
-import remixlab.dandelion.addon.Constants.*;
+import remixlab.dandelion.branch.*;
+import remixlab.dandelion.branch.Constants.*;
 /**
  * Proscene {@link remixlab.dandelion.agent.MultiTouchAgent}.
  */
@@ -112,7 +112,7 @@ public class DroidTouchAgent extends MultiTouchAgent {
 						MotionEvent.NO_MODIFIER_MASK,
 						gesture.id());
 
-				Action<?> a = (inputGrabber() instanceof InteractiveFrame) ? eyeProfile().handle((BogusEvent) event)
+				Action<?> a = (inputGrabber() instanceof GenericFrame) ? eyeProfile().handle((BogusEvent) event)
 						: frameProfile().handle((BogusEvent) event);
 				if (a == null)
 					return;
@@ -169,8 +169,8 @@ public class DroidTouchAgent extends MultiTouchAgent {
 					case TURN_THREE_ID: // Rotate
 						turnOrientation = 1;
 						// TODO needs testing
-						if (inputGrabber() instanceof InteractiveFrame)
-							turnOrientation = ((InteractiveFrame) inputGrabber()).isEyeFrame() ? -1 : 1;
+						if (inputGrabber() instanceof GenericFrame)
+							turnOrientation = ((GenericFrame) inputGrabber()).isEyeFrame() ? -1 : 1;
 						event = new DOF6Event(prevEvent,
 								touchProcessor.getR() * turnOrientation,
 								0,

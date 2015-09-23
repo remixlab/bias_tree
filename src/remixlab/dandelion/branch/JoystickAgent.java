@@ -8,27 +8,27 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.addon;
+package remixlab.dandelion.branch;
 
 import remixlab.bias.event.*;
-import remixlab.dandelion.addon.Constants.*;
+import remixlab.dandelion.branch.Constants.*;
 
 /**
  * A {@code MotionAgent<DOF3Action>}, such most joystick, supporting
- * {@link remixlab.dandelion.addon.Constants.ClickAction}s, and up to
- * {@link remixlab.dandelion.addon.Constants.DOF3Action}s actions.
+ * {@link remixlab.dandelion.branch.Constants.ClickAction}s, and up to
+ * {@link remixlab.dandelion.branch.Constants.DOF3Action}s actions.
  * <p>
- * @see remixlab.dandelion.addon.Constants.ClickAction
- * @see remixlab.dandelion.addon.Constants.DOF1Action
- * @see remixlab.dandelion.addon.Constants.DOF2Action
- * @see remixlab.dandelion.addon.Constants.DOF3Action
+ * @see remixlab.dandelion.branch.Constants.ClickAction
+ * @see remixlab.dandelion.branch.Constants.DOF1Action
+ * @see remixlab.dandelion.branch.Constants.DOF2Action
+ * @see remixlab.dandelion.branch.Constants.DOF3Action
  */
 public abstract class JoystickAgent extends MotionAgent<DOF3Action> {
 	protected float	xSens	= 1f;
 	protected float	ySens	= 1f;
 	protected float	zSens	= 1f;
 
-	public JoystickAgent(InteractiveScene scn, String n) {
+	public JoystickAgent(GenericScene scn, String n) {
 		super(scn, n);
 	}
 

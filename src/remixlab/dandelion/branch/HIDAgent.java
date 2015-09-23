@@ -8,22 +8,22 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.addon;
+package remixlab.dandelion.branch;
 
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.event.*;
-import remixlab.dandelion.addon.Constants.*;
+import remixlab.dandelion.branch.Constants.*;
 
 /**
  * A {@code MotionAgent<DOF6Action>}, such most joystick, supporting
- * {@link remixlab.dandelion.addon.Constants.ClickAction}s, and up to
- * {@link remixlab.dandelion.addon.Constants.DOF6Action}s actions.
+ * {@link remixlab.dandelion.branch.Constants.ClickAction}s, and up to
+ * {@link remixlab.dandelion.branch.Constants.DOF6Action}s actions.
  * <p>
- * @see remixlab.dandelion.addon.Constants.ClickAction
- * @see remixlab.dandelion.addon.Constants.DOF1Action
- * @see remixlab.dandelion.addon.Constants.DOF2Action
- * @see remixlab.dandelion.addon.Constants.DOF3Action
- * @see remixlab.dandelion.addon.Constants.DOF6Action
+ * @see remixlab.dandelion.branch.Constants.ClickAction
+ * @see remixlab.dandelion.branch.Constants.DOF1Action
+ * @see remixlab.dandelion.branch.Constants.DOF2Action
+ * @see remixlab.dandelion.branch.Constants.DOF3Action
+ * @see remixlab.dandelion.branch.Constants.DOF6Action
  */
 public abstract class HIDAgent extends MotionAgent<DOF6Action> {
 	protected float	xSens		= 1f;
@@ -33,7 +33,7 @@ public abstract class HIDAgent extends MotionAgent<DOF6Action> {
 	protected float	yrSens	= 1f;
 	protected float	zrSens	= 1f;
 
-	public HIDAgent(InteractiveScene scn, String n) {
+	public HIDAgent(GenericScene scn, String n) {
 		super(scn, n);
 		setGestureBinding(Target.EYE, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);
 		setGestureBinding(Target.FRAME, DOF6Action.TRANSLATE_XYZ_ROTATE_XYZ);

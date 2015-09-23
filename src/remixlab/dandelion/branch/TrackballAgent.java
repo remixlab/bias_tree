@@ -8,23 +8,23 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.addon;
+package remixlab.dandelion.branch;
 
 import remixlab.bias.event.*;
-import remixlab.dandelion.addon.Constants.*;
+import remixlab.dandelion.branch.Constants.*;
 
 /**
  * A {@code MotionAgent<DOF1Action>}, such as a trackball, supporting
- * {@link remixlab.dandelion.addon.Constants.ClickAction}s, and 
- * {@link remixlab.dandelion.addon.Constants.DOF1Action}s actions.
+ * {@link remixlab.dandelion.branch.Constants.ClickAction}s, and 
+ * {@link remixlab.dandelion.branch.Constants.DOF1Action}s actions.
  * <p>
- * @see remixlab.dandelion.addon.Constants.ClickAction
- * @see remixlab.dandelion.addon.Constants.DOF1Action
+ * @see remixlab.dandelion.branch.Constants.ClickAction
+ * @see remixlab.dandelion.branch.Constants.DOF1Action
  */
 public abstract class TrackballAgent extends MotionAgent<DOF1Action> {
 	protected float	xSens	= 1f;
 
-	public TrackballAgent(InteractiveScene scn, String n) {
+	public TrackballAgent(GenericScene scn, String n) {
 		super(scn, n);
 	}
 

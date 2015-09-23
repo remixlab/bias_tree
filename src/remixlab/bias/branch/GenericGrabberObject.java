@@ -1,77 +1,47 @@
-/**************************************************************************************
- * ProScene (version 3.0.0)
- * Copyright (c) 2010-2014 National University of Colombia, https://github.com/remixlab
+/*********************************************************************************
+ * bias_tree
+ * Copyright (c) 2014 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
- * 
- * All rights reserved. Library that eases the creation of interactive scenes
- * in Processing, released under the terms of the GNU Public License v3.0
+ *
+ * All rights reserved. Library that eases the creation of interactive
+ * scenes, released under the terms of the GNU Public License v3.0
  * which is available at http://www.gnu.org/licenses/gpl.html
- **************************************************************************************/
+ *********************************************************************************/
 
-package remixlab.proscene;
+package remixlab.bias.branch;
 
-import java.lang.reflect.Method;
-
-import processing.core.*;
-import remixlab.bias.addon.Action;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.core.GrabberScene;
 
 /**
- * {@link remixlab.proscene.InteractiveModel} object which eases third-party implementation of the
- * {@link remixlab.proscene.InteractiveModel} interface.
+ * Default implementation of the {@link remixlab.bias.branch.GenericGrabber} interface which eases implementation.
  * <p>
- * Based on the concrete event type, this model object splits the {@link #performInteraction(BogusEvent)} method
- * into more specific versions of it, e.g., {@link #performInteraction(DOF6Event)},
- * {@link #performInteraction(KeyboardEvent)} and so on. Thus allowing implementations of this abstract
- * InteractiveModelObject to override only those method signatures that might be of their interest.
+ * Based on the concrete event type, this interactive grabber object splits the {@link #checkIfGrabsInput(BogusEvent)}
+ * and the {@link #performInteraction(BogusEvent)} methods into more specific versions of them, e.g.,
+ * {@link #checkIfGrabsInput(ClickEvent)}, {@link #checkIfGrabsInput(DOF3Event)},
+ * {@link #performInteraction(DOF6Event)}, {@link #performInteraction(KeyboardEvent)} and so on. Thus 
+ * allowing implementations of this abstract interactive grabber object to override only those method signatures
+ * that might be of their interest.
  * <p>
- * This interactive model object implementation also provided an algorithm to parse an
- * {@link remixlab.bias.addon.Action} sequence from an init action variable, see {@link #processEvent(BogusEvent)}.
- *
- * @param <E> Reference action used to parameterize the {@link remixlab.proscene.InteractiveModel}
+ * This interactive grabber object implementation also provided an algorithm to parse an {@link remixlab.bias.branch.Action}
+ * sequence from an init action variable, see {@link #processEvent(BogusEvent)}.
  */
-public abstract class InteractiveModelObject<E extends Enum<E>> implements InteractiveModel<E> {
-	Action<E>					action;
-	protected Scene		proScene;
-	// protected Agent agent;
-	protected int			id;
-	protected PShape	pshape;
-	
-	// Draw	
-	protected Object						drawHandlerObject;
-	protected Method						drawHandlerMethod;
-	protected String						drawHandlerMethodName;
-		
+public abstract class GenericGrabberObject<E extends Enum<E>> implements GenericGrabber<E> {
+	Action<E>	action;
+
 	/**
-	 * Constructs a interactive-model-object with a null {@link #shape()} and adds it to the
-	 * {@link remixlab.proscene.Scene#models()} collection. Don't forget to call {@link #setShape(PShape)}.
-	 * Third-parties should also add the interactive-model-object into some agents, see
-	 * {@link remixlab.bias.addon.BranchAgent#addGrabber(InteractiveGrabber, Branch)}.
-	 * 
-	 * @see remixlab.proscene.Scene#addModel(Model)
-	 * @see #shape()
-	 * @see #setShape(PShape)
+	 * Empty constructor.
 	 */
-	public InteractiveModelObject(Scene scn) {
-		proScene = scn;
-		if (proScene.addModel(this))
-			id = ++Scene.modelCount;
+	public GenericGrabberObject() {
 	}
-	
+
 	/**
-	 * Wraps the pshape into this interactive-model-object and adds it to the
-	 * {@link remixlab.proscene.Scene#models()} collection. Third-parties should add the interactive-model-object
-	 * into some agents, see {@link remixlab.bias.addon.BranchAgent#addGrabber(InteractiveGrabber, Branch)}.
+	 * Constructs and adds this grabber to the agent pool.
 	 * 
-	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see remixlab.bias.core.Agent#grabbers()
 	 */
-	public InteractiveModelObject(Scene scn, PShape ps) {
-		proScene = scn;
-		pshape = ps;
-		if (proScene.addModel(this))
-			id = ++Scene.modelCount;
+	public GenericGrabberObject(GenericAgent agent, Branch<E> branch) {
+		agent.addGrabber(this, branch);
 	}
 
 	public E referenceAction() {
@@ -79,188 +49,13 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	}
 
 	@Override
-	public void setAction(Action<E> a) {
-		action = a;
-	}
-
-	@Override
 	public Action<E> action() {
 		return action;
 	}
 
-	/**
-	 * Replaces previous {@link #shape()} with {@code ps}.
-	 */
-	public void setShape(PShape ps) {
-		pshape = ps;
-	}
-	
-	public PShape unsetShape() {
-		PShape prev = pshape;
-		pshape = null;
-		return prev;
-	}
-
 	@Override
-	public PShape shape() {
-		return pshape;
-	}
-
-	/**
-	 * Same as {@code draw(scene.pg())}.
-	 * 
-	 * @see remixlab.proscene.Scene#drawModels(PGraphics)
-	 */
-	public void draw() {
-		if (shape() == null)
-			return;
-		PGraphics pg = proScene.pg();
-		draw(pg);
-	}
-
-	/*
-	@Override
-	public void draw(PGraphics pg) {
-		if (shape() == null)
-			return;
-		pg.pushStyle();
-		if (pg == proScene.pickingBuffer()) {
-			shape().disableStyle();
-			if(tex!=null) shape().noTexture();
-			pg.colorMode(PApplet.RGB, 255);
-			pg.fill(getColor());
-			pg.stroke(getColor());
-		}
-		pg.pushMatrix();
-		pg.shape(shape());
-		pg.popMatrix();
-		if (pg == proScene.pickingBuffer()) {
-			if(tex!=null) shape().texture(tex);
-			shape().enableStyle();
-		}
-		pg.popStyle();
-	}*/
-	
-	//TODO experimental
-	@Override
-	public void draw(PGraphics pg) {
-		if (shape() == null && !this.hasGraphicsHandler())
-			return;
-		pg.pushStyle();
-		if (pg == proScene.pickingBuffer()) {
-			if(shape()!=null) {
-				shape().disableStyle();
-			}
-			pg.colorMode(PApplet.RGB, 255);
-			pg.fill(getColor());
-			pg.stroke(getColor());
-		}
-		pg.pushMatrix();
-		if(shape()!=null)
-			pg.shape(shape());
-		if( this.hasGraphicsHandler() )
-			this.invokeGraphicsHandler(pg);
-		pg.popMatrix();
-		if (pg == proScene.pickingBuffer()) {
-			if(shape()!=null) {
-				shape().enableStyle();
-			}
-		}
-		pg.popStyle();
-	}
-	
-	@Override
-	public boolean checkIfGrabsInput(BogusEvent event) {
-		if (event instanceof KeyboardEvent)
-			return checkIfGrabsInput((KeyboardEvent) event);
-		if (event instanceof ClickEvent)
-			return checkIfGrabsInput((ClickEvent) event);
-		if (event instanceof MotionEvent)
-			return checkIfGrabsInput((MotionEvent) event);
-		return false;
-	}
-	
-	/**
-	 * Calls checkIfGrabsInput() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
-	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
-	 */
-	public boolean checkIfGrabsInput(MotionEvent event) {
-		if (event instanceof DOF1Event)
-			return checkIfGrabsInput((DOF1Event) event);
-		if (event instanceof DOF2Event)
-			return checkIfGrabsInput((DOF2Event) event);
-		if (event instanceof DOF3Event)
-			return checkIfGrabsInput((DOF3Event) event);
-		if (event instanceof DOF6Event)
-			return checkIfGrabsInput((DOF6Event) event);
-		return false;
-	}
-
-	/**
-	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.ClickEvent}. 
-	 */
-	protected boolean checkIfGrabsInput(ClickEvent event) {
-		return checkIfGrabsInput(event.x(), event.y());
-	}
-
-	/**
-	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.KeyboardEvent}. 
-	 */
-	protected boolean checkIfGrabsInput(KeyboardEvent event) {
-		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
-		return false;
-	}
-
-	/**
-	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF1Event}. 
-	 */
-	protected boolean checkIfGrabsInput(DOF1Event event) {
-		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
-		return false;
-	}
-
-	/**
-	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF2Event}. 
-	 */
-	protected boolean checkIfGrabsInput(DOF2Event event) {
-		if (event.isAbsolute()) {
-			System.out.println("Grabbing a gFrame is only possible from a relative MotionEvent or from a ClickEvent");
-			return false;
-		}
-		return checkIfGrabsInput(event.x(), event.y());
-	}
-
-
-	/**
-	 * An interactive-model-object is selected using <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
-     * with a color buffer (see {@link remixlab.proscene.Scene#pickingBuffer()}). This method compares the color of 
-     * the {@link remixlab.proscene.Scene#pickingBuffer()} at {@code (x,y)} with {@link #getColor()}.
-     * Returns true if both colors are the same, and false otherwise.
-	 */
-	public final boolean checkIfGrabsInput(float x, float y) {
-		if (shape() == null  && ! this.hasGraphicsHandler())
-			return false;
-		proScene.pickingBuffer().pushStyle();
-		proScene.pickingBuffer().colorMode(PApplet.RGB, 255);
-		int index = (int) y * proScene.width() + (int) x;
-		if ((0 <= index) && (index < proScene.pickingBuffer().pixels.length))
-			return proScene.pickingBuffer().pixels[index] == getColor();
-		proScene.pickingBuffer().popStyle();
-		return false;
-	}
-
-	/**
-	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF3Event}. 
-	 */
-	protected boolean checkIfGrabsInput(DOF3Event event) {
-		return checkIfGrabsInput(event.dof2Event());
-	}
-
-	/**
-	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF6Event}. 
-	 */
-	protected boolean checkIfGrabsInput(DOF6Event event) {
-		return checkIfGrabsInput(event.dof3Event().dof2Event());
+	public void setAction(Action<E> a) {
+		action = a;
 	}
 
 	/**
@@ -270,89 +65,6 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	public boolean grabsInput(Agent agent) {
 		return agent.inputGrabber() == this;
 	}
-	
-	/**
-	 * Checks if the frame grabs input from any agent registered at the scene input handler.
-	 */
-	public boolean grabsInput() {
-		for(Agent agent : proScene.inputHandler().agents()) {
-			if(agent.inputGrabber() == this)
-				return true;
-		}
-		return false;
-	}
-
-	protected int getColor() {
-		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
-		return proScene.pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
-	}
-	
-	// DRAW METHOD REG
-	
-	protected boolean invokeGraphicsHandler(PGraphics pg) {
-		// 3. Draw external registered method
-		if (drawHandlerObject != null) {
-			try {
-				drawHandlerMethod.invoke(drawHandlerObject, new Object[] { pg });
-				return true;
-			} catch (Exception e) {
-				PApplet.println("Something went wrong when invoking your " + drawHandlerMethodName + " method");
-				e.printStackTrace();
-				return false;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Attempt to add a 'draw' handler method to the InteractiveFrame. The default event handler is a method that returns void and
-	 * has one single PGraphics parameter.
-	 * 
-	 * @param obj
-	 *          the object to handle the event
-	 * @param methodName
-	 *          the method to execute in the object handler class
-	 * 
-	 * @see #removeGraphicsHandler()
-	 * @see #invokeGraphicsHandler(PGraphics)
-	 */
-	public void addGraphicsHandler(Object obj, String methodName) {
-		try {
-			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-			//drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { });
-			drawHandlerObject = obj;
-			drawHandlerMethodName = methodName;
-		} catch (Exception e) {
-			PApplet.println("Something went wrong when registering your " + methodName + " method");
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Unregisters the 'draw' handler method (if any has previously been added to the Scene).
-	 * 
-	 * @see #addGraphicsHandler(Object, String)
-	 * @see #invokeGraphicsHandler(PGraphics)
-	 */
-	public void removeGraphicsHandler() {
-		drawHandlerMethod = null;
-		drawHandlerObject = null;
-		drawHandlerMethodName = null;
-	}
-
-	/**
-	 * Returns {@code true} if the user has registered a 'draw' handler method to the Scene and {@code false} otherwise.
-	 * 
-	 * @see #addGraphicsHandler(Object, String)
-	 * @see #invokeGraphicsHandler(PGraphics)
-	 */
-	public boolean hasGraphicsHandler() {
-		if (drawHandlerMethodName == null)
-			return false;
-		return true;
-	}
-
-	// new is good
 
 	@Override
 	public void performInteraction(BogusEvent event) {
@@ -434,10 +146,82 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		// AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
 	}
 
-	Action<E>	initAction;
-	
+	@Override
+	public boolean checkIfGrabsInput(BogusEvent event) {
+		if (event instanceof KeyboardEvent)
+			return checkIfGrabsInput((KeyboardEvent) event);
+		if (event instanceof ClickEvent)
+			return checkIfGrabsInput((ClickEvent) event);
+		if (event instanceof MotionEvent)
+			return checkIfGrabsInput((MotionEvent) event);
+		return false;
+	}
+
 	/**
-	 * Internal use. Algorithm to split a gesture flow into a 'three-tempi' {@link remixlab.bias.addon.Action} sequence.
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.KeyboardEvent}. 
+	 */
+	protected boolean checkIfGrabsInput(KeyboardEvent event) {
+		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)",
+		// this.getClass().getName());
+		return false;
+	}
+
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.ClickEvent}. 
+	 */
+	protected boolean checkIfGrabsInput(ClickEvent event) {
+		// AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(ClickEvent event)", this.getClass().getName());
+		return false;
+	}
+
+	/**
+	 * Calls checkIfGrabsInput() on the proper motion event: {@link remixlab.bias.event.DOF1Event},
+	 * {@link remixlab.bias.event.DOF2Event}, {@link remixlab.bias.event.DOF3Event} or {@link remixlab.bias.event.DOF6Event}.
+	 */
+	public boolean checkIfGrabsInput(MotionEvent event) {
+		if (event instanceof DOF1Event)
+			return checkIfGrabsInput((DOF1Event) event);
+		if (event instanceof DOF2Event)
+			return checkIfGrabsInput((DOF2Event) event);
+		if (event instanceof DOF3Event)
+			return checkIfGrabsInput((DOF3Event) event);
+		if (event instanceof DOF6Event)
+			return checkIfGrabsInput((DOF6Event) event);
+		return false;
+	}
+
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF1Event}. 
+	 */
+	protected boolean checkIfGrabsInput(DOF1Event event) {
+		return false;
+	}
+
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF2Event}. 
+	 */
+	protected boolean checkIfGrabsInput(DOF2Event event) {
+		return false;
+	}
+
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF3Event}. 
+	 */
+	protected boolean checkIfGrabsInput(DOF3Event event) {
+		return false;
+	}
+
+	/**
+	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF6Event}. 
+	 */
+	protected boolean checkIfGrabsInput(DOF6Event event) {
+		return false;
+	}
+
+	Action<E>	initAction;
+
+	/**
+	 * Internal use. Algorithm to split a gesture flow into a 'three-tempi' {@link remixlab.bias.branch.Action} sequence.
 	 * Call it like this (see {@link #performInteraction(BogusEvent)}):
 	 * <pre>
      * {@code
@@ -476,13 +260,13 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 				if (initAction == action())
 					return execAction(event);// continue action
 				else { // initAction != action() -> action changes abruptly, i.e.,
-					// System.out.println("case 1");
+					// System.out.println("case 1 in frame: action() != null && initAction != null (action changes abruptely, calls flush)");
 					flushAction(event);
 					return initAction(event);// start action
 				}
 			}
 			else {// action() == null
-				// System.out.println("case 2");
+				// System.out.println("case 2 in frame: action() == null && initAction != null (ends action, calls flush)");
 				flushAction(event);// stopAction
 				initAction = null;
 				//setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
@@ -573,6 +357,9 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 		return false;
 	}
 
+	/**
+	 * Calls execAction() on the proper event type. Returns true when succeeded and false otherwise.
+	 */
 	protected boolean execAction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
 			return execAction((KeyboardEvent) event);
@@ -584,7 +371,8 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	}
 
 	/**
-	 * Calls execAction() on the proper event type. Returns true when succeeded and false otherwise.
+	 * Override this method when you want the object to execute an action from a
+	 * {@link remixlab.bias.event.DOF1Event}. 
 	 */
 	protected boolean execAction(KeyboardEvent event) {
 		// AbstractScene.showMissingImplementationWarning("execAction(KeyboardEvent event)",
@@ -698,7 +486,6 @@ public abstract class InteractiveModelObject<E extends Enum<E>> implements Inter
 	protected void flushAction(DOF1Event event) {
 
 	}
-
 
 	/**
 	 * Override this method when you want the object to flush an action from a

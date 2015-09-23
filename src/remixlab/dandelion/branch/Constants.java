@@ -8,9 +8,9 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.addon;
+package remixlab.dandelion.branch;
 
-import remixlab.bias.addon.Action;
+import remixlab.bias.branch.Action;
 
 //TODO fix docs
 public interface Constants {

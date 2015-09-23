@@ -8,24 +8,24 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.dandelion.addon;
+package remixlab.dandelion.branch;
 
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import remixlab.bias.addon.Profile;
+import remixlab.bias.branch.Profile;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.addon.Constants.*;
+import remixlab.dandelion.branch.Constants.*;
 
 /**
  * A {@code MotionAgent<DOF2Action>}, such as most mice, supporting
- * {@link remixlab.dandelion.addon.Constants.ClickAction}s, and up to
- * {@link remixlab.dandelion.addon.Constants.DOF2Action}s actions.
+ * {@link remixlab.dandelion.branch.Constants.ClickAction}s, and up to
+ * {@link remixlab.dandelion.branch.Constants.DOF2Action}s actions.
  * <p>
- * @see remixlab.dandelion.addon.Constants.ClickAction
- * @see remixlab.dandelion.addon.Constants.DOF1Action
- * @see remixlab.dandelion.addon.Constants.DOF2Action
+ * @see remixlab.dandelion.branch.Constants.ClickAction
+ * @see remixlab.dandelion.branch.Constants.DOF1Action
+ * @see remixlab.dandelion.branch.Constants.DOF2Action
  */
 public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	protected float		xSens		= 1f;
@@ -35,7 +35,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	 * Creates a mouse agent and appends the {@link #eyeBranch()} and {@link #frameBranch()} to it.
 	 * The mouse agent is added to the {@link remixlab.dandelion.core.GrabberScene#inputHandler()}.
 	 */
-	public WheeledMouseAgent(InteractiveScene scn, String n) {
+	public WheeledMouseAgent(GenericScene scn, String n) {
 		super(scn, n);
 	}
 
@@ -444,7 +444,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action)}.
 	 *
-	 * @see remixlab.dandelion.addon.MotionAgent#setBinding(Target, MotionShortcut, Action)
+	 * @see remixlab.dandelion.branch.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setGestureBinding(Target target, DOF2Action action) {
 		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, BogusEvent.NO_ID), action);
@@ -453,7 +453,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code setBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID), action)}.
 	 * 
-	 * @see remixlab.dandelion.addon.MotionAgent#setBinding(Target, MotionShortcut, Action)
+	 * @see remixlab.dandelion.branch.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setGestureBinding(Target target, int mask, DOF2Action action) {
 		setBinding(target, new MotionShortcut(mask, BogusEvent.NO_ID), action);
@@ -518,7 +518,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code setBinding(target, new MotionShortcut(mask, button), action)}.
 	 * 
-	 * @see remixlab.dandelion.addon.MotionAgent#setBinding(Target, MotionShortcut, Action)
+	 * @see remixlab.dandelion.branch.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setButtonBinding(Target target, int mask, int button, DOF2Action action) {
 		setBinding(target, new MotionShortcut(mask, button), action);
@@ -527,7 +527,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, button), action)}.
 	 * 
-	 * @see remixlab.dandelion.addon.MotionAgent#setBinding(Target, MotionShortcut, Action)
+	 * @see remixlab.dandelion.branch.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setButtonBinding(Target target, int button, DOF2Action action) {
 		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, button), action);
@@ -592,7 +592,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code setBinding(target, new MotionShortcut(mask, WHEEL_ID), action.dof2Action())}.
 	 * 
-	 * @see remixlab.dandelion.addon.MotionAgent#setBinding(Target, MotionShortcut, Action)
+	 * @see remixlab.dandelion.branch.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setWheelBinding(Target target, int mask, DOF1Action action) {
 		setBinding(target, new MotionShortcut(mask, WHEEL_ID), action.dof2Action());
@@ -601,7 +601,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID), action.dof2Action())}.
 	 * 
-	 * @see remixlab.dandelion.addon.MotionAgent#setBinding(Target, MotionShortcut, Action)
+	 * @see remixlab.dandelion.branch.MotionAgent#setBinding(Target, MotionShortcut, Action)
 	 */
 	public void setWheelBinding(Target target, DOF1Action action) {
 		setBinding(target, new MotionShortcut(MotionEvent.NO_MODIFIER_MASK, WHEEL_ID), action.dof2Action());
@@ -660,7 +660,7 @@ public abstract class WheeledMouseAgent extends MotionAgent<DOF2Action> {
 	/**
 	 * Same as {@code return isActionBound(target, action.dof2Action())}.
 	 * 
-	 * @see remixlab.dandelion.addon.MotionAgent#isActionBound(Target, Action)
+	 * @see remixlab.dandelion.branch.MotionAgent#isActionBound(Target, Action)
 	 */
 	public boolean isWheelActionBound(Target target, DOF1Action action) {
 		return isActionBound(target, action.dof2Action());

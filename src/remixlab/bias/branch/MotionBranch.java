@@ -8,30 +8,30 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.addon;
+package remixlab.bias.branch;
 
 import remixlab.bias.event.*;
 
 /**
- * A {@link remixlab.bias.addon.Branch} with a {@link #motionProfile()}, defining some
+ * A {@link remixlab.bias.branch.Branch} with a {@link #motionProfile()}, defining some
  * {@link remixlab.bias.event.MotionShortcut} / (motion) action mappings; and a {@link #clickProfile()},
  * defining some {@link remixlab.bias.event.ClickShortcut} / (click) action mappings. Motion branches
- * may be appended only to an {@link remixlab.bias.addon.MotionBranchAgent}. See
- * {@link remixlab.bias.addon.MotionBranchAgent#appendBranch(String)}.
+ * may be appended only to an {@link remixlab.bias.branch.GenericMotionAgent}. See
+ * {@link remixlab.bias.branch.GenericMotionAgent#appendBranch(String)}.
  * <p>
  * <b>Note</b> that all the methods provided here are simply wrappers to the {@link #motionProfile()} and
- * {@link #clickProfile()}. See {@link remixlab.bias.addon.Profile}.
+ * {@link #clickProfile()}. See {@link remixlab.bias.branch.Profile}.
  *
  * @param <E> Reference action enum.
  * @param <A> Motion action enum sub-group.
  * @param <C> Click/tap action enum sub-group.
  */
 public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Action<E>> extends Branch<E> {
-	MotionBranchAgent motionAgent;
+	GenericMotionAgent motionAgent;
 	protected Profile<E, MotionShortcut, A>	motionProfile;
 	protected Profile<E, ClickShortcut, C>	clickProfile;
 	
-	protected MotionBranch(MotionBranchAgent a, String n) {
+	protected MotionBranch(GenericMotionAgent a, String n) {
 		super(a, n);
 		motionAgent = a;
 		motionProfile = new Profile<E, MotionShortcut, A>();
@@ -55,14 +55,14 @@ public class MotionBranch<E extends Enum<E>, A extends Action<E>, C extends Acti
 	}
 	
 	/**
-	 * Returns the motion {@link remixlab.bias.addon.Profile} instance.
+	 * Returns the motion {@link remixlab.bias.branch.Profile} instance.
 	 */
 	public Profile<E, MotionShortcut, A> motionProfile() {
 		return motionProfile;
 	}
 
 	/**
-	 * Returns the click {@link remixlab.bias.addon.Profile} instance.
+	 * Returns the click {@link remixlab.bias.branch.Profile} instance.
 	 */
 	public Profile<E, ClickShortcut, C> clickProfile() {
 		return clickProfile;

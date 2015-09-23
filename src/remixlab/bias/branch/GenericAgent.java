@@ -1,4 +1,4 @@
-package remixlab.bias.addon;
+package remixlab.bias.branch;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,23 +13,23 @@ import remixlab.bias.event.MotionEvent;
 
 /**
  * A {@link remixlab.bias.core.Agent} extended with branches, see
- * {@link remixlab.bias.addon.MotionBranchAgent#appendBranch(String)},
- * {@link remixlab.bias.addon.KeyboardBranchAgent#appendBranch(String)}.
+ * {@link remixlab.bias.branch.GenericMotionAgent#appendBranch(String)},
+ * {@link remixlab.bias.branch.GenericKeyboardAgent#appendBranch(String)}.
  * <p>
  * For branch handling refer to methods such
  * as {@link #pruneBranch(Branch)}, {@link #branches()}, {@link #branch(Grabber)} and others. Branches enable the agent
- * to parse bogus-events into {@link remixlab.bias.addon.InteractiveGrabber} object {@link remixlab.bias.addon.Action}s
- * (see {@link #addGrabber(InteractiveGrabber, Branch)}). Please refer to the {@link remixlab.bias.addon.Branch} and the
- * {@link remixlab.bias.addon.InteractiveGrabber} documentations for details.
+ * to parse bogus-events into {@link remixlab.bias.branch.GenericGrabber} object {@link remixlab.bias.branch.Action}s
+ * (see {@link #addGrabber(GenericGrabber, Branch)}). Please refer to the {@link remixlab.bias.branch.Branch} and the
+ * {@link remixlab.bias.branch.GenericGrabber} documentations for details.
  */
-public abstract class BranchAgent extends Agent {
+public abstract class GenericAgent extends Agent {
 	protected List<Branch<?>>		brnchs;
 	protected Branch<?>				trackedGrabberBranch, defaultGrabberBranch;
 
 	/**
 	 * Constructs a BranchAgent with the given name and registers is at the given inputHandler.
 	 */
-	public BranchAgent(InputHandler inputHandler, String name) {
+	public GenericAgent(InputHandler inputHandler, String name) {
 		super(inputHandler, name);
 		brnchs = new ArrayList<Branch<?>>();
 	}
@@ -64,7 +64,7 @@ public abstract class BranchAgent extends Agent {
 
 	@Override
 	public boolean addGrabber(Grabber grabber) {
-		if (grabber instanceof InteractiveGrabber) {
+		if (grabber instanceof GenericGrabber) {
 			System.err.println("use addGrabber(G grabber, K Branch) instead");
 			return false;
 		}
@@ -74,14 +74,14 @@ public abstract class BranchAgent extends Agent {
 	/**
 	 * Returns the branch list of interactive-grabber objects.
 	 * 
-	 * @see #addGrabber(InteractiveGrabber, Branch)
+	 * @see #addGrabber(GenericGrabber, Branch)
 	 * @see #removeGrabber(Grabber)
 	 * @see #addGrabber(Grabber)
 	 * @see #hasGrabber(Grabber)
 	 * @see #removeGrabbers()
 	 * @see #grabbers()
 	 */
-	public <E extends Enum<E>> List<InteractiveGrabber<E>> grabbers(Branch<E> branch) {
+	public <E extends Enum<E>> List<GenericGrabber<E>> grabbers(Branch<E> branch) {
 		return branch.grabbers();
 	}
 	
@@ -95,7 +95,7 @@ public abstract class BranchAgent extends Agent {
 	 * @see #grabbers()
 	 * @see #grabbers(Branch)
 	 */
-	public <E extends Enum<E>, K extends Branch<E>, G extends InteractiveGrabber<E>> boolean addGrabber(G grabber, K branch) {
+	public <E extends Enum<E>, K extends Branch<E>, G extends GenericGrabber<E>> boolean addGrabber(G grabber, K branch) {
 		if(branch == null)
 			return false;
 		if (!hasBranch(branch)) {
@@ -261,7 +261,7 @@ public abstract class BranchAgent extends Agent {
 		if(super.updateTrackedGrabber(event) == null) {
 			trackedGrabberBranch = null;//this seems an important line :p 
 			for (Branch<?> branch : brnchs) {
-				InteractiveGrabber<?> iGrabber = branch.updateTrackedGrabber(event);
+				GenericGrabber<?> iGrabber = branch.updateTrackedGrabber(event);
 				if(iGrabber != null) {
 					trackedGrabber = iGrabber;
 					this.trackedGrabberBranch = branch;
@@ -278,7 +278,7 @@ public abstract class BranchAgent extends Agent {
 	 * (which is scheduled for execution till the end of this main event loop iteration, see
 	 * {@link remixlab.bias.core.InputHandler#enqueueEventTuple(EventGrabberTuple)} for details).
 	 * <p>
-	 * If {@link #inputGrabber()} is instance of {@link remixlab.bias.addon.InteractiveGrabber} an
+	 * If {@link #inputGrabber()} is instance of {@link remixlab.bias.branch.GenericGrabber} an
 	 * InteractiveEventGrabberTuple<E>(event, grabber, action) is enqueued instead. Note that the agent
 	 * uses its branches to find the action that's is to be enqueued in this case.
 	 * 
@@ -297,7 +297,7 @@ public abstract class BranchAgent extends Agent {
 			((MotionEvent) event).modulate(sensitivities((MotionEvent) event));
 		Grabber inputGrabber = inputGrabber();
 		if (inputGrabber != null) {
-			if (inputGrabber instanceof InteractiveGrabber<?>) {
+			if (inputGrabber instanceof GenericGrabber<?>) {
 				Branch<?> t = trackedGrabber() != null ? trackedGrabberBranch : defaultGrabberBranch;
 				return trackedGrabber() != null ? t.handleTrackedGrabber(event) : t.handleDefaultGrabber(event);
 			}
