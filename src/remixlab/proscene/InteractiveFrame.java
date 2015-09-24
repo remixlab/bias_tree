@@ -29,7 +29,7 @@ import remixlab.util.*;
  * @see remixlab.proscene.Model
  * @see remixlab.dandelion.branch.GenericFrame
  */
-public class InteractiveFrame extends GenericFrame implements Model /*, Constants */ {
+public class InteractiveFrame extends GenericFrame implements Model {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).

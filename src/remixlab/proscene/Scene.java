@@ -80,7 +80,7 @@ import java.nio.FloatBuffer;
  * {@link #removeModels()}, {@link #hasModel(Model)}, {@link #removeModel(Model)}, {@link #removeModels()},
  * {@link #drawModels()} and {@link #drawModels(PGraphics)} for model handling.
  */
-public class Scene extends GenericScene implements /*Constants,*/ PConstants {
+public class Scene extends GenericScene implements PConstants {
 	// begin: GWT-incompatible
 	// /*
 	// Reflection
