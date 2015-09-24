@@ -1108,26 +1108,9 @@ public class Scene extends GenericScene implements /*Constants,*/ PConstants {
 		pickingBuffer().beginDraw();
 		pickingBuffer().pushStyle();
 		pickingBuffer().background(0);
-		
-		boolean needLoading = false;
-		/*
-		for (Model model : models())
-			if(model.shape() != null || model.hasGraphicsHandler()) {
-				needLoading = true;
-				break;
-			}		
-		if (models().size() > 0)
-		*/
-			/*needLoading =*/ 
-		//drawModels(pickingBuffer());
-		
-		bindMatrices(pickingBuffer());
-		// 2. Draw all models into pgraphics
-		for (Model model : models())
-			if(model.draw(pickingBuffer()))
-				needLoading = true;
-
-		
+		boolean needLoading = models().size() > 0;
+		if(needLoading)
+			needLoading = drawModels(pickingBuffer());	
 		pickingBuffer().popStyle();
 		pickingBuffer().endDraw();
 		if (models().size() > 0 && needLoading)
@@ -1254,6 +1237,8 @@ public class Scene extends GenericScene implements /*Constants,*/ PConstants {
 	/**
 	 * Draw all scene {@link #models()}. Same as: {@code for (Model model : models()) model.draw(pg());}.
 	 * <p>
+	 * Returns {@code true} if at least a model get drawn.
+	 * <p>
 	 * Note that {@code drawModels()} should be call by you, most likely from within your sketch main
 	 * drawing loop (i.e., The P).
 	 * 
@@ -1262,21 +1247,21 @@ public class Scene extends GenericScene implements /*Constants,*/ PConstants {
 	 * @see #drawModels(PGraphics)
 	 * @see #addModel(Model)
 	 * @see #removeModel(Model)
+	 * @see remixlab.proscene.Model#draw(PGraphics)
 	 */
-	public void drawModels() {
-		for (Model model : models())
-			model.draw(pg());
-		/*
+	public boolean drawModels() {
 		boolean result = false;
 		for (Model model : models())
-			result = (result || model.draw(pg()));
+			if(model.draw(pg()))
+				result = true;
 		return result;
-		*/
 	}
 
 	/**
 	 * Draw all {@link #models()} into the given pgraphics. No {@code pgraphics.beginDraw()/endDraw()} calls take place.
 	 * This method allows shader chaining.
+	 * <p>
+	 * Returns {@code true} if at least a model get drawn.
 	 * <p>
 	 * Note that {@code drawModels(pickingBuffer())} (which enables 'picking' of the models using a
 	 * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> technique is called by {@link #post()}.
@@ -1287,23 +1272,17 @@ public class Scene extends GenericScene implements /*Constants,*/ PConstants {
 	 * @see #drawModels()
 	 * @see #addModel(Model)
 	 * @see #removeModel(Model)
+	 * @see remixlab.proscene.Model#draw(PGraphics)
 	 */
-	public void drawModels(PGraphics pgraphics) {
+	public boolean drawModels(PGraphics pgraphics) {
 		// 1. Set pgraphics matrices using a custom MatrixHelper
-		bindMatrices(pgraphics);
-
-		// 2. Draw all models into pgraphics
-		for (Model model : models())
-			model.draw(pgraphics);
-		/*
-		// 1. Set pgraphics matrices using a custom MatrixHelper
-		bindMatrices(pgraphics);
+		bindMatrices(pgraphics);		
 		boolean result = false;
 		// 2. Draw all models into pgraphics
 		for (Model model : models())
-			result = (result || model.draw(pg()));
+			if(model.draw(pgraphics))
+				result = true;		
 		return result;
-		*/
 	}
 
 	/**
