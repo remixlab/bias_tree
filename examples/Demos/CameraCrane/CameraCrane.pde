@@ -16,9 +16,7 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.addon.*;
-import remixlab.dandelion.addon.Constants.*;
+import remixlab.dandelion.branch.Constants.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.constraint.*;
 
@@ -77,8 +75,8 @@ public void setup() {
 // off-screen rendering
 public void draw() {
   handleMouse();
-  GrabberFrame.sync(armScene.camera().frame(), armCam.frame(5));
-  GrabberFrame.sync(heliScene.camera().frame(), heliCam.frame(3));
+  InteractiveFrame.sync(armScene.camera().frame(), armCam.frame(5));
+  InteractiveFrame.sync(heliScene.camera().frame(), heliCam.frame(3));
   canvas.beginDraw();
   mainScene.beginDraw();
   drawing(mainScene);

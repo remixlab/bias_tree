@@ -16,12 +16,9 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.bias.core.*;
-import remixlab.bias.addon.*;
+import remixlab.bias.branch.*;
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.addon.*;
-import remixlab.dandelion.addon.Constants.*;
+import remixlab.dandelion.branch.Constants.*;
 
 Scene scene;
 InteractiveTorus [] toruses;

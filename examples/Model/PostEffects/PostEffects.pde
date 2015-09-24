@@ -15,7 +15,7 @@ boolean bdepth, brays, bpixel, bedge, bdof, bkaleido, bnoise, bfxaa, bhorizontal
 color cols[];
 float posns[];
 int startTime;
-InteractiveModelFrame[] models;
+InteractiveFrame[] models;
 PFont font;
 
 public void setup() {
@@ -33,9 +33,9 @@ public void setup() {
   }  
   graphics = createGraphics(width, height, P3D);  
   scene = new Scene(this, graphics);
-  models = new InteractiveModelFrame[100];
+  models = new InteractiveFrame[100];
   for (int i = 0; i < models.length; i++) {
-    models[i] = new InteractiveModelFrame(scene, boxShape());
+    models[i] = new InteractiveFrame(scene, boxShape());
     models[i].translate(posns[3*i], posns[3*i+1], posns[3*i+2]);
     pushStyle();
     colorMode(HSB, 255);
@@ -229,4 +229,6 @@ void keyPressed() {
     brays = !brays;
   if(key=='9')
     bfxaa = !bfxaa;
+  if(key == ' ')
+    scene.togglePickingBuffer();
 }

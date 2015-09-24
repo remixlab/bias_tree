@@ -29,7 +29,6 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.core.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 

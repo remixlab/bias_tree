@@ -12,7 +12,7 @@ PGraphics srcPGraphics, depthPGraphics, dofPGraphics;
 Scene scene;
 color cols[];
 float posns[];
-InteractiveModelFrame[] models;
+InteractiveFrame[] models;
 int mode = 2;
 
 void setup() {
@@ -29,10 +29,10 @@ void setup() {
 
   srcPGraphics = createGraphics(width, height, P3D);
   scene = new Scene(this, srcPGraphics);
-  models = new InteractiveModelFrame[100];
+  models = new InteractiveFrame[100];
 
   for (int i = 0; i < models.length; i++) {
-    models[i] = new InteractiveModelFrame(scene, boxShape());
+    models[i] = new InteractiveFrame(scene, boxShape());
     models[i].translate(posns[3*i], posns[3*i+1], posns[3*i+2]);
     models[i].shape().setFill(cols[i]);
   }

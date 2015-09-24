@@ -13,8 +13,8 @@ import java.util.Vector;
 
 import TUIO.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.addon.*;
-import remixlab.dandelion.addon.Constants.*;
+import remixlab.dandelion.branch.*;
+import remixlab.dandelion.branch.Constants.*;
 import remixlab.dandelion.geom.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;

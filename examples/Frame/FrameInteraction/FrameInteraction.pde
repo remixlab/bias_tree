@@ -15,8 +15,6 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.addon.*;
-import remixlab.dandelion.addon.Constants.*;
 
 Scene scene;
 InteractiveFrame iFrame;

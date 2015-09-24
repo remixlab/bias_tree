@@ -14,12 +14,9 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.addon.*;
-import remixlab.dandelion.addon.Constants.*;
 
 Scene scene;
-KeyboardAgent keyboard;
+KeyAgent keyboard;
 InteractiveFrame iFrame;
 
 //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
@@ -28,7 +25,7 @@ String renderer = P3D;
 void setup() {
   size(640, 360, renderer);
   scene = new Scene(this);
-  keyboard = scene.keyboardAgent();
+  keyboard = scene.keyAgent();
   iFrame = new InteractiveFrame(scene);
   iFrame.translate(30, 30);
   setExoticCustomization();
@@ -70,23 +67,23 @@ public <T extends Enum<?>> T randomAction(Class<T> actionClass) {
 public void setExoticCustomization() {
   // 1. Scene
   // 1a. Randomless:
-  keyboard.setBinding(Event.CTRL, 'a', SceneAction.TOGGLE_GRID_VISUAL_HINT);
+  keyboard.setBinding(Event.CTRL, 'a', Scene.SceneAction.TOGGLE_GRID_VISUAL_HINT);
   // 1b. Random
-  keyboard.setBinding('a', randomAction(SceneAction.class)); //<>//
+  keyboard.setBinding('a', randomAction(Scene.SceneAction.class)); //<>//
   // 2. Frame:
-  keyboard.setBinding(Target.FRAME, 'x', KeyboardAction.ROTATE_X_POS);
-  keyboard.setBinding(Target.FRAME, Event.SHIFT, 'x', KeyboardAction.ROTATE_X_NEG);
-  keyboard.setBinding(Target.FRAME, 'y', KeyboardAction.ROTATE_Y_POS);
-  keyboard.setBinding(Target.FRAME, Event.SHIFT, 'y', KeyboardAction.ROTATE_Y_NEG);
-  keyboard.setBinding(Target.FRAME, 'z', KeyboardAction.ROTATE_Z_POS);
-  keyboard.setBinding(Target.FRAME, Event.SHIFT, 'z', KeyboardAction.ROTATE_Z_NEG);
+  keyboard.setBinding(Scene.Target.FRAME, 'x', Scene.KeyboardAction.TRANSLATE_X_POS);
+  keyboard.setBinding(Scene.Target.FRAME, Event.SHIFT, 'x', Scene.KeyboardAction.TRANSLATE_X_NEG);
+  keyboard.setBinding(Scene.Target.FRAME, 'y', Scene.KeyboardAction.TRANSLATE_Y_POS);
+  keyboard.setBinding(Scene.Target.FRAME, Event.SHIFT, 'y', Scene.KeyboardAction.TRANSLATE_Y_NEG);
+  keyboard.setBinding(Scene.Target.FRAME, 'z', Scene.KeyboardAction.TRANSLATE_Z_POS);
+  keyboard.setBinding(Scene.Target.FRAME, Event.SHIFT, 'z', Scene.KeyboardAction.TRANSLATE_Z_NEG);
   // 3. Eye
-  keyboard.setBinding(Target.EYE, 'x', KeyboardAction.ROTATE_X_POS);
-  keyboard.setBinding(Target.EYE, Event.SHIFT, 'x', KeyboardAction.ROTATE_X_NEG);
-  keyboard.setBinding(Target.EYE, 'y', KeyboardAction.ROTATE_Y_POS);
-  keyboard.setBinding(Target.EYE, Event.SHIFT, 'y', KeyboardAction.ROTATE_Y_NEG);
-  keyboard.setBinding(Target.EYE, 'z', KeyboardAction.ROTATE_Z_POS);
-  keyboard.setBinding(Target.EYE, Event.SHIFT, 'z', KeyboardAction.ROTATE_Z_NEG);    
+  keyboard.setBinding(Scene.Target.EYE, 'x', Scene.KeyboardAction.ROTATE_X_POS);
+  keyboard.setBinding(Scene.Target.EYE, Event.SHIFT, 'x', Scene.KeyboardAction.ROTATE_X_NEG);
+  keyboard.setBinding(Scene.Target.EYE, 'y', Scene.KeyboardAction.ROTATE_Y_POS);
+  keyboard.setBinding(Scene.Target.EYE, Event.SHIFT, 'y', Scene.KeyboardAction.ROTATE_Y_NEG);
+  keyboard.setBinding(Scene.Target.EYE, 'z', Scene.KeyboardAction.ROTATE_Z_POS);
+  keyboard.setBinding(Scene.Target.EYE, Event.SHIFT, 'z', Scene.KeyboardAction.ROTATE_Z_NEG);    
 }
 
 public void keyPressed() {

@@ -1,6 +1,6 @@
 /**
  * Kinematics.
- * by Juan Pablo Bonilla and Julián Durán. 
+ * by Juan Pablo Bonilla and Juli??n Dur??n. 
  * 
  * A example about kinematics for SCARA ROBOT
  * References: https://sites.google.com/site/proyectosroboticos/cinematica-inversa-i
@@ -12,8 +12,6 @@
  */
  
 import remixlab.proscene.*;
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.addon.*;
 
 PShape base_robot; 
 PShape link_one;

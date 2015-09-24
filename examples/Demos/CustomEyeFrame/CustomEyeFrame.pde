@@ -10,11 +10,10 @@
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 
-import remixlab.bias.core.*;
-import remixlab.bias.event.*;
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.geom.*;
 import remixlab.proscene.*;
+import remixlab.bias.core.*;
+import remixlab.dandelion.core.*;
+import remixlab.bias.event.*;
 
 public class CustomFrame extends GrabberFrame {
   public CustomFrame(Scene _scn) {

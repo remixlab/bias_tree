@@ -9,8 +9,6 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.addon.*;
 
 Scene scene, auxScene;
 PGraphics canvas, auxCanvas;  
@@ -53,9 +51,9 @@ public void setup() {
 
 public void draw() {
   handleMouse();
-  GrabberFrame.sync(frame1, auxFrame1);
-  GrabberFrame.sync(frame2, auxFrame2);
-  GrabberFrame.sync(frame3, auxFrame3);
+  InteractiveFrame.sync(frame1, auxFrame1);
+  InteractiveFrame.sync(frame2, auxFrame2);
+  InteractiveFrame.sync(frame3, auxFrame3);
   canvas.beginDraw();
   scene.beginDraw();
   canvas.background(0);

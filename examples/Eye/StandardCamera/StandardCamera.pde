@@ -15,8 +15,8 @@
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.addon.*;
-import remixlab.dandelion.addon.Constants.*;
+import remixlab.dandelion.branch.Constants.*;
+import remixlab.dandelion.branch.*;
 
 Scene scene, auxScene;
 PGraphics canvas, auxCanvas;
@@ -129,7 +129,7 @@ public class StdCamera extends Camera {
     super(scn);
     // camera frame is a gFrame by default, but we want an iFrame
     // to bind 'u' and 'v' actions to it
-    setFrame(new InteractiveFrame(this));
+    setFrame(new GenericFrame(this));
     standard = false;
   }
 

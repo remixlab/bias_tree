@@ -8,12 +8,10 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.addon.*;
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.addon.Constants.*;
 
 Scene scene;
-InteractiveAvatarFrame iFrame;
+InteractiveFrame iFrame;
 boolean displayPaths = true;
 Point fCorner = new Point();
 
@@ -23,11 +21,11 @@ String renderer = P3D;
 public void setup() {
   size(640, 360, renderer);
   scene = new CustomizedScene(this);
-  iFrame = new InteractiveAvatarFrame(scene);
+  iFrame = new InteractiveFrame(scene);
   iFrame.setGrabsInputThreshold(scene.radius()/4, true);
   iFrame.translate(30, -30, 0);
   scene.keyboardAgent().removeBinding('r');
-  scene.keyboardAgent().setBinding('u', SceneAction.TOGGLE_PATHS_VISUAL_HINT);
+  scene.keyboardAgent().setBinding('u', Scene.SceneAction.TOGGLE_PATHS_VISUAL_HINT);
   scene.setNonSeqTimers();
   scene.setVisualHints(Scene.AXES | Scene.GRID | Scene.PICKING | Scene.PATHS);
   //create a eye path and add some key frames:

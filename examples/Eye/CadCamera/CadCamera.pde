@@ -12,8 +12,7 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.addon.Constants.*;
+import remixlab.dandelion.branch.Constants.*;
 
 Scene scene;
 

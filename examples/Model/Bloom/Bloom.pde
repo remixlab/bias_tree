@@ -13,7 +13,7 @@ Scene SrcScene;
 boolean original;
 color cols[];
 float posns[], kernel[];
-InteractiveModelFrame[] models;
+InteractiveFrame[] models;
 int numCubes;
 
 public void setup() {
@@ -35,10 +35,10 @@ public void setup() {
   SrcScene = new Scene(this, SrcGraphics);
   SrcScene.setRadius(1000);
   SrcScene.showAll();
-  models = new InteractiveModelFrame[numCubes];
+  models = new InteractiveFrame[numCubes];
   
   for (int i = 0; i < models.length; i++) {
-    models[i] = new InteractiveModelFrame(SrcScene, Shape(i));
+    models[i] = new InteractiveFrame(SrcScene, Shape(i));
     models[i].translate(posns[3*i], posns[3*i+1], posns[3*i+2]);
     pushStyle();
     models[i].shape().setFill(cols[i]);

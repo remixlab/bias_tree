@@ -20,9 +20,6 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.addon.*;
-import remixlab.dandelion.addon.Constants.*;
 
 Scene scene;
 MouseAgent mouse;
@@ -75,17 +72,17 @@ public <T extends Enum<?>> T randomAction(Class<T> actionClass) {
 
 public void setExoticCustomization() {
   // 1. Randomless:
-  mouse.removeButtonBinding(Target.EYE, CENTER);
-  mouse.setButtonBinding(Target.EYE, Event.SHIFT, LEFT, DOF2Action.TRANSLATE); 
-  mouse.setButtonBinding(Target.FRAME, RIGHT, DOF2Action.TRANSLATE);
-  mouse.setClickBinding(Target.FRAME, Event.SHIFT, RIGHT, 2, ClickAction.ALIGN_FRAME);  
-  mouse.setWheelBinding(Target.FRAME, Event.CTRL, DOF1Action.ZOOM_ON_ANCHOR);  
+  mouse.removeButtonBinding(Scene.Target.EYE, CENTER);
+  mouse.setButtonBinding(Scene.Target.EYE, Event.SHIFT, LEFT, Scene.DOF2Action.TRANSLATE); 
+  mouse.setButtonBinding(Scene.Target.FRAME, RIGHT, Scene.DOF2Action.TRANSLATE);
+  mouse.setClickBinding(Scene.Target.FRAME, Event.SHIFT, RIGHT, 2, Scene.ClickAction.ALIGN_FRAME);  
+  mouse.setWheelBinding(Scene.Target.FRAME, Event.CTRL, Scene.DOF1Action.ZOOM_ON_ANCHOR);  
  
   // 2. Random
-  mouse.setButtonBinding(Target.FRAME, Event.CTRL, LEFT, randomAction(DOF2Action.class));
-  mouse.setButtonBinding(Target.EYE, RIGHT, randomAction(DOF2Action.class));
-  mouse.setClickBinding(Target.EYE, LEFT, randomAction(ClickAction.class));
-  mouse.setWheelBinding(Target.EYE, randomAction(DOF1Action.class));
+  mouse.setButtonBinding(Scene.Target.FRAME, Event.CTRL, LEFT, randomAction(Scene.DOF2Action.class));
+  mouse.setButtonBinding(Scene.Target.EYE, RIGHT, randomAction(Scene.DOF2Action.class));
+  mouse.setClickBinding(Scene.Target.EYE, LEFT, randomAction(Scene.ClickAction.class));
+  mouse.setWheelBinding(Scene.Target.EYE, randomAction(Scene.DOF1Action.class));
 }
 
 public void keyPressed() {
@@ -102,10 +99,10 @@ public void keyPressed() {
   if(key == 'q') {
     String info;
     info = "RIGHT mouse button + 2 clicks, ";
-    info += mouse.hasClickBinding(Target.EYE, Event.SHIFT, RIGHT, 2) ? "define an EYE binding\n" : "isn't a binding\n";
+    info += mouse.hasClickBinding(Scene.Target.EYE, Event.SHIFT, RIGHT, 2) ? "define an EYE binding\n" : "isn't a binding\n";
     info += "ROTATE_X action ";
-    info += mouse.isActionBound(Target.FRAME, DOF2Action.ROTATE_X) ? "bound to the frame\n" : "not bound\n";
-    info += "CTRL + LEFT button -> " + mouse.buttonAction(Target.FRAME, Event.CTRL, LEFT) + " frame\n";
+    info += mouse.isActionBound(Scene.Target.FRAME, Scene.DOF2Action.ROTATE_X) ? "bound to the frame\n" : "not bound\n";
+    info += "CTRL + LEFT button -> " + mouse.buttonAction(Scene.Target.FRAME, Event.CTRL, LEFT) + " frame\n";
     println(info);
   }
   if ( key == 'i')

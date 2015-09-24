@@ -19,7 +19,7 @@
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.addon.*;
+import remixlab.dandelion.branch.*;
 
 Scene scene;
 InteractiveTorus [] toruses;
@@ -76,7 +76,7 @@ void draw() {
     text("Press 'x' to begin screen drawing", 5, 17);
   if(additionalInstructions)
     text("Press 'y' to clear screen", 5, 35);
-  scene.endScreenDrawing();  
+  scene.endScreenDrawing();
 }
 
 void keyPressed() {

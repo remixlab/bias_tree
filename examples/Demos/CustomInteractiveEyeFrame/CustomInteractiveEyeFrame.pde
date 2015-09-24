@@ -12,13 +12,10 @@
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 
-import remixlab.bias.core.*;
-import remixlab.bias.event.*;
-import remixlab.bias.addon.*;
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.addon.*;
-import remixlab.dandelion.geom.*;
 import remixlab.proscene.*;
+import remixlab.bias.branch.*;
+import remixlab.bias.event.*;
+import remixlab.dandelion.core.*;
 
 // 1. Action declaration
 // We first declare the global action set the frame will support
@@ -72,7 +69,7 @@ public enum MyClickAction implements Action<GlobalAction> {
   }
 }
 
-public class CustumEyeFrame extends GrabberFrame implements InteractiveGrabber<GlobalAction> {
+public class CustumEyeFrame extends GrabberFrame implements GenericGrabber<GlobalAction> {
   public CustumEyeFrame(Eye _eye) {
     super(_eye);
   }

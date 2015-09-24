@@ -14,7 +14,6 @@
 
 import remixlab.proscene.*;
 import remixlab.dandelion.geom.*; //<>//
-import remixlab.dandelion.addon.Constants.*;
 
 Scene scene;
 Point screenPoint = new Point();
@@ -27,9 +26,9 @@ Vec pup;
 void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
-  scene.keyboardAgent().setBinding('z', SceneAction.RESET_ANCHOR);
-  scene.mouseAgent().setClickBinding(Target.EYE, LEFT, 1, ClickAction.ZOOM_ON_PIXEL);
-  scene.mouseAgent().setClickBinding(Target.EYE, Event.CTRL, LEFT, 1, ClickAction.ANCHOR_FROM_PIXEL);
+  scene.keyboardAgent().setBinding('z', Scene.SceneAction.RESET_ANCHOR);
+  scene.mouseAgent().setClickBinding(Scene.Target.EYE, LEFT, 1, Scene.ClickAction.ZOOM_ON_PIXEL);
+  scene.mouseAgent().setClickBinding(Scene.Target.EYE, Event.CTRL, LEFT, 1, Scene.ClickAction.ANCHOR_FROM_PIXEL);
 }
 
 void draw() {  

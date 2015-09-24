@@ -10,11 +10,9 @@
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.addon.*;
+import remixlab.proscene.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.constraint.*;
-import remixlab.proscene.*;
 
 Scene scene;
 PFont myFont;

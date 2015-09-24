@@ -12,7 +12,6 @@
 
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.addon.*;
 import remixlab.dandelion.geom.*;
 
 Scene scene;

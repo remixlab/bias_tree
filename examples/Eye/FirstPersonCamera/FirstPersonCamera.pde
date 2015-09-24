@@ -9,8 +9,6 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.core.*;
-import remixlab.dandelion.addon.*;
 
 Scene scene;
 boolean firstPerson;

@@ -10,10 +10,8 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.addon.*;
-import remixlab.dandelion.addon.Constants.*;
+import remixlab.dandelion.branch.Constants.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
