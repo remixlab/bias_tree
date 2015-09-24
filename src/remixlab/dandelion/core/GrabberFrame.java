@@ -495,7 +495,7 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 		setTranslationSensitivity(1.0f);
 		// TODO normalize
 		setWheelSensitivity(15f);
-		setKeyboardSensitivity(1.0f);
+		setKeyboardSensitivity(10f);
 		setSpinningSensitivity(0.3f);
 		setDamping(0.5f);
 
@@ -1035,7 +1035,7 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * Returns the keyboard sensitivity.
 	 * <p>
-	 * Default value is 1.0. A higher value will make the keyboard more efficient (usually meaning faster motion).
+	 * Default value is 10. A higher value will make the keyboard more efficient (usually meaning faster motion).
 	 * 
 	 * @see #setKeyboardSensitivity(float)
 	 * @see #translationSensitivity()
@@ -2527,7 +2527,7 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 	@Override
 	public void scale(float s) {
 		super.scale(s);
-		//updateTrackingEyeFrame();
+		updateTrackingEyeFrame();
 	}
 	
 	/**

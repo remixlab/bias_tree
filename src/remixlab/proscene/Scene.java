@@ -227,6 +227,16 @@ public class Scene extends GenericScene implements Constants, PConstants {
 	public PGraphics pg() {
 		return mainPGgraphics;
 	}
+	
+	// PICKING BUFFER
+	
+	public void enablePickingBuffer() {
+		
+	}
+	
+    public void disablePickingBuffer() {
+		//TODO pending
+	}
 
 	/**
 	 * Returns the {@link #models()} <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
@@ -372,10 +382,10 @@ public class Scene extends GenericScene implements Constants, PConstants {
 	 */
 	@Override
 	public void enableMotionAgent() {
-		if (!isMotionAgentEnabled()) {
-			inputHandler().registerAgent(motionAgent());
-			parent.registerMethod("mouseEvent", motionAgent());
-		}
+		if (platform() == Platform.PROCESSING_DESKTOP)
+			enableMouseAgent();
+		if (platform() == Platform.PROCESSING_ANDROID)
+			enableDroidTouchAgent();
 	}
 
 	/**
@@ -388,65 +398,13 @@ public class Scene extends GenericScene implements Constants, PConstants {
 	 */
 	@Override
 	public Agent disableMotionAgent() {
-		if (isMotionAgentEnabled()) {
-			parent.unregisterMethod("mouseEvent", motionAgent());
-			return inputHandler().unregisterAgent(motionAgent());
-		}
-		return motionAgent();
-	}
-
-	/**
-	 * Returns the default mouse agent handling Processing mouse events. If you plan to customize your mouse use this
-	 * method.
-	 * 
-	 * @see #keyboardAgent()
-	 */
-	public MouseAgent mouseAgent() {
-		if (platform() == Platform.PROCESSING_ANDROID) {
-			throw new RuntimeException("Proscene mouseAgent() is not available in Android mode");
-		}
-		return (MouseAgent) motionAgent();
+		if (platform() == Platform.PROCESSING_DESKTOP)
+			return disableMouseAgent();
+		if (platform() == Platform.PROCESSING_ANDROID)
+			return disableDroidTouchAgent();
+		return null;
 	}
 	
-	@Override
-	public KeyAgent keyboardAgent() {
-		if (platform() == Platform.PROCESSING_ANDROID) {
-			throw new RuntimeException("Proscene keyboardAgent() is not available in Android mode");
-		}
-		return (KeyAgent)defKeyboardAgent;
-	}
-
-	/**
-	 * Returns the default droid touch agent handling touch events. If you plan to customize your touch use this method.
-	 * 
-	 * @see #keyboardAgent()
-	 */
-	public DroidTouchAgent touchAgent() {
-		if (platform() == Platform.PROCESSING_DESKTOP) {
-			throw new RuntimeException("Proscene touchAgent() is not available in Desktop mode");
-		}
-		return (DroidTouchAgent) motionAgent();
-	}
-	
-	/**
-	 * Returns the default droid key agent handling touch events. If you plan to customize your touch use this method.
-	 * 
-	 * @see #keyboardAgent()
-	 */
-	public DroidKeyAgent droidKeyAgent() {
-		if (platform() == Platform.PROCESSING_DESKTOP) {
-			throw new RuntimeException("Proscene droidKeyAgent() is not available in Desktop mode");
-		}
-		return (DroidKeyAgent)defKeyboardAgent;
-	}
-
-	// TODO doc me and re-add me
-	/*
-	 * public DroidTouchAgent droidTouchAgent() { if (platform() != Platform.PROCESSING_ANDROID) { throw new
-	 * RuntimeException("Proscene droidTouchAgent() is not available in Desktop mode"); } return (DroidTouchAgent)
-	 * motionAgent(); }
-	 */
-
 	// KEYBOARD
 
 	/**
@@ -458,10 +416,10 @@ public class Scene extends GenericScene implements Constants, PConstants {
 	 */
 	@Override
 	public void enableKeyboardAgent() {
-		if (!isKeyboardAgentEnabled()) {
-			inputHandler().registerAgent(keyboardAgent());
-			parent.registerMethod("keyEvent", keyboardAgent());
-		}
+		if (platform() == Platform.PROCESSING_DESKTOP)
+			enableKeyAgent();
+		if (platform() == Platform.PROCESSING_ANDROID)
+			enableDroidKeyAgent();
 	}
 
 	/**
@@ -472,12 +430,276 @@ public class Scene extends GenericScene implements Constants, PConstants {
 	 * @see #disableMotionAgent()
 	 */
 	@Override
-	public KeyboardAgent disableKeyboardAgent() {
+	public Agent disableKeyboardAgent() {
+		if (platform() == Platform.PROCESSING_DESKTOP)
+			return disableKeyAgent();
+		if (platform() == Platform.PROCESSING_ANDROID)
+			return disableDroidKeyAgent();
+		return null;
+	}
+		
+	// Mouse
+
+	/**
+	 * Returns the default mouse agent handling Processing mouse events. If you plan to customize your mouse use this
+	 * method.
+	 * 
+	 * @see #enableMouseAgent()
+	 * @see #isMouseAgentEnabled()
+	 * @see #disableMouseAgent()
+	 * @see #keyAgent()
+	 */
+	public MouseAgent mouseAgent() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene mouseAgent() is not available in Android mode. Use droidTouchAgent() instead");
+		}
+		return (MouseAgent) motionAgent();
+	}
+	
+	/**
+	 * Enables motion handling through the {@link #mouseAgent()}.
+	 * 
+	 * @see #mouseAgent()
+	 * @see #isMouseAgentEnabled()
+	 * @see #disableMouseAgent()
+	 * @see #enableKeyAgent()
+	 */
+	public void enableMouseAgent() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene enableMouseAgent() is not available in Android mode. Use enableDroidTouchAgent() instead");
+		}
+		if (!isMotionAgentEnabled()) {
+			inputHandler().registerAgent(motionAgent());
+			parent.registerMethod("mouseEvent", motionAgent());
+		}
+	}
+	
+	/**
+	 * Disables the default mouse agent and returns it.
+	 * 
+	 * @see #mouseAgent()
+	 * @see #isMouseAgentEnabled()
+	 * @see #enableMouseAgent()
+	 * @see #disableKeyAgent()
+	 */
+	public MouseAgent disableMouseAgent() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene disableMouseAgent() is not available in Android mode. Use disableDroidTouchAgent() instead");
+		}
+		if (isMotionAgentEnabled()) {
+			parent.unregisterMethod("mouseEvent", motionAgent());
+			return (MouseAgent)inputHandler().unregisterAgent(motionAgent());
+		}
+		return (MouseAgent)motionAgent();
+	}
+	
+	/**
+	 * Returns {@code true} if the {@link #mouseAgent()} is enabled and {@code false} otherwise.
+	 * 
+	 * @see #mouseAgent()
+	 * @see #enableMouseAgent() 
+	 * @see #disableMouseAgent()
+	 * @see #enableKeyAgent()
+	 */
+	public boolean isMouseAgentEnabled() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene isMouseAgentEnabled() is not available in Android mode. Use isDroidTouchAgentEnabled() instead");
+		}
+		return isMotionAgentEnabled();
+	}
+	
+	// keyAgent
+	
+    /**
+     * Returns the default key agent handling Processing key events. If you plan to customize your keyboard use this
+	 * method.
+	 * 
+     * @see #enableKeyAgent()
+	 * @see #isKeyAgentEnabled()
+	 * @see #disableKeyAgent()
+	 * @see #mouseAgent()
+     */
+	public KeyAgent keyAgent() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene keyAgent() is not available in Android mode. Use droidKeyAgent() instead");
+		}
+		return (KeyAgent)defKeyboardAgent;
+	}
+	
+	/**
+	 * Enables keyboard handling through the {@link #keyAgent()}.
+	 * 
+	 * @see #keyAgent()
+	 * @see #isKeyAgentEnabled()
+	 * @see #disableKeyAgent()
+	 * @see #enableMouseAgent()
+	 */
+	public void enableKeyAgent() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene enableKeyAgent() is not available in Android mode. Use enableDroidKeyAgent() instead");
+		}
+		if (!isKeyboardAgentEnabled()) {
+			inputHandler().registerAgent(keyboardAgent());
+			parent.registerMethod("keyEvent", keyboardAgent());
+		}
+	}
+	
+	/**
+	 * Disables the key agent and returns it.
+	 * 
+	 * @see #keyAgent()
+	 * @see #isKeyAgentEnabled()
+	 * @see #enableKeyAgent()
+	 * @see #disableMouseAgent()
+	 */
+	public KeyAgent disableKeyAgent() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene disableKeyAgent() is not available in Android mode. Use disableDroidKeyAgent() instead");
+		}
 		if (inputHandler().isAgentRegistered(keyboardAgent())) {
 			parent.unregisterMethod("keyEvent", keyboardAgent());
-			return (KeyboardAgent) inputHandler().unregisterAgent(keyboardAgent());
+			return (KeyAgent) inputHandler().unregisterAgent(keyboardAgent());
 		}
-		return keyboardAgent();
+		return (KeyAgent) keyboardAgent();
+	}
+	
+	/**
+	 * Returns {@code true} if the {@link #keyAgent()} is enabled and {@code false} otherwise.
+	 * 
+	 * @see #keyAgent()
+	 * @see #enableKeyAgent() 
+	 * @see #disableKeyAgent()
+	 * @see #enableKeyAgent()
+	 */
+	public boolean isKeyAgentEnabled() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene isKeyAgentEnabled() is not available in Android mode. Use isDroidKeyAgentEnabled() instead");
+		}
+		return isKeyboardAgentEnabled();
+	}
+	
+	// droid touch
+
+	/**
+	 * Returns the default droid touch agent handling touch events. If you plan to customize your touch use this method.
+	 * 
+	 * @see #enableMouseAgent()
+	 * @see #isMouseAgentEnabled()
+	 * @see #disableMouseAgent()
+	 * @see #droidKeyAgent()
+	 */
+	public DroidTouchAgent droidTouchAgent() {
+		if (platform() == Platform.PROCESSING_DESKTOP) {
+			throw new RuntimeException("Proscene droidTouchAgent() is not available in Desktop mode. Use mouseAgent() instead");
+		}
+		return (DroidTouchAgent) motionAgent();
+	}
+	
+	/**
+	 * Enables motion handling through the {@link #droidTouchAgent()}.
+	 * 
+	 * @see #droidTouchAgent()
+	 * @see #isDroidTouchAgentEnabled()
+	 * @see #disableDroidTouchAgent()
+	 * @see #enableDroidKeyAgent()
+	 */
+	public void enableDroidTouchAgent() {
+		if (platform() == Platform.PROCESSING_DESKTOP) {
+			throw new RuntimeException("Proscene enableDroidTouchAgent() is not available in Desktop mode. Use enableMouseAgent() instead");
+		}
+		super.enableMotionAgent();
+	}
+	
+	/**
+	 * Disables the default droid touch agent and returns it.
+	 * 
+	 * @see #droidTouchAgent()
+	 * @see #isDroidTouchAgentEnabled()
+	 * @see #enableDroidTouchAgent()
+	 * @see #disableDroidKeyAgent()
+	 */
+	public DroidTouchAgent disableDroidTouchAgent() {
+		if (platform() == Platform.PROCESSING_DESKTOP) {
+			throw new RuntimeException("Proscene disableDroidTouchAgent() is not available in Desktop mode. Use disableMouseAgent() instead");
+		}
+		return (DroidTouchAgent)motionAgent();
+	}
+	
+	/**
+	 * Returns {@code true} if the {@link #droidTouchAgent()} is enabled and {@code false} otherwise.
+	 * 
+	 * @see #droidTouchAgent()
+	 * @see #enableDroidTouchAgent() 
+	 * @see #disableDroidTouchAgent()
+	 * @see #enableDroidKeyAgent()
+	 */
+	public boolean isDroidTouchAgentEnabled() {
+		if (platform() == Platform.PROCESSING_DESKTOP) {
+			throw new RuntimeException("Proscene isDroidTouchAgentEnabled() is not available in Android mode. Use isDroidKeyAgentEnabled() instead");
+		}
+		return isMotionAgentEnabled();
+	}
+	
+	// droid key
+	
+	/**
+	 * Returns the default droid key agent handling touch events. If you plan to customize your touch use this method.
+	 * 
+	 * @see #enableDroidKeyAgent()
+	 * @see #isDroidKeyAgentEnabled()
+	 * @see #disableDroidKeyAgent()
+	 * @see #droidTouchAgent()
+	 */
+	public DroidKeyAgent droidKeyAgent() {
+		if (platform() == Platform.PROCESSING_DESKTOP) {
+			throw new RuntimeException("Proscene droidKeyAgent() is not available in Desktop mode. Use keyAgent() instead");
+		}
+		return (DroidKeyAgent)defKeyboardAgent;
+	}
+	
+	/**
+	 * Enables keyboard handling through the {@link #droidKeyAgent()}.
+	 * 
+	 * @see #droidKeyAgent()
+	 * @see #isDroidKeyAgentEnabled()
+	 * @see #disableDroidKeyAgent()
+	 * @see #enableDroidTouchAgent()
+	 */
+	public void enableDroidKeyAgent() {
+		if (platform() == Platform.PROCESSING_DESKTOP) {
+			throw new RuntimeException("Proscene enableDroidKeyAgent() is not available in Desktop mode. Use enableKeyAgent() instead");
+		}
+		super.enableKeyboardAgent();
+	}
+	
+	/**
+	 * Disables the droid key agent and returns it.
+	 * 
+	 * @see #droidKeyAgent()
+	 * @see #isDroidKeyAgentEnabled()
+	 * @see #enableDroidKeyAgent()
+	 * @see #disableDroidTouchAgent()
+	 */
+	public DroidKeyAgent disableDroidKeyAgent() {
+		if (platform() == Platform.PROCESSING_DESKTOP) {
+			throw new RuntimeException("Proscene disableDroidKeyAgent() is not available in Desktop mode. Use disableKeyAgent() instead");
+		}
+		return (DroidKeyAgent)keyboardAgent();
+	}
+	
+	/**
+	 * Returns {@code true} if the {@link #droidKeyAgent()} is enabled and {@code false} otherwise.
+	 * 
+	 * @see #keyAgent()
+	 * @see #enableKeyAgent() 
+	 * @see #disableKeyAgent()
+	 * @see #enableKeyAgent()
+	 */
+	public boolean isDroidKeyAgentEnabled() {
+		if (platform() == Platform.PROCESSING_DESKTOP) {
+			throw new RuntimeException("Proscene isDroidKeyAgentEnabled() is not available in Android mode. Use isDroidKeyAgentEnabled() instead");
+		}
+		return isKeyboardAgentEnabled();
 	}
 
 	// INFO
