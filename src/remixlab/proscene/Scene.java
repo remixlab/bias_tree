@@ -80,7 +80,7 @@ import java.nio.FloatBuffer;
  * {@link #removeModels()}, {@link #hasModel(Model)}, {@link #removeModel(Model)}, {@link #removeModels()},
  * {@link #drawModels()} and {@link #drawModels(PGraphics)} for model handling.
  */
-public class Scene extends GenericScene implements Constants, PConstants {
+public class Scene extends GenericScene implements /*Constants,*/ PConstants {
 	// begin: GWT-incompatible
 	// /*
 	// Reflection
@@ -243,18 +243,30 @@ public class Scene extends GenericScene implements Constants, PConstants {
 		return pBuffer;
 	}
 	
+	/**
+	 * Enable the {@link #pickingBuffer()}.
+	 */
     public void enablePickingBuffer() {
     	pBufferEnabled = true;
 	}
 	
+    /**
+     * Disable the {@link #pickingBuffer()}.
+     */
     public void disablePickingBuffer() {
 		pBufferEnabled = false;
 	}
     
+    /**
+     * Returns {@code true} if {@link #pickingBuffer()} buffer is enabled and {@code false} otherwise.
+     */
     public boolean isPickingBufferEnabled() {
     	return pBufferEnabled;
     }
     
+    /**
+     * Toggles availability of the {@link #pickingBuffer()}.
+     */
     public void togglePickingBuffer() {
     	if(isPickingBufferEnabled())
     		disablePickingBuffer();
