@@ -176,7 +176,7 @@ public class Scene extends GenericScene implements /*Constants,*/ PConstants {
 		pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width,
 				pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height,
 				JAVA2D);
-		pBufferEnabled = pBuffer != null;
+		enablePickingBuffer();
 
 		// 4. (TODO prev 6.) Create agents and register P5 methods
 		if (platform() == Platform.PROCESSING_ANDROID) {
@@ -247,7 +247,8 @@ public class Scene extends GenericScene implements /*Constants,*/ PConstants {
 	 * Enable the {@link #pickingBuffer()}.
 	 */
     public void enablePickingBuffer() {
-    	pBufferEnabled = true;
+    	if ( ! (pBufferEnabled = pBuffer != null))    	
+    		System.out.println("PickingBuffer can't be instantiated!");
 	}
 	
     /**
