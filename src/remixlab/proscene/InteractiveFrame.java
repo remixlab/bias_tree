@@ -124,8 +124,8 @@ public class InteractiveFrame extends GenericFrame implements Model, Constants {
 		super(scn);
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
-		pshape = ps;
 		shift = new PVector();
+		setShape(ps);
 	}
 
 	/**
@@ -139,8 +139,8 @@ public class InteractiveFrame extends GenericFrame implements Model, Constants {
 		super(scn, referenceFrame);
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
-		pshape = ps;
 		shift = new PVector();
+		setShape(ps);
 	}
 
 	/**
@@ -155,8 +155,8 @@ public class InteractiveFrame extends GenericFrame implements Model, Constants {
 		super(scn);
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
-		this.addGraphicsHandler(obj, methodName);
 		shift = new PVector();
+		addGraphicsHandler(obj, methodName);
 	}
 
 	/**
@@ -171,8 +171,8 @@ public class InteractiveFrame extends GenericFrame implements Model, Constants {
 		super(scn, referenceFrame);
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
-		this.addGraphicsHandler(obj, methodName);
 		shift = new PVector();
+		addGraphicsHandler(obj, methodName);
 	}
 
 	protected InteractiveFrame(InteractiveFrame otherFrame) {

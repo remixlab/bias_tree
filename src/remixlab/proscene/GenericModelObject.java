@@ -72,7 +72,7 @@ public abstract class GenericModelObject<E extends Enum<E>> implements GenericMo
 		proScene = scn;
 		if (proScene.addModel(this))
 			id = ++Scene.modelCount;
-		pshape = ps;
+		setShape(ps);
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public abstract class GenericModelObject<E extends Enum<E>> implements GenericMo
 		proScene = scn;
 		if (proScene.addModel(this))
 			id = ++Scene.modelCount;
-		this.addGraphicsHandler(obj, methodName);
+		addGraphicsHandler(obj, methodName);
 	}
 
 	public E referenceAction() {

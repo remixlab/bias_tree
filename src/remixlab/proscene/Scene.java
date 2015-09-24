@@ -407,9 +407,17 @@ public class Scene extends GenericScene implements Constants, PConstants {
 		}
 		return (MouseAgent) motionAgent();
 	}
+	
+	@Override
+	public KeyAgent keyboardAgent() {
+		if (platform() == Platform.PROCESSING_ANDROID) {
+			throw new RuntimeException("Proscene keyboardAgent() is not available in Android mode");
+		}
+		return (KeyAgent)defKeyboardAgent;
+	}
 
 	/**
-	 * Returns the default touch agent handling touch events. If you plan to customize your touch use this method.
+	 * Returns the default droid touch agent handling touch events. If you plan to customize your touch use this method.
 	 * 
 	 * @see #keyboardAgent()
 	 */
@@ -418,6 +426,18 @@ public class Scene extends GenericScene implements Constants, PConstants {
 			throw new RuntimeException("Proscene touchAgent() is not available in Desktop mode");
 		}
 		return (DroidTouchAgent) motionAgent();
+	}
+	
+	/**
+	 * Returns the default droid key agent handling touch events. If you plan to customize your touch use this method.
+	 * 
+	 * @see #keyboardAgent()
+	 */
+	public DroidKeyAgent droidKeyAgent() {
+		if (platform() == Platform.PROCESSING_DESKTOP) {
+			throw new RuntimeException("Proscene droidKeyAgent() is not available in Desktop mode");
+		}
+		return (DroidKeyAgent)defKeyboardAgent;
 	}
 
 	// TODO doc me and re-add me

@@ -43,7 +43,7 @@ public abstract class ModelObject implements Model {
 	
 	public ModelObject(Scene scn, PShape ps, PImage texture) {
 		scene = scn;
-		pshape = ps;
+		setShape(ps);
 		tex = texture;
 		scene.addModel(this);
 		id = ++Scene.modelCount;
@@ -73,7 +73,7 @@ public abstract class ModelObject implements Model {
 		scene = scn;
 		scene.addModel(this);
 		id = ++Scene.modelCount;
-		pshape = ps;
+		setShape(ps);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public abstract class ModelObject implements Model {
 		scene = scn;
 		scene.addModel(this);
 		id = ++Scene.modelCount;
-		this.addGraphicsHandler(obj, methodName);
+		addGraphicsHandler(obj, methodName);
 	}
 
 	/**

@@ -86,7 +86,7 @@ public class ModelFrame extends GrabberFrame implements Model {
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		shift = new PVector();
-		pshape = ps;
+		setShape(ps);
 	}
 	
 	/**
@@ -100,7 +100,7 @@ public class ModelFrame extends GrabberFrame implements Model {
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		shift = new PVector();
-		pshape = ps;
+		setShape(ps);
 	}
 	
 	/**
@@ -115,7 +115,7 @@ public class ModelFrame extends GrabberFrame implements Model {
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		shift = new PVector();
-		this.addGraphicsHandler(obj, methodName);
+		addGraphicsHandler(obj, methodName);
 	}
 	
 	/**
@@ -130,7 +130,7 @@ public class ModelFrame extends GrabberFrame implements Model {
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		shift = new PVector();
-		this.addGraphicsHandler(obj, methodName);
+		addGraphicsHandler(obj, methodName);
 	}
 	
 	protected ModelFrame(ModelFrame otherFrame) {
