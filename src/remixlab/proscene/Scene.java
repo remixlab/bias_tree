@@ -1108,11 +1108,29 @@ public class Scene extends GenericScene implements /*Constants,*/ PConstants {
 		pickingBuffer().beginDraw();
 		pickingBuffer().pushStyle();
 		pickingBuffer().background(0);
+		
+		boolean needLoading = false;
+		/*
+		for (Model model : models())
+			if(model.shape() != null || model.hasGraphicsHandler()) {
+				needLoading = true;
+				break;
+			}		
 		if (models().size() > 0)
-			drawModels(pickingBuffer());
+		*/
+			/*needLoading =*/ 
+		//drawModels(pickingBuffer());
+		
+		bindMatrices(pickingBuffer());
+		// 2. Draw all models into pgraphics
+		for (Model model : models())
+			if(model.draw(pickingBuffer()))
+				needLoading = true;
+
+		
 		pickingBuffer().popStyle();
 		pickingBuffer().endDraw();
-		if (models().size() > 0)
+		if (models().size() > 0 && needLoading)
 			pickingBuffer().loadPixels();
 	}
 
@@ -1248,6 +1266,12 @@ public class Scene extends GenericScene implements /*Constants,*/ PConstants {
 	public void drawModels() {
 		for (Model model : models())
 			model.draw(pg());
+		/*
+		boolean result = false;
+		for (Model model : models())
+			result = (result || model.draw(pg()));
+		return result;
+		*/
 	}
 
 	/**
@@ -1271,6 +1295,15 @@ public class Scene extends GenericScene implements /*Constants,*/ PConstants {
 		// 2. Draw all models into pgraphics
 		for (Model model : models())
 			model.draw(pgraphics);
+		/*
+		// 1. Set pgraphics matrices using a custom MatrixHelper
+		bindMatrices(pgraphics);
+		boolean result = false;
+		// 2. Draw all models into pgraphics
+		for (Model model : models())
+			result = (result || model.draw(pg()));
+		return result;
+		*/
 	}
 
 	/**

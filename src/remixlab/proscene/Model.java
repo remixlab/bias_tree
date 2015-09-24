@@ -40,10 +40,12 @@ public interface Model extends Grabber /* , Animator */{
 	 * <p>
 	 * For an implementation refer to the {@link remixlab.proscene.ModelObject} and
 	 * {@link remixlab.proscene.InteractiveFrame} classes.
+	 * <p>
+	 * Returns {@code true} if succeeded and {@code false} otherwise.
 	 * 
 	 * @param pg PGraphics buffer used to draw the PShape instance. 
 	 * @see remixlab.proscene.Scene#drawModels()
 	 * @see remixlab.proscene.Scene#drawModels(PGraphics)
 	 */
-	void draw(PGraphics pg);
+	boolean draw(PGraphics pg);
 }

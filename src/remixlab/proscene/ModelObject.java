@@ -150,9 +150,9 @@ public abstract class ModelObject implements Model {
 	
 	//TODO experimental
 	@Override
-	public void draw(PGraphics pg) {
+	public boolean draw(PGraphics pg) {
 		if (shape() == null && !this.hasGraphicsHandler())
-			return;
+			return false;
 		pg.pushStyle();
 		if (pg == scene.pickingBuffer()) {
 			if(shape()!=null) {
@@ -177,6 +177,7 @@ public abstract class ModelObject implements Model {
 			}
 		}
 		pg.popStyle();
+		return true;
 	}
 	
 	// DRAW METHOD REG

@@ -301,9 +301,9 @@ public class InteractiveFrame extends GenericFrame implements Model /*, Constant
 
 	//TODO important once debugged draw should be re-implemented at all Model* classes
 	@Override
-	public void draw(PGraphics pg) {
+	public boolean draw(PGraphics pg) {
 		if (shape() == null && !this.hasGraphicsHandler())
-			return;
+			return false;
 		pg.pushStyle();
 		if (pg == ((Scene) gScene).pickingBuffer()) {
 			if(shape()!=null) {
@@ -330,6 +330,7 @@ public class InteractiveFrame extends GenericFrame implements Model /*, Constant
 			}
 		}
 		pg.popStyle();
+		return true;
 	}
 	
 	// DRAW METHOD REG

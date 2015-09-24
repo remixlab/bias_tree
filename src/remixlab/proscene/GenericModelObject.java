@@ -165,9 +165,9 @@ public abstract class GenericModelObject<E extends Enum<E>> implements GenericMo
 	
 	//TODO experimental
 	@Override
-	public void draw(PGraphics pg) {
+	public boolean draw(PGraphics pg) {
 		if (shape() == null && !this.hasGraphicsHandler())
-			return;
+			return false;
 		pg.pushStyle();
 		if (pg == proScene.pickingBuffer()) {
 			if(shape()!=null) {
@@ -189,6 +189,7 @@ public abstract class GenericModelObject<E extends Enum<E>> implements GenericMo
 			}
 		}
 		pg.popStyle();
+		return true;
 	}
 	
 	@Override
