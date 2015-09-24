@@ -2524,11 +2524,21 @@ public class GrabberFrame extends Frame implements Grabber, Trackable {
 	protected Rotation				q;
 	protected float					trackingDist;
 	
+	/**
+	 * Same as {@code return scene().avatar() == this}.
+	 */
+	public boolean isSceneAvatar() {
+		return scene().avatar() == this;
+	}
+	
+	/*
 	@Override
 	public void scale(float s) {
 		super.scale(s);
-		updateTrackingEyeFrame();
+		if( !this.isEyeFrame() )
+			updateTrackingEyeFrame();
 	}
+	*/
 	
 	/**
 	 * Returns the distance between the frame and the tracking camera. Only meaningful when this frame
