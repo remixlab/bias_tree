@@ -114,6 +114,7 @@ public class Scene extends GenericScene implements Constants, PConstants {
 	// Models
 	protected static int				modelCount;
 	protected PGraphics					pBuffer;
+	protected boolean                   pBufferEnabled;
 	protected List<Model>				modelList;
 
 	// E X C E P T I O N H A N D L I N G
@@ -175,6 +176,7 @@ public class Scene extends GenericScene implements Constants, PConstants {
 		pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width,
 				pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height,
 				JAVA2D);
+		pBufferEnabled = pBuffer != null;
 
 		// 4. (TODO prev 6.) Create agents and register P5 methods
 		if (platform() == Platform.PROCESSING_ANDROID) {
@@ -229,14 +231,6 @@ public class Scene extends GenericScene implements Constants, PConstants {
 	}
 	
 	// PICKING BUFFER
-	
-	public void enablePickingBuffer() {
-		
-	}
-	
-    public void disablePickingBuffer() {
-		//TODO pending
-	}
 
 	/**
 	 * Returns the {@link #models()} <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
@@ -247,6 +241,25 @@ public class Scene extends GenericScene implements Constants, PConstants {
 	 */
 	public PGraphics pickingBuffer() {
 		return pBuffer;
+	}
+	
+    public void enablePickingBuffer() {
+    	pBufferEnabled = true;
+	}
+	
+    public void disablePickingBuffer() {
+		pBufferEnabled = false;
+	}
+    
+    public boolean isPickingBufferEnabled() {
+    	return pBufferEnabled;
+    }
+    
+    public void togglePickingBuffer() {
+    	if(isPickingBufferEnabled())
+    		disablePickingBuffer();
+    	else
+    		enablePickingBuffer();
 	}
 
 	@Override
@@ -1077,6 +1090,8 @@ public class Scene extends GenericScene implements Constants, PConstants {
 
 	public void post() {
 		// draw into picking buffer
+		if( !this.isPickingBufferEnabled() )
+			return;
 		pickingBuffer().beginDraw();
 		pickingBuffer().pushStyle();
 		pickingBuffer().background(0);

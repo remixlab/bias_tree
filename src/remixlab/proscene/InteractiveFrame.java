@@ -276,7 +276,7 @@ public class InteractiveFrame extends GenericFrame implements Model, Constants {
 	 */
 	@Override
 	public final boolean checkIfGrabsInput(float x, float y) {
-		if (shape() == null  && !this.hasGraphicsHandler())
+		if ((shape() == null  && !this.hasGraphicsHandler() ) || !((Scene) gScene).isPickingBufferEnabled() )
 			return super.checkIfGrabsInput(x, y);
 		((Scene) gScene).pickingBuffer().pushStyle();
 		((Scene) gScene).pickingBuffer().colorMode(PApplet.RGB, 255);
