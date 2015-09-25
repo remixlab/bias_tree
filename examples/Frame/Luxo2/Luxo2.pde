@@ -37,7 +37,7 @@ public void draw() {
   //scene.drawModels();
   //or with color for selection
   for (Model model : scene.models()) {
-    fill(200, 200, ((InteractiveFrame)model).grabsInput(scene.mouseAgent()) ? 0 : 200);
+    fill(200, 200, scene.mouseAgent().inputGrabber() == model ? 0 : 200);
     model.draw(scene.pg());
   }
 
