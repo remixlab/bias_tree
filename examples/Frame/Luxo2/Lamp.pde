@@ -1,21 +1,10 @@
 /**
  * Lamp by Jean Pierre Charalambos.
  * 
- * This class is part of the Luxo example.
+ * This class is part of the Luxo2 example.
  *
- * Any object that needs to be "pickable" (such as the Caja), should be
- * attached to its own InteractiveFrame. That's all there is to it.
- *
- * The built-in picking proscene mechanism actually works as follows. At
- * instantiation time all InteractiveFrame objects are added to a mouse
- * grabber pool. Scene parses this pool every frame to check if the mouse
- * grabs a InteractiveFrame by projecting its origin onto the screen.
- * If the mouse position is close enough to that projection (default
- * implementation defines a 10x10 pixel square centered at it), the object
- * will be picked. 
- *
- * Override InteractiveFrame.checkIfGrabsMouse if you need a more
- * sophisticated picking mechanism.
+ * Add a graphics handler to an InteractiveFrame to automatically pick
+ * an object. The object is described in the graphics handler procedure.
  *
  * Press 'h' to toggle the mouse and keyboard navigation help.
  */
@@ -101,42 +90,8 @@ public class Lamp {
 
   public void drawCone(PGraphics pg, float zMin, float zMax, float r1, float r2, int nbSub) {
     pg.translate(0.0f, 0.0f, zMin);
-    drawCone(pg, nbSub, 0, 0, r1, r2, zMax-zMin);
+    Scene.drawCone(pg, nbSub, 0, 0, r1, r2, zMax-zMin);
     pg.translate(0.0f, 0.0f, -zMin);
-  }
-  
-  public void drawCone(PGraphics pg, int detail, float x, float y, float r1, float r2, float h) {
-    pg.pushStyle();
-    float firstCircleX[] = new float[detail + 1];
-    float firstCircleY[] = new float[detail + 1];
-    float secondCircleX[] = new float[detail + 1];
-    float secondCircleY[] = new float[detail + 1];
-
-    for (int i = 0; i <= detail; i++) {
-      float a1 = PApplet.TWO_PI * i / detail;
-      firstCircleX[i] = r1 * cos(a1);
-      firstCircleY[i] = r1 * sin(a1);
-      secondCircleX[i] = r2 * cos(a1);
-      secondCircleY[i] = r2 * sin(a1);
-    }
-
-    pg.pushMatrix();
-    pg.translate(x, y);
-    pg.beginShape(PApplet.QUAD_STRIP);
-    for (int i = 0; i <= detail; i++) {
-      pg.vertex(firstCircleX[i], firstCircleY[i], 0);
-      pg.vertex(secondCircleX[i], secondCircleY[i], h);
-    }
-    pg.endShape();
-    pg.popMatrix();
-    pg.popStyle();
-  }
-
-  public void setColor(boolean selected) {
-    if (selected)
-      fill(200, 200, 0);    
-    else
-      fill(200, 200, 200);
   }
 
   public InteractiveFrame frame(int i) {

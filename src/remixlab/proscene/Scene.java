@@ -314,37 +314,73 @@ public class Scene extends GenericScene implements PConstants {
 	// P5-WRAPPERS
 
 	/**
-	 * Wrapper for PGraphics.vertex(x,y,z)
+	 * Same as {@code if (this.is2D()) vertex(pg(), x, y); elsevertex(pg(), x, y, z)}.
+	 * 
+	 * @see #vertex(PGraphics, float, float, float)
 	 */
 	public void vertex(float x, float y, float z) {
 		if (this.is2D())
-			pg().vertex(x, y);
+			vertex(pg(), x, y);
 		else
-			pg().vertex(x, y, z);
+			vertex(pg(), x, y, z);
+	}
+	
+	/**
+	 * Wrapper for PGraphics.vertex(x,y,z)
+	 */
+	public static void vertex(PGraphics pg, float x, float y, float z) {
+		pg.vertex(x, y, z);
 	}
 
 	/**
-	 * Wrapper for PGraphics.vertex(x,y)
+	 * Same as {@code vertex(pg(), x, y)}.
+	 * 
+	 * @see #vertex(PGraphics, float, float)
 	 */
 	public void vertex(float x, float y) {
-		pg().vertex(x, y);
+		vertex(pg(), x, y);
+	}
+	
+	/**
+	 * Wrapper for PGraphics.vertex(x,y)
+	 */
+	public static void vertex(PGraphics pg, float x, float y) {
+		pg.vertex(x, y);
+	}
+	
+	/**
+	 * Same as {@code if (this.is2D()) line(pg(), x1, y1, x2, y2); else line(pg(), x1, y1, z1, x2, y2, z2);}.
+	 * 
+	 * @see #line(PGraphics, float, float, float, float, float, float)
+	 */
+	public void line(float x1, float y1, float z1, float x2, float y2, float z2) {
+		if (this.is2D())
+			line(pg(), x1, y1, x2, y2);
+		else
+			line(pg(), x1, y1, z1, x2, y2, z2);
 	}
 
 	/**
 	 * Wrapper for PGraphics.line(x1, y1, z1, x2, y2, z2)
 	 */
-	public void line(float x1, float y1, float z1, float x2, float y2, float z2) {
-		if (this.is2D())
-			pg().line(x1, y1, x2, y2);
-		else
-			pg().line(x1, y1, z1, x2, y2, z2);
+	public static void line(PGraphics pg, float x1, float y1, float z1, float x2, float y2, float z2) {
+		pg.line(x1, y1, z1, x2, y2, z2);
+	}
+	
+	/**
+	 * Same as {@code pg().line(x1, y1, x2, y2)}.
+	 * 
+	 * @see #line(PGraphics, float, float, float, float)
+	 */
+	public void line(float x1, float y1, float x2, float y2) {
+		line(pg(), x1, y1, x2, y2);
 	}
 
 	/**
 	 * Wrapper for PGraphics.line(x1, y1, x2, y2)
 	 */
-	public void line(float x1, float y1, float x2, float y2) {
-		pg().line(x1, y1, x2, y2);
+	public static void line(PGraphics pg, float x1, float y1, float x2, float y2) {
+		pg.line(x1, y1, x2, y2);
 	}
 
 	/**
@@ -1401,37 +1437,43 @@ public class Scene extends GenericScene implements PConstants {
 			GrabberScene.showDepthWarning("drawCylinder");
 			return;
 		}
-
-		pg().pushStyle();
+		drawCylinder(pg(), w, h);
+	}
+	
+	/**
+	 * {@link #drawCylinder(float, float)} on {@code pg}.
+	 */
+	public static void drawCylinder(PGraphics pg, float w, float h) {
+		pg.pushStyle();
 		float px, py;
 
-		pg().beginShape(PApplet.QUAD_STRIP);
+		pg.beginShape(PApplet.QUAD_STRIP);
 		for (float i = 0; i < 13; i++) {
 			px = (float) Math.cos(PApplet.radians(i * 30)) * w;
 			py = (float) Math.sin(PApplet.radians(i * 30)) * w;
-			vertex(px, py, 0);
-			vertex(px, py, h);
+			vertex(pg, px, py, 0);
+			vertex(pg, px, py, h);
 		}
-		pg().endShape();
+		pg.endShape();
 
-		pg().beginShape(PApplet.TRIANGLE_FAN);
-		vertex(0, 0, 0);
+		pg.beginShape(PApplet.TRIANGLE_FAN);
+		vertex(pg, 0, 0, 0);
 		for (float i = 12; i > -1; i--) {
 			px = (float) Math.cos(PApplet.radians(i * 30)) * w;
 			py = (float) Math.sin(PApplet.radians(i * 30)) * w;
-			vertex(px, py, 0);
+			vertex(pg, px, py, 0);
 		}
-		pg().endShape();
+		pg.endShape();
 
-		pg().beginShape(PApplet.TRIANGLE_FAN);
-		vertex(0, 0, h);
+		pg.beginShape(PApplet.TRIANGLE_FAN);
+		vertex(pg, 0, 0, h);
 		for (float i = 0; i < 13; i++) {
 			px = (float) Math.cos(PApplet.radians(i * 30)) * w;
 			py = (float) Math.sin(PApplet.radians(i * 30)) * w;
-			vertex(px, py, h);
+			vertex(pg, px, py, h);
 		}
-		pg().endShape();
-		pg().popStyle();
+		pg.endShape();
+		pg.popStyle();
 	}
 
 	@Override
@@ -1440,8 +1482,14 @@ public class Scene extends GenericScene implements PConstants {
 			GrabberScene.showDepthWarning("drawHollowCylinder");
 			return;
 		}
-
-		pg().pushStyle();
+		drawHollowCylinder(pg(), detail, w, h, m, n);
+	}
+	
+	/**
+	 * {@link #drawHollowCylinder(int, float, float, Vec, Vec)} on {@code pg}.
+	 */
+	public static void drawHollowCylinder(PGraphics pg, int detail, float w, float h, Vec m, Vec n) {
+		pg.pushStyle();
 		// eqs taken from: http://en.wikipedia.org/wiki/Line-plane_intersection
 		Vec pm0 = new Vec(0, 0, 0);
 		Vec pn0 = new Vec(0, 0, h);
@@ -1450,8 +1498,8 @@ public class Scene extends GenericScene implements PConstants {
 		Vec p = new Vec();
 		float x, y, d;
 
-		pg().noStroke();
-		pg().beginShape(PApplet.QUAD_STRIP);
+		pg.noStroke();
+		pg.beginShape(PApplet.QUAD_STRIP);
 
 		for (float t = 0; t <= detail; t++) {
 			x = w * PApplet.cos(t * PApplet.TWO_PI / detail);
@@ -1460,15 +1508,15 @@ public class Scene extends GenericScene implements PConstants {
 
 			d = (m.dot(Vec.subtract(pm0, l0))) / (l.dot(m));
 			p = Vec.add(Vec.multiply(l, d), l0);
-			vertex(p.x(), p.y(), p.z());
+			vertex(pg, p.x(), p.y(), p.z());
 
 			l0.setZ(h);
 			d = (n.dot(Vec.subtract(pn0, l0))) / (l.dot(n));
 			p = Vec.add(Vec.multiply(l, d), l0);
-			vertex(p.x(), p.y(), p.z());
+			vertex(pg, p.x(), p.y(), p.z());
 		}
-		pg().endShape();
-		pg().popStyle();
+		pg.endShape();
+		pg.popStyle();
 	}
 
 	@Override
@@ -1477,7 +1525,14 @@ public class Scene extends GenericScene implements PConstants {
 			GrabberScene.showDepthWarning("drawCone");
 			return;
 		}
-		pg().pushStyle();
+		drawCone(pg(), detail, x, y, r, h);
+	}
+	
+	/**
+	 * {@link #drawCone(int, float, float, float, float)} on {@code pg}.
+	 */
+	public static void drawCone(PGraphics pg, int detail, float x, float y, float r, float h) {
+		pg.pushStyle();
 		float unitConeX[] = new float[detail + 1];
 		float unitConeY[] = new float[detail + 1];
 
@@ -1487,16 +1542,16 @@ public class Scene extends GenericScene implements PConstants {
 			unitConeY[i] = r * (float) Math.sin(a1);
 		}
 
-		pushModelView();
-		translate(x, y);
-		pg().beginShape(PApplet.TRIANGLE_FAN);
-		vertex(0, 0, h);
+		pg.pushMatrix();
+		pg.translate(x, y);
+		pg.beginShape(PApplet.TRIANGLE_FAN);
+		vertex(pg, 0, 0, h);
 		for (int i = 0; i <= detail; i++) {
-			vertex(unitConeX[i], unitConeY[i], 0.0f);
+			vertex(pg, unitConeX[i], unitConeY[i], 0.0f);
 		}
-		pg().endShape();
-		popModelView();
-		pg().popStyle();
+		pg.endShape();
+		pg.popMatrix();
+		pg.popStyle();
 	}
 
 	@Override
@@ -1505,7 +1560,14 @@ public class Scene extends GenericScene implements PConstants {
 			GrabberScene.showDepthWarning("drawCone");
 			return;
 		}
-		pg().pushStyle();
+		drawCone(pg(), detail, x, y, r1, r2, h);
+	}
+	
+	/**
+	 * {@link #drawCone(int, float, float, float, float, float)} on {@code pg}.
+	 */
+	public static void drawCone(PGraphics pg, int detail, float x, float y, float r1, float r2, float h) {
+		pg.pushStyle();
 		float firstCircleX[] = new float[detail + 1];
 		float firstCircleY[] = new float[detail + 1];
 		float secondCircleX[] = new float[detail + 1];
@@ -1519,16 +1581,16 @@ public class Scene extends GenericScene implements PConstants {
 			secondCircleY[i] = r2 * (float) Math.sin(a1);
 		}
 
-		pushModelView();
-		translate(x, y);
-		pg().beginShape(PApplet.QUAD_STRIP);
+		pg.pushMatrix();
+		pg.translate(x, y);
+		pg.beginShape(PApplet.QUAD_STRIP);
 		for (int i = 0; i <= detail; i++) {
-			vertex(firstCircleX[i], firstCircleY[i], 0);
-			vertex(secondCircleX[i], secondCircleY[i], h);
+			vertex(pg, firstCircleX[i], firstCircleY[i], 0);
+			vertex(pg, secondCircleX[i], secondCircleY[i], h);
 		}
-		pg().endShape();
-		popModelView();
-		pg().popStyle();
+		pg.endShape();
+		pg.popMatrix();
+		pg.popStyle();
 	}
 
 	@Override
@@ -2034,13 +2096,20 @@ public class Scene extends GenericScene implements PConstants {
 	 */
 	@Override
 	public void drawTorusSolenoid(int faces, int detail, float insideRadius, float outsideRadius) {
-		pg().pushStyle();
-		pg().noStroke();
+		drawTorusSolenoid(pg(), faces, detail, insideRadius, outsideRadius);
+	}
+	
+	/**
+	 * {@link #drawTorusSolenoid(int, int, float, float)} pn {@code pg}.
+	 */
+	public static void drawTorusSolenoid(PGraphics pg, int faces, int detail, float insideRadius, float outsideRadius) {
+		pg.pushStyle();
+		pg.noStroke();
 		Vec v1, v2;
 		int b, ii, jj, a;
 		float eps = PApplet.TWO_PI / detail;
 		for (a = 0; a < faces; a += 2) {
-			pg().beginShape(PApplet.TRIANGLE_STRIP);
+			pg.beginShape(PApplet.TRIANGLE_STRIP);
 			b = (a <= (faces - 1)) ? a + 1 : 0;
 			for (int i = 0; i < (detail + 1); i++) {
 				ii = (i < detail) ? i : 0;
@@ -2054,12 +2123,12 @@ public class Scene extends GenericScene implements PConstants {
 				v2 = new Vec((outsideRadius + insideRadius * PApplet.cos(alpha)) * PApplet.cos(ai),
 						(outsideRadius + insideRadius * PApplet.cos(alpha)) * PApplet.sin(ai), insideRadius
 								* PApplet.sin(alpha));
-				vertex(v1.x(), v1.y(), v1.z());
-				vertex(v2.x(), v2.y(), v2.z());
+				vertex(pg, v1.x(), v1.y(), v1.z());
+				vertex(pg, v2.x(), v2.y(), v2.z());
 			}
-			pg().endShape();
+			pg.endShape();
 		}
-		pg().popStyle();
+		pg.popStyle();
 	}
 
 	/*
