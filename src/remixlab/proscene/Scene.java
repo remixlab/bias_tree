@@ -192,8 +192,8 @@ public class Scene extends GenericScene implements PConstants {
 		pApplet().registerMethod("draw", this);
 
 		// Android: remove the following 2 lines if needed to compile the project
-		if (platform() == Platform.PROCESSING_DESKTOP)
-			pApplet().registerMethod("post", this);// -> handle picking buffer
+		//if (platform() == Platform.PROCESSING_ANDROID)
+			//disablePickingBuffer();
 
 		// 5. Eye
 		setLeftHanded();
@@ -1101,22 +1101,6 @@ public class Scene extends GenericScene implements PConstants {
 		postDraw();
 	}
 
-	public void post() {
-		// draw into picking buffer
-		if( !this.isPickingBufferEnabled() )
-			return;
-		pickingBuffer().beginDraw();
-		pickingBuffer().pushStyle();
-		pickingBuffer().background(0);
-		boolean needLoading = models().size() > 0;
-		if(needLoading)
-			needLoading = drawModels(pickingBuffer());	
-		pickingBuffer().popStyle();
-		pickingBuffer().endDraw();
-		if (models().size() > 0 && needLoading)
-			pickingBuffer().loadPixels();
-	}
-
 	/**
 	 * Only if the Scene {@link #isOffscreen()}. This method should be called just after the {@link #pg()} beginDraw()
 	 * method. Simply calls {@link #preDraw()}.
@@ -1175,6 +1159,24 @@ public class Scene extends GenericScene implements PConstants {
 							+ "endDraw() and they cannot be nested. Check your implementation!");
 
 		postDraw();
+	}
+	
+	@Override
+	public void postDraw() {
+		super.postDraw();
+		// draw into picking buffer
+		if( !this.isPickingBufferEnabled() )
+			return;
+		pickingBuffer().beginDraw();
+		pickingBuffer().pushStyle();
+		pickingBuffer().background(0);
+		boolean needLoading = models().size() > 0;
+		if(needLoading)
+			needLoading = drawModels(pickingBuffer());	
+		pickingBuffer().popStyle();
+		pickingBuffer().endDraw();
+		if (models().size() > 0 && needLoading)
+			pickingBuffer().loadPixels();
 	}
 
 	/**
@@ -1264,7 +1266,7 @@ public class Scene extends GenericScene implements PConstants {
 	 * Returns {@code true} if at least a model get drawn.
 	 * <p>
 	 * Note that {@code drawModels(pickingBuffer())} (which enables 'picking' of the models using a
-	 * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> technique is called by {@link #post()}.
+	 * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> technique is called by {@link #postDraw()}.
 	 * 
 	 * @param pgraphics
 	 * 
