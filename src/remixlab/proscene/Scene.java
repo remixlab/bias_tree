@@ -1529,6 +1529,42 @@ public class Scene extends GenericScene implements PConstants {
 	}
 	
 	/**
+	 * Same as {@code cone(pg, det, 0, 0, r, h);}
+	 * 
+	 * @see #drawCone(PGraphics, int, float, float, float, float)
+	 */
+	public static void drawCone(PGraphics pg, int det, float r, float h) {
+		drawCone(pg, det, 0, 0, r, h);
+	}
+
+	/**
+	 * Same as {@code cone(pg, 12, 0, 0, r, h);}
+	 * 
+	 * @see #drawCone(PGraphics, int, float, float, float, float)
+	 */
+	public static void drawCone(PGraphics pg, float r, float h) {
+		drawCone(pg, 12, 0, 0, r, h);
+	}
+
+	/**
+	 * Same as {@code cone(pg, det, 0, 0, r1, r2, h);}
+	 * 
+	 * @see #drawCone(PGraphics, int, float, float, float, float, float)
+	 */
+	public static void drawCone(PGraphics pg, int det, float r1, float r2, float h) {
+		drawCone(pg, det, 0, 0, r1, r2, h);
+	}
+
+	/**
+	 * Same as {@code cone(pg, 18, 0, 0, r1, r2, h);}
+	 * 
+	 * @see #drawCone(PGraphics, int, float, float, float, float, float)
+	 */
+	public static void drawCone(PGraphics pg, float r1, float r2, float h) {
+		drawCone(pg, 18, 0, 0, r1, r2, h);
+	}
+	
+	/**
 	 * {@link #drawCone(int, float, float, float, float)} on {@code pg}.
 	 */
 	public static void drawCone(PGraphics pg, int detail, float x, float y, float r, float h) {
@@ -2100,7 +2136,34 @@ public class Scene extends GenericScene implements PConstants {
 	}
 	
 	/**
-	 * {@link #drawTorusSolenoid(int, int, float, float)} pn {@code pg}.
+	 * Convenience function that simply calls {@code drawTorusSolenoid(pg, 6)}.
+	 * 
+	 * @see #drawTorusSolenoid(PGraphics, int, int, float, float)
+	 */
+	public static void drawTorusSolenoid(PGraphics pg) {
+		drawTorusSolenoid(pg, 6);
+	}
+
+	/**
+	 * Convenience function that simply calls {@code drawTorusSolenoid(pg, 6, insideRadius)}.
+	 * 
+	 * @see #drawTorusSolenoid(PGraphics, int, int, float, float)
+	 */
+	public static void drawTorusSolenoid(PGraphics pg, float insideRadius) {
+		drawTorusSolenoid(pg, 6, insideRadius);
+	}
+
+	/**
+	 * Convenience function that simply calls {@code drawTorusSolenoid(pg, faces, 100, insideRadius, insideRadius * 1.3f)}.
+	 * 
+	 * @see #drawTorusSolenoid(int, int, float, float)
+	 */
+	public static void drawTorusSolenoid(PGraphics pg, int faces, float insideRadius) {
+		drawTorusSolenoid(pg, faces, 100, insideRadius, insideRadius * 1.3f);
+	}
+	
+	/**
+	 * {@link #drawTorusSolenoid(PGraphics, int, int, float, float)} pn {@code pg}.
 	 */
 	public static void drawTorusSolenoid(PGraphics pg, int faces, int detail, float insideRadius, float outsideRadius) {
 		pg.pushStyle();
