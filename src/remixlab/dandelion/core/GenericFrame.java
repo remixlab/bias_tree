@@ -10,6 +10,8 @@
 
 package remixlab.dandelion.core;
 
+import java.lang.reflect.Method;
+
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.geom.*;
@@ -720,6 +722,38 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * {@link remixlab.bias.event.DOF2Event}.
 	 */
 	protected void performInteraction(DOF2Event event) {
+	}
+	
+	//protected Object						iHandlerObject;
+	protected Shortcut shortcut;
+	protected Method						iHandlerMethod;
+	protected String						iHandlerMethodName;
+	
+	protected boolean invokeInteractionHandler(BogusEvent event) {
+		// 3. Draw external registered method
+		if (iHandlerMethod != null) {
+			try {
+				iHandlerMethod.invoke(this, new Object[] { event });
+				return true;
+			} catch (Exception e) {
+				System.out.println("Something went wrong when invoking your " + iHandlerMethodName + " method");
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	public void addInteractionHandler(Shortcut shortcut, String methodName) {
+		try {
+			iHandlerMethod = this.getClass().getMethod(methodName, new Class<?>[] { BogusEvent.class });
+			//drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { });
+			//iHandlerObject = obj;
+			iHandlerMethodName = methodName;
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
 	}
 
 	/**

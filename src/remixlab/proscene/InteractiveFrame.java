@@ -62,7 +62,6 @@ public class InteractiveFrame extends GenericFrame implements Model {
 	// Draw	
 	protected Object						drawHandlerObject;
 	protected Method						drawHandlerMethod;
-	protected String						drawHandlerMethodName;
 		
 	// TODO new experimenting with textures	
 	protected PImage    tex;	
@@ -182,7 +181,6 @@ public class InteractiveFrame extends GenericFrame implements Model {
 		this.shift = otherFrame.shift.copy();
 		this.drawHandlerObject = otherFrame.drawHandlerObject;
 		this.drawHandlerMethod = otherFrame.drawHandlerMethod;
-		this.drawHandlerMethodName = otherFrame.drawHandlerMethodName;
 	}
 
 	@Override
@@ -342,7 +340,7 @@ public class InteractiveFrame extends GenericFrame implements Model {
 				drawHandlerMethod.invoke(drawHandlerObject, new Object[] { pg });
 				return true;
 			} catch (Exception e) {
-				PApplet.println("Something went wrong when invoking your " + drawHandlerMethodName + " method");
+				PApplet.println("Something went wrong when invoking your " + drawHandlerMethod.getName() + " method");
 				e.printStackTrace();
 				return false;
 			}
@@ -365,10 +363,8 @@ public class InteractiveFrame extends GenericFrame implements Model {
 	 */
 	public void addGraphicsHandler(Object obj, String methodName) {
 		try {
-			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
-			//drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { });
+			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });			
 			drawHandlerObject = obj;
-			drawHandlerMethodName = methodName;
 		} catch (Exception e) {
 			PApplet.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -384,7 +380,6 @@ public class InteractiveFrame extends GenericFrame implements Model {
 	public void removeGraphicsHandler() {
 		drawHandlerMethod = null;
 		drawHandlerObject = null;
-		drawHandlerMethodName = null;
 	}
 
 	/**
@@ -394,7 +389,7 @@ public class InteractiveFrame extends GenericFrame implements Model {
 	 * @see #invokeGraphicsHandler(PGraphics)
 	 */
 	public boolean hasGraphicsHandler() {
-		if (drawHandlerMethodName == null)
+		if (drawHandlerMethod == null)
 			return false;
 		return true;
 	}
