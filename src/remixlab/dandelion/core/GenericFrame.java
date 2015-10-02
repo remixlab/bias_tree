@@ -721,13 +721,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * Override this method when you want the object to perform an interaction from a
 	 * {@link remixlab.bias.event.DOF2Event}.
 	 */
-	protected void performInteraction(DOF2Event event) {
+	protected void performInteraction(DOF2Event event) {		
+		if( event.shortcut().equals(shortcut) )
+			this.invokeInteractionHandler(event);
 	}
 	
-	//protected Object						iHandlerObject;
 	protected Shortcut shortcut;
 	protected Method						iHandlerMethod;
-	protected String						iHandlerMethodName;
 	
 	protected boolean invokeInteractionHandler(BogusEvent event) {
 		// 3. Draw external registered method
@@ -736,7 +736,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 				iHandlerMethod.invoke(this, new Object[] { event });
 				return true;
 			} catch (Exception e) {
-				System.out.println("Something went wrong when invoking your " + iHandlerMethodName + " method");
+				System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
 				e.printStackTrace();
 				return false;
 			}
@@ -744,12 +744,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		return false;
 	}
 	
-	public void addInteractionHandler(Shortcut shortcut, String methodName) {
+	public void addInteractionHandler(Shortcut s, String methodName) {
 		try {
-			iHandlerMethod = this.getClass().getMethod(methodName, new Class<?>[] { BogusEvent.class });
-			//drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { });
-			//iHandlerObject = obj;
-			iHandlerMethodName = methodName;
+			this.shortcut = s;
+			iHandlerMethod = this.getClass().getMethod(methodName, new Class<?>[] { MotionEvent.class });
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -1750,7 +1748,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into arcball-rotation conversion routine.
 	 */
-	protected void gestureArcball(MotionEvent event) {
+	public void gestureArcball(MotionEvent event) {
 		DOF2Event dof2Event = MotionEvent.dof2Event(event);
 		if (dof2Event != null)
 			gestureArcball(dof2Event);
