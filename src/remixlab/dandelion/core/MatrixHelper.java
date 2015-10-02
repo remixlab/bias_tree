@@ -18,7 +18,7 @@ import remixlab.util.Util;
  * {@link remixlab.dandelion.core.MatrixStackHelper}.
  */
 public abstract class MatrixHelper {
-	protected GrabberScene	gScene;
+	protected AbstractScene	gScene;
 
 	protected Mat						projectionViewMat, projectionViewInverseMat;
 	protected boolean				isProjViwInvCached, projectionViewMatHasInv;
@@ -29,7 +29,7 @@ public abstract class MatrixHelper {
 	 * 
 	 * @param scn
 	 */
-	public MatrixHelper(GrabberScene scn) {
+	public MatrixHelper(AbstractScene scn) {
 		gScene = scn;
 		projectionViewMat = new Mat();
 		isProjViwInvCached = false;
@@ -38,7 +38,7 @@ public abstract class MatrixHelper {
 	/**
 	 * Returns the scene this object belongs to
 	 */
-	public GrabberScene scene() {
+	public AbstractScene scene() {
 		return gScene;
 	}
 
@@ -50,7 +50,7 @@ public abstract class MatrixHelper {
 	}
 
 	/**
-	 * Load {@link #projection()} and {@link #modelView()} in {@link remixlab.dandelion.core.GrabberScene#preDraw()}.
+	 * Load {@link #projection()} and {@link #modelView()} in {@link remixlab.dandelion.core.AbstractScene#preDraw()}.
 	 */
 	public void bind() {
 		bind(true);
@@ -80,7 +80,7 @@ public abstract class MatrixHelper {
 
 	/**
 	 * Cache {@code inv (P x M)} (and also {@code (P x M)} ) so that
-	 * {@link remixlab.dandelion.core.GrabberScene#unprojectedCoordinatesOf(Vec)} is optimized.
+	 * {@link remixlab.dandelion.core.AbstractScene#unprojectedCoordinatesOf(Vec)} is optimized.
 	 * 
 	 * @see #isProjectionViewInverseCached()
 	 * @see #cacheProjectionView()
@@ -113,7 +113,7 @@ public abstract class MatrixHelper {
 	}
 
 	/**
-	 * Computes the projection matrix from {@link remixlab.dandelion.core.GrabberScene#eye()} parameters and loads it
+	 * Computes the projection matrix from {@link remixlab.dandelion.core.AbstractScene#eye()} parameters and loads it
 	 * into the matrix helper. Used in {@link #bind()}.
 	 * 
 	 * @see remixlab.dandelion.core.Eye#getProjection(boolean)
@@ -128,7 +128,7 @@ public abstract class MatrixHelper {
 	}
 
 	/**
-	 * Computes the view matrix from {@link remixlab.dandelion.core.GrabberScene#eye()} parameters and loads it into the
+	 * Computes the view matrix from {@link remixlab.dandelion.core.AbstractScene#eye()} parameters and loads it into the
 	 * matrix helper. Used in {@link #bind()}. If {@code includeView} is {@code false}
 	 * 
 	 * @see remixlab.dandelion.core.Eye#getView(boolean)
@@ -144,63 +144,63 @@ public abstract class MatrixHelper {
 	 * Push a copy of the modelview matrix onto the stack.
 	 */
 	public void pushModelView() {
-		GrabberScene.showMissingImplementationWarning("pushModelView", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("pushModelView", getClass().getName());
 	}
 
 	/**
 	 * Replace the current modelview matrix with the top of the stack.
 	 */
 	public void popModelView() {
-		GrabberScene.showMissingImplementationWarning("popModelView", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("popModelView", getClass().getName());
 	}
 
 	/**
 	 * Push a copy of the projection matrix onto the stack.
 	 */
 	public void pushProjection() {
-		GrabberScene.showMissingImplementationWarning("pushProjection", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("pushProjection", getClass().getName());
 	}
 
 	/**
 	 * Replace the current projection matrix with the top of the stack.
 	 */
 	public void popProjection() {
-		GrabberScene.showMissingImplementationWarning("popProjection", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("popProjection", getClass().getName());
 	}
 
 	/**
 	 * Set the current projection matrix to identity.
 	 */
 	public void resetProjection() {
-		GrabberScene.showMissingImplementationWarning("resetProjection", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("resetProjection", getClass().getName());
 	}
 
 	/**
 	 * Multiplies the current projection matrix by the one specified through the parameters.
 	 */
 	public void applyProjection(Mat source) {
-		GrabberScene.showMissingImplementationWarning("applyProjection", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("applyProjection", getClass().getName());
 	}
 
 	/**
 	 * Set the current projection matrix to the contents of another.
 	 */
 	public void setProjection(Mat source) {
-		GrabberScene.showMissingImplementationWarning("setProjection", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("setProjection", getClass().getName());
 	}
 
 	/**
 	 * Translate in X and Y.
 	 */
 	public void translate(float tx, float ty) {
-		GrabberScene.showMissingImplementationWarning("translate", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("translate", getClass().getName());
 	}
 
 	/**
 	 * Translate in X, Y, and Z.
 	 */
 	public void translate(float tx, float ty, float tz) {
-		GrabberScene.showMissingImplementationWarning("translate", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("translate", getClass().getName());
 	}
 
 	/**
@@ -212,42 +212,42 @@ public abstract class MatrixHelper {
 	 * <A HREF="http://www.xkcd.com/c184.html">Additional background</A>.
 	 */
 	public void rotate(float angle) {
-		GrabberScene.showMissingImplementationWarning("rotate", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("rotate", getClass().getName());
 	}
 
 	/**
 	 * Rotate around the X axis.
 	 */
 	public void rotateX(float angle) {
-		GrabberScene.showMissingImplementationWarning("rotateX", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("rotateX", getClass().getName());
 	}
 
 	/**
 	 * Rotate around the Y axis.
 	 */
 	public void rotateY(float angle) {
-		GrabberScene.showMissingImplementationWarning("rotateY", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("rotateY", getClass().getName());
 	}
 
 	/**
 	 * Rotate around the Z axis.
 	 */
 	public void rotateZ(float angle) {
-		GrabberScene.showMissingImplementationWarning("rotateZ", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("rotateZ", getClass().getName());
 	}
 
 	/**
 	 * Rotate about a vector in space. Same as the glRotatef() function.
 	 */
 	public void rotate(float angle, float vx, float vy, float vz) {
-		GrabberScene.showMissingImplementationWarning("rotate", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("rotate", getClass().getName());
 	}
 
 	/**
 	 * Scale equally in all dimensions.
 	 */
 	public void scale(float s) {
-		GrabberScene.showMissingImplementationWarning("scale", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("scale", getClass().getName());
 	}
 
 	/**
@@ -257,14 +257,14 @@ public abstract class MatrixHelper {
 	 * to scale it by.
 	 */
 	public void scale(float sx, float sy) {
-		GrabberScene.showMissingImplementationWarning("scale", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("scale", getClass().getName());
 	}
 
 	/**
 	 * Scale in X, Y, and Z.
 	 */
 	public void scale(float x, float y, float z) {
-		GrabberScene.showMissingImplementationWarning("scale", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("scale", getClass().getName());
 	}
 
 	/**
@@ -291,7 +291,7 @@ public abstract class MatrixHelper {
 	 * @return projection matrix
 	 */
 	public Mat projection() {
-		GrabberScene.showMissingImplementationWarning("projection", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("projection", getClass().getName());
 		return null;
 	}
 
@@ -299,7 +299,7 @@ public abstract class MatrixHelper {
 	 * Copy the current projection matrix into the specified target. Pass in null to create a new matrix.
 	 */
 	public Mat getProjection(Mat target) {
-		GrabberScene.showMissingImplementationWarning("getProjection", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("getProjection", getClass().getName());
 		return null;
 	}
 
@@ -317,7 +317,7 @@ public abstract class MatrixHelper {
 	 * Print the current projection matrix.
 	 */
 	public void printProjection() {
-		GrabberScene.showMissingImplementationWarning("printProjection", getClass().getName());
+		AbstractScene.showMissingImplementationWarning("printProjection", getClass().getName());
 	}
 
 	/**

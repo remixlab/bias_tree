@@ -12,7 +12,8 @@ package remixlab.proscene;
 
 import processing.core.PApplet;
 import remixlab.bias.event.KeyboardEvent;
-import remixlab.dandelion.branch.*;
+import remixlab.dandelion.core.AbstractScene;
+import remixlab.bias.core.*;
 
 /**
  * Proscene key-agent. A {@link remixlab.dandelion.branch.KeyboardAgent} specialization
@@ -23,7 +24,9 @@ import remixlab.dandelion.branch.*;
  * @see remixlab.proscene.DroidKeyAgent
  * @see remixlab.proscene.DroidTouchAgent
  */
-public class KeyAgent extends KeyboardAgent {
+public class KeyAgent extends Agent {
+	//public static int LEFT_KEY	= PApplet.LEFT, RIGHT_KEY = PApplet.RIGHT, UP_KEY = PApplet.UP, DOWN_KEY = PApplet.DOWN;
+	protected Scene scene;
 	protected boolean				press, release, type;
 	protected KeyboardEvent	currentEvent;
 
@@ -32,13 +35,38 @@ public class KeyAgent extends KeyboardAgent {
 	 * 
 	 * @see #setDefaultBindings()
 	 */
-	public KeyAgent(GenericScene scn, String n) {
-		super(scn, n);
+	public KeyAgent(Scene scn, String n) {
+		super(scn.inputHandler(), n);
+		scene = scn;
 		LEFT_KEY = PApplet.LEFT;
 		RIGHT_KEY = PApplet.RIGHT;
 		UP_KEY= PApplet.UP;
 		DOWN_KEY= PApplet.DOWN;
-		setDefaultBindings();
+		addGrabber(scene);
+		//TODO pending
+		//setDefaultBindings();
+	}
+	
+	@Override
+	public boolean setDefaultGrabber(Grabber g) {
+		if( g instanceof AbstractScene ) {
+			System.err.println("No default keyboard agent grabber set. A scene cannot be set as a default keyboard agent input grabber.");
+			return false;
+		}
+		return super.setDefaultGrabber(g);
+	}
+	
+	@Override
+	public boolean resetDefaultGrabber() {
+		addGrabber(scene.eye().frame());
+		return setDefaultGrabber(scene.eye().frame());
+	}
+	
+	/**
+	 * Returns the scene this object belongs to.
+	 */
+	public Scene scene() {
+		return scene;
 	}
 
 	/**
@@ -55,8 +83,11 @@ public class KeyAgent extends KeyboardAgent {
 		}
 	}
 
+	//TODO pending
+	/*
 	@Override
 	public int keyCode(char key) {
 		return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key);
 	}
+	*/
 }

@@ -17,7 +17,7 @@ import remixlab.bias.event.DOF3Event;
 import remixlab.bias.event.DOF6Event;
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.bias.event.MotionEvent;
-import remixlab.dandelion.core.GrabberScene;
+import remixlab.dandelion.core.AbstractScene;
 
 /**
  * {@link remixlab.bias.core.Grabber} object which eases third-party implementation of the
@@ -108,7 +108,7 @@ public abstract class GrabberObject implements Grabber {
 	 * {@link remixlab.bias.event.KeyboardEvent}. 
 	 */
 	protected void performInteraction(KeyboardEvent event) {
-		GrabberScene
+		AbstractScene
 				.showMissingImplementationWarning("performInteraction(KeyboardEvent event)", this.getClass().getName());
 	}
 
@@ -117,7 +117,7 @@ public abstract class GrabberObject implements Grabber {
 	 * {@link remixlab.bias.event.ClickEvent}. 
 	 */
 	protected void performInteraction(ClickEvent event) {
-		GrabberScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
 	}
 
 	/**
@@ -125,7 +125,7 @@ public abstract class GrabberObject implements Grabber {
 	 * {@link remixlab.bias.event.DOF1Event}. 
 	 */
 	protected void performInteraction(DOF1Event event) {
-		GrabberScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
 	}
 
 	/**
@@ -133,7 +133,7 @@ public abstract class GrabberObject implements Grabber {
 	 * {@link remixlab.bias.event.DOF2Event}. 
 	 */
 	protected void performInteraction(DOF2Event event) {
-		GrabberScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
 	}
 
 	/**
@@ -141,7 +141,7 @@ public abstract class GrabberObject implements Grabber {
 	 * {@link remixlab.bias.event.DOF3Event}. 
 	 */
 	protected void performInteraction(DOF3Event event) {
-		GrabberScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
 	}
 
 	/**
@@ -149,7 +149,7 @@ public abstract class GrabberObject implements Grabber {
 	 * {@link remixlab.bias.event.DOF6Event}. 
 	 */
 	protected void performInteraction(DOF6Event event) {
-		GrabberScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
 	}
 	
 	@Override
@@ -185,7 +185,7 @@ public abstract class GrabberObject implements Grabber {
 	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.KeyboardEvent}. 
 	 */
 	protected boolean checkIfGrabsInput(KeyboardEvent event) {
-		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
 		return false;
 	}
 
@@ -193,7 +193,7 @@ public abstract class GrabberObject implements Grabber {
 	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.ClickEvent}. 
 	 */
 	protected boolean checkIfGrabsInput(ClickEvent event) {
-		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(ClickEvent event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(ClickEvent event)", this.getClass().getName());
 		return false;
 	}
 
@@ -201,7 +201,7 @@ public abstract class GrabberObject implements Grabber {
 	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF1Event}. 
 	 */
 	protected boolean checkIfGrabsInput(DOF1Event event) {
-		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
 
@@ -209,7 +209,7 @@ public abstract class GrabberObject implements Grabber {
 	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF2Event}. 
 	 */
 	protected boolean checkIfGrabsInput(DOF2Event event) {
-		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(DOF2Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF2Event event)", this.getClass().getName());
 		return false;
 	}
 
@@ -217,7 +217,7 @@ public abstract class GrabberObject implements Grabber {
 	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF3Event}. 
 	 */
 	protected boolean checkIfGrabsInput(DOF3Event event) {
-		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(DOF3Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF3Event event)", this.getClass().getName());
 		return false;
 	}
 
@@ -225,7 +225,7 @@ public abstract class GrabberObject implements Grabber {
 	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.DOF6Event}. 
 	 */
 	protected boolean checkIfGrabsInput(DOF6Event event) {
-		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(DOF6Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF6Event event)", this.getClass().getName());
 		return false;
 	}
 }

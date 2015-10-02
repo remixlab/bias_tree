@@ -56,7 +56,7 @@ import remixlab.fpstiming.*;
  * your custom grabber-scene will {@link #toggleCameraType()} when the key 'z' is pressed (provided that
  * grabber-scene is the {@link #keyboardAgent()} {@link remixlab.bias.core.Agent#inputGrabber()}).
  */
-public abstract class GrabberScene extends AnimatorObject implements Grabber {
+public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	protected boolean					dottedGrid;
 
 	// O B J E C T S
@@ -135,7 +135,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	 * @see #setVisualHints(int)
 	 * @see #setEye(Eye)
 	 */
-	public GrabberScene() {
+	public AbstractScene() {
 		setPlatform();
 		setTimingHandler(new TimingHandler(this));
 		deltaCount = frameCount;
@@ -166,14 +166,14 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	 * {@link remixlab.bias.event.KeyboardEvent}. 
 	 */
 	protected void performInteraction(KeyboardEvent event) {
-		GrabberScene.showMissingImplementationWarning("performInteraction(KeyboardEvent event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performInteraction(KeyboardEvent event)", this.getClass().getName());
 	}
 	
 	/**
 	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.KeyboardEvent}. 
 	 */
 	protected boolean checkIfGrabsInput(KeyboardEvent event) {
-		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
 		return false;
 	}
 	
@@ -530,7 +530,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 		if (onConsole)
 			System.out.println(info());
 		else
-			GrabberScene.showMissingImplementationWarning("displayInfo", getClass().getName());
+			AbstractScene.showMissingImplementationWarning("displayInfo", getClass().getName());
 	}
 
 	// 1. Scene overloaded
@@ -1085,13 +1085,13 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	}
 	
 	protected void drawPickingTargets() {
-		List<GrabberFrame> gList = new ArrayList<GrabberFrame>();
+		List<GenericFrame> gList = new ArrayList<GenericFrame>();
 		for (Grabber mg : motionAgent().grabbers())
-			if(mg instanceof GrabberFrame)
-				if( !((GrabberFrame)mg).isEyeFrame() )
-					gList.add((GrabberFrame)mg);
+			if(mg instanceof GenericFrame)
+				if( !((GenericFrame)mg).isEyeFrame() )
+					gList.add((GenericFrame)mg);
 		gList.removeAll(eye.keyFrames());
-		for(GrabberFrame g : gList)
+		for(GenericFrame g : gList)
 			this.drawPickingTarget(g);
 	}
 
@@ -1134,7 +1134,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 			drawPath(k[i], 3, 5, radius());
 	    // */ 
 		
-		for(GrabberFrame gFrame : eye.keyFrames())
+		for(GenericFrame gFrame : eye.keyFrames())
 			drawPickingTarget(gFrame);
 	}
 
@@ -1536,12 +1536,12 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 
 	/**
 	 * Draws all GrabberFrames' picking targets: a shooter target visual hint of
-	 * {@link remixlab.dandelion.core.GrabberFrame#grabsInputThreshold()} pixels size.
+	 * {@link remixlab.dandelion.core.GenericFrame#grabsInputThreshold()} pixels size.
 	 * 
 	 * <b>Attention:</b> the target is drawn either if the iFrame is part of camera path and keyFrame is {@code true}, or
 	 * if the iFrame is not part of camera path and keyFrame is {@code false}.
 	 */
-	public abstract void drawPickingTarget(GrabberFrame gFrame);
+	public abstract void drawPickingTarget(GenericFrame gFrame);
 
 	// end wrapper
 
@@ -1573,19 +1573,19 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 			return;
 
 		eye().frame().stopSpinning();
-		if (avatar() instanceof GrabberFrame)
-			((GrabberFrame) (avatar())).stopSpinning();
+		if (avatar() instanceof GenericFrame)
+			((GenericFrame) (avatar())).stopSpinning();
 
 		// perform small animation ;)
 		if (eye().anyInterpolationStarted())
 			eye().stopInterpolations();
 		// eye().interpolateTo(avatar().eyeFrame());//works only when eyeFrame scaling = magnitude
-		GrabberFrame eyeFrameCopy = avatar().trackingEyeFrame().get();
+		GenericFrame eyeFrameCopy = avatar().trackingEyeFrame().get();
 		eyeFrameCopy.setMagnitude(avatar().trackingEyeFrame().scaling());
 		eye().interpolateTo(eyeFrameCopy);
 		
-		if (avatar() instanceof GrabberFrame) {
-			GrabberFrame avatarGrabber = (GrabberFrame)avatar();
+		if (avatar() instanceof GenericFrame) {
+			GenericFrame avatarGrabber = (GenericFrame)avatar();
 			for(Agent agent : inputHandler().agents()) {
 				agent.addGrabber(avatarGrabber);
 				agent.setDefaultGrabber(avatarGrabber);
@@ -1627,7 +1627,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 		return eye;
 	}
 	
-	public GrabberFrame eyeFrame() {
+	public GenericFrame eyeFrame() {
 		return eye.frame();
 	} 
 	
@@ -1738,7 +1738,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	/**
 	 * Same as {@code eye().frame().setConstraint(constraint)}.
 	 * 
-	 * @see remixlab.dandelion.core.GrabberFrame#setConstraint(Constraint)
+	 * @see remixlab.dandelion.core.GenericFrame#setConstraint(Constraint)
 	 */
 	public void setEyeConstraint(Constraint constraint) {
 		eye().frame().setConstraint(constraint);
@@ -1849,7 +1849,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	 */
 	public void toggleCameraType() {
 		if (this.is2D()) {
-			GrabberScene.showDepthWarning("toggleCameraType");
+			AbstractScene.showDepthWarning("toggleCameraType");
 			return;
 		}
 		else {
@@ -1869,7 +1869,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	 */
 	public boolean isFaceBackFacing(Vec a, Vec b, Vec c) {
 		if (this.is2D()) {
-			GrabberScene.showDepthWarning("isFaceBackFacing");
+			AbstractScene.showDepthWarning("isFaceBackFacing");
 			return false;
 		}
 		return camera().isFaceBackFacing(a, b, c);
@@ -1884,7 +1884,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	 */
 	public boolean isConeBackFacing(Vec vertex, Vec[] normals) {
 		if (this.is2D()) {
-			GrabberScene.showDepthWarning("isConeBackFacing");
+			AbstractScene.showDepthWarning("isConeBackFacing");
 			return false;
 		}
 		return camera().isConeBackFacing(vertex, normals);
@@ -1899,7 +1899,7 @@ public abstract class GrabberScene extends AnimatorObject implements Grabber {
 	 */
 	public boolean isConeBackFacing(Vec vertex, Vec axis, float angle) {
 		if (this.is2D()) {
-			GrabberScene.showDepthWarning("isConeBackFacing");
+			AbstractScene.showDepthWarning("isConeBackFacing");
 			return false;
 		}
 		return camera().isConeBackFacing(vertex, axis, angle);

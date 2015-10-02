@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * in the latter case).
  * <p>
  * The near and far planes of the Camera are fitted to the scene and determined from the
- * {@link remixlab.dandelion.core.GrabberScene#radius()}, {@link remixlab.dandelion.core.GrabberScene#center()} and
+ * {@link remixlab.dandelion.core.AbstractScene#radius()}, {@link remixlab.dandelion.core.AbstractScene#center()} and
  * {@link #zClippingCoefficient()} by the {@link #zNear()} and {@link #zFar()}. Reasonable values on the scene extends
  * thus have to be provided to the Scene in order for the Camera to correctly display the scene. High level positioning
  * methods also use this information ({@link #showEntireScene()}, {@link #centerScene()}, ...).
@@ -116,7 +116,7 @@ public class Camera extends Eye implements Copyable {
 	 * See {@link #IODistance()}, {@link #physicalDistanceToScreen()}, {@link #physicalScreenWidth()} and
 	 * {@link #focusDistance()} documentations for default stereo parameter values.
 	 */
-	public Camera(GrabberScene scn) {
+	public Camera(AbstractScene scn) {
 		super(scn);
 
 		if (gScene.is2D())
@@ -349,7 +349,7 @@ public class Camera extends Eye implements Copyable {
 
 	/**
 	 * Changes the Camera {@link #fieldOfView()} so that the entire scene (defined by
-	 * {@link remixlab.dandelion.core.GrabberScene#center()} and {@link remixlab.dandelion.core.GrabberScene#radius()}
+	 * {@link remixlab.dandelion.core.AbstractScene#center()} and {@link remixlab.dandelion.core.AbstractScene#radius()}
 	 * is visible from the Camera {@link #position()}.
 	 * <p>
 	 * The {@link #position()} and {@link #orientation()} of the Camera are not modified and you first have to orientate
@@ -423,7 +423,7 @@ public class Camera extends Eye implements Copyable {
 	 * See also the {@link #zFar()}, {@link #zClippingCoefficient()} and {@link #zNearCoefficient()} documentations.
 	 * <p>
 	 * If you need a completely different zNear computation, overload the {@link #zNear()} and {@link #zFar()} methods in
-	 * a new class that publicly inherits from Camera and use {@link remixlab.dandelion.core.GrabberScene#setEye(Eye)}.
+	 * a new class that publicly inherits from Camera and use {@link remixlab.dandelion.core.AbstractScene#setEye(Eye)}.
 	 * <p>
 	 * <b>Attention:</b> The value is always positive although the clipping plane is positioned at a negative z value in
 	 * the Camera coordinate system. This follows the {@code gluPerspective} standard.
@@ -702,8 +702,8 @@ public class Camera extends Eye implements Copyable {
 	/**
 	 * Returns {@code true} if the given face is back-facing the camera. Otherwise returns {@code false}.
 	 * <p>
-	 * Vertices must given in clockwise order if {@link remixlab.dandelion.core.GrabberScene#isLeftHanded()} or in
-	 * counter-clockwise order if {@link remixlab.dandelion.core.GrabberScene#isRightHanded()}.
+	 * Vertices must given in clockwise order if {@link remixlab.dandelion.core.AbstractScene#isLeftHanded()} or in
+	 * counter-clockwise order if {@link remixlab.dandelion.core.AbstractScene#isRightHanded()}.
 	 * 
 	 * @param a
 	 *          first face vertex
@@ -988,7 +988,7 @@ public class Camera extends Eye implements Copyable {
 	/**
 	 * Same as {@code setAnchor(new Vec(x,y,z))}.
 	 * 
-	 * @see GrabberScene#setAnchor(Vec)
+	 * @see AbstractScene#setAnchor(Vec)
 	 */
 	public void setAnchor(float x, float y, float z) {
 		setAnchor(new Vec(x,y,z));
@@ -1190,10 +1190,10 @@ public class Camera extends Eye implements Copyable {
 
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(detachFrame());
-		interpolationKfi.addKeyFrame(new GrabberFrame(gScene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame().orientation(), frame().magnitude()).detach(), 0.4f);
+		interpolationKfi.addKeyFrame(new GenericFrame(gScene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame().orientation(), frame().magnitude()).detach(), 0.4f);
 
-		GrabberFrame originalFrame = frame();
-		GrabberFrame tempFrame = detachFrame();
+		GenericFrame originalFrame = frame();
+		GenericFrame tempFrame = detachFrame();
 		tempFrame.setPosition(Vec.add(Vec.multiply(frame().position(), coef), Vec.multiply(target, (1.0f - coef))));
 		replaceFrame(tempFrame);
 		lookAt(target);

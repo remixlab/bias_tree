@@ -14,7 +14,6 @@ import processing.core.*;
 import processing.opengl.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.DOF2Event;
-import remixlab.dandelion.branch.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
@@ -34,7 +33,7 @@ import java.nio.FloatBuffer;
 
 /**
  * A 2D or 3D interactive Processing Scene. The Scene is a specialization of the
- * {@link remixlab.dandelion.core.GrabberScene}, providing an interface between Dandelion and Processing.
+ * {@link remixlab.dandelion.core.AbstractScene}, providing an interface between Dandelion and Processing.
  * <p>
  * <h3>Usage</h3>
  * To use a Scene you have three choices:
@@ -80,7 +79,7 @@ import java.nio.FloatBuffer;
  * {@link #removeModels()}, {@link #hasModel(Model)}, {@link #removeModel(Model)}, {@link #removeModels()},
  * {@link #drawModels()} and {@link #drawModels(PGraphics)} for model handling.
  */
-public class Scene extends GenericScene implements PConstants {
+public class Scene extends AbstractScene implements PConstants {
 	// begin: GWT-incompatible
 	// /*
 	// Reflection
@@ -178,7 +177,16 @@ public class Scene extends GenericScene implements PConstants {
 				JAVA2D);
 		enablePickingBuffer();
 
-		// 4. (TODO prev 6.) Create agents and register P5 methods
+		// 4. Create agents and register P5 methods
+		//TODO android
+		// discard this block one android is restored
+		{
+			defMotionAgent = new MouseAgent(this, "proscene_mouse");
+			defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
+			parent.registerMethod("mouseEvent", motionAgent());
+		}
+		//
+		/*
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
 			defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
@@ -187,6 +195,8 @@ public class Scene extends GenericScene implements PConstants {
 			defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
 			parent.registerMethod("mouseEvent", motionAgent());
 		}
+		*/
+		
 		parent.registerMethod("keyEvent", keyboardAgent());
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
@@ -200,7 +210,8 @@ public class Scene extends GenericScene implements PConstants {
 		width = pg.width;
 		height = pg.height;
 		eye = is3D() ? new Camera(this) : new Window(this);
-		eye.setFrame(new GenericFrame(eye));
+		//TODO pending
+		//eye.setFrame(new GenericFrame(eye));
 		setEye(eye());// calls showAll();
 
 		// 6. Misc stuff:
@@ -462,8 +473,11 @@ public class Scene extends GenericScene implements PConstants {
 	public Agent disableMotionAgent() {
 		if (platform() == Platform.PROCESSING_DESKTOP)
 			return disableMouseAgent();
+		//TODO android
+		/*
 		if (platform() == Platform.PROCESSING_ANDROID)
 			return disableDroidTouchAgent();
+		*/
 		return null;
 	}
 	
@@ -495,8 +509,11 @@ public class Scene extends GenericScene implements PConstants {
 	public Agent disableKeyboardAgent() {
 		if (platform() == Platform.PROCESSING_DESKTOP)
 			return disableKeyAgent();
+		//TODO android
+		/*
 		if (platform() == Platform.PROCESSING_ANDROID)
 			return disableDroidKeyAgent();
+		*/
 		return null;
 	}
 		
@@ -650,12 +667,15 @@ public class Scene extends GenericScene implements PConstants {
 	 * @see #disableMouseAgent()
 	 * @see #droidKeyAgent()
 	 */
+	//TODO android
+	/*
 	public DroidTouchAgent droidTouchAgent() {
 		if (platform() == Platform.PROCESSING_DESKTOP) {
 			throw new RuntimeException("Proscene droidTouchAgent() is not available in Desktop mode. Use mouseAgent() instead");
 		}
 		return (DroidTouchAgent) motionAgent();
 	}
+	*/
 	
 	/**
 	 * Enables motion handling through the {@link #droidTouchAgent()}.
@@ -680,12 +700,15 @@ public class Scene extends GenericScene implements PConstants {
 	 * @see #enableDroidTouchAgent()
 	 * @see #disableDroidKeyAgent()
 	 */
+	//TODO android
+	/*
 	public DroidTouchAgent disableDroidTouchAgent() {
 		if (platform() == Platform.PROCESSING_DESKTOP) {
 			throw new RuntimeException("Proscene disableDroidTouchAgent() is not available in Desktop mode. Use disableMouseAgent() instead");
 		}
 		return (DroidTouchAgent)motionAgent();
 	}
+	*/
 	
 	/**
 	 * Returns {@code true} if the {@link #droidTouchAgent()} is enabled and {@code false} otherwise.
@@ -712,12 +735,15 @@ public class Scene extends GenericScene implements PConstants {
 	 * @see #disableDroidKeyAgent()
 	 * @see #droidTouchAgent()
 	 */
+	//TODO android
+	/*
 	public DroidKeyAgent droidKeyAgent() {
 		if (platform() == Platform.PROCESSING_DESKTOP) {
 			throw new RuntimeException("Proscene droidKeyAgent() is not available in Desktop mode. Use keyAgent() instead");
 		}
 		return (DroidKeyAgent)defKeyboardAgent;
 	}
+	*/
 	
 	/**
 	 * Enables keyboard handling through the {@link #droidKeyAgent()}.
@@ -742,12 +768,15 @@ public class Scene extends GenericScene implements PConstants {
 	 * @see #enableDroidKeyAgent()
 	 * @see #disableDroidTouchAgent()
 	 */
+	//TODO android
+	/*
 	public DroidKeyAgent disableDroidKeyAgent() {
 		if (platform() == Platform.PROCESSING_DESKTOP) {
 			throw new RuntimeException("Proscene disableDroidKeyAgent() is not available in Desktop mode. Use disableKeyAgent() instead");
 		}
 		return (DroidKeyAgent)keyboardAgent();
 	}
+	*/
 	
 	/**
 	 * Returns {@code true} if the {@link #droidKeyAgent()} is enabled and {@code false} otherwise.
@@ -777,7 +806,7 @@ public class Scene extends GenericScene implements PConstants {
 		String l = "ID_" + String.valueOf(MouseAgent.LEFT_ID);
 		String r = "ID_" + String.valueOf(MouseAgent.RIGHT_ID);
 		String c = "ID_" + String.valueOf(MouseAgent.CENTER_ID);
-		String w = "ID_" + String.valueOf(WheeledMouseAgent.WHEEL_ID);
+		String w = "ID_" + String.valueOf(MouseAgent.WHEEL_ID);
 		String n = "ID_0";
 
 		// ... and replace it with proper descriptions:
@@ -1434,7 +1463,7 @@ public class Scene extends GenericScene implements PConstants {
 	@Override
 	public void drawCylinder(float w, float h) {
 		if (is2D()) {
-			GrabberScene.showDepthWarning("drawCylinder");
+			AbstractScene.showDepthWarning("drawCylinder");
 			return;
 		}
 		drawCylinder(pg(), w, h);
@@ -1479,7 +1508,7 @@ public class Scene extends GenericScene implements PConstants {
 	@Override
 	public void drawHollowCylinder(int detail, float w, float h, Vec m, Vec n) {
 		if (is2D()) {
-			GrabberScene.showDepthWarning("drawHollowCylinder");
+			AbstractScene.showDepthWarning("drawHollowCylinder");
 			return;
 		}
 		drawHollowCylinder(pg(), detail, w, h, m, n);
@@ -1522,7 +1551,7 @@ public class Scene extends GenericScene implements PConstants {
 	@Override
 	public void drawCone(int detail, float x, float y, float r, float h) {
 		if (is2D()) {
-			GrabberScene.showDepthWarning("drawCone");
+			AbstractScene.showDepthWarning("drawCone");
 			return;
 		}
 		drawCone(pg(), detail, x, y, r, h);
@@ -1593,7 +1622,7 @@ public class Scene extends GenericScene implements PConstants {
 	@Override
 	public void drawCone(int detail, float x, float y, float r1, float r2, float h) {
 		if (is2D()) {
-			GrabberScene.showDepthWarning("drawCone");
+			AbstractScene.showDepthWarning("drawCone");
 			return;
 		}
 		drawCone(pg(), detail, x, y, r1, r2, h);
@@ -2092,7 +2121,7 @@ public class Scene extends GenericScene implements PConstants {
 	}
 	
 	@Override
-	public void drawPickingTarget(GrabberFrame iFrame) {
+	public void drawPickingTarget(GenericFrame iFrame) {
 		if(iFrame.isEyeFrame()) {
 			System.err.println("eye frames don't have a picking target");
 			return;
@@ -2272,21 +2301,24 @@ public class Scene extends GenericScene implements PConstants {
 	// TODO check these comments:
 	@Override
 	protected void drawScreenRotateHint() {
-		if (!(motionAgent() instanceof WheeledMouseAgent))
+		if (!(motionAgent() instanceof MouseAgent))
 			return;
+		//TODO pending
+		/*
 		if (!(motionAgent().inputGrabber() instanceof GenericFrame))
 			return;
+			*/
 
 		pg().pushStyle();
 		float p1x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;
 		float p1y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;
 
 		Vec p2 = new Vec();
-		if (motionAgent().inputGrabber() instanceof GrabberFrame) {
-			if (((GrabberFrame) motionAgent().inputGrabber()).isEyeFrame())
+		if (motionAgent().inputGrabber() instanceof GenericFrame) {
+			if (((GenericFrame) motionAgent().inputGrabber()).isEyeFrame())
 				p2 = eye().projectedCoordinatesOf(anchor());
 			else
-				p2 = eye().projectedCoordinatesOf(((GrabberFrame) mouseAgent().inputGrabber()).position());
+				p2 = eye().projectedCoordinatesOf(((GenericFrame) mouseAgent().inputGrabber()).position());
 		}
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
@@ -2300,16 +2332,21 @@ public class Scene extends GenericScene implements PConstants {
 	// TODO check these comments:
 	@Override
 	protected void drawZoomWindowHint() {
-		if (!(motionAgent() instanceof WheeledMouseAgent))
+		if (!(motionAgent() instanceof MouseAgent))
 			return;
+		//TODO pending
+				/*
 		if (!(motionAgent().inputGrabber() instanceof GenericFrame))
 			return;
-		GenericFrame iFrame = (GenericFrame) motionAgent().inputGrabber();
+		GrabberFrame iFrame = (GrabberFrame) motionAgent().inputGrabber();
 		if (!(iFrame.initMotionEvent instanceof DOF2Event))
 			return;
+			*/
 
 		pg().pushStyle();
-		DOF2Event init = (DOF2Event) iFrame.initMotionEvent;
+		//TODO pending
+		DOF2Event init = new DOF2Event(0,0);
+		//DOF2Event init = (DOF2Event) iFrame.initMotionEvent;
 		float p1x = init.x() /*- originCorner().x()*/;
 		float p1y = init.y() /*- originCorner().y()*/;
 		float p2x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;

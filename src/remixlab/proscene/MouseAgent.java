@@ -11,9 +11,9 @@
 package remixlab.proscene;
 
 import processing.core.PApplet;
-import remixlab.bias.core.BogusEvent;
+import processing.event.*;
+import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.branch.*;
 
 /**
  * Proscene mouse-agent. A {@link remixlab.dandelion.branch.WheeledMouseAgent} specialization
@@ -24,34 +24,79 @@ import remixlab.dandelion.branch.*;
  * @see remixlab.proscene.DroidKeyAgent
  * @see remixlab.proscene.DroidTouchAgent
  */
-public class MouseAgent extends WheeledMouseAgent {
+public class MouseAgent extends Agent {
+	protected Scene scene;
+	//public static int LEFT_ID	= PApplet.LEFT, CENTER_ID = PApplet.CENTER, RIGHT_ID = PApplet.RIGHT, WHEEL_ID = MouseEvent.WHEEL;
+	
 	protected DOF2Event	currentEvent, prevEvent;
 	protected boolean		move, press, drag, release;
+	
+	protected PickingMode pMode;
+
+	public enum PickingMode {
+		MOVE, CLICK
+	};
 
 	/**
 	 * Calls super on (scn,n) and sets {@link #dragToArcball()} bindings.
 	 * 
 	 * @see #dragToArcball()
-	 */
-	public MouseAgent(GenericScene scn, String n) {
-		super(scn, n);
+	 */	    
+	public MouseAgent(Scene scn, String n) {
+		super(scn.inputHandler(), n);
+		scene = scn;
 		LEFT_ID = PApplet.LEFT;
 		CENTER_ID = PApplet.CENTER;
 		RIGHT_ID = PApplet.RIGHT;
-		dragToArcball();
+		WHEEL_ID = MouseEvent.WHEEL;
+		setPickingMode(PickingMode.MOVE);
+		
+		//TODO pending
+		//dragToArcball();
+	}
+	
+	@Override
+	public boolean resetDefaultGrabber() {
+		addGrabber(scene.eye().frame());
+		return setDefaultGrabber(scene.eye().frame());
+	}
+	
+	/**
+	 * Returns the scene this object belongs to.
+	 */
+	public Scene scene() {
+		return scene;
+	}
+	
+	/**
+	 * Sets the agent {@link #pickingMode()}. Either {@link PickingMode#MOVE} or {@link PickingMode#CLICK}.
+	 * 
+	 * @see #pickingMode()
+	 */
+	public void setPickingMode(PickingMode mode) {
+		pMode = mode;
 	}
 
 	/**
+	 * Returns the agent {@link #pickingMode()}. Either {@link PickingMode#MOVE} or {@link PickingMode#CLICK}.
+	 * 
+	 * @see #setPickingMode(PickingMode)
+	 */
+	public PickingMode pickingMode() {
+		return pMode;
+	}
+	
+	/**
 	 * Processing mouseEvent method to be registered at the PApplet's instance.
 	 */
-	public void mouseEvent(processing.event.MouseEvent e) {
+	public void mouseEvent(processing.event.MouseEvent e) {		
 		move = e.getAction() == processing.event.MouseEvent.MOVE;
 		press = e.getAction() == processing.event.MouseEvent.PRESS;
 		drag = e.getAction() == processing.event.MouseEvent.DRAG;
 		release = e.getAction() == processing.event.MouseEvent.RELEASE;
 		if (move || press || drag || release) {
 			currentEvent = new DOF2Event(prevEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
-					e.getModifiers(), move ? BogusEvent.NO_ID : e.getButton());
+					e.getModifiers(), move ? BogusEvent.NO_ID : e.getButton());			
 			if (move && (pickingMode() == PickingMode.MOVE))
 				updateTrackedGrabber(currentEvent);
 			handle(release ? currentEvent.flush() : currentEvent);			

@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 import processing.core.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.dandelion.core.GrabberScene;
+import remixlab.dandelion.core.AbstractScene;
 
 /**
  * {@link remixlab.proscene.Model} object which eases third-party implementation of the
@@ -286,7 +286,7 @@ public abstract class ModelObject implements Model {
 	 * Selection with a picking buffer requires a MotionEvernt with at least two degrees-of-freedom.
 	 */
 	protected boolean checkIfGrabsInput(KeyboardEvent event) {
-		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
 		return false;
 	}
 
@@ -296,7 +296,7 @@ public abstract class ModelObject implements Model {
 	 * @see #checkIfGrabsInput(float, float)
 	 */
 	protected boolean checkIfGrabsInput(DOF1Event event) {
-		GrabberScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
 
@@ -397,7 +397,7 @@ public abstract class ModelObject implements Model {
 	 * {@link remixlab.bias.event.KeyboardEvent}. 
 	 */
 	protected void performInteraction(KeyboardEvent event) {
-		GrabberScene
+		AbstractScene
 				.showMissingImplementationWarning("performInteraction(KeyboardEvent event)", this.getClass().getName());
 	}
 
@@ -406,7 +406,7 @@ public abstract class ModelObject implements Model {
 	 * {@link remixlab.bias.event.ClickEvent}. 
 	 */
 	protected void performInteraction(ClickEvent event) {
-		GrabberScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performInteraction(ClickEvent event)", this.getClass().getName());
 	}
 
 	/**
@@ -414,7 +414,7 @@ public abstract class ModelObject implements Model {
 	 * {@link remixlab.bias.event.DOF1Event}. 
 	 */
 	protected void performInteraction(DOF1Event event) {
-		GrabberScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF1Event event)", this.getClass().getName());
 	}
 
 	/**
@@ -422,7 +422,7 @@ public abstract class ModelObject implements Model {
 	 * {@link remixlab.bias.event.DOF2Event}. 
 	 */
 	protected void performInteraction(DOF2Event event) {
-		GrabberScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF2Event event)", this.getClass().getName());
 	}
 
 	/**
@@ -430,7 +430,7 @@ public abstract class ModelObject implements Model {
 	 * {@link remixlab.bias.event.DOF3Event}. 
 	 */
 	protected void performInteraction(DOF3Event event) {
-		GrabberScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF3Event event)", this.getClass().getName());
 	}
 
 	/**
@@ -438,7 +438,7 @@ public abstract class ModelObject implements Model {
 	 * {@link remixlab.bias.event.DOF6Event}. 
 	 */
 	protected void performInteraction(DOF6Event event) {
-		GrabberScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
+		AbstractScene.showMissingImplementationWarning("performInteraction(DOF6Event event)", this.getClass().getName());
 	}
 
 	/**

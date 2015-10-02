@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 
 import processing.core.*;
 import remixlab.bias.core.Agent;
-import remixlab.dandelion.branch.*;
+import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
