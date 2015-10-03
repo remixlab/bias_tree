@@ -12,6 +12,7 @@ package remixlab.bias.core;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -152,6 +153,15 @@ public class Profile implements Copyable {
 		}
 	}
 	
+	public void removeMotionBindings() {
+		Iterator<Entry<Shortcut, Method>> it = map.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<Shortcut, Method> pair = it.next();
+	        if( pair.getKey() instanceof MotionShortcut )
+	        	it.remove();
+	    }
+	}
+	
 	public void setKeyboardBinding(Shortcut key, String methodName) {
 		if (hasBinding(key)) {
 			Method a = method(key);
@@ -169,6 +179,15 @@ public class Profile implements Copyable {
 		}
 	}
 	
+	public void removeKeyboardBindings() {
+		Iterator<Entry<Shortcut, Method>> it = map.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<Shortcut, Method> pair = it.next();
+	        if( pair.getKey() instanceof KeyboardShortcut )
+	        	it.remove();
+	    }
+	}
+	
 	public void setClickBinding(Shortcut key, String methodName) {
 		if (hasBinding(key)) {
 			Method a = method(key);
@@ -184,6 +203,15 @@ public class Profile implements Copyable {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
 		}
+	}
+	
+	public void removeClickBindings() {
+		Iterator<Entry<Shortcut, Method>> it = map.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<Shortcut, Method> pair = it.next();
+	        if( pair.getKey() instanceof ClickShortcut )
+	        	it.remove();
+	    }
 	}
 	
 	public void setDOF1Binding(Shortcut key, String methodName) {
