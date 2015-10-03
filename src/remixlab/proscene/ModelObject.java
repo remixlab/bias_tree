@@ -36,7 +36,6 @@ public abstract class ModelObject implements Model {
 	// Draw	
 	protected Object						drawHandlerObject;
 	protected Method						drawHandlerMethod;
-	protected String						drawHandlerMethodName;
 	
 	// TODO new experimenting with textures
 	protected PImage    tex;
@@ -189,7 +188,7 @@ public abstract class ModelObject implements Model {
 				drawHandlerMethod.invoke(drawHandlerObject, new Object[] { pg });
 				return true;
 			} catch (Exception e) {
-				PApplet.println("Something went wrong when invoking your " + drawHandlerMethodName + " method");
+				PApplet.println("Something went wrong when invoking your " + drawHandlerMethod.getName() + " method");
 				e.printStackTrace();
 				return false;
 			}
@@ -215,7 +214,6 @@ public abstract class ModelObject implements Model {
 			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });
 			//drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { });
 			drawHandlerObject = obj;
-			drawHandlerMethodName = methodName;
 		} catch (Exception e) {
 			PApplet.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -231,7 +229,6 @@ public abstract class ModelObject implements Model {
 	public void removeGraphicsHandler() {
 		drawHandlerMethod = null;
 		drawHandlerObject = null;
-		drawHandlerMethodName = null;
 	}
 
 	/**
@@ -241,7 +238,7 @@ public abstract class ModelObject implements Model {
 	 * @see #invokeGraphicsHandler(PGraphics)
 	 */
 	public boolean hasGraphicsHandler() {
-		if (drawHandlerMethodName == null)
+		if (drawHandlerMethod == null)
 			return false;
 		return true;
 	}

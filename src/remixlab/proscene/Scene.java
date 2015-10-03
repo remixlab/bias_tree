@@ -87,15 +87,11 @@ public class Scene extends AbstractScene implements PConstants {
 	protected Object						drawHandlerObject;
 	// The method in drawHandlerObject to execute
 	protected Method						drawHandlerMethod;
-	// the name of the method to handle the event
-	protected String						drawHandlerMethodName;
 	// 2. Animation
 	// The object to handle the animation
 	protected Object						animateHandlerObject;
 	// The method in animateHandlerObject to execute
 	protected Method						animateHandlerMethod;
-	// the name of the method to handle the animation
-	protected String						animateHandlerMethodName;
 
 	// Timing
 	protected boolean						javaTiming;
@@ -967,7 +963,7 @@ public class Scene extends AbstractScene implements PConstants {
 				drawHandlerMethod.invoke(drawHandlerObject, new Object[] { this });
 				return true;
 			} catch (Exception e) {
-				PApplet.println("Something went wrong when invoking your " + drawHandlerMethodName + " method");
+				PApplet.println("Something went wrong when invoking your " + drawHandlerMethod.getName() + " method");
 				e.printStackTrace();
 				return false;
 			}
@@ -991,7 +987,6 @@ public class Scene extends AbstractScene implements PConstants {
 		try {
 			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
 			drawHandlerObject = obj;
-			drawHandlerMethodName = methodName;
 		} catch (Exception e) {
 			PApplet.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -1007,7 +1002,6 @@ public class Scene extends AbstractScene implements PConstants {
 	public void removeGraphicsHandler() {
 		drawHandlerMethod = null;
 		drawHandlerObject = null;
-		drawHandlerMethodName = null;
 	}
 
 	/**
@@ -1017,7 +1011,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #invokeGraphicsHandler()
 	 */
 	public boolean hasGraphicsHandler() {
-		if (drawHandlerMethodName == null)
+		if (drawHandlerMethod == null)
 			return false;
 		return true;
 	}
@@ -1031,7 +1025,7 @@ public class Scene extends AbstractScene implements PConstants {
 				animateHandlerMethod.invoke(animateHandlerObject, new Object[] { this });
 				return true;
 			} catch (Exception e) {
-				PApplet.println("Something went wrong when invoking your " + animateHandlerMethodName + " method");
+				PApplet.println("Something went wrong when invoking your " + animateHandlerMethod.getName() + " method");
 				e.printStackTrace();
 				return false;
 			}
@@ -1055,7 +1049,6 @@ public class Scene extends AbstractScene implements PConstants {
 		try {
 			animateHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { Scene.class });
 			animateHandlerObject = obj;
-			animateHandlerMethodName = methodName;
 		} catch (Exception e) {
 			PApplet.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -1070,7 +1063,6 @@ public class Scene extends AbstractScene implements PConstants {
 	public void removeAnimationHandler() {
 		animateHandlerMethod = null;
 		animateHandlerObject = null;
-		animateHandlerMethodName = null;
 	}
 
 	/**
@@ -1081,7 +1073,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #removeAnimationHandler()
 	 */
 	public boolean hasAnimationHandler() {
-		if (animateHandlerMethodName == null)
+		if (animateHandlerMethod == null)
 			return false;
 		return true;
 	}
