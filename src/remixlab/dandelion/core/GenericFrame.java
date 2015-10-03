@@ -10,8 +10,6 @@
 
 package remixlab.dandelion.core;
 
-import java.lang.reflect.Method;
-
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.geom.*;
@@ -684,6 +682,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
 	@Override
 	public void performInteraction(BogusEvent event) {
+		if( profile.handle(event) )
+			return;
 		if (event instanceof ClickEvent)
 			performInteraction((ClickEvent) event);
 		if (event instanceof MotionEvent)
@@ -721,38 +721,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * Override this method when you want the object to perform an interaction from a
 	 * {@link remixlab.bias.event.DOF2Event}.
 	 */
-	protected void performInteraction(DOF2Event event) {		
-		if( event.shortcut().equals(shortcut) )
-			this.invokeInteractionHandler(event);
+	protected void performInteraction(DOF2Event event) {
 	}
 	
-	protected Shortcut shortcut;
-	protected Method						iHandlerMethod;
-	
-	protected boolean invokeInteractionHandler(BogusEvent event) {
-		// 3. Draw external registered method
-		if (iHandlerMethod != null) {
-			try {
-				iHandlerMethod.invoke(this, new Object[] { event });
-				return true;
-			} catch (Exception e) {
-				System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
-				e.printStackTrace();
-				return false;
-			}
-		}
-		return false;
-	}
-	
-	public void addInteractionHandler(Shortcut s, String methodName) {
-		try {
-			this.shortcut = s;
-			iHandlerMethod = this.getClass().getMethod(methodName, new Class<?>[] { MotionEvent.class });
-		} catch (Exception e) {
-			System.out.println("Something went wrong when registering your " + methodName + " method");
-			e.printStackTrace();
-		}
-	}
+	public Profile profile = new Profile(this);
 
 	/**
 	 * Override this method when you want the object to perform an interaction from a
