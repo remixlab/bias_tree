@@ -82,12 +82,8 @@ public class KeyAgent extends Agent {
 			handle(currentEvent);
 		}
 	}
-
-	//TODO pending
-	/*
-	@Override
-	public int keyCode(char key) {
+	
+	public static int keyCode(char key) {
 		return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key);
 	}
-	*/
 }

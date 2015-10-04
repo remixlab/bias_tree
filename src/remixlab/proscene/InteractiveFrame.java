@@ -77,6 +77,8 @@ public class InteractiveFrame extends GenericFrame implements Model {
 	
 	//--
 	
+	//TODO implement high level profile api, according to P5 mouse simplicity behavior 
+	
 	/**
 	 * Constructs a interactive-frame and adds to the {@link remixlab.proscene.Scene#models()} collection.
 	 * Calls {@code super(scn}.

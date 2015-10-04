@@ -724,6 +724,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	protected void performInteraction(DOF2Event event) {
 	}
 	
+	//TODO add me properly
+	//TODO decide if it's better to attach the Profile at the IFrame
 	public Profile profile = new Profile(this);
 
 	/**

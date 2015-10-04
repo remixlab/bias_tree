@@ -25,6 +25,8 @@ import remixlab.bias.event.*;
  * @see remixlab.proscene.DroidTouchAgent
  */
 public class MouseAgent extends Agent {
+	
+	//TODO simplify event reduction (no MOD) according to P5 mouse simplicity behavior
 	protected Scene scene;
 	//public static int LEFT_ID	= PApplet.LEFT, CENTER_ID = PApplet.CENTER, RIGHT_ID = PApplet.RIGHT, WHEEL_ID = MouseEvent.WHEEL;
 	

@@ -179,6 +179,23 @@ public class Profile implements Copyable {
 		}
 	}
 	
+	public void setRawKeyboardBinding(Shortcut key, String methodName) {
+		if (hasBinding(key)) {
+			Method a = method(key);
+			if(a.getName().equals(methodName))
+				System.out.println("Warning: shortcut already bound to " + a);
+			else
+				System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
+				
+		}
+		try {
+			map.put(key, grabber.getClass().getMethod(methodName, new Class<?>[] { }));
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+	
 	public void removeKeyboardBindings() {
 		Iterator<Entry<Shortcut, Method>> it = map.entrySet().iterator();
 	    while (it.hasNext()) {

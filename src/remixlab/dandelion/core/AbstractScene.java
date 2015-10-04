@@ -147,9 +147,17 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	}
 	
 	// Grabber Implementation
+	
+	//TODO pending high level set keyboard bindings
+	//TODO decide if it's better to attach the Profile at the Scene
+	
+	//TODO add me properly
+	public Profile profile = new Profile(this);
 
 	@Override
 	public void performInteraction(BogusEvent event) {
+		if( profile.handle(event) )
+			return;
 		if (event instanceof KeyboardEvent)
 			performInteraction((KeyboardEvent) event);
 	}
@@ -169,12 +177,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 		AbstractScene.showMissingImplementationWarning("performInteraction(KeyboardEvent event)", this.getClass().getName());
 	}
 	
-	/**
-	 * Override this method when you want the object to be picked from a {@link remixlab.bias.event.KeyboardEvent}. 
-	 */
 	protected boolean checkIfGrabsInput(KeyboardEvent event) {
-		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(KeyboardEvent event)", this.getClass().getName());
-		return false;
+		return profile.hasBinding(event.shortcut());
 	}
 	
 	/**
@@ -828,6 +832,11 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	 */
 	public void toggleAxesVisualHint() {
 		setAxesVisualHint(!axesVisualHint());
+	}
+	
+	//TODO experimenting
+	public void toggleAxes(KeyboardEvent event) {
+		toggleAxesVisualHint();
 	}
 
 	/**
