@@ -26,6 +26,16 @@ import remixlab.util.*;
  * 
  */
 public class Profile implements Copyable {
+	class ObjectMethodTuple {
+		Object object;
+		Method method;
+		
+		ObjectMethodTuple(Object o, Method m) {
+			object = o;
+			method = m;
+		}
+	}
+	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).append(map).toHashCode();
@@ -41,17 +51,19 @@ public class Profile implements Copyable {
 			return false;
 
 		Profile other = (Profile) obj;
-		return new EqualsBuilder().append(map, other.map).isEquals();
+		return new EqualsBuilder().append(map, other.map)
+				.append(grabber, other.grabber)
+				.isEquals();
 	}
 	
-	protected HashMap<Shortcut, Method>	map;
+	protected HashMap<Shortcut, ObjectMethodTuple>	map;
 	protected Grabber grabber;
 
 	/**
 	 * Constructs the hash-map based profile.
 	 */
 	public Profile(Grabber g) {
-		map = new HashMap<Shortcut, Method>();
+		map = new HashMap<Shortcut, ObjectMethodTuple>();
 		grabber = g;
 	}
 
@@ -62,11 +74,9 @@ public class Profile implements Copyable {
 	 *          profile to be copied
 	 */
 	protected Profile(Profile other) {
-		map = new HashMap<Shortcut, Method>();
-		for (Map.Entry<Shortcut, Method> entry : other.map().entrySet()) {
-			Shortcut key = entry.getKey();
-			Method value = entry.getValue();
-			map.put(key, value);
+		map = new HashMap<Shortcut, ObjectMethodTuple>();
+		for (Map.Entry<Shortcut, ObjectMethodTuple> entry : other.map().entrySet()) {
+			map.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
 		}
 		grabber = other.grabber;
 	}
@@ -82,7 +92,7 @@ public class Profile implements Copyable {
 	/**
 	 * Returns the {@code map} (which is simply an instance of {@code HashMap}) encapsulated by this object.
 	 */
-	public HashMap<Shortcut, Method> map() {
+	public HashMap<Shortcut, ObjectMethodTuple> map() {
 		return map;
 	}
 
@@ -91,16 +101,18 @@ public class Profile implements Copyable {
 	 * key.
 	 */
 	public Method method(Shortcut key) {
-		return map.get(key);
+		return map.get(key) == null ? null : map.get(key).method;
 	}
 	
+	public Object object(Shortcut key) {
+		return map.get(key) == null ? null : map.get(key).object;
+	}
 		
 	public boolean handle(BogusEvent event) {
 		Method iHandlerMethod = method(event.shortcut());
-		// 3. Draw external registered method
 		if (iHandlerMethod != null) {
 			try {
-				iHandlerMethod.invoke(grabber, new Object[] { event });
+				iHandlerMethod.invoke(object(event.shortcut()), new Object[] { event });
 				return true;
 			} catch (Exception e) {
 				System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
@@ -111,7 +123,7 @@ public class Profile implements Copyable {
 		return false;
 	}
 	
-	public void setBinding(Shortcut key, String methodName) {
+	protected void printWarning(Shortcut key, String methodName) {
 		if (hasBinding(key)) {
 			Method a = method(key);
 			if(a.getName().equals(methodName))
@@ -120,8 +132,12 @@ public class Profile implements Copyable {
 				System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
 				
 		}
+	}
+	
+	public void setBinding(Shortcut key, String methodName) {
+		printWarning(key, methodName);
 		try {
-			map.put(key, grabber.getClass().getMethod(methodName, new Class<?>[] { BogusEvent.class }));
+			map.put(key, new ObjectMethodTuple(grabber, grabber.getClass().getMethod(methodName, new Class<?>[] { BogusEvent.class })));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -137,16 +153,11 @@ public class Profile implements Copyable {
 	 *          {@link java.lang.reflect.Method}
 	 */
 	public void setMotionBinding(Shortcut key, String methodName) {
-		if (hasBinding(key)) {
-			Method a = method(key);
-			if(a.getName().equals(methodName))
-				System.out.println("Warning: shortcut already bound to " + a);
-			else
-				System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
-				
-		}
+		printWarning(key, methodName);
 		try {
-			map.put(key, grabber.getClass().getMethod(methodName, new Class<?>[] { MotionEvent.class }));
+			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { MotionEvent.class });
+			map.put(key, new ObjectMethodTuple(grabber, method));
+			//System.out.println("grabber.getClass().getName() " + grabber.getClass().getName() + ", method.getDeclaringClass().getName(): " + method.getDeclaringClass().getName());
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -154,42 +165,31 @@ public class Profile implements Copyable {
 	}
 	
 	public void removeMotionBindings() {
-		Iterator<Entry<Shortcut, Method>> it = map.entrySet().iterator();
+		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
 	    while (it.hasNext()) {
-	        Map.Entry<Shortcut, Method> pair = it.next();
+	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
 	        if( pair.getKey() instanceof MotionShortcut )
 	        	it.remove();
 	    }
 	}
 	
 	public void setKeyboardBinding(Shortcut key, String methodName) {
-		if (hasBinding(key)) {
-			Method a = method(key);
-			if(a.getName().equals(methodName))
-				System.out.println("Warning: shortcut already bound to " + a);
-			else
-				System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
-				
-		}
+		printWarning(key, methodName);
 		try {
-			map.put(key, grabber.getClass().getMethod(methodName, new Class<?>[] { KeyboardEvent.class }));
+			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { KeyboardEvent.class });
+			map.put(key, new ObjectMethodTuple(grabber, method));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
 		}
 	}
 	
+	//TODO experimental
 	public void setRawKeyboardBinding(Shortcut key, String methodName) {
-		if (hasBinding(key)) {
-			Method a = method(key);
-			if(a.getName().equals(methodName))
-				System.out.println("Warning: shortcut already bound to " + a);
-			else
-				System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
-				
-		}
+		printWarning(key, methodName);
 		try {
-			map.put(key, grabber.getClass().getMethod(methodName, new Class<?>[] { }));
+			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { });
+			map.put(key, new ObjectMethodTuple(grabber, method));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -197,25 +197,19 @@ public class Profile implements Copyable {
 	}
 	
 	public void removeKeyboardBindings() {
-		Iterator<Entry<Shortcut, Method>> it = map.entrySet().iterator();
+		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
 	    while (it.hasNext()) {
-	        Map.Entry<Shortcut, Method> pair = it.next();
+	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
 	        if( pair.getKey() instanceof KeyboardShortcut )
 	        	it.remove();
 	    }
 	}
-	
+
 	public void setClickBinding(Shortcut key, String methodName) {
-		if (hasBinding(key)) {
-			Method a = method(key);
-			if(a.getName().equals(methodName))
-				System.out.println("Warning: shortcut already bound to " + a);
-			else
-				System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
-				
-		}
+		printWarning(key, methodName);
 		try {
-			map.put(key, grabber.getClass().getMethod(methodName, new Class<?>[] { ClickEvent.class }));
+			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { ClickEvent.class });
+			map.put(key, new ObjectMethodTuple(grabber, method));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -223,25 +217,19 @@ public class Profile implements Copyable {
 	}
 	
 	public void removeClickBindings() {
-		Iterator<Entry<Shortcut, Method>> it = map.entrySet().iterator();
+		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
 	    while (it.hasNext()) {
-	        Map.Entry<Shortcut, Method> pair = it.next();
+	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
 	        if( pair.getKey() instanceof ClickShortcut )
 	        	it.remove();
 	    }
 	}
-	
+
 	public void setDOF1Binding(Shortcut key, String methodName) {
-		if (hasBinding(key)) {
-			Method a = method(key);
-			if(a.getName().equals(methodName))
-				System.out.println("Warning: shortcut already bound to " + a);
-			else
-				System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
-				
-		}
+		printWarning(key, methodName);
 		try {
-			map.put(key, grabber.getClass().getMethod(methodName, new Class<?>[] { DOF1Event.class }));
+			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { DOF1Event.class });
+			map.put(key, new ObjectMethodTuple(grabber, method));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -249,16 +237,10 @@ public class Profile implements Copyable {
 	}
 	
 	public void setDOF2Binding(Shortcut key, String methodName) {
-		if (hasBinding(key)) {
-			Method a = method(key);
-			if(a.getName().equals(methodName))
-				System.out.println("Warning: shortcut already bound to " + a);
-			else
-				System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
-				
-		}
+		printWarning(key, methodName);
 		try {
-			map.put(key, grabber.getClass().getMethod(methodName, new Class<?>[] { DOF2Event.class }));
+			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { DOF2Event.class });
+			map.put(key, new ObjectMethodTuple(grabber, method));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -266,16 +248,10 @@ public class Profile implements Copyable {
 	}
 	
 	public void setDOF3Binding(Shortcut key, String methodName) {
-		if (hasBinding(key)) {
-			Method a = method(key);
-			if(a.getName().equals(methodName))
-				System.out.println("Warning: shortcut already bound to " + a);
-			else
-				System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
-				
-		}
+		printWarning(key, methodName);
 		try {
-			map.put(key, grabber.getClass().getMethod(methodName, new Class<?>[] { DOF3Event.class }));
+			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { DOF3Event.class });
+			map.put(key, new ObjectMethodTuple(grabber, method));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -283,16 +259,10 @@ public class Profile implements Copyable {
 	}
 	
 	public void setDOF6Binding(Shortcut key, String methodName) {
-		if (hasBinding(key)) {
-			Method a = method(key);
-			if(a.getName().equals(methodName))
-				System.out.println("Warning: shortcut already bound to " + a);
-			else
-				System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
-				
-		}
+		printWarning(key, methodName);
 		try {
-			map.put(key, grabber.getClass().getMethod(methodName, new Class<?>[] { DOF6Event.class }));
+			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { DOF6Event.class });
+			map.put(key, new ObjectMethodTuple(grabber, method));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -326,16 +296,28 @@ public class Profile implements Copyable {
 	public boolean hasBinding(Shortcut key) {
 		return map.containsKey(key);
 	}
-
+	
 	/**
 	 * Returns true if this object maps one or more shortcuts to the specified action.
 	 * 
-	 * @param methot
+	 * @param method
 	 *          {@link java.lang.reflect.Method}
 	 * @return true if this object maps one or more shortcuts to the specified action.
 	 */
+	public boolean isMethodBound(String method) {
+		for (ObjectMethodTuple tuple : map.values()) {
+			if( grabber == tuple.object && tuple.method.getName().equals(method) )
+				return true;
+		}
+		return false;
+	}
+	
 	public boolean isMethodBound(Method method) {
-		return map.containsValue(method);
+		return isMethodBound(grabber, method);
+	}
+	
+	public boolean isMethodBound(Object object, Method method) {
+		return map.containsValue(new ObjectMethodTuple(object, method));
 	}
 
 	/**
@@ -344,13 +326,13 @@ public class Profile implements Copyable {
 	public String description() {
 		String result = new String();
 		boolean title = false;
-		for (Entry<Shortcut, Method> entry : map.entrySet())
+		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
 			if (entry.getKey() != null && entry.getValue() != null) {
 				if(!title) {
 				  result += entry.getKey().getClass().getSimpleName() + "s:\n";
 				  title = true;
 				}
-				result += entry.getKey().description() + " -> " + entry.getValue().getName() + "\n";
+				result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
 			}
 		return result;
 	}
