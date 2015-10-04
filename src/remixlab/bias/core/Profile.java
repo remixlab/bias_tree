@@ -112,7 +112,10 @@ public class Profile implements Copyable {
 		Method iHandlerMethod = method(event.shortcut());
 		if (iHandlerMethod != null) {
 			try {
-				iHandlerMethod.invoke(object(event.shortcut()), new Object[] { event });
+				if(object(event.shortcut()) == grabber)
+					iHandlerMethod.invoke(object(event.shortcut()), new Object[] { event });
+				else
+					iHandlerMethod.invoke(object(event.shortcut()), new Object[] { grabber, event });
 				return true;
 			} catch (Exception e) {
 				System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
@@ -144,6 +147,17 @@ public class Profile implements Copyable {
 		}
 	}
 	
+	public void setBinding(Object object, Shortcut key, String methodName) {
+		printWarning(key, methodName);
+		try {
+			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), BogusEvent.class });
+			map.put(key, new ObjectMethodTuple(object, method));
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Defines the shortcut that triggers the given method.
 	 * 
@@ -157,6 +171,18 @@ public class Profile implements Copyable {
 		try {
 			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { MotionEvent.class });
 			map.put(key, new ObjectMethodTuple(grabber, method));
+			//System.out.println("grabber.getClass().getName() " + grabber.getClass().getName() + ", method.getDeclaringClass().getName(): " + method.getDeclaringClass().getName());
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+	
+	public void setMotionBinding(Object object, Shortcut key, String methodName) {
+		printWarning(key, methodName);
+		try {
+			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), MotionEvent.class });
+			map.put(key, new ObjectMethodTuple(object, method));
 			//System.out.println("grabber.getClass().getName() " + grabber.getClass().getName() + ", method.getDeclaringClass().getName(): " + method.getDeclaringClass().getName());
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
@@ -184,6 +210,18 @@ public class Profile implements Copyable {
 		}
 	}
 	
+	public void setKeyboardBinding(Object object, Shortcut key, String methodName) {
+		printWarning(key, methodName);
+		try {
+			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), KeyboardEvent.class });
+			map.put(key, new ObjectMethodTuple(object, method));
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+	
+	/*
 	//TODO experimental
 	public void setRawKeyboardBinding(Shortcut key, String methodName) {
 		printWarning(key, methodName);
@@ -195,6 +233,7 @@ public class Profile implements Copyable {
 			e.printStackTrace();
 		}
 	}
+	*/
 	
 	public void removeKeyboardBindings() {
 		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
@@ -210,6 +249,17 @@ public class Profile implements Copyable {
 		try {
 			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { ClickEvent.class });
 			map.put(key, new ObjectMethodTuple(grabber, method));
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+	
+	public void setClickBinding(Object object, Shortcut key, String methodName) {
+		printWarning(key, methodName);
+		try {
+			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), ClickEvent.class });
+			map.put(key, new ObjectMethodTuple(object, method));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -236,11 +286,33 @@ public class Profile implements Copyable {
 		}
 	}
 	
+	public void setDOF1Binding(Object object, Shortcut key, String methodName) {
+		printWarning(key, methodName);
+		try {
+			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), DOF1Event.class });
+			map.put(key, new ObjectMethodTuple(object, method));
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+	
 	public void setDOF2Binding(Shortcut key, String methodName) {
 		printWarning(key, methodName);
 		try {
 			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { DOF2Event.class });
 			map.put(key, new ObjectMethodTuple(grabber, method));
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+	
+	public void setDOF2Binding(Object object, Shortcut key, String methodName) {
+		printWarning(key, methodName);
+		try {
+			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), DOF2Event.class });
+			map.put(key, new ObjectMethodTuple(object, method));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -258,11 +330,33 @@ public class Profile implements Copyable {
 		}
 	}
 	
+	public void setDOF3Binding(Object object, Shortcut key, String methodName) {
+		printWarning(key, methodName);
+		try {
+			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), DOF3Event.class });
+			map.put(key, new ObjectMethodTuple(object, method));
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+	
 	public void setDOF6Binding(Shortcut key, String methodName) {
 		printWarning(key, methodName);
 		try {
 			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { DOF6Event.class });
 			map.put(key, new ObjectMethodTuple(grabber, method));
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+	
+	public void setDOF6Binding(Object object, Shortcut key, String methodName) {
+		printWarning(key, methodName);
+		try {
+			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), DOF6Event.class });
+			map.put(key, new ObjectMethodTuple(object, method));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
