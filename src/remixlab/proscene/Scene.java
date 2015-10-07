@@ -14,6 +14,8 @@ import processing.core.*;
 import processing.opengl.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.DOF2Event;
+import remixlab.bias.event.KeyboardEvent;
+import remixlab.bias.ext.Profile;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
@@ -218,6 +220,22 @@ public class Scene extends AbstractScene implements PConstants {
 
 		// 7. Init should be called only once
 		init();
+	}
+	
+	// Profile stuff
+	
+	//TODO add me properly
+	//TODO decide if it's better to attach the Profile at the IFrame
+	public Profile profile = new Profile(this);
+	
+	public void performInteraction(BogusEvent event) {
+		if( profile.handle(event) )
+			return;
+	}
+	
+	@Override
+	protected boolean checkIfGrabsInput(KeyboardEvent event) {
+		return profile.hasBinding(event.shortcut());
 	}
 
 	// P5 STUFF

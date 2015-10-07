@@ -18,7 +18,9 @@ package remixlab.proscene;
 import java.lang.reflect.Method;
 
 import processing.core.*;
-import remixlab.bias.core.Agent;
+import remixlab.bias.core.*;
+import remixlab.bias.event.*;
+import remixlab.bias.ext.Profile;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
@@ -395,4 +397,95 @@ public class InteractiveFrame extends GenericFrame implements Model {
 			return false;
 		return true;
 	}
+	
+	// TODO wheel bindings -> as part of motion bindings
+	
+	//TODO add me properly
+	//TODO decide if it's better to attach the Profile at the IFrame
+	public Profile profile = new Profile(this);
+	
+	@Override
+	public void performInteraction(BogusEvent event) {
+		if( profile.handle(event) )
+			return;
+	}
+	
+	//mouse move
+	public void setMotionBinding(String methodName) {
+		profile.setMotionBinding(new MotionShortcut(), methodName);
+	}
+	
+	public void setMotionBinding(Object object, String methodName) {
+		profile.setMotionBinding(object, new MotionShortcut(), methodName);
+	}
+	
+	public boolean hasMotionBinding() {
+		return profile.hasBinding(new MotionShortcut());
+	}
+	
+	public void removeMotionBinding() {
+		profile.removeBinding(new MotionShortcut());
+	}
+	
+	public void setMotionBinding(int id, String methodName) {
+		profile.setMotionBinding(new MotionShortcut(id), methodName);
+	}
+	
+	public void setMotionBinding(Object object, int id, String methodName) {
+		profile.setMotionBinding(object, new MotionShortcut(id), methodName);
+	}
+	
+	public boolean hasMotionBinding(int it) {
+		return profile.hasBinding(new MotionShortcut(id));
+	}
+	
+	public void removeMotionBinding(int id) {
+		profile.removeBinding(new MotionShortcut(id));
+	}
+	
+	public void removeMotionBindings() {
+		profile.removeMotionBindings();
+	}
+	
+	public void setKeyBinding(char key, String methodName) {
+		profile.setKeyboardBinding(new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
+	}
+	
+	public void setKeyBinding(Object object, char key, String methodName) {
+		profile.setKeyboardBinding(object, new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
+	}
+	
+	public boolean hasKeyBinding(char key) {
+		return profile.hasBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
+	}
+	
+	public void removeKeyBinding(char key) {
+		profile.removeBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
+	}
+	
+	public void setKeyBinding(int mask, char key, String methodName) {
+		profile.setKeyboardBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
+	}
+	
+	public void setKeyBinding(Object object, int mask, char key, String methodName) {
+		profile.setKeyboardBinding(object, new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
+	}
+	
+	public boolean hasKeyBinding(int mask, char key) {
+		return profile.hasBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
+	}
+	
+	public void removeKeyBinding(int mask, char key) {
+		profile.removeBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
+	}
+	
+	public void removeKeyBindings() {
+		profile.removeKeyboardBindings();
+	}
+	
+	public void removeBindings() {
+		profile.removeBindings();
+	}
+	
+	// TODO click and double click bindings
 }

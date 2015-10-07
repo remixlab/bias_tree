@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.core;
+package remixlab.bias.ext;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -16,6 +16,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import remixlab.bias.core.BogusEvent;
+import remixlab.bias.core.Grabber;
+import remixlab.bias.core.Shortcut;
 import remixlab.bias.event.*;
 import remixlab.util.*;
 
@@ -130,9 +133,9 @@ public class Profile implements Copyable {
 		if (hasBinding(key)) {
 			Method a = method(key);
 			if(a.getName().equals(methodName))
-				System.out.println("Warning: shortcut already bound to " + a);
+				System.out.println("Warning: shortcut already bound to " + a.getName());
 			else
-				System.out.println("Warning: overwritting shortcut which was previously bound to " + a);
+				System.out.println("Warning: overwritting shortcut which was previously bound to " + a.getName());
 				
 		}
 	}
