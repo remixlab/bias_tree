@@ -1352,6 +1352,20 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	protected void gestureTranslateX(DOF1Event event, float sens) {
 		translate(screenToVec(Vec.multiply(new Vec(isEyeFrame() ? -event.dx() : event.dx(), 0, 0), sens)));
 	}
+	
+	/**
+	 * User gesture into x-translation conversion routine.
+	 */
+	public void gestureTranslateXPos(KeyboardEvent event) {
+		gestureTranslateX(event, true);
+	}
+	
+	/**
+	 * User gesture into x-translation conversion routine.
+	 */
+	public void gestureTranslateXNeg(KeyboardEvent event) {
+		gestureTranslateX(event, false);
+	}
 
 	/**
 	 * User gesture into x-translation conversion routine.
@@ -1383,6 +1397,20 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	protected void gestureTranslateY(DOF1Event event, float sens) {
 		translate(screenToVec(Vec.multiply(new Vec(0, isEyeFrame() ^ gScene.isRightHanded() ? -event.dx() : event.dx()),
 				sens)));
+	}
+	
+	/**
+	 * User gesture into y-translation conversion routine.
+	 */
+	public void gestureTranslateYPos(KeyboardEvent event) {
+		gestureTranslateY(event, true);
+	}
+	
+	/**
+	 * User gesture into y-translation conversion routine.
+	 */
+	public void gestureTranslateYNeg(KeyboardEvent event) {
+		gestureTranslateY(event, false);
 	}
 
 	/**
@@ -1419,6 +1447,20 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	protected void gestureTranslateZ(DOF1Event event, float sens) {
 		translate(screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, isEyeFrame() ? -event.dx() : event.dx()), sens)));
 	}
+	
+	/**
+	 * User gesture into z-translation conversion routine.
+	 */
+	public void gestureTranslateZPos(KeyboardEvent event) {
+		gestureTranslateZ(event, true);
+	}
+	
+	/**
+	 * User gesture into z-translation conversion routine.
+	 */
+	public void gestureTranslateZNeg(KeyboardEvent event) {
+		gestureTranslateZ(event, false);
+	}
 
 	/**
 	 * User gesture into z-translation conversion routine.
@@ -1453,7 +1495,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into xy-translation conversion routine.
 	 */
-	public void gestureTranslateXY(DOF2Event event) {
+	protected void gestureTranslateXY(DOF2Event event) {
 		translate(screenToVec(Vec.multiply(new Vec(isEyeFrame() ? -event.dx() : event.dx(),
 				(gScene.isRightHanded() ^ isEyeFrame()) ? -event.dy() : event.dy(), 0.0f), this.translationSensitivity())));
 	}
@@ -1476,7 +1518,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into xyz-translation conversion routine.
 	 */
-	public void gestureTranslateXYZ(DOF3Event event) {
+	protected void gestureTranslateXYZ(DOF3Event event) {
 		translate(screenToVec(Vec.multiply(
 				new Vec(event.dx(), gScene.isRightHanded() ? -event.dy() : event.dy(), -event.dz()),
 				this.translationSensitivity())));
@@ -1515,6 +1557,24 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 		if (direction.magnitude() > 0.02f * gScene.radius() || delta > 0.0f)
 			translate(Vec.multiply(direction, delta));
 	}
+	
+	/**
+	 * User gesture into zoom-on-anchor conversion routine.
+	 * 
+	 * @see remixlab.dandelion.core.Eye#anchor()
+	 */
+	public void gestureZoomOnAnchorPos(KeyboardEvent event) {
+		gestureZoomOnAnchor(event, true);
+	}
+	
+	/**
+	 * User gesture into zoom-on-anchor conversion routine.
+	 * 
+	 * @see remixlab.dandelion.core.Eye#anchor()
+	 */
+	public void gestureZoomOnAnchorNeg(KeyboardEvent event) {
+		gestureZoomOnAnchor(event, false);
+	}
 
 	/**
 	 * User gesture into zoom-on-anchor conversion routine.
@@ -1552,7 +1612,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into zoom-on-region conversion routine.
 	 */
-	public void gestureZoomOnRegion(DOF2Event event) {
+	protected void gestureZoomOnRegion(DOF2Event event) {
 		int w = (int) Math.abs(event.dx());
 		int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
 		int h = (int) Math.abs(event.dy());
@@ -1589,6 +1649,20 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 			return;
 		}
 		spin(screenToQuat(computeAngle(event) * (isEyeFrame() ? -sens : sens), 0, 0), event.speed(), event.delay());
+	}
+	
+	/**
+	 * User gesture into x-rotation conversion routine.
+	 */
+	public void gestureRotateXPos(KeyboardEvent event) {
+		gestureRotateX(event, true);
+	}
+	
+	/**
+	 * User gesture into x-rotation conversion routine.
+	 */
+	public void gestureRotateXNeg(KeyboardEvent event) {
+		gestureRotateX(event, false);
 	}
 
 	/**
@@ -1631,6 +1705,20 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 			return;
 		}
 		spin(screenToQuat(0, computeAngle(event) * (isEyeFrame() ? -sens : sens), 0), event.speed(), event.delay());
+	}
+	
+	/**
+	 * User gesture into y-rotation conversion routine.
+	 */
+	public void gestureRotateYPos(KeyboardEvent event) {
+		gestureRotateY(event, true);
+	}
+	
+	/**
+	 * User gesture into y-rotation conversion routine.
+	 */
+	public void gestureRotateYNeg(KeyboardEvent event) {
+		gestureRotateY(event, false);
 	}
 
 	/**
@@ -1677,6 +1765,20 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 			rt = screenToQuat(0, 0, sens * computeAngle(event));
 		spin(rt, event.speed(), event.delay());
 	}
+	
+	/**
+	 * User gesture into z-rotation conversion routine.
+	 */
+	public void gestureRotateZPos(KeyboardEvent event) {
+		gestureRotateZ(event, true);
+	}
+	
+	/**
+	 * User gesture into z-rotation conversion routine.
+	 */
+	public void gestureRotateZNeg(KeyboardEvent event) {
+		gestureRotateZ(event, false);
+	}
 
 	/**
 	 * User gesture into z-rotation conversion routine.
@@ -1693,7 +1795,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into xyz-rotation conversion routine.
 	 */
-	public void gestureRotateXYZ(MotionEvent event) {
+	protected void gestureRotateXYZ(MotionEvent event) {
 		if (gScene.is2D()) {
 			AbstractScene.showDepthWarning("gestureRotateXYZ");
 			return;
@@ -1708,7 +1810,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into xyz-rotation conversion routine.
 	 */
-	public void gestureRotateXYZ(DOF3Event event) {
+	protected void gestureRotateXYZ(DOF3Event event) {
 		rotate(screenToQuat(Vec.multiply(
 				new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz())), rotationSensitivity())));
 	}
@@ -1727,7 +1829,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into arcball-rotation conversion routine.
 	 */
-	public void gestureArcball(DOF2Event event) {
+	protected void gestureArcball(DOF2Event event) {
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("deformedBallRotation");
 			return;
@@ -1774,6 +1876,20 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 			float s = 1 + Math.abs(delta) / (float) gScene.height();
 			scale(delta >= 0 ? s : 1 / s);
 		}
+	}
+	
+	/**
+	 * User gesture into scaling conversion routine.
+	 */
+	public void gestureScalePos(KeyboardEvent event) {
+		gestureScale(event, true);
+	}
+	
+	/**
+	 * User gesture into scaling conversion routine.
+	 */
+	public void gestureScaleNeg(KeyboardEvent event) {
+		gestureScale(event, false);
 	}
 
 	/**
@@ -1848,7 +1964,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into drive conversion routine.
 	 */
-	public void gestureDrive(DOF2Event event) {
+	protected void gestureDrive(DOF2Event event) {
 		Vec trns;
 		rotate(turnQuaternion(event.dof1Event(), gScene.camera()));
 		flyDisp.set(0.0f, 0.0f, flySpeed());
@@ -1874,7 +1990,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into CAD-rotation conversion routine.
 	 */
-	public void gestureRotateCAD(DOF2Event event) {
+	protected void gestureRotateCAD(DOF2Event event) {
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("gestureRotateCAD");
 			return;
@@ -1913,7 +2029,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into hinge conversion routine.
 	 */
-	public void gestureHinge(DOF6Event event) {
+	protected void gestureHinge(DOF6Event event) {
 		// aka google earth navigation
 		// 1. Relate the eye reference frame:
 		Vec trns = new Vec();
@@ -2001,6 +2117,56 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 				rt = new Quat(axis, prev_angle - angle);
 			spin(rt, event.speed(), event.delay());
 		}
+	}
+	
+	// click gestures
+	
+	/**
+	 * User gesture into align frame conversion routine.
+	 */
+	public void gestureAlign(KeyboardEvent event) {
+		align();
+	}
+	
+	/**
+	 * User gesture into align frame conversion routine.
+	 */
+	public void gestureAlign(ClickEvent event) {
+		align();
+	}
+	
+	/**
+	 * User gesture into center frame conversion routine.
+	 */
+	public void gestureCenter(KeyboardEvent event) {
+		center();
+	}
+	
+	/**
+	 * User gesture into center frame conversion routine.
+	 */
+	public void gestureCenter(ClickEvent event) {
+		center();
+	}
+	
+	/**
+	 * User gesture into anchor from pixel conversion routine.
+	 */
+	public void gestureAnchorFromPixel(ClickEvent event) {
+		if (isEyeFrame())
+			eye().setAnchorFromPixel(new Point(event.x(), event.y()));
+		else
+			AbstractScene.showOnlyEyeWarning("gestureAnchorFromPixel");
+	}
+	
+	/**
+	 * User gesture into zoom on pixel conversion routine.
+	 */
+	public void gestureZoomOnPixel(ClickEvent event) {
+		if (isEyeFrame())
+			eye().interpolateToZoomOnPixel(new Point(event.x(), event.y()));
+		else
+			AbstractScene.showOnlyEyeWarning("gestureAnchorFromPixel");
 	}
 
 	// Quite nice

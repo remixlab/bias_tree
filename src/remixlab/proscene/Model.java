@@ -31,12 +31,13 @@ import remixlab.util.*;
  * @see remixlab.proscene.Model
  * @see remixlab.dandelion.InteractiveFrame.GenericFrame
  */
-public class Model extends InteractiveFrame {
+public class Model extends InteractiveFrame implements Constants {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
 				appendSuper(super.hashCode()).
 				append(id).
+				append(profile).
 				toHashCode();
 	}
 
@@ -53,6 +54,7 @@ public class Model extends InteractiveFrame {
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(id, other.id)
+				.append(profile, other.profile)
 				.isEquals();
 	}
 	
@@ -75,6 +77,7 @@ public class Model extends InteractiveFrame {
 		pshape = ps;
 		tex = texture;
 		shift = new PVector();
+		profile = new Profile(this);
 	}
 	
 	//--
@@ -96,6 +99,8 @@ public class Model extends InteractiveFrame {
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		shift = new PVector();
+		profile = new Profile(this);
+		setDefaultBindings();
 	}
 	
 	/**
@@ -113,6 +118,8 @@ public class Model extends InteractiveFrame {
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		shift = new PVector();
+		profile = new Profile(this);
+		setDefaultBindings();
 	}
 	
 	/**
@@ -129,6 +136,8 @@ public class Model extends InteractiveFrame {
 		id = ++Scene.modelCount;
 		shift = new PVector();
 		setShape(ps);
+		profile = new Profile(this);
+		setDefaultBindings();
 	}
 
 	/**
@@ -144,6 +153,8 @@ public class Model extends InteractiveFrame {
 		id = ++Scene.modelCount;
 		shift = new PVector();
 		setShape(ps);
+		profile = new Profile(this);
+		setDefaultBindings();
 	}
 
 	/**
@@ -160,6 +171,8 @@ public class Model extends InteractiveFrame {
 		id = ++Scene.modelCount;
 		shift = new PVector();
 		addGraphicsHandler(obj, methodName);
+		profile = new Profile(this);
+		setDefaultBindings();
 	}
 
 	/**
@@ -176,6 +189,8 @@ public class Model extends InteractiveFrame {
 		id = ++Scene.modelCount;
 		shift = new PVector();
 		addGraphicsHandler(obj, methodName);
+		profile = new Profile(this);
+		setDefaultBindings();
 	}
 
 	protected Model(Model otherFrame) {
@@ -185,6 +200,12 @@ public class Model extends InteractiveFrame {
 		this.shift = otherFrame.shift.copy();
 		this.drawHandlerObject = otherFrame.drawHandlerObject;
 		this.drawHandlerMethod = otherFrame.drawHandlerMethod;
+		this.profile = new Profile(this);
+		this.profile.from(otherFrame.profile);
+	}
+	
+	public Profile profile() {
+		return profile;
 	}
 
 	@Override
@@ -400,7 +421,7 @@ public class Model extends InteractiveFrame {
 	
 	//TODO add me properly
 	//TODO decide if it's better to attach the Profile at the IFrame
-	public Profile profile = new Profile(this);
+	public Profile profile;
 	
 	@Override
 	public void performInteraction(BogusEvent event) {
@@ -409,6 +430,13 @@ public class Model extends InteractiveFrame {
 	}
 	
 	//mouse move
+	
+	public void removeBindings() {
+		profile.removeBindings();
+	}
+
+	// Motion
+	
 	public void setMotionBinding(String methodName) {
 		profile.setMotionBinding(new MotionShortcut(), methodName);
 	}
@@ -444,6 +472,8 @@ public class Model extends InteractiveFrame {
 	public void removeMotionBindings() {
 		profile.removeMotionBindings();
 	}
+	
+	// Key
 	
 	public void setKeyBinding(char key, String methodName) {
 		profile.setKeyboardBinding(new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
@@ -481,9 +511,48 @@ public class Model extends InteractiveFrame {
 		profile.removeKeyboardBindings();
 	}
 	
-	public void removeBindings() {
-		profile.removeBindings();
+	// click
+	
+	public void setClickBinding(int id, int count, String methodName) {
+		profile.setClickBinding(new ClickShortcut(id, count), methodName);
+	}
+	
+	public void setClickBinding(Object object, int id, int count, String methodName) {
+		profile.setClickBinding(object, new ClickShortcut(id, count), methodName);
+	}
+	
+	public boolean hasClickBinding(int id, int count) {
+		return profile.hasBinding(new ClickShortcut(id, count));
+	}
+	
+	public void removeClickBinding(int id, int count) {
+		profile.removeBinding(new ClickShortcut(id, count));
+	}
+	
+	public void removeClickBindings() {
+		profile.removeClickBindings();
 	}
 	
 	// TODO click and double click bindings
+	
+	public void setDefaultBindings() {
+		setMotionBinding(LEFT_ID, "gestureArcball");
+		setMotionBinding(CENTER_ID, "gestureScale");
+		setMotionBinding(RIGHT_ID, "gestureTranslateXY");
+		setMotionBinding(WHEEL_ID, "gestureScale");
+		
+		setClickBinding(LEFT_ID, 2, "gestureAlign");
+		setClickBinding(RIGHT_ID, 2, "gestureCenter");
+		
+		/*
+		setKeyBinding('n', "gestureAlign");
+		setKeyBinding('c', "gestureCenter");
+		setKeyBinding(LEFT_KEY, "gestureTranslateXNeg");
+		setKeyBinding(RIGHT_KEY, "gestureTranslateXPos");
+		setKeyBinding(DOWN_KEY, KeyboardAction.TRANSLATE_Y_NEG);
+		setKeyBinding(UP_KEY, KeyboardAction.TRANSLATE_Y_POS);
+		setKeyBinding('z', KeyboardAction.ROTATE_Z_NEG);
+		setKeyBinding(BogusEvent.SHIFT, 'z', KeyboardAction.ROTATE_Z_POS);
+		*/
+	}
 }

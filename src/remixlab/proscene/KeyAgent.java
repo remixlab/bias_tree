@@ -10,7 +10,6 @@
 
 package remixlab.proscene;
 
-import processing.core.PApplet;
 import remixlab.bias.event.KeyboardEvent;
 import remixlab.dandelion.core.AbstractScene;
 import remixlab.bias.core.*;
@@ -38,10 +37,6 @@ public class KeyAgent extends Agent {
 	public KeyAgent(Scene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		LEFT_KEY = PApplet.LEFT;
-		RIGHT_KEY = PApplet.RIGHT;
-		UP_KEY= PApplet.UP;
-		DOWN_KEY= PApplet.DOWN;
 		addGrabber(scene);
 		//TODO pending
 		//setDefaultBindings();

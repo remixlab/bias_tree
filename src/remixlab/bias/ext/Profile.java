@@ -28,7 +28,7 @@ import remixlab.util.*;
  * <p>
  * 
  */
-public class Profile implements Copyable {
+public class Profile {
 	class ObjectMethodTuple {
 		Object object;
 		Method method;
@@ -54,9 +54,7 @@ public class Profile implements Copyable {
 			return false;
 
 		Profile other = (Profile) obj;
-		return new EqualsBuilder().append(map, other.map)
-				.append(grabber, other.grabber)
-				.isEquals();
+		return new EqualsBuilder().append(map, other.map).isEquals();
 	}
 	
 	protected HashMap<Shortcut, ObjectMethodTuple>	map;
@@ -69,27 +67,16 @@ public class Profile implements Copyable {
 		map = new HashMap<Shortcut, ObjectMethodTuple>();
 		grabber = g;
 	}
-
-	/**
-	 * Copy constructor. Use {@link #get()} to copy this profile.
-	 * 
-	 * @param other
-	 *          profile to be copied
-	 */
-	protected Profile(Profile other) {
+	
+	public void from(Profile p) {		
+		if( grabber.getClass() != p.grabber.getClass() ) {
+			System.err.println("Profile grabbers should be of the same type");
+			return;
+		}
 		map = new HashMap<Shortcut, ObjectMethodTuple>();
-		for (Map.Entry<Shortcut, ObjectMethodTuple> entry : other.map().entrySet()) {
+		for (Map.Entry<Shortcut, ObjectMethodTuple> entry : p.map().entrySet()) {
 			map.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
 		}
-		grabber = other.grabber;
-	}
-
-	/**
-	 * Returns a deep-copy of this profile.
-	 */
-	@Override
-	public Profile get() {
-		return new Profile(this);
 	}
 
 	/**

@@ -31,10 +31,7 @@ import remixlab.bias.event.*;
  * grabber meets the condition, the {@link #trackedGrabber()} is then set to null. In this case, a non-null
  * {@link #inputGrabber()} may still be set with {@link #setDefaultGrabber(Grabber)} (see also {@link #defaultGrabber()}).
  */
-public abstract class Agent {
-	public static int LEFT_ID	= 1, CENTER_ID = 2, RIGHT_ID = 3, WHEEL_ID = 4;
-	public static int LEFT_KEY	= 1, RIGHT_KEY = 2, UP_KEY = 3, DOWN_KEY = 4;
-	
+public abstract class Agent implements Constants {	
 	protected String										nm;	
 	protected List<Grabber>	grabberList;	
 	protected Grabber trackedGrabber, defaultGrabber;

@@ -10,8 +10,6 @@
 
 package remixlab.proscene;
 
-import processing.core.PApplet;
-import processing.event.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
@@ -25,6 +23,8 @@ import remixlab.bias.event.*;
  * @see remixlab.proscene.DroidTouchAgent
  */
 public class MouseAgent extends Agent {
+	protected float		xSens		= 1f;
+	protected float		ySens		= 1f;
 	
 	//TODO simplify event reduction (no MOD) according to P5 mouse simplicity behavior
 	protected Scene scene;
@@ -47,14 +47,7 @@ public class MouseAgent extends Agent {
 	public MouseAgent(Scene scn, String n) {
 		super(scn.inputHandler(), n);
 		scene = scn;
-		LEFT_ID = PApplet.LEFT;
-		CENTER_ID = PApplet.CENTER;
-		RIGHT_ID = PApplet.RIGHT;
-		WHEEL_ID = MouseEvent.WHEEL;
 		setPickingMode(PickingMode.MOVE);
-		
-		//TODO pending
-		//dragToArcball();
 	}
 	
 	@Override
@@ -118,5 +111,51 @@ public class MouseAgent extends Agent {
 			handle(bogusClickEvent);
 			return;
 		}
+	}
+	
+	@Override
+	public float[] sensitivities(MotionEvent event) {
+		if (event instanceof DOF2Event)
+			return new float[] { xSens, ySens, 1f, 1f, 1f, 1f };
+		else
+			return super.sensitivities(event);
+	}
+
+	/**
+	 * Defines the {@link #xSensitivity()}.
+	 */
+	public void setXSensitivity(float sensitivity) {
+		xSens = sensitivity;
+	}
+
+	/**
+	 * Returns the x sensitivity.
+	 * <p>
+	 * Default value is 1. A higher value will make the event more efficient (usually meaning a faster motion). Use a
+	 * negative value to invert the along x-Axis motion direction.
+	 * 
+	 * @see #setWheelSensitivity(float)
+	 */
+	public float xSensitivity() {
+		return xSens;
+	}
+
+	/**
+	 * Defines the {@link #ySensitivity()}.
+	 */
+	public void setYSensitivity(float sensitivity) {
+		ySens = sensitivity;
+	}
+
+	/**
+	 * Returns the y sensitivity.
+	 * <p>
+	 * Default value is 1. A higher value will make the event more efficient (usually meaning a faster motion). Use a
+	 * negative value to invert the along y-Axis motion direction.
+	 * 
+	 * @see #setWheelSensitivity(float)
+	 */
+	public float ySensitivity() {
+		return ySens;
 	}
 }
