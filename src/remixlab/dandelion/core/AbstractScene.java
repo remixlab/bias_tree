@@ -1090,13 +1090,13 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	}
 	
 	protected void drawPickingTargets() {
-		List<GenericFrame> gList = new ArrayList<GenericFrame>();
+		List<InteractiveFrame> gList = new ArrayList<InteractiveFrame>();
 		for (Grabber mg : motionAgent().grabbers())
-			if(mg instanceof GenericFrame)
-				if( !((GenericFrame)mg).isEyeFrame() )
-					gList.add((GenericFrame)mg);
+			if(mg instanceof InteractiveFrame)
+				if( !((InteractiveFrame)mg).isEyeFrame() )
+					gList.add((InteractiveFrame)mg);
 		gList.removeAll(eye.keyFrames());
-		for(GenericFrame g : gList)
+		for(InteractiveFrame g : gList)
 			this.drawPickingTarget(g);
 	}
 
@@ -1139,7 +1139,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 			drawPath(k[i], 3, 5, radius());
 	    // */ 
 		
-		for(GenericFrame gFrame : eye.keyFrames())
+		for(InteractiveFrame gFrame : eye.keyFrames())
 			drawPickingTarget(gFrame);
 	}
 
@@ -1541,12 +1541,12 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 
 	/**
 	 * Draws all GrabberFrames' picking targets: a shooter target visual hint of
-	 * {@link remixlab.dandelion.core.GenericFrame#grabsInputThreshold()} pixels size.
+	 * {@link remixlab.dandelion.core.InteractiveFrame#grabsInputThreshold()} pixels size.
 	 * 
 	 * <b>Attention:</b> the target is drawn either if the iFrame is part of camera path and keyFrame is {@code true}, or
 	 * if the iFrame is not part of camera path and keyFrame is {@code false}.
 	 */
-	public abstract void drawPickingTarget(GenericFrame gFrame);
+	public abstract void drawPickingTarget(InteractiveFrame gFrame);
 
 	// end wrapper
 
@@ -1578,19 +1578,19 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 			return;
 
 		eye().frame().stopSpinning();
-		if (avatar() instanceof GenericFrame)
-			((GenericFrame) (avatar())).stopSpinning();
+		if (avatar() instanceof InteractiveFrame)
+			((InteractiveFrame) (avatar())).stopSpinning();
 
 		// perform small animation ;)
 		if (eye().anyInterpolationStarted())
 			eye().stopInterpolations();
 		// eye().interpolateTo(avatar().eyeFrame());//works only when eyeFrame scaling = magnitude
-		GenericFrame eyeFrameCopy = avatar().trackingEyeFrame().get();
+		InteractiveFrame eyeFrameCopy = avatar().trackingEyeFrame().get();
 		eyeFrameCopy.setMagnitude(avatar().trackingEyeFrame().scaling());
 		eye().interpolateTo(eyeFrameCopy);
 		
-		if (avatar() instanceof GenericFrame) {
-			GenericFrame avatarGrabber = (GenericFrame)avatar();
+		if (avatar() instanceof InteractiveFrame) {
+			InteractiveFrame avatarGrabber = (InteractiveFrame)avatar();
 			for(Agent agent : inputHandler().agents()) {
 				agent.addGrabber(avatarGrabber);
 				agent.setDefaultGrabber(avatarGrabber);
@@ -1632,7 +1632,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 		return eye;
 	}
 	
-	public GenericFrame eyeFrame() {
+	public InteractiveFrame eyeFrame() {
 		return eye.frame();
 	} 
 	
@@ -1743,7 +1743,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	/**
 	 * Same as {@code eye().frame().setConstraint(constraint)}.
 	 * 
-	 * @see remixlab.dandelion.core.GenericFrame#setConstraint(Constraint)
+	 * @see remixlab.dandelion.core.InteractiveFrame#setConstraint(Constraint)
 	 */
 	public void setEyeConstraint(Constraint constraint) {
 		eye().frame().setConstraint(constraint);

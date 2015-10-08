@@ -138,9 +138,9 @@ public class KeyFrameInterpolator implements Copyable {
 
 		protected Vec						tgPVec;
 		protected float					tm;
-		protected GenericFrame	frm;
+		protected InteractiveFrame	frm;
 
-		KeyFrame(GenericFrame fr, float t) {
+		KeyFrame(InteractiveFrame fr, float t) {
 			tm = t;
 			frm = fr;
 		}
@@ -166,7 +166,7 @@ public class KeyFrameInterpolator implements Copyable {
 			return tm;
 		}
 
-		GenericFrame frame() {
+		InteractiveFrame frame() {
 			return frm;
 		}
 
@@ -183,7 +183,7 @@ public class KeyFrameInterpolator implements Copyable {
 	protected class KeyFrame3D extends KeyFrame {
 		protected Quat	tgQuat;
 
-		KeyFrame3D(GenericFrame fr, float t) {
+		KeyFrame3D(InteractiveFrame fr, float t) {
 			super(fr, t);
 		}
 
@@ -211,7 +211,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * 2D KeyFrame internal class.
 	 */
 	protected class KeyFrame2D extends KeyFrame {
-		KeyFrame2D(GenericFrame fr, float t) {
+		KeyFrame2D(InteractiveFrame fr, float t) {
 			super(fr, t);
 		}
 
@@ -396,7 +396,7 @@ public class KeyFrameInterpolator implements Copyable {
 	}
 
 	/**
-	 * Returns the number of keyFrames used by the interpolation. Use {@link #addKeyFrame(GenericFrame)} to add new
+	 * Returns the number of keyFrames used by the interpolation. Use {@link #addKeyFrame(InteractiveFrame)} to add new
 	 * keyFrames.
 	 */
 	public int numberOfKeyFrames() {
@@ -580,7 +580,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * Use {@link #setInterpolationTime(float)} before calling this method to change the starting
 	 * {@link #interpolationTime()}.
 	 * <p>
-	 * <b>Attention:</b> The keyFrames must be defined (see {@link #addKeyFrame(GenericFrame, float)}) before you
+	 * <b>Attention:</b> The keyFrames must be defined (see {@link #addKeyFrame(InteractiveFrame, float)}) before you
 	 * startInterpolation(), or else the interpolation will naturally immediately stop.
 	 */
 	public void startInterpolation(int myPeriod) {
@@ -622,10 +622,10 @@ public class KeyFrameInterpolator implements Copyable {
 	/**
 	 * Appends a new keyFrame to the path.
 	 * <p>
-	 * Same as {@link #addKeyFrame(GenericFrame, float)}, except that the {@link #keyFrameTime(int)} is set to the
+	 * Same as {@link #addKeyFrame(InteractiveFrame, float)}, except that the {@link #keyFrameTime(int)} is set to the
 	 * previous {@link #keyFrameTime(int)} plus one second (or 0.0 if there is no previous keyFrame).
 	 */
-	public void addKeyFrame(GenericFrame frame) {
+	public void addKeyFrame(InteractiveFrame frame) {
 		float time;
 
 		if (keyFrameList.isEmpty())
@@ -647,7 +647,7 @@ public class KeyFrameInterpolator implements Copyable {
 	 * allows for dynamic paths, where keyFrame can be edited, even during the interpolation. {@code null} frame
 	 * references are silently ignored. The {@link #keyFrameTime(int)} has to be monotonously increasing over keyFrames.
 	 */
-	public void addKeyFrame(GenericFrame frame, float time) {
+	public void addKeyFrame(InteractiveFrame frame, float time) {
 		if (frame == null)
 			return;
 
@@ -828,9 +828,9 @@ public class KeyFrameInterpolator implements Copyable {
 	 * See also {@link #keyFrameTime(int)}. {@code index} has to be in the range 0..{@link #numberOfKeyFrames()}-1.
 	 * <p>
 	 * <b>Note:</b> If this keyFrame was defined using a reference to a Frame (see
-	 * {@link #addKeyFrame(GenericFrame, float)} the current referenced Frame state is returned.
+	 * {@link #addKeyFrame(InteractiveFrame, float)} the current referenced Frame state is returned.
 	 */
-	public GenericFrame keyFrame(int index) {
+	public InteractiveFrame keyFrame(int index) {
 		/**
 		 * AbstractKeyFrame kf = keyFr.get(index); return new Frame(kf.orientation(), kf.position(), kf.magnitude());
 		 */

@@ -1282,9 +1282,6 @@ public class Scene extends AbstractScene implements PConstants {
 		if (models().size() == 0)
 			pickingBuffer().loadPixels();
 		boolean result = models().add(model);
-		if (model instanceof ModelObject)
-			for (Agent agent : inputHandler().agents())
-				agent.addGrabber(model);
 		return result;
 	}
 
@@ -2131,7 +2128,7 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 	
 	@Override
-	public void drawPickingTarget(GenericFrame iFrame) {
+	public void drawPickingTarget(InteractiveFrame iFrame) {
 		if(iFrame.isEyeFrame()) {
 			System.err.println("eye frames don't have a picking target");
 			return;
@@ -2324,11 +2321,11 @@ public class Scene extends AbstractScene implements PConstants {
 		float p1y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;
 
 		Vec p2 = new Vec();
-		if (motionAgent().inputGrabber() instanceof GenericFrame) {
-			if (((GenericFrame) motionAgent().inputGrabber()).isEyeFrame())
+		if (motionAgent().inputGrabber() instanceof InteractiveFrame) {
+			if (((InteractiveFrame) motionAgent().inputGrabber()).isEyeFrame())
 				p2 = eye().projectedCoordinatesOf(anchor());
 			else
-				p2 = eye().projectedCoordinatesOf(((GenericFrame) mouseAgent().inputGrabber()).position());
+				p2 = eye().projectedCoordinatesOf(((InteractiveFrame) mouseAgent().inputGrabber()).position());
 		}
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);
