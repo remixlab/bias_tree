@@ -533,8 +533,6 @@ public class Model extends InteractiveFrame implements Constants {
 		profile.removeClickBindings();
 	}
 	
-	// TODO click and double click bindings
-	
 	public void setDefaultBindings() {
 		setMotionBinding(LEFT_ID, "gestureArcball");
 		setMotionBinding(CENTER_ID, "gestureScale");
