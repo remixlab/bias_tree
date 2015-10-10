@@ -578,14 +578,16 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 		return new InteractiveFrame(this);
 	}
 	
-	@Override
+	//TODO experimental
+	/*
+	//@Override
 	public InteractiveFrame detach() {
 		InteractiveFrame frame = new InteractiveFrame(gScene);
-		for(Agent agent : gScene.inputHandler().agents())
-			agent.removeGrabber(frame);
+		gScene.inputHandler().removeGrabber(frame);
 		frame.fromFrame(this);
 		return frame;
 	}
+	//*/
 
 	/**
 	 * Returns the scene this object belongs to.

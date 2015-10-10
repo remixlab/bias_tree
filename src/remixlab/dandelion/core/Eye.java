@@ -63,6 +63,8 @@ public abstract class Eye implements Copyable {
 			super(otherFrame);
 		}
 
+		//TODO experimental
+		/*
 		@Override
 		public GrabberEyeFrame detach() {
 			GrabberEyeFrame frame = new GrabberEyeFrame(gScene);
@@ -71,6 +73,7 @@ public abstract class Eye implements Copyable {
 			frame.fromFrame(this);
 			return frame;
 		}
+		*/
 
 		@Override
 		public GrabberEyeFrame get() {
@@ -467,10 +470,14 @@ public abstract class Eye implements Copyable {
 		gScene.flip();
 	}
 	
-	public final InteractiveFrame detachFrame() {
-		return frame().detach();
+	//TODO experimental
+	protected GrabberEyeFrame detachFrame() {
+		GrabberEyeFrame frame = new GrabberEyeFrame(gScene);
+		gScene.inputHandler().removeGrabber(frame);
+		frame.fromFrame(frame());
+		return frame;
 	}
-	
+
 	/**
 	 * Internal use. Temporarily attach a frame to the Eye which is useful to some interpolation methods
 	 * such as {@link #interpolateToFitScene()}.
@@ -1940,7 +1947,7 @@ public abstract class Eye implements Copyable {
 			stopInterpolations();
 
 		interpolationKfi.deletePath();
-		interpolationKfi.addKeyFrame(frame().detach());
+		interpolationKfi.addKeyFrame(detachFrame());
 		InteractiveFrame originalFrame = frame();
 		InteractiveFrame tempFrame = detachFrame();
 		replaceFrame(tempFrame);
@@ -1997,7 +2004,7 @@ public abstract class Eye implements Copyable {
 			stopInterpolations();
 
 		interpolationKfi.deletePath();
-		interpolationKfi.addKeyFrame(frame().detach());
+		interpolationKfi.addKeyFrame(detachFrame());
 		interpolationKfi.addKeyFrame(fr, duration);
 		interpolationKfi.startInterpolation();
 	}

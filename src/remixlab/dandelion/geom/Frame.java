@@ -210,9 +210,10 @@ public class Frame implements Copyable {
 
 	protected Frame(Frame other) {
 		childrenList = new ArrayList<Frame>();
-		Iterator<Frame> iterator = other.childrenList.iterator();
-		while (iterator.hasNext())
-			childrenList.add(iterator.next());
+		//TODO experimental
+		//Iterator<Frame> iterator = other.childrenList.iterator();
+		//while (iterator.hasNext())
+			//childrenList.add(iterator.next());
 		trans = other.translation().get();
 		rot = other.rotation().get();
 		scl = other.scaling();
@@ -229,15 +230,18 @@ public class Frame implements Copyable {
 	 * Returns a copy of this frame preserving its {@link #position()}, {@link #orientation()} and
 	 * {@link #magnitude()}, but discarding its {@link #referenceFrame()} and {@link #children()}. 
 	 */
+	/*
 	public Frame detach() {
 		Frame frame = get();
-		Iterator<Frame> iterator = frame.childrenList.iterator();
-		while (iterator.hasNext())
-			childrenList.remove(iterator.next());
+		//TODO experimental
+		//Iterator<Frame> iterator = frame.childrenList.iterator();
+		//while (iterator.hasNext())
+			//childrenList.remove(iterator.next());
 		frame.setReferenceFrame(null);
 		frame.fromFrame(this);
 		return frame;
 	}
+	*/
 
 	// MODIFIED
 
@@ -333,9 +337,23 @@ public class Frame implements Copyable {
 
 	/**
 	 * Returns a list of the frame children, i.e., frame which {@link #referenceFrame()} is this.
+	 * 
+	 * @see #removeChildren()
 	 */
 	public List<Frame> children() {
 		return childrenList;
+	}
+	
+	/**
+	 * Remove all frame {@link #children()}.
+	 */
+	public void removeChildren() {
+		Iterator<Frame> iterator = childrenList.iterator();
+		while (iterator.hasNext()) {
+			Frame frame = iterator.next();
+			childrenList.remove(frame);
+			frame.setReferenceFrame(null);
+		}		
 	}
 
 	// CONSTRAINT
@@ -1282,34 +1300,15 @@ public class Frame implements Copyable {
 	}
 
 	/**
-	 * Same as {@code fromFrame(otherFrame, null)}.
-	 * 
-	 * @see #fromFrame(Frame, Frame)
+	 * Sets {@link #position()}, {@link #orientation()} and {@link #magnitude()} values
+	 * from those of {@code otherFrame}.
 	 */
 	public void fromFrame(Frame otherFrame) {
-		fromFrame(otherFrame, null);
-	}
-
-	/**
-	 * If {@code referenceFrame == null} sets {@link #position()}, {@link #orientation()} and {@link #magnitude()} values
-	 * from those of {@code otherFrame}. Otherwise, sets {@link #translation()}, {@link #rotation()} and
-	 * {@link #scaling()} values from those of {@code otherFrame} and sets {@code referenceFrame} as
-	 * {@link #referenceFrame()}.
-	 */
-	public void fromFrame(Frame otherFrame, Frame referenceFrame) {
 		if(otherFrame == null)
 			return;
-		if (referenceFrame == null) {
-			setPosition(otherFrame.position());
-			setOrientation(otherFrame.orientation());
-			setMagnitude(otherFrame.magnitude());
-		}
-		else {
-			setTranslation(otherFrame.translation().get());
-			setRotation(otherFrame.rotation().get());
-			setScaling(otherFrame.scaling());
-			setReferenceFrame(referenceFrame);
-		}
+		setPosition(otherFrame.position());
+		setOrientation(otherFrame.orientation());
+		setMagnitude(otherFrame.magnitude());
 	}
 
 	/**

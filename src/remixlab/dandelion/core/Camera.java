@@ -1190,7 +1190,11 @@ public class Camera extends Eye implements Copyable {
 
 		interpolationKfi.deletePath();
 		interpolationKfi.addKeyFrame(detachFrame());
-		interpolationKfi.addKeyFrame(new InteractiveFrame(gScene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame().orientation(), frame().magnitude()).detach(), 0.4f);
+		//TODO experimental
+		InteractiveFrame frame = new InteractiveFrame(gScene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame().orientation(), frame().magnitude());
+		scene().inputHandler().removeGrabber(frame);
+		interpolationKfi.addKeyFrame(frame, 0.4f);		
+		//interpolationKfi.addKeyFrame(new InteractiveFrame(gScene, Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame().orientation(), frame().magnitude()).detach(), 0.4f);
 
 		InteractiveFrame originalFrame = frame();
 		InteractiveFrame tempFrame = detachFrame();

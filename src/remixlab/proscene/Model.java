@@ -18,10 +18,6 @@ package remixlab.proscene;
 import java.lang.reflect.Method;
 
 import processing.core.*;
-import remixlab.bias.core.*;
-import remixlab.bias.event.*;
-import remixlab.bias.ext.Profile;
-import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
@@ -31,13 +27,12 @@ import remixlab.util.*;
  * @see remixlab.proscene.Model
  * @see remixlab.dandelion.InteractiveFrame.GenericFrame
  */
-public class Model extends InteractiveFrame implements Constants {
+public class Model extends GenericP5Frame {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
 				appendSuper(super.hashCode()).
 				append(id).
-				append(profile).
 				toHashCode();
 	}
 
@@ -54,7 +49,6 @@ public class Model extends InteractiveFrame implements Constants {
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(id, other.id)
-				.append(profile, other.profile)
 				.isEquals();
 	}
 	
@@ -77,7 +71,6 @@ public class Model extends InteractiveFrame implements Constants {
 		pshape = ps;
 		tex = texture;
 		shift = new PVector();
-		profile = new Profile(this);
 	}
 	
 	//--
@@ -99,8 +92,6 @@ public class Model extends InteractiveFrame implements Constants {
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		shift = new PVector();
-		profile = new Profile(this);
-		setDefaultBindings();
 	}
 	
 	/**
@@ -118,8 +109,6 @@ public class Model extends InteractiveFrame implements Constants {
 		((Scene) gScene).addModel(this);
 		id = ++Scene.modelCount;
 		shift = new PVector();
-		profile = new Profile(this);
-		setDefaultBindings();
 	}
 	
 	/**
@@ -136,8 +125,6 @@ public class Model extends InteractiveFrame implements Constants {
 		id = ++Scene.modelCount;
 		shift = new PVector();
 		setShape(ps);
-		profile = new Profile(this);
-		setDefaultBindings();
 	}
 
 	/**
@@ -153,8 +140,6 @@ public class Model extends InteractiveFrame implements Constants {
 		id = ++Scene.modelCount;
 		shift = new PVector();
 		setShape(ps);
-		profile = new Profile(this);
-		setDefaultBindings();
 	}
 
 	/**
@@ -171,8 +156,6 @@ public class Model extends InteractiveFrame implements Constants {
 		id = ++Scene.modelCount;
 		shift = new PVector();
 		addGraphicsHandler(obj, methodName);
-		profile = new Profile(this);
-		setDefaultBindings();
 	}
 
 	/**
@@ -189,8 +172,6 @@ public class Model extends InteractiveFrame implements Constants {
 		id = ++Scene.modelCount;
 		shift = new PVector();
 		addGraphicsHandler(obj, methodName);
-		profile = new Profile(this);
-		setDefaultBindings();
 	}
 
 	protected Model(Model otherFrame) {
@@ -200,26 +181,11 @@ public class Model extends InteractiveFrame implements Constants {
 		this.shift = otherFrame.shift.copy();
 		this.drawHandlerObject = otherFrame.drawHandlerObject;
 		this.drawHandlerMethod = otherFrame.drawHandlerMethod;
-		this.profile = new Profile(this);
-		this.profile.from(otherFrame.profile);
-	}
-	
-	public Profile profile() {
-		return profile;
 	}
 
 	@Override
 	public Model get() {
 		return new Model(this);
-	}
-	
-	@Override
-	public Model detach() {
-		Model frame = new Model((Scene)gScene);
-		for(Agent agent : gScene.inputHandler().agents())
-			agent.removeGrabber(frame);
-		frame.fromFrame(this);
-		return frame;
 	}
 	
 	/**
@@ -415,142 +381,5 @@ public class Model extends InteractiveFrame implements Constants {
 		if (drawHandlerMethod == null)
 			return false;
 		return true;
-	}
-	
-	// TODO wheel bindings -> as part of motion bindings
-	
-	//TODO add me properly
-	//TODO decide if it's better to attach the Profile at the IFrame
-	public Profile profile;
-	
-	@Override
-	public void performInteraction(BogusEvent event) {
-		if( profile.handle(event) )
-			return;
-	}
-	
-	//mouse move
-	
-	public void removeBindings() {
-		profile.removeBindings();
-	}
-
-	// Motion
-	
-	public void setMotionBinding(String methodName) {
-		profile.setMotionBinding(new MotionShortcut(), methodName);
-	}
-	
-	public void setMotionBinding(Object object, String methodName) {
-		profile.setMotionBinding(object, new MotionShortcut(), methodName);
-	}
-	
-	public boolean hasMotionBinding() {
-		return profile.hasBinding(new MotionShortcut());
-	}
-	
-	public void removeMotionBinding() {
-		profile.removeBinding(new MotionShortcut());
-	}
-	
-	public void setMotionBinding(int id, String methodName) {
-		profile.setMotionBinding(new MotionShortcut(id), methodName);
-	}
-	
-	public void setMotionBinding(Object object, int id, String methodName) {
-		profile.setMotionBinding(object, new MotionShortcut(id), methodName);
-	}
-	
-	public boolean hasMotionBinding(int it) {
-		return profile.hasBinding(new MotionShortcut(id));
-	}
-	
-	public void removeMotionBinding(int id) {
-		profile.removeBinding(new MotionShortcut(id));
-	}
-	
-	public void removeMotionBindings() {
-		profile.removeMotionBindings();
-	}
-	
-	// Key
-	
-	public void setKeyBinding(char key, String methodName) {
-		profile.setKeyboardBinding(new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
-	}
-	
-	public void setKeyBinding(Object object, char key, String methodName) {
-		profile.setKeyboardBinding(object, new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
-	}
-	
-	public boolean hasKeyBinding(char key) {
-		return profile.hasBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
-	}
-	
-	public void removeKeyBinding(char key) {
-		profile.removeBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
-	}
-	
-	public void setKeyBinding(int mask, char key, String methodName) {
-		profile.setKeyboardBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
-	}
-	
-	public void setKeyBinding(Object object, int mask, char key, String methodName) {
-		profile.setKeyboardBinding(object, new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
-	}
-	
-	public boolean hasKeyBinding(int mask, char key) {
-		return profile.hasBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
-	}
-	
-	public void removeKeyBinding(int mask, char key) {
-		profile.removeBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
-	}
-	
-	public void removeKeyBindings() {
-		profile.removeKeyboardBindings();
-	}
-	
-	// click
-	
-	public void setClickBinding(int id, int count, String methodName) {
-		profile.setClickBinding(new ClickShortcut(id, count), methodName);
-	}
-	
-	public void setClickBinding(Object object, int id, int count, String methodName) {
-		profile.setClickBinding(object, new ClickShortcut(id, count), methodName);
-	}
-	
-	public boolean hasClickBinding(int id, int count) {
-		return profile.hasBinding(new ClickShortcut(id, count));
-	}
-	
-	public void removeClickBinding(int id, int count) {
-		profile.removeBinding(new ClickShortcut(id, count));
-	}
-	
-	public void removeClickBindings() {
-		profile.removeClickBindings();
-	}
-	
-	public void setDefaultBindings() {
-		setMotionBinding(LEFT_ID, "gestureArcball");
-		setMotionBinding(CENTER_ID, "gestureScale");
-		setMotionBinding(RIGHT_ID, "gestureTranslateXY");
-		setMotionBinding(WHEEL_ID, "gestureScale");
-		
-		setClickBinding(LEFT_ID, 2, "gestureAlign");
-		setClickBinding(RIGHT_ID, 2, "gestureCenter");
-		
-		/*
-		setKeyBinding('n', "gestureAlign");
-		setKeyBinding('c', "gestureCenter");
-		setKeyBinding(LEFT_KEY, "gestureTranslateXNeg");
-		setKeyBinding(RIGHT_KEY, "gestureTranslateXPos");
-		setKeyBinding(DOWN_KEY, KeyboardAction.TRANSLATE_Y_NEG);
-		setKeyBinding(UP_KEY, KeyboardAction.TRANSLATE_Y_POS);
-		setKeyBinding('z', KeyboardAction.ROTATE_Z_NEG);
-		setKeyBinding(BogusEvent.SHIFT, 'z', KeyboardAction.ROTATE_Z_POS);
-		*/
 	}
 }

@@ -82,6 +82,54 @@ public class InputHandler {
 		}
 		return description;
 	}
+	
+	/**
+	 * Calls {@link remixlab.bias.core.Agent#addGrabber(Grabber)} on registered {@link #agents()}.
+	 */
+	public void addGrabber(Grabber grabber) {
+		for(Agent agent : agents())
+			agent.addGrabber(grabber);
+	}
+	
+	/**
+	 * Calls {@link remixlab.bias.core.Agent#removeGrabber(Grabber)} on registered {@link #agents()}.
+	 */
+	public void removeGrabber(Grabber grabber) {
+		for(Agent agent : agents())
+			agent.removeGrabber(grabber);
+	}
+	
+	/**
+	 * Calls {@link remixlab.bias.core.Agent#removeGrabbers()} on registered {@link #agents()}.
+	 */
+	public void removeGrabbers() {
+		for(Agent agent : agents())
+			agent.removeGrabbers();
+	}
+	
+	/**
+	 * Calls {@link remixlab.bias.core.Agent#setDefaultGrabber(Grabber)} on registered {@link #agents()}.
+	 */
+	public void setDefaultGrabber(Grabber grabber) {
+		for(Agent agent : agents())
+			agent.setDefaultGrabber(grabber);
+	}
+	
+	/**
+	 * Calls {@link remixlab.bias.core.Agent#resetDefaultGrabber()} on registered {@link #agents()}.
+	 */
+	public void resetDefaultGrabber() {
+		for(Agent agent : agents())
+			agent.resetDefaultGrabber();
+	}
+	
+	/**
+	 * Calls {@link remixlab.bias.core.Agent#resetTrackedGrabber()} on registered {@link #agents()}.
+	 */
+	public void resetTrackedGrabber() {
+		for(Agent agent : agents())
+			agent.resetTrackedGrabber();
+	}
 
 	/**
 	 * Returns an array of the registered agents.
