@@ -684,6 +684,11 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 
 	@Override
 	public void performInteraction(BogusEvent event) {
+		/*
+		//TODO re-add me if needed 
+		if (processEvent(event))
+			return;
+		*/
 		if (event instanceof ClickEvent)
 			performInteraction((ClickEvent) event);
 		if (event instanceof MotionEvent)
@@ -1515,6 +1520,15 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 			gestureTranslateXYZ(dof3Event);
 		else
 			AbstractScene.showMinDOFsWarning("gestureTranslateXYZ", 3);
+	}
+	
+	/**
+	 * User gesture into xyz-translation and rotation conversion routine.
+	 */
+	public void gestureTranslateRotateXYZ(MotionEvent event) {
+		gestureTranslateXYZ(event);
+		// B. Rotate the iFrame
+		gestureRotateXYZ(event);
 	}
 
 	/**

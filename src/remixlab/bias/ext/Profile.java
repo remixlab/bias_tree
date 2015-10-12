@@ -94,6 +94,13 @@ public class Profile {
 		return map.get(key) == null ? null : map.get(key).method;
 	}
 	
+	public String methodName(Shortcut key) {
+		Method m = method(key); 
+		if(m == null)
+			return null;
+		return m.getName();		
+	}
+	
 	public Object object(Shortcut key) {
 		return map.get(key) == null ? null : map.get(key).object;
 	}
