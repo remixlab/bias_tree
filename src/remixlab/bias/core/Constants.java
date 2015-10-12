@@ -17,6 +17,7 @@ public interface Constants {
 						CENTER_ID = 3,
 						RIGHT_ID = 39,
 						WHEEL_ID = 8,
+						NO_BUTTON = BogusEvent.NO_ID,
 	// 1.b. Keys
 						LEFT_KEY	= 37,
 						RIGHT_KEY = 39, 

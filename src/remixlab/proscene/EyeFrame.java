@@ -19,7 +19,7 @@ public class EyeFrame extends GenericP5Frame {
 	//TODO remove me
 	public void mouseAsFirstPerson() {
 		removeMouseBindings();
-		setMotionBinding("gestureLookAround");
+		setMotionBinding(NO_BUTTON, "gestureLookAround");
 		setMotionBinding(LEFT_ID, "gestureMoveForward");		
 		setMotionBinding(RIGHT_ID, "gestureMoveBackward");
 		setClickBinding(LEFT_ID, 2, "gestureAlign");

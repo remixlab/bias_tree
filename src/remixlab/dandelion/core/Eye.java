@@ -50,7 +50,7 @@ import remixlab.util.*;
  * An Eye can also be used outside of an Scene for its coordinate system conversion capabilities.
  */
 public abstract class Eye implements Copyable {
-	class GrabberEyeFrame extends InteractiveFrame {
+	class GrabberEyeFrame extends InteractiveFrame implements Constants {
 		public GrabberEyeFrame(AbstractScene _scene) {
 			super(_scene);
 		}
@@ -97,11 +97,11 @@ public abstract class Eye implements Copyable {
 			if(event.flushed())
 				stopFlying();
 			else if(event.isShiftDown()) {
-				if (event.id() == Agent.LEFT_ID)
+				if (event.id() == LEFT_ID)
 					gestureMoveForward(event, true);
-				if (event.id() == Agent.RIGHT_ID)
+				if (event.id() == RIGHT_ID)
 					gestureMoveForward(event, false);
-				if (event.id() == Agent.CENTER_ID)
+				if (event.id() == CENTER_ID)
 					if(gScene.is3D())
 						rotate(rollPitchQuaternion(event, gScene.camera()));
 			}

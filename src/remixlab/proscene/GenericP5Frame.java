@@ -80,6 +80,7 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 
 	// Motion
 	
+	/*
 	public void setMotionBinding(String methodName) {
 		profile.setMotionBinding(new MotionShortcut(), methodName);
 	}
@@ -87,6 +88,7 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 	public void setMotionBinding(Object object, String methodName) {
 		profile.setMotionBinding(object, new MotionShortcut(), methodName);
 	}
+	*/
 	
 	public boolean hasMotionBinding() {
 		return profile.hasBinding(new MotionShortcut());
@@ -199,6 +201,7 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 		removeMotionBinding(CENTER_ID);
 		removeMotionBinding(RIGHT_ID);
 		removeMotionBinding(WHEEL_ID);
+		removeMotionBinding(NO_BUTTON);
 		removeClickBinding(LEFT_ID, 1);
 		removeClickBinding(CENTER_ID, 1);
 		removeClickBinding(RIGHT_ID, 1);

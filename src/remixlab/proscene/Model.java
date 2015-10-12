@@ -382,24 +382,4 @@ public class Model extends GenericP5Frame {
 			return false;
 		return true;
 	}
-	
-	/*
-	public void dragAvatar() {
-		removeMotionBindings();
-		setMotionBinding(LEFT_ID, "gestureMoveForward");
-		setMotionBinding(CENTER_ID, "gestureLookAround");
-		setMotionBinding(RIGHT_ID, "gestureMoveBackward");
-		setDefaultKeyBindings();
-		setDefaultClickBindings();
-	}
-	
-	public void moveAvatar() {
-		removeMotionBindings();
-		setMotionBinding("gestureLookAround");
-		setMotionBinding(LEFT_ID, "gestureMoveForward");		
-		setMotionBinding(RIGHT_ID, "gestureMoveBackward");
-		setDefaultKeyBindings();
-		setDefaultClickBindings();
-	}
-	*/
 }
