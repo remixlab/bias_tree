@@ -13,8 +13,7 @@ package remixlab.proscene;
 import processing.core.*;
 import processing.opengl.*;
 import remixlab.bias.core.*;
-import remixlab.bias.event.DOF2Event;
-import remixlab.bias.event.KeyboardEvent;
+import remixlab.bias.event.*;
 import remixlab.bias.ext.Profile;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
@@ -113,6 +112,10 @@ public class Scene extends AbstractScene implements PConstants {
 	protected PGraphics					pBuffer;
 	protected boolean                   pBufferEnabled;
 	protected List<Model>				modelList;
+	
+	///TODO decide placement
+	//Profile
+	public Profile profile;
 
 	// E X C E P T I O N H A N D L I N G
 	protected int								beginOffScreenDrawingCalls;
@@ -176,6 +179,8 @@ public class Scene extends AbstractScene implements PConstants {
 		enablePickingBuffer();
 
 		// 4. Create agents and register P5 methods
+		//TODO add me properly
+		profile = new Profile(this);
 		//TODO android
 		// discard this block one android is restored
 		{
@@ -196,6 +201,7 @@ public class Scene extends AbstractScene implements PConstants {
 		*/
 		
 		parent.registerMethod("keyEvent", keyboardAgent());
+		this.setDefaultKeyBindings();
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
 
@@ -220,17 +226,11 @@ public class Scene extends AbstractScene implements PConstants {
 
 		// 7. Init should be called only once
 		init();
-	}
+	}	
 	
-	// Profile stuff
-	
-	//TODO add me properly
-	//TODO decide if it's better to attach the Profile at the IFrame
-	public Profile profile = new Profile(this);
-	
-	public void performInteraction(BogusEvent event) {
-		if( profile.handle(event) )
-			return;
+	@Override
+	public EyeFrame eyeFrame() {
+		return (EyeFrame)eye.frame();
 	}
 	
 	@Override
@@ -2370,6 +2370,126 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().endShape(CLOSE);
 		endScreenDrawing();
 		pg().popStyle();
+	}
+	
+	@Override
+	public void performInteraction(BogusEvent event) {
+		if( profile.handle(event) )
+			return;
+	}
+	
+	//mouse move
+	
+	/*
+	public void removeBindings() {
+		profile.removeBindings();
+	}
+	*/
+
+	// Motion
+	
+	// Key
+	
+	public void setKeyBinding(int vkey, String methodName) {
+		profile.setKeyboardBinding(new KeyboardShortcut(vkey), methodName);
+	}
+	
+	public void setKeyBinding(char key, String methodName) {
+		profile.setKeyboardBinding(new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
+	}
+	
+	public void setKeyBinding(Object object, int vkey, String methodName) {
+		profile.setKeyboardBinding(object, new KeyboardShortcut(vkey), methodName);
+	}
+	
+	public void setKeyBinding(Object object, char key, String methodName) {
+		profile.setKeyboardBinding(object, new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
+	}
+	
+	public boolean hasKeyBinding(int vkey) {
+		return profile.hasBinding(new KeyboardShortcut(vkey));
+	}
+	
+	public boolean hasKeyBinding(char key) {
+		return profile.hasBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
+	}
+	
+	public void removeKeyBinding(int vkey) {
+		profile.removeBinding(new KeyboardShortcut(vkey));
+	}
+	
+	public void removeKeyBinding(char key) {
+		profile.removeBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
+	}
+	
+	public void setKeyBinding(int mask, char key, String methodName) {
+		profile.setKeyboardBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
+	}
+	
+	public void setKeyBinding(Object object, int mask, char key, String methodName) {
+		profile.setKeyboardBinding(object, new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
+	}
+	
+	public boolean hasKeyBinding(int mask, char key) {
+		return profile.hasBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
+	}
+	
+	public void removeKeyBinding(int mask, char key) {
+		profile.removeBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
+	}
+	
+	public void removeKeyBindings() {
+		profile.removeKeyboardBindings();
+	}
+	
+	// click
+	
+	/*
+	public void setClickBinding(int id, int count, String methodName) {
+		profile.setClickBinding(new ClickShortcut(id, count), methodName);
+	}
+	
+	public void setClickBinding(Object object, int id, int count, String methodName) {
+		profile.setClickBinding(object, new ClickShortcut(id, count), methodName);
+	}
+	
+	public boolean hasClickBinding(int id, int count) {
+		return profile.hasBinding(new ClickShortcut(id, count));
+	}
+	
+	public void removeClickBinding(int id, int count) {
+		profile.removeBinding(new ClickShortcut(id, count));
+	}
+	
+	public void removeClickBindings() {
+		profile.removeClickBindings();
+	}
+	*/
+	
+	//public void setDefaultBindings() {
+	public void setDefaultKeyBindings() {
+		setKeyBinding('a', "toggleAxesVisualHint");
+		setKeyBinding('e', "toggleCameraType");
+		setKeyBinding('f', "togglePickingVisualhint");
+		setKeyBinding('g', "toggleGridVisualHint");
+		setKeyBinding('h', "displayInfo");
+		setKeyBinding('m', "toggleAnimation");
+		setKeyBinding('r', "togglePathsVisualHint");
+		setKeyBinding('s', "interpolateToFitScene");
+		setKeyBinding(BogusEvent.SHIFT, 's', "showAll");
+		setKeyBinding(BogusEvent.CTRL, '1', "addKeyFrameToPath1");
+		setKeyBinding(BogusEvent.ALT, '1', "deletePath1");
+		setKeyBinding('1', "playPath1");
+		setKeyBinding(BogusEvent.CTRL, '2', "addKeyFrameToPath2");
+		setKeyBinding(BogusEvent.ALT, '2', "deletePath2");
+		setKeyBinding('2', "playPath2");
+		setKeyBinding(BogusEvent.CTRL, '3', "addKeyFrameToPath3");
+		setKeyBinding(BogusEvent.ALT, '3', "deletePath3");
+		setKeyBinding('3', "playPath3");
+	}
+	
+	public Profile profile() {
+		return profile;
 	}
 
 	// decide whether or not to include these in the 3.0 release:

@@ -580,7 +580,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	
 	//TODO experimental
 	/*
-	//@Override
+	@Override
 	public InteractiveFrame detach() {
 		InteractiveFrame frame = new InteractiveFrame(gScene);
 		gScene.inputHandler().removeGrabber(frame);
@@ -1902,10 +1902,13 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 		scale(up ? s : 1 / s);
 	}
 	
+	public void gestureLookAround(MotionEvent event) {
+		rotate(rollPitchQuaternion(event, gScene.camera()));
+	}
+	
 	/**
 	 * User gesture into move-backward conversion routine.
 	 */
-	//TODO check other gesture and try to implement their duals like here gestureMoveBackward/gestureMoveForward
 	public void gestureMoveBackward(MotionEvent event) {
 		gestureMoveForward(event, false);
 	}
@@ -2070,6 +2073,28 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 		setReferenceFrame(oldRef);
 		setPosition(pos);
 		setOrientation(o);
+	}
+	
+	/**
+	 * User gesture screen-translate conversion routine.
+	 */
+	public void gestureScreenTranslate(MotionEvent event) {
+		DOF2Event dof2Event = MotionEvent.dof2Event(event);
+		if (dof2Event != null)
+			gestureScreenTranslate(dof2Event);
+		else
+			AbstractScene.showMinDOFsWarning("screenTranslate", 2);
+	}
+	
+	/**
+	 * User gesture screen-translate conversion routine.
+	 */
+	public void gestureScreenTranslate(DOF2Event event) {
+		int dir = originalDirection(event);
+		if (dir == 1)
+			gestureTranslateX(event, true);
+		else if (dir == -1)
+			gestureTranslateY(event, true);
 	}
 
 	/**

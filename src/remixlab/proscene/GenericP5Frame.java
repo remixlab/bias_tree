@@ -37,19 +37,22 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 	public GenericP5Frame(Scene scn) {
 		super(scn);
 		profile = new Profile(this);
-		setDefaultBindings();
+		setDefaultMouseBindings();
+		setDefaultKeyBindings();
 	}
 	
 	public GenericP5Frame(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		profile = new Profile(this);
-		setDefaultBindings();
+		setDefaultMouseBindings();
+		setDefaultKeyBindings();
 	}
 	
 	public GenericP5Frame(Eye eye) {
 		super(eye);
 		profile = new Profile(this);
-		setDefaultBindings();
+		setDefaultMouseBindings();
+		setDefaultKeyBindings();
 	}
 	
 	protected GenericP5Frame(GenericP5Frame otherFrame) {
@@ -170,11 +173,13 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 	// click
 	
 	public void setClickBinding(int id, int count, String methodName) {
-		profile.setClickBinding(new ClickShortcut(id, count), methodName);
+		if(count == 1 || count == 2)
+			profile.setClickBinding(new ClickShortcut(id, count), methodName);
 	}
 	
 	public void setClickBinding(Object object, int id, int count, String methodName) {
-		profile.setClickBinding(object, new ClickShortcut(id, count), methodName);
+		if(count == 1 || count == 2)
+			profile.setClickBinding(object, new ClickShortcut(id, count), methodName);
 	}
 	
 	public boolean hasClickBinding(int id, int count) {
@@ -189,35 +194,35 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 		profile.removeClickBindings();
 	}
 	
-	public void setDefaultBindings() {
-		setMotionBinding(LEFT_ID, "gestureArcball");
-		setMotionBinding(CENTER_ID, "gestureScale");
-		setMotionBinding(RIGHT_ID, "gestureTranslateXY");
-		setMotionBinding(WHEEL_ID, "gestureScale");
-		
-		setClickBinding(LEFT_ID, 2, "gestureAlign");
-		setClickBinding(RIGHT_ID, 2, "gestureCenter");
-		
-		setKeyBinding('n', "gestureAlign");
-		setKeyBinding('c', "gestureCenter");
-		setKeyBinding(LEFT_KEY, "gestureTranslateXNeg");
-		setKeyBinding(RIGHT_KEY, "gestureTranslateXPos");
-		setKeyBinding(DOWN_KEY, "gestureTranslateYNeg");
-		setKeyBinding(UP_KEY, "gestureTranslateYPos");
-		setKeyBinding('z', "gestureRotateZNeg");
-		setKeyBinding(BogusEvent.SHIFT, 'z', "gestureRotateZPos");
+	public void removeMouseBindings() {
+		removeMotionBinding(LEFT_ID);
+		removeMotionBinding(CENTER_ID);
+		removeMotionBinding(RIGHT_ID);
+		removeMotionBinding(WHEEL_ID);
+		removeClickBinding(LEFT_ID, 1);
+		removeClickBinding(CENTER_ID, 1);
+		removeClickBinding(RIGHT_ID, 1);
+		removeClickBinding(LEFT_ID, 2);
+		removeClickBinding(CENTER_ID, 2);
+		removeClickBinding(RIGHT_ID, 2);
 	}
 	
-	/*
-	public void setDefaultBindings() {
+	public void setDefaultMouseBindings() {
+		removeMouseBindings();
+		
 		setMotionBinding(LEFT_ID, "gestureArcball");
-		setMotionBinding(CENTER_ID, "gestureScale");
+		//TODO pending
+		//setMotionBinding(CENTER_ID, "gestureScreenTranslate");
 		setMotionBinding(RIGHT_ID, "gestureTranslateXY");
-		setMotionBinding(WHEEL_ID, "gestureScale");
+		setMotionBinding(WHEEL_ID, scene().is3D() ? isEyeFrame() ? "gestureTranslateZ" : "gestureScale" : "gestureScale");
 		
-		setClickBinding(LEFT_ID, 2, "gestureAlign");
+		//removeClickBindings();
+    	setClickBinding(LEFT_ID, 2, "gestureAlign");
 		setClickBinding(RIGHT_ID, 2, "gestureCenter");
-		
+	}
+	
+	public void setDefaultKeyBindings() {
+		removeKeyBindings();
 		setKeyBinding('n', "gestureAlign");
 		setKeyBinding('c', "gestureCenter");
 		setKeyBinding(LEFT_KEY, "gestureTranslateXNeg");
@@ -227,7 +232,6 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 		setKeyBinding('z', "gestureRotateZNeg");
 		setKeyBinding(BogusEvent.SHIFT, 'z', "gestureRotateZPos");
 	}
-	*/
 	
 	public Profile profile() {
 		return profile;

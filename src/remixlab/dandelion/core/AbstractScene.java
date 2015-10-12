@@ -56,7 +56,7 @@ import remixlab.fpstiming.*;
  * your custom grabber-scene will {@link #toggleCameraType()} when the key 'z' is pressed (provided that
  * grabber-scene is the {@link #keyboardAgent()} {@link remixlab.bias.core.Agent#inputGrabber()}).
  */
-public abstract class AbstractScene extends AnimatorObject implements Grabber {
+public abstract class AbstractScene extends AnimatorObject implements Grabber, Constants {
 	protected boolean					dottedGrid;
 
 	// O B J E C T S
@@ -145,6 +145,168 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 		setVisualHints(AXES | GRID);
 		upperLeftCorner = new Point(0, 0);
 	}
+	
+	// actions
+	
+	/*
+	public void addKeyFrameToPath1(ClickEvent event) {
+		eye().addKeyFrameToPath(1);
+	}
+	
+	public void addKeyFrameToPath2(ClickEvent event) {
+		eye().addKeyFrameToPath(2);
+	}
+	
+	public void addKeyFrameToPath3(ClickEvent event) {
+		eye().addKeyFrameToPath(3);
+	}
+	
+	public void deletePath1(ClickEvent event) {
+		eye().deletePath(1);
+	}
+	
+	public void deletePath2(ClickEvent event) {
+		eye().deletePath(2);
+	}
+	
+	public void deletePath3(ClickEvent event) {
+		eye().deletePath(3);
+	}
+	
+	public void playPath1(ClickEvent event) {
+		eye().playPath(1);
+	}
+	
+	public void showAll(ClickEvent event) {
+		showAll();
+	}
+	
+	public void playPath2(ClickEvent event) {
+		eye().playPath(2);
+	}
+	
+	public void playPath3(ClickEvent event) {
+		eye().playPath(3);
+	}
+	
+	public void interpolateToFitScene(ClickEvent event) {
+		eye().interpolateToFitScene();
+	}
+	
+	public void resetAnchor(ClickEvent event) {
+		eye().setAnchor(new Vec(0, 0, 0));
+		// looks horrible, but works ;)
+		eye().anchorFlag = true;
+		eye().runResetAnchorHintTimer(1000);
+	}
+	
+	public void toggleAnimation(ClickEvent event) {
+		toggleAnimation();
+	}
+	
+	public void toggleAxesVisualHint(ClickEvent event) {
+		toggleAxesVisualHint();
+	}
+	
+	public void toggleCameraType(ClickEvent event) {
+		toggleCameraType();
+	}
+	
+	public void toggleGridVisualHint(ClickEvent event) {
+		toggleGridVisualHint();
+	}
+	
+	public void togglePickingVisualhint(ClickEvent event) {
+		togglePickingVisualhint();
+	}
+	
+	public void displayInfo(ClickEvent event) {
+		displayInfo();
+	}
+	//*/
+	
+	//
+	
+	public void addKeyFrameToPath1(KeyboardEvent event) {
+		eye().addKeyFrameToPath(1);
+	}	
+	
+	public void addKeyFrameToPath2(KeyboardEvent event) {
+		eye().addKeyFrameToPath(2);
+	}
+	
+	public void addKeyFrameToPath3(KeyboardEvent event) {
+		eye().addKeyFrameToPath(3);
+	}
+	
+	public void deletePath1(KeyboardEvent event) {
+		eye().deletePath(1);
+	}
+	
+	public void deletePath2(KeyboardEvent event) {
+		eye().deletePath(2);
+	}
+	
+	public void deletePath3(KeyboardEvent event) {
+		eye().deletePath(1);
+	}
+	
+	public void playPath1(KeyboardEvent event) {
+		eye().playPath(1);
+	}
+	
+	public void playPath2(KeyboardEvent event) {
+		eye().playPath(2);
+	}
+	
+	public void playPath3(KeyboardEvent event) {
+		eye().playPath(1);
+	}
+	
+	public void interpolateToFitScene(KeyboardEvent event) {
+		eye().interpolateToFitScene();
+	}
+	
+	public void showAll(KeyboardEvent event) {
+		showAll();
+	}
+	
+	public void resetAnchor(KeyboardEvent event) {
+		eye().setAnchor(new Vec(0, 0, 0));
+		// looks horrible, but works ;)
+		eye().anchorFlag = true;
+		eye().runResetAnchorHintTimer(1000);
+	}
+	
+	public void toggleAnimation(KeyboardEvent event) {
+		toggleAnimation();
+	}
+	
+	public void toggleAxesVisualHint(KeyboardEvent event) {
+		toggleAxesVisualHint();
+	}
+	
+	public void toggleCameraType(KeyboardEvent event) {
+		toggleCameraType();
+	}
+	
+	public void toggleGridVisualHint(KeyboardEvent event) {
+		toggleGridVisualHint();
+	}
+	
+	public void togglePathsVisualHint(KeyboardEvent event) {
+		togglePathsVisualHint();
+	}
+	
+	public void togglePickingVisualhint(KeyboardEvent event) {
+		togglePickingVisualhint();
+	}
+	
+	public void displayInfo(KeyboardEvent event) {
+		displayInfo();
+	}
+	
+	// end
 	
 	// Grabber Implementation
 

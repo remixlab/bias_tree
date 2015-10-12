@@ -73,7 +73,7 @@ public abstract class Eye implements Copyable {
 			frame.fromFrame(this);
 			return frame;
 		}
-		*/
+		//*/
 
 		@Override
 		public GrabberEyeFrame get() {
@@ -471,12 +471,20 @@ public abstract class Eye implements Copyable {
 	}
 	
 	//TODO experimental
+	///*
 	protected GrabberEyeFrame detachFrame() {
 		GrabberEyeFrame frame = new GrabberEyeFrame(gScene);
 		gScene.inputHandler().removeGrabber(frame);
 		frame.fromFrame(frame());
 		return frame;
 	}
+	//*/
+	
+	/*
+	public final InteractiveFrame detachFrame() {
+		return frame().detach();
+	}
+	//*/
 
 	/**
 	 * Internal use. Temporarily attach a frame to the Eye which is useful to some interpolation methods

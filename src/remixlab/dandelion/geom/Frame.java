@@ -241,7 +241,7 @@ public class Frame implements Copyable {
 		frame.fromFrame(this);
 		return frame;
 	}
-	*/
+	//*/
 
 	// MODIFIED
 
