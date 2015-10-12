@@ -2310,11 +2310,8 @@ public class Scene extends AbstractScene implements PConstants {
 	protected void drawScreenRotateHint() {
 		if (!(motionAgent() instanceof MouseAgent))
 			return;
-		//TODO pending
-		/*
-		if (!(motionAgent().inputGrabber() instanceof GenericFrame))
+		if (!(motionAgent().inputGrabber() instanceof GenericP5Frame))
 			return;
-			*/
 
 		pg().pushStyle();
 		float p1x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;
@@ -2341,19 +2338,14 @@ public class Scene extends AbstractScene implements PConstants {
 	protected void drawZoomWindowHint() {
 		if (!(motionAgent() instanceof MouseAgent))
 			return;
-		//TODO pending
-				/*
-		if (!(motionAgent().inputGrabber() instanceof GenericFrame))
+		if (!(motionAgent().inputGrabber() instanceof GenericP5Frame))
 			return;
-		GrabberFrame iFrame = (GrabberFrame) motionAgent().inputGrabber();
+		GenericP5Frame iFrame = (GenericP5Frame) motionAgent().inputGrabber();
 		if (!(iFrame.initMotionEvent instanceof DOF2Event))
 			return;
-			*/
 
 		pg().pushStyle();
-		//TODO pending
-		DOF2Event init = new DOF2Event(0,0);
-		//DOF2Event init = (DOF2Event) iFrame.initMotionEvent;
+		DOF2Event init = (DOF2Event) iFrame.initMotionEvent;
 		float p1x = init.x() /*- originCorner().x()*/;
 		float p1y = init.y() /*- originCorner().y()*/;
 		float p2x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;

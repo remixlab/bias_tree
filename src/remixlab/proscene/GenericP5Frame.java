@@ -216,8 +216,8 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 		removeMouseBindings();
 		
 		setMotionBinding(LEFT_ID, "gestureArcball");
-		//TODO pending
-		//setMotionBinding(CENTER_ID, "gestureScreenTranslate");
+		//setMotionBinding(CENTER_ID, "gestureScreenRotate");//
+		setMotionBinding(CENTER_ID, "gestureZoomOnRegion");
 		setMotionBinding(RIGHT_ID, "gestureTranslateXY");
 		setMotionBinding(WHEEL_ID, scene().is3D() ? isEyeFrame() ? "gestureTranslateZ" : "gestureScale" : "gestureScale");
 		
