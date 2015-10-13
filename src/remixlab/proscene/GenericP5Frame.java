@@ -376,19 +376,10 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected boolean initAction(MotionEvent event) {
-		if (event instanceof DOF1Event)
+	protected boolean initAction(MotionEvent e) {
+		DOF2Event event = MotionEvent.dof2Event(e);
+		if(event == null)
 			return false;
-		return initAction(MotionEvent.dof2Event(event));
-	}
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processEvent(BogusEvent)
-	 */
-	//TODO generalize me (taking a MotionEvent)
-	protected boolean initAction(DOF2Event event) {
 		initMotionEvent = event.get();
 		currMotionEvent = event;
 		stopSpinning();
@@ -442,19 +433,10 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected boolean execAction(MotionEvent event) {
-		if (event instanceof DOF1Event)
+	protected boolean execAction(MotionEvent e) {
+		DOF2Event event = MotionEvent.dof2Event(e);
+		if(event == null)
 			return false;
-		return execAction(MotionEvent.dof2Event(event));
-	}
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processEvent(BogusEvent)
-	 */
-	//TODO generalize me (taking a MotionEvent)
-	protected boolean execAction(DOF2Event event) {
 		currMotionEvent = event;
 		if (zor != null) {
 			zor = event.get();
@@ -506,33 +488,10 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected void flushAction(MotionEvent event) {
-		if (!(event instanceof DOF1Event))
-			flushAction(MotionEvent.dof2Event(event));
-	}
-	
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processEvent(BogusEvent)
-	 */
-	protected void flushAction(KeyboardEvent event) {		
-	}
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processEvent(BogusEvent)
-	 */
-	protected void flushAction(ClickEvent event) {
-	}
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processEvent(BogusEvent)
-	 */
-	protected void flushAction(DOF2Event event) {
+	protected void flushAction(MotionEvent e) {
+		DOF2Event event = MotionEvent.dof2Event(e);
+		if(event == null)
+			return;
 		if (rotateHint) {
 			gScene.setRotateVisualHint(false);
 			rotateHint = false;
@@ -555,5 +514,21 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 				setFlySpeed(flySpeedCache);
 			stopFlying();
 		}
+	}
+	
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
+	protected void flushAction(KeyboardEvent event) {		
+	}
+
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
+	protected void flushAction(ClickEvent event) {
 	}
 }
