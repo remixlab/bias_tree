@@ -75,7 +75,10 @@ public class Profile {
 		}
 		map = new HashMap<Shortcut, ObjectMethodTuple>();
 		for (Map.Entry<Shortcut, ObjectMethodTuple> entry : p.map().entrySet()) {
-			map.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
+			if( entry.getValue().object == p.grabber )
+				map.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
+			else
+				map.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
 		}
 	}
 

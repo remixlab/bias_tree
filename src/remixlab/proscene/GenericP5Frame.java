@@ -44,8 +44,12 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 	public GenericP5Frame(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		profile = new Profile(this);
-		setDefaultMouseBindings();
-		setDefaultKeyBindings();
+		if(referenceFrame instanceof GenericP5Frame)
+			this.profile.from(((GenericP5Frame)referenceFrame).profile);
+		else {
+			setDefaultMouseBindings();
+			setDefaultKeyBindings();
+		}
 	}
 	
 	public GenericP5Frame(Eye eye) {
@@ -241,6 +245,10 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 	
 	public Profile profile() {
 		return profile;
+	}
+	
+	public void setBindings(GenericP5Frame otherFrame) {
+		profile.from(otherFrame.profile());
 	}
 	
 	String initAction;

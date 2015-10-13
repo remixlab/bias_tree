@@ -2440,6 +2440,10 @@ public class Scene extends AbstractScene implements PConstants {
 		profile.removeKeyboardBindings();
 	}
 	
+	public void setBindings(Scene otherScene) {
+		profile.from(otherScene.profile());
+	}
+	
 	// click
 	
 	/*
