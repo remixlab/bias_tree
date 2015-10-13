@@ -354,7 +354,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Wrapper for PGraphics.vertex(x,y,z)
 	 */
 	public static void vertex(PGraphics pg, float x, float y, float z) {
-		pg.vertex(x, y, z);
+		if (pg instanceof PGraphics3D)
+			pg.vertex(x, y, z);
+		else
+			pg.vertex(x, y);
 	}
 
 	/**
@@ -389,7 +392,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Wrapper for PGraphics.line(x1, y1, z1, x2, y2, z2)
 	 */
 	public static void line(PGraphics pg, float x1, float y1, float z1, float x2, float y2, float z2) {
-		pg.line(x1, y1, z1, x2, y2, z2);
+		if (pg instanceof PGraphics3D)
+			pg.line(x1, y1, z1, x2, y2, z2);
+		else
+			pg.line(x1, y1, x2, y2);
 	}
 	
 	/**

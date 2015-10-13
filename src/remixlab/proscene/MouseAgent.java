@@ -91,7 +91,7 @@ public class MouseAgent extends Agent {
 		release = e.getAction() == processing.event.MouseEvent.RELEASE;
 		if (move || press || drag || release) {
 			currentEvent = new DOF2Event(prevEvent, e.getX() - scene.originCorner().x(), e.getY() - scene.originCorner().y(),
-					e.getModifiers(), move ? BogusEvent.NO_ID : e.getButton());			
+					/*e.getModifiers()*/BogusEvent.NO_MODIFIER_MASK, move ? BogusEvent.NO_ID : e.getButton());			
 			if (move && (pickingMode() == PickingMode.MOVE))
 				updateTrackedGrabber(currentEvent);
 			handle(release ? currentEvent.flush() : currentEvent);			
@@ -99,13 +99,13 @@ public class MouseAgent extends Agent {
 			return;
 		}
 		if (e.getAction() == processing.event.MouseEvent.WHEEL) {// e.getAction() = MouseEvent.WHEEL = 8
-			handle(new DOF1Event(e.getCount(), e.getModifiers(), WHEEL_ID));
+			handle(new DOF1Event(e.getCount(), /*e.getModifiers()*/BogusEvent.NO_MODIFIER_MASK, WHEEL_ID));
 			return;
 		}
 		if (e.getAction() == processing.event.MouseEvent.CLICK) {
 			ClickEvent bogusClickEvent = new ClickEvent(e.getX() - scene.originCorner().x(), e.getY()
 					- scene.originCorner().y(),
-					e.getModifiers(), e.getButton(), e.getCount());
+					/*e.getModifiers()*/BogusEvent.NO_MODIFIER_MASK, e.getButton(), e.getCount());
 			if (pickingMode() == PickingMode.CLICK)
 				updateTrackedGrabber(bogusClickEvent);
 			handle(bogusClickEvent);
