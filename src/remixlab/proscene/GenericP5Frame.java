@@ -198,18 +198,19 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 		profile.removeClickBindings();
 	}
 	
+	// mouse
+	
+	protected void removeMouseClickBindings() {
+		profile.removeClickBindings(new int[]{LEFT_ID,CENTER_ID,RIGHT_ID});
+	}
+	
+	protected void removeMouseMotionBindings() {
+		profile.removeMotionBindings(new int[]{LEFT_ID,CENTER_ID,RIGHT_ID,WHEEL_ID,NO_BUTTON});
+	}
+	
 	public void removeMouseBindings() {
-		removeMotionBinding(LEFT_ID);
-		removeMotionBinding(CENTER_ID);
-		removeMotionBinding(RIGHT_ID);
-		removeMotionBinding(WHEEL_ID);
-		removeMotionBinding(NO_BUTTON);
-		removeClickBinding(LEFT_ID, 1);
-		removeClickBinding(CENTER_ID, 1);
-		removeClickBinding(RIGHT_ID, 1);
-		removeClickBinding(LEFT_ID, 2);
-		removeClickBinding(CENTER_ID, 2);
-		removeClickBinding(RIGHT_ID, 2);
+		removeMouseMotionBindings();
+		removeMouseClickBindings();
 	}
 	
 	public void setDefaultMouseBindings() {

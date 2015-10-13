@@ -196,6 +196,25 @@ public class Profile {
 	    }
 	}
 	
+	public void removeMotionBindings(int [] ids) {
+		if(ids == null)
+			return;
+		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
+	        Shortcut shortcut = pair.getKey();
+	        if(shortcut instanceof MotionShortcut) {
+	        	int id = shortcut.id();
+		        for(int i = 0; i < ids.length; i++ ) {
+		        	if( id == ids[i] ) {
+		        		it.remove();
+		        		break;
+		        	}
+				}	        
+	        }       	
+	    }
+	}
+	
 	public void setKeyboardBinding(Shortcut key, String methodName) {
 		printWarning(key, methodName);
 		try {
@@ -217,20 +236,6 @@ public class Profile {
 			e.printStackTrace();
 		}
 	}
-	
-	/*
-	//TODO experimental
-	public void setRawKeyboardBinding(Shortcut key, String methodName) {
-		printWarning(key, methodName);
-		try {
-			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { });
-			map.put(key, new ObjectMethodTuple(grabber, method));
-		} catch (Exception e) {
-			System.out.println("Something went wrong when registering your " + methodName + " method");
-			e.printStackTrace();
-		}
-	}
-	*/
 	
 	public void removeKeyboardBindings() {
 		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
@@ -269,6 +274,25 @@ public class Profile {
 	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
 	        if( pair.getKey() instanceof ClickShortcut )
 	        	it.remove();
+	    }
+	}
+	
+	public void removeClickBindings(int [] ids) {
+		if(ids == null)
+			return;
+		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
+	        Shortcut shortcut = pair.getKey();
+	        if(shortcut instanceof ClickShortcut) {
+	        	int id = shortcut.id();
+		        for(int i = 0; i < ids.length; i++ ) {
+		        	if( id == ids[i] ) {
+		        		it.remove();
+		        		break;
+		        	}
+				}	        
+	        }       	
 	    }
 	}
 
@@ -376,6 +400,24 @@ public class Profile {
 	public void removeBindings() {
 		map.clear();
 	}
+	
+	/*
+	public void removeBindings(int [] ids) {
+		if(ids == null)
+			return;
+		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
+	        int id = pair.getKey().id();
+	        for(int i = 0; i < ids.length; i++ ) {
+	        	if( id == ids[i] ) {
+	        		it.remove();
+	        		break;
+	        	}
+			}	        	
+	    }
+	}
+	*/
 
 	/**
 	 * Returns true if this object contains a binding for the specified shortcut.
@@ -395,7 +437,7 @@ public class Profile {
 	 *          {@link java.lang.reflect.Method}
 	 * @return true if this object maps one or more shortcuts to the specified action.
 	 */
-	public boolean isMethodBound(String method) {
+	public boolean isActionBound(String method) {
 		for (ObjectMethodTuple tuple : map.values()) {
 			if( grabber == tuple.object && tuple.method.getName().equals(method) )
 				return true;
@@ -403,11 +445,11 @@ public class Profile {
 		return false;
 	}
 	
-	public boolean isMethodBound(Method method) {
-		return isMethodBound(grabber, method);
+	public boolean isActionBound(Method method) {
+		return isActionBound(grabber, method);
 	}
 	
-	public boolean isMethodBound(Object object, Method method) {
+	public boolean isActionBound(Object object, Method method) {
 		return map.containsValue(new ObjectMethodTuple(object, method));
 	}
 
