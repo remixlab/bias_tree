@@ -93,12 +93,12 @@ public class Profile {
 	 * Returns the {@link java.lang.reflect.Method} binding for the given {@link remixlab.bias.core.Shortcut}
 	 * key.
 	 */
-	public Method method(Shortcut key) {
+	public Method gesture(Shortcut key) {
 		return map.get(key) == null ? null : map.get(key).method;
 	}
 	
-	public String methodName(Shortcut key) {
-		Method m = method(key); 
+	public String gestureName(Shortcut key) {
+		Method m = gesture(key); 
 		if(m == null)
 			return null;
 		return m.getName();		
@@ -109,7 +109,7 @@ public class Profile {
 	}
 		
 	public boolean handle(BogusEvent event) {
-		Method iHandlerMethod = method(event.shortcut());
+		Method iHandlerMethod = gesture(event.shortcut());
 		if (iHandlerMethod != null) {
 			try {
 				if(object(event.shortcut()) == grabber)
@@ -128,7 +128,7 @@ public class Profile {
 	
 	protected void printWarning(Shortcut key, String methodName) {
 		if (hasBinding(key)) {
-			Method a = method(key);
+			Method a = gesture(key);
 			if(a.getName().equals(methodName))
 				System.out.println("Warning: shortcut already bound to " + a.getName());
 			else
@@ -440,7 +440,7 @@ public class Profile {
 	 *          {@link java.lang.reflect.Method}
 	 * @return true if this object maps one or more shortcuts to the specified action.
 	 */
-	public boolean isActionBound(String method) {
+	public boolean isGestureBound(String method) {
 		for (ObjectMethodTuple tuple : map.values()) {
 			if( grabber == tuple.object && tuple.method.getName().equals(method) )
 				return true;
@@ -448,11 +448,11 @@ public class Profile {
 		return false;
 	}
 	
-	public boolean isActionBound(Method method) {
-		return isActionBound(grabber, method);
+	public boolean isGestureBound(Method method) {
+		return isGestureBound(grabber, method);
 	}
 	
-	public boolean isActionBound(Object object, Method method) {
+	public boolean isGestureBound(Object object, Method method) {
 		return map.containsValue(new ObjectMethodTuple(object, method));
 	}
 
