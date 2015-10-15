@@ -1,5 +1,7 @@
 package remixlab.proscene;
 
+import java.lang.reflect.Method;
+
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.bias.ext.*;
@@ -83,6 +85,14 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 	
 	public void removeBindings() {
 		profile.removeBindings();
+	}
+	
+	public Method gesture(Shortcut key) {
+		return profile.gesture(key);
+	}
+	
+	public String gestureName(Shortcut key) {
+		return profile.gestureName(key);
 	}
 
 	// Motion

@@ -1246,18 +1246,17 @@ public class Scene extends AbstractScene implements PConstants {
 	public void postDraw() {
 		super.postDraw();
 		// draw into picking buffer
-		if( !this.isPickingBufferEnabled() )
+		//TODO experimental, should be tested when no pshape nor graphics are created, but yet there exists some 'models'
+		if( !this.isPickingBufferEnabled() || !GRAPHICS )
 			return;
 		pickingBuffer().beginDraw();
 		pickingBuffer().pushStyle();
 		pickingBuffer().background(0);
-		boolean needLoading = models().size() > 0;
-		if(needLoading)
-			needLoading = drawModels(pickingBuffer());	
+		drawModels(pickingBuffer());	
 		pickingBuffer().popStyle();
 		pickingBuffer().endDraw();
-		if (models().size() > 0 && needLoading)
-			pickingBuffer().loadPixels();
+		//if (models().size() > 0)
+		pickingBuffer().loadPixels();
 	}
 
 	/**
@@ -1297,6 +1296,8 @@ public class Scene extends AbstractScene implements PConstants {
 	public boolean hasModel(Model model) {
 		return models().contains(model);
 	}
+	
+	public static boolean GRAPHICS;
 
 	/**
 	 * Remove the {@code model} from the scene.
@@ -1307,7 +1308,16 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #addModel(Model)
 	 */
 	public boolean removeModel(Model model) {
-		return models().remove(model);
+		boolean result = models().remove(model);
+		if(result) {
+			for( Model m : models())
+				if(m.shape() != null || m.hasGraphicsHandler()) {
+					GRAPHICS = true;
+					break;
+				}
+			GRAPHICS = false;
+		}
+		return result;
 	}
 
 	public void removeModels() {
@@ -1329,12 +1339,9 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #removeModel(Model)
 	 * @see remixlab.proscene.Model#draw(PGraphics)
 	 */
-	public boolean drawModels() {
-		boolean result = false;
+	public void drawModels() {
 		for (Model model : models())
-			if(model.draw(pg()))
-				result = true;
-		return result;
+			model.draw(pg());
 	}
 
 	/**
@@ -1354,15 +1361,12 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #removeModel(Model)
 	 * @see remixlab.proscene.Model#draw(PGraphics)
 	 */
-	public boolean drawModels(PGraphics pgraphics) {
+	public void drawModels(PGraphics pgraphics) {
 		// 1. Set pgraphics matrices using a custom MatrixHelper
-		bindMatrices(pgraphics);		
-		boolean result = false;
+		bindMatrices(pgraphics);
 		// 2. Draw all models into pgraphics
 		for (Model model : models())
-			if(model.draw(pgraphics))
-				result = true;		
-		return result;
+			model.draw(pgraphics);
 	}
 
 	/**
@@ -2383,6 +2387,14 @@ public class Scene extends AbstractScene implements PConstants {
 		profile.removeBindings();
 	}
 	*/
+	
+	public Method gesture(Shortcut key) {
+		return profile.gesture(key);
+	}
+	
+	public String gestureName(Shortcut key) {
+		return profile.gestureName(key);
+	}
 
 	// Motion
 	

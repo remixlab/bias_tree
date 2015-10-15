@@ -27,7 +27,7 @@ import remixlab.util.*;
  * @see remixlab.proscene.Model
  * @see remixlab.dandelion.InteractiveFrame.GenericFrame
  */
-public class Model extends GenericP5Frame {
+public class Model extends GenericP5Frame {	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -246,6 +246,16 @@ public class Model extends GenericP5Frame {
 	 */
 	public void setShape(PShape ps) {
 		pshape = ps;
+		Scene.GRAPHICS = update();
+	}
+	
+	protected boolean update() {
+		if(pshape != null || this.hasGraphicsHandler())
+			return true;
+		for( Model m : ((Scene) gScene).models())
+			if(m.shape() != null || m.hasGraphicsHandler())
+				return true;
+		return false;
 	}
 	
 	/**
@@ -254,6 +264,7 @@ public class Model extends GenericP5Frame {
 	public PShape unsetShape() {
 		PShape prev = pshape;
 		pshape = null;
+		Scene.GRAPHICS = update();
 		return prev;
 	}
 	
@@ -354,6 +365,7 @@ public class Model extends GenericP5Frame {
 		try {
 			drawHandlerMethod = obj.getClass().getMethod(methodName, new Class<?>[] { PGraphics.class });			
 			drawHandlerObject = obj;
+			Scene.GRAPHICS = update();
 		} catch (Exception e) {
 			PApplet.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
@@ -369,6 +381,7 @@ public class Model extends GenericP5Frame {
 	public void removeGraphicsHandler() {
 		drawHandlerMethod = null;
 		drawHandlerObject = null;
+		Scene.GRAPHICS = update();
 	}
 
 	/**
