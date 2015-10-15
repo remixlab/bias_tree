@@ -9,8 +9,7 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.Frame;
 import remixlab.util.*;
 
-//TODO should be public, but set default bindings should be removed from here
-class GenericP5Frame extends InteractiveFrame implements Constants {
+class GenericP5Frame extends GenericFrame implements Constants {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).

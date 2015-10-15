@@ -22,12 +22,12 @@ import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
 /**
- * A {@link remixlab.proscene.Model} {@link remixlab.dandelion.InteractiveFrame.GenericFrame}.
+ * A {@link remixlab.proscene.InteractiveFrame} {@link remixlab.dandelion.GenericFrame.GenericFrame}.
  * 
- * @see remixlab.proscene.Model
- * @see remixlab.dandelion.InteractiveFrame.GenericFrame
+ * @see remixlab.proscene.InteractiveFrame
+ * @see remixlab.dandelion.GenericFrame.GenericFrame
  */
-public class Model extends GenericP5Frame {	
+public class InteractiveFrame extends GenericP5Frame {	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -45,7 +45,7 @@ public class Model extends GenericP5Frame {
 		if (obj.getClass() != getClass())
 			return false;
 
-		Model other = (Model) obj;
+		InteractiveFrame other = (InteractiveFrame) obj;
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(id, other.id)
@@ -64,10 +64,10 @@ public class Model extends GenericP5Frame {
 	// TODO new experimenting with textures	
 	protected PImage    tex;	
 		
-	public Model(Scene scn, PShape ps, PImage texture) {
+	public InteractiveFrame(Scene scn, PShape ps, PImage texture) {
 		super(scn);
-		((Scene) gScene).addModel(this);
-		id = ++Scene.modelCount;
+		((Scene) gScene).addFrame(this);
+		id = ++Scene.frameCount;
 		pshape = ps;
 		tex = texture;
 		shift = new PVector();
@@ -78,103 +78,103 @@ public class Model extends GenericP5Frame {
 	//TODO implement high level profile api, according to P5 mouse simplicity behavior 
 	
 	/**
-	 * Constructs a interactive-frame and adds to the {@link remixlab.proscene.Scene#models()} collection.
+	 * Constructs a interactive-frame and adds to the {@link remixlab.proscene.Scene#frames()} collection.
 	 * Calls {@code super(scn}.
 	 * 
-	 * @see remixlab.dandelion.InteractiveFrame.GenericFrame#GenericFrame(GenericScene)
-	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see remixlab.dandelion.GenericFrame.GenericFrame#GenericFrame(GenericScene)
+	 * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
 	 * @see #shape()
 	 * @see #setShape(PShape)
 	 * @see #addGraphicsHandler(Object, String)
 	 */
-	public Model(Scene scn) {
+	public InteractiveFrame(Scene scn) {
 		super(scn);
-		((Scene) gScene).addModel(this);
-		id = ++Scene.modelCount;
+		((Scene) gScene).addFrame(this);
+		id = ++Scene.frameCount;
 		shift = new PVector();
 	}
 	
 	/**
 	 * Constructs an interactive-frame as a child of reference frame, and adds it to the
-	 * {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn, referenceFrame}.
+	 * {@link remixlab.proscene.Scene#frames()} collection. Calls {@code super(scn, referenceFrame}.
 	 * 
-	 * @see remixlab.dandelion.InteractiveFrame.GenericFrame#GenericFrame(GenericScene, Frame)
-	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see remixlab.dandelion.GenericFrame.GenericFrame#GenericFrame(GenericScene, Frame)
+	 * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
 	 * @see #shape()
 	 * @see #setShape(PShape)
 	 * @see #addGraphicsHandler(Object, String)
 	 */
-	public Model(Scene scn, Frame referenceFrame) {
+	public InteractiveFrame(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
-		((Scene) gScene).addModel(this);
-		id = ++Scene.modelCount;
+		((Scene) gScene).addFrame(this);
+		id = ++Scene.frameCount;
 		shift = new PVector();
 	}
 	
 	/**
 	 * 
 	 * Wraps the pshape into this interactive-frame which is then added to the
-	 * {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn)}.
+	 * {@link remixlab.proscene.Scene#frames()} collection. Calls {@code super(scn)}.
 	 * 
-	 * @see remixlab.dandelion.InteractiveFrame.GenericFrame#GenericFrame(GenericScene)
-	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see remixlab.dandelion.GenericFrame.GenericFrame#GenericFrame(GenericScene)
+	 * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
 	 */
-	public Model(Scene scn, PShape ps) {
+	public InteractiveFrame(Scene scn, PShape ps) {
 		super(scn);
-		((Scene) gScene).addModel(this);
-		id = ++Scene.modelCount;
+		((Scene) gScene).addFrame(this);
+		id = ++Scene.frameCount;
 		shift = new PVector();
 		setShape(ps);
 	}
 
 	/**
 	 * Wraps the pshape into this interactive-frame which is created as a child of reference frame and then added to the
-	 * {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn, referenceFrame)}.
+	 * {@link remixlab.proscene.Scene#frames()} collection. Calls {@code super(scn, referenceFrame)}.
 	 * 
-	 * @see remixlab.dandelion.InteractiveFrame.GenericFrame#GenericFrame(GenericScene, Frame)
-	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see remixlab.dandelion.GenericFrame.GenericFrame#GenericFrame(GenericScene, Frame)
+	 * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
 	 */
-	public Model(Scene scn, Frame referenceFrame, PShape ps) {
+	public InteractiveFrame(Scene scn, Frame referenceFrame, PShape ps) {
 		super(scn, referenceFrame);
-		((Scene) gScene).addModel(this);
-		id = ++Scene.modelCount;
+		((Scene) gScene).addFrame(this);
+		id = ++Scene.frameCount;
 		shift = new PVector();
 		setShape(ps);
 	}
 
 	/**
 	 * Wraps the function object procedure into this interactive-frame which is then added it to the
-	 * {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn}.
+	 * {@link remixlab.proscene.Scene#frames()} collection. Calls {@code super(scn}.
 	 * 
-	 * @see remixlab.dandelion.InteractiveFrame.GenericFrame#GenericFrame(GenericScene)
-	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see remixlab.dandelion.GenericFrame.GenericFrame#GenericFrame(GenericScene)
+	 * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
 	 * @see #addGraphicsHandler(Object, String)
 	 */
-	public Model(Scene scn, Object obj, String methodName) {
+	public InteractiveFrame(Scene scn, Object obj, String methodName) {
 		super(scn);
-		((Scene) gScene).addModel(this);
-		id = ++Scene.modelCount;
+		((Scene) gScene).addFrame(this);
+		id = ++Scene.frameCount;
 		shift = new PVector();
 		addGraphicsHandler(obj, methodName);
 	}
 
 	/**
 	 * Wraps the the function object procedure into this interactive-frame which is is created as a child of reference frame
-	 * and then added to the {@link remixlab.proscene.Scene#models()} collection. Calls {@code super(scn, referenceFrame}.
+	 * and then added to the {@link remixlab.proscene.Scene#frames()} collection. Calls {@code super(scn, referenceFrame}.
 	 * 
-	 * @see remixlab.dandelion.InteractiveFrame.GenericFrame#GenericFrame(GenericScene, Frame)
-	 * @see remixlab.proscene.Scene#addModel(Model)
+	 * @see remixlab.dandelion.GenericFrame.GenericFrame#GenericFrame(GenericScene, Frame)
+	 * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
 	 * @see #addGraphicsHandler(Object, String)
 	 */
-	public Model(Scene scn, Frame referenceFrame, Object obj, String methodName) {
+	public InteractiveFrame(Scene scn, Frame referenceFrame, Object obj, String methodName) {
 		super(scn, referenceFrame);
-		((Scene) gScene).addModel(this);
-		id = ++Scene.modelCount;
+		((Scene) gScene).addFrame(this);
+		id = ++Scene.frameCount;
 		shift = new PVector();
 		addGraphicsHandler(obj, methodName);
 	}
 
-	protected Model(Model otherFrame) {
+	protected InteractiveFrame(InteractiveFrame otherFrame) {
 		super(otherFrame);
 		this.pshape = otherFrame.pshape;
 		this.id = otherFrame.id;
@@ -184,8 +184,8 @@ public class Model extends GenericP5Frame {
 	}
 
 	@Override
-	public Model get() {
-		return new Model(this);
+	public InteractiveFrame get() {
+		return new InteractiveFrame(this);
 	}
 	
 	/**
@@ -207,7 +207,7 @@ public class Model extends GenericP5Frame {
 	}
 
 	/**
-	 * Internal use. Model color to use in the {@link remixlab.proscene.Scene#pickingBuffer()}.
+	 * Internal use. Frame graphics color to use in the {@link remixlab.proscene.Scene#pickingBuffer()}.
 	 */
 	protected int getColor() {
 		// see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
@@ -217,18 +217,18 @@ public class Model extends GenericP5Frame {
 	/**
 	 * Shifts the {@link #shape()} respect to the frame {@link #position()}. Default value is zero.
 	 * 
-	 * @see #modelShift()
+	 * @see #graphicsShift()
 	 */
-	public void shiftModel(PVector shift) {
+	public void shiftGraphics(PVector shift) {
 		this.shift = shift;
 	}
 	
 	/**
 	 * Returns the {@link #shape()} shift.
 	 * 
-	 * @see #shiftModel(PVector)
+	 * @see #shiftGraphics(PVector)
 	 */
-	public PVector modelShift() {
+	public PVector graphicsShift() {
 		return shift;
 	}
 	
@@ -252,7 +252,7 @@ public class Model extends GenericP5Frame {
 	protected boolean update() {
 		if(pshape != null || this.hasGraphicsHandler())
 			return true;
-		for( Model m : ((Scene) gScene).models())
+		for( InteractiveFrame m : ((Scene) gScene).frames())
 			if(m.shape() != null || m.hasGraphicsHandler())
 				return true;
 		return false;
@@ -290,7 +290,7 @@ public class Model extends GenericP5Frame {
 	/**
 	 * Same as {@code draw(scene.pg())}.
 	 * 
-	 * @see remixlab.proscene.Scene#drawModels(PGraphics)
+	 * @see remixlab.proscene.Scene#drawFrames(PGraphics)
 	 */
 	public void draw() {
 		if (shape() == null  && !this.hasGraphicsHandler())
@@ -349,7 +349,7 @@ public class Model extends GenericP5Frame {
 	}
 	
 	/**
-	 * Attempt to add a graphics handler method to the Model. The default event handler is a method that
+	 * Attempt to add a graphics handler method to the frame. The default event handler is a method that
 	 * returns void and has one single PGraphics parameter. Note that the method should only deal with geometry and
 	 * that not coloring procedure may be specified within it.
 	 * 

@@ -72,13 +72,13 @@ import java.nio.FloatBuffer;
  * That method should return {@code void} and have one single {@code Scene} parameter. See the example
  * <i>AnimationHandler</i>.
  * </ol>
- * <h3>Scene models</h3>
- * Each scene instance has a collection of models (see {@link #models()}). A {@link remixlab.proscene.Model} is a PSshape
+ * <h3>Scene frames</h3>
+ * Each scene instance has a collection of frames (see {@link #frames()}). A {@link remixlab.proscene.InteractiveFrame} is a PSshape
  * wrapper {@link remixlab.bias.core.Grabber} (it may thus be manipulated by any {@link remixlab.bias.core.Agent}),
  * implementing a <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> with a color buffer (see
- * {@link #pickingBuffer()}) technique for easy and precise object selection. Use {@link #models()}, {@link #addModel(Model)},
- * {@link #removeModels()}, {@link #hasModel(Model)}, {@link #removeModel(Model)}, {@link #removeModels()},
- * {@link #drawModels()} and {@link #drawModels(PGraphics)} for model handling.
+ * {@link #pickingBuffer()}) technique for easy and precise object selection. Use {@link #frames()}, {@link #addFrame(InteractiveFrame)},
+ * {@link #removeFrames()}, {@link #hasFrame(InteractiveFrame)}, {@link #removeFrame(InteractiveFrame)}, {@link #removeFrames()},
+ * {@link #drawFrames()} and {@link #drawFrames(PGraphics)} for frame handling.
  */
 public class Scene extends AbstractScene implements PConstants {
 	// begin: GWT-incompatible
@@ -107,11 +107,11 @@ public class Scene extends AbstractScene implements PConstants {
 	protected PApplet						parent;
 	protected PGraphics					mainPGgraphics;
 
-	// Models
-	protected static int				modelCount;
+	// iFrames
+	protected static int				frameCount;
 	protected PGraphics					pBuffer;
 	protected boolean                   pBufferEnabled;
-	protected List<Model>				modelList;
+	protected List<InteractiveFrame>				frameList;
 	
 	///TODO decide placement
 	//Profile
@@ -171,8 +171,8 @@ public class Scene extends AbstractScene implements PConstants {
 		// 2. Matrix helper
 		setMatrixHelper(matrixHelper(pg));
 
-		// 3. Models & picking buffer
-		modelList = new ArrayList<Model>();
+		// 3. Frames & picking buffer
+		frameList = new ArrayList<InteractiveFrame>();
 		pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width,
 				pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height,
 				JAVA2D);
@@ -258,11 +258,11 @@ public class Scene extends AbstractScene implements PConstants {
 	// PICKING BUFFER
 
 	/**
-	 * Returns the {@link #models()} <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
+	 * Returns the {@link #frames()} <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
 	 * color buffer.
 	 * 
-	 * @see #drawModels()
-	 * @see #drawModels(PGraphics)
+	 * @see #drawFrames()
+	 * @see #drawFrames(PGraphics)
 	 */
 	public PGraphics pickingBuffer() {
 		return pBuffer;
@@ -1246,71 +1246,71 @@ public class Scene extends AbstractScene implements PConstants {
 	public void postDraw() {
 		super.postDraw();
 		// draw into picking buffer
-		//TODO experimental, should be tested when no pshape nor graphics are created, but yet there exists some 'models'
+		//TODO experimental, should be tested when no pshape nor graphics are created, but yet there exists some 'frames'
 		if( !this.isPickingBufferEnabled() || !GRAPHICS )
 			return;
 		pickingBuffer().beginDraw();
 		pickingBuffer().pushStyle();
 		pickingBuffer().background(0);
-		drawModels(pickingBuffer());	
+		drawFrames(pickingBuffer());	
 		pickingBuffer().popStyle();
 		pickingBuffer().endDraw();
-		//if (models().size() > 0)
+		//if (frames().size() > 0)
 		pickingBuffer().loadPixels();
 	}
 
 	/**
-	 * Returns all the models handled by the scene.
+	 * Returns all the frames handled by the scene.
 	 * 
-	 * @see #drawModels()
-	 * @see #drawModels(PGraphics)
-	 * @see #addModel(Model)
-	 * @see #removeModel(Model)
+	 * @see #drawFrames()
+	 * @see #drawFrames(PGraphics)
+	 * @see #addFrame(InteractiveFrame)
+	 * @see #removeFrame(InteractiveFrame)
 	 */
-	public List<Model> models() {
-		return modelList;
+	public List<InteractiveFrame> frames() {
+		return frameList;
 	}
 
 	/**
-	 * Add the {@code model} into the scene. Does nothing if the current models belongs to the scene.
+	 * Add the {@code frame} into the scene. Does nothing if the current frames belongs to the scene.
 	 * 
-	 * @see #models()
-	 * @see #drawModels()
-	 * @see #drawModels(PGraphics)
-	 * @see #removeModel(Model)
+	 * @see #frames()
+	 * @see #drawFrames()
+	 * @see #drawFrames(PGraphics)
+	 * @see #removeFrame(InteractiveFrame)
 	 */
-	public boolean addModel(Model model) {
-		if (model == null)
+	public boolean addFrame(InteractiveFrame iFrame) {
+		if (iFrame == null)
 			return false;
-		if (models().contains(model))
+		if (frames().contains(iFrame))
 			return false;
-		if (models().size() == 0)
+		if (frames().size() == 0)
 			pickingBuffer().loadPixels();
-		boolean result = models().add(model);
+		boolean result = frames().add(iFrame);
 		return result;
 	}
 
 	/**
-	 * Returns true if scene has {@code model} and false otherwise.
+	 * Returns true if scene has {@code frame} and false otherwise.
 	 */
-	public boolean hasModel(Model model) {
-		return models().contains(model);
+	public boolean hasFrame(InteractiveFrame iFrame) {
+		return frames().contains(iFrame);
 	}
 	
 	public static boolean GRAPHICS;
 
 	/**
-	 * Remove the {@code model} from the scene.
+	 * Remove the {@code frame} from the scene.
 	 * 
-	 * @see #models()
-	 * @see #drawModels()
-	 * @see #drawModels(PGraphics)
-	 * @see #addModel(Model)
+	 * @see #frames()
+	 * @see #drawFrames()
+	 * @see #drawFrames(PGraphics)
+	 * @see #addFrame(InteractiveFrame)
 	 */
-	public boolean removeModel(Model model) {
-		boolean result = models().remove(model);
+	public boolean removeFrame(InteractiveFrame iFrame) {
+		boolean result = frames().remove(iFrame);
 		if(result) {
-			for( Model m : models())
+			for( InteractiveFrame m : frames())
 				if(m.shape() != null || m.hasGraphicsHandler()) {
 					GRAPHICS = true;
 					break;
@@ -1320,53 +1320,53 @@ public class Scene extends AbstractScene implements PConstants {
 		return result;
 	}
 
-	public void removeModels() {
-		models().clear();
+	public void removeFrames() {
+		frames().clear();
 	}
 
 	/**
-	 * Draw all scene {@link #models()}. Same as: {@code for (Model model : models()) model.draw(pg());}.
+	 * Draw all scene {@link #frames()}. Same as: {@code for (InteractiveFrame frame : frames()) frame.draw(pg());}.
 	 * <p>
-	 * Returns {@code true} if at least a model get drawn.
+	 * Returns {@code true} if at least a frame get drawn.
 	 * <p>
-	 * Note that {@code drawModels()} should be call by you, most likely from within your sketch main
+	 * Note that {@code drawFrames()} should be call by you, most likely from within your sketch main
 	 * drawing loop (i.e., The P).
 	 * 
-	 * @see #models()
+	 * @see #frames()
 	 * @see #pg()
-	 * @see #drawModels(PGraphics)
-	 * @see #addModel(Model)
-	 * @see #removeModel(Model)
-	 * @see remixlab.proscene.Model#draw(PGraphics)
+	 * @see #drawFrames(PGraphics)
+	 * @see #addFrame(InteractiveFrame)
+	 * @see #removeFrame(InteractiveFrame)
+	 * @see remixlab.proscene.InteractiveFrame#draw(PGraphics)
 	 */
-	public void drawModels() {
-		for (Model model : models())
-			model.draw(pg());
+	public void drawFrames() {
+		for (InteractiveFrame frame : frames())
+			frame.draw(pg());
 	}
 
 	/**
-	 * Draw all {@link #models()} into the given pgraphics. No {@code pgraphics.beginDraw()/endDraw()} calls take place.
+	 * Draw all {@link #frames()} into the given pgraphics. No {@code pgraphics.beginDraw()/endDraw()} calls take place.
 	 * This method allows shader chaining.
 	 * <p>
-	 * Returns {@code true} if at least a model get drawn.
+	 * Returns {@code true} if at least a frame get drawn.
 	 * <p>
-	 * Note that {@code drawModels(pickingBuffer())} (which enables 'picking' of the models using a
+	 * Note that {@code drawFrames(pickingBuffer())} (which enables 'picking' of the frames using a
 	 * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> technique is called by {@link #postDraw()}.
 	 * 
 	 * @param pgraphics
 	 * 
-	 * @see #models()
-	 * @see #drawModels()
-	 * @see #addModel(Model)
-	 * @see #removeModel(Model)
-	 * @see remixlab.proscene.Model#draw(PGraphics)
+	 * @see #frames()
+	 * @see #drawFrames()
+	 * @see #addFrame(InteractiveFrame)
+	 * @see #removeFrame(InteractiveFrame)
+	 * @see remixlab.proscene.InteractiveFrame#draw(PGraphics)
 	 */
-	public void drawModels(PGraphics pgraphics) {
+	public void drawFrames(PGraphics pgraphics) {
 		// 1. Set pgraphics matrices using a custom MatrixHelper
 		bindMatrices(pgraphics);
-		// 2. Draw all models into pgraphics
-		for (Model model : models())
-			model.draw(pgraphics);
+		// 2. Draw all frames into pgraphics
+		for (InteractiveFrame frame : frames())
+			frame.draw(pgraphics);
 	}
 
 	/**
@@ -1376,8 +1376,8 @@ public class Scene extends AbstractScene implements PConstants {
 	 * 
 	 * @see #matrixHelper()
 	 * @see #setMatrixHelper(MatrixHelper)
-	 * @see #drawModels()
-	 * @see #drawModels(PGraphics)
+	 * @see #drawFrames()
+	 * @see #drawFrames(PGraphics)
 	 * @see #applyWorldTransformation(PGraphics, Frame)
 	 */
 	public MatrixHelper matrixHelper(PGraphics pgraphics) {
@@ -1425,9 +1425,9 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * Apply the global transformation defined by the given {@code frame} on the given {@code pgraphics}. This method
 	 * doesn't call {@link #bindMatrices(PGraphics)} which should be called manually (only makes sense when {@link #pg()}
-	 * is different than {@code pgraphics}). Needed by {@link remixlab.proscene.Model#draw(PGraphics)}
+	 * is different than {@code pgraphics}). Needed by {@link remixlab.proscene.InteractiveFrame#draw(PGraphics)}
 	 * 
-	 * @see remixlab.proscene.Model#draw(PGraphics)
+	 * @see remixlab.proscene.InteractiveFrame#draw(PGraphics)
 	 * @see #applyTransformation(PGraphics, Frame)
 	 * @see #bindMatrices(PGraphics)
 	 */
@@ -2138,7 +2138,7 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 	
 	@Override
-	public void drawPickingTarget(InteractiveFrame iFrame) {
+	public void drawPickingTarget(GenericFrame iFrame) {
 		if(iFrame.isEyeFrame()) {
 			System.err.println("eye frames don't have a picking target");
 			return;
@@ -2328,11 +2328,11 @@ public class Scene extends AbstractScene implements PConstants {
 		float p1y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;
 
 		Vec p2 = new Vec();
-		if (motionAgent().inputGrabber() instanceof InteractiveFrame) {
-			if (((InteractiveFrame) motionAgent().inputGrabber()).isEyeFrame())
+		if (motionAgent().inputGrabber() instanceof GenericFrame) {
+			if (((GenericFrame) motionAgent().inputGrabber()).isEyeFrame())
 				p2 = eye().projectedCoordinatesOf(anchor());
 			else
-				p2 = eye().projectedCoordinatesOf(((InteractiveFrame) mouseAgent().inputGrabber()).position());
+				p2 = eye().projectedCoordinatesOf(((GenericFrame) mouseAgent().inputGrabber()).position());
 		}
 		beginScreenDrawing();
 		pg().stroke(255, 255, 255);

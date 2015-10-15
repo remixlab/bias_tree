@@ -49,7 +49,7 @@ import remixlab.util.*;
  * to move to the right. A grabber-frame can be attached to an eye only at construction times (see {@link #GrabberFrame(Eye)} and
  * all the constructors that take an eye parameter). An eye may have more than one grabber-frame attached to it. To set
  * one of them as the {@link remixlab.dandelion.core.Eye#frame()}, call
- * {@link remixlab.dandelion.core.Eye#setFrame(InteractiveFrame)}. Note that a grabber-frame may be detached from the eye at any time,
+ * {@link remixlab.dandelion.core.Eye#setFrame(GenericFrame)}. Note that a grabber-frame may be detached from the eye at any time,
  * see {@link #detach()}.
  * <p>
  * This class provides several gesture-to-motion converting methods, such as: {@link #gestureArcball(MotionEvent)},
@@ -77,7 +77,7 @@ import remixlab.util.*;
  * A grabber-frame is loosely-coupled with the scene object used to instantiate it, i.e., the transformation it represents may
  * be applied to a different scene. See {@link #applyTransformation()} and {@link #applyTransformation(AbstractScene)}.
  * <p>
- * Two grabber-frames can be synced together ({@link #sync(InteractiveFrame, InteractiveFrame)}), meaning that they will share
+ * Two grabber-frames can be synced together ({@link #sync(GenericFrame, GenericFrame)}), meaning that they will share
  * their global parameters (position, orientation and magnitude) taken the one that has been most recently updated. Syncing
  * can be useful to share frames among different off-screen scenes (see ProScene's CameraCrane and the AuxiliarViewer
  * examples).
@@ -86,7 +86,7 @@ import remixlab.util.*;
  * mode, see {@link remixlab.dandelion.core.Trackable} documentation. See also {@link #setTrackingEyeDistance(float)},
  * {@link #setTrackingEyeAzimuth(float)} and {@link #setTrackingEyeInclination(float)}.
  */
-public class InteractiveFrame extends Frame implements Grabber, Trackable {
+public class GenericFrame extends Frame implements Grabber, Trackable {
 	// according to space-nav fine tuning it turned out that the space-nav is right handed
 	// we thus define our gesture physical space as right-handed as follows:
 	// hid.sens should be non-negative for the space-nav to behave as expected from the physical interface
@@ -162,7 +162,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 		if (obj.getClass() != getClass())
 			return false;
 
-		InteractiveFrame other = (InteractiveFrame) obj;
+		GenericFrame other = (GenericFrame) obj;
 		return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(grabsInputThreshold, other.grabsInputThreshold)
@@ -187,7 +187,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn) {
+	public GenericFrame(AbstractScene scn) {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
@@ -196,7 +196,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye) {
+	public GenericFrame(Eye eye) {
 		this(eye, null, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), 1);
 	}
 
@@ -205,7 +205,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Vec p) {
+	public GenericFrame(AbstractScene scn, Vec p) {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
@@ -214,7 +214,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye, Vec p) {
+	public GenericFrame(Eye eye, Vec p) {
 		this(eye, null, p, eye.scene().is3D() ? new Quat() : new Rot(), 1);
 	}
 
@@ -223,7 +223,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Rotation r) {
+	public GenericFrame(AbstractScene scn, Rotation r) {
 		this(scn, null, new Vec(), r, 1);
 	}
 
@@ -232,7 +232,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye, Rotation r) {
+	public GenericFrame(Eye eye, Rotation r) {
 		this(eye, null, new Vec(), r, 1);
 	}
 
@@ -241,7 +241,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, float s) {
+	public GenericFrame(AbstractScene scn, float s) {
 		this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
@@ -250,7 +250,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye, float s) {
+	public GenericFrame(Eye eye, float s) {
 		this(eye, null, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), s);
 	}
 
@@ -259,7 +259,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Vec p, float s) {
+	public GenericFrame(AbstractScene scn, Vec p, float s) {
 		this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
@@ -268,7 +268,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye, Vec p, float s) {
+	public GenericFrame(Eye eye, Vec p, float s) {
 		this(eye, null, p, eye.scene().is3D() ? new Quat() : new Rot(), s);
 	}
 
@@ -277,7 +277,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Vec p, Rotation r) {
+	public GenericFrame(AbstractScene scn, Vec p, Rotation r) {
 		this(scn, null, p, r, 1);
 	}
 
@@ -286,7 +286,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye, Vec p, Rotation r) {
+	public GenericFrame(Eye eye, Vec p, Rotation r) {
 		this(eye, null, p, r, 1);
 	}
 
@@ -295,7 +295,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Rotation r, float s) {
+	public GenericFrame(AbstractScene scn, Rotation r, float s) {
 		this(scn, null, new Vec(), r, s);
 	}
 
@@ -304,7 +304,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye, Rotation r, float s) {
+	public GenericFrame(Eye eye, Rotation r, float s) {
 		this(eye, null, new Vec(), r, s);
 	}
 
@@ -313,7 +313,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Vec p, Rotation r, float s) {
+	public GenericFrame(AbstractScene scn, Vec p, Rotation r, float s) {
 		this(scn, null, p, r, s);
 	}
 
@@ -322,11 +322,11 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame) {
+	public GenericFrame(AbstractScene scn, Frame referenceFrame) {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
-	public InteractiveFrame(Eye eye, Frame referenceFrame) {
+	public GenericFrame(Eye eye, Frame referenceFrame) {
 		this(eye, referenceFrame, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), 1);
 	}
 
@@ -335,7 +335,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p) {
+	public GenericFrame(AbstractScene scn, Frame referenceFrame, Vec p) {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1);
 	}
 
@@ -344,7 +344,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye, Frame referenceFrame, Vec p) {
+	public GenericFrame(Eye eye, Frame referenceFrame, Vec p) {
 		this(eye, referenceFrame, p, eye.scene().is3D() ? new Quat() : new Rot(), 1);
 	}
 
@@ -353,7 +353,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Rotation r) {
+	public GenericFrame(AbstractScene scn, Frame referenceFrame, Rotation r) {
 		this(scn, referenceFrame, new Vec(), r, 1);
 	}
 
@@ -362,7 +362,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye, Frame referenceFrame, Rotation r) {
+	public GenericFrame(Eye eye, Frame referenceFrame, Rotation r) {
 		this(eye, referenceFrame, new Vec(), r, 1);
 	}
 
@@ -371,7 +371,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, float s) {
+	public GenericFrame(AbstractScene scn, Frame referenceFrame, float s) {
 		this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
@@ -380,7 +380,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye, Frame referenceFrame, float s) {
+	public GenericFrame(Eye eye, Frame referenceFrame, float s) {
 		this(eye, referenceFrame, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), s);
 	}
 
@@ -389,7 +389,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, float s) {
+	public GenericFrame(AbstractScene scn, Frame referenceFrame, Vec p, float s) {
 		this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s);
 	}
 
@@ -398,7 +398,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye, Frame referenceFrame, Vec p, float s) {
+	public GenericFrame(Eye eye, Frame referenceFrame, Vec p, float s) {
 		this(eye, referenceFrame, p, eye.scene().is3D() ? new Quat() : new Rot(), s);
 	}
 
@@ -407,7 +407,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r) {
+	public GenericFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r) {
 		this(scn, referenceFrame, p, r, 1);
 	}
 
@@ -416,7 +416,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r) {
+	public GenericFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r) {
 		this(eye, referenceFrame, p, r, 1);
 	}
 
@@ -425,7 +425,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(AbstractScene, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Rotation r, float s) {
+	public GenericFrame(AbstractScene scn, Frame referenceFrame, Rotation r, float s) {
 		this(scn, referenceFrame, new Vec(), r, s);
 	}
 
@@ -434,7 +434,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #GrabberFrame(Eye, Frame, Vec, Rotation, float)
 	 */
-	public InteractiveFrame(Eye eye, Frame referenceFrame, Rotation r, float s) {
+	public GenericFrame(Eye eye, Frame referenceFrame, Rotation r, float s) {
 		this(eye, referenceFrame, new Vec(), r, s);
 	}
 
@@ -454,7 +454,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * <p>
 	 * After object creation a call to {@link #isEyeFrame()} will return {@code false}.
 	 */
-	public InteractiveFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
+	public GenericFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(referenceFrame, p, r, s);
 		init(scn);
 		setGrabsInputThreshold(20);
@@ -478,7 +478,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * <p>
 	 * After object creation a call to {@link #isEyeFrame()} will return {@code true}.
 	 */
-	public InteractiveFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
+	public GenericFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
 		super(referenceFrame, p, r, s);
 		theeye = eye;
 		init(theeye.scene());
@@ -525,7 +525,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 		//updateTrackingEyeFrame();
 	}
 	
-	protected InteractiveFrame(InteractiveFrame otherFrame) {
+	protected GenericFrame(GenericFrame otherFrame) {
 		super(otherFrame);
 		this.gScene = otherFrame.gScene;		
 		this.theeye = otherFrame.theeye;
@@ -574,8 +574,8 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	}
 
 	@Override
-	public InteractiveFrame get() {
-		return new InteractiveFrame(this);
+	public GenericFrame get() {
+		return new GenericFrame(this);
 	}
 	
 	//TODO experimental
@@ -838,9 +838,9 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * Same as {@code sync(this, otherFrame)}.
 	 * 
-	 * @see #sync(InteractiveFrame, InteractiveFrame)
+	 * @see #sync(GenericFrame, GenericFrame)
 	 */
-	public void sync(InteractiveFrame otherFrame) {
+	public void sync(GenericFrame otherFrame) {
 		sync(this, otherFrame);
 	}
 
@@ -854,13 +854,13 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see #fromFrame(Frame)
 	 */
-	public static void sync(InteractiveFrame f1, InteractiveFrame f2) {
+	public static void sync(GenericFrame f1, GenericFrame f2) {
 		if(f1 == null || f2 == null)
 			return;
 		if (f1.lastGlobalUpdate() == f2.lastGlobalUpdate())
 			return;
-		InteractiveFrame source = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f1 : f2;
-		InteractiveFrame target = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f2 : f1;
+		GenericFrame source = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f1 : f2;
+		GenericFrame target = (f1.lastGlobalUpdate() > f2.lastGlobalUpdate()) ? f2 : f1;
 		target.fromFrame(source);
 	}
 
@@ -2055,7 +2055,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 		Vec pos = position();
 		Quat o = (Quat) orientation();
 		Frame oldRef = referenceFrame();
-		InteractiveFrame rFrame = new InteractiveFrame(gScene);
+		GenericFrame rFrame = new GenericFrame(gScene);
 		rFrame.setPosition(eye().anchor());
 		rFrame.setZAxis(Vec.subtract(pos, eye().anchor()));
 		rFrame.setXAxis(xAxis());
@@ -2251,7 +2251,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * @see #screenToQuat(float, float, float)
 	 */
 	public Vec eyeToReferenceFrame(Vec trns) {
-		InteractiveFrame gFrame = isEyeFrame() ? this : /* respectToEye() ? */gScene.eye().frame() /* : this */;
+		GenericFrame gFrame = isEyeFrame() ? this : /* respectToEye() ? */gScene.eye().frame() /* : this */;
 		Vec t = gFrame.inverseTransformOf(trns);
 		if (referenceFrame() != null)
 			t = referenceFrame().transformOf(t);
@@ -2374,7 +2374,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 				gScene.motionAgent().removeGrabber((Grabber) ref);
 				gScene.keyboardAgent().removeGrabber((Grabber) ref);
 			}
-			InteractiveFrame copy = get();
+			GenericFrame copy = get();
 			gScene.motionAgent().removeGrabber((Grabber) copy);
 			gScene.keyboardAgent().removeGrabber((Grabber) copy);
 			copy.setReferenceFrame(ref);
@@ -2735,7 +2735,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	
 	// Trackable Interface implementation
 	
-	protected InteractiveFrame eFrame;
+	protected GenericFrame eFrame;
 	protected Rotation				q;
 	protected float					trackingDist;
 	
@@ -2849,7 +2849,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 */
 	protected void updateTrackingEyeFrame() {
 		if(eFrame == null) {
-			eFrame = new InteractiveFrame(scene(), this);
+			eFrame = new GenericFrame(scene(), this);
 			scene().motionAgent().removeGrabber(eFrame);
 			scene().keyboardAgent().removeGrabber(eFrame);
 		}
@@ -2881,7 +2881,7 @@ public class InteractiveFrame extends Frame implements Grabber, Trackable {
 	 * @see remixlab.dandelion.core.AbstractScene#setAvatar(Trackable)
 	 */
 	@Override
-	public InteractiveFrame trackingEyeFrame() {
+	public GenericFrame trackingEyeFrame() {
 		return eFrame;
 	}
 }

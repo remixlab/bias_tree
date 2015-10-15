@@ -94,7 +94,7 @@ import remixlab.util.*;
  * 
  * <h3>Derived classes</h3>
  * 
- * The {@link remixlab.dandelion.core.InteractiveFrame} class inherits Frame and implements all sorts of motion actions,
+ * The {@link remixlab.dandelion.core.GenericFrame} class inherits Frame and implements all sorts of motion actions,
  * so that a Frame (and hence an object) can be manipulated in the scene by whatever user interaction means you can
  * imagine.
  */
