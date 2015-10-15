@@ -63,72 +63,29 @@ public abstract class Eye implements Copyable {
 			super(otherFrame);
 		}
 
-		//TODO experimental
-		/*
-		@Override
-		public GrabberEyeFrame detach() {
-			GrabberEyeFrame frame = new GrabberEyeFrame(gScene);
-			for (Agent agent : gScene.inputHandler().agents())
-				agent.removeGrabber(frame);
-			frame.fromFrame(this);
-			return frame;
-		}
-		//*/
-
 		@Override
 		public GrabberEyeFrame get() {
 			return new GrabberEyeFrame(this);
 		}
 
 		@Override
-		public void performInteraction(DOF1Event event) {
-			if(event.flushed())
-				stopFlying();
-			if(event.isShiftDown())
-				gestureRotateZ(event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
-			else if(gScene.is2D())
-				gestureScale(event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
-			else
-				gestureTranslateZ(event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
-		}
-
-		@Override
-		public void performInteraction(DOF2Event event) {
-			if(event.flushed())
-				stopFlying();
-			else if(event.isShiftDown()) {
-				if (event.id() == LEFT_ID)
-					gestureMoveForward(event, true);
-				if (event.id() == RIGHT_ID)
-					gestureMoveForward(event, false);
-				if (event.id() == CENTER_ID)
-					if(gScene.is3D())
-						rotate(rollPitchQuaternion(event, gScene.camera()));
+		public void performInteraction(MotionEvent event) {
+			switch( event.shortcut().id() ) {
+			case LEFT_ID:
+				gestureArcball(event);
+				break;
+			case CENTER_ID:
+				gestureScreenRotate(event);
+				break;
+			case RIGHT_ID:
+				gestureTranslateXY(event);
+			case WHEEL_ID:
+				if(scene().is3D() && isEyeFrame())
+					gestureTranslateZ(event);
+				else
+					gestureScale(event);						
+				break;
 			}
-			else {
-				if (event.id() == Agent.LEFT_ID)
-					gestureArcball(event);
-				if (event.id() == Agent.RIGHT_ID)
-					gestureTranslateXY(event);
-			}
-		}
-		
-		@Override
-		public void performInteraction(DOF3Event event) {
-			if(event.flushed())
-				stopFlying();
-			if(event.isShiftDown())
-				gestureTranslateXYZ(event);
-			else
-				gestureRotateXYZ(event);
-		}
-		
-		@Override
-		public void performInteraction(DOF6Event event) {
-			if(event.flushed())
-				stopFlying();
-			gestureTranslateXYZ(event);
-			gestureRotateXYZ(event);
 		}
 
 		@Override

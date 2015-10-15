@@ -240,6 +240,10 @@ class GenericP5Frame extends InteractiveFrame implements Constants {
 		setKeyBinding(RIGHT_KEY, "gestureTranslateXPos");
 		setKeyBinding(DOWN_KEY, "gestureTranslateYNeg");
 		setKeyBinding(UP_KEY, "gestureTranslateYPos");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, LEFT_KEY), "gestureRotateXNeg");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, RIGHT_KEY), "gestureRotateXPos");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, DOWN_KEY), "gestureRotateYNeg");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, UP_KEY), "gestureRotateYPos");		
 		setKeyBinding('z', "gestureRotateZNeg");
 		setKeyBinding(BogusEvent.SHIFT, 'z', "gestureRotateZPos");
 	}
