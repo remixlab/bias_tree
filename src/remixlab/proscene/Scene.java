@@ -2392,8 +2392,8 @@ public class Scene extends AbstractScene implements PConstants {
 		return profile.gesture(key);
 	}
 	
-	public String gestureName(Shortcut key) {
-		return profile.gestureName(key);
+	public boolean isGestureBound(String method) {
+		return profile.isGestureBound(method);
 	}
 
 	// Motion

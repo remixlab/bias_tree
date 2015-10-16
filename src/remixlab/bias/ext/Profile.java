@@ -126,19 +126,28 @@ public class Profile {
 		return false;
 	}
 	
-	protected void printWarning(Shortcut key, String methodName) {
+	protected boolean printWarning(Shortcut key, String methodName) {
+		if(methodName == null) {
+			this.removeBinding(key);
+			System.out.println(key.description() + " removed");
+			return true;
+		}			
 		if (hasBinding(key)) {
 			Method a = gesture(key);
-			if(a.getName().equals(methodName))
+			if(a.getName().equals(methodName)) {
 				System.out.println("Warning: shortcut already bound to " + a.getName());
-			else
+				return true;
+			}
+			else {
 				System.out.println("Warning: overwritting shortcut which was previously bound to " + a.getName());
-				
+				return false;
+			}	
 		}
+		return false;
 	}
 	
 	public void setBinding(Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			map.put(key, new ObjectMethodTuple(grabber, grabber.getClass().getMethod(methodName, new Class<?>[] { BogusEvent.class })));
 		} catch (Exception e) {
@@ -148,7 +157,7 @@ public class Profile {
 	}
 	
 	public void setBinding(Object object, Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), BogusEvent.class });
 			map.put(key, new ObjectMethodTuple(object, method));
@@ -167,7 +176,7 @@ public class Profile {
 	 *          {@link java.lang.reflect.Method}
 	 */
 	public void setMotionBinding(Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { MotionEvent.class });
 			map.put(key, new ObjectMethodTuple(grabber, method));
@@ -179,7 +188,7 @@ public class Profile {
 	}
 	
 	public void setMotionBinding(Object object, Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), MotionEvent.class });
 			map.put(key, new ObjectMethodTuple(object, method));
@@ -219,7 +228,7 @@ public class Profile {
 	}
 	
 	public void setKeyboardBinding(Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { KeyboardEvent.class });
 			map.put(key, new ObjectMethodTuple(grabber, method));
@@ -230,7 +239,7 @@ public class Profile {
 	}
 	
 	public void setKeyboardBinding(Object object, Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), KeyboardEvent.class });
 			map.put(key, new ObjectMethodTuple(object, method));
@@ -250,7 +259,7 @@ public class Profile {
 	}
 
 	public void setClickBinding(Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { ClickEvent.class });
 			map.put(key, new ObjectMethodTuple(grabber, method));
@@ -261,7 +270,7 @@ public class Profile {
 	}
 	
 	public void setClickBinding(Object object, Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), ClickEvent.class });
 			map.put(key, new ObjectMethodTuple(object, method));
@@ -300,7 +309,7 @@ public class Profile {
 	}
 
 	public void setDOF1Binding(Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { DOF1Event.class });
 			map.put(key, new ObjectMethodTuple(grabber, method));
@@ -311,7 +320,7 @@ public class Profile {
 	}
 	
 	public void setDOF1Binding(Object object, Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), DOF1Event.class });
 			map.put(key, new ObjectMethodTuple(object, method));
@@ -322,7 +331,7 @@ public class Profile {
 	}
 	
 	public void setDOF2Binding(Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { DOF2Event.class });
 			map.put(key, new ObjectMethodTuple(grabber, method));
@@ -333,7 +342,7 @@ public class Profile {
 	}
 	
 	public void setDOF2Binding(Object object, Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), DOF2Event.class });
 			map.put(key, new ObjectMethodTuple(object, method));
@@ -344,7 +353,7 @@ public class Profile {
 	}
 	
 	public void setDOF3Binding(Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { DOF3Event.class });
 			map.put(key, new ObjectMethodTuple(grabber, method));
@@ -355,7 +364,7 @@ public class Profile {
 	}
 	
 	public void setDOF3Binding(Object object, Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), DOF3Event.class });
 			map.put(key, new ObjectMethodTuple(object, method));
@@ -366,7 +375,7 @@ public class Profile {
 	}
 	
 	public void setDOF6Binding(Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { DOF6Event.class });
 			map.put(key, new ObjectMethodTuple(grabber, method));
@@ -377,7 +386,7 @@ public class Profile {
 	}
 	
 	public void setDOF6Binding(Object object, Shortcut key, String methodName) {
-		printWarning(key, methodName);
+		if(printWarning(key, methodName)) return;
 		try {
 			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), DOF6Event.class });
 			map.put(key, new ObjectMethodTuple(object, method));

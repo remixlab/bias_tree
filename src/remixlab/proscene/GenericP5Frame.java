@@ -90,8 +90,8 @@ class GenericP5Frame extends GenericFrame implements Constants {
 		return profile.gesture(key);
 	}
 	
-	public String gestureName(Shortcut key) {
-		return profile.gestureName(key);
+	public boolean isGestureBound(String method) {
+		return profile.isGestureBound(method);
 	}
 
 	// Motion
@@ -106,6 +106,7 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	}
 	*/
 	
+	/*
 	public boolean hasMotionBinding() {
 		return profile.hasBinding(new MotionShortcut());
 	}
@@ -113,6 +114,7 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	public void removeMotionBinding() {
 		profile.removeBinding(new MotionShortcut());
 	}
+	*/
 	
 	public void setMotionBinding(int id, String methodName) {
 		profile.setMotionBinding(new MotionShortcut(id), methodName);
