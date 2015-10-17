@@ -360,6 +360,8 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 */
 	protected boolean initGesture(BogusEvent event) {
 		initGesture = profile.gestureName(event.shortcut());
+		if(initGesture == null)
+			return false;
 		if (event instanceof KeyboardEvent)
 			return initGesture((KeyboardEvent) event);
 		if (event instanceof ClickEvent)
