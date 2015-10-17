@@ -2108,7 +2108,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		if (dir == 1)
 			gestureTranslateX(event, true);
 		else if (dir == -1)
-			gestureTranslateY(event, true);
+			gestureTranslateY(event, false);
 	}
 
 	/**

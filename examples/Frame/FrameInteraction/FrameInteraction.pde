@@ -121,3 +121,17 @@ public void draw() {
     fill(255, 255, 0);
   frame3.draw();
 }
+
+public void keyPressed() {
+  if(key == ' ')
+    if( scene.mouseAgent().pickingMode() == MouseAgent.PickingMode.CLICK ) {
+      scene.mouseAgent().setPickingMode(MouseAgent.PickingMode.MOVE);
+      scene.eyeFrame().setMotionBinding(LEFT, "gestureArcball");
+      scene.eyeFrame().removeMotionBinding(MouseAgent.NO_BUTTON);
+    }
+    else {
+      scene.mouseAgent().setPickingMode(MouseAgent.PickingMode.CLICK);
+      scene.eyeFrame().setMotionBinding(MouseAgent.NO_BUTTON, "gestureArcball");
+      scene.eyeFrame().removeMotionBinding(LEFT);
+    }
+}
