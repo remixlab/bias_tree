@@ -43,17 +43,8 @@ InteractiveFrame frame1, frame2, frame3;
 //Choose one of P3D for a 3D scene, or P2D or JAVA2D for a 2D scene
 String renderer = P3D;
 
-
-public static void main(String args[]) {
-  PApplet.main(new String[] { "--present", "basic.FrameInteraction" });
-}
-
-public void settings() {
-  size(640, 360, renderer);
-}
-
 public void setup() {
-  //size(640, 360, renderer);    
+  size(640, 360, renderer);    
   scene = new Scene(this);
   scene.eyeFrame().setDamping(0);
   scene.setPickingVisualHint(true);

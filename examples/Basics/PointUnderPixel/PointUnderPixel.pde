@@ -13,7 +13,7 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.geom.*; //<>//
+import remixlab.dandelion.geom.*;
 
 Scene scene;
 Point screenPoint = new Point();
@@ -26,9 +26,12 @@ Vec pup;
 void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
-  scene.keyboardAgent().setBinding('z', Scene.SceneAction.RESET_ANCHOR);
-  scene.mouseAgent().setClickBinding(Scene.Target.EYE, LEFT, 1, Scene.ClickAction.ZOOM_ON_PIXEL);
-  scene.mouseAgent().setClickBinding(Scene.Target.EYE, Event.CTRL, LEFT, 1, Scene.ClickAction.ANCHOR_FROM_PIXEL);
+  
+  scene.setKeyBinding('z', "resetAnchor");
+  //same as: scene.eyeFrame().setMotionBinding(CENTER, null);
+  scene.eyeFrame().removeMotionBinding(CENTER);
+  scene.eyeFrame().setClickBinding(LEFT, 1, "gestureZoomOnPixel");
+  scene.eyeFrame().setClickBinding(CENTER, 1, "gestureAnchorFromPixel");
 }
 
 void draw() {  
