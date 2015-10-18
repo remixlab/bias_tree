@@ -15,8 +15,6 @@
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.branch.Constants.*;
-import remixlab.dandelion.branch.*;
 
 Scene scene, auxScene;
 PGraphics canvas, auxCanvas;
@@ -117,9 +115,9 @@ void keyPressed() {
     this.redraw();
   }
   if ( key == 'u' )
-    scene.mouseAgent().setWheelBinding(Target.EYE, DOF1Action.TRANSLATE_Z);
+    scene.eyeFrame().setMotionBinding(MouseAgent.WHEEL_ID, "translateZ");
   if ( key == 'v' )
-    scene.mouseAgent().setWheelBinding(Target.EYE, DOF1Action.SCALE);
+    scene.eyeFrame().setMotionBinding(MouseAgent.WHEEL_ID, "scale");
 }
 
 public class StdCamera extends Camera {
@@ -129,7 +127,7 @@ public class StdCamera extends Camera {
     super(scn);
     // camera frame is a gFrame by default, but we want an iFrame
     // to bind 'u' and 'v' actions to it
-    setFrame(new GenericFrame(this));
+    setFrame(new EyeFrame(this));
     standard = false;
   }
 

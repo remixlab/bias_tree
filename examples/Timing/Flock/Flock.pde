@@ -51,7 +51,7 @@ boolean changedMode;
 void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
-  scene.motionAgent().setPickingMode(MouseAgent.PickingMode.CLICK);
+  scene.mouseAgent().setPickingMode(MouseAgent.PickingMode.CLICK);
   scene.setAxesVisualHint(false);
   scene.setGridVisualHint(false);
   scene.setBoundingBox(new Vec(0, 0, 0), new Vec(flockWidth, flockHeight, flockDepth));

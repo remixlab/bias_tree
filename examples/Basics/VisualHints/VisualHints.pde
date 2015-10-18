@@ -24,8 +24,8 @@ public void setup() {
   iFrame = new InteractiveFrame(scene);
   iFrame.setGrabsInputThreshold(scene.radius()/4, true);
   iFrame.translate(30, -30, 0);
-  scene.keyboardAgent().removeBinding('r');
-  scene.keyboardAgent().setBinding('u', Scene.SceneAction.TOGGLE_PATHS_VISUAL_HINT);
+  scene.removeKeyBinding('r');
+  scene.setKeyBinding('u', "togglePathsVisualHint");
   scene.setNonSeqTimers();
   scene.setVisualHints(Scene.AXES | Scene.GRID | Scene.PICKING | Scene.PATHS);
   //create a eye path and add some key frames:

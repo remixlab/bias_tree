@@ -16,7 +16,6 @@
 
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.branch.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
@@ -116,7 +115,7 @@ void displayControls() {
     scene.endScreenDrawing();
   }
 
-  GrabberFrame iFrame;
+  GenericFrame iFrame;
   if ( isIFrame ) {
     iFrame = interactiveFrame;
     scene.beginScreenDrawing();
@@ -169,15 +168,15 @@ void decreaseSensitivity(Sensitivity sens) {
     decreaseSensitivity(scene.eyeFrame(), sens);
 }	
 
-void increaseSensitivity(GrabberFrame iFrame, Sensitivity sens) {
+void increaseSensitivity(GenericFrame iFrame, Sensitivity sens) {
   changeSensitivity(iFrame, sens, true);
 }
 
-void decreaseSensitivity(GrabberFrame iFrame, Sensitivity sens) {
+void decreaseSensitivity(GenericFrame iFrame, Sensitivity sens) {
   changeSensitivity(iFrame, sens, false);
 }	
 
-void changeSensitivity(GrabberFrame iFrame, Sensitivity sens, boolean increase) {
+void changeSensitivity(GenericFrame iFrame, Sensitivity sens, boolean increase) {
   float step = 1;
   float res;
   switch (sens) {
@@ -214,7 +213,7 @@ void changeSensitivity(GrabberFrame iFrame, Sensitivity sens, boolean increase) 
   }
 }
 
-boolean areDefaultsSet(GrabberFrame iFrame) {
+boolean areDefaultsSet(GenericFrame iFrame) {
   if (   equals(iFrame.rotationSensitivity(), defRotSens)
       && equals(iFrame.translationSensitivity(), defTransSens)
       && equals(iFrame.spinningSensitivity(), defSpngSens)
@@ -225,7 +224,7 @@ boolean areDefaultsSet(GrabberFrame iFrame) {
   return false;
 }
 
-void setDefaults(GrabberFrame iFrame) {
+void setDefaults(GenericFrame iFrame) {
   iFrame.setRotationSensitivity(defRotSens);
   iFrame.setTranslationSensitivity(defTransSens);
   iFrame.setSpinningSensitivity(defSpngSens);

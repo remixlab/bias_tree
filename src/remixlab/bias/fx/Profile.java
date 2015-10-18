@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  *********************************************************************************/
 
-package remixlab.bias.ext;
+package remixlab.bias.fx;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -93,12 +93,12 @@ public class Profile {
 	 * Returns the {@link java.lang.reflect.Method} binding for the given {@link remixlab.bias.core.Shortcut}
 	 * key.
 	 */
-	public Method gesture(Shortcut key) {
+	public Method action(Shortcut key) {
 		return map.get(key) == null ? null : map.get(key).method;
 	}
 	
-	public String gestureName(Shortcut key) {
-		Method m = gesture(key); 
+	public String actionName(Shortcut key) {
+		Method m = action(key); 
 		if(m == null)
 			return null;
 		return m.getName();		
@@ -109,7 +109,7 @@ public class Profile {
 	}
 		
 	public boolean handle(BogusEvent event) {
-		Method iHandlerMethod = gesture(event.shortcut());
+		Method iHandlerMethod = action(event.shortcut());
 		if (iHandlerMethod != null) {
 			try {
 				if(object(event.shortcut()) == grabber)
@@ -133,7 +133,7 @@ public class Profile {
 			return true;
 		}			
 		if (hasBinding(key)) {
-			Method a = gesture(key);
+			Method a = action(key);
 			if(a.getName().equals(methodName)) {
 				System.out.println("Warning: shortcut already bound to " + a.getName());
 				return true;
@@ -449,7 +449,7 @@ public class Profile {
 	 *          {@link java.lang.reflect.Method}
 	 * @return true if this object maps one or more shortcuts to the specified action.
 	 */
-	public boolean isGestureBound(String method) {
+	public boolean isActionBound(String method) {
 		for (ObjectMethodTuple tuple : map.values()) {
 			if( grabber == tuple.object && tuple.method.getName().equals(method) )
 				return true;
@@ -457,11 +457,11 @@ public class Profile {
 		return false;
 	}
 	
-	public boolean isGestureBound(Method method) {
-		return isGestureBound(grabber, method);
+	public boolean isActionBound(Method method) {
+		return isActionBound(grabber, method);
 	}
 	
-	public boolean isGestureBound(Object object, Method method) {
+	public boolean isActionBound(Object object, Method method) {
 		return map.containsValue(new ObjectMethodTuple(object, method));
 	}
 

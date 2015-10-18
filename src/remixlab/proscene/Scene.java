@@ -14,7 +14,7 @@ import processing.core.*;
 import processing.opengl.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.ext.Profile;
+import remixlab.bias.fx.Profile;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
@@ -2388,12 +2388,12 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 	*/
 	
-	public Method gesture(Shortcut key) {
-		return profile.gesture(key);
+	public Method action(Shortcut key) {
+		return profile.action(key);
 	}
 	
-	public boolean isGestureBound(String method) {
-		return profile.isGestureBound(method);
+	public boolean isActionBound(String method) {
+		return profile.isActionBound(method);
 	}
 
 	// Motion

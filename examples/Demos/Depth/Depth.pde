@@ -51,10 +51,10 @@ void setup() {
 void draw() {
   background(0);
   if (original)
-    scene.drawModels();
+    scene.drawFrames();
   else {
     scene.pg().shader(shader);
-    scene.drawModels();
+    scene.drawFrames();
     scene.pg().resetShader(); 
   }
 }

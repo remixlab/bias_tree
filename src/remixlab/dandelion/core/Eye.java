@@ -72,18 +72,18 @@ public abstract class Eye implements Copyable {
 		public void performInteraction(MotionEvent event) {
 			switch( event.shortcut().id() ) {
 			case LEFT_ID:
-				gestureArcball(event);
+				rotate(event);
 				break;
 			case CENTER_ID:
-				gestureScreenRotate(event);
+				screenRotate(event);
 				break;
 			case RIGHT_ID:
-				gestureTranslateXY(event);
+				translate(event);
 			case WHEEL_ID:
 				if(scene().is3D() && isEyeFrame())
-					gestureTranslateZ(event);
+					translateZ(event);
 				else
-					gestureScale(event);						
+					scale(event);						
 				break;
 			}
 		}
@@ -102,25 +102,25 @@ public abstract class Eye implements Copyable {
 		public void performInteraction(KeyboardEvent event) {
 			if( event.isShiftDown() ) {
 				if(event.id()  == Agent.UP_KEY)
-					gestureTranslateY(event, true);
+					translateY(event, true);
 				if(event.id()  == Agent.DOWN_KEY)
-					gestureTranslateY(event, false);
+					translateY(event, false);
 				if(event.id()  == Agent.LEFT_KEY)
-					gestureTranslateX(event, false);
+					translateX(event, false);
 				if(event.id()  == Agent.RIGHT_KEY)
-					gestureTranslateX(event, true);
+					translateX(event, true);
 			}
 			else {
 				if(event.id()  == Agent.UP_KEY)
 					if(gScene.is3D())
-						gestureRotateX(event, true);
+						rotateX(event, true);
 				if(event.id()  == Agent.DOWN_KEY)
 					if(gScene.is3D())
-						gestureRotateY(event, false);
+						rotateY(event, false);
 				if(event.id()  == Agent.LEFT_KEY)
-					gestureRotateZ(event, false);
+					rotateZ(event, false);
 				if(event.id()  == Agent.RIGHT_KEY)
-					gestureRotateZ(event, true);
+					rotateZ(event, true);
 			}
 		}
 	}

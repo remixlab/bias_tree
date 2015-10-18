@@ -86,7 +86,7 @@ public void draw() {
   SrcScene.beginDraw();
   pg.background(0);
   pg.lights();
-  SrcScene.drawModels();
+  SrcScene.drawFrames();
   SrcScene.endDraw();
   pg.endDraw();
   

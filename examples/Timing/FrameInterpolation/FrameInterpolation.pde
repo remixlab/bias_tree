@@ -23,7 +23,6 @@
 
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
-import remixlab.dandelion.branch.*;
 
 Scene scene;
 InteractiveFrame keyFrame[];

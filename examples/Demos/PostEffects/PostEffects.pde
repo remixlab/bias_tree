@@ -115,7 +115,7 @@ public void draw() {
   pg.beginDraw();
   scene.beginDraw();
   pg.background(0);
-  scene.drawModels();
+  scene.drawFrames();
   scene.endDraw();
   pg.endDraw();
  
@@ -124,7 +124,7 @@ public void draw() {
   if (bdepth){
     colorGraphics.beginDraw();
     colorGraphics.background(0);
-    scene.drawModels(colorGraphics);
+    scene.drawFrames(colorGraphics);
     colorGraphics.endDraw();
     drawGraphics = colorGraphics;
   }

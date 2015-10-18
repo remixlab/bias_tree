@@ -57,8 +57,8 @@ public void setup() {
 
   // frame 2
   frame2 = new InteractiveFrame(scene, createShape(SPHERE, 40));
-  frame2.setMotionBinding(LEFT, "gestureTranslateXY");
-  frame2.setMotionBinding(RIGHT, "gestureScale");
+  frame2.setMotionBinding(LEFT, "translateXY");
+  frame2.setMotionBinding(RIGHT, "scale");
 
   //frame 3
   frame3 = new InteractiveFrame(scene, this, "boxDrawing");
@@ -75,7 +75,7 @@ public void boxDrawing(PGraphics pg) {
 }
 
 public void boxCustomMotion(InteractiveFrame frame, MotionEvent event) {
-  frame.gestureScreenRotate(event);
+  frame.screenRotate(event);
 }
 
 public void boxCustomClick(InteractiveFrame frame, ClickEvent event) {
@@ -126,12 +126,12 @@ public void keyPressed() {
   if(key == ' ')
     if( scene.mouseAgent().pickingMode() == MouseAgent.PickingMode.CLICK ) {
       scene.mouseAgent().setPickingMode(MouseAgent.PickingMode.MOVE);
-      scene.eyeFrame().setMotionBinding(LEFT, "gestureArcball");
+      scene.eyeFrame().setMotionBinding(LEFT, "rotate");
       scene.eyeFrame().removeMotionBinding(MouseAgent.NO_BUTTON);
     }
     else {
       scene.mouseAgent().setPickingMode(MouseAgent.PickingMode.CLICK);
-      scene.eyeFrame().setMotionBinding(MouseAgent.NO_BUTTON, "gestureArcball");
+      scene.eyeFrame().setMotionBinding(MouseAgent.NO_BUTTON, "rotate");
       scene.eyeFrame().removeMotionBinding(LEFT);
     }
 }

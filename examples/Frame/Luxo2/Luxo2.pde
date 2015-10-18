@@ -34,11 +34,11 @@ public void setup() {
 public void draw() {
   background(0);
   lights();
-  //scene.drawModels();
+  //scene.drawFrames();
   //or with color for selection
-  for (Model model : scene.models()) {
-    fill(200, 200, scene.mouseAgent().inputGrabber() == model ? 0 : 200);
-    model.draw(scene.pg());
+  for (InteractiveFrame frame : scene.frames()) {
+    fill(200, 200, scene.mouseAgent().inputGrabber() == frame ? 0 : 200);
+    frame.draw(scene.pg());
   }
 
   //draw the ground

@@ -1,6 +1,6 @@
 // This class shows an alternative way of using an InteractiveFrame by deriving from it.
 
-public class Patch extends InteractiveFrame {
+public class Patch extends GenericFrame {
   private int number; // patch number
   private float size; // patch size in world
   private float padding = 0f; // space arround the patch

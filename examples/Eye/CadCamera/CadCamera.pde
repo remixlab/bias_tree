@@ -12,7 +12,6 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.branch.Constants.*;
 
 Scene scene;
 
@@ -24,7 +23,7 @@ void setup() {
   scene.setRightHanded();
   //scene.motionAgent().eyeProfile().setBinding(Constants.B_LEFT, DOF2Action.ROTATE_CAD);
   //same as the previous line:
-  scene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE_CAD);
+  scene.eyeFrame().setMotionBinding(LEFT, "rotateCAD");
   scene.camera().frame().setRotationSensitivity(1.5);
   //no spinning:
   scene.camera().frame().setSpinningSensitivity(100);
@@ -40,10 +39,10 @@ void draw() {
 
 void keyPressed() {
   if (key == ' ')
-    if ( scene.mouseAgent().isActionBound(Target.EYE, DOF2Action.ROTATE_CAD) )
-      scene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE);
+    if ( scene.eyeFrame().isActionBound("rotateCAD") )
+      scene.eyeFrame().setMotionBinding(LEFT, "rotate");
     else {
-      scene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.ROTATE_CAD);
+      scene.eyeFrame().setMotionBinding(LEFT, "rotateCAD");
       scene.camera().setUpVector(0, 1, 0);
     }
   if (key == 'u' || key == 'U')

@@ -16,7 +16,6 @@
  */
 
 import remixlab.proscene.*;
-import remixlab.dandelion.branch.Constants.*;
 import remixlab.dandelion.geom.*;
 import remixlab.dandelion.constraint.*;
 
@@ -64,12 +63,16 @@ public void setup() {
   heliScene.camera().frame().fromFrame(heliCam.frame(3));
   armScene.camera().frame().fromFrame(armCam.frame(5));  
 
-  armScene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.LOOK_AROUND);
-  armScene.mouseAgent().setButtonBinding(Target.EYE, CENTER, null);
-  armScene.mouseAgent().setButtonBinding(Target.EYE, RIGHT, null);
-  heliScene.mouseAgent().setButtonBinding(Target.EYE, LEFT, DOF2Action.LOOK_AROUND);
-  heliScene.mouseAgent().setButtonBinding(Target.EYE, CENTER, null);
-  heliScene.mouseAgent().setButtonBinding(Target.EYE, RIGHT, null);
+  armScene.eyeFrame().setMotionBinding(LEFT, "lookAround");
+  armScene.eyeFrame().setMotionBinding(CENTER, null);
+  armScene.eyeFrame().removeMotionBinding(CENTER);
+  armScene.eyeFrame().setMotionBinding(RIGHT, null);
+  armScene.eyeFrame().removeMotionBinding(RIGHT);
+  heliScene.eyeFrame().setMotionBinding(LEFT, "lookAround");
+  heliScene.eyeFrame().setMotionBinding(CENTER, null);//same as removeMotionBinding
+  heliScene.eyeFrame().removeMotionBinding(CENTER);
+  heliScene.eyeFrame().setMotionBinding(RIGHT, null);//same as removeMotionBinding
+  heliScene.eyeFrame().removeMotionBinding(RIGHT);
 }
 
 // off-screen rendering

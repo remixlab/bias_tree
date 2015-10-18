@@ -19,7 +19,6 @@
 import remixlab.proscene.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
-import remixlab.dandelion.branch.*;
 
 Scene scene;
 InteractiveTorus [] toruses;

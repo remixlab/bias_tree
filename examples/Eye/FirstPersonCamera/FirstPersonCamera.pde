@@ -1,5 +1,5 @@
 /**
- * Fisrt Person Camera.
+ * First Person Camera.
  * by Jean Pierre Charalambos.
  * 
  * This example illustrates how to set up mouse bindings to control the camera
@@ -11,16 +11,15 @@
 import remixlab.proscene.*;
 
 Scene scene;
-boolean firstPerson;
 InteractiveFrame iFrame;
+boolean firstPerson;
 
 void setup() {
   size(640, 360, P3D);		
   scene = new Scene(this);	
   iFrame = new InteractiveFrame(scene);
   iFrame.translate(30, 30);
-  scene.mouseAgent().dragToFirstPerson();
-  firstPerson = true;
+  toggleFirstPerson();
 }
 
 void draw() {
@@ -53,18 +52,25 @@ void draw() {
   popMatrix();
 }
 
+public void toggleFirstPerson() {
+  firstPerson = !firstPerson;
+  if(firstPerson) {
+    scene.eyeFrame().setMotionBinding(MouseAgent.NO_BUTTON, "lookAround");
+    scene.eyeFrame().setMotionBinding(LEFT, "moveForward");
+    scene.eyeFrame().setMotionBinding(RIGHT, "moveBackward");
+  }
+  else {
+    scene.eyeFrame().removeMotionBinding(MouseAgent.NO_BUTTON);
+    scene.eyeFrame().setMotionBinding(LEFT, "rotate");
+    scene.eyeFrame().setMotionBinding(RIGHT, "translate");
+  }
+}
+
 public void keyPressed() {
   if ( key == 'i')
     scene.motionAgent().shiftDefaultGrabber(scene.eyeFrame(), iFrame);
-  if ( key == ' ') {
-    firstPerson = !firstPerson;
-    if ( firstPerson ) {
-      scene.mouseAgent().dragToFirstPerson();
-    }
-    else {
-      scene.mouseAgent().dragToArcball();
-    }
-  }
+  if ( key == ' ')
+    toggleFirstPerson();
   if(key == '+')
     scene.eyeFrame().setFlySpeed(scene.eyeFrame().flySpeed() * 1.1);
   if(key == '-')

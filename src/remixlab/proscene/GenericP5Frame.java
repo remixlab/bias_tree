@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.ext.*;
+import remixlab.bias.fx.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.Frame;
 import remixlab.util.*;
@@ -86,12 +86,12 @@ class GenericP5Frame extends GenericFrame implements Constants {
 		profile.removeBindings();
 	}
 	
-	public Method gesture(Shortcut key) {
-		return profile.gesture(key);
+	public Method action(Shortcut key) {
+		return profile.action(key);
 	}
 	
-	public boolean isGestureBound(String method) {
-		return profile.isGestureBound(method);
+	public boolean isActionBound(String method) {
+		return profile.isActionBound(method);
 	}
 
 	// Motion
@@ -232,31 +232,31 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	public void setDefaultMouseBindings() {
 		removeMouseBindings();
 		
-		setMotionBinding(LEFT_ID, "gestureArcball");
-		//setMotionBinding(CENTER_ID, "gestureScreenRotate");//
-		setMotionBinding(CENTER_ID, "gestureZoomOnRegion");
-		setMotionBinding(RIGHT_ID, "gestureTranslateXY");
-		setMotionBinding(WHEEL_ID, scene().is3D() ? isEyeFrame() ? "gestureTranslateZ" : "gestureScale" : "gestureScale");
+		setMotionBinding(LEFT_ID, "rotate");
+		//setMotionBinding(CENTER_ID, "screenRotate");//
+		setMotionBinding(CENTER_ID, "zoomOnRegion");
+		setMotionBinding(RIGHT_ID, "translate");
+		setMotionBinding(WHEEL_ID, scene().is3D() ? isEyeFrame() ? "translateZ" : "scale" : "scale");
 		
 		//removeClickBindings();
-    	setClickBinding(LEFT_ID, 2, "gestureAlign");
-		setClickBinding(RIGHT_ID, 2, "gestureCenter");
+    	setClickBinding(LEFT_ID, 2, "align");
+		setClickBinding(RIGHT_ID, 2, "center");
 	}
 	
 	public void setDefaultKeyBindings() {
 		removeKeyBindings();
-		setKeyBinding('n', "gestureAlign");
-		setKeyBinding('c', "gestureCenter");
-		setKeyBinding(LEFT_KEY, "gestureTranslateXNeg");
-		setKeyBinding(RIGHT_KEY, "gestureTranslateXPos");
-		setKeyBinding(DOWN_KEY, "gestureTranslateYNeg");
-		setKeyBinding(UP_KEY, "gestureTranslateYPos");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, LEFT_KEY), "gestureRotateXNeg");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, RIGHT_KEY), "gestureRotateXPos");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, DOWN_KEY), "gestureRotateYNeg");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, UP_KEY), "gestureRotateYPos");		
-		setKeyBinding('z', "gestureRotateZNeg");
-		setKeyBinding(BogusEvent.SHIFT, 'z', "gestureRotateZPos");
+		setKeyBinding('n', "align");
+		setKeyBinding('c', "center");
+		setKeyBinding(LEFT_KEY, "translateXNeg");
+		setKeyBinding(RIGHT_KEY, "translateXPos");
+		setKeyBinding(DOWN_KEY, "translateYNeg");
+		setKeyBinding(UP_KEY, "translateYPos");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, LEFT_KEY), "rotateXNeg");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, RIGHT_KEY), "rotateXPos");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, DOWN_KEY), "rotateYNeg");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, UP_KEY), "rotateYPos");	
+		setKeyBinding('z', "rotateZNeg");
+		setKeyBinding(BogusEvent.SHIFT, 'z', "rotateZPos");
 	}
 	
 	public Profile profile() {
@@ -267,7 +267,7 @@ class GenericP5Frame extends GenericFrame implements Constants {
 		profile.from(otherFrame.profile());
 	}
 	
-	String initGesture;
+	String initAction;
 	
 	// private A a;//TODO study make me an attribute to com between init and end
 	protected boolean			need4Spin;
@@ -290,7 +290,7 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	// lets see
 	
 	/**
-	 * Internal use. Algorithm to split a gesture flow into a 'three-tempi' {@link remixlab.bias.branch.Action} sequence.
+	 * Internal use. Algorithm to split an action flow into a 'three-tempi' {@link remixlab.bias.branch.Action} sequence.
 	 * It's called like this (see {@link #performInteraction(BogusEvent)}):
 	 * <pre>
      * {@code
@@ -309,14 +309,14 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 * <p>
 	 * The algorithm parses the bogus-event in {@link #performInteraction(BogusEvent)} and then decide what to call:
 	 * <ol>
-     * <li>{@link #initGesture(BogusEvent)} (1st tempi): sets the initAction, called when initAction == null.</li>
-     * <li>{@link #execGesture(BogusEvent)} (2nd tempi): continues action execution, called when initAction == action()
+     * <li>{@link #initAction(BogusEvent)} (1st tempi): sets the initAction, called when initAction == null.</li>
+     * <li>{@link #execAction(BogusEvent)} (2nd tempi): continues action execution, called when initAction == action()
      * (current action)</li>
-     * <li>{@link #flushGesture(BogusEvent)} (3rd): ends action, called when {@link remixlab.bias.core.BogusEvent#flushed()}
+     * <li>{@link #flushAction(BogusEvent)} (3rd): ends action, called when {@link remixlab.bias.core.BogusEvent#flushed()}
      * is true or when initAction != action()</li>
      * </ol>
      * <p>
-     * Useful to parse multiple-tempi gestures, such as a mouse press/move/drag/release flow.
+     * Useful to parse multiple-tempi actions, such as a mouse press/move/drag/release flow.
      * <p>
      * The following motion-actions have been implemented using the aforementioned technique:
 	 * {@link remixlab.dandelion.branch.Constants.DOF2Action#SCREEN_ROTATE},
@@ -327,23 +327,23 @@ class GenericP5Frame extends GenericFrame implements Constants {
      * Current implementation only supports {@link remixlab.bias.event.MotionEvent}s.
 	 */
 	protected final boolean processEvent(BogusEvent event) {
-		if (initGesture == null) {
+		if (initAction == null) {
 			if (!event.flushed()) {
-				return initGesture(event);// start action
+				return initAction(event);// start action
 			}
 		}
 		else { // initAction != null
 			if (!event.flushed()) {
-				if (initGesture == profile.gestureName(event.shortcut()))
-					return execGesture(event);// continue action
+				if (initAction == profile.actionName(event.shortcut()))
+					return execAction(event);// continue action
 				else { // initAction != action() -> action changes abruptly
-					flushGesture(event);
-					return initGesture(event);// start action
+					flushAction(event);
+					return initAction(event);// start action
 				}
 			}
 			else {// action() == null
-				flushGesture(event);// stopAction
-				initGesture = null;
+				flushAction(event);// stopAction
+				initAction = null;
 				//setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
 				return true;
 			}
@@ -358,16 +358,16 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected boolean initGesture(BogusEvent event) {
-		initGesture = profile.gestureName(event.shortcut());
-		if(initGesture == null)
+	protected boolean initAction(BogusEvent event) {
+		initAction = profile.actionName(event.shortcut());
+		if(initAction == null)
 			return false;
 		if (event instanceof KeyboardEvent)
-			return initGesture((KeyboardEvent) event);
+			return initAction((KeyboardEvent) event);
 		if (event instanceof ClickEvent)
-			return initGesture((ClickEvent) event);
+			return initAction((ClickEvent) event);
 		if (event instanceof MotionEvent)
-			return initGesture((MotionEvent) event);
+			return initAction((MotionEvent) event);
 		return false;
 	}
 
@@ -376,7 +376,7 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected boolean initGesture(ClickEvent event) {
+	protected boolean initAction(ClickEvent event) {
 		return false;
 	}
 	
@@ -385,7 +385,7 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected boolean initGesture(KeyboardEvent event) {
+	protected boolean initAction(KeyboardEvent event) {
 		return false;
 	}
 
@@ -394,34 +394,34 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected boolean initGesture(MotionEvent e) {
+	protected boolean initAction(MotionEvent e) {
 		DOF2Event event = MotionEvent.dof2Event(e);
 		if(event == null)
 			return false;
 		initMotionEvent = event.get();
 		currMotionEvent = event;
 		stopSpinning();
-		String twotempi = profile.gestureName(event.shortcut());
-		if (twotempi == "gestureScreenTranslate")
+		String twotempi = profile.actionName(event.shortcut());
+		if (twotempi == "screenTranslate")
 			dirIsFixed = false;
-		boolean rotateMode = ((twotempi == "gestureArcball") || (twotempi == "gestureRotateXYZ")
-				|| (twotempi == "gestureRotateCAD")
-				|| (twotempi == "gestureScreenRotate") || (twotempi == "gestureTranslateRotateXYZ"));
+		boolean rotateMode = ((twotempi == "rotate") || (twotempi == "rotateXYZ")
+				|| (twotempi == "rotateCAD")
+				|| (twotempi == "screenRotate") || (twotempi == "translateRotateXYZ"));
 		if (rotateMode && gScene.is3D())
 			gScene.camera().cadRotationIsReversed = gScene.camera().frame()
 					.transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
 		need4Spin = (rotateMode && (damping() == 0));
-		drive = (twotempi == "gestureDrive");
+		drive = (twotempi == "drive");
 		if (drive)
 			flySpeedCache = flySpeed();
-		need4Tossing = (twotempi == "gestureMoveForward") || (twotempi == "gestureMoveBackward")
+		need4Tossing = (twotempi == "moveForward") || (twotempi == "moveBackward")
 				|| (drive);
 		if (need4Tossing)
 			updateSceneUpVector();
-		rotateHint = twotempi == "gestureScreenRotate";
+		rotateHint = twotempi == "screenRotate";
 		if (rotateHint)
 			gScene.setRotateVisualHint(true);
-		if (isEyeFrame() && twotempi == "gestureZoomOnRegion") {
+		if (isEyeFrame() && twotempi == "zoomOnRegion") {
 			gScene.setZoomVisualHint(true);
 			zor = event.get();
 			return true;
@@ -436,13 +436,13 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected boolean execGesture(BogusEvent event) {
+	protected boolean execAction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
-			return execGesture((KeyboardEvent) event);
+			return execAction((KeyboardEvent) event);
 		if (event instanceof ClickEvent)
-			return execGesture((ClickEvent) event);
+			return execAction((ClickEvent) event);
 		if (event instanceof MotionEvent)
-			return execGesture((MotionEvent) event);
+			return execAction((MotionEvent) event);
 		return false;
 	}
 
@@ -451,7 +451,7 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected boolean execGesture(MotionEvent e) {
+	protected boolean execAction(MotionEvent e) {
 		DOF2Event event = MotionEvent.dof2Event(e);
 		if(event == null)
 			return false;
@@ -462,7 +462,7 @@ class GenericP5Frame extends GenericFrame implements Constants {
 			return true;// bypass
 		}
 		// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-		if (profile.gestureName(event.shortcut()) == "gestureZoomOnRegion") {
+		if (profile.actionName(event.shortcut()) == "zoomOnRegion") {
 			return true;
 		}
 		if (drive) {
@@ -477,11 +477,11 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected boolean execGesture(ClickEvent event) {
+	protected boolean execAction(ClickEvent event) {
 		return false;
 	}
 	
-	protected boolean execGesture(KeyboardEvent event) {
+	protected boolean execAction(KeyboardEvent event) {
 		return false;
 	}
 
@@ -492,13 +492,13 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected void flushGesture(BogusEvent event) {
+	protected void flushAction(BogusEvent event) {
 		if (event instanceof KeyboardEvent)
-			flushGesture((KeyboardEvent) event);
+			flushAction((KeyboardEvent) event);
 		if (event instanceof ClickEvent)
-			flushGesture((ClickEvent) event);
+			flushAction((ClickEvent) event);
 		if (event instanceof MotionEvent)
-			flushGesture((MotionEvent) event);
+			flushAction((MotionEvent) event);
 	}
 
 	/**
@@ -506,7 +506,7 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected void flushGesture(MotionEvent e) {
+	protected void flushAction(MotionEvent e) {
 		DOF2Event event = MotionEvent.dof2Event(e);
 		if(event == null)
 			return;
@@ -523,7 +523,7 @@ class GenericP5Frame extends GenericFrame implements Constants {
 			// the problem is that depending on the order the button and the modifiers are released,
 			// different actions maybe triggered, so we go for sure ;) :
 			gScene.setZoomVisualHint(false);
-			gestureZoomOnRegion(zor);// now action need to be executed on event
+			zoomOnRegion(zor);// now action need to be executed on event
 			zor = null;
 		}
 		if (need4Tossing) {
@@ -539,7 +539,7 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected void flushGesture(KeyboardEvent event) {		
+	protected void flushAction(KeyboardEvent event) {		
 	}
 
 	/**
@@ -547,6 +547,6 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected void flushGesture(ClickEvent event) {
+	protected void flushAction(ClickEvent event) {
 	}
 }

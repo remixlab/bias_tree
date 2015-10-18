@@ -65,14 +65,14 @@ void draw() {
   pg.beginDraw();
   scene.beginDraw();
   pg.background(0);
-  scene.drawModels();
+  scene.drawFrames();
   scene.endDraw();
   pg.endDraw();
 
   // 2. Draw into depth buffer
   depthPGraphics.beginDraw();
   depthPGraphics.background(0);
-  scene.drawModels(depthPGraphics);
+  scene.drawFrames(depthPGraphics);
   depthPGraphics.endDraw();
 
   // 3. Draw destination buffer

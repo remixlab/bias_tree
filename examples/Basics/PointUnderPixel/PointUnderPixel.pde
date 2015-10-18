@@ -30,8 +30,8 @@ void setup() {
   scene.setKeyBinding('z', "resetAnchor");
   //same as: scene.eyeFrame().setMotionBinding(CENTER, null);
   scene.eyeFrame().removeMotionBinding(CENTER);
-  scene.eyeFrame().setClickBinding(LEFT, 1, "gestureZoomOnPixel");
-  scene.eyeFrame().setClickBinding(CENTER, 1, "gestureAnchorFromPixel");
+  scene.eyeFrame().setClickBinding(LEFT, 1, "zoomOnPixel");
+  scene.eyeFrame().setClickBinding(CENTER, 1, "anchorFromPixel");
 }
 
 void draw() {  
