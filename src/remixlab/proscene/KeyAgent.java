@@ -11,6 +11,7 @@
 package remixlab.proscene;
 
 import remixlab.bias.event.KeyboardEvent;
+import remixlab.bias.event.KeyboardShortcut;
 import remixlab.dandelion.core.AbstractScene;
 import remixlab.bias.core.*;
 
@@ -81,4 +82,36 @@ public class KeyAgent extends Agent {
 	public static int keyCode(char key) {
 		return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key);
 	}
+	
+	public void removeBindings(GenericP5Frame frame) {
+		frame.removeKeyBindings();
+	}
+	
+	public void setDefaultBindings(GenericP5Frame frame) {
+		removeBindings(frame);
+		frame.setKeyBinding('n', "align");
+		frame.setKeyBinding('c', "center");
+		frame.setKeyBinding(LEFT_KEY, "translateXNeg");
+		frame.setKeyBinding(RIGHT_KEY, "translateXPos");
+		frame.setKeyBinding(DOWN_KEY, "translateYNeg");
+		frame.setKeyBinding(UP_KEY, "translateYPos");
+		frame.profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, LEFT_KEY), "rotateXNeg");
+		frame.profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, RIGHT_KEY), "rotateXPos");
+		frame.profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, DOWN_KEY), "rotateYNeg");
+		frame.profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, UP_KEY), "rotateYPos");	
+		frame.setKeyBinding('z', "rotateZNeg");
+		frame.setKeyBinding(BogusEvent.SHIFT, 'z', "rotateZPos");
+	}
+	
+	public void removeBindings() {
+		for( Grabber grabber : this.grabbers() ) 
+			if(grabber instanceof GenericP5Frame)
+				removeBindings((GenericP5Frame)grabber);
+	}
+	
+	public void setDefaultBindings() {
+		for( Grabber grabber : this.grabbers() ) 
+			if(grabber instanceof GenericP5Frame)
+				setDefaultBindings((GenericP5Frame)grabber);
+	}	
 }

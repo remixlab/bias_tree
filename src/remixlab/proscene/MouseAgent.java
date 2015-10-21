@@ -34,6 +34,9 @@ public class MouseAgent extends Agent {
 	protected boolean		move, press, drag, release;
 	
 	protected PickingMode pMode;
+	
+	protected int [] motionIDs = {LEFT_ID,CENTER_ID,RIGHT_ID,WHEEL_ID,NO_BUTTON};
+	protected int [] clickIDs = {LEFT_ID,CENTER_ID,RIGHT_ID};
 
 	public enum PickingMode {
 		MOVE, CLICK
@@ -158,4 +161,115 @@ public class MouseAgent extends Agent {
 	public float ySensitivity() {
 		return ySens;
 	}
+	
+	// 1. Frame bindings
+	
+	// 1.a. Default
+	
+	public void setDefaultBindings(GenericP5Frame frame) {
+		if( ! this.hasGrabber(frame) ) {
+			System.out.println("Nothing done frame should be added to the mouse agent first. Call agent.addGrabber(frame) first");
+			return;
+		}
+		
+		removeBindings(frame);
+		
+		setMotionBinding(frame, LEFT_ID, "rotate");
+		//setMotionBinding(CENTER_ID, "screenRotate");//
+		setMotionBinding(frame, CENTER_ID, "zoomOnRegion");
+		setMotionBinding(frame, RIGHT_ID, "translate");
+		setMotionBinding(frame, WHEEL_ID, scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
+		
+		removeClickBindings(frame);
+		/*//TODO pending
+		setClickBinding(frame, LEFT_ID, 2, "align");
+		setClickBinding(frame, RIGHT_ID, 2, "center");
+		*/
+		setClickBinding(frame, LEFT_ID, "align");
+		setClickBinding(frame, RIGHT_ID, "center");
+	}
+	
+	public void removeBindings(GenericP5Frame frame) {
+		if( ! this.hasGrabber(frame) ) {
+			System.out.println("Nothing done frame should be added to the mouse agent first. Call agent.addGrabber(frame) first");
+			return;
+		}
+		removeMotionBindings(frame);
+		removeClickBindings(frame);		
+	}
+	
+	// 1.b. Motion
+	
+	// 1.b.1 2DOF
+	
+	public void removeMotionBindings(GenericP5Frame frame) {
+		if( ! this.hasGrabber(frame) ) {
+			System.out.println("Nothing done frame should be added to the mouse agent first. Call agent.addGrabber(frame) first");
+			return;
+		}
+		frame.profile.removeMotionBindings(motionIDs);
+	}
+	
+	public void setMotionBinding(GenericP5Frame frame, int id, String methodName) {
+		frame.setMotionBinding(id, methodName);
+	}
+		
+	public void setMotionBinding(Object object, GenericP5Frame frame, int id, String methodName) {
+		frame.setMotionBinding(object, id, methodName);
+	}
+	
+	// 1.b.1 Wheel
+	
+	// 1.c. (single) Click
+	
+	public void removeClickBindings(GenericP5Frame frame) {
+		if( ! this.hasGrabber(frame) ) {
+			System.out.println("Nothing done frame should be added to the mouse agent first. Call agent.addGrabber(frame) first");
+			return;
+		}
+		frame.profile.removeClickBindings(clickIDs);
+	}
+	
+	public void setClickBinding(GenericP5Frame frame, int id, String methodName) {
+		frame.profile.setClickBinding(new ClickShortcut(id, 1), methodName);
+	}
+	
+	public void setClickBinding(Object object, GenericP5Frame frame, int id, String methodName) {
+		frame.profile.setClickBinding(object, new ClickShortcut(id, 1), methodName);
+	}
+	
+	public boolean hasClickBinding(GenericP5Frame frame, int id) {
+		return frame.profile.hasBinding(new ClickShortcut(id, 1));
+	}
+	
+	public void removeClickBinding(GenericP5Frame frame, int id) {
+		frame.profile.removeBinding(new ClickShortcut(id, 1));
+	}
+	
+	/*
+	public void setFirstPersonBindings(GenericP5Frame frame) {
+		removeBindings(scene.eyeFrame());
+		frame.setMotionBinding(NO_BUTTON, "lookAround");
+		frame.setMotionBinding(LEFT_ID, "moveForward");		
+		frame.setMotionBinding(RIGHT_ID, "moveBackward");
+		frame.setClickBinding(LEFT_ID, 2, "align");
+		frame.setClickBinding(RIGHT_ID, 2, "center");
+	}
+	*/
+
+	/*
+	// global bindings
+
+	public void removeBindings() {
+		for( Grabber grabber : this.grabbers() ) 
+			if(grabber instanceof GenericP5Frame)
+				removeBindings((GenericP5Frame)grabber);
+	}
+	
+	public void setDefaultBindings() {
+		for( Grabber grabber : this.grabbers() ) 
+			if(grabber instanceof GenericP5Frame)
+				setDefaultBindings((GenericP5Frame)grabber);
+	}
+	*/
 }
