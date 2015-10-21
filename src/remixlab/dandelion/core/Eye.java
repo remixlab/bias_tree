@@ -360,7 +360,7 @@ public abstract class Eye implements Copyable {
 	/**
 	 * Internal use. Run the reset anchor hint timer according to {@code period}.
 	 */
-	public void runResetAnchorHintTimer(long period) {
+	protected void runResetAnchorHintTimer(long period) {
 		timerFx.runOnce(period);
 	}
 
