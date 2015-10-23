@@ -215,7 +215,7 @@ public class Scene extends AbstractScene implements PConstants {
 		height = pg.height;
 		eye = is3D() ? new Camera(this) : new Window(this);
 		//TODO pending
-		//eye.setFrame(new EyeFrame(eye));
+		eye.setFrame(new EyeFrame(eye));
 		setEye(eye());// calls showAll();
 
 		// 6. Misc stuff:
@@ -228,12 +228,10 @@ public class Scene extends AbstractScene implements PConstants {
 		init();
 	}	
 	
-	/*
 	@Override
 	public EyeFrame eyeFrame() {
 		return (EyeFrame)eye.frame();
 	}
-	*/
 	
 	@Override
 	protected boolean checkIfGrabsInput(KeyboardEvent event) {
