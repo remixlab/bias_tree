@@ -10,6 +10,8 @@
 
 package remixlab.proscene;
 
+import java.util.Arrays;
+
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
@@ -25,17 +27,12 @@ import remixlab.bias.event.*;
 public class MouseAgent extends Agent {
 	protected float		xSens		= 1f;
 	protected float		ySens		= 1f;
-	
-	//TODO simplify event reduction (no MOD) according to P5 mouse simplicity behavior
-	protected Scene scene;
-	//public static int LEFT_ID	= PApplet.LEFT, CENTER_ID = PApplet.CENTER, RIGHT_ID = PApplet.RIGHT, WHEEL_ID = MouseEvent.WHEEL;
-	
+	protected Scene scene;	
 	protected DOF2Event	currentEvent, prevEvent;
-	protected boolean		move, press, drag, release;
-	
-	protected PickingMode pMode;
-	
+	protected boolean		move, press, drag, release;	
+	protected PickingMode pMode;	
 	protected int [] motionIDs = {LEFT_ID,CENTER_ID,RIGHT_ID,WHEEL_ID,NO_BUTTON};
+	protected int [] dof2IDs = {LEFT_ID,CENTER_ID,RIGHT_ID,NO_BUTTON};
 	protected int [] clickIDs = {LEFT_ID,CENTER_ID,RIGHT_ID};
 
 	public enum PickingMode {
@@ -163,87 +160,152 @@ public class MouseAgent extends Agent {
 	}
 	
 	// 1. Frame bindings
-	
-	// 1.a. Default
-	
-	public void setDefaultBindings(GenericP5Frame frame) {
-		if( ! this.hasGrabber(frame) ) {
-			System.out.println("Nothing done frame should be added to the mouse agent first. Call agent.addGrabber(frame) first");
-			return;
+	//see here: http://stackoverflow.com/questions/880581/how-to-convert-int-to-integer-in-java
+	protected boolean validateDOF2IDs(int id) {
+		if(Arrays.asList(Arrays.stream(dof2IDs).boxed().toArray( Integer[]::new )).contains(id))
+			return true;
+		else {
+			System.out.println("Warning: no mouse dof2 binding set. Use a valid dof2 id: LEFT_ID,CENTER_ID,RIGHT_ID,NO_BUTTON");
+			return false;
 		}
-		
+	}
+	
+	protected boolean validateClickIDs(int id) {
+		if(Arrays.asList(Arrays.stream(clickIDs).boxed().toArray( Integer[]::new )).contains(id))
+			return true;
+		else {
+			System.out.println("Warning: no mouse click binding set. Use a valid click id: LEFT_ID,CENTER_ID,RIGHT_ID");
+			return false;
+		}
+	}
+	
+	// 1. Default
+	
+	public void setDefaultBindings(GenericP5Frame frame) {	
 		removeBindings(frame);
 		
-		setMotionBinding(frame, LEFT_ID, "rotate");
-		//setMotionBinding(CENTER_ID, "screenRotate");//
-		setMotionBinding(frame, CENTER_ID, "zoomOnRegion");
-		setMotionBinding(frame, RIGHT_ID, "translate");
-		setMotionBinding(frame, WHEEL_ID, scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
+		setDOF2Binding(frame, LEFT_ID, "rotate");
+		setDOF2Binding(frame, CENTER_ID, "zoomOnRegion");
+		setDOF2Binding(frame, RIGHT_ID, "translate");
+		setDOF1Binding(frame, scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
 		
 		removeClickBindings(frame);
-		/*//TODO pending
 		setClickBinding(frame, LEFT_ID, 2, "align");
 		setClickBinding(frame, RIGHT_ID, 2, "center");
-		*/
-		setClickBinding(frame, LEFT_ID, "align");
-		setClickBinding(frame, RIGHT_ID, "center");
 	}
 	
 	public void removeBindings(GenericP5Frame frame) {
-		if( ! this.hasGrabber(frame) ) {
-			System.out.println("Nothing done frame should be added to the mouse agent first. Call agent.addGrabber(frame) first");
-			return;
-		}
-		removeMotionBindings(frame);
-		removeClickBindings(frame);		
+		//if(validateFrame(frame)) {
+			removeDOF2Bindings(frame);
+			removeDOF1Binding(frame);
+			removeClickBindings(frame);
+		//}
 	}
 	
-	// 1.b. Motion
-	
-	// 1.b.1 2DOF
-	
-	public void removeMotionBindings(GenericP5Frame frame) {
-		if( ! this.hasGrabber(frame) ) {
-			System.out.println("Nothing done frame should be added to the mouse agent first. Call agent.addGrabber(frame) first");
-			return;
+	/*
+	protected boolean validateFrame(GenericP5Frame frame) {
+		if(hasGrabber(frame))
+			return true;
+		else {
+			System.out.println("Warning: nothing done. Add frame first: scene.mouseAgent().addGrabber(frame)");
+			return false;
 		}
-		frame.profile.removeMotionBindings(motionIDs);
 	}
+	*/
 	
-	public void setMotionBinding(GenericP5Frame frame, int id, String methodName) {
-		frame.setMotionBinding(id, methodName);
+	// 2. 2DOF
+	
+	public void setDOF2Binding(GenericP5Frame frame, int id, String methodName) {
+		if(validateDOF2IDs(id) /*&& validateFrame(frame)*/)
+			frame.profile.setDOF2Binding(new MotionShortcut(id), methodName);
 	}
 		
-	public void setMotionBinding(Object object, GenericP5Frame frame, int id, String methodName) {
-		frame.setMotionBinding(object, id, methodName);
+	public void setDOF2Binding(Object object, GenericP5Frame frame, int id, String methodName) {
+		if(validateDOF2IDs(id) /*&& validateFrame(frame)*/)
+			frame.profile.setDOF2Binding(object, new MotionShortcut(id), methodName);
 	}
 	
-	// 1.b.1 Wheel
-	
-	// 1.c. (single) Click
-	
-	public void removeClickBindings(GenericP5Frame frame) {
-		if( ! this.hasGrabber(frame) ) {
-			System.out.println("Nothing done frame should be added to the mouse agent first. Call agent.addGrabber(frame) first");
-			return;
-		}
-		frame.profile.removeClickBindings(clickIDs);
+	public boolean hasDOF2Binding(GenericP5Frame frame, int id) {
+		if(validateDOF2IDs(id) /*&& validateFrame(frame)*/)
+			return frame.profile.hasBinding(new MotionShortcut(id));
+		return false;
 	}
+	
+	public void removeDOF2Binding(GenericP5Frame frame, int id) {
+		if(validateDOF2IDs(id) /*&& validateFrame(frame)*/)
+			frame.profile.removeBinding(new MotionShortcut(id));
+	}
+	
+	public void removeDOF2Bindings(GenericP5Frame frame) {
+		//if(validateFrame(frame))
+			frame.profile.removeMotionBindings(dof2IDs);
+	}
+	
+	// 3. Wheel
+	
+	public void setDOF1Binding(GenericP5Frame frame, String methodName) {
+		//if(validateFrame(frame))
+			frame.profile.setDOF1Binding(new MotionShortcut(WHEEL_ID), methodName);
+	}
+		
+	public void setDOF1Binding(Object object, GenericP5Frame frame, String methodName) {
+		//if(validateFrame(frame))
+			frame.profile.setDOF1Binding(object, new MotionShortcut(WHEEL_ID), methodName);
+	}
+	
+	public boolean hasDOF1Binding(GenericP5Frame frame) {
+		//if(validateFrame(frame))
+			return frame.profile.hasBinding(new MotionShortcut(WHEEL_ID));
+		//return false;
+	}
+	
+	public void removeDOF1Binding(GenericP5Frame frame) {
+		//if(validateFrame(frame))
+			frame.profile.removeBinding(new MotionShortcut(WHEEL_ID));
+	}
+	
+	// 4. Click
 	
 	public void setClickBinding(GenericP5Frame frame, int id, String methodName) {
-		frame.profile.setClickBinding(new ClickShortcut(id, 1), methodName);
+		setClickBinding(frame, id, 1, methodName);
+	}
+	
+	public void setClickBinding(GenericP5Frame frame, int id, int count, String methodName) {
+		if(validateClickIDs(id) /*&& validateFrame(frame)*/)
+			frame.profile.setClickBinding(new ClickShortcut(id, count), methodName);
 	}
 	
 	public void setClickBinding(Object object, GenericP5Frame frame, int id, String methodName) {
-		frame.profile.setClickBinding(object, new ClickShortcut(id, 1), methodName);
+		setClickBinding(object, frame, id, 1, methodName);
+	}
+	
+	public void setClickBinding(Object object, GenericP5Frame frame, int id, int count, String methodName) {
+		if(validateClickIDs(id) /*&& validateFrame(frame)*/)
+			frame.profile.setClickBinding(object, new ClickShortcut(id, count), methodName);
 	}
 	
 	public boolean hasClickBinding(GenericP5Frame frame, int id) {
-		return frame.profile.hasBinding(new ClickShortcut(id, 1));
+		return hasClickBinding(frame, id, 1);
+	}
+	
+	public boolean hasClickBinding(GenericP5Frame frame, int id, int count) {
+		if(validateClickIDs(id) /*&& validateFrame(frame)*/)
+			return frame.profile.hasBinding(new ClickShortcut(id, count));
+		return false;
 	}
 	
 	public void removeClickBinding(GenericP5Frame frame, int id) {
-		frame.profile.removeBinding(new ClickShortcut(id, 1));
+		removeClickBinding(frame, id, 1);
+	}
+	
+	public void removeClickBinding(GenericP5Frame frame, int id, int count) {
+		if(validateClickIDs(id) /*&& validateFrame(frame)*/)
+			frame.profile.removeBinding(new ClickShortcut(id, count));
+	}
+	
+	public void removeClickBindings(GenericP5Frame frame) {
+		//if(validateFrame(frame))
+			frame.profile.removeClickBindings(clickIDs);
 	}
 	
 	/*

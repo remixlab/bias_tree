@@ -141,6 +141,7 @@ public class GenericP5Frame extends GenericFrame implements Constants {
 		profile.removeMotionBindings();
 	}
 	
+	/*
 	// DOF1
 	
 	public void setDOF1Binding(int id, String methodName) {
@@ -180,6 +181,7 @@ public class GenericP5Frame extends GenericFrame implements Constants {
 	public void setDOF6Binding(Object object, int id, String methodName) {
 		profile.setDOF6Binding(object, new MotionShortcut(id), methodName);
 	}
+	*/
 	
 	// Key
 	

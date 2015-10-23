@@ -84,7 +84,7 @@ public class KeyAgent extends Agent {
 	}
 	
 	public void removeBindings(GenericP5Frame frame) {
-		frame.removeKeyBindings();
+		frame.profile.removeKeyboardBindings();
 	}
 	
 	public void setDefaultBindings(GenericP5Frame frame) {
@@ -103,6 +103,7 @@ public class KeyAgent extends Agent {
 		frame.setKeyBinding(BogusEvent.SHIFT, 'z', "rotateZPos");
 	}
 	
+	/*
 	public void removeBindings() {
 		for( Grabber grabber : this.grabbers() ) 
 			if(grabber instanceof GenericP5Frame)
@@ -113,5 +114,60 @@ public class KeyAgent extends Agent {
 		for( Grabber grabber : this.grabbers() ) 
 			if(grabber instanceof GenericP5Frame)
 				setDefaultBindings((GenericP5Frame)grabber);
-	}	
+	}
+	*/
+	
+	/*
+	public void removeBindings(GenericP5Frame frame) {
+		frame.removeKeyBindings();
+	}
+	*/
+	
+	public void setBinding(GenericP5Frame frame, int vkey, String methodName) {
+		frame.profile.setKeyboardBinding(new KeyboardShortcut(vkey), methodName);
+	}
+	
+	public void setBinding(GenericP5Frame frame, char key, String methodName) {
+		frame.profile.setKeyboardBinding(new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
+	}
+	
+	public void setBinding(GenericP5Frame frame, Object object, int vkey, String methodName) {
+		frame.profile.setKeyboardBinding(object, new KeyboardShortcut(vkey), methodName);
+	}
+	
+	public void setBinding(Object object, GenericP5Frame frame, char key, String methodName) {
+		frame.profile.setKeyboardBinding(object, new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
+	}
+	
+	public boolean hasBinding(GenericP5Frame frame, int vkey) {
+		return frame.profile.hasBinding(new KeyboardShortcut(vkey));
+	}
+	
+	public boolean hasBinding(GenericP5Frame frame, char key) {
+		return frame.profile.hasBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
+	}
+	
+	public void removeBinding(GenericP5Frame frame, int vkey) {
+		frame.profile.removeBinding(new KeyboardShortcut(vkey));
+	}
+	
+	public void removeBinding(GenericP5Frame frame, char key) {
+		frame.profile.removeBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
+	}
+	
+	public void setBinding(GenericP5Frame frame, int mask, char key, String methodName) {
+		frame.profile.setKeyboardBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
+	}
+	
+	public void setBinding(Object object, GenericP5Frame frame, int mask, char key, String methodName) {
+		frame.profile.setKeyboardBinding(object, new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
+	}
+	
+	public boolean hasBinding(GenericP5Frame frame, int mask, char key) {
+		return frame.profile.hasBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
+	}
+	
+	public void removeBinding(GenericP5Frame frame, int mask, char key) {
+		frame.profile.removeBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
+	}
 }

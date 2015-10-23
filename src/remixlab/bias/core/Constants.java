@@ -23,4 +23,6 @@ public interface Constants {
 						RIGHT_KEY = 39, 
 						UP_KEY = 38,
 						DOWN_KEY = 40;
+	
+	int [] motionIDs = {LEFT_ID,CENTER_ID,RIGHT_ID,WHEEL_ID,NO_BUTTON};
 }

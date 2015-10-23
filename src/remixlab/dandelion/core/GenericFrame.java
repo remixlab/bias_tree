@@ -1352,6 +1352,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		if (dof1Event != null)
 			translateX(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
+	
+	/**
+	 * User gesture into x-translation conversion routine.
+	 */
+	public void translateX(DOF1Event event) {
+		translateX(event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
+	}
 
 	/**
 	 * User gesture into x-translation conversion routine.
@@ -1396,6 +1403,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			translateY(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
+	}
+	
+	/**
+	 * User gesture into y-translation conversion routine.
+	 */
+	public void translateY(DOF1Event event) {
+		translateY(event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
 
 	/**
@@ -1446,6 +1460,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			translateZ(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
+	}
+	
+	/**
+	 * User gesture into z-translation conversion routine.
+	 */
+	public void translateZ(DOF1Event event) {
+		translateZ(event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
 
 	/**
@@ -1502,7 +1523,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into xy-translation conversion routine.
 	 */
-	protected void translate(DOF2Event event) {
+	public void translate(DOF2Event event) {
 		translate(screenToVec(Vec.multiply(new Vec(isEyeFrame() ? -event.dx() : event.dx(),
 				(gScene.isRightHanded() ^ isEyeFrame()) ? -event.dy() : event.dy(), 0.0f), this.translationSensitivity())));
 	}
@@ -1534,7 +1555,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into xyz-translation conversion routine.
 	 */
-	protected void translateXYZ(DOF3Event event) {
+	public void translateXYZ(DOF3Event event) {
 		translate(screenToVec(Vec.multiply(
 				new Vec(event.dx(), gScene.isRightHanded() ? -event.dy() : event.dy(), -event.dz()),
 				this.translationSensitivity())));
@@ -1628,7 +1649,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into zoom-on-region conversion routine.
 	 */
-	protected void zoomOnRegion(DOF2Event event) {
+	public void zoomOnRegion(DOF2Event event) {
 		int w = (int) Math.abs(event.dx());
 		int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
 		int h = (int) Math.abs(event.dy());
@@ -1654,6 +1675,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			rotateX(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
+	}
+	
+	/**
+	 * User gesture into x-rotation conversion routine.
+	 */
+	public void rotateX(DOF1Event event) {
+		rotateX(event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
 
 	/**
@@ -1711,6 +1739,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		if (dof1Event != null)
 			rotateY(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
 	}
+	
+	/**
+	 * User gesture into y-rotation conversion routine.
+	 */
+	public void rotateY(DOF1Event event) {
+		rotateY(event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
+	}
 
 	/**
 	 * User gesture into y-rotation conversion routine.
@@ -1763,6 +1798,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event);
 		if (dof1Event != null)
 			rotateZ(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
+	}
+	
+	/**
+	 * User gesture into z-rotation conversion routine.
+	 */
+	public void rotateZ(DOF1Event event) {
+		rotateZ(event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
 	}
 
 	/**
@@ -1826,7 +1868,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into xyz-rotation conversion routine.
 	 */
-	protected void rotateXYZ(DOF3Event event) {
+	public void rotateXYZ(DOF3Event event) {
 		rotate(screenToQuat(Vec.multiply(
 				new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz())), rotationSensitivity())));
 	}
@@ -1845,7 +1887,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into arcball-rotation conversion routine.
 	 */
-	protected void rotate(DOF2Event event) {
+	public void rotate(DOF2Event event) {
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("deformedBallRotation");
 			return;
@@ -1876,6 +1918,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		DOF1Event dof1Event = MotionEvent.dof1Event(event);
 		if (dof1Event != null)
 			scale(dof1Event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
+	}
+	
+	/**
+	 * User gesture into scaling conversion routine.
+	 */
+	public void scale(DOF1Event event) {
+		scale(event, wheel(event) ? wheelSensitivity() : scalingSensitivity());
 	}
 
 	/**
@@ -1983,7 +2032,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into drive conversion routine.
 	 */
-	protected void drive(DOF2Event event) {
+	public void drive(DOF2Event event) {
 		Vec trns;
 		rotate(turnQuaternion(event.dof1Event(), gScene.camera()));
 		flyDisp.set(0.0f, 0.0f, flySpeed());
@@ -2009,7 +2058,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into CAD-rotation conversion routine.
 	 */
-	protected void rotateCAD(DOF2Event event) {
+	public void rotateCAD(DOF2Event event) {
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("gestureRotateCAD");
 			return;
@@ -2048,7 +2097,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into hinge conversion routine.
 	 */
-	protected void hinge(DOF6Event event) {
+	public void hinge(DOF6Event event) {
 		// aka google earth navigation
 		// 1. Relate the eye reference frame:
 		Vec trns = new Vec();
