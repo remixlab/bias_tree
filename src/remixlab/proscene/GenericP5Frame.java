@@ -9,7 +9,7 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.Frame;
 import remixlab.util.*;
 
-public class GenericP5Frame extends GenericFrame implements Constants {
+public class GenericP5Frame extends GenericFrame {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).

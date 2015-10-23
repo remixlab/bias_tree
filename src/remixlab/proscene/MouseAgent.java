@@ -25,15 +25,22 @@ import remixlab.bias.event.*;
  * @see remixlab.proscene.DroidTouchAgent
  */
 public class MouseAgent extends Agent {
+	public static final int LEFT_ID	= 37,		
+		     CENTER_ID = 3,
+		     RIGHT_ID = 39,
+		     WHEEL_ID = 8,
+		     NO_BUTTON = BogusEvent.NO_ID;
+	
+	protected int [] motionIDs = {LEFT_ID,CENTER_ID,RIGHT_ID,WHEEL_ID,NO_BUTTON};
+	protected int [] dof2IDs = {LEFT_ID,CENTER_ID,RIGHT_ID,NO_BUTTON};
+	protected int [] clickIDs = {LEFT_ID,CENTER_ID,RIGHT_ID};
+	
 	protected float		xSens		= 1f;
 	protected float		ySens		= 1f;
 	protected Scene scene;	
 	protected DOF2Event	currentEvent, prevEvent;
 	protected boolean		move, press, drag, release;	
 	protected PickingMode pMode;	
-	protected int [] motionIDs = {LEFT_ID,CENTER_ID,RIGHT_ID,WHEEL_ID,NO_BUTTON};
-	protected int [] dof2IDs = {LEFT_ID,CENTER_ID,RIGHT_ID,NO_BUTTON};
-	protected int [] clickIDs = {LEFT_ID,CENTER_ID,RIGHT_ID};
 
 	public enum PickingMode {
 		MOVE, CLICK

@@ -56,7 +56,7 @@ import remixlab.fpstiming.*;
  * your custom grabber-scene will {@link #toggleCameraType()} when the key 'z' is pressed (provided that
  * grabber-scene is the {@link #keyboardAgent()} {@link remixlab.bias.core.Agent#inputGrabber()}).
  */
-public abstract class AbstractScene extends AnimatorObject implements Grabber, Constants {
+public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	protected boolean					dottedGrid;
 
 	// O B J E C T S
