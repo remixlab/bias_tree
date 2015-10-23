@@ -1454,7 +1454,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	protected void translateZ(MotionEvent event, boolean fromX) {
 		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("gestureTranslateZ");
+			AbstractScene.showDepthWarning("translateZ");
 			return;
 		}
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
@@ -1495,7 +1495,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	protected void translateZ(KeyboardEvent event, boolean up) {
 		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("gestureTranslateZ");
+			AbstractScene.showDepthWarning("translateZ");
 			return;
 		}
 		translate(screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, 1), (up ^ this.isEyeFrame()) ? -keyboardSensitivity()
@@ -1517,7 +1517,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		if (dof2Event != null)
 			translate(dof2Event);
 		else
-			AbstractScene.showMinDOFsWarning("gestureTranslateXY", 2);
+			AbstractScene.showMinDOFsWarning("translate", 2);
 	}
 
 	/**
@@ -1533,14 +1533,14 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	public void translateXYZ(MotionEvent event) {
 		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("gestureTranslateXYZ");
+			AbstractScene.showDepthWarning("translateXYZ");
 			return;
 		}
 		DOF3Event dof3Event = MotionEvent.dof3Event(event, true);
 		if (dof3Event != null)
 			translateXYZ(dof3Event);
 		else
-			AbstractScene.showMinDOFsWarning("gestureTranslateXYZ", 3);
+			AbstractScene.showMinDOFsWarning("translateXYZ", 3);
 	}
 	
 	/**
@@ -1632,15 +1632,15 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	public void zoomOnRegion(MotionEvent event) {
 		if (!isEyeFrame()) {
-			AbstractScene.showOnlyEyeWarning("gestureZoomOnRegion");
+			AbstractScene.showOnlyEyeWarning("zoomOnRegion");
 		}
 		if (event.isAbsolute()) {
-			AbstractScene.showEventVariationWarning("gestureZoomOnRegion");
+			AbstractScene.showEventVariationWarning("zoomOnRegion");
 			return;
 		}
 		DOF2Event dof2 = MotionEvent.dof2Event(event);
 		if (dof2 == null) {
-			AbstractScene.showMinDOFsWarning("gestureZoomOnRegion", 2);
+			AbstractScene.showMinDOFsWarning("zoomOnRegion", 2);
 			return;
 		}
 		zoomOnRegion(dof2);
@@ -1669,7 +1669,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	protected void rotateX(MotionEvent event, boolean fromX) {
 		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("gestureRotateX");
+			AbstractScene.showDepthWarning("rotateX");
 			return;
 		}
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
@@ -1689,7 +1689,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	protected void rotateX(DOF1Event event, float sens) {
 		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("gestureRotateX");
+			AbstractScene.showDepthWarning("rotateX");
 			return;
 		}
 		spin(screenToQuat(computeAngle(event) * (isEyeFrame() ? -sens : sens), 0, 0), event.speed(), event.delay());
@@ -1714,7 +1714,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	protected void rotateX(KeyboardEvent event, boolean up) {
 		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("gestureRotateX");
+			AbstractScene.showDepthWarning("rotateX");
 			return;
 		}
 		rotate(screenToQuat(computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0, 0));
@@ -1732,7 +1732,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	protected void rotateY(MotionEvent event, boolean fromX) {
 		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("gestureRotateY");
+			AbstractScene.showDepthWarning("rotateY");
 			return;
 		}
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
@@ -1752,7 +1752,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	protected void rotateY(DOF1Event event, float sens) {
 		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("gestureRotateY");
+			AbstractScene.showDepthWarning("rotateY");
 			return;
 		}
 		spin(screenToQuat(0, computeAngle(event) * (isEyeFrame() ? -sens : sens), 0), event.speed(), event.delay());
@@ -1777,7 +1777,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	protected void rotateY(KeyboardEvent event, boolean up) {
 		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("gestureRotateY");
+			AbstractScene.showDepthWarning("rotateY");
 			return;
 		}
 		Rotation rt = screenToQuat(0, computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0);
@@ -1855,14 +1855,14 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	protected void rotateXYZ(MotionEvent event) {
 		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("gestureRotateXYZ");
+			AbstractScene.showDepthWarning("rotateXYZ");
 			return;
 		}
 		DOF3Event dof3Event = MotionEvent.dof3Event(event, false);
 		if (dof3Event != null)
 			rotateXYZ(dof3Event);
 		else
-			AbstractScene.showMinDOFsWarning("gestureRotateXYZ", 2);
+			AbstractScene.showMinDOFsWarning("rotateXYZ", 2);
 	}
 
 	/**
@@ -1881,7 +1881,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		if (dof2Event != null)
 			rotate(dof2Event);
 		else
-			AbstractScene.showMinDOFsWarning("arcball", 2);
+			AbstractScene.showMinDOFsWarning("rotate", 2);
 	}
 
 	/**
@@ -1889,7 +1889,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	public void rotate(DOF2Event event) {
 		if (event.isAbsolute()) {
-			AbstractScene.showEventVariationWarning("deformedBallRotation");
+			AbstractScene.showEventVariationWarning("rotate");
 			return;
 		}
 		Rotation rt;
@@ -2045,14 +2045,14 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	public void rotateCAD(MotionEvent event) {
 		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("gestureRotateCAD");
+			AbstractScene.showDepthWarning("rotateCAD");
 			return;
 		}
 		DOF2Event dof2Event = MotionEvent.dof2Event(event);
 		if (dof2Event != null)
 			rotateCAD(dof2Event);
 		else
-			AbstractScene.showMinDOFsWarning("gestureRotateCAD", 2);
+			AbstractScene.showMinDOFsWarning("rotateCAD", 2);
 	}
 
 	/**
@@ -2060,7 +2060,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	public void rotateCAD(DOF2Event event) {
 		if (event.isAbsolute()) {
-			AbstractScene.showEventVariationWarning("gestureRotateCAD");
+			AbstractScene.showEventVariationWarning("rotateCAD");
 			return;
 		}
 		// Multiply by 2.0 to get on average about the same speed as with the deformed ball
@@ -2176,7 +2176,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	public void screenRotate(DOF2Event event) {
 		if (event.isAbsolute()) {
-			AbstractScene.showEventVariationWarning("gestureScreenRotate");
+			AbstractScene.showEventVariationWarning("screenRotate");
 			return;
 		}
 		if (this.is2D()) {
@@ -2246,7 +2246,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		if (isEyeFrame())
 			eye().setAnchorFromPixel(new Point(event.x(), event.y()));
 		else
-			AbstractScene.showOnlyEyeWarning("gestureAnchorFromPixel");
+			AbstractScene.showOnlyEyeWarning("anchorFromPixel");
 	}
 	
 	/**
@@ -2256,7 +2256,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		if (isEyeFrame())
 			eye().interpolateToZoomOnPixel(new Point(event.x(), event.y()));
 		else
-			AbstractScene.showOnlyEyeWarning("gestureAnchorFromPixel");
+			AbstractScene.showOnlyEyeWarning("zoomOnPixel");
 	}
 
 	// Quite nice
@@ -2394,7 +2394,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 */
 	public Quat screenToQuat(float roll, float pitch, float yaw) {
 		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("gestureToQuat");
+			AbstractScene.showDepthWarning("screenToQuat");
 			return null;
 		}
 
@@ -2836,7 +2836,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		if (scene().is3D())
 			return ((Quat) q).taitBryanAngles().vec[1];
 		else {
-			AbstractScene.showDepthWarning("azimuth");
+			AbstractScene.showDepthWarning("trackingEyeAzimuth");
 			return 0;
 		}
 	}
@@ -2854,7 +2854,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 			updateTrackingEyeFrame();
 		}
 		else
-			AbstractScene.showDepthWarning("setAzimuth");
+			AbstractScene.showDepthWarning("setTrackingEyeAzimuth");
 	}
 
 	/**

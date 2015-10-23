@@ -81,6 +81,11 @@ public abstract class Eye implements Copyable {
 
 		@Override
 		public void performInteraction(MotionEvent event) {
+			//TODO how to handle multi-tempi
+			/*
+			if(event.flushed())
+				stopFlying();
+				*/
 			switch( event.shortcut().id() ) {
 			case LEFT_ID:
 				rotate(event);
@@ -90,6 +95,7 @@ public abstract class Eye implements Copyable {
 				break;
 			case RIGHT_ID:
 				translate(event);
+				break;
 			case WHEEL_ID:
 				if(scene().is3D() && isEyeFrame())
 					translateZ(event);
