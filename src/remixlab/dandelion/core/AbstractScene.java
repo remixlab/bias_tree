@@ -1169,7 +1169,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 			//but prefer this one:
 			eye().frame().fromFrame(avatar().trackingEyeFrame());
 			//this one is buggy:
-			//GrabberFrame.sync(eye().frame(), avatar().trackingEyeFrame());
+			//GenericFrame.sync(eye().frame(), avatar().trackingEyeFrame());
 		}
 
 		bindMatrices();
