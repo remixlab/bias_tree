@@ -173,10 +173,10 @@ public class Scene extends AbstractScene implements PConstants {
 
 		// 3. Frames & picking buffer
 		frameList = new ArrayList<InteractiveFrame>();
-		pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width,
-				pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height,
-				JAVA2D);
-		enablePickingBuffer();
+		//pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height, JAVA2D);
+		pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : null;
+		if(pBuffer != null)
+			enablePickingBuffer();	
 
 		// 4. Create agents and register P5 methods
 		//TODO add me properly
@@ -1285,7 +1285,8 @@ public class Scene extends AbstractScene implements PConstants {
 		if (frames().contains(iFrame))
 			return false;
 		if (frames().size() == 0)
-			pickingBuffer().loadPixels();
+			if( this.isPickingBufferEnabled() )
+				pickingBuffer().loadPixels();
 		boolean result = frames().add(iFrame);
 		return result;
 	}
