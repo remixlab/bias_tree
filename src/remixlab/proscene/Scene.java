@@ -1282,7 +1282,7 @@ public class Scene extends AbstractScene implements PConstants {
 	public boolean addFrame(InteractiveFrame iFrame) {
 		if (iFrame == null)
 			return false;
-		if (frames().contains(iFrame))
+		if (hasFrame(iFrame))
 			return false;
 		if (frames().size() == 0)
 			if( this.isPickingBufferEnabled() )
@@ -1295,7 +1295,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns true if scene has {@code frame} and false otherwise.
 	 */
 	public boolean hasFrame(InteractiveFrame iFrame) {
-		return frames().contains(iFrame);
+		for(InteractiveFrame frame : frames())
+			if(frame == iFrame)
+				return true;
+		return false;
 	}
 	
 	public static boolean GRAPHICS;
