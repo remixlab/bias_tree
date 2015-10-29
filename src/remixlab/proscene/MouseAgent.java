@@ -10,6 +10,8 @@
 
 package remixlab.proscene;
 
+import java.util.Arrays;
+
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
@@ -23,17 +25,22 @@ import remixlab.bias.event.*;
  * @see remixlab.proscene.DroidTouchAgent
  */
 public class MouseAgent extends Agent {
+	public static final int LEFT_ID	= 37,		
+		     CENTER_ID = 3,
+		     RIGHT_ID = 39,
+		     WHEEL_ID = 8,
+		     NO_BUTTON = BogusEvent.NO_ID;
+	
+	protected int [] motionIDs = {LEFT_ID,CENTER_ID,RIGHT_ID,WHEEL_ID,NO_BUTTON};
+	protected int [] dof2IDs = {LEFT_ID,CENTER_ID,RIGHT_ID,NO_BUTTON};
+	protected int [] clickIDs = {LEFT_ID,CENTER_ID,RIGHT_ID};
+	
 	protected float		xSens		= 1f;
 	protected float		ySens		= 1f;
-	
-	//TODO simplify event reduction (no MOD) according to P5 mouse simplicity behavior
-	protected Scene scene;
-	//public static int LEFT_ID	= PApplet.LEFT, CENTER_ID = PApplet.CENTER, RIGHT_ID = PApplet.RIGHT, WHEEL_ID = MouseEvent.WHEEL;
-	
+	protected Scene scene;	
 	protected DOF2Event	currentEvent, prevEvent;
-	protected boolean		move, press, drag, release;
-	
-	protected PickingMode pMode;
+	protected boolean		move, press, drag, release;	
+	protected PickingMode pMode;	
 
 	public enum PickingMode {
 		MOVE, CLICK
@@ -158,4 +165,180 @@ public class MouseAgent extends Agent {
 	public float ySensitivity() {
 		return ySens;
 	}
+	
+	// 1. Frame bindings
+	//see here: http://stackoverflow.com/questions/880581/how-to-convert-int-to-integer-in-java
+	protected boolean validateDOF2IDs(int id) {
+		if(Arrays.asList(Arrays.stream(dof2IDs).boxed().toArray( Integer[]::new )).contains(id))
+			return true;
+		else {
+			System.out.println("Warning: no mouse dof2 binding set. Use a valid dof2 id: LEFT_ID,CENTER_ID,RIGHT_ID,NO_BUTTON");
+			return false;
+		}
+	}
+	
+	protected boolean validateClickIDs(int id) {
+		if(Arrays.asList(Arrays.stream(clickIDs).boxed().toArray( Integer[]::new )).contains(id))
+			return true;
+		else {
+			System.out.println("Warning: no mouse click binding set. Use a valid click id: LEFT_ID,CENTER_ID,RIGHT_ID");
+			return false;
+		}
+	}
+	
+	// 1. Default
+	
+	public void setDefaultBindings(GenericP5Frame frame) {	
+		removeBindings(frame);
+		
+		setDOF2Binding(frame, LEFT_ID, "rotate");
+		setDOF2Binding(frame, CENTER_ID, "zoomOnRegion");
+		setDOF2Binding(frame, RIGHT_ID, "translate");
+		setDOF1Binding(frame, scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
+		
+		removeClickBindings(frame);
+		setClickBinding(frame, LEFT_ID, 2, "align");
+		setClickBinding(frame, RIGHT_ID, 2, "center");
+	}
+	
+	public void removeBindings(GenericP5Frame frame) {
+		//if(validateFrame(frame)) {
+			removeDOF2Bindings(frame);
+			removeDOF1Binding(frame);
+			removeClickBindings(frame);
+		//}
+	}
+	
+	/*
+	protected boolean validateFrame(GenericP5Frame frame) {
+		if(hasGrabber(frame))
+			return true;
+		else {
+			System.out.println("Warning: nothing done. Add frame first: scene.mouseAgent().addGrabber(frame)");
+			return false;
+		}
+	}
+	*/
+	
+	// 2. 2DOF
+	
+	public void setDOF2Binding(GenericP5Frame frame, int id, String methodName) {
+		if(validateDOF2IDs(id) /*&& validateFrame(frame)*/)
+			frame.profile.setDOF2Binding(new MotionShortcut(id), methodName);
+	}
+		
+	public void setDOF2Binding(Object object, GenericP5Frame frame, int id, String methodName) {
+		if(validateDOF2IDs(id) /*&& validateFrame(frame)*/)
+			frame.profile.setDOF2Binding(object, new MotionShortcut(id), methodName);
+	}
+	
+	public boolean hasDOF2Binding(GenericP5Frame frame, int id) {
+		if(validateDOF2IDs(id) /*&& validateFrame(frame)*/)
+			return frame.profile.hasBinding(new MotionShortcut(id));
+		return false;
+	}
+	
+	public void removeDOF2Binding(GenericP5Frame frame, int id) {
+		if(validateDOF2IDs(id) /*&& validateFrame(frame)*/)
+			frame.profile.removeBinding(new MotionShortcut(id));
+	}
+	
+	public void removeDOF2Bindings(GenericP5Frame frame) {
+		//if(validateFrame(frame))
+			frame.profile.removeMotionBindings(dof2IDs);
+	}
+	
+	// 3. Wheel
+	
+	public void setDOF1Binding(GenericP5Frame frame, String methodName) {
+		//if(validateFrame(frame))
+			frame.profile.setDOF1Binding(new MotionShortcut(WHEEL_ID), methodName);
+	}
+		
+	public void setDOF1Binding(Object object, GenericP5Frame frame, String methodName) {
+		//if(validateFrame(frame))
+			frame.profile.setDOF1Binding(object, new MotionShortcut(WHEEL_ID), methodName);
+	}
+	
+	public boolean hasDOF1Binding(GenericP5Frame frame) {
+		//if(validateFrame(frame))
+			return frame.profile.hasBinding(new MotionShortcut(WHEEL_ID));
+		//return false;
+	}
+	
+	public void removeDOF1Binding(GenericP5Frame frame) {
+		//if(validateFrame(frame))
+			frame.profile.removeBinding(new MotionShortcut(WHEEL_ID));
+	}
+	
+	// 4. Click
+	
+	public void setClickBinding(GenericP5Frame frame, int id, String methodName) {
+		setClickBinding(frame, id, 1, methodName);
+	}
+	
+	public void setClickBinding(GenericP5Frame frame, int id, int count, String methodName) {
+		if(validateClickIDs(id) /*&& validateFrame(frame)*/)
+			frame.profile.setClickBinding(new ClickShortcut(id, count), methodName);
+	}
+	
+	public void setClickBinding(Object object, GenericP5Frame frame, int id, String methodName) {
+		setClickBinding(object, frame, id, 1, methodName);
+	}
+	
+	public void setClickBinding(Object object, GenericP5Frame frame, int id, int count, String methodName) {
+		if(validateClickIDs(id) /*&& validateFrame(frame)*/)
+			frame.profile.setClickBinding(object, new ClickShortcut(id, count), methodName);
+	}
+	
+	public boolean hasClickBinding(GenericP5Frame frame, int id) {
+		return hasClickBinding(frame, id, 1);
+	}
+	
+	public boolean hasClickBinding(GenericP5Frame frame, int id, int count) {
+		if(validateClickIDs(id) /*&& validateFrame(frame)*/)
+			return frame.profile.hasBinding(new ClickShortcut(id, count));
+		return false;
+	}
+	
+	public void removeClickBinding(GenericP5Frame frame, int id) {
+		removeClickBinding(frame, id, 1);
+	}
+	
+	public void removeClickBinding(GenericP5Frame frame, int id, int count) {
+		if(validateClickIDs(id) /*&& validateFrame(frame)*/)
+			frame.profile.removeBinding(new ClickShortcut(id, count));
+	}
+	
+	public void removeClickBindings(GenericP5Frame frame) {
+		//if(validateFrame(frame))
+			frame.profile.removeClickBindings(clickIDs);
+	}
+	
+	/*
+	public void setFirstPersonBindings(GenericP5Frame frame) {
+		removeBindings(scene.eyeFrame());
+		frame.setMotionBinding(NO_BUTTON, "lookAround");
+		frame.setMotionBinding(LEFT_ID, "moveForward");		
+		frame.setMotionBinding(RIGHT_ID, "moveBackward");
+		frame.setClickBinding(LEFT_ID, 2, "align");
+		frame.setClickBinding(RIGHT_ID, 2, "center");
+	}
+	*/
+
+	/*
+	// global bindings
+
+	public void removeBindings() {
+		for( Grabber grabber : this.grabbers() ) 
+			if(grabber instanceof GenericP5Frame)
+				removeBindings((GenericP5Frame)grabber);
+	}
+	
+	public void setDefaultBindings() {
+		for( Grabber grabber : this.grabbers() ) 
+			if(grabber instanceof GenericP5Frame)
+				setDefaultBindings((GenericP5Frame)grabber);
+	}
+	*/
 }

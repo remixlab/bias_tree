@@ -104,7 +104,7 @@ public class Scene extends AbstractScene implements PConstants {
 	public static final String	version				= "23";
 
 	// P R O C E S S I N G A P P L E T A N D O B J E C T S
-	protected PApplet						parent;
+	protected PApplet					parent;
 	protected PGraphics					mainPGgraphics;
 
 	// iFrames
@@ -173,10 +173,10 @@ public class Scene extends AbstractScene implements PConstants {
 
 		// 3. Frames & picking buffer
 		frameList = new ArrayList<InteractiveFrame>();
-		pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width,
-				pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height,
-				JAVA2D);
-		enablePickingBuffer();
+		//pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width, pg().height, JAVA2D);
+		pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ? pApplet().createGraphics(pg().width, pg().height, pg() instanceof PGraphics3D ? P3D : P2D) : null;
+		if(pBuffer != null)
+			enablePickingBuffer();	
 
 		// 4. Create agents and register P5 methods
 		//TODO add me properly
@@ -208,6 +208,8 @@ public class Scene extends AbstractScene implements PConstants {
 		// Android: remove the following 2 lines if needed to compile the project
 		//if (platform() == Platform.PROCESSING_ANDROID)
 			//disablePickingBuffer();
+		if( this.isOffscreen() && ( upperLeftCorner.x() != 0 || upperLeftCorner.y() != 0 ) )
+			pApplet().registerMethod("post", this);			
 
 		// 5. Eye
 		setLeftHanded();
@@ -226,7 +228,7 @@ public class Scene extends AbstractScene implements PConstants {
 
 		// 7. Init should be called only once
 		init();
-	}	
+	}
 	
 	@Override
 	public EyeFrame eyeFrame() {
@@ -1245,6 +1247,14 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void postDraw() {
 		super.postDraw();
+		if(! (this.isOffscreen() && ( upperLeftCorner.x() != 0 || upperLeftCorner.y() != 0 )) )
+			post();
+	}
+	
+	// TODO WARNING: hack: as drawing should never happen here
+	// but that's the only way to draw visual hints correctly
+	// into an off-screen scene which is shifted from the papplet origin
+	public void post() {
 		// draw into picking buffer
 		//TODO experimental, should be tested when no pshape nor graphics are created, but yet there exists some 'frames'
 		if( !this.isPickingBufferEnabled() || !GRAPHICS )
@@ -1256,7 +1266,7 @@ public class Scene extends AbstractScene implements PConstants {
 		pickingBuffer().popStyle();
 		pickingBuffer().endDraw();
 		//if (frames().size() > 0)
-		pickingBuffer().loadPixels();
+		pickingBuffer().loadPixels();		
 	}
 
 	/**
@@ -1282,10 +1292,11 @@ public class Scene extends AbstractScene implements PConstants {
 	public boolean addFrame(InteractiveFrame iFrame) {
 		if (iFrame == null)
 			return false;
-		if (frames().contains(iFrame))
+		if (hasFrame(iFrame))
 			return false;
 		if (frames().size() == 0)
-			pickingBuffer().loadPixels();
+			if( this.isPickingBufferEnabled() )
+				pickingBuffer().loadPixels();
 		boolean result = frames().add(iFrame);
 		return result;
 	}
@@ -1294,7 +1305,10 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Returns true if scene has {@code frame} and false otherwise.
 	 */
 	public boolean hasFrame(InteractiveFrame iFrame) {
-		return frames().contains(iFrame);
+		for(InteractiveFrame frame : frames())
+			if(frame == iFrame)
+				return true;
+		return false;
 	}
 	
 	public static boolean GRAPHICS;

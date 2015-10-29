@@ -9,7 +9,7 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.Frame;
 import remixlab.util.*;
 
-class GenericP5Frame extends GenericFrame implements Constants {
+public class GenericP5Frame extends GenericFrame {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -36,11 +36,19 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	
 	public Profile profile;
 	
+	protected void setDefaultBindings() {
+		for( Agent agent : gScene.inputHandler().agents() ) {
+			if( agent instanceof MouseAgent)
+				((MouseAgent)agent).setDefaultBindings(this);
+			if( agent instanceof KeyAgent)
+				((KeyAgent)agent).setDefaultBindings(this);
+		}
+	}
+	
 	public GenericP5Frame(Scene scn) {
 		super(scn);
 		profile = new Profile(this);
-		setDefaultMouseBindings();
-		setDefaultKeyBindings();
+		setDefaultBindings();
 	}
 	
 	public GenericP5Frame(Scene scn, Frame referenceFrame) {
@@ -48,17 +56,14 @@ class GenericP5Frame extends GenericFrame implements Constants {
 		profile = new Profile(this);
 		if(referenceFrame instanceof GenericP5Frame)
 			this.profile.from(((GenericP5Frame)referenceFrame).profile);
-		else {
-			setDefaultMouseBindings();
-			setDefaultKeyBindings();
-		}
+		else
+			setDefaultBindings();
 	}
 	
 	public GenericP5Frame(Eye eye) {
 		super(eye);
 		profile = new Profile(this);
-		setDefaultMouseBindings();
-		setDefaultKeyBindings();
+		setDefaultBindings();
 	}
 	
 	protected GenericP5Frame(GenericP5Frame otherFrame) {
@@ -136,6 +141,47 @@ class GenericP5Frame extends GenericFrame implements Constants {
 		profile.removeMotionBindings();
 	}
 	
+	// DOF1
+	
+	public void setDOF1Binding(int id, String methodName) {
+		profile.setDOF1Binding(new MotionShortcut(id), methodName);
+	}
+	
+	public void setDOF1Binding(Object object, int id, String methodName) {
+		profile.setDOF1Binding(object, new MotionShortcut(id), methodName);
+	}
+	
+	// DOF2
+	
+	public void setDOF2Binding(int id, String methodName) {
+		profile.setDOF2Binding(new MotionShortcut(id), methodName);
+	}
+		
+	public void setDOF2Binding(Object object, int id, String methodName) {
+		profile.setDOF2Binding(object, new MotionShortcut(id), methodName);
+	}
+	
+	// DOF3
+	
+	public void setDOF3Binding(int id, String methodName) {
+		profile.setDOF3Binding(new MotionShortcut(id), methodName);
+	}
+		
+	public void setDOF3Binding(Object object, int id, String methodName) {
+		profile.setDOF3Binding(object, new MotionShortcut(id), methodName);
+	}
+	
+	// DOF6
+	
+	public void setDOF6Binding(int id, String methodName) {
+		profile.setDOF6Binding(new MotionShortcut(id), methodName);
+	}
+		
+	public void setDOF6Binding(Object object, int id, String methodName) {
+		profile.setDOF6Binding(object, new MotionShortcut(id), methodName);
+	}
+	//*/
+	
 	// Key
 	
 	public void setKeyBinding(int vkey, String methodName) {
@@ -193,13 +239,11 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	// click
 	
 	public void setClickBinding(int id, int count, String methodName) {
-		if(count == 1 || count == 2)
-			profile.setClickBinding(new ClickShortcut(id, count), methodName);
+		profile.setClickBinding(new ClickShortcut(id, count), methodName);
 	}
 	
 	public void setClickBinding(Object object, int id, int count, String methodName) {
-		if(count == 1 || count == 2)
-			profile.setClickBinding(object, new ClickShortcut(id, count), methodName);
+		profile.setClickBinding(object, new ClickShortcut(id, count), methodName);
 	}
 	
 	public boolean hasClickBinding(int id, int count) {
@@ -212,51 +256,6 @@ class GenericP5Frame extends GenericFrame implements Constants {
 	
 	public void removeClickBindings() {
 		profile.removeClickBindings();
-	}
-	
-	// mouse
-	
-	protected void removeMouseClickBindings() {
-		profile.removeClickBindings(new int[]{LEFT_ID,CENTER_ID,RIGHT_ID});
-	}
-	
-	protected void removeMouseMotionBindings() {
-		profile.removeMotionBindings(new int[]{LEFT_ID,CENTER_ID,RIGHT_ID,WHEEL_ID,NO_BUTTON});
-	}
-	
-	public void removeMouseBindings() {
-		removeMouseMotionBindings();
-		removeMouseClickBindings();
-	}
-	
-	public void setDefaultMouseBindings() {
-		removeMouseBindings();
-		
-		setMotionBinding(LEFT_ID, "rotate");
-		//setMotionBinding(CENTER_ID, "screenRotate");//
-		setMotionBinding(CENTER_ID, "zoomOnRegion");
-		setMotionBinding(RIGHT_ID, "translate");
-		setMotionBinding(WHEEL_ID, scene().is3D() ? isEyeFrame() ? "translateZ" : "scale" : "scale");
-		
-		//removeClickBindings();
-    	setClickBinding(LEFT_ID, 2, "align");
-		setClickBinding(RIGHT_ID, 2, "center");
-	}
-	
-	public void setDefaultKeyBindings() {
-		removeKeyBindings();
-		setKeyBinding('n', "align");
-		setKeyBinding('c', "center");
-		setKeyBinding(LEFT_KEY, "translateXNeg");
-		setKeyBinding(RIGHT_KEY, "translateXPos");
-		setKeyBinding(DOWN_KEY, "translateYNeg");
-		setKeyBinding(UP_KEY, "translateYPos");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, LEFT_KEY), "rotateXNeg");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, RIGHT_KEY), "rotateXPos");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, DOWN_KEY), "rotateYNeg");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, UP_KEY), "rotateYPos");	
-		setKeyBinding('z', "rotateZNeg");
-		setKeyBinding(BogusEvent.SHIFT, 'z', "rotateZPos");
 	}
 	
 	public Profile profile() {

@@ -50,7 +50,18 @@ import remixlab.util.*;
  * An Eye can also be used outside of an Scene for its coordinate system conversion capabilities.
  */
 public abstract class Eye implements Copyable {
-	class GrabberEyeFrame extends GenericFrame implements Constants {
+	class GrabberEyeFrame extends GenericFrame /* implements Constants*/ {
+		public final int LEFT_ID	= 37,		
+					     CENTER_ID = 3,
+					     RIGHT_ID = 39,
+					     WHEEL_ID = 8,
+					     NO_BUTTON = BogusEvent.NO_ID,
+					     // 1.b. Keys
+						 LEFT_KEY	= 37,
+						 RIGHT_KEY = 39, 
+						 UP_KEY = 38,
+						 DOWN_KEY = 40;
+		
 		public GrabberEyeFrame(AbstractScene _scene) {
 			super(_scene);
 		}
@@ -70,6 +81,11 @@ public abstract class Eye implements Copyable {
 
 		@Override
 		public void performInteraction(MotionEvent event) {
+			//TODO how to handle multi-tempi
+			/*
+			if(event.flushed())
+				stopFlying();
+				*/
 			switch( event.shortcut().id() ) {
 			case LEFT_ID:
 				rotate(event);
@@ -79,6 +95,7 @@ public abstract class Eye implements Copyable {
 				break;
 			case RIGHT_ID:
 				translate(event);
+				break;
 			case WHEEL_ID:
 				if(scene().is3D() && isEyeFrame())
 					translateZ(event);
@@ -91,9 +108,9 @@ public abstract class Eye implements Copyable {
 		@Override
 		public void performInteraction(ClickEvent event) {
 			if (event.clickCount() == 2) {
-				if (event.id() == Agent.LEFT_ID)
+				if (event.id() == LEFT_ID)
 					center();
-				if (event.id() == Agent.RIGHT_ID)
+				if (event.id() == RIGHT_ID)
 					align();
 			}
 		}
@@ -101,25 +118,25 @@ public abstract class Eye implements Copyable {
 		@Override
 		public void performInteraction(KeyboardEvent event) {
 			if( event.isShiftDown() ) {
-				if(event.id()  == Agent.UP_KEY)
+				if(event.id()  == UP_KEY)
 					translateY(event, true);
-				if(event.id()  == Agent.DOWN_KEY)
+				if(event.id()  == DOWN_KEY)
 					translateY(event, false);
-				if(event.id()  == Agent.LEFT_KEY)
+				if(event.id()  == LEFT_KEY)
 					translateX(event, false);
-				if(event.id()  == Agent.RIGHT_KEY)
+				if(event.id()  == RIGHT_KEY)
 					translateX(event, true);
 			}
 			else {
-				if(event.id()  == Agent.UP_KEY)
+				if(event.id()  == UP_KEY)
 					if(gScene.is3D())
 						rotateX(event, true);
-				if(event.id()  == Agent.DOWN_KEY)
+				if(event.id()  == DOWN_KEY)
 					if(gScene.is3D())
 						rotateY(event, false);
-				if(event.id()  == Agent.LEFT_KEY)
+				if(event.id()  == LEFT_KEY)
 					rotateZ(event, false);
-				if(event.id()  == Agent.RIGHT_KEY)
+				if(event.id()  == RIGHT_KEY)
 					rotateZ(event, true);
 			}
 		}
