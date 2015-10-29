@@ -1,6 +1,8 @@
 /**
- * Luxo.
- * by Jean Pierre Charalambos. 
+ * Luxo 2.
+ * by Jean Pierre Charalambos.
+ *
+ * Same as Luxo but with frame.addGraphicsHandler (see Lamp) and frame.draw().
  * 
  * A more complex example that combines InteractiveFrames, selection and constraints.
  * 

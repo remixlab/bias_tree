@@ -208,6 +208,8 @@ public class Scene extends AbstractScene implements PConstants {
 		// Android: remove the following 2 lines if needed to compile the project
 		//if (platform() == Platform.PROCESSING_ANDROID)
 			//disablePickingBuffer();
+		if( this.isOffscreen() && ( upperLeftCorner.x() != 0 || upperLeftCorner.y() != 0 ) )
+			pApplet().registerMethod("post", this);			
 
 		// 5. Eye
 		setLeftHanded();
@@ -226,7 +228,7 @@ public class Scene extends AbstractScene implements PConstants {
 
 		// 7. Init should be called only once
 		init();
-	}	
+	}
 	
 	@Override
 	public EyeFrame eyeFrame() {
@@ -1245,6 +1247,14 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public void postDraw() {
 		super.postDraw();
+		if(! (this.isOffscreen() && ( upperLeftCorner.x() != 0 || upperLeftCorner.y() != 0 )) )
+			post();
+	}
+	
+	// TODO WARNING: hack: as drawing should never happen here
+	// but that's the only way to draw visual hints correctly
+	// into an off-screen scene which is shifted from the papplet origin
+	public void post() {
 		// draw into picking buffer
 		//TODO experimental, should be tested when no pshape nor graphics are created, but yet there exists some 'frames'
 		if( !this.isPickingBufferEnabled() || !GRAPHICS )
@@ -1256,7 +1266,7 @@ public class Scene extends AbstractScene implements PConstants {
 		pickingBuffer().popStyle();
 		pickingBuffer().endDraw();
 		//if (frames().size() > 0)
-		pickingBuffer().loadPixels();
+		pickingBuffer().loadPixels();		
 	}
 
 	/**
