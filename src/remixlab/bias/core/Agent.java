@@ -32,7 +32,6 @@ import remixlab.bias.event.*;
  * {@link #inputGrabber()} may still be set with {@link #setDefaultGrabber(Grabber)} (see also {@link #defaultGrabber()}).
  */
 public abstract class Agent {	
-	protected String										nm;	
 	protected List<Grabber>	grabberList;	
 	protected Grabber trackedGrabber, defaultGrabber;
 	protected boolean							agentTrckn;
@@ -42,18 +41,10 @@ public abstract class Agent {
 	 * Constructs an Agent with the given name and registers is at the given inputHandler.
 	 */
 	public Agent(InputHandler inputHandler, String name) {
-		nm = name;
 		grabberList = new ArrayList<Grabber>();
 		setTracking(true);
 		handler = inputHandler;
 		handler.registerAgent(this);
-	}
-
-	/**
-	 * @return agent's name
-	 */
-	public String name() {
-		return nm;
 	}
 	
 	// 1. Grabbers
@@ -140,16 +131,6 @@ public abstract class Agent {
 		return grabberList.add(grabber);
 	}
 
-	/**
-	 * Returns a String with a detailed description of this Agent.
-	 */
-	public String info() {
-		String description = new String();
-		description += name();
-		description += "\n";
-		return description;
-	}
-	
 	/**
 	 * Feeds {@link #updateTrackedGrabber(BogusEvent)} and {@link #handle(BogusEvent)} with the returned event.
 	 * Returns null by default. Use it in place of {@link #updateTrackedGrabberFeed()} and/or {@link #handleFeed()}

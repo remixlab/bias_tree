@@ -307,6 +307,32 @@ public class Profile {
 	        }       	
 	    }
 	}
+	
+	public String clickBindingsInfo() {
+		String result = new String();
+		result += "Click Shortcuts:\n";
+		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
+			if (entry.getKey() != null && entry.getValue() != null)
+				if( entry.getKey() instanceof ClickShortcut )
+					result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
+		return result;
+	}
+	
+	public String clickBindingsInfo(int [] ids) {
+		String result = new String();
+		result += "Click Shortcuts:\n";
+		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
+			if (entry.getKey() != null && entry.getValue() != null)
+				if( entry.getKey() instanceof ClickShortcut ) {
+					int id = entry.getKey().id();
+			        for(int i = 0; i < ids.length; i++ )
+			        	if( id == ids[i] ) {
+			        		result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
+			        		break;
+			        	}
+				}
+		return result;
+	}
 
 	public void setDOF1Binding(Shortcut key, String methodName) {
 		if(printWarning(key, methodName)) return;
@@ -468,7 +494,7 @@ public class Profile {
 	/**
 	 * Returns a description of all the bindings this profile holds.
 	 */
-	public String description() {
+	public String info() {
 		String result = new String();
 		boolean title = false;
 		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())

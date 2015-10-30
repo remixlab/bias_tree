@@ -574,11 +574,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	 * @see #enableKeyboardAgent()
 	 * @see #disableMotionAgent()
 	 */
-	public Agent disableKeyboardAgent() {
-		if (inputHandler().isAgentRegistered(keyboardAgent())) {
-			return inputHandler().unregisterAgent(keyboardAgent());
-		}
-		return keyboardAgent();
+	public boolean disableKeyboardAgent() {
+		return inputHandler().unregisterAgent(keyboardAgent());
 	}
 
 	/**
@@ -588,11 +585,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	 * @see #enableMotionAgent()
 	 * @see #enableKeyboardAgent()
 	 */
-	public Agent disableMotionAgent() {
-		if (inputHandler().isAgentRegistered(motionAgent())) {
-			return inputHandler().unregisterAgent(motionAgent());
-		}
-		return motionAgent();
+	public boolean disableMotionAgent() {
+		return inputHandler().unregisterAgent(motionAgent());
 	}
 
 	// FPSTiming STUFF
@@ -669,9 +663,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	 * 
 	 * @see #displayInfo(boolean)
 	 */
-	public String info() {
-		return inputHandler().info();
-	}
+	public abstract String info();
 
 	/**
 	 * Convenience function that simply calls {@code displayInfo(true)}.

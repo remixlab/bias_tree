@@ -11,7 +11,6 @@
 package remixlab.bias.core;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,12 +27,12 @@ import java.util.List;
  */
 public class InputHandler {
 	// D E V I C E S & E V E N T S
-	protected HashMap<String, Agent>				agents;
+	protected List<Agent>				agents;
 	protected LinkedList<EventGrabberTuple>	eventTupleQueue;
 
 	public InputHandler() {
 		// agents
-		agents = new HashMap<String, Agent>();
+		agents = new ArrayList<Agent>();
 		// events
 		eventTupleQueue = new LinkedList<EventGrabberTuple>();
 	}
@@ -58,29 +57,13 @@ public class InputHandler {
 	 */
 	public void handle() {
 		// 1. Agents
-		for (Agent agent : agents.values()) {
+		for (Agent agent : agents()) {
 			agent.updateTrackedGrabber(agent.updateTrackedGrabberFeed() != null ? agent.updateTrackedGrabberFeed() : agent.feed());
 			agent.handle(agent.handleFeed() != null ? agent.handleFeed() : agent.feed());
 		}	
 		// 2. Low level events
 		while (!eventTupleQueue.isEmpty())
 			eventTupleQueue.remove().perform();
-	}
-
-	/**
-	 * Returns a description of all registered agents' bindings and shortcuts as a String
-	 */
-	public String info() {
-		String description = new String();
-		description += "Agents' info\n";
-		int index = 1;
-		for (Agent agent : agents()) {
-			description += index;
-			description += ". ";
-			description += agent.info();
-			index++;
-		}
-		return description;
 	}
 	
 	/**
@@ -132,69 +115,36 @@ public class InputHandler {
 	}
 
 	/**
-	 * Returns an array of the registered agents.
-	 * 
-	 * @see #agents()
-	 */
-	public Agent[] agentsArray() {
-		return agents.values().toArray(new Agent[0]);
-	}
-
-	/**
 	 * Returns a list of the registered agents.
 	 * 
 	 * @see #agentsArray()
 	 */
 	public List<Agent> agents() {
-		return new ArrayList<Agent>(agents.values());
+		return agents;
 	}
 
 	/**
 	 * Registers the given agent.
 	 */
-	public void registerAgent(Agent agent) {
-		if (!isAgentRegistered(agent))
-			agents.put(agent.name(), agent);
-		else {
-			System.out.println("Nothing done. An agent with the same name is already registered. Current agent names are:");
-			for (Agent ag : agents.values())
-				System.out.println(ag.name());
-		}
+	public boolean registerAgent(Agent agent) {
+		if( agents().contains(agent) )
+			return false;
+		else
+			return agents().add(agent);
 	}
-
+	
 	/**
 	 * Returns true if the given agent is registered.
 	 */
 	public boolean isAgentRegistered(Agent agent) {
-		return agents.containsKey(agent.name());
+		return agents().contains(agent);
 	}
 
 	/**
-	 * Returns true if the agent (given by its name) is registered.
+	 * Unregisters the given agent.
 	 */
-	public boolean isAgentRegistered(String name) {
-		return agents.containsKey(name);
-	}
-
-	/**
-	 * Returns the agent by its name. The agent must be {@link #isAgentRegistered(Agent)}.
-	 */
-	public Agent agent(String name) {
-		return agents.get(name);
-	}
-
-	/**
-	 * Unregisters the given agent and returns it.
-	 */
-	public Agent unregisterAgent(Agent agent) {
-		return agents.remove(agent.name());
-	}
-
-	/**
-	 * Unregisters the given agent by its name and returns it.
-	 */
-	public Agent unregisterAgent(String name) {
-		return agents.remove(name);
+	public boolean unregisterAgent(Agent agent) {
+		return agents().remove(agent);
 	}
 
 	/**

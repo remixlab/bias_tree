@@ -21,6 +21,7 @@ import remixlab.fpstiming.*;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -492,7 +493,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #disableKeyboardAgent()
 	 */
 	@Override
-	public Agent disableMotionAgent() {
+	public boolean disableMotionAgent() {
 		if (platform() == Platform.PROCESSING_DESKTOP)
 			return disableMouseAgent();
 		//TODO android
@@ -500,7 +501,7 @@ public class Scene extends AbstractScene implements PConstants {
 		if (platform() == Platform.PROCESSING_ANDROID)
 			return disableDroidTouchAgent();
 		*/
-		return null;
+		return false;
 	}
 	
 	// KEYBOARD
@@ -528,7 +529,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #disableMotionAgent()
 	 */
 	@Override
-	public Agent disableKeyboardAgent() {
+	public boolean disableKeyboardAgent() {
 		if (platform() == Platform.PROCESSING_DESKTOP)
 			return disableKeyAgent();
 		//TODO android
@@ -536,7 +537,7 @@ public class Scene extends AbstractScene implements PConstants {
 		if (platform() == Platform.PROCESSING_ANDROID)
 			return disableDroidKeyAgent();
 		*/
-		return null;
+		return false;
 	}
 		
 	// Mouse
@@ -583,15 +584,15 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #enableMouseAgent()
 	 * @see #disableKeyAgent()
 	 */
-	public MouseAgent disableMouseAgent() {
+	public boolean disableMouseAgent() {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			throw new RuntimeException("Proscene disableMouseAgent() is not available in Android mode. Use disableDroidTouchAgent() instead");
 		}
 		if (isMotionAgentEnabled()) {
 			parent.unregisterMethod("mouseEvent", motionAgent());
-			return (MouseAgent)inputHandler().unregisterAgent(motionAgent());
+			return inputHandler().unregisterAgent(motionAgent());
 		}
-		return (MouseAgent)motionAgent();
+		return false;
 	}
 	
 	/**
@@ -653,15 +654,15 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #enableKeyAgent()
 	 * @see #disableMouseAgent()
 	 */
-	public KeyAgent disableKeyAgent() {
+	public boolean disableKeyAgent() {
 		if (platform() == Platform.PROCESSING_ANDROID) {
 			throw new RuntimeException("Proscene disableKeyAgent() is not available in Android mode. Use disableDroidKeyAgent() instead");
 		}
 		if (inputHandler().isAgentRegistered(keyboardAgent())) {
 			parent.unregisterMethod("keyEvent", keyboardAgent());
-			return (KeyAgent) inputHandler().unregisterAgent(keyboardAgent());
+			return inputHandler().unregisterAgent(keyboardAgent());
 		}
-		return (KeyAgent) keyboardAgent();
+		return false;
 	}
 	
 	/**
@@ -819,6 +820,8 @@ public class Scene extends AbstractScene implements PConstants {
 
 	@Override
 	public String info() {
+	    String info = new String();
+	    /*
 		String info = super.info();
 
 		// info PARSING
@@ -855,6 +858,7 @@ public class Scene extends AbstractScene implements PConstants {
 
 		info = info.replace(vk_1, "'1'").replace(vk_2, "'2'").replace(vk_3, "'3'")
 				.replace(vk_l, "LEFT_vkey").replace(vk_u, "UP_vkey").replace(vk_r, "RIGHT_vkey").replace(vk_d, "DOWN_vkey");
+		// */
 
 		// 2b. Parse the remaining virtual key codes:
 
@@ -1322,7 +1326,14 @@ public class Scene extends AbstractScene implements PConstants {
 	 * @see #addFrame(InteractiveFrame)
 	 */
 	public boolean removeFrame(InteractiveFrame iFrame) {
-		boolean result = frames().remove(iFrame);
+		boolean result = false;
+		Iterator<InteractiveFrame> it = frames().iterator();
+		while(it.hasNext()) {
+		    if (it.next() == iFrame) { 
+		        it.remove();
+		        result = true;
+		    }
+		}
 		if(result) {
 			for( InteractiveFrame m : frames())
 				if(m.shape() != null || m.hasGraphicsHandler()) {
