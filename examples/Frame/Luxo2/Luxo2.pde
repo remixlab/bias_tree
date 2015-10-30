@@ -40,7 +40,7 @@ public void draw() {
   //or with color for selection
   for (InteractiveFrame frame : scene.frames()) {
     fill(200, 200, scene.mouseAgent().inputGrabber() == frame ? 0 : 200);
-    frame.draw(scene.pg());
+    frame.draw();
   }
 
   //draw the ground

@@ -9,7 +9,7 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.Frame;
 import remixlab.util.*;
 
-public class GenericP5Frame extends GenericFrame {
+public class GenericP5Frame extends GenericFrame {	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -34,16 +34,12 @@ public class GenericP5Frame extends GenericFrame {
 				.isEquals();
 	}
 	
-	public Profile profile;
-	
-	protected void setDefaultBindings() {
-		for( Agent agent : gScene.inputHandler().agents() ) {
-			if( agent instanceof MouseAgent)
-				((MouseAgent)agent).setDefaultBindings(this);
-			if( agent instanceof KeyAgent)
-				((KeyAgent)agent).setDefaultBindings(this);
-		}
+	@Override
+	public Scene scene() {
+		return (Scene)gScene;
 	}
+	
+	public Profile profile;
 	
 	public GenericP5Frame(Scene scn) {
 		super(scn);
@@ -121,6 +117,23 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	*/
 	
+    //TODO decide these three:
+	
+	protected void setDefaultBindings() {
+		setDefaultMouseBindings();
+		setDefaultKeyBindings();
+	}
+	
+	public void setDefaultMouseBindings() {
+		scene().mouseAgent().setDefaultBindings(this);
+	}
+	
+	public void setDefaultKeyBindings() {
+		scene().keyAgent().setDefaultBindings(this);
+	}
+	
+	//
+	
 	public void setMotionBinding(int id, String methodName) {
 		profile.setMotionBinding(new MotionShortcut(id), methodName);
 	}
@@ -128,6 +141,12 @@ public class GenericP5Frame extends GenericFrame {
 	public void setMotionBinding(Object object, int id, String methodName) {
 		profile.setMotionBinding(object, new MotionShortcut(id), methodName);
 	}
+	
+	public void removeMotionBindings() {
+		profile.removeMotionBindings();
+	}
+	
+	// good for all dofs :P
 	
 	public boolean hasMotionBinding(int id) {
 		return profile.hasBinding(new MotionShortcut(id));
@@ -137,8 +156,8 @@ public class GenericP5Frame extends GenericFrame {
 		profile.removeBinding(new MotionShortcut(id));
 	}
 	
-	public void removeMotionBindings() {
-		profile.removeMotionBindings();
+	public void removeMotionBindings(int [] ids) {
+		profile.removeMotionBindings(ids);
 	}
 	
 	// DOF1
@@ -257,6 +276,61 @@ public class GenericP5Frame extends GenericFrame {
 	public void removeClickBindings() {
 		profile.removeClickBindings();
 	}
+	
+	public void removeClickBindings(int [] ids) {
+		profile.removeClickBindings(ids);
+	}
+	
+	/*
+	 
+	// mouse
+	
+	protected void removeMouseClickBindings() {
+		profile.removeClickBindings(new int[]{MouseAgent.LEFT_ID,MouseAgent.CENTER_ID,MouseAgent.RIGHT_ID});
+	}
+	
+	protected void removeMouseMotionBindings() {
+		profile.removeMotionBindings(new int[]{MouseAgent.LEFT_ID,MouseAgent.CENTER_ID,MouseAgent.RIGHT_ID,MouseAgent.WHEEL_ID,MouseAgent.NO_BUTTON});
+	}
+	
+	public void removeMouseBindings() {
+		removeMouseMotionBindings();
+		removeMouseClickBindings();
+	}
+	
+	public void setDefaultMouseBindings() {
+		removeMouseBindings();
+		
+		setMotionBinding(MouseAgent.LEFT_ID, "rotate");
+		//setMotionBinding(MouseAgent.CENTER_ID, "screenRotate");//
+		setMotionBinding(MouseAgent.CENTER_ID, "zoomOnRegion");
+		setMotionBinding(MouseAgent.RIGHT_ID, "translate");
+		setMotionBinding(MouseAgent.WHEEL_ID, scene().is3D() ? isEyeFrame() ? "translateZ" : "scale" : "scale");
+		
+		//removeClickBindings();
+    	setClickBinding(MouseAgent.LEFT_ID, 2, "align");
+		setClickBinding(MouseAgent.RIGHT_ID, 2, "center");
+	}
+	
+	public void setDefaultKeyBindings() {
+		removeKeyBindings();
+		setKeyBinding('n', "align");
+		setKeyBinding('c', "center");
+		setKeyBinding(KeyAgent.LEFT_KEY, "translateXNeg");
+		setKeyBinding(KeyAgent.RIGHT_KEY, "translateXPos");
+		setKeyBinding(KeyAgent.DOWN_KEY, "translateYNeg");
+		setKeyBinding(KeyAgent.UP_KEY, "translateYPos");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.LEFT_KEY), "rotateXNeg");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.RIGHT_KEY), "rotateXPos");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.DOWN_KEY), "rotateYNeg");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.UP_KEY), "rotateYPos");	
+		setKeyBinding('z', "rotateZNeg");
+		setKeyBinding(BogusEvent.SHIFT, 'z', "rotateZPos");
+	}
+	
+	*/
+	
+	//
 	
 	public Profile profile() {
 		return profile;

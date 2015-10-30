@@ -25,10 +25,10 @@ import remixlab.bias.core.*;
  * @see remixlab.proscene.DroidTouchAgent
  */
 public class KeyAgent extends Agent {
-	public final int 	LEFT_KEY	= 37,
-			 			RIGHT_KEY = 39, 
-			 			UP_KEY = 38,
-			 			DOWN_KEY = 40;
+	public static final int LEFT_KEY	= 37,
+							RIGHT_KEY = 39, 
+							UP_KEY = 38,
+							DOWN_KEY = 40;
 	//public static int LEFT_KEY	= PApplet.LEFT, RIGHT_KEY = PApplet.RIGHT, UP_KEY = PApplet.UP, DOWN_KEY = PApplet.DOWN;
 	protected Scene scene;
 	protected boolean				press, release, type;
@@ -87,12 +87,8 @@ public class KeyAgent extends Agent {
 		return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key);
 	}
 	
-	public void removeBindings(GenericP5Frame frame) {
-		frame.profile.removeKeyboardBindings();
-	}
-	
 	public void setDefaultBindings(GenericP5Frame frame) {
-		removeBindings(frame);
+		frame.removeKeyBindings();
 		frame.setKeyBinding('n', "align");
 		frame.setKeyBinding('c', "center");
 		frame.setKeyBinding(LEFT_KEY, "translateXNeg");
@@ -106,6 +102,12 @@ public class KeyAgent extends Agent {
 		frame.setKeyBinding('z', "rotateZNeg");
 		frame.setKeyBinding(BogusEvent.SHIFT, 'z', "rotateZPos");
 	}
+	
+	/*
+	public void removeBindings(GenericP5Frame frame) {
+		frame.profile.removeKeyboardBindings();
+	}
+	*/
 	
 	/*
 	public void removeBindings() {
@@ -127,6 +129,8 @@ public class KeyAgent extends Agent {
 	}
 	*/
 	
+	/*
+	 
 	public void setBinding(GenericP5Frame frame, int vkey, String methodName) {
 		frame.profile.setKeyboardBinding(new KeyboardShortcut(vkey), methodName);
 	}
@@ -174,4 +178,6 @@ public class KeyAgent extends Agent {
 	public void removeBinding(GenericP5Frame frame, int mask, char key) {
 		frame.profile.removeBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
 	}
+	
+	*/
 }

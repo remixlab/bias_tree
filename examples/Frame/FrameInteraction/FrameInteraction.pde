@@ -57,7 +57,7 @@ public void setup() {
 
   // frame 2
   frame2 = new InteractiveFrame(scene, createShape(SPHERE, 40));
-  frame2.setMotionBinding(LEFT, "translateXY");
+  frame2.setMotionBinding(LEFT, "translate");
   frame2.setMotionBinding(RIGHT, "scale");
 
   //frame 3

@@ -10,7 +10,7 @@
 
 package remixlab.proscene;
 
-import java.util.Arrays;
+//import java.util.Arrays;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
@@ -33,6 +33,7 @@ public class MouseAgent extends Agent {
 	
 	protected int [] motionIDs = {LEFT_ID,CENTER_ID,RIGHT_ID,WHEEL_ID,NO_BUTTON};
 	protected int [] dof2IDs = {LEFT_ID,CENTER_ID,RIGHT_ID,NO_BUTTON};
+	protected int [] dof1IDs = {WHEEL_ID};
 	protected int [] clickIDs = {LEFT_ID,CENTER_ID,RIGHT_ID};
 	
 	protected float		xSens		= 1f;
@@ -166,6 +167,8 @@ public class MouseAgent extends Agent {
 		return ySens;
 	}
 	
+	/*
+	
 	// 1. Frame bindings
 	//see here: http://stackoverflow.com/questions/880581/how-to-convert-int-to-integer-in-java
 	protected boolean validateDOF2IDs(int id) {
@@ -186,21 +189,52 @@ public class MouseAgent extends Agent {
 		}
 	}
 	
-	// 1. Default
+	*/
 	
-	public void setDefaultBindings(GenericP5Frame frame) {	
-		removeBindings(frame);
-		
-		setDOF2Binding(frame, LEFT_ID, "rotate");
-		setDOF2Binding(frame, CENTER_ID, "zoomOnRegion");
-		setDOF2Binding(frame, RIGHT_ID, "translate");
-		setDOF1Binding(frame, scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
-		
-		removeClickBindings(frame);
-		setClickBinding(frame, LEFT_ID, 2, "align");
-		setClickBinding(frame, RIGHT_ID, 2, "center");
+	public int [] motionIDs() {
+		return motionIDs;
 	}
 	
+	public int [] dof2IDs() {
+		return dof2IDs;
+	}
+	
+	public int [] dof1IDs() {
+		return dof1IDs;
+	}
+	
+	public int [] clickIDs() {
+		return clickIDs;
+	}
+	
+	// 1. Default
+	
+	public void setDefaultBindings(GenericP5Frame frame) {
+		frame.removeMotionBindings(motionIDs());
+		frame.removeClickBindings(clickIDs());
+		
+		frame.setDOF2Binding(LEFT_ID, "rotate");
+		frame.setDOF2Binding(CENTER_ID, "zoomOnRegion");
+		frame.setDOF2Binding(RIGHT_ID, "translate");
+		
+		frame.setDOF1Binding(WHEEL_ID, scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
+		
+		frame.setClickBinding(LEFT_ID, 2, "align");
+		frame.setClickBinding(RIGHT_ID, 2, "center");
+		
+		/*
+		frame.profile.setDOF2Binding(new MotionShortcut(LEFT_ID), "rotate");
+		frame.profile.setDOF2Binding(new MotionShortcut(CENTER_ID), "zoomOnRegion");
+		frame.profile.setDOF2Binding(new MotionShortcut(RIGHT_ID), "translate");
+		
+		frame.profile.setDOF1Binding(new MotionShortcut(WHEEL_ID), scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
+		
+		frame.profile.setClickBinding(new ClickShortcut(LEFT_ID, 2), "align");
+		frame.profile.setClickBinding(new ClickShortcut(RIGHT_ID, 2), "center");
+		*/
+	}
+	
+	/*
 	public void removeBindings(GenericP5Frame frame) {
 		//if(validateFrame(frame)) {
 			removeDOF2Bindings(frame);
@@ -208,6 +242,22 @@ public class MouseAgent extends Agent {
 			removeClickBindings(frame);
 		//}
 	}
+	
+	public void removeDOF2Bindings(GenericP5Frame frame) {
+		//if(validateFrame(frame))
+			frame.profile.removeMotionBindings(dof2IDs);
+	}
+	
+	public void removeDOF1Binding(GenericP5Frame frame) {
+		//if(validateFrame(frame))
+			frame.profile.removeBinding(new MotionShortcut(WHEEL_ID));
+	}
+	
+	public void removeClickBindings(GenericP5Frame frame) {
+		//if(validateFrame(frame))
+			frame.profile.removeClickBindings(clickIDs);
+	}
+	*/
 	
 	/*
 	protected boolean validateFrame(GenericP5Frame frame) {
@@ -220,32 +270,33 @@ public class MouseAgent extends Agent {
 	}
 	*/
 	
+	/*
+	 
 	// 2. 2DOF
-	
+
 	public void setDOF2Binding(GenericP5Frame frame, int id, String methodName) {
-		if(validateDOF2IDs(id) /*&& validateFrame(frame)*/)
+		//if(validateDOF2IDs(id) && validateFrame(frame))
+		if(validateDOF2IDs(id))
 			frame.profile.setDOF2Binding(new MotionShortcut(id), methodName);
 	}
 		
 	public void setDOF2Binding(Object object, GenericP5Frame frame, int id, String methodName) {
-		if(validateDOF2IDs(id) /*&& validateFrame(frame)*/)
+		//if(validateDOF2IDs(id) && validateFrame(frame))
+		if(validateDOF2IDs(id))
 			frame.profile.setDOF2Binding(object, new MotionShortcut(id), methodName);
 	}
 	
 	public boolean hasDOF2Binding(GenericP5Frame frame, int id) {
-		if(validateDOF2IDs(id) /*&& validateFrame(frame)*/)
+		//if(validateDOF2IDs(id) && validateFrame(frame))
+		if(validateDOF2IDs(id))
 			return frame.profile.hasBinding(new MotionShortcut(id));
 		return false;
 	}
 	
 	public void removeDOF2Binding(GenericP5Frame frame, int id) {
-		if(validateDOF2IDs(id) /*&& validateFrame(frame)*/)
+		//if(validateDOF2IDs(id) && validateFrame(frame))
+		if(validateDOF2IDs(id))
 			frame.profile.removeBinding(new MotionShortcut(id));
-	}
-	
-	public void removeDOF2Bindings(GenericP5Frame frame) {
-		//if(validateFrame(frame))
-			frame.profile.removeMotionBindings(dof2IDs);
 	}
 	
 	// 3. Wheel
@@ -266,11 +317,6 @@ public class MouseAgent extends Agent {
 		//return false;
 	}
 	
-	public void removeDOF1Binding(GenericP5Frame frame) {
-		//if(validateFrame(frame))
-			frame.profile.removeBinding(new MotionShortcut(WHEEL_ID));
-	}
-	
 	// 4. Click
 	
 	public void setClickBinding(GenericP5Frame frame, int id, String methodName) {
@@ -278,7 +324,8 @@ public class MouseAgent extends Agent {
 	}
 	
 	public void setClickBinding(GenericP5Frame frame, int id, int count, String methodName) {
-		if(validateClickIDs(id) /*&& validateFrame(frame)*/)
+		//if(validateClickIDs(id) && validateFrame(frame))
+		if(validateClickIDs(id))
 			frame.profile.setClickBinding(new ClickShortcut(id, count), methodName);
 	}
 	
@@ -287,7 +334,8 @@ public class MouseAgent extends Agent {
 	}
 	
 	public void setClickBinding(Object object, GenericP5Frame frame, int id, int count, String methodName) {
-		if(validateClickIDs(id) /*&& validateFrame(frame)*/)
+		//if(validateClickIDs(id) && validateFrame(frame))
+		if(validateClickIDs(id))
 			frame.profile.setClickBinding(object, new ClickShortcut(id, count), methodName);
 	}
 	
@@ -296,7 +344,8 @@ public class MouseAgent extends Agent {
 	}
 	
 	public boolean hasClickBinding(GenericP5Frame frame, int id, int count) {
-		if(validateClickIDs(id) /*&& validateFrame(frame)*/)
+		//if(validateClickIDs(id) && validateFrame(frame))
+		if(validateClickIDs(id))
 			return frame.profile.hasBinding(new ClickShortcut(id, count));
 		return false;
 	}
@@ -306,14 +355,12 @@ public class MouseAgent extends Agent {
 	}
 	
 	public void removeClickBinding(GenericP5Frame frame, int id, int count) {
-		if(validateClickIDs(id) /*&& validateFrame(frame)*/)
+		//if(validateClickIDs(id) && validateFrame(frame))
+		if(validateClickIDs(id))
 			frame.profile.removeBinding(new ClickShortcut(id, count));
 	}
 	
-	public void removeClickBindings(GenericP5Frame frame) {
-		//if(validateFrame(frame))
-			frame.profile.removeClickBindings(clickIDs);
-	}
+	//*/
 	
 	/*
 	public void setFirstPersonBindings(GenericP5Frame frame) {
