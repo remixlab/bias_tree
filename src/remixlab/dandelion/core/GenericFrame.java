@@ -1453,10 +1453,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into z-translation conversion routine.
 	 */
 	protected void translateZ(MotionEvent event, boolean fromX) {
-		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("translateZ");
-			return;
-		}
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			translateZ(dof1Event, wheel(event) ? this.wheelSensitivity() : this.translationSensitivity());
@@ -1473,6 +1469,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into z-translation conversion routine.
 	 */
 	protected void translateZ(DOF1Event event, float sens) {
+		if (gScene.is2D()) {
+			AbstractScene.showDepthWarning("translateZ");
+			return;
+		}
 		translate(screenToVec(Vec.multiply(new Vec(0.0f, 0.0f, isEyeFrame() ? -event.dx() : event.dx()), sens)));
 	}
 	
@@ -1532,10 +1532,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into xyz-translation conversion routine.
 	 */
 	public void translateXYZ(MotionEvent event) {
-		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("translateXYZ");
-			return;
-		}
 		DOF3Event dof3Event = MotionEvent.dof3Event(event, true);
 		if (dof3Event != null)
 			translateXYZ(dof3Event);
@@ -1556,6 +1552,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into xyz-translation conversion routine.
 	 */
 	public void translateXYZ(DOF3Event event) {
+		if (gScene.is2D()) {
+			AbstractScene.showDepthWarning("translateXYZ");
+			return;
+		}
 		translate(screenToVec(Vec.multiply(
 				new Vec(event.dx(), gScene.isRightHanded() ? -event.dy() : event.dy(), -event.dz()),
 				this.translationSensitivity())));
@@ -1631,13 +1631,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into zoom-on-region conversion routine.
 	 */
 	public void zoomOnRegion(MotionEvent event) {
-		if (!isEyeFrame()) {
-			AbstractScene.showOnlyEyeWarning("zoomOnRegion");
-		}
-		if (event.isAbsolute()) {
-			AbstractScene.showEventVariationWarning("zoomOnRegion");
-			return;
-		}
 		DOF2Event dof2 = MotionEvent.dof2Event(event);
 		if (dof2 == null) {
 			AbstractScene.showMinDOFsWarning("zoomOnRegion", 2);
@@ -1650,6 +1643,14 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into zoom-on-region conversion routine.
 	 */
 	public void zoomOnRegion(DOF2Event event) {
+		if (!isEyeFrame()) {
+			AbstractScene.showOnlyEyeWarning("zoomOnRegion");
+			return;
+		}
+		if (event.isAbsolute()) {
+			AbstractScene.showEventVariationWarning("zoomOnRegion");
+			return;
+		}
 		int w = (int) Math.abs(event.dx());
 		int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
 		int h = (int) Math.abs(event.dy());
@@ -1668,10 +1669,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into x-rotation conversion routine.
 	 */
 	protected void rotateX(MotionEvent event, boolean fromX) {
-		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("rotateX");
-			return;
-		}
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			rotateX(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
@@ -1731,10 +1728,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into y-rotation conversion routine.
 	 */
 	protected void rotateY(MotionEvent event, boolean fromX) {
-		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("rotateY");
-			return;
-		}
 		DOF1Event dof1Event = MotionEvent.dof1Event(event, fromX);
 		if (dof1Event != null)
 			rotateY(dof1Event, wheel(event) ? this.wheelSensitivity() : this.rotationSensitivity());
@@ -1854,10 +1847,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into xyz-rotation conversion routine.
 	 */
 	protected void rotateXYZ(MotionEvent event) {
-		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("rotateXYZ");
-			return;
-		}
 		DOF3Event dof3Event = MotionEvent.dof3Event(event, false);
 		if (dof3Event != null)
 			rotateXYZ(dof3Event);
@@ -1869,6 +1858,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into xyz-rotation conversion routine.
 	 */
 	public void rotateXYZ(DOF3Event event) {
+		if (gScene.is2D()) {
+			AbstractScene.showDepthWarning("rotateXYZ");
+			return;
+		}
 		rotate(screenToQuat(Vec.multiply(
 				new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz())), rotationSensitivity())));
 	}
@@ -2018,10 +2011,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into drive conversion routine.
 	 */
 	public void drive(MotionEvent event) {
-		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("drive");
-			return;
-		}
 		DOF2Event dof2Event = MotionEvent.dof2Event(event);
 		if (dof2Event != null)
 			drive(dof2Event);
@@ -2033,6 +2022,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into drive conversion routine.
 	 */
 	public void drive(DOF2Event event) {
+		if (gScene.is2D()) {
+			AbstractScene.showDepthWarning("drive");
+			return;
+		}
 		Vec trns;
 		rotate(turnQuaternion(event.dof1Event(), gScene.camera()));
 		flyDisp.set(0.0f, 0.0f, flySpeed());
@@ -2044,10 +2037,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into CAD-rotation conversion routine.
 	 */
 	public void rotateCAD(MotionEvent event) {
-		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("rotateCAD");
-			return;
-		}
 		DOF2Event dof2Event = MotionEvent.dof2Event(event);
 		if (dof2Event != null)
 			rotateCAD(dof2Event);
@@ -2059,6 +2048,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into CAD-rotation conversion routine.
 	 */
 	public void rotateCAD(DOF2Event event) {
+		if (gScene.is2D()) {
+			AbstractScene.showDepthWarning("rotateCAD");
+			return;
+		}
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("rotateCAD");
 			return;
@@ -2079,14 +2072,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into hinge conversion routine.
 	 */
 	public void hinge(MotionEvent event) {
-		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("hinge");
-			return;
-		}
-		if (!isEyeFrame()) {
-			AbstractScene.showOnlyEyeWarning("hinge");
-			return;
-		}
 		DOF6Event dof6Event = MotionEvent.dof6Event(event);
 		if (dof6Event != null)
 			hinge(dof6Event);
@@ -2098,6 +2083,14 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * User gesture into hinge conversion routine.
 	 */
 	public void hinge(DOF6Event event) {
+		if (gScene.is2D()) {
+			AbstractScene.showDepthWarning("hinge");
+			return;
+		}
+		if (!isEyeFrame()) {
+			AbstractScene.showOnlyEyeWarning("hinge");
+			return;
+		}
 		// aka google earth navigation
 		// 1. Relate the eye reference frame:
 		Vec trns = new Vec();
@@ -2649,10 +2642,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	// --
 
 	protected Quat rollPitchQuaternion(MotionEvent event, Camera camera) {
-		if (gScene.is2D()) {
-			AbstractScene.showDepthWarning("rollPitchQuaternion");
-			return null;
-		}
 		DOF2Event dof2Event = MotionEvent.dof2Event(event);
 		if (dof2Event != null)
 			return rollPitchQuaternion(dof2Event, camera);
@@ -2667,6 +2656,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * {@link #sceneUpVector()} axis).
 	 */
 	protected Quat rollPitchQuaternion(DOF2Event event, Camera camera) {
+		if (gScene.is2D()) {
+			AbstractScene.showDepthWarning("rollPitchQuaternion");
+			return null;
+		}
 		float deltaX = event.dx();
 		float deltaY = event.dy();
 

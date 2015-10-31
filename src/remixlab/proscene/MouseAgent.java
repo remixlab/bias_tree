@@ -58,6 +58,18 @@ public class MouseAgent extends Agent {
 		setPickingMode(PickingMode.MOVE);
 	}
 	
+	/*
+	@Override
+	public boolean addGrabber(Grabber grabber) {
+		boolean result = super.addGrabber(grabber);
+		if(result)
+			if(grabber instanceof InteractiveFrame)
+				if(((InteractiveFrame)grabber).profile().motionBindingsInfo(motionIDs).isEmpty())
+					this.setDefaultBindings((InteractiveFrame)grabber);
+		return result;			
+	}
+	*/
+	
 	@Override
 	public boolean resetDefaultGrabber() {
 		addGrabber(scene.eye().frame());
@@ -214,9 +226,8 @@ public class MouseAgent extends Agent {
 		frame.removeClickBindings(clickIDs());
 		
 		frame.setDOF2Binding(LEFT_ID, "rotate");
-		frame.setDOF2Binding(CENTER_ID, "zoomOnRegion");
-		frame.setDOF2Binding(RIGHT_ID, "translate");
-		
+		frame.setDOF2Binding(CENTER_ID, frame.isEyeFrame() ? "zoomOnRegion" : "screenRotate");
+		frame.setDOF2Binding(RIGHT_ID, "translate");		
 		frame.setDOF1Binding(WHEEL_ID, scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
 		
 		frame.setClickBinding(LEFT_ID, 2, "align");

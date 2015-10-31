@@ -818,7 +818,7 @@ public class Scene extends AbstractScene implements PConstants {
 
 	// INFO
 	
-	static String parseInfo(String info) {
+	protected static String parseInfo(String info) {
 		// mouse:
 		String l = "ID_" + String.valueOf(MouseAgent.LEFT_ID);
 		String r = "ID_" + String.valueOf(MouseAgent.RIGHT_ID);
@@ -834,7 +834,7 @@ public class Scene extends AbstractScene implements PConstants {
 		return info;
 	}
 	
-	static String parseKeyInfo(String info) {
+	protected static String parseKeyInfo(String info) {
 		// Parsing is split in two steps:
 		// 1. Parse the "1", "2", "3" and left-right-up-down keys:
 		String vk_1 = "VKEY_" + String.valueOf(49);
