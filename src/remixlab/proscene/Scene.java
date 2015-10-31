@@ -185,8 +185,8 @@ public class Scene extends AbstractScene implements PConstants {
 		//TODO android
 		// discard this block one android is restored
 		{
-			defMotionAgent = new MouseAgent(this, "proscene_mouse");
-			defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
+			defMotionAgent = new MouseAgent(this);
+			defKeyboardAgent = new KeyAgent(this);
 			parent.registerMethod("mouseEvent", motionAgent());
 		}
 		//

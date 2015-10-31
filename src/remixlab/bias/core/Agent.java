@@ -40,7 +40,7 @@ public abstract class Agent {
 	/**
 	 * Constructs an Agent with the given name and registers is at the given inputHandler.
 	 */
-	public Agent(InputHandler inputHandler, String name) {
+	public Agent(InputHandler inputHandler) {
 		grabberList = new ArrayList<Grabber>();
 		setTracking(true);
 		handler = inputHandler;

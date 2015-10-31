@@ -52,8 +52,8 @@ public class MouseAgent extends Agent {
 	 * 
 	 * @see #dragToArcball()
 	 */	    
-	public MouseAgent(Scene scn, String n) {
-		super(scn.inputHandler(), n);
+	public MouseAgent(Scene scn) {
+		super(scn.inputHandler());
 		scene = scn;
 		setPickingMode(PickingMode.MOVE);
 	}

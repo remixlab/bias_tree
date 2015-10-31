@@ -39,8 +39,8 @@ public class KeyAgent extends Agent {
 	 * 
 	 * @see #setDefaultBindings()
 	 */
-	public KeyAgent(Scene scn, String n) {
-		super(scn.inputHandler(), n);
+	public KeyAgent(Scene scn) {
+		super(scn.inputHandler());
 		scene = scn;
 		addGrabber(scene);
 		//TODO pending
