@@ -227,6 +227,30 @@ public class Profile {
 	    }
 	}
 	
+	public String motionBindingsInfo() {
+		String result = new String();
+		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
+			if (entry.getKey() != null && entry.getValue() != null)
+				if( entry.getKey() instanceof MotionShortcut )
+					result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
+		return result;
+	}
+	
+	public String motionBindingsInfo(int [] ids) {
+		String result = new String();
+		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
+			if (entry.getKey() != null && entry.getValue() != null)
+				if( entry.getKey() instanceof MotionShortcut ) {
+					int id = entry.getKey().id();
+			        for(int i = 0; i < ids.length; i++ )
+			        	if( id == ids[i] ) {
+			        		result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
+			        		break;
+			        	}
+				}
+		return result;
+	}
+	
 	public void setKeyboardBinding(Shortcut key, String methodName) {
 		if(printWarning(key, methodName)) return;
 		try {
@@ -256,6 +280,15 @@ public class Profile {
 	        if( pair.getKey() instanceof KeyboardShortcut )
 	        	it.remove();
 	    }
+	}
+	
+	public String keyboardBindingsInfo() {
+		String result = new String();
+		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
+			if (entry.getKey() != null && entry.getValue() != null)
+				if( entry.getKey() instanceof KeyboardShortcut )
+					result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
+		return result;
 	}
 
 	public void setClickBinding(Shortcut key, String methodName) {
@@ -310,7 +343,6 @@ public class Profile {
 	
 	public String clickBindingsInfo() {
 		String result = new String();
-		result += "Click Shortcuts:\n";
 		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
 			if (entry.getKey() != null && entry.getValue() != null)
 				if( entry.getKey() instanceof ClickShortcut )
@@ -320,7 +352,6 @@ public class Profile {
 	
 	public String clickBindingsInfo(int [] ids) {
 		String result = new String();
-		result += "Click Shortcuts:\n";
 		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
 			if (entry.getKey() != null && entry.getValue() != null)
 				if( entry.getKey() instanceof ClickShortcut ) {

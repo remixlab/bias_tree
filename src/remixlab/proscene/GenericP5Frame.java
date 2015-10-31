@@ -340,6 +340,28 @@ public class GenericP5Frame extends GenericFrame {
 		profile.from(otherFrame.profile());
 	}
 	
+	public String info() {
+		String result = new String();
+		String info = profile().keyboardBindingsInfo();
+		if(!info.isEmpty()) {
+			result = "Key bindings:\n";
+			result += Scene.parseKeyInfo(info);
+		}
+		info = profile().motionBindingsInfo();
+		if(!info.isEmpty()) {
+			result += "Motion bindings:\n";
+			result += Scene.parseInfo(info);
+		}
+		info = profile().clickBindingsInfo();
+		if(!info.isEmpty()) {
+			result += "Click bindings:\n";
+			result += Scene.parseInfo(info);
+		}
+		return result;
+	}
+	
+	//
+	
 	String initAction;
 	
 	// private A a;//TODO study make me an attribute to com between init and end

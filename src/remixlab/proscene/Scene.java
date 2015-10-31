@@ -817,35 +817,26 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 
 	// INFO
-
-	@Override
-	public String info() {
-	    String info = new String();
-	    /*
-		String info = super.info();
-
-		// info PARSING
-
-		// 1. We first parse the mouse agent info (the one contained in super.info())
-
+	
+	static String parseInfo(String info) {
+		// mouse:
 		String l = "ID_" + String.valueOf(MouseAgent.LEFT_ID);
 		String r = "ID_" + String.valueOf(MouseAgent.RIGHT_ID);
 		String c = "ID_" + String.valueOf(MouseAgent.CENTER_ID);
 		String w = "ID_" + String.valueOf(MouseAgent.WHEEL_ID);
-		String n = "ID_0";
+		String n = "ID_" + String.valueOf(MouseAgent.NO_BUTTON);
 
 		// ... and replace it with proper descriptions:
 
-		info = info.replace(l, "LEFT_BUTTON").replace(r, "RIGHT_BUTTON").replace(c, "CENTER_BUTTON").replace(w, "WHEEL")
-				.replace(n, "NO_BUTTON");
-		String keyboardtitle = keyboardAgent().name()
-				+ " (key-codes are defined here: http://docs.oracle.com/javase/7/docs/api/constant-values.html)";
-		info = info.replace(keyboardAgent().name(), keyboardtitle);
-
-		// 2. keyboard parsing is split in two steps:
-
-		// 2a. Parse the "1", "2", "3" and left-right-up-down keys:
-
+		info = info.replace(l, "LEFT_BUTTON").replace(r, "RIGHT_BUTTON").replace(c, "CENTER_BUTTON").replace(w, "WHEEL").replace(n, "NO_BUTTON");
+		
+		// add other agents here:
+		return info;
+	}
+	
+	static String parseKeyInfo(String info) {
+		// Parsing is split in two steps:
+		// 1. Parse the "1", "2", "3" and left-right-up-down keys:
 		String vk_1 = "VKEY_" + String.valueOf(49);
 		String vk_2 = "VKEY_" + String.valueOf(50);
 		String vk_3 = "VKEY_" + String.valueOf(51);
@@ -856,8 +847,7 @@ public class Scene extends AbstractScene implements PConstants {
 
 		// ... and replace it with proper descriptions:
 
-		info = info.replace(vk_1, "'1'").replace(vk_2, "'2'").replace(vk_3, "'3'")
-				.replace(vk_l, "LEFT_vkey").replace(vk_u, "UP_vkey").replace(vk_r, "RIGHT_vkey").replace(vk_d, "DOWN_vkey");
+		info = info.replace(vk_1, "'1'").replace(vk_2, "'2'").replace(vk_3, "'3'").replace(vk_l, "LEFT_vkey").replace(vk_u, "UP_vkey").replace(vk_r, "RIGHT_vkey").replace(vk_d, "DOWN_vkey");
 		// */
 
 		// 2b. Parse the remaining virtual key codes:
@@ -867,7 +857,7 @@ public class Scene extends AbstractScene implements PConstants {
 		 * 
 		 * Search for the following pattern in info string: "VKEY_id " (note the final white space)
 		 * 
-		 * where id is the virtual key code (as defined in the above url)
+		 * where id is the virtual key code (as defined here: http://docs.oracle.com/javase/7/docs/api/constant-values.html)
 		 * 
 		 * and replace it with: "char"
 		 * 
@@ -880,8 +870,30 @@ public class Scene extends AbstractScene implements PConstants {
 		 * 
 		 * See: http://www.vogella.com/tutorials/JavaRegularExpressions/article.html
 		 */
-
 		return info;
+	}
+
+	@Override
+	public String info() {
+		String result = new String();
+		String info = profile().keyboardBindingsInfo();
+		if(!info.isEmpty()) {
+			result = "1. Scene key bindings:\n";
+			result += parseKeyInfo(info);
+		}
+		info = eyeFrame().info(); // frame already parses info :P
+		if(!info.isEmpty()) {
+			result += "2. Eye bindings:\n";
+			result += info;
+		}		
+		result += "3. For a specific frame bindings use: frame.info():\n";		
+		/*
+		result += "Frames' info\n";
+		for (InteractiveFrame frame : frames()) {
+			result += frame.info();
+		}
+		//*/		
+		return result;
 	}
 
 	@Override
