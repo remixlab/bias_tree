@@ -2417,14 +2417,6 @@ public class Scene extends AbstractScene implements PConstants {
 			return;
 	}
 	
-	//mouse move
-	
-	/*
-	public void removeBindings() {
-		profile.removeBindings();
-	}
-	*/
-	
 	public Method action(Shortcut key) {
 		return profile.action(key);
 	}

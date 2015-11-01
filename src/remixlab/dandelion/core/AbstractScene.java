@@ -102,7 +102,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	public final static int		ZOOM		= 1 << 4; // prosceneMouse.zoomOnRegion
 	public final static int		ROTATE	= 1 << 5; // prosceneMouse.screenRotate
 
-	protected Platform				platform;
+	protected static Platform				platform;
 
 	public enum Platform {
 		PROCESSING_DESKTOP, PROCESSING_ANDROID, PROCESSING_JS
@@ -376,7 +376,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	/**
 	 * Returns the platform where dandelion is running. Either DESKTOP, ANDROID or JS.
 	 */
-	public Platform platform() {
+	public static Platform platform() {
 		return platform;
 	}
 

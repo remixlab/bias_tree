@@ -6,6 +6,7 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.bias.fx.*;
 import remixlab.dandelion.core.*;
+import remixlab.dandelion.core.AbstractScene.Platform;
 import remixlab.dandelion.geom.Frame;
 import remixlab.util.*;
 
@@ -119,17 +120,30 @@ public class GenericP5Frame extends GenericFrame {
 	
     //TODO decide these three:
 	
-	protected void setDefaultBindings() {
-		setDefaultMouseBindings();
+	public void setDefaultBindings() {
+		setDefaultMotionBindings();
 		setDefaultKeyBindings();
 	}
 	
-	public void setDefaultMouseBindings() {
-		scene().mouseAgent().setDefaultBindings(this);
+	public void setDefaultMotionBindings() {
+		if(Scene.platform() == Platform.PROCESSING_DESKTOP)
+			scene().mouseAgent().setDefaultBindings(this);
 	}
 	
 	public void setDefaultKeyBindings() {
-		scene().keyAgent().setDefaultBindings(this);
+		removeKeyBindings();
+		setKeyBinding('n', "align");
+		setKeyBinding('c', "center");
+		setKeyBinding(KeyAgent.LEFT_KEY, "translateXNeg");
+		setKeyBinding(KeyAgent.RIGHT_KEY, "translateXPos");
+		setKeyBinding(KeyAgent.DOWN_KEY, "translateYNeg");
+		setKeyBinding(KeyAgent.UP_KEY, "translateYPos");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.LEFT_KEY), "rotateXNeg");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.RIGHT_KEY), "rotateXPos");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.DOWN_KEY), "rotateYNeg");
+		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.UP_KEY), "rotateYPos");	
+		setKeyBinding('z', "rotateZNeg");
+		setKeyBinding(BogusEvent.SHIFT, 'z', "rotateZPos");
 	}
 	
 	//
