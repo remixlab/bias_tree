@@ -632,6 +632,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	}
 
 	public boolean checkIfGrabsInput(MotionEvent event) {
+		if(isEyeFrame()) return false;
 		if (event instanceof DOF1Event)
 			return checkIfGrabsInput((DOF1Event) event);
 		if (event instanceof DOF2Event)
@@ -644,6 +645,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	}
 
 	protected boolean checkIfGrabsInput(ClickEvent event) {
+		if(isEyeFrame()) return false;
 		return checkIfGrabsInput(event.x(), event.y());
 	}
 
@@ -653,11 +655,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	}
 
 	protected boolean checkIfGrabsInput(DOF1Event event) {
+		if(isEyeFrame()) return false;
 		AbstractScene.showMissingImplementationWarning("checkIfGrabsInput(DOF1Event event)", this.getClass().getName());
 		return false;
 	}
 
 	protected boolean checkIfGrabsInput(DOF2Event event) {
+		if(isEyeFrame()) return false;
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("checkIfGrabsInput");
 			return false;

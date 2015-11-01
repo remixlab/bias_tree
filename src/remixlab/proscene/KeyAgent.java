@@ -11,7 +11,6 @@
 package remixlab.proscene;
 
 import remixlab.bias.event.*;
-import remixlab.dandelion.core.AbstractScene;
 import remixlab.bias.core.*;
 
 /**
@@ -45,15 +44,6 @@ public class KeyAgent extends Agent {
 	}
 	
 	@Override
-	public boolean setDefaultGrabber(Grabber g) {
-		if( g instanceof AbstractScene ) {
-			System.err.println("No default keyboard agent grabber set. A scene cannot be set as a default keyboard agent input grabber.");
-			return false;
-		}
-		return super.setDefaultGrabber(g);
-	}
-	
-	@Override
 	public boolean resetDefaultGrabber() {
 		addGrabber(scene.eye().frame());
 		return setDefaultGrabber(scene.eye().frame());
@@ -83,82 +73,4 @@ public class KeyAgent extends Agent {
 	public static int keyCode(char key) {
 		return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key);
 	}
-	
-	/*
-	public void removeBindings(GenericP5Frame frame) {
-		frame.profile.removeKeyboardBindings();
-	}
-	*/
-	
-	/*
-	public void removeBindings() {
-		for( Grabber grabber : this.grabbers() ) 
-			if(grabber instanceof GenericP5Frame)
-				removeBindings((GenericP5Frame)grabber);
-	}
-	
-	public void setDefaultBindings() {
-		for( Grabber grabber : this.grabbers() ) 
-			if(grabber instanceof GenericP5Frame)
-				setDefaultBindings((GenericP5Frame)grabber);
-	}
-	*/
-	
-	/*
-	public void removeBindings(GenericP5Frame frame) {
-		frame.removeKeyBindings();
-	}
-	*/
-	
-	/*
-	 
-	public void setBinding(GenericP5Frame frame, int vkey, String methodName) {
-		frame.profile.setKeyboardBinding(new KeyboardShortcut(vkey), methodName);
-	}
-	
-	public void setBinding(GenericP5Frame frame, char key, String methodName) {
-		frame.profile.setKeyboardBinding(new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
-	}
-	
-	public void setBinding(GenericP5Frame frame, Object object, int vkey, String methodName) {
-		frame.profile.setKeyboardBinding(object, new KeyboardShortcut(vkey), methodName);
-	}
-	
-	public void setBinding(Object object, GenericP5Frame frame, char key, String methodName) {
-		frame.profile.setKeyboardBinding(object, new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
-	}
-	
-	public boolean hasBinding(GenericP5Frame frame, int vkey) {
-		return frame.profile.hasBinding(new KeyboardShortcut(vkey));
-	}
-	
-	public boolean hasBinding(GenericP5Frame frame, char key) {
-		return frame.profile.hasBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
-	}
-	
-	public void removeBinding(GenericP5Frame frame, int vkey) {
-		frame.profile.removeBinding(new KeyboardShortcut(vkey));
-	}
-	
-	public void removeBinding(GenericP5Frame frame, char key) {
-		frame.profile.removeBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
-	}
-	
-	public void setBinding(GenericP5Frame frame, int mask, char key, String methodName) {
-		frame.profile.setKeyboardBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
-	}
-	
-	public void setBinding(Object object, GenericP5Frame frame, int mask, char key, String methodName) {
-		frame.profile.setKeyboardBinding(object, new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
-	}
-	
-	public boolean hasBinding(GenericP5Frame frame, int mask, char key) {
-		return frame.profile.hasBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
-	}
-	
-	public void removeBinding(GenericP5Frame frame, int mask, char key) {
-		frame.profile.removeBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
-	}
-	
-	*/
 }

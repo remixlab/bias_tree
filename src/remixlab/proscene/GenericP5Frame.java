@@ -82,6 +82,11 @@ public class GenericP5Frame extends GenericFrame {
 			return;
 	}
 	
+	@Override
+	protected boolean checkIfGrabsInput(KeyboardEvent event) {
+		return profile.hasBinding(event.shortcut());
+	}
+	
 	//mouse move
 	
 	public void removeBindings() {

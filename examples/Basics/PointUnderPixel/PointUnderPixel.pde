@@ -27,7 +27,7 @@ void setup() {
   size(640, 360, P3D);
   scene = new Scene(this);
   
-  scene.setKeyBinding('z', "resetAnchor");
+  scene.setKeyBinding('x', "resetAnchor");
   //same as: scene.eyeFrame().setMotionBinding(CENTER, null);
   scene.eyeFrame().removeMotionBinding(CENTER);
   scene.eyeFrame().setClickBinding(LEFT, 1, "zoomOnPixel");

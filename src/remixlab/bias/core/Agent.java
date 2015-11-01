@@ -209,19 +209,28 @@ public abstract class Agent {
 	protected Grabber updateTrackedGrabber(BogusEvent event) {
 		if (event == null || !inputHandler().isAgentRegistered(this) || !isTracking())
 			return trackedGrabber();
-		Grabber g = trackedGrabber();
-		// We first check if tracked grabber remains the same
-		if (g != null)
-			if (g.checkIfGrabsInput(event))
+		// We first check if default grabber is tracked,
+		// i.e., default grabber has the highest priority (which is good for keyboards
+		// and doesn't hurt motion grabbers: 
+		Grabber dG = defaultGrabber();
+		if (dG != null)
+			if (dG.checkIfGrabsInput(event)) {
+				trackedGrabber = dG;
+				return trackedGrabber();
+			}
+		// then if tracked grabber remains the same:
+		Grabber tG = trackedGrabber();		
+		if (tG != null)
+			if (tG.checkIfGrabsInput(event))
 				return trackedGrabber();
 		// pick the first otherwise
 		trackedGrabber = null;
-		for (Grabber grabber : grabberList) {
-			if(grabber.checkIfGrabsInput(event)) {
-				trackedGrabber = grabber;
-				return trackedGrabber();
-			}
-		}
+		for (Grabber grabber : grabberList)
+			if(grabber != dG && grabber != tG)
+				if(grabber.checkIfGrabsInput(event)) {
+					trackedGrabber = grabber;
+					return trackedGrabber();
+				}
 		return trackedGrabber();
 	}
 
