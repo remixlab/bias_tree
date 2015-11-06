@@ -126,6 +126,33 @@ public class Profile {
 		return false;
 	}
 	
+	/*
+	// TODO keyboard handlers may need a key event
+	public boolean handle(BogusEvent event) {
+		Method iHandlerMethod = action(event.shortcut());
+		if (iHandlerMethod != null) {
+			try {
+				if(event.shortcut() instanceof KeyboardShortcut)
+					if(object(event.shortcut()) == grabber)
+						iHandlerMethod.invoke(object(event.shortcut()), new Object[] { });
+					else
+						iHandlerMethod.invoke(object(event.shortcut()), new Object[] { grabber });
+				else
+					if(object(event.shortcut()) == grabber)
+						iHandlerMethod.invoke(object(event.shortcut()), new Object[] { event });
+					else
+						iHandlerMethod.invoke(object(event.shortcut()), new Object[] { grabber, event });
+				return true;
+			} catch (Exception e) {
+				System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
+	}
+	*/
+	
 	protected boolean printWarning(Shortcut key, String methodName) {
 		if(methodName == null) {
 			this.removeBinding(key);
@@ -250,6 +277,20 @@ public class Profile {
 				}
 		return result;
 	}
+	
+	/*
+	// TODO keyboard handlers may need a key event
+	public void setKeyboardBinding(Shortcut key, String methodName) {
+		if(printWarning(key, methodName)) return;
+		try {
+			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { });
+			map.put(key, new ObjectMethodTuple(grabber, method));
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+	*/
 	
 	public void setKeyboardBinding(Shortcut key, String methodName) {
 		if(printWarning(key, methodName)) return;
