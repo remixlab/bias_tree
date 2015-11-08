@@ -27,6 +27,7 @@ import remixlab.bias.core.BogusEvent;
 public class KeyboardEvent extends BogusEvent {
 	protected final char	key;
 
+	//debug
 	public KeyboardEvent(char _key, int modifiers, int vk) {
 		super(modifiers, vk);
 		key = _key;
@@ -38,12 +39,7 @@ public class KeyboardEvent extends BogusEvent {
 	 */
 	public KeyboardEvent(int modifiers, int vk) {
 		super(modifiers, vk);
-		key = '\uFFFF';
-	}
-
-	public KeyboardEvent(char _key, int vk) {
-		super(NO_MODIFIER_MASK, vk);
-		key = _key;
+		key = '\0';
 	}
 
 	/**
@@ -52,6 +48,11 @@ public class KeyboardEvent extends BogusEvent {
 	public KeyboardEvent(int vk) {
 		super(NO_MODIFIER_MASK, vk);
 		key = '\uFFFF';
+	}
+	
+	public KeyboardEvent(char _key) {
+		super();
+		key = _key;
 	}
 
 	/**
@@ -69,10 +70,12 @@ public class KeyboardEvent extends BogusEvent {
 
 	@Override
 	public KeyboardShortcut shortcut() {
-		return new KeyboardShortcut(modifiers(), id());
+		if (key == '\0')
+			return new KeyboardShortcut(modifiers(), id());
+		else
+			return new KeyboardShortcut(key());
 	}
 
-	// not really in used
 	public char key() {
 		return key;
 	}

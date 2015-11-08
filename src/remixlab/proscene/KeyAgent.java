@@ -63,12 +63,45 @@ public class KeyAgent extends Agent {
 		press = e.getAction() == processing.event.KeyEvent.PRESS;
 		release = e.getAction() == processing.event.KeyEvent.RELEASE;
 		type = e.getAction() == processing.event.KeyEvent.TYPE;
-		currentEvent = new KeyboardEvent(e.getKey(), e.getModifiers(), e.getKeyCode());
-		if (press) {
-			updateTrackedGrabber(currentEvent);
-			handle(currentEvent);
+		
+		/*
+		//debug
+		KeyboardEvent kEvent;		
+		if(type) {
+			kEvent = new KeyboardEvent(e.getKey());
+			System.out.println("TYPE:    " + printEvent(kEvent) + printAction(kEvent));
 		}
+		if(press) {
+			kEvent = new KeyboardEvent(e.getModifiers(), e.getKeyCode());
+			System.out.println("PRESS:   " + printEvent(kEvent) + printAction(kEvent));
+		}
+		if(release) {
+			kEvent = new KeyboardEvent(e.getModifiers(), e.getKeyCode());
+			System.out.println("RELEASE: " + printEvent(kEvent) + printAction(kEvent));
+		}
+		// 
+		//*/
+		
+		if(type)
+			currentEvent = new KeyboardEvent(e.getKey());
+		else if (press || release)
+			currentEvent = new KeyboardEvent(e.getModifiers(), e.getKeyCode());
+		
+		if(type || press)
+			updateTrackedGrabber(currentEvent);
+		handle(release ? currentEvent.flush() : currentEvent);
 	}
+	
+	//debug
+	/*
+	protected String printEvent(KeyboardEvent event) {
+		return " mod: " + KeyboardEvent.modifiersText(event.modifiers()) + " vkey: " + event.id() + " char: " + event.key();
+	}
+	
+	protected String printAction(KeyboardEvent event) {
+		return " scene: " + scene.profile().actionName(event.shortcut()) + " eye: " + scene.eyeFrame().profile().actionName(event.shortcut());
+	}
+	*/
 	
 	public static int keyCode(char key) {
 		return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key);

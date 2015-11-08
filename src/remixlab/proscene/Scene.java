@@ -2413,9 +2413,86 @@ public class Scene extends AbstractScene implements PConstants {
 	
 	@Override
 	public void performInteraction(BogusEvent event) {
+		if (processEvent(event))
+			return;
 		if( profile.handle(event) )
 			return;
 	}
+	
+	String initAction;
+	String vkeyAction;
+	
+	protected final boolean processEvent(BogusEvent event) {
+		if (initAction == null) {
+			if (!event.flushed()) {
+				return initAction(event);// start action
+			}
+		}
+		else { // initAction != null
+			if (!event.flushed()) {
+				if (initAction == profile.actionName(event.shortcut()))
+					return execAction(event);// continue action
+				else { // initAction != action() -> action changes abruptly
+					flushAction(event);
+					return initAction(event);// start action
+				}
+			}
+			else {// action() == null
+				flushAction(event);// stopAction
+				initAction = null;
+				//setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
+				return true;
+			}
+		}
+		return true;// i.e., if initAction == action() == null -> ignore :)
+	}
+
+	// init domain
+
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processEvent(BogusEvent)
+	 */
+	protected boolean initAction(BogusEvent event) {
+		initAction = profile.actionName(event.shortcut());
+		if(initAction == null)
+			return false;
+		if (event instanceof KeyboardEvent)
+			return initAction((KeyboardEvent) event);
+		return false;
+	}
+	
+	protected boolean initAction(KeyboardEvent event) {
+		if(event.id() == 0)//TYPE event
+			return vkeyAction == null ? false : true;
+		else {
+			vkeyAction = profile.actionName(event.shortcut());
+		    return false;
+		}
+	}
+	
+	protected boolean execAction(BogusEvent event) {
+		if (event instanceof KeyboardEvent)
+			return execAction((KeyboardEvent) event);
+		return false;
+	}
+	
+	protected boolean execAction(KeyboardEvent event) {
+		return false;
+	}
+	
+	protected void flushAction(BogusEvent event) {
+		if (event instanceof KeyboardEvent)
+			flushAction((KeyboardEvent) event);
+	}
+	
+	protected void flushAction(KeyboardEvent event) {
+		if( event.flushed() && vkeyAction != null )
+			vkeyAction = null;
+	}
+	
+	//
 	
 	public Method action(Shortcut key) {
 		return profile.action(key);
@@ -2434,7 +2511,7 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 	
 	public void setKeyBinding(char key, String methodName) {
-		profile.setKeyboardBinding(new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
+		profile.setKeyboardBinding(new KeyboardShortcut(key), methodName);
 	}
 	
 	public void setKeyBinding(Object object, int vkey, String methodName) {
@@ -2442,7 +2519,7 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 	
 	public void setKeyBinding(Object object, char key, String methodName) {
-		profile.setKeyboardBinding(object, new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
+		profile.setKeyboardBinding(object, new KeyboardShortcut(key), methodName);
 	}
 	
 	public boolean hasKeyBinding(int vkey) {
@@ -2450,7 +2527,7 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 	
 	public boolean hasKeyBinding(char key) {
-		return profile.hasBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
+		return profile.hasBinding(new KeyboardShortcut(key));
 	}
 	
 	public void removeKeyBinding(int vkey) {
@@ -2458,23 +2535,41 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 	
 	public void removeKeyBinding(char key) {
-		profile.removeBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
+		profile.removeBinding(new KeyboardShortcut(key));
+	}
+	
+	//
+	
+	public void setKeyBinding(int mask, int vkey, String methodName) {
+		profile.setKeyboardBinding(new KeyboardShortcut(mask, vkey), methodName);
+	}
+	
+	public void setKeyBinding(Object object, int mask, int vkey, String methodName) {
+		profile.setKeyboardBinding(object, new KeyboardShortcut(mask, vkey), methodName);
+	}
+	
+	public boolean hasKeyBinding(int mask, int vkey) {
+		return profile.hasBinding(new KeyboardShortcut(mask, vkey));
+	}
+	
+	public void removeKeyBinding(int mask, int vkey) {
+		profile.removeBinding(new KeyboardShortcut(mask, vkey));
 	}
 	
 	public void setKeyBinding(int mask, char key, String methodName) {
-		profile.setKeyboardBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
+		setKeyBinding(mask, KeyAgent.keyCode(key), methodName);
 	}
 	
 	public void setKeyBinding(Object object, int mask, char key, String methodName) {
-		profile.setKeyboardBinding(object, new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
+		setKeyBinding(object, mask, KeyAgent.keyCode(key), methodName);
 	}
 	
 	public boolean hasKeyBinding(int mask, char key) {
-		return profile.hasBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
+		return hasKeyBinding(mask, KeyAgent.keyCode(key));
 	}
 	
 	public void removeKeyBinding(int mask, char key) {
-		profile.removeBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
+		removeKeyBinding(mask, KeyAgent.keyCode(key));
 	}
 	
 	public void removeKeyBindings() {
@@ -2519,7 +2614,7 @@ public class Scene extends AbstractScene implements PConstants {
 		setKeyBinding('m', "toggleAnimation");
 		setKeyBinding('r', "togglePathsVisualHint");
 		setKeyBinding('s', "interpolateToFitScene");
-		setKeyBinding(BogusEvent.SHIFT, 's', "showAll");
+		setKeyBinding('S', "showAll");
 		setKeyBinding(BogusEvent.CTRL, '1', "addKeyFrameToPath1");
 		setKeyBinding(BogusEvent.ALT, '1', "deletePath1");
 		setKeyBinding('1', "playPath1");

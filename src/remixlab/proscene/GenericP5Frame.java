@@ -143,12 +143,12 @@ public class GenericP5Frame extends GenericFrame {
 		setKeyBinding(KeyAgent.RIGHT_KEY, "translateXPos");
 		setKeyBinding(KeyAgent.DOWN_KEY, "translateYNeg");
 		setKeyBinding(KeyAgent.UP_KEY, "translateYPos");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.LEFT_KEY), "rotateXNeg");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.RIGHT_KEY), "rotateXPos");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.DOWN_KEY), "rotateYNeg");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.UP_KEY), "rotateYPos");	
+		setKeyBinding(BogusEvent.SHIFT, KeyAgent.LEFT_KEY, "rotateXNeg");
+		setKeyBinding(BogusEvent.SHIFT, KeyAgent.RIGHT_KEY, "rotateXPos");
+		setKeyBinding(BogusEvent.SHIFT, KeyAgent.DOWN_KEY, "rotateYNeg");
+		setKeyBinding(BogusEvent.SHIFT, KeyAgent.UP_KEY, "rotateYPos");	
 		setKeyBinding('z', "rotateZNeg");
-		setKeyBinding(BogusEvent.SHIFT, 'z', "rotateZPos");
+		setKeyBinding('Z', "rotateZPos");
 	}
 	
 	//
@@ -227,7 +227,7 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public void setKeyBinding(char key, String methodName) {
-		profile.setKeyboardBinding(new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
+		profile.setKeyboardBinding(new KeyboardShortcut(key), methodName);
 	}
 	
 	public void setKeyBinding(Object object, int vkey, String methodName) {
@@ -235,7 +235,7 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public void setKeyBinding(Object object, char key, String methodName) {
-		profile.setKeyboardBinding(object, new KeyboardShortcut(KeyAgent.keyCode(key)), methodName);
+		profile.setKeyboardBinding(object, new KeyboardShortcut(key), methodName);
 	}
 	
 	public boolean hasKeyBinding(int vkey) {
@@ -243,7 +243,7 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public boolean hasKeyBinding(char key) {
-		return profile.hasBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
+		return profile.hasBinding(new KeyboardShortcut(key));
 	}
 	
 	public void removeKeyBinding(int vkey) {
@@ -251,23 +251,39 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public void removeKeyBinding(char key) {
-		profile.removeBinding(new KeyboardShortcut(KeyAgent.keyCode(key)));
+		profile.removeBinding(new KeyboardShortcut(key));
+	}
+	
+	public void setKeyBinding(int mask, int vkey, String methodName) {
+		profile.setKeyboardBinding(new KeyboardShortcut(mask, vkey), methodName);
+	}
+	
+	public void setKeyBinding(Object object, int mask, int vkey, String methodName) {
+		profile.setKeyboardBinding(object, new KeyboardShortcut(mask, vkey), methodName);
+	}
+	
+	public boolean hasKeyBinding(int mask, int vkey) {
+		return profile.hasBinding(new KeyboardShortcut(mask, vkey));
+	}
+	
+	public void removeKeyBinding(int mask, int vkey) {
+		profile.removeBinding(new KeyboardShortcut(mask, vkey));
 	}
 	
 	public void setKeyBinding(int mask, char key, String methodName) {
-		profile.setKeyboardBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
+		setKeyBinding(mask, KeyAgent.keyCode(key), methodName);
 	}
 	
 	public void setKeyBinding(Object object, int mask, char key, String methodName) {
-		profile.setKeyboardBinding(object, new KeyboardShortcut(mask, KeyAgent.keyCode(key)), methodName);
+		setKeyBinding(object, mask, KeyAgent.keyCode(key), methodName);
 	}
 	
 	public boolean hasKeyBinding(int mask, char key) {
-		return profile.hasBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
+		return hasKeyBinding(mask, KeyAgent.keyCode(key));
 	}
 	
 	public void removeKeyBinding(int mask, char key) {
-		profile.removeBinding(new KeyboardShortcut(mask, KeyAgent.keyCode(key)));
+		removeKeyBinding(mask, KeyAgent.keyCode(key));
 	}
 	
 	public void removeKeyBindings() {
@@ -329,24 +345,7 @@ public class GenericP5Frame extends GenericFrame {
 		//removeClickBindings();
     	setClickBinding(MouseAgent.LEFT_ID, 2, "align");
 		setClickBinding(MouseAgent.RIGHT_ID, 2, "center");
-	}
-	
-	public void setDefaultKeyBindings() {
-		removeKeyBindings();
-		setKeyBinding('n', "align");
-		setKeyBinding('c', "center");
-		setKeyBinding(KeyAgent.LEFT_KEY, "translateXNeg");
-		setKeyBinding(KeyAgent.RIGHT_KEY, "translateXPos");
-		setKeyBinding(KeyAgent.DOWN_KEY, "translateYNeg");
-		setKeyBinding(KeyAgent.UP_KEY, "translateYPos");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.LEFT_KEY), "rotateXNeg");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.RIGHT_KEY), "rotateXPos");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.DOWN_KEY), "rotateYNeg");
-		profile.setKeyboardBinding(new KeyboardShortcut(BogusEvent.SHIFT, KeyAgent.UP_KEY), "rotateYPos");	
-		setKeyBinding('z', "rotateZNeg");
-		setKeyBinding(BogusEvent.SHIFT, 'z', "rotateZPos");
-	}
-	
+	}	
 	*/
 	
 	//
@@ -382,6 +381,7 @@ public class GenericP5Frame extends GenericFrame {
 	//
 	
 	String initAction;
+	String vkeyAction;
 	
 	// private A a;//TODO study make me an attribute to com between init and end
 	protected boolean			need4Spin;
@@ -500,7 +500,12 @@ public class GenericP5Frame extends GenericFrame {
 	 * @see #processEvent(BogusEvent)
 	 */
 	protected boolean initAction(KeyboardEvent event) {
-		return false;
+		if(event.id() == 0)//TYPE event
+			return vkeyAction == null ? false : true;
+		else {
+			vkeyAction = profile.actionName(event.shortcut());
+		    return false;
+		}
 	}
 
 	/**
@@ -653,7 +658,9 @@ public class GenericP5Frame extends GenericFrame {
 	 * 
 	 * @see #processEvent(BogusEvent)
 	 */
-	protected void flushAction(KeyboardEvent event) {		
+	protected void flushAction(KeyboardEvent event) {
+		if( event.flushed() && vkeyAction != null )
+			vkeyAction = null;
 	}
 
 	/**

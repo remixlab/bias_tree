@@ -10,9 +10,8 @@
 
 package remixlab.bias.event;
 
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.Shortcut;
-import remixlab.util.Copyable;
+import remixlab.bias.core.*;
+import remixlab.util.*;
 
 /**
  * This class represents {@link remixlab.bias.event.KeyboardEvent} shortcuts.
@@ -21,14 +20,40 @@ import remixlab.util.Copyable;
  * key); or, 2. Key combinations (e.g., CTRL key + virtual key representing 'a').
  */
 public final class KeyboardShortcut extends Shortcut implements Copyable {
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37).
+				appendSuper(super.hashCode()).
+				append(key).
+				toHashCode();
+	}
+
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		if (obj == this)
+			return true;
+		if (obj.getClass() != getClass())
+			return false;
+
+		KeyboardShortcut rhs = (KeyboardShortcut) obj;
+		return new EqualsBuilder()
+				.appendSuper(super.equals(obj))
+				.append(key, rhs.key)
+				.isEquals();
+	}
+	
+	protected final char	key;
+	
 	/**
 	 * Defines a keyboard shortcut from the given character.
 	 * 
-	 * @param vk
-	 *          the virtual key that defines the keyboard shortcut.
+	 * @param k
+	 *          the character that defines the keyboard shortcut.
 	 */
-	public KeyboardShortcut(int vk) {
-		super(vk);
+	public KeyboardShortcut(char k) {
+		super();
+		key = k;
 	}
 
 	/**
@@ -41,10 +66,23 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 	 */
 	public KeyboardShortcut(int m, int vk) {
 		super(m, vk);
+		key = '\0';
+	}
+	
+	/**
+	 * Defines a keyboard shortcut from the given virtual key.
+	 * 
+	 * @param vk
+	 *          the virtual key that defines the keyboard shortcut.
+	 */
+	public KeyboardShortcut(int vk) {
+		super(vk);
+		key = '\0';
 	}
 
 	protected KeyboardShortcut(KeyboardShortcut other) {
 		super(other);
+		this.key = other.key;
 	}
 
 	@Override
@@ -54,6 +92,8 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
 
 	@Override
 	public String description() {
+		if (key != '\0')
+			return String.valueOf(key);
 		String m = BogusEvent.modifiersText(mask);
 		return ((m.length() > 0) ? m + "+VKEY_" : "VKEY_") + String.valueOf(id);
 	}
