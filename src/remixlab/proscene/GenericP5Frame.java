@@ -10,7 +10,7 @@ import remixlab.dandelion.core.AbstractScene.Platform;
 import remixlab.dandelion.geom.Frame;
 import remixlab.util.*;
 
-public class GenericP5Frame extends GenericFrame {	
+public class GenericP5Frame extends GenericFrame implements MultiTempi{	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -76,10 +76,7 @@ public class GenericP5Frame extends GenericFrame {
 	
 	@Override
 	public void performInteraction(BogusEvent event) {
-		if (processEvent(event))
-			return;
-		if( profile.handle(event) )
-			return;
+		profile.handle(event);
 	}
 	
 	@Override
@@ -379,8 +376,6 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	//
-	
-	String initAction;
 	String vkeyAction;
 	
 	// private A a;//TODO study make me an attribute to com between init and end
@@ -403,102 +398,30 @@ public class GenericP5Frame extends GenericFrame {
 	
 	// lets see
 	
-	/**
-	 * Internal use. Algorithm to split an action flow into a 'three-tempi' {@link remixlab.bias.branch.Action} sequence.
-	 * It's called like this (see {@link #performInteraction(BogusEvent)}):
-	 * <pre>
-     * {@code
-	 * public void performInteraction(BogusEvent event) {
-	 *	if (processEvent(event))
-	 *		return;
-	 *	if (event instanceof KeyboardEvent)
-	 *		performInteraction((KeyboardEvent) event);
-	 *	if (event instanceof ClickEvent)
-	 *		performInteraction((ClickEvent) event);
-	 *	if (event instanceof MotionEvent)
-	 *		performInteraction((MotionEvent) event);
-	 * }
-     * }
-     * </pre>
-	 * <p>
-	 * The algorithm parses the bogus-event in {@link #performInteraction(BogusEvent)} and then decide what to call:
-	 * <ol>
-     * <li>{@link #initAction(BogusEvent)} (1st tempi): sets the initAction, called when initAction == null.</li>
-     * <li>{@link #execAction(BogusEvent)} (2nd tempi): continues action execution, called when initAction == action()
-     * (current action)</li>
-     * <li>{@link #flushAction(BogusEvent)} (3rd): ends action, called when {@link remixlab.bias.core.BogusEvent#flushed()}
-     * is true or when initAction != action()</li>
-     * </ol>
-     * <p>
-     * Useful to parse multiple-tempi actions, such as a mouse press/move/drag/release flow.
-     * <p>
-     * The following motion-actions have been implemented using the aforementioned technique:
-	 * {@link remixlab.dandelion.branch.Constants.DOF2Action#SCREEN_ROTATE},
-	 * {@link remixlab.dandelion.branch.Constants.DOF2Action#ZOOM_ON_REGION},
-	 * {@link remixlab.dandelion.branch.Constants.DOF2Action#MOVE_BACKWARD}, and
-	 * {@link remixlab.dandelion.branch.Constants.DOF2Action#MOVE_FORWARD}.
-	 * <p>
-     * Current implementation only supports {@link remixlab.bias.event.MotionEvent}s.
-	 */
-	protected final boolean processEvent(BogusEvent event) {
-		if (initAction == null) {
-			if (!event.flushed()) {
-				return initAction(event);// start action
-			}
-		}
-		else { // initAction != null
-			if (!event.flushed()) {
-				if (initAction == profile.actionName(event.shortcut()))
-					return execAction(event);// continue action
-				else { // initAction != action() -> action changes abruptly
-					flushAction(event);
-					return initAction(event);// start action
-				}
-			}
-			else {// action() == null
-				flushAction(event);// stopAction
-				initAction = null;
-				//setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
-				return true;
-			}
-		}
-		return true;// i.e., if initAction == action() == null -> ignore :)
-	}
-
-	// init domain
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processEvent(BogusEvent)
-	 */
-	protected boolean initAction(BogusEvent event) {
-		initAction = profile.actionName(event.shortcut());
-		if(initAction == null)
-			return false;
-		if (event instanceof KeyboardEvent)
-			return initAction((KeyboardEvent) event);
-		if (event instanceof ClickEvent)
-			return initAction((ClickEvent) event);
-		if (event instanceof MotionEvent)
+	@Override
+	public boolean initAction(BogusEvent event) {
+		if(event instanceof MotionEvent)
 			return initAction((MotionEvent) event);
-		return false;
-	}
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processEvent(BogusEvent)
-	 */
-	protected boolean initAction(ClickEvent event) {
+		if(event instanceof KeyboardEvent)
+			return initAction((KeyboardEvent) event);
 		return false;
 	}
 	
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processEvent(BogusEvent)
-	 */
+	@Override
+	public boolean execAction(BogusEvent event) {
+		if(event instanceof MotionEvent)
+			return execAction((MotionEvent) event);
+		return false;
+	}
+	
+	@Override
+	public void flushAction(BogusEvent event) {
+		if(event instanceof MotionEvent)
+			flushAction((MotionEvent) event);
+		if(event instanceof KeyboardEvent)
+			flushAction((KeyboardEvent) event);
+	}
+	
 	protected boolean initAction(KeyboardEvent event) {
 		if(event.id() == 0)//TYPE event
 			return vkeyAction == null ? false : true;
@@ -511,7 +434,7 @@ public class GenericP5Frame extends GenericFrame {
 	/**
 	 * Internal use.
 	 * 
-	 * @see #processEvent(BogusEvent)
+	 * @see #processAction(BogusEvent)
 	 */
 	protected boolean initAction(MotionEvent e) {
 		DOF2Event event = MotionEvent.dof2Event(e);
@@ -547,28 +470,11 @@ public class GenericP5Frame extends GenericFrame {
 		}
 		return false;
 	}
-
-	// exec domain
-
+	
 	/**
 	 * Internal use.
 	 * 
-	 * @see #processEvent(BogusEvent)
-	 */
-	protected boolean execAction(BogusEvent event) {
-		if (event instanceof KeyboardEvent)
-			return execAction((KeyboardEvent) event);
-		if (event instanceof ClickEvent)
-			return execAction((ClickEvent) event);
-		if (event instanceof MotionEvent)
-			return execAction((MotionEvent) event);
-		return false;
-	}
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processEvent(BogusEvent)
+	 * @see #processAction(BogusEvent)
 	 */
 	protected boolean execAction(MotionEvent e) {
 		DOF2Event event = MotionEvent.dof2Event(e);
@@ -594,36 +500,7 @@ public class GenericP5Frame extends GenericFrame {
 	/**
 	 * Internal use.
 	 * 
-	 * @see #processEvent(BogusEvent)
-	 */
-	protected boolean execAction(ClickEvent event) {
-		return false;
-	}
-	
-	protected boolean execAction(KeyboardEvent event) {
-		return false;
-	}
-
-	// flushDomain
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processEvent(BogusEvent)
-	 */
-	protected void flushAction(BogusEvent event) {
-		if (event instanceof KeyboardEvent)
-			flushAction((KeyboardEvent) event);
-		if (event instanceof ClickEvent)
-			flushAction((ClickEvent) event);
-		if (event instanceof MotionEvent)
-			flushAction((MotionEvent) event);
-	}
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processEvent(BogusEvent)
+	 * @see #processAction(BogusEvent)
 	 */
 	protected void flushAction(MotionEvent e) {
 		DOF2Event event = MotionEvent.dof2Event(e);
@@ -656,7 +533,7 @@ public class GenericP5Frame extends GenericFrame {
 	/**
 	 * Internal use.
 	 * 
-	 * @see #processEvent(BogusEvent)
+	 * @see #processAction(BogusEvent)
 	 */
 	protected void flushAction(KeyboardEvent event) {
 		if( event.flushed() && vkeyAction != null )
@@ -666,7 +543,7 @@ public class GenericP5Frame extends GenericFrame {
 	/**
 	 * Internal use.
 	 * 
-	 * @see #processEvent(BogusEvent)
+	 * @see #processAction(BogusEvent)
 	 */
 	protected void flushAction(ClickEvent event) {
 	}

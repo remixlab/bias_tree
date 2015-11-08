@@ -14,7 +14,7 @@ import processing.core.*;
 import processing.opengl.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.fx.Profile;
+import remixlab.bias.fx.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
@@ -81,7 +81,7 @@ import java.nio.FloatBuffer;
  * {@link #removeFrames()}, {@link #hasFrame(InteractiveFrame)}, {@link #removeFrame(InteractiveFrame)}, {@link #removeFrames()},
  * {@link #drawFrames()} and {@link #drawFrames(PGraphics)} for frame handling.
  */
-public class Scene extends AbstractScene implements PConstants {
+public class Scene extends AbstractScene implements PConstants, MultiTempi {
 	// begin: GWT-incompatible
 	// /*
 	// Reflection
@@ -117,6 +117,7 @@ public class Scene extends AbstractScene implements PConstants {
 	///TODO decide placement
 	//Profile
 	public Profile profile;
+	String vkeyAction;
 
 	// E X C E P T I O N H A N D L I N G
 	protected int								beginOffScreenDrawingCalls;
@@ -2413,54 +2414,25 @@ public class Scene extends AbstractScene implements PConstants {
 	
 	@Override
 	public void performInteraction(BogusEvent event) {
-		if (processEvent(event))
-			return;
-		if( profile.handle(event) )
-			return;
+		profile.handle(event);
 	}
 	
-	String initAction;
-	String vkeyAction;
-	
-	protected final boolean processEvent(BogusEvent event) {
-		if (initAction == null) {
-			if (!event.flushed()) {
-				return initAction(event);// start action
-			}
-		}
-		else { // initAction != null
-			if (!event.flushed()) {
-				if (initAction == profile.actionName(event.shortcut()))
-					return execAction(event);// continue action
-				else { // initAction != action() -> action changes abruptly
-					flushAction(event);
-					return initAction(event);// start action
-				}
-			}
-			else {// action() == null
-				flushAction(event);// stopAction
-				initAction = null;
-				//setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
-				return true;
-			}
-		}
-		return true;// i.e., if initAction == action() == null -> ignore :)
-	}
-
-	// init domain
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processEvent(BogusEvent)
-	 */
-	protected boolean initAction(BogusEvent event) {
-		initAction = profile.actionName(event.shortcut());
-		if(initAction == null)
-			return false;
-		if (event instanceof KeyboardEvent)
+	@Override
+	public boolean initAction(BogusEvent event) {
+		if(event instanceof KeyboardEvent)
 			return initAction((KeyboardEvent) event);
 		return false;
+	}
+	
+	@Override
+	public boolean execAction(BogusEvent event) {
+		return false;
+	}
+	
+	@Override
+	public void flushAction(BogusEvent event) {
+		if(event instanceof KeyboardEvent)
+			flushAction((KeyboardEvent) event);
 	}
 	
 	protected boolean initAction(KeyboardEvent event) {
@@ -2472,27 +2444,10 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 	}
 	
-	protected boolean execAction(BogusEvent event) {
-		if (event instanceof KeyboardEvent)
-			return execAction((KeyboardEvent) event);
-		return false;
-	}
-	
-	protected boolean execAction(KeyboardEvent event) {
-		return false;
-	}
-	
-	protected void flushAction(BogusEvent event) {
-		if (event instanceof KeyboardEvent)
-			flushAction((KeyboardEvent) event);
-	}
-	
 	protected void flushAction(KeyboardEvent event) {
 		if( event.flushed() && vkeyAction != null )
 			vkeyAction = null;
 	}
-	
-	//
 	
 	public Method action(Shortcut key) {
 		return profile.action(key);

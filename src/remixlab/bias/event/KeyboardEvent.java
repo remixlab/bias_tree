@@ -28,10 +28,12 @@ public class KeyboardEvent extends BogusEvent {
 	protected final char	key;
 
 	//debug
+	/*
 	public KeyboardEvent(char _key, int modifiers, int vk) {
 		super(modifiers, vk);
 		key = _key;
 	}
+	*/
 
 	/**
 	 * Constructs a keyboard event with the <b>modifiers</b> and <b>vk</b> defining its

@@ -59,6 +59,9 @@ public class Profile {
 	
 	protected HashMap<Shortcut, ObjectMethodTuple>	map;
 	protected Grabber grabber;
+	
+	// temporal vars
+	String initAction;
 
 	/**
 	 * Constructs the hash-map based profile.
@@ -68,7 +71,7 @@ public class Profile {
 		grabber = g;
 	}
 	
-	public void from(Profile p) {		
+	public void from(Profile p) {	
 		if( grabber.getClass() != p.grabber.getClass() ) {
 			System.err.println("Profile grabbers should be of the same type");
 			return;
@@ -107,8 +110,13 @@ public class Profile {
 	public Object object(Shortcut key) {
 		return map.get(key) == null ? null : map.get(key).object;
 	}
+	
+	public void handle(BogusEvent event) {
+		if (!processAction(event))
+			invokeAction(event);
+	}
 		
-	public boolean handle(BogusEvent event) {
+	protected boolean invokeAction(BogusEvent event) {
 		Method iHandlerMethod = action(event.shortcut());
 		if (iHandlerMethod != null) {
 			try {
@@ -578,5 +586,104 @@ public class Profile {
 				result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
 			}
 		return result;
+	}
+	
+	//
+	
+	/**
+	 * Internal use. Algorithm to split an action flow into a 'three-tempi' {@link remixlab.bias.branch.Action} sequence.
+	 * It's called like this (see {@link #performInteraction(BogusEvent)}):
+	 * <pre>
+     * {@code
+	 * public void performInteraction(BogusEvent event) {
+	 *	if (processEvent(event))
+	 *		return;
+	 *	if (event instanceof KeyboardEvent)
+	 *		performInteraction((KeyboardEvent) event);
+	 *	if (event instanceof ClickEvent)
+	 *		performInteraction((ClickEvent) event);
+	 *	if (event instanceof MotionEvent)
+	 *		performInteraction((MotionEvent) event);
+	 * }
+     * }
+     * </pre>
+	 * <p>
+	 * The algorithm parses the bogus-event in {@link #performInteraction(BogusEvent)} and then decide what to call:
+	 * <ol>
+     * <li>{@link #initAction(BogusEvent)} (1st tempi): sets the initAction, called when initAction == null.</li>
+     * <li>{@link #execAction(BogusEvent)} (2nd tempi): continues action execution, called when initAction == action()
+     * (current action)</li>
+     * <li>{@link #flushAction(BogusEvent)} (3rd): ends action, called when {@link remixlab.bias.core.BogusEvent#flushed()}
+     * is true or when initAction != action()</li>
+     * </ol>
+     * <p>
+     * Useful to parse multiple-tempi actions, such as a mouse press/move/drag/release flow.
+     * <p>
+     * The following motion-actions have been implemented using the aforementioned technique:
+	 * {@link remixlab.dandelion.branch.Constants.DOF2Action#SCREEN_ROTATE},
+	 * {@link remixlab.dandelion.branch.Constants.DOF2Action#ZOOM_ON_REGION},
+	 * {@link remixlab.dandelion.branch.Constants.DOF2Action#MOVE_BACKWARD}, and
+	 * {@link remixlab.dandelion.branch.Constants.DOF2Action#MOVE_FORWARD}.
+	 * <p>
+     * Current implementation only supports {@link remixlab.bias.event.MotionEvent}s.
+	 */
+	protected final boolean processAction(BogusEvent event) {
+		if (initAction == null) {
+			if (!event.flushed()) {
+				return initAction(event);// start action
+			}
+		}
+		else { // initAction != null
+			if (!event.flushed()) {
+				if (initAction == actionName(event.shortcut()))
+					return execAction(event);// continue action
+				else { // initAction != action() -> action changes abruptly
+					flushAction(event);
+					return initAction(event);// start action
+				}
+			}
+			else {// action() == null
+				flushAction(event);// stopAction
+				initAction = null;
+				//setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
+				return true;
+			}
+		}
+		return true;// i.e., if initAction == action() == null -> ignore :)
+	}
+
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processAction(BogusEvent)
+	 */
+	protected boolean initAction(BogusEvent event) {
+		initAction = actionName(event.shortcut());
+		if(initAction == null)
+			return false;		
+		if( grabber instanceof MultiTempi )
+			return ((MultiTempi)grabber).initAction(event);		
+		return false;
+	}
+	
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processAction(BogusEvent)
+	 */
+	protected boolean execAction(BogusEvent event) {		
+		if( grabber instanceof MultiTempi )
+			return ((MultiTempi)grabber).execAction(event);
+		return false;
+	}
+	
+	/**
+	 * Internal use.
+	 * 
+	 * @see #processAction(BogusEvent)
+	 */
+	protected void flushAction(BogusEvent event) {
+		if( grabber instanceof MultiTempi )
+			((MultiTempi)grabber).flushAction(event);
 	}
 }
