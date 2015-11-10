@@ -782,7 +782,7 @@ public class Profile {
 	
 	protected Class<?> printWarning(String methodName) {
 		if( !names.contains(methodName) ) {
-			System.out.println("Warning: nothing added, methodName should be one in: " + names.toString() );
+			System.out.println("Warning: your " + methodName + " method hasn't been added, it should be one of: " + names.toString() );
 			return null;
 		}
 		Class<?> cls = null;

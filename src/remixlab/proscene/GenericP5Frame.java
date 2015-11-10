@@ -46,6 +46,7 @@ public class GenericP5Frame extends GenericFrame {
 		super(scn);
 		profile = new Profile(this);
 		setDefaultBindings();
+		addActionHandlers();
 	}
 	
 	public GenericP5Frame(Scene scn, Frame referenceFrame) {
@@ -55,12 +56,15 @@ public class GenericP5Frame extends GenericFrame {
 			this.profile.from(((GenericP5Frame)referenceFrame).profile);
 		else
 			setDefaultBindings();
+		//TODO copy pending
+		addActionHandlers();
 	}
 	
 	public GenericP5Frame(Eye eye) {
 		super(eye);
 		profile = new Profile(this);
 		setDefaultBindings();
+		addActionHandlers();
 	}
 	
 	protected GenericP5Frame(GenericP5Frame otherFrame) {
@@ -125,18 +129,27 @@ public class GenericP5Frame extends GenericFrame {
 	public void setDefaultBindings() {
 		setDefaultMotionBindings();
 		setDefaultKeyBindings();
-		
-		//TODO experimental
+	}
+	
+	protected void addActionHandlers() {
 		profile.addActionHandler("initKeyboard");
 		profile.addActionHandler("flushKeyboard");
-		/*
+		
 		profile.addActionHandler("initMotion");
 		profile.addActionHandler("execMotion");
 		profile.addActionHandler("flushMotion");
-		*/
+		
 		profile.addActionHandler("initDOF2");
 		profile.addActionHandler("execDOF2");
 		profile.addActionHandler("flushDOF2");
+		
+		profile.addActionHandler("initDOF3");
+		profile.addActionHandler("execDOF3");
+		profile.addActionHandler("flushDOF3");
+		
+		profile.addActionHandler("initDOF6");
+		profile.addActionHandler("execDOF6");
+		profile.addActionHandler("flushDOF6");
 	}
 	
 	public void setDefaultMotionBindings() {
@@ -410,6 +423,22 @@ public class GenericP5Frame extends GenericFrame {
 	
 	// lets see
 	
+	public void addActionHandler(String methodName) {
+		profile().addActionHandler(methodName);
+	}
+	
+	public void addActionHandler(Object object, String methodName) {
+		profile().addActionHandler(object, methodName);
+	}
+	
+	public boolean hasActionHandler(String methodName) {
+		return profile().hasActionHandler(methodName);
+	}
+	
+	public void removeActionHandler(String methodName) {
+		profile().removeActionHandler(methodName);
+	}
+	
 	public boolean initKeyboard(KeyboardEvent event) {
 		if(event.id() == 0)//TYPE event
 			return vkeyAction == null ? false : true;
@@ -430,6 +459,14 @@ public class GenericP5Frame extends GenericFrame {
 	 * @see #processAction(BogusEvent)
 	 */
 	public boolean initMotion(MotionEvent e) {
+		return initDOF2(MotionEvent.dof2Event(e));
+	}
+	
+	public boolean initDOF3(DOF3Event e) {
+		return initDOF2(MotionEvent.dof2Event(e));
+	}
+	
+	public boolean initDOF6(DOF6Event e) {
 		return initDOF2(MotionEvent.dof2Event(e));
 	}
 	
@@ -476,6 +513,14 @@ public class GenericP5Frame extends GenericFrame {
 		return execDOF2(MotionEvent.dof2Event(e));
 	}
 	
+	public boolean execDOF3(DOF3Event e) {
+		return execDOF2(MotionEvent.dof2Event(e));
+	}
+	
+	public boolean execDOF6(DOF6Event e) {
+		return execDOF2(MotionEvent.dof2Event(e));
+	}
+	
 	public boolean execDOF2(DOF2Event event) {
 		if(event == null)
 			return false;
@@ -502,6 +547,14 @@ public class GenericP5Frame extends GenericFrame {
 	 * @see #processAction(BogusEvent)
 	 */
 	public void flushMotion(MotionEvent e) {
+		flushMotion(MotionEvent.dof2Event(e));
+	}
+	
+	public void flushDOF3(DOF3Event e) {
+		flushMotion(MotionEvent.dof2Event(e));
+	}
+	
+	public void flushDOF6(DOF6Event e) {
 		flushMotion(MotionEvent.dof2Event(e));
 	}
 	
