@@ -81,7 +81,7 @@ import java.nio.FloatBuffer;
  * {@link #removeFrames()}, {@link #hasFrame(InteractiveFrame)}, {@link #removeFrame(InteractiveFrame)}, {@link #removeFrames()},
  * {@link #drawFrames()} and {@link #drawFrames(PGraphics)} for frame handling.
  */
-public class Scene extends AbstractScene implements PConstants, MultiTempi {
+public class Scene extends AbstractScene implements PConstants {
 	// begin: GWT-incompatible
 	// /*
 	// Reflection
@@ -204,6 +204,11 @@ public class Scene extends AbstractScene implements PConstants, MultiTempi {
 		
 		parent.registerMethod("keyEvent", keyboardAgent());
 		this.setDefaultKeyBindings();
+		
+		//TODO experimental
+		profile.addActionHandler("initKeyboard");
+		profile.addActionHandler("flushKeyboard");
+		
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
 
@@ -2417,6 +2422,21 @@ public class Scene extends AbstractScene implements PConstants, MultiTempi {
 		profile.handle(event);
 	}
 	
+	public boolean initKeyboard(KeyboardEvent event) {
+		if(event.id() == 0)//TYPE event
+			return vkeyAction == null ? false : true;
+		else {
+			vkeyAction = profile.actionName(event.shortcut());
+		    return false;
+		}
+	}
+	
+	public void flushKeyboard(KeyboardEvent event) {
+		if( event.flushed() && vkeyAction != null )
+			vkeyAction = null;
+	}
+	
+	/*
 	@Override
 	public boolean initAction(BogusEvent event) {
 		if(event instanceof KeyboardEvent)
@@ -2448,6 +2468,7 @@ public class Scene extends AbstractScene implements PConstants, MultiTempi {
 		if( event.flushed() && vkeyAction != null )
 			vkeyAction = null;
 	}
+	*/
 	
 	public Method action(Shortcut key) {
 		return profile.action(key);

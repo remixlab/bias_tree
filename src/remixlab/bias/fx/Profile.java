@@ -11,14 +11,14 @@
 package remixlab.bias.fx;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.Grabber;
-import remixlab.bias.core.Shortcut;
+import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.util.*;
 
@@ -62,12 +62,20 @@ public class Profile {
 	
 	// temporal vars
 	String initAction;
+	
+	protected HashMap<String, ObjectMethodTuple> tuples;
+	
+	protected List<String> names = Arrays.asList(
+			"init", "initKeyboard", "initClick", "initMotion", "initDOF1", "initDOF2", "initDOF3", "initDOF6",
+			"exec", "execKeyboard", "execClick", "execMotion", "execDOF1", "execDOF2", "execDOF3", "execDOF6",
+			"flush", "flushKeyboard", "flushClick", "flushMotion", "flushDOF1", "flushDOF2", "flushDOF3", "flushDOF6");
 
 	/**
 	 * Constructs the hash-map based profile.
 	 */
 	public Profile(Grabber g) {
 		map = new HashMap<Shortcut, ObjectMethodTuple>();
+		tuples = new HashMap<String, ObjectMethodTuple>();
 		grabber = g;
 	}
 	
@@ -107,8 +115,12 @@ public class Profile {
 		return m.getName();		
 	}
 	
-	public Object object(Shortcut key) {
+	protected Object object(Shortcut key) {
 		return map.get(key) == null ? null : map.get(key).object;
+	}
+	
+	protected Object object(String name) {
+		return tuples.get(name) == null ? null : tuples.get(name).object;
 	}
 	
 	public void handle(BogusEvent event) {
@@ -660,10 +672,22 @@ public class Profile {
 	protected boolean initAction(BogusEvent event) {
 		initAction = actionName(event.shortcut());
 		if(initAction == null)
-			return false;		
-		if( grabber instanceof MultiTempi )
-			return ((MultiTempi)grabber).initAction(event);		
-		return false;
+			return false;
+		if (event instanceof KeyboardEvent)
+			return invokeActionHandler(event, "initKeyboard");
+		if (event instanceof ClickEvent)
+			return invokeActionHandler(event, "initClick");
+		if (event instanceof DOF1Event)
+			return invokeActionHandler(event, "initDOF1");
+		if (event instanceof DOF2Event) 
+			return invokeActionHandler(event, "initDOF2");
+		if (event instanceof DOF3Event)
+			return invokeActionHandler(event, "initDOF3");
+		if (event instanceof DOF6Event)
+			return invokeActionHandler(event, "initDOF6");
+		if (event instanceof MotionEvent)
+			return invokeActionHandler(event, "initMotion");
+		return invokeActionHandler(event, "init");
 	}
 	
 	/**
@@ -671,10 +695,22 @@ public class Profile {
 	 * 
 	 * @see #processAction(BogusEvent)
 	 */
-	protected boolean execAction(BogusEvent event) {		
-		if( grabber instanceof MultiTempi )
-			return ((MultiTempi)grabber).execAction(event);
-		return false;
+	protected boolean execAction(BogusEvent event) {
+		if (event instanceof KeyboardEvent)
+			return invokeActionHandler(event, "execKeyboard");
+		if (event instanceof ClickEvent)
+			return invokeActionHandler(event, "execClick");
+		if (event instanceof DOF1Event)
+			return invokeActionHandler(event, "execDOF1");
+		if (event instanceof DOF2Event)
+			return invokeActionHandler(event, "execDOF2");
+		if (event instanceof DOF3Event)
+			return invokeActionHandler(event, "execDOF3");
+		if (event instanceof DOF6Event)
+			return invokeActionHandler(event, "execDOF6");
+		if (event instanceof MotionEvent)
+			return invokeActionHandler(event, "execMotion");
+		return invokeActionHandler(event, "exec");
 	}
 	
 	/**
@@ -683,7 +719,122 @@ public class Profile {
 	 * @see #processAction(BogusEvent)
 	 */
 	protected void flushAction(BogusEvent event) {
-		if( grabber instanceof MultiTempi )
-			((MultiTempi)grabber).flushAction(event);
+		if (event instanceof KeyboardEvent) {
+			invokeActionHandler(event, "flushKeyboard");
+			return;
+		}
+		if (event instanceof ClickEvent) {
+			invokeActionHandler(event, "flushClick");
+			return;
+		}
+		if (event instanceof DOF1Event) {
+			invokeActionHandler(event, "flushDOF1");
+			return;
+		}
+		if (event instanceof DOF2Event) {
+			invokeActionHandler(event, "flushDOF2");
+			return;
+		}
+		if (event instanceof DOF3Event) {
+			invokeActionHandler(event, "flushDOF3");
+			return;
+		}
+		if (event instanceof DOF6Event) {
+			invokeActionHandler(event, "flushDOF6");
+			return;
+		}
+		if (event instanceof MotionEvent) {
+			invokeActionHandler(event, "flushMotion");
+			return;
+		}
+		invokeActionHandler(event, "flush");
+	}
+	
+	protected boolean invokeActionHandler(BogusEvent event, String methodName) {
+		boolean result = false;
+		ObjectMethodTuple tuple = tuples.get(methodName);
+		if(tuple == null)
+			return result;
+		Method iHandlerMethod = tuple.method;
+		if (iHandlerMethod != null) {
+			try {
+				if(methodName.contains("flush")) {
+					if(object(methodName) == grabber)
+						iHandlerMethod.invoke(object(methodName), new Object[] { event });
+					else
+						iHandlerMethod.invoke(object(methodName), new Object[] { grabber, event });
+					result = true;
+				}
+				else {//init and exec
+					if(object(methodName) == grabber)
+						result = (boolean) iHandlerMethod.invoke(object(methodName), new Object[] { event });
+					else
+						result = (boolean) iHandlerMethod.invoke(object(methodName), new Object[] { grabber, event });										
+				}
+			} catch (Exception e) {
+				System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
+				e.printStackTrace();
+				result = false;
+			}
+		}
+		return result;
+	}
+	
+	protected Class<?> printWarning(String methodName) {
+		if( !names.contains(methodName) ) {
+			System.out.println("Warning: nothing added, methodName should be one in: " + names.toString() );
+			return null;
+		}
+		Class<?> cls = null;
+		if (tuples.containsKey(methodName))
+			System.out.println("Warning: " + methodName + " re-added");
+		if( methodName.contains("Keyboard") )
+			cls = KeyboardEvent.class;
+		else if (methodName.contains("Click"))
+			cls = ClickEvent.class;
+		else if (methodName.contains("Motion"))
+			cls = MotionEvent.class;
+		else if (methodName.contains("DOF1"))
+			cls = DOF1Event.class;
+		else if (methodName.contains("DOF2"))
+			cls = DOF2Event.class;
+		else if (methodName.contains("DOF3"))
+			cls = DOF3Event.class;
+		else if (methodName.contains("DOF6"))
+			cls = DOF6Event.class;
+		else
+			cls = BogusEvent.class;		
+		return cls;
+	}
+	
+	public void addActionHandler(String methodName) {
+		Class<?> cls = printWarning(methodName);
+		if(cls == null) return;
+		try {
+			tuples.put(methodName, new ObjectMethodTuple(grabber, grabber.getClass().getMethod(methodName, new Class<?>[] { cls })));
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+	
+	public void addActionHandler(Object object, String methodName) {
+		Class<?> cls = printWarning(methodName);
+		if(cls == null) return;
+		try {
+			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), cls });
+			tuples.put(methodName, new ObjectMethodTuple(object, method));
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean hasActionHandler(String methodName) {
+		return tuples.containsKey(methodName);
+	}
+	
+	public void removeActionHandler(String methodName) {
+		tuples.remove(methodName);
 	}
 }

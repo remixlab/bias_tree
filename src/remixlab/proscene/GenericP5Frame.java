@@ -10,7 +10,7 @@ import remixlab.dandelion.core.AbstractScene.Platform;
 import remixlab.dandelion.geom.Frame;
 import remixlab.util.*;
 
-public class GenericP5Frame extends GenericFrame implements MultiTempi{	
+public class GenericP5Frame extends GenericFrame {	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -125,6 +125,18 @@ public class GenericP5Frame extends GenericFrame implements MultiTempi{
 	public void setDefaultBindings() {
 		setDefaultMotionBindings();
 		setDefaultKeyBindings();
+		
+		//TODO experimental
+		profile.addActionHandler("initKeyboard");
+		profile.addActionHandler("flushKeyboard");
+		/*
+		profile.addActionHandler("initMotion");
+		profile.addActionHandler("execMotion");
+		profile.addActionHandler("flushMotion");
+		*/
+		profile.addActionHandler("initDOF2");
+		profile.addActionHandler("execDOF2");
+		profile.addActionHandler("flushDOF2");
 	}
 	
 	public void setDefaultMotionBindings() {
@@ -398,31 +410,7 @@ public class GenericP5Frame extends GenericFrame implements MultiTempi{
 	
 	// lets see
 	
-	@Override
-	public boolean initAction(BogusEvent event) {
-		if(event instanceof MotionEvent)
-			return initAction((MotionEvent) event);
-		if(event instanceof KeyboardEvent)
-			return initAction((KeyboardEvent) event);
-		return false;
-	}
-	
-	@Override
-	public boolean execAction(BogusEvent event) {
-		if(event instanceof MotionEvent)
-			return execAction((MotionEvent) event);
-		return false;
-	}
-	
-	@Override
-	public void flushAction(BogusEvent event) {
-		if(event instanceof MotionEvent)
-			flushAction((MotionEvent) event);
-		if(event instanceof KeyboardEvent)
-			flushAction((KeyboardEvent) event);
-	}
-	
-	protected boolean initAction(KeyboardEvent event) {
+	public boolean initKeyboard(KeyboardEvent event) {
 		if(event.id() == 0)//TYPE event
 			return vkeyAction == null ? false : true;
 		else {
@@ -430,14 +418,22 @@ public class GenericP5Frame extends GenericFrame implements MultiTempi{
 		    return false;
 		}
 	}
+	
+	public void flushKeyboard(KeyboardEvent event) {
+		if( event.flushed() && vkeyAction != null )
+			vkeyAction = null;
+	}
 
 	/**
 	 * Internal use.
 	 * 
 	 * @see #processAction(BogusEvent)
 	 */
-	protected boolean initAction(MotionEvent e) {
-		DOF2Event event = MotionEvent.dof2Event(e);
+	public boolean initMotion(MotionEvent e) {
+		return initDOF2(MotionEvent.dof2Event(e));
+	}
+	
+	public boolean initDOF2(DOF2Event event) {
 		if(event == null)
 			return false;
 		initMotionEvent = event.get();
@@ -476,8 +472,11 @@ public class GenericP5Frame extends GenericFrame implements MultiTempi{
 	 * 
 	 * @see #processAction(BogusEvent)
 	 */
-	protected boolean execAction(MotionEvent e) {
-		DOF2Event event = MotionEvent.dof2Event(e);
+	public boolean execMotion(MotionEvent e) {
+		return execDOF2(MotionEvent.dof2Event(e));
+	}
+	
+	public boolean execDOF2(DOF2Event event) {
 		if(event == null)
 			return false;
 		currMotionEvent = event;
@@ -502,8 +501,11 @@ public class GenericP5Frame extends GenericFrame implements MultiTempi{
 	 * 
 	 * @see #processAction(BogusEvent)
 	 */
-	protected void flushAction(MotionEvent e) {
-		DOF2Event event = MotionEvent.dof2Event(e);
+	public void flushMotion(MotionEvent e) {
+		flushMotion(MotionEvent.dof2Event(e));
+	}
+	
+	public void flushDOF2(DOF2Event event) {
 		if(event == null)
 			return;
 		if (rotateHint) {
@@ -528,23 +530,5 @@ public class GenericP5Frame extends GenericFrame implements MultiTempi{
 				setFlySpeed(flySpeedCache);
 			stopFlying();
 		}
-	}
-	
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processAction(BogusEvent)
-	 */
-	protected void flushAction(KeyboardEvent event) {
-		if( event.flushed() && vkeyAction != null )
-			vkeyAction = null;
-	}
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processAction(BogusEvent)
-	 */
-	protected void flushAction(ClickEvent event) {
 	}
 }
