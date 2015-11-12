@@ -54,10 +54,10 @@ public class GenericP5Frame extends GenericFrame {
 		profile = new Profile(this);
 		if(referenceFrame instanceof GenericP5Frame)
 			this.profile.from(((GenericP5Frame)referenceFrame).profile);
-		else
+		else {
 			setDefaultBindings();
-		//TODO copy pending
-		addActionHandlers();
+			addActionHandlers();
+		}
 	}
 	
 	public GenericP5Frame(Eye eye) {

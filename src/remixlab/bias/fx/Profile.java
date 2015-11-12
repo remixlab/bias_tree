@@ -91,6 +91,13 @@ public class Profile {
 			else
 				map.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
 		}
+		tuples = new HashMap<String, ObjectMethodTuple>();
+		for (Map.Entry<String, ObjectMethodTuple> entry : p.tuples.entrySet()) {
+			if( entry.getValue().object == p.grabber )
+				tuples.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
+			else
+				tuples.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
+		}
 	}
 
 	/**
