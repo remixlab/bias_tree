@@ -99,6 +99,10 @@ public class Profile {
 				tuples.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
 		}
 	}
+	
+	public Grabber grabber() {
+		return grabber;
+	}
 
 	/**
 	 * Returns the {@code map} (which is simply an instance of {@code HashMap}) encapsulated by this object.

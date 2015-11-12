@@ -182,7 +182,7 @@ public class Scene extends AbstractScene implements PConstants {
 
 		// 4. Create agents and register P5 methods
 		//TODO add me properly
-		profile = new Profile(this);
+		setProfile(new Profile(this));
 		//TODO android
 		// discard this block one android is restored
 		{
@@ -841,41 +841,50 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 	
 	protected static String parseKeyInfo(String info) {
-		// Parsing is split in two steps:
-		// 1. Parse the "1", "2", "3" and left-right-up-down keys:
-		String vk_1 = "VKEY_" + String.valueOf(49);
-		String vk_2 = "VKEY_" + String.valueOf(50);
-		String vk_3 = "VKEY_" + String.valueOf(51);
+		// parse...
+		// the left-right-up-down keys:
 		String vk_l = "VKEY_" + String.valueOf(37);
 		String vk_u = "VKEY_" + String.valueOf(38);
 		String vk_r = "VKEY_" + String.valueOf(39);
 		String vk_d = "VKEY_" + String.valueOf(40);
+		// the function keys
+		String vk_f1 = "VKEY_" + String.valueOf(112);
+		String vk_f2 = "VKEY_" + String.valueOf(113);
+		String vk_f3 = "VKEY_" + String.valueOf(114);
+		String vk_f4 = "VKEY_" + String.valueOf(115);
+		String vk_f5 = "VKEY_" + String.valueOf(116);
+		String vk_f6 = "VKEY_" + String.valueOf(117);
+		String vk_f7 = "VKEY_" + String.valueOf(118);
+		String vk_f8 = "VKEY_" + String.valueOf(119);
+		String vk_f9 = "VKEY_" + String.valueOf(120);
+		String vk_f10 = "VKEY_" + String.valueOf(121);
+		String vk_f11 = "VKEY_" + String.valueOf(122);
+		String vk_f12 = "VKEY_" + String.valueOf(123);
+		// other common keys
+		String vk_cancel = "VKEY_" + String.valueOf(3);
+		String vk_insert = "VKEY_" + String.valueOf(155);
+		String vk_delete = "VKEY_" + String.valueOf(127);
+		String vk_scape = "VKEY_" + String.valueOf(27);
+		String vk_enter = "VKEY_" + String.valueOf(10);
+		String vk_pageup = "VKEY_" + String.valueOf(33);
+		String vk_pagedown = "VKEY_" + String.valueOf(34);
+		String vk_end = "VKEY_" + String.valueOf(35);
+		String vk_home = "VKEY_" + String.valueOf(36);
+		String vk_begin = "VKEY_" + String.valueOf(65368);
 
 		// ... and replace it with proper descriptions:
 
-		info = info.replace(vk_1, "'1'").replace(vk_2, "'2'").replace(vk_3, "'3'").replace(vk_l, "LEFT_vkey").replace(vk_u, "UP_vkey").replace(vk_r, "RIGHT_vkey").replace(vk_d, "DOWN_vkey");
+		info = info.replace(vk_l, "LEFT_vkey").replace(vk_u, "UP_vkey").replace(vk_r, "RIGHT_vkey").replace(vk_d, "DOWN_vkey")
+				.replace(vk_f1, "F1_vkey").replace(vk_f2, "F2_vkey").replace(vk_f3, "F3_vkey")
+				.replace(vk_f4, "F4_vkey").replace(vk_f5, "F5_vkey").replace(vk_f6, "F6_vkey")
+				.replace(vk_f7, "F7_vkey").replace(vk_f8, "F8_vkey").replace(vk_f9, "F9_vkey")
+		        .replace(vk_f10, "F10_vkey").replace(vk_f11, "F11_vkey").replace(vk_f12, "F12_vkey")
+		        .replace(vk_cancel, "CANCEL_vkey").replace(vk_insert, "INSERT_vkey").replace(vk_delete, "DELETE_vkey")
+		        .replace(vk_scape, "SCAPE_vkey").replace(vk_enter, "ENTER_vkey").replace(vk_pageup, "PAGEUP_vkey")
+		        .replace(vk_pagedown, "PAGEDOWN_vkey").replace(vk_end, "END_vkey").replace(vk_home, "HOME_vkey")
+		        .replace(vk_begin, "BEGIN_vkey");
 		// */
 
-		// 2b. Parse the remaining virtual key codes:
-
-		/*
-		 * //TODO (far fancier than the mouse agent)
-		 * 
-		 * Search for the following pattern in info string: "VKEY_id " (note the final white space)
-		 * 
-		 * where id is the virtual key code (as defined here: http://docs.oracle.com/javase/7/docs/api/constant-values.html)
-		 * 
-		 * and replace it with: "char"
-		 * 
-		 * where char is the key bound to that code, i.e., the one obtained with the following code: char char=(char)id_int
-		 * 
-		 * where id_int is the integer representation of the id char (see:
-		 * http://stackoverflow.com/questions/15991822/java-converting-keycode-to-string-or-char);
-		 * 
-		 * Note that id_int should be obtained from "_id " before the actual replacement.
-		 * 
-		 * See: http://www.vogella.com/tutorials/JavaRegularExpressions/article.html
-		 */
 		return info;
 	}
 
@@ -2604,6 +2613,13 @@ public class Scene extends AbstractScene implements PConstants {
 	
 	public Profile profile() {
 		return profile;
+	}
+	
+	public void setProfile(Profile p) {
+		if( p.grabber() == this )
+			profile = p;
+		else
+			System.out.println("Nothing done, profile grabber is different than this scene");
 	}
 
 	// decide whether or not to include these in the 3.0 release:

@@ -44,14 +44,14 @@ public class GenericP5Frame extends GenericFrame {
 	
 	public GenericP5Frame(Scene scn) {
 		super(scn);
-		profile = new Profile(this);
+		setProfile(new Profile(this));
 		setDefaultBindings();
 		addActionHandlers();
 	}
 	
 	public GenericP5Frame(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
-		profile = new Profile(this);
+		setProfile(new Profile(this));
 		if(referenceFrame instanceof GenericP5Frame)
 			this.profile.from(((GenericP5Frame)referenceFrame).profile);
 		else {
@@ -62,14 +62,14 @@ public class GenericP5Frame extends GenericFrame {
 	
 	public GenericP5Frame(Eye eye) {
 		super(eye);
-		profile = new Profile(this);
+		setProfile(new Profile(this));
 		setDefaultBindings();
 		addActionHandlers();
 	}
 	
 	protected GenericP5Frame(GenericP5Frame otherFrame) {
 		super(otherFrame);
-		this.profile = new Profile(this);
+		setProfile(new Profile(this));
 		this.profile.from(otherFrame.profile);
 	}
 	
@@ -87,8 +87,6 @@ public class GenericP5Frame extends GenericFrame {
 	protected boolean checkIfGrabsInput(KeyboardEvent event) {
 		return profile.hasBinding(event.shortcut());
 	}
-	
-	//mouse move
 	
 	public void removeBindings() {
 		profile.removeBindings();
@@ -123,8 +121,6 @@ public class GenericP5Frame extends GenericFrame {
 		profile.removeBinding(new MotionShortcut());
 	}
 	*/
-	
-    //TODO decide these three:
 	
 	public void setDefaultBindings() {
 		setDefaultMotionBindings();
@@ -374,6 +370,13 @@ public class GenericP5Frame extends GenericFrame {
 	
 	public Profile profile() {
 		return profile;
+	}
+	
+	public void setProfile(Profile p) {
+		if( p.grabber() == this )
+			profile = p;
+		else
+			System.out.println("Nothing done, profile grabber is different than this grabber");
 	}
 	
 	public void setBindings(GenericP5Frame otherFrame) {
