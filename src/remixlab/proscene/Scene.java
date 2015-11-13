@@ -205,9 +205,8 @@ public class Scene extends AbstractScene implements PConstants {
 		parent.registerMethod("keyEvent", keyboardAgent());
 		this.setDefaultKeyBindings();
 		
-		//TODO experimental
-		profile.addActionHandler("initKeyboard");
-		profile.addActionHandler("flushKeyboard");
+		addStageHandler("initKeyboard");
+		addStageHandler("flushKeyboard");
 		
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
@@ -2445,39 +2444,21 @@ public class Scene extends AbstractScene implements PConstants {
 			vkeyAction = null;
 	}
 	
-	/*
-	@Override
-	public boolean initAction(BogusEvent event) {
-		if(event instanceof KeyboardEvent)
-			return initAction((KeyboardEvent) event);
-		return false;
+	public void addStageHandler(String methodName) {
+		profile().addStageHandler(methodName);
 	}
 	
-	@Override
-	public boolean execAction(BogusEvent event) {
-		return false;
+	public void addStageHandler(Object object, String methodName) {
+		profile().addStageHandler(object, methodName);
 	}
 	
-	@Override
-	public void flushAction(BogusEvent event) {
-		if(event instanceof KeyboardEvent)
-			flushAction((KeyboardEvent) event);
+	public boolean hasStageHandler(String methodName) {
+		return profile().hasStageHandler(methodName);
 	}
 	
-	protected boolean initAction(KeyboardEvent event) {
-		if(event.id() == 0)//TYPE event
-			return vkeyAction == null ? false : true;
-		else {
-			vkeyAction = profile.actionName(event.shortcut());
-		    return false;
-		}
+	public void removeStageHandler(String methodName) {
+		profile().removeStageHandler(methodName);
 	}
-	
-	protected void flushAction(KeyboardEvent event) {
-		if( event.flushed() && vkeyAction != null )
-			vkeyAction = null;
-	}
-	*/
 	
 	public Method action(Shortcut key) {
 		return profile.action(key);
