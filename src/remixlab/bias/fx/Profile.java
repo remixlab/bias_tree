@@ -41,7 +41,9 @@ public class Profile {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(17, 37).append(actionMap).toHashCode();
+		return new HashCodeBuilder(17, 37).
+				append(actionMap).
+				append(stageMap).toHashCode();
 	}
 
 	@Override
@@ -54,7 +56,10 @@ public class Profile {
 			return false;
 
 		Profile other = (Profile) obj;
-		return new EqualsBuilder().append(actionMap, other.actionMap).isEquals();
+		return new EqualsBuilder()
+				.append(actionMap, other.actionMap)
+				.append(stageMap, other.stageMap).
+				isEquals();
 	}
 	
 	protected HashMap<Shortcut, ObjectMethodTuple>	actionMap;
