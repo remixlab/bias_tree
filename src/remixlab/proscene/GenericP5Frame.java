@@ -494,15 +494,15 @@ public class GenericP5Frame extends GenericFrame {
 	 * @see #processStage(BogusEvent)
 	 */
 	public void flushMotion(MotionEvent e) {
-		flushMotion(MotionEvent.dof2Event(e));
+		flushDOF2(MotionEvent.dof2Event(e));
 	}
 	
 	public void flushDOF3(DOF3Event e) {
-		flushMotion(MotionEvent.dof2Event(e));
+		flushDOF2(MotionEvent.dof2Event(e));
 	}
 	
 	public void flushDOF6(DOF6Event e) {
-		flushMotion(MotionEvent.dof2Event(e));
+		flushDOF2(MotionEvent.dof2Event(e));
 	}
 	
 	public void flushDOF2(DOF2Event event) {
