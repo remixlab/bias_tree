@@ -239,7 +239,7 @@ public class Profile {
 	 * 
 	 * @param key
 	 *          {@link remixlab.bias.core.Shortcut}
-	 * @param method
+	 * @param methodName
 	 *          {@link java.lang.reflect.Method}
 	 */
 	public void setMotionBinding(Shortcut key, String methodName) {

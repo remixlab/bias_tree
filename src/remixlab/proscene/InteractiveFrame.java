@@ -22,10 +22,10 @@ import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
 /**
- * A {@link remixlab.proscene.InteractiveFrame} {@link remixlab.dandelion.GenericFrame.GenericFrame}.
+ * An Processing interactive {@link remixlab.dandelion.core.GenericFrame}.
  * 
  * @see remixlab.proscene.InteractiveFrame
- * @see remixlab.dandelion.GenericFrame.GenericFrame
+ * @see remixlab.dandelion.core.GenericFrame
  */
 public class InteractiveFrame extends GenericP5Frame {	
 	@Override
@@ -81,7 +81,7 @@ public class InteractiveFrame extends GenericP5Frame {
 	 * Constructs a interactive-frame and adds to the {@link remixlab.proscene.Scene#frames()} collection.
 	 * Calls {@code super(scn}.
 	 * 
-	 * @see remixlab.dandelion.GenericFrame.GenericFrame#GenericFrame(GenericScene)
+	 * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
 	 * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
 	 * @see #shape()
 	 * @see #setShape(PShape)
@@ -98,7 +98,7 @@ public class InteractiveFrame extends GenericP5Frame {
 	 * Constructs an interactive-frame as a child of reference frame, and adds it to the
 	 * {@link remixlab.proscene.Scene#frames()} collection. Calls {@code super(scn, referenceFrame}.
 	 * 
-	 * @see remixlab.dandelion.GenericFrame.GenericFrame#GenericFrame(GenericScene, Frame)
+	 * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame)
 	 * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
 	 * @see #shape()
 	 * @see #setShape(PShape)
@@ -116,7 +116,7 @@ public class InteractiveFrame extends GenericP5Frame {
 	 * Wraps the pshape into this interactive-frame which is then added to the
 	 * {@link remixlab.proscene.Scene#frames()} collection. Calls {@code super(scn)}.
 	 * 
-	 * @see remixlab.dandelion.GenericFrame.GenericFrame#GenericFrame(GenericScene)
+	 * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
 	 * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
 	 */
 	public InteractiveFrame(Scene scn, PShape ps) {
@@ -131,7 +131,7 @@ public class InteractiveFrame extends GenericP5Frame {
 	 * Wraps the pshape into this interactive-frame which is created as a child of reference frame and then added to the
 	 * {@link remixlab.proscene.Scene#frames()} collection. Calls {@code super(scn, referenceFrame)}.
 	 * 
-	 * @see remixlab.dandelion.GenericFrame.GenericFrame#GenericFrame(GenericScene, Frame)
+	 * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame)
 	 * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
 	 */
 	public InteractiveFrame(Scene scn, Frame referenceFrame, PShape ps) {
@@ -146,7 +146,7 @@ public class InteractiveFrame extends GenericP5Frame {
 	 * Wraps the function object procedure into this interactive-frame which is then added it to the
 	 * {@link remixlab.proscene.Scene#frames()} collection. Calls {@code super(scn}.
 	 * 
-	 * @see remixlab.dandelion.GenericFrame.GenericFrame#GenericFrame(GenericScene)
+	 * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
 	 * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
 	 * @see #addGraphicsHandler(Object, String)
 	 */
@@ -162,7 +162,7 @@ public class InteractiveFrame extends GenericP5Frame {
 	 * Wraps the the function object procedure into this interactive-frame which is is created as a child of reference frame
 	 * and then added to the {@link remixlab.proscene.Scene#frames()} collection. Calls {@code super(scn, referenceFrame}.
 	 * 
-	 * @see remixlab.dandelion.GenericFrame.GenericFrame#GenericFrame(GenericScene, Frame)
+	 * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame)
 	 * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
 	 * @see #addGraphicsHandler(Object, String)
 	 */

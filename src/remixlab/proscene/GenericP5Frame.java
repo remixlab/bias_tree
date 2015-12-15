@@ -403,7 +403,7 @@ public class GenericP5Frame extends GenericFrame {
 	/**
 	 * Internal use.
 	 * 
-	 * @see #processStage(BogusEvent)
+	 * @see remixlab.bias.fx.Profile
 	 */
 	public boolean initMotion(MotionEvent e) {
 		return initDOF2(MotionEvent.dof2Event(e));
@@ -454,7 +454,7 @@ public class GenericP5Frame extends GenericFrame {
 	/**
 	 * Internal use.
 	 * 
-	 * @see #processStage(BogusEvent)
+	 * @see remixlab.bias.fx.Profile
 	 */
 	public boolean execMotion(MotionEvent e) {
 		return execDOF2(MotionEvent.dof2Event(e));
@@ -491,7 +491,7 @@ public class GenericP5Frame extends GenericFrame {
 	/**
 	 * Internal use.
 	 * 
-	 * @see #processStage(BogusEvent)
+	 * @see remixlab.bias.fx.Profile
 	 */
 	public void flushMotion(MotionEvent e) {
 		flushDOF2(MotionEvent.dof2Event(e));

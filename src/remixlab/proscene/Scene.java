@@ -58,7 +58,7 @@ import java.nio.FloatBuffer;
  * <li><b>The default keyboard agent</b> provides shortcuts to global keyboard actions such as {@link #drawGrid()} or
  * {@link #drawAxes()}. See {@link #keyboardAgent()}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame motion actions. Please refer
- * to the {@link remixlab.dandelion.branch.MotionAgent} and {@link remixlab.dandelion.branch.KeyboardAgent} API's.
+ * to the {@link remixlab.proscene.MouseAgent} and {@link remixlab.proscene.KeyAgent} API's.
  * </ol>
  * <h3>Animation mechanisms</h3>
  * ProScene provides three animation mechanisms to define how your scene evolves over time:
@@ -159,7 +159,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * on-screen Scene, see also {@link #isOffscreen()}), the values of x and y are meaningless (both are set to 0 to be
 	 * taken as dummy values).
 	 * 
-	 * @see remixlab.dandelion.branch.GenericScene#GenericScene()
+	 * @see remixlab.dandelion.core.AbstractScene#AbstractScene()
 	 * @see #Scene(PApplet)
 	 * @see #Scene(PApplet, PGraphics)
 	 */

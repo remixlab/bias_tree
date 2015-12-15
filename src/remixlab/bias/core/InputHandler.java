@@ -116,8 +116,6 @@ public class InputHandler {
 
 	/**
 	 * Returns a list of the registered agents.
-	 * 
-	 * @see #agentsArray()
 	 */
 	public List<Agent> agents() {
 		return agents;

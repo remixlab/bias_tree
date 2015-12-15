@@ -16,10 +16,10 @@ import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 
 /**
- * Proscene mouse-agent. A {@link remixlab.dandelion.branch.WheeledMouseAgent} specialization
+ * Proscene mouse-agent. A {@link remixlab.bias.core.Agent} specialization
  * which handles Processing mouse-events. 
  *
- * @see remixlab.dandelion.branch.WheeledMouseAgent
+ * @see remixlab.bias.core.Agent
  * @see remixlab.proscene.KeyAgent
  * @see remixlab.proscene.DroidKeyAgent
  * @see remixlab.proscene.DroidTouchAgent
@@ -48,9 +48,9 @@ public class MouseAgent extends Agent {
 	};
 
 	/**
-	 * Calls super on (scn,n) and sets {@link #dragToArcball()} bindings.
+	 * Calls super on (scn,n) and sets {@link #pickingMode()} to {@link PickingMode#MOVE}.
 	 * 
-	 * @see #dragToArcball()
+	 * @see #setPickingMode(PickingMode)
 	 */	    
 	public MouseAgent(Scene scn) {
 		super(scn.inputHandler());
@@ -141,8 +141,6 @@ public class MouseAgent extends Agent {
 	 * <p>
 	 * Default value is 1. A higher value will make the event more efficient (usually meaning a faster motion). Use a
 	 * negative value to invert the along x-Axis motion direction.
-	 * 
-	 * @see #setWheelSensitivity(float)
 	 */
 	public float xSensitivity() {
 		return xSens;
@@ -160,8 +158,6 @@ public class MouseAgent extends Agent {
 	 * <p>
 	 * Default value is 1. A higher value will make the event more efficient (usually meaning a faster motion). Use a
 	 * negative value to invert the along y-Axis motion direction.
-	 * 
-	 * @see #setWheelSensitivity(float)
 	 */
 	public float ySensitivity() {
 		return ySens;

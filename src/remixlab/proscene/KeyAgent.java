@@ -14,10 +14,10 @@ import remixlab.bias.event.*;
 import remixlab.bias.core.*;
 
 /**
- * Proscene key-agent. A {@link remixlab.dandelion.branch.KeyboardAgent} specialization
+ * Proscene key-agent. An {@link remixlab.bias.core.Agent} specialization
  * which handles Processing key-events.
  * 
- * @see remixlab.dandelion.branch.KeyboardAgent
+ * @see remixlab.bias.core.Agent
  * @see remixlab.proscene.MouseAgent
  * @see remixlab.proscene.DroidKeyAgent
  * @see remixlab.proscene.DroidTouchAgent
@@ -34,8 +34,6 @@ public class KeyAgent extends Agent {
 
 	/**
 	 * Calls super on (scn,n) and sets default keyboard shortcuts.
-	 * 
-	 * @see #setDefaultBindings()
 	 */
 	public KeyAgent(Scene scn) {
 		super(scn.inputHandler());
