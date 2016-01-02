@@ -2157,7 +2157,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	/**
 	 * Sets the {@link #radius()} of the Scene.
 	 * <p>
-	 * Convenience wrapper function that simply returns {@code camera().setSceneRadius(radius)}
+	 * Convenience wrapper function that simply calls {@code camera().setSceneRadius(radius)}.
 	 * 
 	 * @see #setCenter(Vec)
 	 */
