@@ -103,7 +103,7 @@ public class MotionEvent extends BogusEvent {
 
 	@Override
 	public MotionShortcut shortcut() {
-		return new MotionShortcut(modifiers(), id());
+		return new MotionShortcut(modifiers(), id(), 0);
 	}
 
 	/**

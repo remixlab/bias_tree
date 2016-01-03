@@ -133,6 +133,11 @@ public class DOF3Event extends MotionEvent {
 	public DOF3Event get() {
 		return new DOF3Event(this);
 	}
+	
+	@Override
+	public MotionShortcut shortcut() {
+		return new MotionShortcut(modifiers(), id(), 3);
+	}
 
 	@Override
 	public void setPreviousEvent(MotionEvent prevEvent) {

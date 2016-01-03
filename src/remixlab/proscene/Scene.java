@@ -2473,19 +2473,19 @@ public class Scene extends AbstractScene implements PConstants {
 	// Key
 	
 	public void setKeyBinding(int vkey, String methodName) {
-		profile.setKeyboardBinding(new KeyboardShortcut(vkey), methodName);
+		profile.setBinding(new KeyboardShortcut(vkey), methodName);
 	}
 	
 	public void setKeyBinding(char key, String methodName) {
-		profile.setKeyboardBinding(new KeyboardShortcut(key), methodName);
+		profile.setBinding(new KeyboardShortcut(key), methodName);
 	}
 	
 	public void setKeyBinding(Object object, int vkey, String methodName) {
-		profile.setKeyboardBinding(object, new KeyboardShortcut(vkey), methodName);
+		profile.setBinding(object, new KeyboardShortcut(vkey), methodName);
 	}
 	
 	public void setKeyBinding(Object object, char key, String methodName) {
-		profile.setKeyboardBinding(object, new KeyboardShortcut(key), methodName);
+		profile.setBinding(object, new KeyboardShortcut(key), methodName);
 	}
 	
 	public boolean hasKeyBinding(int vkey) {
@@ -2507,11 +2507,11 @@ public class Scene extends AbstractScene implements PConstants {
 	//
 	
 	public void setKeyBinding(int mask, int vkey, String methodName) {
-		profile.setKeyboardBinding(new KeyboardShortcut(mask, vkey), methodName);
+		profile.setBinding(new KeyboardShortcut(mask, vkey), methodName);
 	}
 	
 	public void setKeyBinding(Object object, int mask, int vkey, String methodName) {
-		profile.setKeyboardBinding(object, new KeyboardShortcut(mask, vkey), methodName);
+		profile.setBinding(object, new KeyboardShortcut(mask, vkey), methodName);
 	}
 	
 	public boolean hasKeyBinding(int mask, int vkey) {

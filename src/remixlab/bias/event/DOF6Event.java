@@ -179,6 +179,11 @@ public class DOF6Event extends MotionEvent {
 	public DOF6Event get() {
 		return new DOF6Event(this);
 	}
+	
+	@Override
+	public MotionShortcut shortcut() {
+		return new MotionShortcut(modifiers(), id(), 6);
+	}
 
 	@Override
 	public void setPreviousEvent(MotionEvent prevEvent) {

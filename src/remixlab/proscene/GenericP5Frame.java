@@ -147,14 +147,14 @@ public class GenericP5Frame extends GenericFrame {
 		setKeyBinding('Z', "rotateZPos");
 	}
 	
-	//
+	// TODO: motion stuff should go?
 	
-	public void setMotionBinding(int id, String methodName) {
-		profile.setMotionBinding(new MotionShortcut(id), methodName);
+	public void setMotionBinding(int id, int dof, String methodName) {
+		profile.setBinding(new MotionShortcut(id, dof), methodName);
 	}
 	
-	public void setMotionBinding(Object object, int id, String methodName) {
-		profile.setMotionBinding(object, new MotionShortcut(id), methodName);
+	public void setMotionBinding(Object object, int id, int dof, String methodName) {
+		profile.setBinding(object, new MotionShortcut(id, dof), methodName);
 	}
 	
 	public void removeMotionBindings() {
@@ -163,12 +163,12 @@ public class GenericP5Frame extends GenericFrame {
 	
 	// good for all dofs :P
 	
-	public boolean hasMotionBinding(int id) {
-		return profile.hasBinding(new MotionShortcut(id));
+	public boolean hasMotionBinding(int id, int dof) {
+		return profile.hasBinding(new MotionShortcut(id, dof));
 	}
 	
-	public void removeMotionBinding(int id) {
-		profile.removeBinding(new MotionShortcut(id));
+	public void removeMotionBinding(int id, int dof) {
+		profile.removeBinding(new MotionShortcut(id, dof));
 	}
 	
 	public void removeMotionBindings(int [] ids) {
@@ -178,60 +178,60 @@ public class GenericP5Frame extends GenericFrame {
 	// DOF1
 	
 	public void setDOF1Binding(int id, String methodName) {
-		profile.setDOF1Binding(new MotionShortcut(id), methodName);
+		profile.setBinding(new MotionShortcut(id, 1), methodName);
 	}
 	
 	public void setDOF1Binding(Object object, int id, String methodName) {
-		profile.setDOF1Binding(object, new MotionShortcut(id), methodName);
+		profile.setBinding(object, new MotionShortcut(id, 1), methodName);
 	}
 	
 	// DOF2
 	
 	public void setDOF2Binding(int id, String methodName) {
-		profile.setDOF2Binding(new MotionShortcut(id), methodName);
+		profile.setBinding(new MotionShortcut(id, 2), methodName);
 	}
 		
 	public void setDOF2Binding(Object object, int id, String methodName) {
-		profile.setDOF2Binding(object, new MotionShortcut(id), methodName);
+		profile.setBinding(object, new MotionShortcut(id, 2), methodName);
 	}
 	
 	// DOF3
 	
 	public void setDOF3Binding(int id, String methodName) {
-		profile.setDOF3Binding(new MotionShortcut(id), methodName);
+		profile.setBinding(new MotionShortcut(id, 3), methodName);
 	}
 		
 	public void setDOF3Binding(Object object, int id, String methodName) {
-		profile.setDOF3Binding(object, new MotionShortcut(id), methodName);
+		profile.setBinding(object, new MotionShortcut(id, 3), methodName);
 	}
 	
 	// DOF6
 	
 	public void setDOF6Binding(int id, String methodName) {
-		profile.setDOF6Binding(new MotionShortcut(id), methodName);
+		profile.setBinding(new MotionShortcut(id, 6), methodName);
 	}
 		
 	public void setDOF6Binding(Object object, int id, String methodName) {
-		profile.setDOF6Binding(object, new MotionShortcut(id), methodName);
+		profile.setBinding(object, new MotionShortcut(id, 6), methodName);
 	}
 	//*/
 	
 	// Key
 	
 	public void setKeyBinding(int vkey, String methodName) {
-		profile.setKeyboardBinding(new KeyboardShortcut(vkey), methodName);
+		profile.setBinding(new KeyboardShortcut(vkey), methodName);
 	}
 	
 	public void setKeyBinding(char key, String methodName) {
-		profile.setKeyboardBinding(new KeyboardShortcut(key), methodName);
+		profile.setBinding(new KeyboardShortcut(key), methodName);
 	}
 	
 	public void setKeyBinding(Object object, int vkey, String methodName) {
-		profile.setKeyboardBinding(object, new KeyboardShortcut(vkey), methodName);
+		profile.setBinding(object, new KeyboardShortcut(vkey), methodName);
 	}
 	
 	public void setKeyBinding(Object object, char key, String methodName) {
-		profile.setKeyboardBinding(object, new KeyboardShortcut(key), methodName);
+		profile.setBinding(object, new KeyboardShortcut(key), methodName);
 	}
 	
 	public boolean hasKeyBinding(int vkey) {
@@ -251,11 +251,11 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public void setKeyBinding(int mask, int vkey, String methodName) {
-		profile.setKeyboardBinding(new KeyboardShortcut(mask, vkey), methodName);
+		profile.setBinding(new KeyboardShortcut(mask, vkey), methodName);
 	}
 	
 	public void setKeyBinding(Object object, int mask, int vkey, String methodName) {
-		profile.setKeyboardBinding(object, new KeyboardShortcut(mask, vkey), methodName);
+		profile.setBinding(object, new KeyboardShortcut(mask, vkey), methodName);
 	}
 	
 	public boolean hasKeyBinding(int mask, int vkey) {
@@ -289,11 +289,11 @@ public class GenericP5Frame extends GenericFrame {
 	// click
 	
 	public void setClickBinding(int id, int count, String methodName) {
-		profile.setClickBinding(new ClickShortcut(id, count), methodName);
+		profile.setBinding(new ClickShortcut(id, count), methodName);
 	}
 	
 	public void setClickBinding(Object object, int id, int count, String methodName) {
-		profile.setClickBinding(object, new ClickShortcut(id, count), methodName);
+		profile.setBinding(object, new ClickShortcut(id, count), methodName);
 	}
 	
 	public boolean hasClickBinding(int id, int count) {
