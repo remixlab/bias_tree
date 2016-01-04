@@ -676,11 +676,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
 	@Override
 	public void performInteraction(BogusEvent event) {
-		/*
-		//TODO re-add me if needed 
-		if (processEvent(event))
-			return;
-		*/
 		if (event instanceof ClickEvent)
 			performInteraction((ClickEvent) event);
 		if (event instanceof MotionEvent)
@@ -1292,7 +1287,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		return computeAngle(e1.dx());
 	}
 
-	protected float computeAngle(KeyboardEvent e1) {
+	protected float computeAngle() {
 		return computeAngle(1);
 	}
 
@@ -1362,21 +1357,21 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into x-translation conversion routine.
 	 */
-	public void translateXPos(KeyboardEvent event) {
-		translateX(event, true);
+	public void translateXPos() {
+		translateX(true);
 	}
 	
 	/**
 	 * User gesture into x-translation conversion routine.
 	 */
-	public void translateXNeg(KeyboardEvent event) {
-		translateX(event, false);
+	public void translateXNeg() {
+		translateX(false);
 	}
 
 	/**
 	 * User gesture into x-translation conversion routine.
 	 */
-	protected void translateX(KeyboardEvent event, boolean right) {
+	protected void translateX(boolean right) {
 		translate(screenToVec(Vec.multiply(new Vec(1, 0), (right ^ this.isEyeFrame()) ? keyboardSensitivity()
 				: -keyboardSensitivity())));
 	}
@@ -1415,21 +1410,21 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into y-translation conversion routine.
 	 */
-	public void translateYPos(KeyboardEvent event) {
-		translateY(event, true);
+	public void translateYPos() {
+		translateY(true);
 	}
 	
 	/**
 	 * User gesture into y-translation conversion routine.
 	 */
-	public void translateYNeg(KeyboardEvent event) {
-		translateY(event, false);
+	public void translateYNeg() {
+		translateY(false);
 	}
 
 	/**
 	 * User gesture into y-translation conversion routine.
 	 */
-	protected void translateY(KeyboardEvent event, boolean up) {
+	protected void translateY(boolean up) {
 		translate(screenToVec(Vec.multiply(new Vec(0, (up ^ this.isEyeFrame() ^ gScene.isLeftHanded()) ? 1 : -1),
 				this.keyboardSensitivity())));
 	}
@@ -1471,21 +1466,21 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into z-translation conversion routine.
 	 */
-	public void translateZPos(KeyboardEvent event) {
-		translateZ(event, true);
+	public void translateZPos() {
+		translateZ(true);
 	}
 	
 	/**
 	 * User gesture into z-translation conversion routine.
 	 */
-	public void translateZNeg(KeyboardEvent event) {
-		translateZ(event, false);
+	public void translateZNeg() {
+		translateZ(false);
 	}
 
 	/**
 	 * User gesture into z-translation conversion routine.
 	 */
-	protected void translateZ(KeyboardEvent event, boolean up) {
+	protected void translateZ(boolean up) {
 		if (gScene.is2D()) {
 			AbstractScene.showDepthWarning("translateZ");
 			return;
@@ -1592,8 +1587,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see remixlab.dandelion.core.Eye#anchor()
 	 */
-	public void zoomOnAnchorPos(KeyboardEvent event) {
-		zoomOnAnchor(event, true);
+	public void zoomOnAnchorPos() {
+		zoomOnAnchor(true);
 	}
 	
 	/**
@@ -1601,8 +1596,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see remixlab.dandelion.core.Eye#anchor()
 	 */
-	public void zoomOnAnchorNeg(KeyboardEvent event) {
-		zoomOnAnchor(event, false);
+	public void zoomOnAnchorNeg() {
+		zoomOnAnchor(false);
 	}
 
 	/**
@@ -1610,7 +1605,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * 
 	 * @see remixlab.dandelion.core.Eye#anchor()
 	 */
-	protected void zoomOnAnchor(KeyboardEvent event, boolean in) {
+	protected void zoomOnAnchor(boolean in) {
 		Vec direction = Vec.subtract(gScene.eye().anchor(), position());
 		if (referenceFrame() != null)
 			direction = referenceFrame().transformOf(direction);
@@ -1687,26 +1682,26 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into x-rotation conversion routine.
 	 */
-	public void rotateXPos(KeyboardEvent event) {
-		rotateX(event, true);
+	public void rotateXPos() {
+		rotateX(true);
 	}
 	
 	/**
 	 * User gesture into x-rotation conversion routine.
 	 */
-	public void rotateXNeg(KeyboardEvent event) {
-		rotateX(event, false);
+	public void rotateXNeg() {
+		rotateX(false);
 	}
 
 	/**
 	 * User gesture into x-rotation conversion routine.
 	 */
-	protected void rotateX(KeyboardEvent event, boolean up) {
+	protected void rotateX(boolean up) {
 		if (gScene.is2D()) {
 			AbstractScene.showDepthWarning("rotateX");
 			return;
 		}
-		rotate(screenToQuat(computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0, 0));
+		rotate(screenToQuat(computeAngle() * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0, 0));
 	}
 
 	/**
@@ -1746,26 +1741,26 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into y-rotation conversion routine.
 	 */
-	public void rotateYPos(KeyboardEvent event) {
-		rotateY(event, true);
+	public void rotateYPos() {
+		rotateY(true);
 	}
 	
 	/**
 	 * User gesture into y-rotation conversion routine.
 	 */
-	public void rotateYNeg(KeyboardEvent event) {
-		rotateY(event, false);
+	public void rotateYNeg() {
+		rotateY(false);
 	}
 
 	/**
 	 * User gesture into y-rotation conversion routine.
 	 */
-	protected void rotateY(KeyboardEvent event, boolean up) {
+	protected void rotateY(boolean up) {
 		if (gScene.is2D()) {
 			AbstractScene.showDepthWarning("rotateY");
 			return;
 		}
-		Rotation rt = screenToQuat(0, computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0);
+		Rotation rt = screenToQuat(0, computeAngle() * (up ? keyboardSensitivity() : -keyboardSensitivity()), 0);
 		rotate(rt);
 	}
 
@@ -1812,26 +1807,26 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into z-rotation conversion routine.
 	 */
-	public void rotateZPos(KeyboardEvent event) {
-		rotateZ(event, true);
+	public void rotateZPos() {
+		rotateZ(true);
 	}
 	
 	/**
 	 * User gesture into z-rotation conversion routine.
 	 */
-	public void rotateZNeg(KeyboardEvent event) {
-		rotateZ(event, false);
+	public void rotateZNeg() {
+		rotateZ(false);
 	}
 
 	/**
 	 * User gesture into z-rotation conversion routine.
 	 */
-	protected void rotateZ(KeyboardEvent event, boolean up) {
+	protected void rotateZ(boolean up) {
 		Rotation rt;
 		if (is2D())
-			rt = new Rot(computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()));
+			rt = new Rot(computeAngle() * (up ? keyboardSensitivity() : -keyboardSensitivity()));
 		else
-			rt = screenToQuat(0, 0, computeAngle(event) * (up ? keyboardSensitivity() : -keyboardSensitivity()));
+			rt = screenToQuat(0, 0, computeAngle() * (up ? keyboardSensitivity() : -keyboardSensitivity()));
 		rotate(rt);
 	}
 
@@ -1931,21 +1926,21 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into scaling conversion routine.
 	 */
-	public void scalePos(KeyboardEvent event) {
-		scale(event, true);
+	public void scalePos() {
+		scale(true);
 	}
 	
 	/**
 	 * User gesture into scaling conversion routine.
 	 */
-	public void scaleNeg(KeyboardEvent event) {
-		scale(event, false);
+	public void scaleNeg() {
+		scale(false);
 	}
 
 	/**
 	 * User gesture into scaling conversion routine.
 	 */
-	protected void scale(KeyboardEvent event, boolean up) {
+	protected void scale(boolean up) {
 		float s = 1 + Math.abs(keyboardSensitivity()) / (isEyeFrame() ? (float) -gScene.height() : (float) gScene.height());
 		scale(up ? s : 1 / s);
 	}
@@ -2192,36 +2187,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 				rt = new Quat(axis, prev_angle - angle);
 			spin(rt, event.speed(), event.delay());
 		}
-	}
-	
-	// click gestures
-	
-	/**
-	 * User gesture into align frame conversion routine.
-	 */
-	public void align(KeyboardEvent event) {
-		align();
-	}
-	
-	/**
-	 * User gesture into align frame conversion routine.
-	 */
-	public void align(ClickEvent event) {
-		align();
-	}
-	
-	/**
-	 * User gesture into center frame conversion routine.
-	 */
-	public void center(KeyboardEvent event) {
-		center();
-	}
-	
-	/**
-	 * User gesture into center frame conversion routine.
-	 */
-	public void center(ClickEvent event) {
-		center();
 	}
 	
 	/**

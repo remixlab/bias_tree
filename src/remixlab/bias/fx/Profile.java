@@ -190,26 +190,6 @@ public class Profile {
 			invokeAction(event);
 	}
 	
-	/*
-	protected boolean invokeAction(BogusEvent event) {
-		Method iHandlerMethod = action(event.shortcut());
-		if (iHandlerMethod != null) {
-			try {
-				if(object(event.shortcut()) == grabber)
-					iHandlerMethod.invoke(object(event.shortcut()), new Object[] { event });
-				else
-					iHandlerMethod.invoke(object(event.shortcut()), new Object[] { grabber, event });
-				return true;
-			} catch (Exception e) {
-				System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
-				e.printStackTrace();
-				return false;
-			}
-		}
-		return false;
-	}
-	*/
-	
 	protected boolean invokeAction(BogusEvent event) {
 		Method iHandlerMethod = action(event.shortcut());
 		if (iHandlerMethod != null) {

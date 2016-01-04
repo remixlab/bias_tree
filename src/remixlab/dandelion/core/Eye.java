@@ -119,25 +119,25 @@ public abstract class Eye implements Copyable {
 		public void performInteraction(KeyboardEvent event) {
 			if( event.isShiftDown() ) {
 				if(event.id()  == UP_KEY)
-					translateY(event, true);
+					translateY(true);
 				if(event.id()  == DOWN_KEY)
-					translateY(event, false);
+					translateY(false);
 				if(event.id()  == LEFT_KEY)
-					translateX(event, false);
+					translateX(false);
 				if(event.id()  == RIGHT_KEY)
-					translateX(event, true);
+					translateX(true);
 			}
 			else {
 				if(event.id()  == UP_KEY)
 					if(gScene.is3D())
-						rotateX(event, true);
+						rotateX(true);
 				if(event.id()  == DOWN_KEY)
 					if(gScene.is3D())
-						rotateY(event, false);
+						rotateY(false);
 				if(event.id()  == LEFT_KEY)
-					rotateZ(event, false);
+					rotateZ(false);
 				if(event.id()  == RIGHT_KEY)
-					rotateZ(event, true);
+					rotateZ(true);
 			}
 		}
 	}
