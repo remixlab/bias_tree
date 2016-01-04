@@ -158,7 +158,7 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public void removeMotionBindings() {
-		profile.removeMotionBindings();
+		profile.removeBindings(MotionShortcut.class);
 	}
 	
 	// good for all dofs :P
@@ -283,7 +283,7 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public void removeKeyBindings() {
-		profile.removeKeyboardBindings();
+		profile.removeBindings(KeyboardShortcut.class);
 	}
 	
 	// click
@@ -305,7 +305,7 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public void removeClickBindings() {
-		profile.removeClickBindings();
+		profile.removeBindings(ClickShortcut.class);
 	}
 	
 	public void removeClickBindings(int [] ids) {
@@ -329,17 +329,17 @@ public class GenericP5Frame extends GenericFrame {
 	
 	public String info() {
 		String result = new String();
-		String info = profile().keyboardBindingsInfo();
+		String info = profile().info(KeyboardShortcut.class);
 		if(!info.isEmpty()) {
 			result = "Key bindings:\n";
 			result += Scene.parseKeyInfo(info);
 		}
-		info = profile().motionBindingsInfo();
+		info = profile().info(MotionShortcut.class);
 		if(!info.isEmpty()) {
 			result += "Motion bindings:\n";
 			result += Scene.parseInfo(info);
 		}
-		info = profile().clickBindingsInfo();
+		info = profile().info(ClickShortcut.class);
 		if(!info.isEmpty()) {
 			result += "Click bindings:\n";
 			result += Scene.parseInfo(info);

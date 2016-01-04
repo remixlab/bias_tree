@@ -145,11 +145,11 @@ public class Profile {
 	
 	protected Class<?> cls(Shortcut key) {
 		Class<?> eventClass = BogusEvent.class;
-		if (key.getClass() == KeyboardShortcut.class)
+		if (key instanceof KeyboardShortcut)
 			eventClass = KeyboardEvent.class;
-		else if (key.getClass() == ClickShortcut.class)
+		else if (key instanceof ClickShortcut)
 			eventClass = ClickEvent.class;
-		else if (key.getClass() == MotionShortcut.class) {
+		else if (key instanceof MotionShortcut) {
 			switch (((MotionShortcut) key).dof()) {
 			case 1:
 				eventClass = DOF1Event.class;
@@ -277,13 +277,34 @@ public class Profile {
 	
 	// TODO all this should take a class parameter to keep it simple
 	
-	public void removeMotionBindings() {
-		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = actionMap.entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
-	        if( pair.getKey() instanceof MotionShortcut )
-	        	it.remove();
-	    }
+	public String motionBindingsInfo(int [] ids) {
+		String result = new String();
+		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
+			if (entry.getKey() != null && entry.getValue() != null)
+				if( entry.getKey() instanceof MotionShortcut ) {
+					int id = entry.getKey().id();
+			        for(int i = 0; i < ids.length; i++ )
+			        	if( id == ids[i] ) {
+			        		result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
+			        		break;
+			        	}
+				}
+		return result;
+	}
+	
+	public String clickBindingsInfo(int [] ids) {
+		String result = new String();
+		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
+			if (entry.getKey() != null && entry.getValue() != null)
+				if( entry.getKey() instanceof ClickShortcut ) {
+					int id = entry.getKey().id();
+			        for(int i = 0; i < ids.length; i++ )
+			        	if( id == ids[i] ) {
+			        		result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
+			        		break;
+			        	}
+				}
+		return result;
 	}
 	
 	public void removeMotionBindings(int [] ids) {
@@ -302,71 +323,6 @@ public class Profile {
 		        	}
 				}	        
 	        }       	
-	    }
-	}
-	
-	public String motionBindingsInfo() {
-		String result = new String();
-		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
-			if (entry.getKey() != null && entry.getValue() != null)
-				if( entry.getKey() instanceof MotionShortcut )
-					result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
-		return result;
-	}
-	
-	public String motionBindingsInfo(int [] ids) {
-		String result = new String();
-		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
-			if (entry.getKey() != null && entry.getValue() != null)
-				if( entry.getKey() instanceof MotionShortcut ) {
-					int id = entry.getKey().id();
-			        for(int i = 0; i < ids.length; i++ )
-			        	if( id == ids[i] ) {
-			        		result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
-			        		break;
-			        	}
-				}
-		return result;
-	}
-	
-	/*
-	// TODO keyboard handlers may need a key event
-	public void setKeyboardBinding(Shortcut key, String methodName) {
-		if(printWarning(key, methodName)) return;
-		try {
-			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { });
-			map.put(key, new ObjectMethodTuple(grabber, method));
-		} catch (Exception e) {
-			System.out.println("Something went wrong when registering your " + methodName + " method");
-			e.printStackTrace();
-		}
-	}
-	*/
-	
-	public void removeKeyboardBindings() {
-		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = actionMap.entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
-	        if( pair.getKey() instanceof KeyboardShortcut )
-	        	it.remove();
-	    }
-	}
-	
-	public String keyboardBindingsInfo() {
-		String result = new String();
-		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
-			if (entry.getKey() != null && entry.getValue() != null)
-				if( entry.getKey() instanceof KeyboardShortcut )
-					result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
-		return result;
-	}
-	
-	public void removeClickBindings() {
-		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = actionMap.entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
-	        if( pair.getKey() instanceof ClickShortcut )
-	        	it.remove();
 	    }
 	}
 	
@@ -389,30 +345,20 @@ public class Profile {
 	    }
 	}
 	
-	public String clickBindingsInfo() {
-		String result = new String();
-		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
-			if (entry.getKey() != null && entry.getValue() != null)
-				if( entry.getKey() instanceof ClickShortcut )
-					result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
-		return result;
+	/*
+	// TODO keyboard handlers may need a key event
+	public void setKeyboardBinding(Shortcut key, String methodName) {
+		if(printWarning(key, methodName)) return;
+		try {
+			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { });
+			map.put(key, new ObjectMethodTuple(grabber, method));
+		} catch (Exception e) {
+			System.out.println("Something went wrong when registering your " + methodName + " method");
+			e.printStackTrace();
+		}
 	}
+	*/
 	
-	public String clickBindingsInfo(int [] ids) {
-		String result = new String();
-		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
-			if (entry.getKey() != null && entry.getValue() != null)
-				if( entry.getKey() instanceof ClickShortcut ) {
-					int id = entry.getKey().id();
-			        for(int i = 0; i < ids.length; i++ )
-			        	if( id == ids[i] ) {
-			        		result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
-			        		break;
-			        	}
-				}
-		return result;
-	}
-
 	/**
 	 * Removes the shortcut binding.
 	 * 
@@ -428,6 +374,41 @@ public class Profile {
 	 */
 	public void removeBindings() {
 		actionMap.clear();
+	}
+	
+	public void removeBindings(Class<?> cls) {
+		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = actionMap.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
+	        if(cls.isInstance(pair.getKey()))
+	        	it.remove();
+	    }
+	}
+	
+	public String info(Class<?> cls) {
+		String result = new String();
+		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
+			if (entry.getKey() != null && entry.getValue() != null)
+				if(cls.isInstance(entry.getKey()))
+					result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
+		return result;
+	}
+	
+	/**
+	 * Returns a description of all the bindings this profile holds.
+	 */
+	public String info() {
+		String result = new String();
+		boolean title = false;
+		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
+			if (entry.getKey() != null && entry.getValue() != null) {
+				if(!title) {
+				  result += entry.getKey().getClass().getSimpleName() + "s:\n";
+				  title = true;
+				}
+				result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
+			}
+		return result;
 	}
 	
 	/*
@@ -480,23 +461,6 @@ public class Profile {
 	
 	public boolean isActionBound(Object object, Method method) {
 		return actionMap.containsValue(new ObjectMethodTuple(object, method));
-	}
-
-	/**
-	 * Returns a description of all the bindings this profile holds.
-	 */
-	public String info() {
-		String result = new String();
-		boolean title = false;
-		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
-			if (entry.getKey() != null && entry.getValue() != null) {
-				if(!title) {
-				  result += entry.getKey().getClass().getSimpleName() + "s:\n";
-				  title = true;
-				}
-				result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
-			}
-		return result;
 	}
 	
 	//

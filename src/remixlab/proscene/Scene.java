@@ -890,7 +890,7 @@ public class Scene extends AbstractScene implements PConstants {
 	@Override
 	public String info() {
 		String result = new String();
-		String info = profile().keyboardBindingsInfo();
+		String info = profile().info(KeyboardShortcut.class);
 		if(!info.isEmpty()) {
 			result = "1. Scene key bindings:\n";
 			result += parseKeyInfo(info);
@@ -2539,7 +2539,7 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 	
 	public void removeKeyBindings() {
-		profile.removeKeyboardBindings();
+		profile.removeBindings(KeyboardShortcut.class);
 	}
 	
 	public void setBindings(Scene otherScene) {
