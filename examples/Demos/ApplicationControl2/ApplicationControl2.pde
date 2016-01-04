@@ -34,17 +34,17 @@ public class InteractiveEllipse extends InteractiveFrame {
      updateEllipse();
   }
 
-  public void changeColor(ClickEvent event) {
+  public void changeColor() {
     colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
     updateEllipse();
   }
   
-  public void colorBlue(KeyboardEvent event) {
+  public void colorBlue() {
     colour = color(0, 0, 255);
     updateEllipse();
   }
   
-  public void colorRed(KeyboardEvent event) {
+  public void colorRed() {
     colour = color(255, 0, 0);
     updateEllipse();
   }

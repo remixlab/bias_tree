@@ -227,83 +227,51 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	
 	//
 	
-	public void addKeyFrameToPath1(KeyboardEvent event) {
+	public void addKeyFrameToPath1() {
 		eye().addKeyFrameToPath(1);
 	}	
 	
-	public void addKeyFrameToPath2(KeyboardEvent event) {
+	public void addKeyFrameToPath2() {
 		eye().addKeyFrameToPath(2);
 	}
 	
-	public void addKeyFrameToPath3(KeyboardEvent event) {
+	public void addKeyFrameToPath3() {
 		eye().addKeyFrameToPath(3);
 	}
 	
-	public void deletePath1(KeyboardEvent event) {
+	public void deletePath1() {
 		eye().deletePath(1);
 	}
 	
-	public void deletePath2(KeyboardEvent event) {
+	public void deletePath2() {
 		eye().deletePath(2);
 	}
 	
-	public void deletePath3(KeyboardEvent event) {
+	public void deletePath3() {
 		eye().deletePath(1);
 	}
 	
-	public void playPath1(KeyboardEvent event) {
+	public void playPath1() {
 		eye().playPath(1);
 	}
 	
-	public void playPath2(KeyboardEvent event) {
+	public void playPath2() {
 		eye().playPath(2);
 	}
 	
-	public void playPath3(KeyboardEvent event) {
+	public void playPath3() {
 		eye().playPath(1);
 	}
 	
-	public void interpolateToFitScene(KeyboardEvent event) {
+	public void interpolateToFitScene() {
 		eye().interpolateToFitScene();
 	}
 	
-	public void showAll(KeyboardEvent event) {
-		showAll();
-	}
-	
-	public void resetAnchor(KeyboardEvent event) {
+	public void resetAnchor() {
 		eye().setAnchor(new Vec(0, 0, 0));
 		// looks horrible, but works ;)
 		eye().anchorFlag = true;
 		eye().runResetAnchorHintTimer(1000);
-	}
-	
-	public void toggleAnimation(KeyboardEvent event) {
-		toggleAnimation();
-	}
-	
-	public void toggleAxesVisualHint(KeyboardEvent event) {
-		toggleAxesVisualHint();
-	}
-	
-	public void toggleCameraType(KeyboardEvent event) {
-		toggleCameraType();
-	}
-	
-	public void toggleGridVisualHint(KeyboardEvent event) {
-		toggleGridVisualHint();
-	}
-	
-	public void togglePathsVisualHint(KeyboardEvent event) {
-		togglePathsVisualHint();
-	}
-	
-	public void togglePickingVisualhint(KeyboardEvent event) {
-		togglePickingVisualhint();
-	}
-	
-	public void displayInfo(KeyboardEvent event) {
-		displayInfo();
 	}
 	
 	// end

@@ -149,12 +149,12 @@ public class GenericP5Frame extends GenericFrame {
 	
 	// TODO: motion stuff should go?
 	
-	public void setMotionBinding(int id, int dof, String methodName) {
-		profile.setBinding(new MotionShortcut(id, dof), methodName);
+	public void setMotionBinding(int id, String methodName) {
+		profile.setBinding(new MotionShortcut(id), methodName);
 	}
 	
-	public void setMotionBinding(Object object, int id, int dof, String methodName) {
-		profile.setBinding(object, new MotionShortcut(id, dof), methodName);
+	public void setMotionBinding(Object object, int id, String methodName) {
+		profile.setBinding(object, new MotionShortcut(id), methodName);
 	}
 	
 	public void removeMotionBindings() {
@@ -163,12 +163,12 @@ public class GenericP5Frame extends GenericFrame {
 	
 	// good for all dofs :P
 	
-	public boolean hasMotionBinding(int id, int dof) {
-		return profile.hasBinding(new MotionShortcut(id, dof));
+	public boolean hasMotionBinding(int id) {
+		return profile.hasBinding(new MotionShortcut(id));
 	}
 	
-	public void removeMotionBinding(int id, int dof) {
-		profile.removeBinding(new MotionShortcut(id, dof));
+	public void removeMotionBinding(int id) {
+		profile.removeBinding(new MotionShortcut(id));
 	}
 	
 	public void removeMotionBindings(int [] ids) {
@@ -178,41 +178,41 @@ public class GenericP5Frame extends GenericFrame {
 	// DOF1
 	
 	public void setDOF1Binding(int id, String methodName) {
-		profile.setBinding(new MotionShortcut(id, 1), methodName);
+		profile.setBinding(new MotionShortcut(id), methodName);
 	}
 	
 	public void setDOF1Binding(Object object, int id, String methodName) {
-		profile.setBinding(object, new MotionShortcut(id, 1), methodName);
+		profile.setBinding(object, new MotionShortcut(id), methodName);
 	}
 	
 	// DOF2
 	
 	public void setDOF2Binding(int id, String methodName) {
-		profile.setBinding(new MotionShortcut(id, 2), methodName);
+		profile.setBinding(new MotionShortcut(id), methodName);
 	}
 		
 	public void setDOF2Binding(Object object, int id, String methodName) {
-		profile.setBinding(object, new MotionShortcut(id, 2), methodName);
+		profile.setBinding(object, new MotionShortcut(id), methodName);
 	}
 	
 	// DOF3
 	
 	public void setDOF3Binding(int id, String methodName) {
-		profile.setBinding(new MotionShortcut(id, 3), methodName);
+		profile.setBinding(new MotionShortcut(id), methodName);
 	}
 		
 	public void setDOF3Binding(Object object, int id, String methodName) {
-		profile.setBinding(object, new MotionShortcut(id, 3), methodName);
+		profile.setBinding(object, new MotionShortcut(id), methodName);
 	}
 	
 	// DOF6
 	
 	public void setDOF6Binding(int id, String methodName) {
-		profile.setBinding(new MotionShortcut(id, 6), methodName);
+		profile.setBinding(new MotionShortcut(id), methodName);
 	}
 		
 	public void setDOF6Binding(Object object, int id, String methodName) {
-		profile.setBinding(object, new MotionShortcut(id, 6), methodName);
+		profile.setBinding(object, new MotionShortcut(id), methodName);
 	}
 	//*/
 	

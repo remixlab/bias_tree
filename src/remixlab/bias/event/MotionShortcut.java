@@ -12,8 +12,6 @@ package remixlab.bias.event;
 
 import remixlab.bias.core.Shortcut;
 import remixlab.util.Copyable;
-import remixlab.util.EqualsBuilder;
-import remixlab.util.HashCodeBuilder;
 
 /**
  * This class represents {@link remixlab.bias.event.MotionEvent} shortcuts.
@@ -26,38 +24,11 @@ import remixlab.util.HashCodeBuilder;
  * button pressed).
  */
 public final class MotionShortcut extends Shortcut implements Copyable {
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37).
-				appendSuper(super.hashCode()).
-				append(dof).
-				toHashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (obj == this)
-			return true;
-		if (obj.getClass() != getClass())
-			return false;
-
-		MotionShortcut other = (MotionShortcut) obj;
-		return new EqualsBuilder()
-				.appendSuper(super.equals(obj))
-				.append(dof, other.dof)
-				.isEquals();
-	}
-	
-	protected final int	dof;
-	
 	/**
 	 * Constructs an "empty" shortcut by conveniently calling {@code this(B_NOMODIFIER_MASK, B_NOBUTTON);}
 	 */
-	public MotionShortcut(int _dof) {
+	public MotionShortcut() {
 		super();
-		dof = _dof;
 	}
 
 	/**
@@ -66,9 +37,8 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 * @param id
 	 *          button
 	 */
-	public MotionShortcut(int id, int _dof) {
+	public MotionShortcut(int id) {
 		super(id);
-		dof = _dof;
 	}
 
 	/**
@@ -79,22 +49,16 @@ public final class MotionShortcut extends Shortcut implements Copyable {
 	 * @param id
 	 *          button
 	 */
-	public MotionShortcut(int m, int id, int _dof) {
+	public MotionShortcut(int m, int id) {
 		super(m, id);
-		dof = _dof;
 	}
 
 	protected MotionShortcut(MotionShortcut other) {
 		super(other);
-		dof = other.dof();
 	}
 
 	@Override
 	public MotionShortcut get() {
 		return new MotionShortcut(this);
-	}
-	
-	public int dof() {
-		return dof;
 	}
 }

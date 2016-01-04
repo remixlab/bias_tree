@@ -28,6 +28,7 @@ import remixlab.util.*;
  * <p>
  * 
  */
+//TODO: shortcut.dof vs Profile.motionIDs hashmap: id -> dofs
 public class Profile {
 	class ObjectMethodTuple {
 		Object object;
@@ -62,6 +63,7 @@ public class Profile {
 				isEquals();
 	}
 	
+	protected static HashMap<Integer, Integer> idMap = new HashMap<Integer, Integer>();	
 	protected HashMap<Shortcut, ObjectMethodTuple>	actionMap;
 	protected Grabber grabber;
 	
@@ -82,6 +84,21 @@ public class Profile {
 		actionMap = new HashMap<Shortcut, ObjectMethodTuple>();
 		stageMap = new HashMap<String, ObjectMethodTuple>();
 		grabber = g;
+	}
+	
+	public static void registerMotionID(int id, int dof) {
+		if(idMap.containsKey(id)) {
+			System.out.println("Warning: nothing done! id already present in Profile. Call Profile.unregisterID first or use an id differente than: " + idMap.keySet().toArray().toString());
+			return;
+		}
+		if(dof == 1 || dof == 2 || dof == 3 || dof == 6)
+			idMap.put(id, dof);
+		else
+			System.out.println("Warning: Nothing done! dofs in Profile.registerID should be either 1, 2, 3 or 6.");
+	}
+	
+	public static void unregisterMotionID(int id) {
+		idMap.remove(id);
 	}
 	
 	public void from(Profile p) {	
@@ -150,7 +167,7 @@ public class Profile {
 		else if (key instanceof ClickShortcut)
 			eventClass = ClickEvent.class;
 		else if (key instanceof MotionShortcut) {
-			switch (((MotionShortcut) key).dof()) {
+			switch (idMap.get(key.id())) {
 			case 1:
 				eventClass = DOF1Event.class;
 				break;
@@ -163,9 +180,6 @@ public class Profile {
 			case 6:
 				eventClass = DOF2Event.class;
 				break;
-			default:
-				eventClass = MotionEvent.class;
-				break;
 			}
 		}
 		return eventClass;
@@ -175,7 +189,8 @@ public class Profile {
 		if (!processStage(event))
 			invokeAction(event);
 	}
-		
+	
+	/*
 	protected boolean invokeAction(BogusEvent event) {
 		Method iHandlerMethod = action(event.shortcut());
 		if (iHandlerMethod != null) {
@@ -193,33 +208,34 @@ public class Profile {
 		}
 		return false;
 	}
+	*/
 	
-	/*
-	// TODO keyboard handlers may need a key event
-	public boolean handle(BogusEvent event) {
+	protected boolean invokeAction(BogusEvent event) {
 		Method iHandlerMethod = action(event.shortcut());
 		if (iHandlerMethod != null) {
 			try {
-				if(event.shortcut() instanceof KeyboardShortcut)
-					if(object(event.shortcut()) == grabber)
-						iHandlerMethod.invoke(object(event.shortcut()), new Object[] { });
-					else
-						iHandlerMethod.invoke(object(event.shortcut()), new Object[] { grabber });
+				if(object(event.shortcut()) == grabber)
+					iHandlerMethod.invoke(object(event.shortcut()), new Object[] { event });
 				else
-					if(object(event.shortcut()) == grabber)
-						iHandlerMethod.invoke(object(event.shortcut()), new Object[] { event });
-					else
-						iHandlerMethod.invoke(object(event.shortcut()), new Object[] { grabber, event });
+					iHandlerMethod.invoke(object(event.shortcut()), new Object[] { grabber, event });
 				return true;
 			} catch (Exception e) {
+				try {
+					if(object(event.shortcut()) == grabber)
+						iHandlerMethod.invoke(object(event.shortcut()), new Object[] {});
+					else
+						iHandlerMethod.invoke(object(event.shortcut()), new Object[] { grabber });
+					return true;
+				} catch (Exception empty) {
+					System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
+					empty.printStackTrace();
+				}
 				System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
 				e.printStackTrace();
-				return false;
 			}
 		}
 		return false;
 	}
-	*/
 	
 	protected boolean printWarning(Shortcut key, String methodName) {
 		if(methodName == null) {
@@ -241,8 +257,6 @@ public class Profile {
 		return false;
 	}
 	
-	// TODO make parameterless versions of these two and fix key binding methods
-	
 	/**
 	 * Defines the shortcut that triggers the given method.
 	 * 
@@ -250,27 +264,69 @@ public class Profile {
 	 *          {@link remixlab.bias.core.Shortcut}
 	 * @param methodName
 	 *          {@link java.lang.reflect.Method}
-	 */
+	 */	
 	public void setBinding(Shortcut key, String methodName) {
-		if(printWarning(key, methodName)) return;
+		if (printWarning(key, methodName))
+			return;
 		Method method = null;
 		try {
-			method = grabber.getClass().getMethod(methodName, new Class<?>[] { cls(key) });		
-		} catch (Exception e) {
-			System.out.println("Something went wrong when registering your " + methodName + " method");
-			e.printStackTrace();
+			method = grabber.getClass().getMethod(methodName, new Class<?>[] { cls(key) });
+		} catch (Exception clazz) {
+			boolean print = true;
+			try {
+				method = grabber.getClass().getMethod(methodName, new Class<?>[] {});
+				print = false;
+			} catch (Exception empty) {
+				if (key instanceof MotionShortcut)
+					try {
+						method = grabber.getClass().getMethod(methodName, new Class<?>[] { MotionEvent.class });
+						print = false;
+					} catch (Exception motion) {
+						System.out.println("Something went wrong when registering your " + methodName + " method");
+						motion.printStackTrace();
+					}
+				else {
+					System.out.println("Something went wrong when registering your " + methodName + " method");
+					empty.printStackTrace();
+				}
+			}
+			if(print) {
+				System.out.println("Something went wrong when registering your " + methodName + " method");
+				clazz.printStackTrace();
+			}
 		}
 		actionMap.put(key, new ObjectMethodTuple(grabber, method));
 	}
 	
 	public void setBinding(Object object, Shortcut key, String methodName) {
-		if(printWarning(key, methodName)) return;
+		if (printWarning(key, methodName))
+			return;
 		Method method = null;
 		try {
-			method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), cls(key) });		
-		} catch (Exception e) {
-			System.out.println("Something went wrong when registering your " + methodName + " method");
-			e.printStackTrace();
+			method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), cls(key) });
+		} catch (Exception clazz) {
+			boolean print = true;
+			try {
+				method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass() });
+				print = false;
+			} catch (Exception empty) {
+				if (key instanceof MotionShortcut)
+					try {
+						method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), MotionEvent.class });
+						print = false;
+					} catch (Exception motion) {
+						System.out.println("Something went wrong when registering your " + methodName + " method");
+						motion.printStackTrace();
+					}
+				else {
+					System.out.println("Something went wrong when registering your " + methodName + " method");
+					empty.printStackTrace();
+				}
+			}
+			if(print) {
+				System.out.println("Something went wrong when registering your " + methodName + " method");
+				clazz.printStackTrace();
+			}
 		}
 		actionMap.put(key, new ObjectMethodTuple(object, method));
 	}

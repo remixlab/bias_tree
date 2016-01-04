@@ -78,7 +78,7 @@ public void boxCustomMotion(InteractiveFrame frame, MotionEvent event) {
   frame.screenRotate(event);
 }
 
-public void boxCustomClick(InteractiveFrame frame, ClickEvent event) {
+public void boxCustomClick(InteractiveFrame frame) {
   frame.center();
 }
 

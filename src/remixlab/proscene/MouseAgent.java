@@ -14,6 +14,7 @@ package remixlab.proscene;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.bias.fx.Profile;
 
 /**
  * Proscene mouse-agent. A {@link remixlab.bias.core.Agent} specialization
@@ -30,6 +31,13 @@ public class MouseAgent extends Agent {
 		     RIGHT_ID = 39,
 		     WHEEL_ID = 8,
 		     NO_BUTTON = BogusEvent.NO_ID;
+	static {
+		Profile.registerMotionID(LEFT_ID, 2);
+		Profile.registerMotionID(CENTER_ID, 2);
+		Profile.registerMotionID(RIGHT_ID, 2);
+		Profile.registerMotionID(NO_BUTTON, 2);
+		Profile.registerMotionID(WHEEL_ID, 1);
+	}
 	
 	protected int [] motionIDs = {LEFT_ID,CENTER_ID,RIGHT_ID,WHEEL_ID,NO_BUTTON};
 	protected int [] dof2IDs = {LEFT_ID,CENTER_ID,RIGHT_ID,NO_BUTTON};

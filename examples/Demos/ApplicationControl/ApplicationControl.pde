@@ -57,17 +57,17 @@ public void changeShape(InteractiveFrame frame, DOF2Event event) {
   updateEllipse(frame);
 }
 
-public void changeColor(InteractiveFrame frame, ClickEvent event) {
+public void changeColor(InteractiveFrame frame) {
   colour = color(color(random(0, 255), random(0, 255), random(0, 255), 125));
   updateEllipse(frame);
 }
 
-public void colorBlue(InteractiveFrame frame, KeyboardEvent event) {
+public void colorBlue(InteractiveFrame frame) {
   colour = color(0, 0, 255);
   updateEllipse(frame);
 }
 
-public void colorRed(InteractiveFrame frame, KeyboardEvent event) {
+public void colorRed(InteractiveFrame frame) {
   colour = color(255, 0, 0);
   updateEllipse(frame);
 }
