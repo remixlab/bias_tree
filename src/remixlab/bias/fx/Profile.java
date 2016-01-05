@@ -12,6 +12,7 @@ package remixlab.bias.fx;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -86,16 +87,24 @@ public class Profile {
 		grabber = g;
 	}
 	
-	public static void registerMotionID(int id, int dof) {
-		if(idMap.containsKey(id)) {
+	public static int registerMotionID(int id, int dof) {
+		if(idMap.containsKey(id))
 			//System.out.println("Warning: nothing done! id already present in Profile. Call Profile.unregisterID first or use an id different than: " + Arrays.toString(idMap.keySet().toArray()));
-			System.out.println("Warning: nothing done! id already present in Profile. Call Profile.unregisterID first or use an id different than: " + motionIDs().toString());
-			return;
-		}
-		if(dof == 1 || dof == 2 || dof == 3 || dof == 6)
+			throw new RuntimeException("Nothing done! id already present in Profile. Call Profile.unregisterMotionID first or use an id different than: " + motionIDs().toString());
+		if(dof == 1 || dof == 2 || dof == 3 || dof == 6) {
 			idMap.put(id, dof);
+			return id;
+		}
 		else
-			System.out.println("Warning: Nothing done! dofs in Profile.registerID should be either 1, 2, 3 or 6.");
+			throw new RuntimeException("Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
+	}
+	
+	public static int registerMotionID(int dof) {
+		if(dof != 1 && dof != 2 && dof != 3 && dof != 6)
+			throw new RuntimeException("Warning: Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
+		int key = Collections.max(new ArrayList<Integer>(idMap.keySet())) + 1;
+		idMap.put(key, dof);
+		return key;
 	}
 	
 	public static ArrayList<Integer> motionIDs() {
