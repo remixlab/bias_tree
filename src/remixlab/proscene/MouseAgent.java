@@ -191,12 +191,13 @@ public class MouseAgent extends Agent {
 	
 	protected void setDefaultBindings(GenericP5Frame frame) {
 		frame.removeMotionBindings(motionIDs());
-		frame.removeClickBindings(clickIDs());
+		for(int i=1; i<4; i++)
+			frame.removeClickBindings(clickIDs(), i);
 		
-		frame.setDOF2Binding(LEFT_ID, "rotate");
-		frame.setDOF2Binding(CENTER_ID, frame.isEyeFrame() ? "zoomOnRegion" : "screenRotate");
-		frame.setDOF2Binding(RIGHT_ID, "translate");		
-		frame.setDOF1Binding(WHEEL_ID, scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
+		frame.setMotionBinding(LEFT_ID, "rotate");
+		frame.setMotionBinding(CENTER_ID, frame.isEyeFrame() ? "zoomOnRegion" : "screenRotate");
+		frame.setMotionBinding(RIGHT_ID, "translate");		
+		frame.setMotionBinding(WHEEL_ID, scene().is3D() ? frame.isEyeFrame() ? "translateZ" : "scale" : "scale");
 		
 		frame.setClickBinding(LEFT_ID, 2, "align");
 		frame.setClickBinding(RIGHT_ID, 2, "center");

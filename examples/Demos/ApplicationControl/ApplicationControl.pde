@@ -38,8 +38,8 @@ public void setup() {
 
   e = new InteractiveFrame(ctrlScene);
   updateEllipse(e);
-  e.setDOF1Binding(this, MouseAgent.WHEEL_ID, "changeShape");
-  e.setDOF2Binding(this, LEFT, "changeShape");
+  e.setMotionBinding(this, MouseAgent.WHEEL_ID, "changeShape");
+  e.setMotionBinding(this, LEFT, "changeShape");
   e.setClickBinding(this, LEFT, 1, "changeColor");
   e.setKeyBinding(this, 'x', "colorBlue");
   e.setKeyBinding(this, 'y', "colorRed");

@@ -77,8 +77,8 @@ public void setup() {
   ctrlScene = new Scene(this, ctrlCanvas, oX, oY);
   
   e = new InteractiveEllipse(ctrlScene);
-  e.setDOF1Binding(MouseAgent.WHEEL_ID, "changeShape");
-  e.setDOF2Binding(LEFT, "changeShape");
+  e.setMotionBinding(MouseAgent.WHEEL_ID, "changeShape");
+  e.setMotionBinding(LEFT, "changeShape");
   e.setClickBinding(LEFT, 1, "changeColor");
   e.setKeyBinding('x', "colorBlue");
   e.setKeyBinding('y', "colorRed");

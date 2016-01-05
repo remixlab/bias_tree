@@ -146,8 +146,8 @@ public class GenericP5Frame extends GenericFrame {
 		setKeyBinding('z', "rotateZNeg");
 		setKeyBinding('Z', "rotateZPos");
 	}
-	
-	// TODO: motion stuff should go?
+
+	// good for all dofs :P
 	
 	public void setMotionBinding(int id, String methodName) {
 		profile.setBinding(new MotionShortcut(id), methodName);
@@ -161,8 +161,6 @@ public class GenericP5Frame extends GenericFrame {
 		profile.removeBindings(MotionShortcut.class);
 	}
 	
-	// good for all dofs :P
-	
 	public boolean hasMotionBinding(int id) {
 		return profile.hasBinding(new MotionShortcut(id));
 	}
@@ -172,49 +170,9 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public void removeMotionBindings(int [] ids) {
-		profile.removeMotionBindings(ids);
+		for(int i=0; i< ids.length; i++)
+			removeMotionBinding(ids[i]);
 	}
-	
-	// DOF1
-	
-	public void setDOF1Binding(int id, String methodName) {
-		profile.setBinding(new MotionShortcut(id), methodName);
-	}
-	
-	public void setDOF1Binding(Object object, int id, String methodName) {
-		profile.setBinding(object, new MotionShortcut(id), methodName);
-	}
-	
-	// DOF2
-	
-	public void setDOF2Binding(int id, String methodName) {
-		profile.setBinding(new MotionShortcut(id), methodName);
-	}
-		
-	public void setDOF2Binding(Object object, int id, String methodName) {
-		profile.setBinding(object, new MotionShortcut(id), methodName);
-	}
-	
-	// DOF3
-	
-	public void setDOF3Binding(int id, String methodName) {
-		profile.setBinding(new MotionShortcut(id), methodName);
-	}
-		
-	public void setDOF3Binding(Object object, int id, String methodName) {
-		profile.setBinding(object, new MotionShortcut(id), methodName);
-	}
-	
-	// DOF6
-	
-	public void setDOF6Binding(int id, String methodName) {
-		profile.setBinding(new MotionShortcut(id), methodName);
-	}
-		
-	public void setDOF6Binding(Object object, int id, String methodName) {
-		profile.setBinding(object, new MotionShortcut(id), methodName);
-	}
-	//*/
 	
 	// Key
 	
@@ -289,11 +247,17 @@ public class GenericP5Frame extends GenericFrame {
 	// click
 	
 	public void setClickBinding(int id, int count, String methodName) {
-		profile.setBinding(new ClickShortcut(id, count), methodName);
+		if(count > 0 && count < 4)
+			profile.setBinding(new ClickShortcut(id, count), methodName);
+		else
+			System.out.println("Warning no click binding set! Count should be between 1 and 3");
 	}
 	
 	public void setClickBinding(Object object, int id, int count, String methodName) {
-		profile.setBinding(object, new ClickShortcut(id, count), methodName);
+		if(count > 0 && count < 4)
+			profile.setBinding(object, new ClickShortcut(id, count), methodName);
+		else
+			System.out.println("Warning no click binding set! Count should be between 1 and 3");
 	}
 	
 	public boolean hasClickBinding(int id, int count) {
@@ -308,8 +272,9 @@ public class GenericP5Frame extends GenericFrame {
 		profile.removeBindings(ClickShortcut.class);
 	}
 	
-	public void removeClickBindings(int [] ids) {
-		profile.removeClickBindings(ids);
+	public void removeClickBindings(int [] ids, int count) {
+		for(int i=0; i<ids.length; i++)
+			removeClickBinding(ids[i], count);
 	}
 	
 	public Profile profile() {

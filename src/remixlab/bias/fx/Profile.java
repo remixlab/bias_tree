@@ -12,6 +12,7 @@ package remixlab.bias.fx;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +29,6 @@ import remixlab.util.*;
  * <p>
  * 
  */
-//TODO: shortcut.dof vs Profile.motionIDs hashmap: id -> dofs
 public class Profile {
 	class ObjectMethodTuple {
 		Object object;
@@ -88,13 +88,18 @@ public class Profile {
 	
 	public static void registerMotionID(int id, int dof) {
 		if(idMap.containsKey(id)) {
-			System.out.println("Warning: nothing done! id already present in Profile. Call Profile.unregisterID first or use an id differente than: " + idMap.keySet().toArray().toString());
+			//System.out.println("Warning: nothing done! id already present in Profile. Call Profile.unregisterID first or use an id different than: " + Arrays.toString(idMap.keySet().toArray()));
+			System.out.println("Warning: nothing done! id already present in Profile. Call Profile.unregisterID first or use an id different than: " + motionIDs().toString());
 			return;
 		}
 		if(dof == 1 || dof == 2 || dof == 3 || dof == 6)
 			idMap.put(id, dof);
 		else
 			System.out.println("Warning: Nothing done! dofs in Profile.registerID should be either 1, 2, 3 or 6.");
+	}
+	
+	public static ArrayList<Integer> motionIDs() {
+		return new ArrayList<Integer>(idMap.keySet());
 	}
 	
 	public static void unregisterMotionID(int id) {
@@ -313,6 +318,7 @@ public class Profile {
 	
 	// TODO all this should take a class parameter to keep it simple
 	
+	/*
 	public String motionBindingsInfo(int [] ids) {
 		String result = new String();
 		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
@@ -380,19 +386,6 @@ public class Profile {
 	        }       	
 	    }
 	}
-	
-	/*
-	// TODO keyboard handlers may need a key event
-	public void setKeyboardBinding(Shortcut key, String methodName) {
-		if(printWarning(key, methodName)) return;
-		try {
-			Method method = grabber.getClass().getMethod(methodName, new Class<?>[] { });
-			map.put(key, new ObjectMethodTuple(grabber, method));
-		} catch (Exception e) {
-			System.out.println("Something went wrong when registering your " + methodName + " method");
-			e.printStackTrace();
-		}
-	}
 	*/
 	
 	/**
@@ -446,24 +439,6 @@ public class Profile {
 			}
 		return result;
 	}
-	
-	/*
-	public void removeBindings(int [] ids) {
-		if(ids == null)
-			return;
-		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
-	        int id = pair.getKey().id();
-	        for(int i = 0; i < ids.length; i++ ) {
-	        	if( id == ids[i] ) {
-	        		it.remove();
-	        		break;
-	        	}
-			}	        	
-	    }
-	}
-	*/
 
 	/**
 	 * Returns true if this object contains a binding for the specified shortcut.
