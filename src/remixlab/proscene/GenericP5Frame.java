@@ -106,17 +106,20 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	protected void addStageHandlers() {
-		addStageHandler("initKeyboard");
-		addStageHandler("flushKeyboard");
+		addInitHandler(KeyboardEvent.class, "initKeyboard");
+		addFlushHandler(KeyboardEvent.class, "flushKeyboard");
 		
+		/*
 		addStageHandler("initMotion");
 		addStageHandler("execMotion");
 		addStageHandler("flushMotion");
+		*/
 		
-		addStageHandler("initDOF2");
-		addStageHandler("execDOF2");
-		addStageHandler("flushDOF2");
+		addInitHandler(DOF2Event.class, "initDOF2");
+		addExecHandler(DOF2Event.class, "execDOF2");
+		addFlushHandler(DOF2Event.class, "flushDOF2");
 		
+		/*
 		addStageHandler("initDOF3");
 		addStageHandler("execDOF3");
 		addStageHandler("flushDOF3");
@@ -124,6 +127,7 @@ public class GenericP5Frame extends GenericFrame {
 		addStageHandler("initDOF6");
 		addStageHandler("execDOF6");
 		addStageHandler("flushDOF6");
+		*/
 	}
 	
 	public void setDefaultMotionBindings() {
@@ -335,20 +339,52 @@ public class GenericP5Frame extends GenericFrame {
 	
 	// lets see
 	
-	public void addStageHandler(String methodName) {
-		profile().addStageHandler(methodName);
+	public void addInitHandler(Class<?> event, String methodName) {
+		profile().addInitHandler(event, methodName);
 	}
 	
-	public void addStageHandler(Object object, String methodName) {
-		profile().addStageHandler(object, methodName);
+	public void addInitHandler(Object object, Class<?> event, String methodName) {
+		profile().addInitHandler(object, event, methodName);
 	}
 	
-	public boolean hasStageHandler(String methodName) {
-		return profile().hasStageHandler(methodName);
+	public boolean hasInitHandler(Class<?> event) {
+		return profile().hasInitHandler(event);
 	}
 	
-	public void removeStageHandler(String methodName) {
-		profile().removeStageHandler(methodName);
+	public void removeInitHandler(Class<?> event) {
+		profile().removeInitHandler(event);
+	}
+	
+	public void addExecHandler(Class<?> event, String methodName) {
+		profile().addExecHandler(event, methodName);
+	}
+	
+	public void addExecHandler(Object object, Class<?> event, String methodName) {
+		profile().addExecHandler(object, event, methodName);
+	}
+	
+	public boolean hasExecHandler(Class<?> event) {
+		return profile().hasExecHandler(event);
+	}
+	
+	public void removeExecHandler(Class<?> event) {
+		profile().removeExecHandler(event);
+	}
+	
+	public void addFlushHandler(Class<?> event, String methodName) {
+		profile().addFlushHandler(event, methodName);
+	}
+	
+	public void addFlushHandler(Object object, Class<?> event, String methodName) {
+		profile().addFlushHandler(object, event, methodName);
+	}
+	
+	public boolean hasFlushHandler(Class<?> event) {
+		return profile().hasFlushHandler(event);
+	}
+	
+	public void removeFlushHandler(Class<?> event) {
+		profile().removeFlushHandler(event);
 	}
 	
 	public boolean initKeyboard(KeyboardEvent event) {
@@ -360,9 +396,10 @@ public class GenericP5Frame extends GenericFrame {
 		}
 	}
 	
-	public void flushKeyboard(KeyboardEvent event) {
+	public boolean flushKeyboard(KeyboardEvent event) {
 		if( event.flushed() && vkeyAction != null )
 			vkeyAction = null;
+		return true;
 	}
 
 	/**
@@ -458,21 +495,21 @@ public class GenericP5Frame extends GenericFrame {
 	 * 
 	 * @see remixlab.bias.fx.Profile
 	 */
-	public void flushMotion(MotionEvent e) {
-		flushDOF2(MotionEvent.dof2Event(e));
+	public boolean flushMotion(MotionEvent e) {
+		return flushDOF2(MotionEvent.dof2Event(e));
 	}
 	
-	public void flushDOF3(DOF3Event e) {
-		flushDOF2(MotionEvent.dof2Event(e));
+	public boolean flushDOF3(DOF3Event e) {
+		return flushDOF2(MotionEvent.dof2Event(e));
 	}
 	
-	public void flushDOF6(DOF6Event e) {
-		flushDOF2(MotionEvent.dof2Event(e));
+	public boolean flushDOF6(DOF6Event e) {
+		return flushDOF2(MotionEvent.dof2Event(e));
 	}
 	
-	public void flushDOF2(DOF2Event event) {
+	public boolean flushDOF2(DOF2Event event) {
 		if(event == null)
-			return;
+			return true;
 		if (rotateHint) {
 			gScene.setRotateVisualHint(false);
 			rotateHint = false;
@@ -495,5 +532,6 @@ public class GenericP5Frame extends GenericFrame {
 				setFlySpeed(flySpeedCache);
 			stopFlying();
 		}
+		return true;
 	}
 }

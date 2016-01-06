@@ -205,8 +205,8 @@ public class Scene extends AbstractScene implements PConstants {
 		parent.registerMethod("keyEvent", keyboardAgent());
 		this.setDefaultKeyBindings();
 		
-		addStageHandler("initKeyboard");
-		addStageHandler("flushKeyboard");
+		addInitHandler(KeyboardEvent.class, "initKeyboard");
+		addFlushHandler(KeyboardEvent.class, "flushKeyboard");
 		
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
@@ -2439,25 +2439,58 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 	}
 	
-	public void flushKeyboard(KeyboardEvent event) {
+	public boolean flushKeyboard(KeyboardEvent event) {
 		if( event.flushed() && vkeyAction != null )
 			vkeyAction = null;
+		return true;
 	}
 	
-	public void addStageHandler(String methodName) {
-		profile().addStageHandler(methodName);
+	public void addInitHandler(Class<?> event, String methodName) {
+		profile().addInitHandler(event, methodName);
 	}
 	
-	public void addStageHandler(Object object, String methodName) {
-		profile().addStageHandler(object, methodName);
+	public void addInitHandler(Object object, Class<?> event, String methodName) {
+		profile().addInitHandler(object, event, methodName);
 	}
 	
-	public boolean hasStageHandler(String methodName) {
-		return profile().hasStageHandler(methodName);
+	public boolean hasInitHandler(Class<?> event) {
+		return profile().hasInitHandler(event);
 	}
 	
-	public void removeStageHandler(String methodName) {
-		profile().removeStageHandler(methodName);
+	public void removeInitHandler(Class<?> event) {
+		profile().removeInitHandler(event);
+	}
+	
+	public void addExecHandler(Class<?> event, String methodName) {
+		profile().addExecHandler(event, methodName);
+	}
+	
+	public void addExecHandler(Object object, Class<?> event, String methodName) {
+		profile().addExecHandler(object, event, methodName);
+	}
+	
+	public boolean hasExecHandler(Class<?> event) {
+		return profile().hasExecHandler(event);
+	}
+	
+	public void removeExecHandler(Class<?> event) {
+		profile().removeExecHandler(event);
+	}
+	
+	public void addFlushHandler(Class<?> event, String methodName) {
+		profile().addFlushHandler(event, methodName);
+	}
+	
+	public void addFlushHandler(Object object, Class<?> event, String methodName) {
+		profile().addFlushHandler(object, event, methodName);
+	}
+	
+	public boolean hasFlushHandler(Class<?> event) {
+		return profile().hasFlushHandler(event);
+	}
+	
+	public void removeFlushHandler(Class<?> event) {
+		profile().removeFlushHandler(event);
 	}
 	
 	public Method action(Shortcut key) {

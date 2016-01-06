@@ -11,12 +11,10 @@
 package remixlab.bias.fx;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -45,7 +43,9 @@ public class Profile {
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
 				append(actionMap).
-				append(stageMap).toHashCode();
+				append(initMap).
+				append(execMap).
+				append(flushMap).toHashCode();
 	}
 
 	@Override
@@ -60,7 +60,9 @@ public class Profile {
 		Profile other = (Profile) obj;
 		return new EqualsBuilder()
 				.append(actionMap, other.actionMap)
-				.append(stageMap, other.stageMap).
+				.append(initMap, other.initMap)
+				.append(execMap, other.execMap)
+				.append(flushMap, other.flushMap).
 				isEquals();
 	}
 	
@@ -71,19 +73,16 @@ public class Profile {
 	// temporal vars
 	String initAction;
 	
-	protected HashMap<String, ObjectMethodTuple> stageMap;
+	protected HashMap<Class<?>, ObjectMethodTuple> initMap, execMap, flushMap;
 	
-	protected List<String> names = Arrays.asList(
-			"init", "initKeyboard", "initClick", "initMotion", "initDOF1", "initDOF2", "initDOF3", "initDOF6",
-			"exec", "execKeyboard", "execClick", "execMotion", "execDOF1", "execDOF2", "execDOF3", "execDOF6",
-			"flush", "flushKeyboard", "flushClick", "flushMotion", "flushDOF1", "flushDOF2", "flushDOF3", "flushDOF6");
-
 	/**
 	 * Constructs the hash-map based profile.
 	 */
 	public Profile(Grabber g) {
 		actionMap = new HashMap<Shortcut, ObjectMethodTuple>();
-		stageMap = new HashMap<String, ObjectMethodTuple>();
+		initMap = new HashMap<Class<?>, ObjectMethodTuple>();
+		execMap = new HashMap<Class<?>, ObjectMethodTuple>();
+		flushMap = new HashMap<Class<?>, ObjectMethodTuple>();
 		grabber = g;
 	}
 	
@@ -127,12 +126,26 @@ public class Profile {
 			else
 				actionMap.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
 		}
-		stageMap = new HashMap<String, ObjectMethodTuple>();
-		for (Map.Entry<String, ObjectMethodTuple> entry : p.stageMap.entrySet()) {
+		initMap = new HashMap<Class<?>, ObjectMethodTuple>();
+		for (Map.Entry<Class<?>, ObjectMethodTuple> entry : p.initMap.entrySet()) {
 			if( entry.getValue().object == p.grabber )
-				stageMap.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
+				initMap.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
 			else
-				stageMap.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
+				initMap.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
+		}
+		execMap = new HashMap<Class<?>, ObjectMethodTuple>();
+		for (Map.Entry<Class<?>, ObjectMethodTuple> entry : p.execMap.entrySet()) {
+			if( entry.getValue().object == p.grabber )
+				execMap.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
+			else
+				execMap.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
+		}
+		flushMap = new HashMap<Class<?>, ObjectMethodTuple>();
+		for (Map.Entry<Class<?>, ObjectMethodTuple> entry : p.flushMap.entrySet()) {
+			if( entry.getValue().object == p.grabber )
+				flushMap.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
+			else
+				flushMap.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
 		}
 	}
 	
@@ -147,8 +160,20 @@ public class Profile {
 		return actionMap;
 	}
 	
-	protected HashMap<String, ObjectMethodTuple> stageMap() {
-		return stageMap;
+	protected HashMap<Class<?>, ObjectMethodTuple> initMap() {
+		return initMap;
+	}
+	
+	protected HashMap<Class<?>, ObjectMethodTuple> execMap() {
+		return execMap;
+	}
+	
+	protected HashMap<Class<?>, ObjectMethodTuple> flushMap() {
+		return flushMap;
+	}
+	
+	public Method action(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event) {
+		return stageMap.get(event) == null ? null : stageMap.get(event).method;
 	}
 
 	/**
@@ -170,8 +195,8 @@ public class Profile {
 		return actionMap.get(key) == null ? null : actionMap.get(key).object;
 	}
 	
-	protected Object object(String name) {
-		return stageMap.get(name) == null ? null : stageMap.get(name).object;
+	protected Object object(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event) {
+		return stageMap.get(event) == null ? null : stageMap.get(event).object;
 	}
 	
 	protected Class<?> cls(Shortcut key) {
@@ -325,78 +350,6 @@ public class Profile {
 		actionMap.put(key, new ObjectMethodTuple(object, method));
 	}
 	
-	// TODO all this should take a class parameter to keep it simple
-	
-	/*
-	public String motionBindingsInfo(int [] ids) {
-		String result = new String();
-		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
-			if (entry.getKey() != null && entry.getValue() != null)
-				if( entry.getKey() instanceof MotionShortcut ) {
-					int id = entry.getKey().id();
-			        for(int i = 0; i < ids.length; i++ )
-			        	if( id == ids[i] ) {
-			        		result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
-			        		break;
-			        	}
-				}
-		return result;
-	}
-	
-	public String clickBindingsInfo(int [] ids) {
-		String result = new String();
-		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
-			if (entry.getKey() != null && entry.getValue() != null)
-				if( entry.getKey() instanceof ClickShortcut ) {
-					int id = entry.getKey().id();
-			        for(int i = 0; i < ids.length; i++ )
-			        	if( id == ids[i] ) {
-			        		result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
-			        		break;
-			        	}
-				}
-		return result;
-	}
-	
-	public void removeMotionBindings(int [] ids) {
-		if(ids == null)
-			return;
-		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = actionMap.entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
-	        Shortcut shortcut = pair.getKey();
-	        if(shortcut instanceof MotionShortcut) {
-	        	int id = shortcut.id();
-		        for(int i = 0; i < ids.length; i++ ) {
-		        	if( id == ids[i] ) {
-		        		it.remove();
-		        		break;
-		        	}
-				}	        
-	        }       	
-	    }
-	}
-	
-	public void removeClickBindings(int [] ids) {
-		if(ids == null)
-			return;
-		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = actionMap.entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
-	        Shortcut shortcut = pair.getKey();
-	        if(shortcut instanceof ClickShortcut) {
-	        	int id = shortcut.id();
-		        for(int i = 0; i < ids.length; i++ ) {
-		        	if( id == ids[i] ) {
-		        		it.remove();
-		        		break;
-		        	}
-				}	        
-	        }       	
-	    }
-	}
-	*/
-	
 	/**
 	 * Removes the shortcut binding.
 	 * 
@@ -525,20 +478,22 @@ public class Profile {
 	protected final boolean processStage(BogusEvent event) {
 		if (initAction == null) {
 			if (!event.flushed()) {
-				return initStage(event);// start action
+				initAction = actionName(event.shortcut());
+				return (initAction == null) ? false : invokeStageHandler(initMap, event);// start action
 			}
 		}
 		else { // initAction != null
 			if (!event.flushed()) {
 				if (initAction == actionName(event.shortcut()))
-					return execStage(event);// continue action
+					return invokeStageHandler(execMap, event);// continue action
 				else { // initAction != action() -> action changes abruptly
-					flushStage(event);
-					return initStage(event);// start action
+					invokeStageHandler(flushMap, event);
+					initAction = actionName(event.shortcut());
+					return (initAction == null) ? false : invokeStageHandler(initMap, event);// start action
 				}
 			}
 			else {// action() == null
-				flushStage(event);// stopAction
+				invokeStageHandler(flushMap, event);// stopAction
 				initAction = null;
 				//setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
 				return true;
@@ -546,114 +501,20 @@ public class Profile {
 		}
 		return true;// i.e., if initAction == action() == null -> ignore :)
 	}
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processStage(BogusEvent)
-	 */
-	protected boolean initStage(BogusEvent event) {
-		initAction = actionName(event.shortcut());
-		if(initAction == null)
-			return false;
-		if (event instanceof KeyboardEvent)
-			return invokeStageHandler(event, "initKeyboard");
-		if (event instanceof ClickEvent)
-			return invokeStageHandler(event, "initClick");
-		if (event instanceof DOF1Event)
-			return invokeStageHandler(event, "initDOF1");
-		if (event instanceof DOF2Event) 
-			return invokeStageHandler(event, "initDOF2");
-		if (event instanceof DOF3Event)
-			return invokeStageHandler(event, "initDOF3");
-		if (event instanceof DOF6Event)
-			return invokeStageHandler(event, "initDOF6");
-		if (event instanceof MotionEvent)
-			return invokeStageHandler(event, "initMotion");
-		return invokeStageHandler(event, "init");
-	}
 	
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processStage(BogusEvent)
-	 */
-	protected boolean execStage(BogusEvent event) {
-		if (event instanceof KeyboardEvent)
-			return invokeStageHandler(event, "execKeyboard");
-		if (event instanceof ClickEvent)
-			return invokeStageHandler(event, "execClick");
-		if (event instanceof DOF1Event)
-			return invokeStageHandler(event, "execDOF1");
-		if (event instanceof DOF2Event)
-			return invokeStageHandler(event, "execDOF2");
-		if (event instanceof DOF3Event)
-			return invokeStageHandler(event, "execDOF3");
-		if (event instanceof DOF6Event)
-			return invokeStageHandler(event, "execDOF6");
-		if (event instanceof MotionEvent)
-			return invokeStageHandler(event, "execMotion");
-		return invokeStageHandler(event, "exec");
-	}
-	
-	/**
-	 * Internal use.
-	 * 
-	 * @see #processStage(BogusEvent)
-	 */
-	protected void flushStage(BogusEvent event) {
-		if (event instanceof KeyboardEvent) {
-			invokeStageHandler(event, "flushKeyboard");
-			return;
-		}
-		if (event instanceof ClickEvent) {
-			invokeStageHandler(event, "flushClick");
-			return;
-		}
-		if (event instanceof DOF1Event) {
-			invokeStageHandler(event, "flushDOF1");
-			return;
-		}
-		if (event instanceof DOF2Event) {
-			invokeStageHandler(event, "flushDOF2");
-			return;
-		}
-		if (event instanceof DOF3Event) {
-			invokeStageHandler(event, "flushDOF3");
-			return;
-		}
-		if (event instanceof DOF6Event) {
-			invokeStageHandler(event, "flushDOF6");
-			return;
-		}
-		if (event instanceof MotionEvent) {
-			invokeStageHandler(event, "flushMotion");
-			return;
-		}
-		invokeStageHandler(event, "flush");
-	}
-	
-	protected boolean invokeStageHandler(BogusEvent event, String methodName) {
+	protected boolean invokeStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, BogusEvent event) {
 		boolean result = false;
-		ObjectMethodTuple tuple = stageMap.get(methodName);
-		if(tuple == null)
+		ObjectMethodTuple tuple = stageMap.get(event.getClass());
+		if (tuple == null)
 			return result;
 		Method iHandlerMethod = tuple.method;
-		if (iHandlerMethod != null) {
-			try {
-				if(methodName.contains("flush")) {
-					if(object(methodName) == grabber)
-						iHandlerMethod.invoke(object(methodName), new Object[] { event });
-					else
-						iHandlerMethod.invoke(object(methodName), new Object[] { grabber, event });
-					result = true;
-				}
-				else {//init and exec
-					if(object(methodName) == grabber)
-						result = (boolean) iHandlerMethod.invoke(object(methodName), new Object[] { event });
-					else
-						result = (boolean) iHandlerMethod.invoke(object(methodName), new Object[] { grabber, event });										
-				}
+		if (iHandlerMethod != null) {			
+			try {// init and exec //TODO: exclude flush? Allow return void in flush
+				Object object = object(stageMap, event.getClass());
+				if (object == grabber)
+					result = (boolean) iHandlerMethod.invoke(object, new Object[] { event });
+				else
+					result = (boolean) iHandlerMethod.invoke(object, new Object[] { grabber, event });
 			} catch (Exception e) {
 				System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
 				e.printStackTrace();
@@ -663,61 +524,96 @@ public class Profile {
 		return result;
 	}
 	
-	protected Class<?> printWarning(String methodName) {
-		if( !names.contains(methodName) ) {
-			System.out.println("Warning: your " + methodName + " method hasn't been added, it should be one of: " + names.toString() );
-			return null;
+	protected boolean printWarning(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event, String methodName) {
+		Method a = action(stageMap, event);
+		String name = a.getName() + " " + event.getSimpleName() + " " + (stageMap == initMap() ? "init" : stageMap == execMap() ? "exec" : "flush" ) + " stage handler";
+		if(methodName == null) {
+			this.removeStageHandler(stageMap, event);
+			System.out.println(name + " removed");
+			return true;
+		}			
+		if (hasStageHandler(stageMap, event)) {
+			System.out.println("Warning: " + name + " overwritten");
+			return false;	
 		}
-		Class<?> cls = null;
-		if (stageMap.containsKey(methodName))
-			System.out.println("Warning: " + methodName + " re-added");
-		if( methodName.contains("Keyboard") )
-			cls = KeyboardEvent.class;
-		else if (methodName.contains("Click"))
-			cls = ClickEvent.class;
-		else if (methodName.contains("Motion"))
-			cls = MotionEvent.class;
-		else if (methodName.contains("DOF1"))
-			cls = DOF1Event.class;
-		else if (methodName.contains("DOF2"))
-			cls = DOF2Event.class;
-		else if (methodName.contains("DOF3"))
-			cls = DOF3Event.class;
-		else if (methodName.contains("DOF6"))
-			cls = DOF6Event.class;
-		else
-			cls = BogusEvent.class;		
-		return cls;
+		return false;
 	}
 	
-	public void addStageHandler(String methodName) {
-		Class<?> cls = printWarning(methodName);
-		if(cls == null) return;
+	protected void addStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event, String methodName) {
+		if (printWarning(stageMap, event, methodName))
+			return;
 		try {
-			stageMap.put(methodName, new ObjectMethodTuple(grabber, grabber.getClass().getMethod(methodName, new Class<?>[] { cls })));
+			stageMap.put(event, new ObjectMethodTuple(grabber, grabber.getClass().getMethod(methodName, new Class<?>[] { event })));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
 		}
 	}
 	
-	public void addStageHandler(Object object, String methodName) {
-		Class<?> cls = printWarning(methodName);
-		if(cls == null) return;
+	protected void addStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Object object, Class<?> event, String methodName) {
+		if (printWarning(stageMap, event, methodName))
+			return;
 		try {
-			Method method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), cls });
-			stageMap.put(methodName, new ObjectMethodTuple(object, method));
+			stageMap.put(event, new ObjectMethodTuple(object, object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), event })));
 		} catch (Exception e) {
 			System.out.println("Something went wrong when registering your " + methodName + " method");
 			e.printStackTrace();
 		}
 	}
 	
-	public boolean hasStageHandler(String methodName) {
-		return stageMap.containsKey(methodName);
+	public void addInitHandler(Class<?> event, String methodName) {
+		addStageHandler(initMap, event, methodName);
 	}
 	
-	public void removeStageHandler(String methodName) {
-		stageMap.remove(methodName);
+	public void addInitHandler(Object object, Class<?> event, String methodName) {
+		addStageHandler(initMap, object, event, methodName);
+	}
+	
+	public void addExecHandler(Class<?> event, String methodName) {
+		addStageHandler(execMap, event, methodName);
+	}
+	
+	public void addExecHandler(Object object, Class<?> event, String methodName) {
+		addStageHandler(execMap, object, event, methodName);
+	}
+	
+	public void addFlushHandler(Class<?> event, String methodName) {
+		addStageHandler(flushMap, event, methodName);
+	}
+	
+	public void addFlushHandler(Object object, Class<?> event, String methodName) {
+		addStageHandler(flushMap, object, event, methodName);
+	}
+	
+	protected boolean hasStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event) {
+		return stageMap.containsKey(event);
+	}
+	
+	public boolean hasInitHandler(Class<?> event) {
+		return hasStageHandler(initMap, event);
+	}
+	
+	public boolean hasExecHandler(Class<?> event) {
+		return hasStageHandler(execMap, event);
+	}
+	
+	public boolean hasFlushHandler(Class<?> event) {
+		return hasStageHandler(flushMap, event);
+	}
+	
+	protected void removeStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event) {
+		stageMap.remove(event);
+	}
+	
+	public void removeInitHandler(Class<?> event) {
+		removeStageHandler(initMap, event);
+	}
+	
+	public void removeExecHandler(Class<?> event) {
+		removeStageHandler(execMap, event);
+	}
+	
+	public void removeFlushHandler(Class<?> event) {
+		removeStageHandler(flushMap, event);
 	}
 }
