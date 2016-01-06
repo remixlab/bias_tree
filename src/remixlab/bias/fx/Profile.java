@@ -1,12 +1,12 @@
-/*********************************************************************************
+/**************************************************************************************
  * bias_tree
- * Copyright (c) 2014 National University of Colombia, https://github.com/remixlab
+ * Copyright (c) 2014-2016 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  *
  * All rights reserved. Library that eases the creation of interactive
  * scenes, released under the terms of the GNU Public License v3.0
  * which is available at http://www.gnu.org/licenses/gpl.html
- *********************************************************************************/
+ **************************************************************************************/
 
 package remixlab.bias.fx;
 
@@ -42,7 +42,7 @@ public class Profile {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
-				append(actionMap).
+				append(map).
 				append(initMap).
 				append(execMap).
 				append(flushMap).toHashCode();
@@ -59,7 +59,7 @@ public class Profile {
 
 		Profile other = (Profile) obj;
 		return new EqualsBuilder()
-				.append(actionMap, other.actionMap)
+				.append(map, other.map)
 				.append(initMap, other.initMap)
 				.append(execMap, other.execMap)
 				.append(flushMap, other.flushMap).
@@ -67,7 +67,7 @@ public class Profile {
 	}
 	
 	protected static HashMap<Integer, Integer> idMap = new HashMap<Integer, Integer>();	
-	protected HashMap<Shortcut, ObjectMethodTuple>	actionMap;
+	protected HashMap<Shortcut, ObjectMethodTuple> map;
 	protected Grabber grabber;
 	
 	// temporal vars
@@ -79,7 +79,7 @@ public class Profile {
 	 * Constructs the hash-map based profile.
 	 */
 	public Profile(Grabber g) {
-		actionMap = new HashMap<Shortcut, ObjectMethodTuple>();
+		map = new HashMap<Shortcut, ObjectMethodTuple>();
 		initMap = new HashMap<Class<?>, ObjectMethodTuple>();
 		execMap = new HashMap<Class<?>, ObjectMethodTuple>();
 		flushMap = new HashMap<Class<?>, ObjectMethodTuple>();
@@ -119,12 +119,12 @@ public class Profile {
 			System.err.println("Profile grabbers should be of the same type");
 			return;
 		}
-		actionMap = new HashMap<Shortcut, ObjectMethodTuple>();
+		map = new HashMap<Shortcut, ObjectMethodTuple>();
 		for (Map.Entry<Shortcut, ObjectMethodTuple> entry : p.actionMap().entrySet()) {
 			if( entry.getValue().object == p.grabber )
-				actionMap.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
+				map.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
 			else
-				actionMap.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
+				map.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
 		}
 		initMap = new HashMap<Class<?>, ObjectMethodTuple>();
 		for (Map.Entry<Class<?>, ObjectMethodTuple> entry : p.initMap.entrySet()) {
@@ -157,7 +157,7 @@ public class Profile {
 	 * Returns the {@code map} (which is simply an instance of {@code HashMap}) encapsulated by this object.
 	 */
 	protected HashMap<Shortcut, ObjectMethodTuple> actionMap() {
-		return actionMap;
+		return map;
 	}
 	
 	protected HashMap<Class<?>, ObjectMethodTuple> initMap() {
@@ -172,7 +172,7 @@ public class Profile {
 		return flushMap;
 	}
 	
-	public Method action(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event) {
+	public Method method(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event) {
 		return stageMap.get(event) == null ? null : stageMap.get(event).method;
 	}
 
@@ -180,19 +180,19 @@ public class Profile {
 	 * Returns the {@link java.lang.reflect.Method} binding for the given {@link remixlab.bias.core.Shortcut}
 	 * key.
 	 */
-	public Method action(Shortcut key) {
-		return actionMap.get(key) == null ? null : actionMap.get(key).method;
+	public Method method(Shortcut key) {
+		return map.get(key) == null ? null : map.get(key).method;
 	}
 	
-	public String actionName(Shortcut key) {
-		Method m = action(key); 
+	public String action(Shortcut key) {
+		Method m = method(key); 
 		if(m == null)
 			return null;
 		return m.getName();		
 	}
 	
 	protected Object object(Shortcut key) {
-		return actionMap.get(key) == null ? null : actionMap.get(key).object;
+		return map.get(key) == null ? null : map.get(key).object;
 	}
 	
 	protected Object object(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event) {
@@ -230,7 +230,7 @@ public class Profile {
 	}
 	
 	protected boolean invokeAction(BogusEvent event) {
-		Method iHandlerMethod = action(event.shortcut());
+		Method iHandlerMethod = method(event.shortcut());
 		if (iHandlerMethod != null) {
 			try {
 				if(object(event.shortcut()) == grabber)
@@ -256,15 +256,15 @@ public class Profile {
 		return false;
 	}
 	
-	protected boolean printWarning(Shortcut key, String methodName) {
-		if(methodName == null) {
+	protected boolean printWarning(Shortcut key, String action) {
+		if(action == null) {
 			this.removeBinding(key);
 			System.out.println(key.description() + " removed");
 			return true;
 		}			
 		if (hasBinding(key)) {
-			Method a = action(key);
-			if(a.getName().equals(methodName)) {
+			Method a = method(key);
+			if(a.getName().equals(action)) {
 				System.out.println("Warning: shortcut already bound to " + a.getName());
 				return true;
 			}
@@ -281,73 +281,73 @@ public class Profile {
 	 * 
 	 * @param key
 	 *          {@link remixlab.bias.core.Shortcut}
-	 * @param methodName
+	 * @param action
 	 *          {@link java.lang.reflect.Method}
 	 */	
-	public void setBinding(Shortcut key, String methodName) {
-		if (printWarning(key, methodName))
+	public void setBinding(Shortcut key, String action) {
+		if (printWarning(key, action))
 			return;
 		Method method = null;
 		try {
-			method = grabber.getClass().getMethod(methodName, new Class<?>[] { cls(key) });
+			method = grabber.getClass().getMethod(action, new Class<?>[] { cls(key) });
 		} catch (Exception clazz) {
 			boolean print = true;
 			try {
-				method = grabber.getClass().getMethod(methodName, new Class<?>[] {});
+				method = grabber.getClass().getMethod(action, new Class<?>[] {});
 				print = false;
 			} catch (Exception empty) {
 				if (key instanceof MotionShortcut)
 					try {
-						method = grabber.getClass().getMethod(methodName, new Class<?>[] { MotionEvent.class });
+						method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
 						print = false;
 					} catch (Exception motion) {
-						System.out.println("Something went wrong when registering your " + methodName + " method");
+						System.out.println("Something went wrong when registering your " + action + " method");
 						motion.printStackTrace();
 					}
 				else {
-					System.out.println("Something went wrong when registering your " + methodName + " method");
+					System.out.println("Something went wrong when registering your " + action + " method");
 					empty.printStackTrace();
 				}
 			}
 			if(print) {
-				System.out.println("Something went wrong when registering your " + methodName + " method");
+				System.out.println("Something went wrong when registering your " + action + " method");
 				clazz.printStackTrace();
 			}
 		}
-		actionMap.put(key, new ObjectMethodTuple(grabber, method));
+		map.put(key, new ObjectMethodTuple(grabber, method));
 	}
 	
-	public void setBinding(Object object, Shortcut key, String methodName) {
-		if (printWarning(key, methodName))
+	public void setBinding(Object object, Shortcut key, String action) {
+		if (printWarning(key, action))
 			return;
 		Method method = null;
 		try {
-			method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), cls(key) });
+			method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), cls(key) });
 		} catch (Exception clazz) {
 			boolean print = true;
 			try {
-				method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass() });
+				method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass() });
 				print = false;
 			} catch (Exception empty) {
 				if (key instanceof MotionShortcut)
 					try {
-						method = object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), MotionEvent.class });
+						method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), MotionEvent.class });
 						print = false;
 					} catch (Exception motion) {
-						System.out.println("Something went wrong when registering your " + methodName + " method");
+						System.out.println("Something went wrong when registering your " + action + " method");
 						motion.printStackTrace();
 					}
 				else {
-					System.out.println("Something went wrong when registering your " + methodName + " method");
+					System.out.println("Something went wrong when registering your " + action + " method");
 					empty.printStackTrace();
 				}
 			}
 			if(print) {
-				System.out.println("Something went wrong when registering your " + methodName + " method");
+				System.out.println("Something went wrong when registering your " + action + " method");
 				clazz.printStackTrace();
 			}
 		}
-		actionMap.put(key, new ObjectMethodTuple(object, method));
+		map.put(key, new ObjectMethodTuple(object, method));
 	}
 	
 	/**
@@ -357,18 +357,18 @@ public class Profile {
 	 *          {@link remixlab.bias.core.Shortcut}
 	 */
 	public void removeBinding(Shortcut key) {
-		actionMap.remove(key);
+		map.remove(key);
 	}
 
 	/**
 	 * Removes all the shortcuts from this object.
 	 */
 	public void removeBindings() {
-		actionMap.clear();
+		map.clear();
 	}
 	
 	public void removeBindings(Class<?> cls) {
-		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = actionMap.entrySet().iterator();
+		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
 	    while (it.hasNext()) {
 	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
 	        if(cls.isInstance(pair.getKey()))
@@ -378,7 +378,7 @@ public class Profile {
 	
 	public String info(Class<?> cls) {
 		String result = new String();
-		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
+		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
 			if (entry.getKey() != null && entry.getValue() != null)
 				if(cls.isInstance(entry.getKey()))
 					result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
@@ -391,7 +391,7 @@ public class Profile {
 	public String info() {
 		String result = new String();
 		boolean title = false;
-		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
+		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
 			if (entry.getKey() != null && entry.getValue() != null) {
 				if(!title) {
 				  result += entry.getKey().getClass().getSimpleName() + "s:\n";
@@ -410,30 +410,30 @@ public class Profile {
 	 * @return true if this object contains a binding for the specified shortcut.
 	 */
 	public boolean hasBinding(Shortcut key) {
-		return actionMap.containsKey(key);
+		return map.containsKey(key);
 	}
 	
 	/**
 	 * Returns true if this object maps one or more shortcuts to the specified action.
 	 * 
-	 * @param method
+	 * @param action
 	 *          {@link java.lang.reflect.Method}
 	 * @return true if this object maps one or more shortcuts to the specified action.
 	 */
-	public boolean isActionBound(String method) {
-		for (ObjectMethodTuple tuple : actionMap.values()) {
-			if( grabber == tuple.object && tuple.method.getName().equals(method) )
+	public boolean isActionBound(String action) {
+		for (ObjectMethodTuple tuple : map.values()) {
+			if( grabber == tuple.object && tuple.method.getName().equals(action) )
 				return true;
 		}
 		return false;
 	}
 	
-	public boolean isActionBound(Method method) {
-		return isActionBound(grabber, method);
+	public boolean isMethodBound(Method method) {
+		return isMethodBound(grabber, method);
 	}
 	
-	public boolean isActionBound(Object object, Method method) {
-		return actionMap.containsValue(new ObjectMethodTuple(object, method));
+	public boolean isMethodBound(Object object, Method method) {
+		return map.containsValue(new ObjectMethodTuple(object, method));
 	}
 	
 	//
@@ -478,17 +478,17 @@ public class Profile {
 	protected final boolean processStage(BogusEvent event) {
 		if (initAction == null) {
 			if (!event.flushed()) {
-				initAction = actionName(event.shortcut());
+				initAction = action(event.shortcut());
 				return (initAction == null) ? false : invokeStageHandler(initMap, event);// start action
 			}
 		}
 		else { // initAction != null
 			if (!event.flushed()) {
-				if (initAction == actionName(event.shortcut()))
+				if (initAction == action(event.shortcut()))
 					return invokeStageHandler(execMap, event);// continue action
 				else { // initAction != action() -> action changes abruptly
 					invokeStageHandler(flushMap, event);
-					initAction = actionName(event.shortcut());
+					initAction = action(event.shortcut());
 					return (initAction == null) ? false : invokeStageHandler(initMap, event);// start action
 				}
 			}
@@ -533,10 +533,10 @@ public class Profile {
 		return result;
 	}
 	
-	protected boolean printWarning(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event, String methodName) {
-		Method a = action(stageMap, event);
+	protected boolean printWarning(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event, String action) {
+		Method a = method(stageMap, event);
 		String str = event.getSimpleName() + " " + (stageMap == initMap() ? "init" : stageMap == execMap() ? "exec" : "flush" ) + " stage handler";
-		if(methodName == null) {
+		if(action == null) {
 			this.removeStageHandler(stageMap, event);
 			System.out.println(str + " removed");
 			return true;
@@ -548,50 +548,50 @@ public class Profile {
 		return false;
 	}
 	
-	protected void addStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event, String methodName) {
-		if (printWarning(stageMap, event, methodName))
+	protected void addStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event, String action) {
+		if (printWarning(stageMap, event, action))
 			return;
 		try {
-			stageMap.put(event, new ObjectMethodTuple(grabber, grabber.getClass().getMethod(methodName, new Class<?>[] { event })));
+			stageMap.put(event, new ObjectMethodTuple(grabber, grabber.getClass().getMethod(action, new Class<?>[] { event })));
 		} catch (Exception e) {
-			System.out.println("Something went wrong when registering your " + methodName + " method");
+			System.out.println("Something went wrong when registering your " + action + " method");
 			e.printStackTrace();
 		}
 	}
 	
-	protected void addStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Object object, Class<?> event, String methodName) {
-		if (printWarning(stageMap, event, methodName))
+	protected void addStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Object object, Class<?> event, String action) {
+		if (printWarning(stageMap, event, action))
 			return;
 		try {
-			stageMap.put(event, new ObjectMethodTuple(object, object.getClass().getMethod(methodName, new Class<?>[] { grabber.getClass(), event })));
+			stageMap.put(event, new ObjectMethodTuple(object, object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), event })));
 		} catch (Exception e) {
-			System.out.println("Something went wrong when registering your " + methodName + " method");
+			System.out.println("Something went wrong when registering your " + action + " method");
 			e.printStackTrace();
 		}
 	}
 	
-	public void addInitHandler(Class<?> event, String methodName) {
-		addStageHandler(initMap, event, methodName);
+	public void addInitHandler(Class<?> event, String action) {
+		addStageHandler(initMap, event, action);
 	}
 	
-	public void addInitHandler(Object object, Class<?> event, String methodName) {
-		addStageHandler(initMap, object, event, methodName);
+	public void addInitHandler(Object object, Class<?> event, String action) {
+		addStageHandler(initMap, object, event, action);
 	}
 	
-	public void addExecHandler(Class<?> event, String methodName) {
-		addStageHandler(execMap, event, methodName);
+	public void addExecHandler(Class<?> event, String action) {
+		addStageHandler(execMap, event, action);
 	}
 	
-	public void addExecHandler(Object object, Class<?> event, String methodName) {
-		addStageHandler(execMap, object, event, methodName);
+	public void addExecHandler(Object object, Class<?> event, String action) {
+		addStageHandler(execMap, object, event, action);
 	}
 	
-	public void addFlushHandler(Class<?> event, String methodName) {
-		addStageHandler(flushMap, event, methodName);
+	public void addFlushHandler(Class<?> event, String action) {
+		addStageHandler(flushMap, event, action);
 	}
 	
-	public void addFlushHandler(Object object, Class<?> event, String methodName) {
-		addStageHandler(flushMap, object, event, methodName);
+	public void addFlushHandler(Object object, Class<?> event, String action) {
+		addStageHandler(flushMap, object, event, action);
 	}
 	
 	protected boolean hasStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event) {

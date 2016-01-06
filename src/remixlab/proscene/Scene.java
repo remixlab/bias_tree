@@ -1,6 +1,6 @@
 /**************************************************************************************
  * ProScene (version 3.0.0)
- * Copyright (c) 2010-2014 National University of Colombia, https://github.com/remixlab
+ * Copyright (c) 2014-2016 National University of Colombia, https://github.com/remixlab
  * @author Jean Pierre Charalambos, http://otrolado.info/
  * 
  * All rights reserved. Library that eases the creation of interactive scenes
@@ -2434,7 +2434,7 @@ public class Scene extends AbstractScene implements PConstants {
 		if(event.id() == 0)//TYPE event
 			return vkeyAction == null ? false : true;
 		else {
-			vkeyAction = profile.actionName(event.shortcut());
+			vkeyAction = profile.action(event.shortcut());
 		    return false;
 		}
 	}
@@ -2492,12 +2492,12 @@ public class Scene extends AbstractScene implements PConstants {
 		profile().removeFlushHandler(event);
 	}
 	
-	public Method action(Shortcut key) {
+	public String action(Shortcut key) {
 		return profile.action(key);
 	}
 	
-	public boolean isActionBound(String method) {
-		return profile.isActionBound(method);
+	public boolean isActionBound(String action) {
+		return profile.isActionBound(action);
 	}
 
 	// Motion

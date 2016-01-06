@@ -1,6 +1,14 @@
-package remixlab.proscene;
+/**************************************************************************************
+ * ProScene (version 3.0.0)
+ * Copyright (c) 2014-2016 National University of Colombia, https://github.com/remixlab
+ * @author Jean Pierre Charalambos, http://otrolado.info/
+ * 
+ * All rights reserved. Library that eases the creation of interactive scenes
+ * in Processing, released under the terms of the GNU Public License v3.0
+ * which is available at http://www.gnu.org/licenses/gpl.html
+ **************************************************************************************/
 
-import java.lang.reflect.Method;
+package remixlab.proscene;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
@@ -92,12 +100,12 @@ public class GenericP5Frame extends GenericFrame {
 		profile.removeBindings();
 	}
 	
-	public Method action(Shortcut key) {
+	public String action(Shortcut key) {
 		return profile.action(key);
 	}
 	
-	public boolean isActionBound(String method) {
-		return profile.isActionBound(method);
+	public boolean isActionBound(String action) {
+		return profile.isActionBound(action);
 	}
 	
 	public void setDefaultBindings() {
@@ -109,25 +117,17 @@ public class GenericP5Frame extends GenericFrame {
 		addInitHandler(KeyboardEvent.class, "initKeyboard");
 		addFlushHandler(KeyboardEvent.class, "flushKeyboard");
 		
-		/*
-		addStageHandler("initMotion");
-		addStageHandler("execMotion");
-		addStageHandler("flushMotion");
-		*/
-		
 		addInitHandler(DOF2Event.class, "initDOF2");
 		addExecHandler(DOF2Event.class, "execDOF2");
 		addFlushHandler(DOF2Event.class, "flushDOF2");
 		
-		/*
-		addStageHandler("initDOF3");
-		addStageHandler("execDOF3");
-		addStageHandler("flushDOF3");
+		addInitHandler(DOF3Event.class, "initDOF3");
+		addExecHandler(DOF3Event.class, "execDOF3");
+		addFlushHandler(DOF3Event.class, "flushDOF3");
 		
-		addStageHandler("initDOF6");
-		addStageHandler("execDOF6");
-		addStageHandler("flushDOF6");
-		*/
+		addInitHandler(DOF6Event.class, "initDOF6");
+		addExecHandler(DOF6Event.class, "execDOF6");
+		addFlushHandler(DOF6Event.class, "flushDOF6");
 	}
 	
 	public void setDefaultMotionBindings() {
@@ -153,12 +153,12 @@ public class GenericP5Frame extends GenericFrame {
 
 	// good for all dofs :P
 	
-	public void setMotionBinding(int id, String methodName) {
-		profile.setBinding(new MotionShortcut(id), methodName);
+	public void setMotionBinding(int id, String action) {
+		profile.setBinding(new MotionShortcut(id), action);
 	}
 	
-	public void setMotionBinding(Object object, int id, String methodName) {
-		profile.setBinding(object, new MotionShortcut(id), methodName);
+	public void setMotionBinding(Object object, int id, String action) {
+		profile.setBinding(object, new MotionShortcut(id), action);
 	}
 	
 	public void removeMotionBindings() {
@@ -180,20 +180,20 @@ public class GenericP5Frame extends GenericFrame {
 	
 	// Key
 	
-	public void setKeyBinding(int vkey, String methodName) {
-		profile.setBinding(new KeyboardShortcut(vkey), methodName);
+	public void setKeyBinding(int vkey, String action) {
+		profile.setBinding(new KeyboardShortcut(vkey), action);
 	}
 	
-	public void setKeyBinding(char key, String methodName) {
-		profile.setBinding(new KeyboardShortcut(key), methodName);
+	public void setKeyBinding(char key, String action) {
+		profile.setBinding(new KeyboardShortcut(key), action);
 	}
 	
-	public void setKeyBinding(Object object, int vkey, String methodName) {
-		profile.setBinding(object, new KeyboardShortcut(vkey), methodName);
+	public void setKeyBinding(Object object, int vkey, String action) {
+		profile.setBinding(object, new KeyboardShortcut(vkey), action);
 	}
 	
-	public void setKeyBinding(Object object, char key, String methodName) {
-		profile.setBinding(object, new KeyboardShortcut(key), methodName);
+	public void setKeyBinding(Object object, char key, String action) {
+		profile.setBinding(object, new KeyboardShortcut(key), action);
 	}
 	
 	public boolean hasKeyBinding(int vkey) {
@@ -212,12 +212,12 @@ public class GenericP5Frame extends GenericFrame {
 		profile.removeBinding(new KeyboardShortcut(key));
 	}
 	
-	public void setKeyBinding(int mask, int vkey, String methodName) {
-		profile.setBinding(new KeyboardShortcut(mask, vkey), methodName);
+	public void setKeyBinding(int mask, int vkey, String action) {
+		profile.setBinding(new KeyboardShortcut(mask, vkey), action);
 	}
 	
-	public void setKeyBinding(Object object, int mask, int vkey, String methodName) {
-		profile.setBinding(object, new KeyboardShortcut(mask, vkey), methodName);
+	public void setKeyBinding(Object object, int mask, int vkey, String action) {
+		profile.setBinding(object, new KeyboardShortcut(mask, vkey), action);
 	}
 	
 	public boolean hasKeyBinding(int mask, int vkey) {
@@ -228,12 +228,12 @@ public class GenericP5Frame extends GenericFrame {
 		profile.removeBinding(new KeyboardShortcut(mask, vkey));
 	}
 	
-	public void setKeyBinding(int mask, char key, String methodName) {
-		setKeyBinding(mask, KeyAgent.keyCode(key), methodName);
+	public void setKeyBinding(int mask, char key, String action) {
+		setKeyBinding(mask, KeyAgent.keyCode(key), action);
 	}
 	
-	public void setKeyBinding(Object object, int mask, char key, String methodName) {
-		setKeyBinding(object, mask, KeyAgent.keyCode(key), methodName);
+	public void setKeyBinding(Object object, int mask, char key, String action) {
+		setKeyBinding(object, mask, KeyAgent.keyCode(key), action);
 	}
 	
 	public boolean hasKeyBinding(int mask, char key) {
@@ -250,16 +250,16 @@ public class GenericP5Frame extends GenericFrame {
 	
 	// click
 	
-	public void setClickBinding(int id, int count, String methodName) {
+	public void setClickBinding(int id, int count, String action) {
 		if(count > 0 && count < 4)
-			profile.setBinding(new ClickShortcut(id, count), methodName);
+			profile.setBinding(new ClickShortcut(id, count), action);
 		else
 			System.out.println("Warning no click binding set! Count should be between 1 and 3");
 	}
 	
-	public void setClickBinding(Object object, int id, int count, String methodName) {
+	public void setClickBinding(Object object, int id, int count, String action) {
 		if(count > 0 && count < 4)
-			profile.setBinding(object, new ClickShortcut(id, count), methodName);
+			profile.setBinding(object, new ClickShortcut(id, count), action);
 		else
 			System.out.println("Warning no click binding set! Count should be between 1 and 3");
 	}
@@ -339,12 +339,12 @@ public class GenericP5Frame extends GenericFrame {
 	
 	// lets see
 	
-	public void addInitHandler(Class<?> event, String methodName) {
-		profile().addInitHandler(event, methodName);
+	public void addInitHandler(Class<?> event, String action) {
+		profile().addInitHandler(event, action);
 	}
 	
-	public void addInitHandler(Object object, Class<?> event, String methodName) {
-		profile().addInitHandler(object, event, methodName);
+	public void addInitHandler(Object object, Class<?> event, String action) {
+		profile().addInitHandler(object, event, action);
 	}
 	
 	public boolean hasInitHandler(Class<?> event) {
@@ -355,12 +355,12 @@ public class GenericP5Frame extends GenericFrame {
 		profile().removeInitHandler(event);
 	}
 	
-	public void addExecHandler(Class<?> event, String methodName) {
-		profile().addExecHandler(event, methodName);
+	public void addExecHandler(Class<?> event, String action) {
+		profile().addExecHandler(event, action);
 	}
 	
-	public void addExecHandler(Object object, Class<?> event, String methodName) {
-		profile().addExecHandler(object, event, methodName);
+	public void addExecHandler(Object object, Class<?> event, String action) {
+		profile().addExecHandler(object, event, action);
 	}
 	
 	public boolean hasExecHandler(Class<?> event) {
@@ -371,12 +371,12 @@ public class GenericP5Frame extends GenericFrame {
 		profile().removeExecHandler(event);
 	}
 	
-	public void addFlushHandler(Class<?> event, String methodName) {
-		profile().addFlushHandler(event, methodName);
+	public void addFlushHandler(Class<?> event, String action) {
+		profile().addFlushHandler(event, action);
 	}
 	
-	public void addFlushHandler(Object object, Class<?> event, String methodName) {
-		profile().addFlushHandler(object, event, methodName);
+	public void addFlushHandler(Object object, Class<?> event, String action) {
+		profile().addFlushHandler(object, event, action);
 	}
 	
 	public boolean hasFlushHandler(Class<?> event) {
@@ -391,7 +391,7 @@ public class GenericP5Frame extends GenericFrame {
 		if(event.id() == 0)//TYPE event
 			return vkeyAction == null ? false : true;
 		else {
-			vkeyAction = profile.actionName(event.shortcut());
+			vkeyAction = profile.action(event.shortcut());
 		    return false;
 		}
 	}
@@ -405,11 +405,7 @@ public class GenericP5Frame extends GenericFrame {
 	 * Internal use.
 	 * 
 	 * @see remixlab.bias.fx.Profile
-	 */
-	public boolean initMotion(MotionEvent e) {
-		return initDOF2(MotionEvent.dof2Event(e));
-	}
-	
+	 */	
 	public boolean initDOF3(DOF3Event e) {
 		return initDOF2(MotionEvent.dof2Event(e));
 	}
@@ -424,7 +420,7 @@ public class GenericP5Frame extends GenericFrame {
 		initMotionEvent = event.get();
 		currMotionEvent = event;
 		stopSpinning();
-		String twotempi = profile.actionName(event.shortcut());
+		String twotempi = profile.action(event.shortcut());
 		if (twotempi == "screenTranslate")
 			dirIsFixed = false;
 		boolean rotateMode = ((twotempi == "rotate") || (twotempi == "rotateXYZ")
@@ -456,11 +452,7 @@ public class GenericP5Frame extends GenericFrame {
 	 * Internal use.
 	 * 
 	 * @see remixlab.bias.fx.Profile
-	 */
-	public boolean execMotion(MotionEvent e) {
-		return execDOF2(MotionEvent.dof2Event(e));
-	}
-	
+	 */	
 	public boolean execDOF3(DOF3Event e) {
 		return execDOF2(MotionEvent.dof2Event(e));
 	}
@@ -479,7 +471,7 @@ public class GenericP5Frame extends GenericFrame {
 			return true;// bypass
 		}
 		// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-		if (profile.actionName(event.shortcut()) == "zoomOnRegion") {
+		if (profile.action(event.shortcut()) == "zoomOnRegion") {
 			return true;
 		}
 		if (drive) {
@@ -493,11 +485,7 @@ public class GenericP5Frame extends GenericFrame {
 	 * Internal use.
 	 * 
 	 * @see remixlab.bias.fx.Profile
-	 */
-	public void flushMotion(MotionEvent e) {
-		flushDOF2(MotionEvent.dof2Event(e));
-	}
-	
+	 */	
 	public void flushDOF3(DOF3Event e) {
 		flushDOF2(MotionEvent.dof2Event(e));
 	}
