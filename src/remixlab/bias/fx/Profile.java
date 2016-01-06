@@ -509,12 +509,21 @@ public class Profile {
 			return result;
 		Method iHandlerMethod = tuple.method;
 		if (iHandlerMethod != null) {			
-			try {// init and exec //TODO: exclude flush? Allow return void in flush
+			try {
 				Object object = object(stageMap, event.getClass());
-				if (object == grabber)
-					result = (boolean) iHandlerMethod.invoke(object, new Object[] { event });
-				else
-					result = (boolean) iHandlerMethod.invoke(object, new Object[] { grabber, event });
+				if(stageMap != flushMap()) {
+					if (object == grabber)
+						result = (boolean) iHandlerMethod.invoke(object, new Object[] { event });
+					else
+						result = (boolean) iHandlerMethod.invoke(object, new Object[] { grabber, event });
+				}
+				else {
+					if (object == grabber)
+						iHandlerMethod.invoke(object, new Object[] { event });
+					else
+						iHandlerMethod.invoke(object, new Object[] { grabber, event });
+					result = true;
+				}
 			} catch (Exception e) {
 				System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
 				e.printStackTrace();
@@ -526,14 +535,14 @@ public class Profile {
 	
 	protected boolean printWarning(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event, String methodName) {
 		Method a = action(stageMap, event);
-		String name = a.getName() + " " + event.getSimpleName() + " " + (stageMap == initMap() ? "init" : stageMap == execMap() ? "exec" : "flush" ) + " stage handler";
+		String str = event.getSimpleName() + " " + (stageMap == initMap() ? "init" : stageMap == execMap() ? "exec" : "flush" ) + " stage handler";
 		if(methodName == null) {
 			this.removeStageHandler(stageMap, event);
-			System.out.println(name + " removed");
+			System.out.println(str + " removed");
 			return true;
 		}			
 		if (hasStageHandler(stageMap, event)) {
-			System.out.println("Warning: " + name + " overwritten");
+			System.out.println("Warning: " + a.getName() + " " + str + " overwritten");
 			return false;	
 		}
 		return false;

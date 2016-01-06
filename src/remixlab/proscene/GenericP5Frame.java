@@ -396,10 +396,9 @@ public class GenericP5Frame extends GenericFrame {
 		}
 	}
 	
-	public boolean flushKeyboard(KeyboardEvent event) {
+	public void flushKeyboard(KeyboardEvent event) {
 		if( event.flushed() && vkeyAction != null )
 			vkeyAction = null;
-		return true;
 	}
 
 	/**
@@ -495,21 +494,21 @@ public class GenericP5Frame extends GenericFrame {
 	 * 
 	 * @see remixlab.bias.fx.Profile
 	 */
-	public boolean flushMotion(MotionEvent e) {
-		return flushDOF2(MotionEvent.dof2Event(e));
+	public void flushMotion(MotionEvent e) {
+		flushDOF2(MotionEvent.dof2Event(e));
 	}
 	
-	public boolean flushDOF3(DOF3Event e) {
-		return flushDOF2(MotionEvent.dof2Event(e));
+	public void flushDOF3(DOF3Event e) {
+		flushDOF2(MotionEvent.dof2Event(e));
 	}
 	
-	public boolean flushDOF6(DOF6Event e) {
-		return flushDOF2(MotionEvent.dof2Event(e));
+	public void flushDOF6(DOF6Event e) {
+		flushDOF2(MotionEvent.dof2Event(e));
 	}
 	
-	public boolean flushDOF2(DOF2Event event) {
+	public void flushDOF2(DOF2Event event) {
 		if(event == null)
-			return true;
+			return;
 		if (rotateHint) {
 			gScene.setRotateVisualHint(false);
 			rotateHint = false;
@@ -532,6 +531,5 @@ public class GenericP5Frame extends GenericFrame {
 				setFlySpeed(flySpeedCache);
 			stopFlying();
 		}
-		return true;
 	}
 }
