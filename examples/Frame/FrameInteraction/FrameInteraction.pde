@@ -98,7 +98,7 @@ public void draw() {
   if (frame1.grabsInput())
     fill(255, 0, 0);
   else 
-  fill(0, 255, 255);
+    fill(0, 255, 255);
   scene.drawTorusSolenoid();
 
   popStyle();

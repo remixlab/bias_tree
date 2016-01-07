@@ -1,6 +1,6 @@
 /**
  * Luxo.
- * by Jean Pierre Charalambos. 
+ * by Jean Pierre Charalambos.
  * 
  * A more complex example that combines InteractiveFrames, selection and constraints.
  * 
@@ -8,8 +8,7 @@
  * manipulated with the mouse. It illustrates the use of several InteractiveFrames
  * in the same scene.
  * 
- * Click on a frame visual hint to select a part of the lamp, and then move it with
- * the mouse.
+ * Hover over lamp elements to select them, and then drag them with the mouse.
  * 
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
@@ -28,14 +27,19 @@ public void setup() {
   scene.setRadius(100);
   scene.showAll();
   scene.setGridVisualHint(false);
-  scene.setPickingVisualHint(true);
   lamp = new Lamp(scene);
 }
 
 public void draw() {
   background(0);
   lights();
-  lamp.draw();
+  //scene.drawFrames();
+  //or with color for selection
+  for (InteractiveFrame frame : scene.frames()) {
+    fill(200, 200, scene.mouseAgent().inputGrabber() == frame ? 0 : 200);
+    frame.draw();
+  }
+
   //draw the ground
   noStroke();
   fill(120, 120, 120);

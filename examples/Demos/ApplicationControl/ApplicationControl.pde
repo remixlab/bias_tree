@@ -20,15 +20,18 @@ PGraphics          ctrlCanvas;
 Scene              ctrlScene;
 public PShape      eShape;
 InteractiveFrame   e;
+InteractiveRect    r;
 PGraphics          canvas;
 Scene              scene;
 boolean            showAid  = true;
 
-float  radiusX  = 30, radiusY = 30;
+float  radiusX  = 40, radiusY = 40;
 int    colour  = color(255, 0, 0);
 
 public void setup() {
   size(640, 360, P2D);
+  
+  rectMode(CENTER);
 
   canvas = createGraphics(640, 360, P3D);
   scene = new Scene(this, canvas);
@@ -43,7 +46,15 @@ public void setup() {
   e.setClickBinding(this, LEFT, 1, "changeColor");
   e.setKeyBinding(this, 'x', "colorBlue");
   e.setKeyBinding(this, 'y', "colorRed");
-  ctrlScene.keyAgent().setDefaultGrabber(e);
+  //ctrlScene.keyAgent().setDefaultGrabber(e);
+  
+  r = new InteractiveRect(ctrlScene);
+  r.setMotionBinding(MouseAgent.WHEEL_ID, "changeShape");
+  r.setMotionBinding(LEFT, "changeShape");
+  r.setClickBinding(LEFT, 1, "changeColor");
+  r.setKeyBinding('u', "colorBlue");
+  r.setKeyBinding('v', "colorRed");
+  ctrlScene.keyAgent().setDefaultGrabber(r);
 }
 
 public void changeShape(InteractiveFrame frame, DOF1Event event) {
@@ -73,7 +84,7 @@ public void colorRed(InteractiveFrame frame) {
 }
 
 public void updateEllipse(InteractiveFrame frame) {
-  frame.setShape(createShape(ELLIPSE, 0, 0, 2 * radiusX, 2 * radiusY));
+  frame.setShape(createShape(ELLIPSE, -60, 0, 2 * radiusX, 2 * radiusY));
   frame.shape().setFill(color(colour));
 }
 
@@ -83,7 +94,15 @@ public void draw() {
   scene.beginDraw();
   canvas.background(255);
   canvas.fill(colour);
-  scene.drawTorusSolenoid((int) map(PI * radiusX * radiusY, 20, w * h, 2, 50), 100, radiusY, radiusX);
+  canvas.pushMatrix();
+  canvas.translate(-80,0,0);
+  scene.drawTorusSolenoid((int) map(PI * radiusX * radiusY, 20, w * h, 2, 50), 100, radiusY/2, radiusX/2);
+  canvas.popMatrix();
+  canvas.pushMatrix();
+  canvas.translate(80,0,0);
+  canvas.fill(r.colour);
+  canvas.box(r.halfWidth, r.halfHeight, (r.halfWidth + r.halfHeight) / 2);
+  canvas.popMatrix();
   scene.endDraw();
   canvas.endDraw();
   image(canvas, scene.originCorner().x(), scene.originCorner().y());
