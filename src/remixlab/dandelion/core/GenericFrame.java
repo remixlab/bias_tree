@@ -52,7 +52,7 @@ import remixlab.util.*;
  * {@link remixlab.dandelion.core.Eye#setFrame(GenericFrame)}.
  * <p>
  * This class provides several gesture-to-motion converting methods, such as: {@link #rotate(MotionEvent)},
- * {@link #moveForward(DOF2Event, boolean)}, {@link #translateX(KeyboardEvent, boolean)}, etc. To use them,
+ * {@link #moveForward(DOF2Event, boolean)}, {@link #translateX(boolean)}, etc. To use them,
  * derive from this class and override the version of {@code performInteraction} with the (bogus-event) parameter type you want
  * to customize (see {@link #performInteraction(MotionEvent)}, {@link #performInteraction(KeyboardEvent)}, etc.). For example,
  * with the following code:
