@@ -21,8 +21,6 @@ void setup() {
   scene = new Scene(this);
   //Set right handed world frame (useful for architects...)
   scene.setRightHanded();
-  //scene.motionAgent().eyeProfile().setBinding(Constants.B_LEFT, DOF2Action.ROTATE_CAD);
-  //same as the previous line:
   scene.eyeFrame().setMotionBinding(LEFT, "rotateCAD");
   scene.camera().frame().setRotationSensitivity(1.5);
   //no spinning:

@@ -14,7 +14,7 @@ import processing.core.*;
 import processing.opengl.*;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.fx.*;
+import remixlab.bias.ext.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
@@ -2602,8 +2602,8 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 	*/
 	
-	//public void setDefaultBindings() {
 	public void setDefaultKeyBindings() {
+		removeKeyBindings();
 		setKeyBinding('a', "toggleAxesVisualHint");
 		setKeyBinding('e', "toggleCameraType");
 		setKeyBinding('f', "togglePickingVisualhint");

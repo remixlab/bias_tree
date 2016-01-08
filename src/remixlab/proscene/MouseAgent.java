@@ -14,7 +14,7 @@ package remixlab.proscene;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.fx.Profile;
+import remixlab.bias.ext.Profile;
 
 /**
  * Proscene mouse-agent. A {@link remixlab.bias.core.Agent} specialization

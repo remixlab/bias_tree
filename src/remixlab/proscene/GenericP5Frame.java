@@ -12,7 +12,7 @@ package remixlab.proscene;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.fx.*;
+import remixlab.bias.ext.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.AbstractScene.Platform;
 import remixlab.dandelion.geom.Frame;
@@ -53,7 +53,12 @@ public class GenericP5Frame extends GenericFrame {
 	public GenericP5Frame(Scene scn) {
 		super(scn);
 		setProfile(new Profile(this));
-		setDefaultBindings();
+		//TODO
+		if(Scene.platform() == Platform.PROCESSING_DESKTOP)
+			setDefaultMouseBindings();
+		// else
+		    // setDefaultTouchBindings();
+		setDefaultKeyBindings();
 		addStageHandlers();
 	}
 	
@@ -63,7 +68,12 @@ public class GenericP5Frame extends GenericFrame {
 		if(referenceFrame instanceof GenericP5Frame)
 			this.profile.from(((GenericP5Frame)referenceFrame).profile);
 		else {
-			setDefaultBindings();
+			//TODO
+			if(Scene.platform() == Platform.PROCESSING_DESKTOP)
+				setDefaultMouseBindings();
+			// else
+			    // setDefaultTouchBindings();
+			setDefaultKeyBindings();
 			addStageHandlers();
 		}
 	}
@@ -71,7 +81,12 @@ public class GenericP5Frame extends GenericFrame {
 	public GenericP5Frame(Eye eye) {
 		super(eye);
 		setProfile(new Profile(this));
-		setDefaultBindings();
+		//TODO
+		if(Scene.platform() == Platform.PROCESSING_DESKTOP)
+			setDefaultMouseBindings();
+		// else
+		    // setDefaultTouchBindings();
+		setDefaultKeyBindings();
 		addStageHandlers();
 	}
 	
@@ -108,11 +123,6 @@ public class GenericP5Frame extends GenericFrame {
 		return profile.isActionBound(action);
 	}
 	
-	public void setDefaultBindings() {
-		setDefaultMotionBindings();
-		setDefaultKeyBindings();
-	}
-	
 	protected void addStageHandlers() {
 		addInitHandler(KeyboardEvent.class, "initKeyboard");
 		addFlushHandler(KeyboardEvent.class, "flushKeyboard");
@@ -130,10 +140,16 @@ public class GenericP5Frame extends GenericFrame {
 		addFlushHandler(DOF6Event.class, "flushDOF6");
 	}
 	
-	public void setDefaultMotionBindings() {
-		if(Scene.platform() == Platform.PROCESSING_DESKTOP)
-			scene().mouseAgent().setDefaultBindings(this);
+	public void setDefaultMouseBindings() {
+		scene().mouseAgent().setDefaultBindings(this);
 	}
+	
+	//TODO restore me
+	/*
+	public void setDefaultTouchBindings() {
+		scene().touchAgent().setDefaultBindings(this);
+	}
+	*/
 	
 	public void setDefaultKeyBindings() {
 		removeKeyBindings();
@@ -404,7 +420,7 @@ public class GenericP5Frame extends GenericFrame {
 	/**
 	 * Internal use.
 	 * 
-	 * @see remixlab.bias.fx.Profile
+	 * @see remixlab.bias.ext.Profile
 	 */	
 	public boolean initDOF3(DOF3Event e) {
 		return initDOF2(MotionEvent.dof2Event(e));
@@ -451,7 +467,7 @@ public class GenericP5Frame extends GenericFrame {
 	/**
 	 * Internal use.
 	 * 
-	 * @see remixlab.bias.fx.Profile
+	 * @see remixlab.bias.ext.Profile
 	 */	
 	public boolean execDOF3(DOF3Event e) {
 		return execDOF2(MotionEvent.dof2Event(e));
@@ -484,7 +500,7 @@ public class GenericP5Frame extends GenericFrame {
 	/**
 	 * Internal use.
 	 * 
-	 * @see remixlab.bias.fx.Profile
+	 * @see remixlab.bias.ext.Profile
 	 */	
 	public void flushDOF3(DOF3Event e) {
 		flushDOF2(MotionEvent.dof2Event(e));
