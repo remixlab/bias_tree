@@ -81,7 +81,7 @@ public class Profile {
 	protected Grabber grabber;
 	
 	// temporal vars
-	protected String initAction;
+	String initAction;
 	
 	protected HashMap<Class<?>, ObjectMethodTuple> initMap, execMap, flushMap;
 	
@@ -610,11 +610,9 @@ public class Profile {
 					return (initAction == null) ? false : invokeStageHandler(initMap, event);// start action
 				}
 			}
-			else {// action() == null
-				invokeStageHandler(flushMap, event);// stopAction
+			else {// event.flushed()
 				initAction = null;
-				//setAction(null); // experimental, but sounds logical since: initAction != null && action() == null
-				return true;
+				return invokeStageHandler(flushMap, event);
 			}
 		}
 		return true;// i.e., if initAction == action() == null -> ignore :)
@@ -635,19 +633,10 @@ public class Profile {
 		if (iHandlerMethod != null) {
 			try {
 				Object object = object(stageMap, event.getClass());
-				if(stageMap != flushMap()) {
-					if (object == grabber)
-						result = (boolean) iHandlerMethod.invoke(object, new Object[] { event });
-					else
-						result = (boolean) iHandlerMethod.invoke(object, new Object[] { grabber, event });
-				}
-				else {
-					if (object == grabber)
-						iHandlerMethod.invoke(object, new Object[] { event });
-					else
-						iHandlerMethod.invoke(object, new Object[] { grabber, event });
-					result = true;
-				}
+				if (object == grabber)
+					result = (boolean) iHandlerMethod.invoke(object, new Object[] { event });
+				else
+					result = (boolean) iHandlerMethod.invoke(object, new Object[] { grabber, event });
 			} catch (Exception e) {
 				System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
 				e.printStackTrace();
@@ -706,7 +695,9 @@ public class Profile {
 	/**
 	 * Defines an init stage handler for the given event class.
 	 * <p>
-	 * The handler is a method implemented by the {@link #grabber()} that returns boolean and has a
+	 * The handler is a method implemented by the {@link #grabber()} that returns boolean (while
+	 * returning {@code true} secures {@link #invokeAction(BogusEvent)} NOT to be called after
+	 * {@link #processStage(BogusEvent)}, returning {@code true} secures it to be called) and has a
 	 * {@link remixlab.bias.core.BogusEvent} parameter.
 	 * 
 	 * @see #addInitHandler(Object, Class, String)
@@ -718,10 +709,12 @@ public class Profile {
 	/**
 	 * Defines an init stage handler for the given event class.
 	 * <p>
-	 * The handler is a method implemented by the {@code object} that returns boolean and has a
+	 * The handler is a method implemented by the {@code object} that returns boolean (while returning
+	 * {@code true} secures {@link #invokeAction(BogusEvent)} NOT to be called after
+	 * {@link #processStage(BogusEvent)}, returning {@code true} secures it to be called) and has a
 	 * {@link remixlab.bias.core.Grabber} parameter and a {@link remixlab.bias.core.BogusEvent} parameter.
 	 * 
-	 * @see #addInitHandler(Object, Class, String)
+	 * @see #addInitHandler(Object, String)
 	 */
 	public void addInitHandler(Object object, Class<?> event, String handler) {
 		addStageHandler(initMap, object, event, handler);
@@ -730,10 +723,12 @@ public class Profile {
 	/**
 	 * Defines an exec stage handler for the given event class.
 	 * <p>
-	 * The handler is a method implemented by the {@link #grabber()} that returns boolean and has a
+	 * The handler is a method implemented by the {@link #grabber()} that returns boolean (while
+	 * returning {@code true} secures {@link #invokeAction(BogusEvent)} NOT to be called after
+	 * {@link #processStage(BogusEvent)}, returning {@code true} secures it to be called) and has a
 	 * {@link remixlab.bias.core.BogusEvent} parameter.
 	 * 
-	 * @see #addInitHandler(Object, Class, String)
+	 * @see #addExecHandler(Object, Class, String)
 	 */
 	public void addExecHandler(Class<?> event, String action) {
 		addStageHandler(execMap, event, action);
@@ -742,10 +737,12 @@ public class Profile {
 	/**
 	 * Defines an exec stage handler for the given event class.
 	 * <p>
-	 * The handler is a method implemented by the {@code object} that returns boolean and has a
+	 * The handler is a method implemented by the {@code object} that returns boolean (while returning
+	 * {@code true} secures {@link #invokeAction(BogusEvent)} NOT to be called after
+	 * {@link #processStage(BogusEvent)}, returning {@code true} secures it to be called) and has a
 	 * {@link remixlab.bias.core.Grabber} parameter and a {@link remixlab.bias.core.BogusEvent} parameter.
 	 * 
-	 * @see #addInitHandler(Object, Class, String)
+	 * @see #addExecHandler(Class, String)
 	 */
 	public void addExecHandler(Object object, Class<?> event, String handler) {
 		addStageHandler(execMap, object, event, handler);
@@ -754,10 +751,12 @@ public class Profile {
 	/**
 	 * Defines a flush stage handler for the given event class.
 	 * <p>
-	 * The handler is a method implemented by the {@link #grabber()} that returns void and has a
+	 * The handler is a method implemented by the {@link #grabber()} that returns boolean (while
+	 * returning {@code true} secures {@link #invokeAction(BogusEvent)} NOT to be called after
+	 * {@link #processStage(BogusEvent)},* returning {@code true} secures it to be called) and has a
 	 * {@link remixlab.bias.core.BogusEvent} parameter.
 	 * 
-	 * @see #addInitHandler(Object, Class, String)
+	 * @see #addFlushHandler(Object, Class, String)
 	 */
 	public void addFlushHandler(Class<?> event, String action) {
 		addStageHandler(flushMap, event, action);
@@ -766,10 +765,12 @@ public class Profile {
 	/**
 	 * Defines a flush stage handler for the given event class.
 	 * <p>
-	 * The handler is a method implemented by the {@code object} that returns void and has a
+	 * The handler is a method implemented by the {@code object} that returns boolean (while returning {@code true} secures
+	 * {@link #invokeAction(BogusEvent)} NOT to be called after {@link #processStage(BogusEvent)},
+	 * returning {@code true} secures it to be called) and has a
 	 * {@link remixlab.bias.core.Grabber} parameter and a {@link remixlab.bias.core.BogusEvent} parameter.
 	 * 
-	 * @see #addInitHandler(Object, Class, String)
+	 * @see #addFlushHandler(Class, String)
 	 */
 	public void addFlushHandler(Object object, Class<?> event, String handler) {
 		addStageHandler(flushMap, object, event, handler);

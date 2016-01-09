@@ -2439,9 +2439,10 @@ public class Scene extends AbstractScene implements PConstants {
 		}
 	}
 	
-	public void flushKeyboard(KeyboardEvent event) {
+	public boolean flushKeyboard(KeyboardEvent event) {
 		if( event.flushed() && vkeyAction != null )
 			vkeyAction = null;
+		return true;
 	}
 	
 	public void addInitHandler(Class<?> event, String methodName) {
