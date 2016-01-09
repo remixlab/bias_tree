@@ -125,6 +125,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
 	private float								grabsInputThreshold;
 	private boolean							adpThreshold;
+	
+	// temporal stuff
+	public MotionEvent	initMotionEvent, currentMotionEvent;
 
 	// TODO decide this mode vs constraint! seems overkill
 	// protected boolean rspct2Frame;
@@ -1638,11 +1641,23 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 			AbstractScene.showEventVariationWarning("zoomOnRegion");
 			return;
 		}
-		int w = (int) Math.abs(event.dx());
-		int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
-		int h = (int) Math.abs(event.dy());
-		int tlY = (int) event.prevY() < (int) event.y() ? (int) event.prevY() : (int) event.y();
-		eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
+		if(event.fired()) {
+			initMotionEvent = event.get();
+			currentMotionEvent = event;
+			gScene.setZoomVisualHint(true);
+		}
+		else if(event.flushed()) {
+			event.setPreviousEvent(MotionEvent.dof2Event(initMotionEvent.get()));
+			gScene.setZoomVisualHint(false);
+			int w = (int) Math.abs(event.dx());
+			int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
+			int h = (int) Math.abs(event.dy());
+			int tlY = (int) event.prevY() < (int) event.y() ? (int) event.prevY() : (int) event.y();
+			eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
+		}
+		else {
+			currentMotionEvent = event;
+		}
 	}
 
 	/**
@@ -2159,6 +2174,12 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 			AbstractScene.showEventVariationWarning("screenRotate");
 			return;
 		}
+		// display visual hint
+		if( event.fired() )
+			gScene.setRotateVisualHint(true);
+		if( event.flushed() )
+			gScene.setRotateVisualHint(false);
+		// end
 		if (this.is2D()) {
 			rotate(event);
 			return;

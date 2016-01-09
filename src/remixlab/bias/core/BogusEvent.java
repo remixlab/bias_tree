@@ -40,7 +40,7 @@ public class BogusEvent implements Copyable {
 	public static final int	ALT								= 1 << 3;
 	public static final int	ALT_GRAPH					= 1 << 4;
 	
-	private boolean flush;
+	private boolean init, flush;
 
 	@Override
 	public int hashCode() {
@@ -102,7 +102,7 @@ public class BogusEvent implements Copyable {
 	}
 	
 	/**
-	 * Same as {@code this.get()} but sets the {@link #flush()} to true. Only agents may call this.
+	 * Same as {@code this.get()} but sets the {@link #flushed()} to true. Only agents may call this.
 	 * 
 	 * @see #flushed()
 	 */
@@ -113,12 +113,34 @@ public class BogusEvent implements Copyable {
 	}
 	
 	/**
+	 * Same as {@code this.get()} but sets the {@link #fired()} to true. Only agents may call this.
+	 * 
+	 * @see #flushed()
+	 */
+	public BogusEvent fire() {
+		BogusEvent bogusevent = this.get();
+		bogusevent.init = true;
+		return bogusevent;
+	}
+	
+	/**
 	 * Returns true if this is a 'flushed' event. Flushed events indicate gesture (or action) termination,
 	 * such as a mouse-release within a mouse-press / mouse-move(or mouse-drag) interaction (mouse-release
 	 * can then point to gesture termination).
 	 */
 	public boolean flushed() {
 		return flush;
+	}
+	
+	//TODO
+	
+	/**
+	 * Returns true if this is a 'fired' event. Flushed events indicate gesture (or action) termination,
+	 * such as a mouse-release within a mouse-press / mouse-move(or mouse-drag) interaction (mouse-release
+	 * can then point to gesture termination).
+	 */
+	public boolean fired() {
+		return init;
 	}
 
 	/**

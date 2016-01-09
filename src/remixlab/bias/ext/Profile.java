@@ -319,7 +319,7 @@ public class Profile {
 	 * @see #invokeAction(BogusEvent)
 	 */
 	public void handle(BogusEvent event) {
-		if (!processStage(event))
+		//if (!processStage(event))
 			invokeAction(event);
 	}
 	

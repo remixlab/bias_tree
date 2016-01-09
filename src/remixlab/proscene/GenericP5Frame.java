@@ -18,7 +18,7 @@ import remixlab.dandelion.core.AbstractScene.Platform;
 import remixlab.dandelion.geom.Frame;
 import remixlab.util.*;
 
-public class GenericP5Frame extends GenericFrame {	
+public class GenericP5Frame extends GenericFrame {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -339,19 +339,17 @@ public class GenericP5Frame extends GenericFrame {
 	protected boolean			need4Spin;
 	protected boolean			need4Tossing;
 	protected boolean			drive;
-	protected boolean			rotateHint;
-	protected MotionEvent	currMotionEvent;
-	public MotionEvent		initMotionEvent;
-	public DOF2Event			zor;
 	protected float				flySpeedCache;
 	
+	/*
 	protected MotionEvent initMotionEvent() {
 		return initMotionEvent;
 	}
 
 	protected MotionEvent currentMotionEvent() {
-		return currMotionEvent;
+		return currentMotionEvent;
 	}
+	*/
 	
 	// lets see
 	
@@ -432,12 +430,10 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public boolean initDOF2(DOF2Event event) {
-		if(event == null)
-			return false;
 		initMotionEvent = event.get();
-		currMotionEvent = event;
+		currentMotionEvent = event;
 		stopSpinning();
-		String twotempi = profile.action(event.shortcut());
+		String twotempi = action(event.shortcut());
 		if (twotempi == "screenTranslate")
 			dirIsFixed = false;
 		boolean rotateMode = ((twotempi == "rotate") || (twotempi == "rotateXYZ")
@@ -454,14 +450,6 @@ public class GenericP5Frame extends GenericFrame {
 				|| (drive);
 		if (need4Tossing)
 			updateSceneUpVector();
-		rotateHint = twotempi == "screenRotate";
-		if (rotateHint)
-			gScene.setRotateVisualHint(true);
-		if (isEyeFrame() && twotempi == "zoomOnRegion") {
-			gScene.setZoomVisualHint(true);
-			zor = event.get();
-			return true;
-		}
 		return false;
 	}
 	
@@ -479,18 +467,7 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public boolean execDOF2(DOF2Event event) {
-		if(event == null)
-			return false;
-		currMotionEvent = event;
-		if (zor != null) {
-			zor = event.get();
-			zor.setPreviousEvent(initMotionEvent.get());
-			return true;// bypass
-		}
-		// never handle ZOOM_ON_REGION on a drag. Could happen if user presses a modifier during drag triggering it
-		if (profile.action(event.shortcut()) == "zoomOnRegion") {
-			return true;
-		}
+		currentMotionEvent = event;
 		if (drive) {
 			setFlySpeed(0.01f * gScene.radius() * 0.01f * (event.y() - event.y()));
 			return false;
@@ -512,23 +489,10 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public boolean flushDOF2(DOF2Event event) {
-		if(event == null)
-			return true;
-		if (rotateHint) {
-			gScene.setRotateVisualHint(false);
-			rotateHint = false;
-		}
-		if (currentMotionEvent() != null) {
+		if (currentMotionEvent != null) {
 			if (need4Spin) {
-				startSpinning(spinningRotation(), currentMotionEvent().speed(), currentMotionEvent().delay());
+				startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
 			}
-		}
-		if (zor != null) {
-			// the problem is that depending on the order the button and the modifiers are released,
-			// different actions maybe triggered, so we go for sure ;) :
-			gScene.setZoomVisualHint(false);
-			zoomOnRegion(zor);// now action need to be executed on event
-			zor = null;
 		}
 		if (need4Tossing) {
 			// restore speed after drive action terminates:

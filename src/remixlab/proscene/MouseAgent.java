@@ -93,7 +93,7 @@ public class MouseAgent extends Agent {
 	/**
 	 * Processing mouseEvent method to be registered at the PApplet's instance.
 	 */
-	public void mouseEvent(processing.event.MouseEvent e) {		
+	public void mouseEvent(processing.event.MouseEvent e) {
 		move = e.getAction() == processing.event.MouseEvent.MOVE;
 		press = e.getAction() == processing.event.MouseEvent.PRESS;
 		drag = e.getAction() == processing.event.MouseEvent.DRAG;
@@ -103,7 +103,7 @@ public class MouseAgent extends Agent {
 					/*e.getModifiers()*/BogusEvent.NO_MODIFIER_MASK, move ? BogusEvent.NO_ID : e.getButton());			
 			if (move && (pickingMode() == PickingMode.MOVE))
 				updateTrackedGrabber(currentEvent);
-			handle(release ? currentEvent.flush() : currentEvent);			
+			handle(press ? currentEvent.fire() : release ? currentEvent.flush() : currentEvent);			
 			prevEvent = currentEvent.get();
 			return;
 		}
