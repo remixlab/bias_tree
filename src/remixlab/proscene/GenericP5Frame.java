@@ -126,20 +126,6 @@ public class GenericP5Frame extends GenericFrame {
 	protected void addStageHandlers() {
 		addInitHandler(KeyboardEvent.class, "initKeyboard");
 		addFlushHandler(KeyboardEvent.class, "flushKeyboard");
-		
-		/*
-		addInitHandler(DOF2Event.class, "initDOF2");
-		addExecHandler(DOF2Event.class, "execDOF2");
-		addFlushHandler(DOF2Event.class, "flushDOF2");
-		
-		addInitHandler(DOF3Event.class, "initDOF3");
-		addExecHandler(DOF3Event.class, "execDOF3");
-		addFlushHandler(DOF3Event.class, "flushDOF3");
-		
-		addInitHandler(DOF6Event.class, "initDOF6");
-		addExecHandler(DOF6Event.class, "execDOF6");
-		addFlushHandler(DOF6Event.class, "flushDOF6");
-		*/
 	}
 	
 	public void setDefaultMouseBindings() {
@@ -337,22 +323,6 @@ public class GenericP5Frame extends GenericFrame {
 	//
 	String vkeyAction;
 	
-	// private A a;//TODO study make me an attribute to com between init and end
-	//protected boolean			need4Spin;
-	//protected boolean			need4Tossing;
-	//protected boolean			drive;
-	//protected float				flySpeedCache;
-	
-	/*
-	protected MotionEvent initMotionEvent() {
-		return initMotionEvent;
-	}
-
-	protected MotionEvent currentMotionEvent() {
-		return currentMotionEvent;
-	}
-	*/
-	
 	// lets see
 	
 	public void addInitHandler(Class<?> event, String action) {
@@ -415,61 +385,6 @@ public class GenericP5Frame extends GenericFrame {
 	public boolean flushKeyboard(KeyboardEvent event) {
 		if( event.flushed() && vkeyAction != null )
 			vkeyAction = null;
-		return true;
-	}
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see remixlab.bias.ext.Profile
-	 */	
-	public boolean initDOF3(DOF3Event e) {
-		return initDOF2(MotionEvent.dof2Event(e));
-	}
-	
-	public boolean initDOF6(DOF6Event e) {
-		return initDOF2(MotionEvent.dof2Event(e));
-	}
-	
-	public boolean initDOF2(DOF2Event event) {
-		//initMotionEvent = event.get();
-		//currentMotionEvent = event;
-		//stopSpinning();
-		return false;
-	}
-	
-	/**
-	 * Internal use.
-	 * 
-	 * @see remixlab.bias.ext.Profile
-	 */	
-	public boolean execDOF3(DOF3Event e) {
-		return execDOF2(MotionEvent.dof2Event(e));
-	}
-	
-	public boolean execDOF6(DOF6Event e) {
-		return execDOF2(MotionEvent.dof2Event(e));
-	}
-	
-	public boolean execDOF2(DOF2Event event) {
-		//currentMotionEvent = event;
-		return false;
-	}
-
-	/**
-	 * Internal use.
-	 * 
-	 * @see remixlab.bias.ext.Profile
-	 */	
-	public boolean flushDOF3(DOF3Event e) {
-		return flushDOF2(MotionEvent.dof2Event(e));
-	}
-	
-	public boolean flushDOF6(DOF6Event e) {
-		return flushDOF2(MotionEvent.dof2Event(e));
-	}
-	
-	public boolean flushDOF2(DOF2Event event) {
 		return true;
 	}
 }

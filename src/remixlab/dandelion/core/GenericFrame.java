@@ -1864,7 +1864,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		else
 			AbstractScene.showMinDOFsWarning("rotateXYZ", 2);
 	}
-
+	
 	/**
 	 * User gesture into xyz-rotation conversion routine.
 	 */
@@ -1874,17 +1874,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 			AbstractScene.showDepthWarning("rotateXYZ");
 			return;
 		}
-		if(event.fired() && gScene.is3D()) //TODO needs testing
+		if(event.fired() && gScene.is3D())
 			gScene.camera().cadRotationIsReversed = gScene.camera().frame().transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
-		//TODO testing w_o currentMotionEvent
-		if (event.flushed() && damping() == 0 /* && currentMotionEvent != null */) {
-			//startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
-			//TODO testing rotate
-			//startSpinning(spinningRotation(), event.speed(), currentMotionEvent.delay());
-			return;
-		}
-		rotate(screenToQuat(Vec.multiply(
-				new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz())), rotationSensitivity())));
+		rotate(screenToQuat(Vec.multiply(new Vec(computeAngle(event.dx()), computeAngle(-event.dy()), computeAngle(-event.dz())), rotationSensitivity())));
 	}
 
 	/**
@@ -1900,53 +1892,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
 	/**
 	 * User gesture into arcball-rotation conversion routine.
-	 */
-	//TODO needs testing no-staging
-	/*
-	public void rotate(DOF2Event event) {
-		//TODO: check if we get nulls here
-		if(event == null)
-			throw new RuntimeException("rotate: event can't be null");
-		if(currentMotionEvent == null)
-			throw new RuntimeException("rotate: current motion event can't be null");
-		if (event.isAbsolute()) {
-			AbstractScene.showEventVariationWarning("rotate");
-			return;
-		}
-		if(event.fired() && gScene.is3D()) //TODO needs testing
-			gScene.camera().cadRotationIsReversed = gScene.camera().frame().transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
-		//TODO testing w_o currentMotionEvent
-		System.out.println("rotate: event speed: " + event.speed());
-		System.out.println("rotate: event delay: " + event.delay());
-		if (event.flushed() && damping() == 0 && currentMotionEvent != null) {
-		//if (event.flushed() && damping() == 0 // && currentMotionEvent != null
-		//) {
-			startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
-			//startSpinning(spinningRotation(), event.speed(), event.delay());
-			return;
-		}
-		currentMotionEvent = event;
-		//--
-		Rotation rt;
-		Vec trns;
-		if (isEyeFrame())
-			rt = deformedBallRotation(event, eye().projectedCoordinatesOf(eye().anchor()));
-		else {
-			if (is2D())
-				rt = deformedBallRotation(event, gScene.window().projectedCoordinatesOf(position()));
-			else {
-				trns = gScene.camera().projectedCoordinatesOf(position());
-				rt = deformedBallRotation(event, trns);
-				trns = ((Quat) rt).axis();
-				trns = gScene.camera().frame().orientation().rotate(trns);
-				trns = transformOf(trns);
-				rt = new Quat(trns, -rt.angle());
-			}
-		}
-		spin(rt, event.speed(), event.delay());
-	}
-	*/
-	
+	 */	
 	public void rotate(DOF2Event event) {
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("rotate");
@@ -2067,7 +2013,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into move-forward conversion routine.
 	 */
-	//TODO needs testing no-staging
 	protected void moveForward(DOF2Event event, boolean forward) {
 		if (event.fired())
 			updateSceneUpVector();
@@ -2142,7 +2087,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into CAD-rotation conversion routine.
 	 */
-	//TODO needs testing no-staging
 	public void rotateCAD(DOF2Event event) {
 		if (gScene.is2D()) {
 			AbstractScene.showDepthWarning("rotateCAD");
@@ -2152,25 +2096,25 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 			AbstractScene.showEventVariationWarning("rotateCAD");
 			return;
 		}
-		if(event.fired() && gScene.is3D()) //TODO needs testing
+		if(event.fired())
+			stopSpinning();
+		if(event.fired() && gScene.is3D())
 			gScene.camera().cadRotationIsReversed = gScene.camera().frame().transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
-		//TODO testing w_o currentMotionEvent
-		if (event.flushed() && damping() == 0 /* && currentMotionEvent != null */) {
-			//startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
-			//TODO testing rotate
-			//startSpinning(spinningRotation(), event.speed(), currentMotionEvent.delay());
+		if (event.flushed() && damping() == 0) {
+			startSpinning();
 			return;
-		}	
-		// Multiply by 2.0 to get on average about the same speed as with the deformed ball
-		float dx = -2.0f * rotationSensitivity() * event.dx() / gScene.camera().screenWidth();
-		float dy = 2.0f * rotationSensitivity() * event.dy() / gScene.camera().screenHeight();
-		if (((Camera) eye()).cadRotationIsReversed)
-			dx = -dx;
-		if (gScene.isRightHanded())
-			dy = -dy;
-		Vec verticalAxis = transformOf(sceneUpVector());
-		spin(Quat.multiply(new Quat(verticalAxis, dx), new Quat(new Vec(1.0f, 0.0f, 0.0f), dy)), event.speed(),
-				event.delay());
+		}
+		else {
+			// Multiply by 2.0 to get on average about the same speed as with the deformed ball
+			float dx = -2.0f * rotationSensitivity() * event.dx() / gScene.camera().screenWidth();
+			float dy = 2.0f * rotationSensitivity() * event.dy() / gScene.camera().screenHeight();
+			if (((Camera) eye()).cadRotationIsReversed)
+				dx = -dx;
+			if (gScene.isRightHanded())
+				dy = -dy;
+			Vec verticalAxis = transformOf(sceneUpVector());
+			spin(Quat.multiply(new Quat(verticalAxis, dx), new Quat(new Vec(1.0f, 0.0f, 0.0f), dy)), event.speed(), event.delay());
+		}
 	}
 
 	/**
@@ -2250,7 +2194,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture screen-translate conversion routine.
 	 */
-	//TODO needs testing no-staging
 	public void screenTranslate(DOF2Event event) {
 		if(event.fired())
 			dirIsFixed = false;
@@ -2275,55 +2218,50 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture screen-rotation conversion routine.
 	 */
-	//TODO needs testing no-staging
 	public void screenRotate(DOF2Event event) {
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("screenRotate");
 			return;
 		}
-		// display visual hint
-		if( event.fired() ) {
-			if(gScene.is3D()) //TODO needs testing
+		if(event.fired()) {
+			stopSpinning();
+			gScene.setRotateVisualHint(true); // display visual hint
+			if(gScene.is3D())
 				gScene.camera().cadRotationIsReversed = gScene.camera().frame().transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
-			gScene.setRotateVisualHint(true);
 		}
 		if (event.flushed()) {
 			gScene.setRotateVisualHint(false);
-		    //TODO testing w_o currentMotionEvent
-			if(damping() == 0 /* && currentMotionEvent != null */) {
-				//startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
-				//TODO testing rotate
-				//startSpinning(spinningRotation(), event.speed(), currentMotionEvent.delay());
+			if(damping() == 0) {
+				startSpinning();
 				return;
 			}
-		}			
-		// end
-		if (this.is2D()) {
-			rotate(event);
-			return;
 		}
-		Quat rt;
-		Vec trns;
-		float angle;
-		if (isEyeFrame()) {
-			trns = eye().projectedCoordinatesOf(eye().anchor());
-			angle = (float) Math.atan2(event.y() - trns.vec[1], event.x() - trns.vec[0])
-					- (float) Math.atan2(event.prevY() - trns.vec[1], event.prevX() - trns.vec[0]);
-			if (gScene.isLeftHanded())
-				angle = -angle;
-			rt = new Quat(new Vec(0.0f, 0.0f, 1.0f), angle);
-			spin(rt, event.speed(), event.delay());
-			// updateSceneUpVector();
-		}
-		else {
-			trns = gScene.camera().projectedCoordinatesOf(position());
-			float prev_angle = (float) Math.atan2(event.prevY() - trns.vec[1], event.prevX() - trns.vec[0]);
-			angle = (float) Math.atan2(event.y() - trns.vec[1], event.x() - trns.vec[0]);
-			Vec axis = transformOf(gScene.camera().frame().orientation().rotate(new Vec(0.0f, 0.0f, -1.0f)));
-			if (gScene.isRightHanded())
-				rt = new Quat(axis, angle - prev_angle);
-			else
-				rt = new Quat(axis, prev_angle - angle);
+		if(!event.flushed()) {
+			if (this.is2D()) {
+				rotate(event);
+				return;
+			}
+			Quat rt;
+			Vec trns;
+			float angle;
+			if (isEyeFrame()) {
+				trns = eye().projectedCoordinatesOf(eye().anchor());
+				angle = (float) Math.atan2(event.y() - trns.vec[1], event.x() - trns.vec[0])
+						- (float) Math.atan2(event.prevY() - trns.vec[1], event.prevX() - trns.vec[0]);
+				if (gScene.isLeftHanded())
+					angle = -angle;
+				rt = new Quat(new Vec(0.0f, 0.0f, 1.0f), angle);
+			}
+			else {
+				trns = gScene.camera().projectedCoordinatesOf(position());
+				float prev_angle = (float) Math.atan2(event.prevY() - trns.vec[1], event.prevX() - trns.vec[0]);
+				angle = (float) Math.atan2(event.y() - trns.vec[1], event.x() - trns.vec[0]);
+				Vec axis = transformOf(gScene.camera().frame().orientation().rotate(new Vec(0.0f, 0.0f, -1.0f)));
+				if (gScene.isRightHanded())
+					rt = new Quat(axis, angle - prev_angle);
+				else
+					rt = new Quat(axis, prev_angle - angle);
+			}
 			spin(rt, event.speed(), event.delay());
 		}
 	}

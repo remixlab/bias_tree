@@ -17,8 +17,8 @@ import remixlab.util.HashCodeBuilder;
 /**
  * The root of all events that are to be handled by an {@link remixlab.bias.core.Agent}. Every BogusEvent
  * encapsulates a {@link remixlab.bias.core.Shortcut} which may be bound to an user-defined
- * action (see {@link #shortcut()}). A {@link #flushed()} event encapsulates a gesture
- * termination message which may be of the interest of {@link remixlab.bias.core.Grabber} objects.
+ * action (see {@link #shortcut()}). Gesture initialization and termination, which may be of the interest of
+ * {@link remixlab.bias.core.Grabber} objects, are reported by {@link #fired()} and {@link #flushed()}, resp.
  * <p>
  * The following are the main class specializations: {@link remixlab.bias.event.MotionEvent},
  * {@link remixlab.bias.event.ClickEvent}, and {@link remixlab.bias.event.KeyboardEvent}. Please refer to their
@@ -124,20 +124,20 @@ public class BogusEvent implements Copyable {
 	}
 	
 	/**
-	 * Returns true if this is a 'flushed' event. Flushed events indicate gesture (or action) termination,
-	 * such as a mouse-release within a mouse-press / mouse-move(or mouse-drag) interaction (mouse-release
-	 * can then point to gesture termination).
+	 * Returns true if this is a 'flushed' event. Flushed events indicate gesture termination,
+	 * such as a mouse-release.
+	 * 
+	 * @see #fired()
 	 */
 	public boolean flushed() {
 		return flush;
 	}
 	
-	//TODO
-	
 	/**
-	 * Returns true if this is a 'fired' event. Flushed events indicate gesture (or action) termination,
-	 * such as a mouse-release within a mouse-press / mouse-move(or mouse-drag) interaction (mouse-release
-	 * can then point to gesture termination).
+	 * Returns true if this is a 'fired' event. Fired events indicate gesture activation,
+	 * such as a mouse-press.
+	 * 
+	 * @see #flushed()
 	 */
 	public boolean fired() {
 		return init;
