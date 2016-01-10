@@ -84,10 +84,10 @@ public class KeyAgent extends Agent {
 			currentEvent = new KeyboardEvent(e.getKey());
 		else if (press || release)
 			currentEvent = new KeyboardEvent(e.getModifiers(), e.getKeyCode());
-		
 		if(type || press)
 			updateTrackedGrabber(currentEvent);
-		handle(release ? currentEvent.flush() : currentEvent);
+		//handle(press ? currentEvent.fire() : release ? currentEvent.flush() : currentEvent);
+		handle(release ? currentEvent.flush() : currentEvent.fire());
 	}
 	
 	//debug

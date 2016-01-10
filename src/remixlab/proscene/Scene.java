@@ -205,9 +205,6 @@ public class Scene extends AbstractScene implements PConstants {
 		parent.registerMethod("keyEvent", keyboardAgent());
 		this.setDefaultKeyBindings();
 		
-		addInitHandler(KeyboardEvent.class, "initKeyboard");
-		addFlushHandler(KeyboardEvent.class, "flushKeyboard");
-		
 		pApplet().registerMethod("pre", this);
 		pApplet().registerMethod("draw", this);
 
@@ -2423,7 +2420,26 @@ public class Scene extends AbstractScene implements PConstants {
 	
 	@Override
 	public void performInteraction(BogusEvent event) {
-		profile.handle(event);
+		if (!processKey(event))
+			profile.handle(event);
+	}
+	
+	protected boolean processKey(BogusEvent event) {
+		if(event instanceof KeyboardEvent) {
+			if(event.fired())
+				if(event.id() == 0)//TYPE event
+					return vkeyAction == null ? false : true;
+				else {
+					vkeyAction = profile.action(event.shortcut());
+				    return false;
+				}
+			if(event.flushed()) {
+				if( event.flushed() && vkeyAction != null )
+					vkeyAction = null;
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public boolean initKeyboard(KeyboardEvent event) {
@@ -2441,54 +2457,6 @@ public class Scene extends AbstractScene implements PConstants {
 		return true;
 	}
 	
-	public void addInitHandler(Class<?> event, String methodName) {
-		profile().addInitHandler(event, methodName);
-	}
-	
-	public void addInitHandler(Object object, Class<?> event, String methodName) {
-		profile().addInitHandler(object, event, methodName);
-	}
-	
-	public boolean hasInitHandler(Class<?> event) {
-		return profile().hasInitHandler(event);
-	}
-	
-	public void removeInitHandler(Class<?> event) {
-		profile().removeInitHandler(event);
-	}
-	
-	public void addExecHandler(Class<?> event, String methodName) {
-		profile().addExecHandler(event, methodName);
-	}
-	
-	public void addExecHandler(Object object, Class<?> event, String methodName) {
-		profile().addExecHandler(object, event, methodName);
-	}
-	
-	public boolean hasExecHandler(Class<?> event) {
-		return profile().hasExecHandler(event);
-	}
-	
-	public void removeExecHandler(Class<?> event) {
-		profile().removeExecHandler(event);
-	}
-	
-	public void addFlushHandler(Class<?> event, String methodName) {
-		profile().addFlushHandler(event, methodName);
-	}
-	
-	public void addFlushHandler(Object object, Class<?> event, String methodName) {
-		profile().addFlushHandler(object, event, methodName);
-	}
-	
-	public boolean hasFlushHandler(Class<?> event) {
-		return profile().hasFlushHandler(event);
-	}
-	
-	public void removeFlushHandler(Class<?> event) {
-		profile().removeFlushHandler(event);
-	}
-	
 	public String action(Shortcut key) {
 		return profile.action(key);
 	}
@@ -2496,8 +2464,6 @@ public class Scene extends AbstractScene implements PConstants {
 	public boolean isActionBound(String action) {
 		return profile.isActionBound(action);
 	}
-
-	// Motion
 	
 	// Key
 	

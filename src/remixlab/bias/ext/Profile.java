@@ -24,11 +24,8 @@ import remixlab.util.*;
 
 /**
  * A grabber {@link remixlab.bias.core.Grabber} extension which allows to define
- * {@link remixlab.bias.core.Shortcut} to {@link java.lang.reflect.Method} bindings
- * (see {@link #setBinding(Shortcut, String)}  and {@link #setBinding(Object, Shortcut, String)})
- * and to split a grabber action into multiple stages (init, exec and flush)
- * ({@link #addStageHandler(HashMap, Class, String)} and
- * {@link #addStageHandler(HashMap, Object, Class, String)}).
+ * {@link remixlab.bias.core.Shortcut} to {@link java.lang.reflect.Method} bindings.
+ * See {@link #setBinding(Shortcut, String)} and {@link #setBinding(Object, Shortcut, String)}.
  * <p>
  * To attach a profile to a grabber first override your
  * {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)} method like this:
@@ -52,10 +49,7 @@ public class Profile {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
-				append(actionMap).
-				append(initMap).
-				append(execMap).
-				append(flushMap).toHashCode();
+				append(actionMap).toHashCode();
 	}
 
 	@Override
@@ -69,11 +63,7 @@ public class Profile {
 
 		Profile other = (Profile) obj;
 		return new EqualsBuilder()
-				.append(actionMap, other.actionMap)
-				.append(initMap, other.initMap)
-				.append(execMap, other.execMap)
-				.append(flushMap, other.flushMap).
-				isEquals();
+				.append(actionMap, other.actionMap).isEquals();
 	}
 	
 	protected static HashMap<Integer, Integer> idMap = new HashMap<Integer, Integer>();	
@@ -83,16 +73,11 @@ public class Profile {
 	// temporal vars
 	String initAction;
 	
-	protected HashMap<Class<?>, ObjectMethodTuple> initMap, execMap, flushMap;
-	
 	/**
 	 * Attaches a profile to the given grabber.
 	 */
 	public Profile(Grabber g) {
 		actionMap = new HashMap<Shortcut, ObjectMethodTuple>();
-		initMap = new HashMap<Class<?>, ObjectMethodTuple>();
-		execMap = new HashMap<Class<?>, ObjectMethodTuple>();
-		flushMap = new HashMap<Class<?>, ObjectMethodTuple>();
 		grabber = g;
 	}
 	
@@ -177,27 +162,6 @@ public class Profile {
 			else
 				actionMap.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
 		}
-		initMap = new HashMap<Class<?>, ObjectMethodTuple>();
-		for (Map.Entry<Class<?>, ObjectMethodTuple> entry : p.initMap.entrySet()) {
-			if( entry.getValue().object == p.grabber )
-				initMap.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
-			else
-				initMap.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
-		}
-		execMap = new HashMap<Class<?>, ObjectMethodTuple>();
-		for (Map.Entry<Class<?>, ObjectMethodTuple> entry : p.execMap.entrySet()) {
-			if( entry.getValue().object == p.grabber )
-				execMap.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
-			else
-				execMap.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
-		}
-		flushMap = new HashMap<Class<?>, ObjectMethodTuple>();
-		for (Map.Entry<Class<?>, ObjectMethodTuple> entry : p.flushMap.entrySet()) {
-			if( entry.getValue().object == p.grabber )
-				flushMap.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
-			else
-				flushMap.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
-		}
 	}
 	
 	/**
@@ -212,27 +176,6 @@ public class Profile {
 	 */
 	protected HashMap<Shortcut, ObjectMethodTuple> actionMap() {
 		return actionMap;
-	}
-	
-	/**
-	 * Internal use. Event-class to init stage map.
-	 */
-	protected HashMap<Class<?>, ObjectMethodTuple> initMap() {
-		return initMap;
-	}
-	
-	/**
-	 * Internal use. Event-class to exec stage map.
-	 */
-	protected HashMap<Class<?>, ObjectMethodTuple> execMap() {
-		return execMap;
-	}
-	
-	/**
-	 * Internal use. Event-class to flush stage map.
-	 */
-	protected HashMap<Class<?>, ObjectMethodTuple> flushMap() {
-		return flushMap;
 	}
 	
 	/**
@@ -576,259 +519,5 @@ public class Profile {
 	 */
 	public boolean isMethodBound(Object object, Method method) {
 		return actionMap.containsValue(new ObjectMethodTuple(object, method));
-	}
-	
-	/**
-	 * Internal use. Algorithm to split an action flow into a 'three-tempi' stage sequence.
-	 * <p>
-	 * The algorithm parses the bogus-event in {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}
-	 * and then decide what stage to call (see {@link #invokeStageHandler(HashMap, BogusEvent)}):
-	 * <ol>
-     * <li>Init (1st tempi): sets the initAction, called when initAction == null.</li>
-     * <li>Exec (2nd tempi): continues action execution, called when initAction == action()
-     * (current action)</li>
-     * <li>Flush (3rd): ends action, called when {@link remixlab.bias.core.BogusEvent#flushed()}
-     * is true or when initAction != action()</li>
-     * </ol>
-     * <p>
-     * Useful to parse multiple-tempi actions, such as a mouse press/move/drag/release flow.
-	 */
-	protected final boolean processStage(BogusEvent event) {
-		if (initAction == null) {
-			if (!event.flushed()) {
-				initAction = action(event.shortcut());
-				return (initAction == null) ? false : invokeStageHandler(initMap, event);// start action
-			}
-		}
-		else { // initAction != null
-			if (!event.flushed()) {
-				if (initAction == action(event.shortcut()))
-					return invokeStageHandler(execMap, event);// continue action
-				else { // initAction != action() -> action changes abruptly
-					invokeStageHandler(flushMap, event);
-					initAction = action(event.shortcut());
-					return (initAction == null) ? false : invokeStageHandler(initMap, event);// start action
-				}
-			}
-			else {// event.flushed()
-				initAction = null;
-				return invokeStageHandler(flushMap, event);
-			}
-		}
-		return true;// i.e., if initAction == action() == null -> ignore :)
-	}
-	
-	/**
-	 * Calls an stage handler if the event class is bound.
-	 * 
-	 * @see #addStageHandler(HashMap, Class, String)
-	 * @see #addStageHandler(HashMap, Object, Class, String)
-	 */
-	protected boolean invokeStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, BogusEvent event) {
-		boolean result = false;
-		ObjectMethodTuple tuple = stageMap.get(event.getClass());
-		if (tuple == null)
-			return result;
-		Method iHandlerMethod = tuple.method;
-		if (iHandlerMethod != null) {
-			try {
-				Object object = object(stageMap, event.getClass());
-				if (object == grabber)
-					result = (boolean) iHandlerMethod.invoke(object, new Object[] { event });
-				else
-					result = (boolean) iHandlerMethod.invoke(object, new Object[] { grabber, event });
-			} catch (Exception e) {
-				System.out.println("Something went wrong when invoking your " + iHandlerMethod.getName() + " method");
-				e.printStackTrace();
-				result = false;
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * Internal macro.
-	 */
-	protected boolean printWarning(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event, String handler) {
-		Method a = method(stageMap, event);
-		String str = event.getSimpleName() + " " + (stageMap == initMap() ? "init" : stageMap == execMap() ? "exec" : "flush" ) + " stage handler";
-		if(handler == null) {
-			this.removeStageHandler(stageMap, event);
-			System.out.println(str + " removed");
-			return true;
-		}			
-		if (hasStageHandler(stageMap, event)) {
-			System.out.println("Warning: " + a.getName() + " " + str + " overwritten");
-			return false;	
-		}
-		return false;
-	}
-	
-	/**
-	 * Internal use.
-	 */
-	protected void addStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event, String handler) {
-		if (printWarning(stageMap, event, handler))
-			return;
-		try {
-			stageMap.put(event, new ObjectMethodTuple(grabber, grabber.getClass().getMethod(handler, new Class<?>[] { event })));
-		} catch (Exception e) {
-			System.out.println("Something went wrong when registering your " + handler + " method");
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * Internal use.
-	 */
-	protected void addStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Object object, Class<?> event, String handler) {
-		if (printWarning(stageMap, event, handler))
-			return;
-		try {
-			stageMap.put(event, new ObjectMethodTuple(object, object.getClass().getMethod(handler, new Class<?>[] { grabber.getClass(), event })));
-		} catch (Exception e) {
-			System.out.println("Something went wrong when registering your " + handler + " method");
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * Defines an init stage handler for the given event class.
-	 * <p>
-	 * The handler is a method implemented by the {@link #grabber()} that returns boolean (while
-	 * returning {@code true} secures {@link #invokeAction(BogusEvent)} NOT to be called after
-	 * {@link #processStage(BogusEvent)}, returning {@code true} secures it to be called) and has a
-	 * {@link remixlab.bias.core.BogusEvent} parameter.
-	 * 
-	 * @see #addInitHandler(Object, Class, String)
-	 */
-	public void addInitHandler(Class<?> event, String handler) {
-		addStageHandler(initMap, event, handler);
-	}
-	
-	/**
-	 * Defines an init stage handler for the given event class.
-	 * <p>
-	 * The handler is a method implemented by the {@code object} that returns boolean (while returning
-	 * {@code true} secures {@link #invokeAction(BogusEvent)} NOT to be called after
-	 * {@link #processStage(BogusEvent)}, returning {@code true} secures it to be called) and has a
-	 * {@link remixlab.bias.core.Grabber} parameter and a {@link remixlab.bias.core.BogusEvent} parameter.
-	 * 
-	 * @see #addInitHandler(Object, String)
-	 */
-	public void addInitHandler(Object object, Class<?> event, String handler) {
-		addStageHandler(initMap, object, event, handler);
-	}
-	
-	/**
-	 * Defines an exec stage handler for the given event class.
-	 * <p>
-	 * The handler is a method implemented by the {@link #grabber()} that returns boolean (while
-	 * returning {@code true} secures {@link #invokeAction(BogusEvent)} NOT to be called after
-	 * {@link #processStage(BogusEvent)}, returning {@code true} secures it to be called) and has a
-	 * {@link remixlab.bias.core.BogusEvent} parameter.
-	 * 
-	 * @see #addExecHandler(Object, Class, String)
-	 */
-	public void addExecHandler(Class<?> event, String action) {
-		addStageHandler(execMap, event, action);
-	}
-	
-	/**
-	 * Defines an exec stage handler for the given event class.
-	 * <p>
-	 * The handler is a method implemented by the {@code object} that returns boolean (while returning
-	 * {@code true} secures {@link #invokeAction(BogusEvent)} NOT to be called after
-	 * {@link #processStage(BogusEvent)}, returning {@code true} secures it to be called) and has a
-	 * {@link remixlab.bias.core.Grabber} parameter and a {@link remixlab.bias.core.BogusEvent} parameter.
-	 * 
-	 * @see #addExecHandler(Class, String)
-	 */
-	public void addExecHandler(Object object, Class<?> event, String handler) {
-		addStageHandler(execMap, object, event, handler);
-	}
-	
-	/**
-	 * Defines a flush stage handler for the given event class.
-	 * <p>
-	 * The handler is a method implemented by the {@link #grabber()} that returns boolean (while
-	 * returning {@code true} secures {@link #invokeAction(BogusEvent)} NOT to be called after
-	 * {@link #processStage(BogusEvent)},* returning {@code true} secures it to be called) and has a
-	 * {@link remixlab.bias.core.BogusEvent} parameter.
-	 * 
-	 * @see #addFlushHandler(Object, Class, String)
-	 */
-	public void addFlushHandler(Class<?> event, String action) {
-		addStageHandler(flushMap, event, action);
-	}
-	
-	/**
-	 * Defines a flush stage handler for the given event class.
-	 * <p>
-	 * The handler is a method implemented by the {@code object} that returns boolean (while returning {@code true} secures
-	 * {@link #invokeAction(BogusEvent)} NOT to be called after {@link #processStage(BogusEvent)},
-	 * returning {@code true} secures it to be called) and has a
-	 * {@link remixlab.bias.core.Grabber} parameter and a {@link remixlab.bias.core.BogusEvent} parameter.
-	 * 
-	 * @see #addFlushHandler(Class, String)
-	 */
-	public void addFlushHandler(Object object, Class<?> event, String handler) {
-		addStageHandler(flushMap, object, event, handler);
-	}
-	
-	/**
-	 * Internal use.
-	 */
-	protected boolean hasStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event) {
-		return stageMap.containsKey(event);
-	}
-	
-	/**
-	 * Returns true if there's an init handler for the given event class and false otherwise.
-	 */
-	public boolean hasInitHandler(Class<?> event) {
-		return hasStageHandler(initMap, event);
-	}
-	
-	/**
-	 * Returns true if there's an exec handler for the given event class and false otherwise.
-	 */
-	public boolean hasExecHandler(Class<?> event) {
-		return hasStageHandler(execMap, event);
-	}
-	
-	/**
-	 * Returns true if there's a flush handler for the given event class and false otherwise.
-	 */
-	public boolean hasFlushHandler(Class<?> event) {
-		return hasStageHandler(flushMap, event);
-	}
-	
-	/**
-	 * Internal use.
-	 */
-	protected void removeStageHandler(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event) {
-		stageMap.remove(event);
-	}
-	
-	/**
-	 * Removes the init handler for the given event class.
-	 */
-	public void removeInitHandler(Class<?> event) {
-		removeStageHandler(initMap, event);
-	}
-	
-	/**
-	 * Removes the exec handler for the given event class.
-	 */
-	public void removeExecHandler(Class<?> event) {
-		removeStageHandler(execMap, event);
-	}
-	
-	/**
-	 * Removes the flush handler for the given event class.
-	 */
-	public void removeFlushHandler(Class<?> event) {
-		removeStageHandler(flushMap, event);
 	}
 }

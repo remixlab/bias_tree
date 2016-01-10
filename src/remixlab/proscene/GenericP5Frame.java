@@ -43,6 +43,8 @@ public class GenericP5Frame extends GenericFrame {
 				.isEquals();
 	}
 	
+	String vkeyAction;
+	
 	@Override
 	public Scene scene() {
 		return (Scene)gScene;
@@ -59,7 +61,6 @@ public class GenericP5Frame extends GenericFrame {
 		// else
 		    // setDefaultTouchBindings();
 		setDefaultKeyBindings();
-		addStageHandlers();
 	}
 	
 	public GenericP5Frame(Scene scn, Frame referenceFrame) {
@@ -74,7 +75,6 @@ public class GenericP5Frame extends GenericFrame {
 			// else
 			    // setDefaultTouchBindings();
 			setDefaultKeyBindings();
-			addStageHandlers();
 		}
 	}
 	
@@ -87,7 +87,6 @@ public class GenericP5Frame extends GenericFrame {
 		// else
 		    // setDefaultTouchBindings();
 		setDefaultKeyBindings();
-		addStageHandlers();
 	}
 	
 	protected GenericP5Frame(GenericP5Frame otherFrame) {
@@ -102,13 +101,32 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	@Override
-	public void performInteraction(BogusEvent event) {
-		profile.handle(event);
+	protected boolean checkIfGrabsInput(KeyboardEvent event) {
+		return profile.hasBinding(event.shortcut());
 	}
 	
 	@Override
-	protected boolean checkIfGrabsInput(KeyboardEvent event) {
-		return profile.hasBinding(event.shortcut());
+	public void performInteraction(BogusEvent event) {
+		if (!processKey(event))
+			profile.handle(event);
+	}
+	
+	protected boolean processKey(BogusEvent event) {
+		if(event instanceof KeyboardEvent) {
+			if(event.fired())
+				if(event.id() == 0)//TYPE event
+					return vkeyAction == null ? false : true;
+				else {
+					vkeyAction = profile.action(event.shortcut());
+				    return false;
+				}
+			if(event.flushed()) {
+				if( event.flushed() && vkeyAction != null )
+					vkeyAction = null;
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void removeBindings() {
@@ -121,11 +139,6 @@ public class GenericP5Frame extends GenericFrame {
 	
 	public boolean isActionBound(String action) {
 		return profile.isActionBound(action);
-	}
-	
-	protected void addStageHandlers() {
-		addInitHandler(KeyboardEvent.class, "initKeyboard");
-		addFlushHandler(KeyboardEvent.class, "flushKeyboard");
 	}
 	
 	public void setDefaultMouseBindings() {
@@ -318,73 +331,5 @@ public class GenericP5Frame extends GenericFrame {
 			result += Scene.parseInfo(info);
 		}
 		return result;
-	}
-	
-	//
-	String vkeyAction;
-	
-	// lets see
-	
-	public void addInitHandler(Class<?> event, String action) {
-		profile().addInitHandler(event, action);
-	}
-	
-	public void addInitHandler(Object object, Class<?> event, String action) {
-		profile().addInitHandler(object, event, action);
-	}
-	
-	public boolean hasInitHandler(Class<?> event) {
-		return profile().hasInitHandler(event);
-	}
-	
-	public void removeInitHandler(Class<?> event) {
-		profile().removeInitHandler(event);
-	}
-	
-	public void addExecHandler(Class<?> event, String action) {
-		profile().addExecHandler(event, action);
-	}
-	
-	public void addExecHandler(Object object, Class<?> event, String action) {
-		profile().addExecHandler(object, event, action);
-	}
-	
-	public boolean hasExecHandler(Class<?> event) {
-		return profile().hasExecHandler(event);
-	}
-	
-	public void removeExecHandler(Class<?> event) {
-		profile().removeExecHandler(event);
-	}
-	
-	public void addFlushHandler(Class<?> event, String action) {
-		profile().addFlushHandler(event, action);
-	}
-	
-	public void addFlushHandler(Object object, Class<?> event, String action) {
-		profile().addFlushHandler(object, event, action);
-	}
-	
-	public boolean hasFlushHandler(Class<?> event) {
-		return profile().hasFlushHandler(event);
-	}
-	
-	public void removeFlushHandler(Class<?> event) {
-		profile().removeFlushHandler(event);
-	}
-	
-	public boolean initKeyboard(KeyboardEvent event) {
-		if(event.id() == 0)//TYPE event
-			return vkeyAction == null ? false : true;
-		else {
-			vkeyAction = profile.action(event.shortcut());
-		    return false;
-		}
-	}
-	
-	public boolean flushKeyboard(KeyboardEvent event) {
-		if( event.flushed() && vkeyAction != null )
-			vkeyAction = null;
-		return true;
 	}
 }
