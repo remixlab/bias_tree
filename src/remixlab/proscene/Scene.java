@@ -2402,13 +2402,9 @@ public class Scene extends AbstractScene implements PConstants {
 		if (!(motionAgent().inputGrabber() instanceof GenericP5Frame))
 			return;
 		GenericP5Frame iFrame = (GenericP5Frame) motionAgent().inputGrabber();
-		if (!(iFrame.initEvent instanceof DOF2Event))
-			return;
-
 		pg().pushStyle();
-		DOF2Event init = (DOF2Event) iFrame.initEvent;
-		float p1x = init.x() /*- originCorner().x()*/;
-		float p1y = init.y() /*- originCorner().y()*/;
+		float p1x = iFrame.initEvent.x() /*- originCorner().x()*/;
+		float p1y = iFrame.initEvent.y() /*- originCorner().y()*/;
 		float p2x = mouseAgent().currentEvent.x() /*- originCorner().x()*/;
 		float p2y = mouseAgent().currentEvent.y() /*- originCorner().y()*/;
 		beginScreenDrawing();

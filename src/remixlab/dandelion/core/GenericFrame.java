@@ -112,8 +112,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	private boolean							horiz								= true; // Two simultaneous frames require two mice!
 
 	protected float							eventSpeed;								// spnning and tossing
-	//TODO pending delay
-	//protected long eventDelay;
+	protected long eventDelay;
 	
 	protected Vec								fDir;
 	protected float							flySpd;
@@ -129,7 +128,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	private float								grabsInputThreshold;
 	private boolean							adpThreshold;
 	
-	private MotionEvent	currentMotionEvent;//TODO discard currentMotionEvent
 	public DOF2Event	initEvent;
 	private float				flySpeedCache;
 
@@ -1128,8 +1126,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	public void startSpinning(Rotation rt, float speed, long delay) {
 		setSpinningRotation(rt);
 		eventSpeed = speed;
-		//TODO pending delay
-		//eventDelay = delay;
+		eventDelay = delay;
 		if (Util.zero(damping()) && eventSpeed < spinningSensitivity())
 			return;
 		int updateInterval = (int) delay;
@@ -1140,12 +1137,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * Cache version. Used by rotate methods when damping = 0.
 	 */
-	//TODO pending delay
-	/*
 	protected void startSpinning() {
-		startSpinning(this.spinningRotation(), eventSpeed, eventDelay);
+		startSpinning(spinningRotation(), eventSpeed, eventDelay);
 	}
-	*/
 
 	protected void spinExecution() {
 		if (Util.zero(damping()))
@@ -1161,8 +1155,11 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	}
 
 	protected void spin(Rotation rt, float speed, long delay) {
-		if (Util.zero(damping()))
+		if (Util.zero(damping())) {
 			spin(rt);
+			eventSpeed = speed;
+			eventDelay = delay;
+		}
 		else
 			startSpinning(rt, speed, delay);
 	}
@@ -1659,7 +1656,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		}
 		if(event.fired()) {
 			initEvent = event.get();
-			currentMotionEvent = event;
 			gScene.setZoomVisualHint(true);
 		}
 		else if(event.flushed()) {
@@ -1670,9 +1666,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 			int h = (int) Math.abs(event.dy());
 			int tlY = (int) event.prevY() < (int) event.y() ? (int) event.prevY() : (int) event.y();
 			eye().interpolateToZoomOnRegion(new Rect(tlX, tlY, w, h));
-		}
-		else {
-			currentMotionEvent = event;
 		}
 	}
 
@@ -1886,7 +1879,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		//TODO testing w_o currentMotionEvent
 		if (event.flushed() && damping() == 0 /* && currentMotionEvent != null */) {
 			//startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
-			startSpinning(spinningRotation(), event.speed(), currentMotionEvent.delay());
+			//TODO testing rotate
+			//startSpinning(spinningRotation(), event.speed(), currentMotionEvent.delay());
 			return;
 		}
 		rotate(screenToQuat(Vec.multiply(
@@ -1958,15 +1952,12 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 			AbstractScene.showEventVariationWarning("rotate");
 			return;
 		}
-		//if(event.fired() && damping() == 0 && isSpinning())
-			//stopSpinning();
 		if(event.fired())
 			stopSpinning();
 		if(event.fired() && gScene.is3D())
 			gScene.camera().cadRotationIsReversed = gScene.camera().frame().transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
 		if (event.flushed() && damping() == 0) {
-			//startSpinning(rt, event.speed(), event.delay());
-			startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
+			startSpinning();
 			return;
 		}
 		if(!event.flushed()) {
@@ -1988,7 +1979,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 			}
 			spin(rt, event.speed(), event.delay());
 		}
-		currentMotionEvent = event;
 	}
 
 	/**
@@ -2167,7 +2157,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		//TODO testing w_o currentMotionEvent
 		if (event.flushed() && damping() == 0 /* && currentMotionEvent != null */) {
 			//startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
-			startSpinning(spinningRotation(), event.speed(), currentMotionEvent.delay());
+			//TODO testing rotate
+			//startSpinning(spinningRotation(), event.speed(), currentMotionEvent.delay());
 			return;
 		}	
 		// Multiply by 2.0 to get on average about the same speed as with the deformed ball
@@ -2301,7 +2292,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 		    //TODO testing w_o currentMotionEvent
 			if(damping() == 0 /* && currentMotionEvent != null */) {
 				//startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
-				startSpinning(spinningRotation(), event.speed(), currentMotionEvent.delay());
+				//TODO testing rotate
+				//startSpinning(spinningRotation(), event.speed(), currentMotionEvent.delay());
 				return;
 			}
 		}			
