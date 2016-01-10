@@ -127,6 +127,7 @@ public class GenericP5Frame extends GenericFrame {
 		addInitHandler(KeyboardEvent.class, "initKeyboard");
 		addFlushHandler(KeyboardEvent.class, "flushKeyboard");
 		
+		/*
 		addInitHandler(DOF2Event.class, "initDOF2");
 		addExecHandler(DOF2Event.class, "execDOF2");
 		addFlushHandler(DOF2Event.class, "flushDOF2");
@@ -138,6 +139,7 @@ public class GenericP5Frame extends GenericFrame {
 		addInitHandler(DOF6Event.class, "initDOF6");
 		addExecHandler(DOF6Event.class, "execDOF6");
 		addFlushHandler(DOF6Event.class, "flushDOF6");
+		*/
 	}
 	
 	public void setDefaultMouseBindings() {
@@ -336,10 +338,10 @@ public class GenericP5Frame extends GenericFrame {
 	String vkeyAction;
 	
 	// private A a;//TODO study make me an attribute to com between init and end
-	protected boolean			need4Spin;
-	protected boolean			need4Tossing;
-	protected boolean			drive;
-	protected float				flySpeedCache;
+	//protected boolean			need4Spin;
+	//protected boolean			need4Tossing;
+	//protected boolean			drive;
+	//protected float				flySpeedCache;
 	
 	/*
 	protected MotionEvent initMotionEvent() {
@@ -430,26 +432,9 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public boolean initDOF2(DOF2Event event) {
-		initMotionEvent = event.get();
-		currentMotionEvent = event;
-		stopSpinning();
-		String twotempi = action(event.shortcut());
-		if (twotempi == "screenTranslate")
-			dirIsFixed = false;
-		boolean rotateMode = ((twotempi == "rotate") || (twotempi == "rotateXYZ")
-				|| (twotempi == "rotateCAD")
-				|| (twotempi == "screenRotate") || (twotempi == "translateRotateXYZ"));
-		if (rotateMode && gScene.is3D())
-			gScene.camera().cadRotationIsReversed = gScene.camera().frame()
-					.transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
-		need4Spin = (rotateMode && (damping() == 0));
-		drive = (twotempi == "drive");
-		if (drive)
-			flySpeedCache = flySpeed();
-		need4Tossing = (twotempi == "moveForward") || (twotempi == "moveBackward")
-				|| (drive);
-		if (need4Tossing)
-			updateSceneUpVector();
+		//initMotionEvent = event.get();
+		//currentMotionEvent = event;
+		//stopSpinning();
 		return false;
 	}
 	
@@ -467,11 +452,7 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public boolean execDOF2(DOF2Event event) {
-		currentMotionEvent = event;
-		if (drive) {
-			setFlySpeed(0.01f * gScene.radius() * 0.01f * (event.y() - event.y()));
-			return false;
-		}
+		//currentMotionEvent = event;
 		return false;
 	}
 
@@ -489,17 +470,6 @@ public class GenericP5Frame extends GenericFrame {
 	}
 	
 	public boolean flushDOF2(DOF2Event event) {
-		if (currentMotionEvent != null) {
-			if (need4Spin) {
-				startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
-			}
-		}
-		if (need4Tossing) {
-			// restore speed after drive action terminates:
-			if (drive)
-				setFlySpeed(flySpeedCache);
-			stopFlying();
-		}
 		return true;
 	}
 }

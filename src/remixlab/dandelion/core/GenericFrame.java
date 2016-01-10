@@ -112,6 +112,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	private boolean							horiz								= true; // Two simultaneous frames require two mice!
 
 	protected float							eventSpeed;								// spnning and tossing
+	//TODO pending delay
+	//protected long eventDelay;
+	
 	protected Vec								fDir;
 	protected float							flySpd;
 	protected TimingTask				flyTimerTask;
@@ -126,8 +129,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	private float								grabsInputThreshold;
 	private boolean							adpThreshold;
 	
-	// temporal stuff
-	public MotionEvent	initMotionEvent, currentMotionEvent;
+	private MotionEvent	currentMotionEvent;//TODO discard currentMotionEvent
+	public DOF2Event	initEvent;
+	private float				flySpeedCache;
 
 	// TODO decide this mode vs constraint! seems overkill
 	// protected boolean rspct2Frame;
@@ -1124,12 +1128,24 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	public void startSpinning(Rotation rt, float speed, long delay) {
 		setSpinningRotation(rt);
 		eventSpeed = speed;
+		//TODO pending delay
+		//eventDelay = delay;
 		if (Util.zero(damping()) && eventSpeed < spinningSensitivity())
 			return;
 		int updateInterval = (int) delay;
 		if (updateInterval > 0)
 			spinningTimerTask.run(updateInterval);
 	}
+	
+	/**
+	 * Cache version. Used by rotate methods when damping = 0.
+	 */
+	//TODO pending delay
+	/*
+	protected void startSpinning() {
+		startSpinning(this.spinningRotation(), eventSpeed, eventDelay);
+	}
+	*/
 
 	protected void spinExecution() {
 		if (Util.zero(damping()))
@@ -1642,12 +1658,12 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 			return;
 		}
 		if(event.fired()) {
-			initMotionEvent = event.get();
+			initEvent = event.get();
 			currentMotionEvent = event;
 			gScene.setZoomVisualHint(true);
 		}
 		else if(event.flushed()) {
-			event.setPreviousEvent(MotionEvent.dof2Event(initMotionEvent.get()));
+			event.setPreviousEvent(initEvent.get());
 			gScene.setZoomVisualHint(false);
 			int w = (int) Math.abs(event.dx());
 			int tlX = (int) event.prevX() < (int) event.x() ? (int) event.prevX() : (int) event.x();
@@ -1859,9 +1875,18 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into xyz-rotation conversion routine.
 	 */
+	//TODO needs testing no-staging
 	public void rotateXYZ(DOF3Event event) {
 		if (gScene.is2D()) {
 			AbstractScene.showDepthWarning("rotateXYZ");
+			return;
+		}
+		if(event.fired() && gScene.is3D()) //TODO needs testing
+			gScene.camera().cadRotationIsReversed = gScene.camera().frame().transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
+		//TODO testing w_o currentMotionEvent
+		if (event.flushed() && damping() == 0 /* && currentMotionEvent != null */) {
+			//startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
+			startSpinning(spinningRotation(), event.speed(), currentMotionEvent.delay());
 			return;
 		}
 		rotate(screenToQuat(Vec.multiply(
@@ -1882,11 +1907,32 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into arcball-rotation conversion routine.
 	 */
+	//TODO needs testing no-staging
+	/*
 	public void rotate(DOF2Event event) {
+		//TODO: check if we get nulls here
+		if(event == null)
+			throw new RuntimeException("rotate: event can't be null");
+		if(currentMotionEvent == null)
+			throw new RuntimeException("rotate: current motion event can't be null");
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("rotate");
 			return;
 		}
+		if(event.fired() && gScene.is3D()) //TODO needs testing
+			gScene.camera().cadRotationIsReversed = gScene.camera().frame().transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
+		//TODO testing w_o currentMotionEvent
+		System.out.println("rotate: event speed: " + event.speed());
+		System.out.println("rotate: event delay: " + event.delay());
+		if (event.flushed() && damping() == 0 && currentMotionEvent != null) {
+		//if (event.flushed() && damping() == 0 // && currentMotionEvent != null
+		//) {
+			startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
+			//startSpinning(spinningRotation(), event.speed(), event.delay());
+			return;
+		}
+		currentMotionEvent = event;
+		//--
 		Rotation rt;
 		Vec trns;
 		if (isEyeFrame())
@@ -1904,6 +1950,45 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 			}
 		}
 		spin(rt, event.speed(), event.delay());
+	}
+	*/
+	
+	public void rotate(DOF2Event event) {
+		if (event.isAbsolute()) {
+			AbstractScene.showEventVariationWarning("rotate");
+			return;
+		}
+		//if(event.fired() && damping() == 0 && isSpinning())
+			//stopSpinning();
+		if(event.fired())
+			stopSpinning();
+		if(event.fired() && gScene.is3D())
+			gScene.camera().cadRotationIsReversed = gScene.camera().frame().transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
+		if (event.flushed() && damping() == 0) {
+			//startSpinning(rt, event.speed(), event.delay());
+			startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
+			return;
+		}
+		if(!event.flushed()) {
+			Rotation rt;
+			Vec trns;
+			if (isEyeFrame())
+				rt = deformedBallRotation(event, eye().projectedCoordinatesOf(eye().anchor()));
+			else {
+				if (is2D())
+					rt = deformedBallRotation(event, gScene.window().projectedCoordinatesOf(position()));
+				else {
+					trns = gScene.camera().projectedCoordinatesOf(position());
+					rt = deformedBallRotation(event, trns);
+					trns = ((Quat) rt).axis();
+					trns = gScene.camera().frame().orientation().rotate(trns);
+					trns = transformOf(trns);
+					rt = new Quat(trns, -rt.angle());
+				}
+			}
+			spin(rt, event.speed(), event.delay());
+		}
+		currentMotionEvent = event;
 	}
 
 	/**
@@ -1992,7 +2077,14 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into move-forward conversion routine.
 	 */
+	//TODO needs testing no-staging
 	protected void moveForward(DOF2Event event, boolean forward) {
+		if (event.fired())
+			updateSceneUpVector();
+		else if (event.flushed()) {
+			stopFlying();
+			return;
+		}
 		Vec trns;
 		float fSpeed = forward ? -flySpeed() : flySpeed();
 		if (is2D()) {
@@ -2028,6 +2120,17 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 			AbstractScene.showDepthWarning("drive");
 			return;
 		}
+		if (event.fired()) {
+			initEvent = event.get();
+			updateSceneUpVector();
+			flySpeedCache = flySpeed();
+		}
+		else if (event.flushed()) {
+			setFlySpeed(flySpeedCache);
+			stopFlying();
+			return;
+		}
+		setFlySpeed(0.01f * gScene.radius() * 0.01f * (event.y() - initEvent.y()));		
 		Vec trns;
 		rotate(turnQuaternion(event.dof1Event(), gScene.camera()));
 		flyDisp.set(0.0f, 0.0f, flySpeed());
@@ -2049,6 +2152,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture into CAD-rotation conversion routine.
 	 */
+	//TODO needs testing no-staging
 	public void rotateCAD(DOF2Event event) {
 		if (gScene.is2D()) {
 			AbstractScene.showDepthWarning("rotateCAD");
@@ -2058,6 +2162,14 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 			AbstractScene.showEventVariationWarning("rotateCAD");
 			return;
 		}
+		if(event.fired() && gScene.is3D()) //TODO needs testing
+			gScene.camera().cadRotationIsReversed = gScene.camera().frame().transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
+		//TODO testing w_o currentMotionEvent
+		if (event.flushed() && damping() == 0 /* && currentMotionEvent != null */) {
+			//startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
+			startSpinning(spinningRotation(), event.speed(), currentMotionEvent.delay());
+			return;
+		}	
 		// Multiply by 2.0 to get on average about the same speed as with the deformed ball
 		float dx = -2.0f * rotationSensitivity() * event.dx() / gScene.camera().screenWidth();
 		float dy = 2.0f * rotationSensitivity() * event.dy() / gScene.camera().screenHeight();
@@ -2147,7 +2259,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture screen-translate conversion routine.
 	 */
+	//TODO needs testing no-staging
 	public void screenTranslate(DOF2Event event) {
+		if(event.fired())
+			dirIsFixed = false;
 		int dir = originalDirection(event);
 		if (dir == 1)
 			translateX(event, true);
@@ -2169,16 +2284,27 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	/**
 	 * User gesture screen-rotation conversion routine.
 	 */
+	//TODO needs testing no-staging
 	public void screenRotate(DOF2Event event) {
 		if (event.isAbsolute()) {
 			AbstractScene.showEventVariationWarning("screenRotate");
 			return;
 		}
 		// display visual hint
-		if( event.fired() )
+		if( event.fired() ) {
+			if(gScene.is3D()) //TODO needs testing
+				gScene.camera().cadRotationIsReversed = gScene.camera().frame().transformOf(gScene.camera().frame().sceneUpVector()).y() < 0.0f;
 			gScene.setRotateVisualHint(true);
-		if( event.flushed() )
+		}
+		if (event.flushed()) {
 			gScene.setRotateVisualHint(false);
+		    //TODO testing w_o currentMotionEvent
+			if(damping() == 0 /* && currentMotionEvent != null */) {
+				//startSpinning(spinningRotation(), currentMotionEvent.speed(), currentMotionEvent.delay());
+				startSpinning(spinningRotation(), event.speed(), currentMotionEvent.delay());
+				return;
+			}
+		}			
 		// end
 		if (this.is2D()) {
 			rotate(event);
@@ -2539,8 +2665,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * {@link #moveForward(MotionEvent, boolean)}.
 	 * <p>
 	 * <b>Attention:</b> When the generic-frame is set as the {@link remixlab.dandelion.core.Eye#frame()} or when it is
-	 * set as the {@link remixlab.dandelion.core.AbstractScene#avatar()} (which indeed is an instance of the
-	 * InteractiveAvatarFrame class), this value is set according to the
+	 * set as the {@link remixlab.dandelion.core.AbstractScene#avatar()}, this value is set according to the
 	 * {@link remixlab.dandelion.core.AbstractScene#radius()} by
 	 * {@link remixlab.dandelion.core.AbstractScene#setRadius(float)}.
 	 */
@@ -2552,10 +2677,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * Sets the {@link #flySpeed()}, defined in virtual scene units.
 	 * <p>
 	 * Default value is 0.0, but it is modified according to the {@link remixlab.dandelion.core.AbstractScene#radius()}
-	 * when the generic-frame is set as the {@link remixlab.dandelion.core.Eye#frame()} (which indeed is an instance of
-	 * the generic-frame class) or when the generic-frame is set as the
-	 * {@link remixlab.dandelion.core.AbstractScene#avatar()} (which indeed is an instance of the InteractiveAvatarFrame
-	 * class).
+	 * when the generic-frame is set as the {@link remixlab.dandelion.core.Eye#frame()} or when the generic-frame is set
+	 * as the {@link remixlab.dandelion.core.AbstractScene#avatar()}.
 	 */
 	public void setFlySpeed(float speed) {
 		flySpd = speed;
