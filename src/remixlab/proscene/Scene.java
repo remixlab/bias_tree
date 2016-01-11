@@ -938,7 +938,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Sets all {@link #timingHandler()} timers as (single-threaded) {@link remixlab.fpstiming.SeqTimer}(s).
 	 * 
 	 * @see #setNonSeqTimers()
-	 * @see #switchTimers()
+	 * @see #shiftTimers()
 	 * @see #areTimersSeq()
 	 */
 	public void setSeqTimers() {
@@ -953,7 +953,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * Sets all {@link #timingHandler()} timers as (multi-threaded) java.util.Timer(s).
 	 * 
 	 * @see #setSeqTimers()
-	 * @see #switchTimers()
+	 * @see #shiftTimers()
 	 * @see #areTimersSeq()
 	 */
 	public void setNonSeqTimers() {
@@ -990,7 +990,7 @@ public class Scene extends AbstractScene implements PConstants {
 	 * 
 	 * @see #setSeqTimers()
 	 * @see #setNonSeqTimers()
-	 * @see #switchTimers()
+	 * @see #shiftTimers()
 	 */
 	public boolean areTimersSeq() {
 		return !javaTiming;
@@ -999,7 +999,7 @@ public class Scene extends AbstractScene implements PConstants {
 	/**
 	 * If {@link #areTimersSeq()} calls {@link #setNonSeqTimers()}, otherwise call {@link #setSeqTimers()}.
 	 */
-	public void switchTimers() {
+	public void shiftTimers() {
 		if (areTimersSeq())
 			setNonSeqTimers();
 		else

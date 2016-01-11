@@ -112,7 +112,7 @@ void adjustFrameRate() {
 void keyPressed() {
   switch (key) {
   case 't':
-    scene.switchTimers();
+    scene.shiftTimers();
   case 'p':
     println("Frame rate: " + frameRate);
     break;

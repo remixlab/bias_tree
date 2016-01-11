@@ -49,7 +49,7 @@ public class Profile {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
-				append(actionMap).toHashCode();
+				append(map).toHashCode();
 	}
 
 	@Override
@@ -63,11 +63,11 @@ public class Profile {
 
 		Profile other = (Profile) obj;
 		return new EqualsBuilder()
-				.append(actionMap, other.actionMap).isEquals();
+				.append(map, other.map).isEquals();
 	}
 	
 	protected static HashMap<Integer, Integer> idMap = new HashMap<Integer, Integer>();	
-	protected HashMap<Shortcut, ObjectMethodTuple> actionMap;
+	protected HashMap<Shortcut, ObjectMethodTuple> map;
 	protected Grabber grabber;
 	
 	// temporal vars
@@ -77,7 +77,7 @@ public class Profile {
 	 * Attaches a profile to the given grabber.
 	 */
 	public Profile(Grabber g) {
-		actionMap = new HashMap<Shortcut, ObjectMethodTuple>();
+		map = new HashMap<Shortcut, ObjectMethodTuple>();
 		grabber = g;
 	}
 	
@@ -155,12 +155,12 @@ public class Profile {
 			System.err.println("Profile grabbers should be of the same type");
 			return;
 		}
-		actionMap = new HashMap<Shortcut, ObjectMethodTuple>();
+		map = new HashMap<Shortcut, ObjectMethodTuple>();
 		for (Map.Entry<Shortcut, ObjectMethodTuple> entry : p.actionMap().entrySet()) {
 			if( entry.getValue().object == p.grabber )
-				actionMap.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
+				map.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
 			else
-				actionMap.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
+				map.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
 		}
 	}
 	
@@ -175,14 +175,7 @@ public class Profile {
 	 * Internal use. Shortcut to action map.
 	 */
 	protected HashMap<Shortcut, ObjectMethodTuple> actionMap() {
-		return actionMap;
-	}
-	
-	/**
-	 * Returns the the given stage {@link java.lang.reflect.Method} binding for the event key.
-	 */
-	public Method method(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event) {
-		return stageMap.get(event) == null ? null : stageMap.get(event).method;
+		return map;
 	}
 
 	/**
@@ -192,7 +185,7 @@ public class Profile {
 	 * @see #action(Shortcut)
 	 */
 	public Method method(Shortcut key) {
-		return actionMap.get(key) == null ? null : actionMap.get(key).method;
+		return map.get(key) == null ? null : map.get(key).method;
 	}
 	
 	/**
@@ -213,15 +206,7 @@ public class Profile {
 	 * object.
 	 */
 	protected Object object(Shortcut key) {
-		return actionMap.get(key) == null ? null : actionMap.get(key).object;
-	}
-	
-	/**
-	 * Internal macro. Returns the given stage performing object. Either the {@link #grabber()} or an external
-	 * object.
-	 */	
-	protected Object object(HashMap<Class<?>, ObjectMethodTuple> stageMap, Class<?> event) {
-		return stageMap.get(event) == null ? null : stageMap.get(event).object;
+		return map.get(key) == null ? null : map.get(key).object;
 	}
 	
 	/**
@@ -255,24 +240,12 @@ public class Profile {
 	
 	/**
 	 * Main class method to be called from {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}.
-	 * <p>
-	 * Same as {@code if (!processStage(event)) invokeAction(event)}.
-	 * 
-	 * @see #processStage(BogusEvent)
-	 * @see #invokeAction(BogusEvent)
-	 */
-	public void handle(BogusEvent event) {
-		//if (!processStage(event))
-			invokeAction(event);
-	}
-	
-	/**
 	 * Calls an action handler if the {@link remixlab.bias.core.BogusEvent#shortcut()} is bound.
 	 * 
 	 * @see #setBinding(Shortcut, String)
 	 * @see #setBinding(Object, Shortcut, String)
 	 */
-	protected boolean invokeAction(BogusEvent event) {
+	public boolean handle(BogusEvent event) {
 		Method iHandlerMethod = method(event.shortcut());
 		if (iHandlerMethod != null) {
 			try {
@@ -365,7 +338,7 @@ public class Profile {
 				clazz.printStackTrace();
 			}
 		}
-		actionMap.put(key, new ObjectMethodTuple(grabber, method));
+		map.put(key, new ObjectMethodTuple(grabber, method));
 	}
 	
 	/**
@@ -413,7 +386,7 @@ public class Profile {
 				clazz.printStackTrace();
 			}
 		}
-		actionMap.put(key, new ObjectMethodTuple(object, method));
+		map.put(key, new ObjectMethodTuple(object, method));
 	}
 	
 	/**
@@ -423,21 +396,21 @@ public class Profile {
 	 *          {@link remixlab.bias.core.Shortcut}
 	 */
 	public void removeBinding(Shortcut key) {
-		actionMap.remove(key);
+		map.remove(key);
 	}
 
 	/**
 	 * Removes all the shortcuts from this object.
 	 */
 	public void removeBindings() {
-		actionMap.clear();
+		map.clear();
 	}
 	
 	/**
 	 * Removes all the shortcuts from the given event class.
 	 */
 	public void removeBindings(Class<?> cls) {
-		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = actionMap.entrySet().iterator();
+		Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
 	    while (it.hasNext()) {
 	        Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
 	        if(cls.isInstance(pair.getKey()))
@@ -450,7 +423,7 @@ public class Profile {
 	 */
 	public String info(Class<?> cls) {
 		String result = new String();
-		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
+		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
 			if (entry.getKey() != null && entry.getValue() != null)
 				if(cls.isInstance(entry.getKey()))
 					result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
@@ -463,7 +436,7 @@ public class Profile {
 	public String info() {
 		String result = new String();
 		boolean title = false;
-		for (Entry<Shortcut, ObjectMethodTuple> entry : actionMap.entrySet())
+		for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
 			if (entry.getKey() != null && entry.getValue() != null) {
 				if(!title) {
 				  result += entry.getKey().getClass().getSimpleName() + "s:\n";
@@ -482,7 +455,7 @@ public class Profile {
 	 * @return true if this object contains a binding for the specified shortcut.
 	 */
 	public boolean hasBinding(Shortcut key) {
-		return actionMap.containsKey(key);
+		return map.containsKey(key);
 	}
 	
 	/**
@@ -492,7 +465,7 @@ public class Profile {
 	 * @return true if this object maps one or more shortcuts to the specified action.
 	 */
 	public boolean isActionBound(String action) {
-		for (ObjectMethodTuple tuple : actionMap.values()) {
+		for (ObjectMethodTuple tuple : map.values()) {
 			if( grabber == tuple.object && tuple.method.getName().equals(action) )
 				return true;
 		}
@@ -518,6 +491,6 @@ public class Profile {
 	 * @return  true if this object maps one or more shortcuts to the specified action.
 	 */
 	public boolean isMethodBound(Object object, Method method) {
-		return actionMap.containsValue(new ObjectMethodTuple(object, method));
+		return map.containsValue(new ObjectMethodTuple(object, method));
 	}
 }
