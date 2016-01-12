@@ -114,9 +114,7 @@ public class Scene extends AbstractScene implements PConstants {
 	protected boolean                   pBufferEnabled;
 	protected List<InteractiveFrame>				frameList;
 	
-	///TODO decide placement
-	//Profile
-	public Profile profile;
+	protected Profile profile;
 
 	// E X C E P T I O N H A N D L I N G
 	protected int								beginOffScreenDrawingCalls;

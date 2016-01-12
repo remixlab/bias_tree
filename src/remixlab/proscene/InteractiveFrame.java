@@ -22,9 +22,8 @@ import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
 /**
- * An Processing interactive {@link remixlab.dandelion.core.GenericFrame}.
+ * A Processing interactive {@link remixlab.dandelion.core.GenericFrame} with a {@link #profile()}.
  * 
- * @see remixlab.proscene.InteractiveFrame
  * @see remixlab.dandelion.core.GenericFrame
  */
 public class InteractiveFrame extends GenericP5Frame {	
@@ -72,10 +71,6 @@ public class InteractiveFrame extends GenericP5Frame {
 		tex = texture;
 		shift = new PVector();
 	}
-	
-	//--
-	
-	//TODO implement high level profile api, according to P5 mouse simplicity behavior 
 	
 	/**
 	 * Constructs a interactive-frame and adds to the {@link remixlab.proscene.Scene#frames()} collection.
@@ -299,6 +294,7 @@ public class InteractiveFrame extends GenericP5Frame {
 		draw(pg);
 	}
 
+	//TODO doc me
 	public boolean draw(PGraphics pg) {
 		if (shape() == null && !this.hasGraphicsHandler())
 			return false;
@@ -322,8 +318,7 @@ public class InteractiveFrame extends GenericP5Frame {
 		pg.popMatrix();
 		if (pg == ((Scene) gScene).pickingBuffer()) {
 			if(shape()!=null) {
-				if(tex!=null)
-					shape().texture(tex);
+				if(tex!=null) shape().texture(tex);
 				shape().enableStyle();
 			}
 		}
@@ -333,6 +328,7 @@ public class InteractiveFrame extends GenericP5Frame {
 	
 	// DRAW METHOD REG
 	
+	//TODO doc me
 	protected boolean invokeGraphicsHandler(PGraphics pg) {
 		// 3. Draw external registered method
 		if (drawHandlerObject != null) {

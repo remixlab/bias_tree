@@ -20,6 +20,7 @@ import remixlab.dandelion.constraint.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
 
+//TODO doc animation stuff
 /**
  * A 2D or 3D {@link remixlab.bias.core.Grabber} scene.
  * 
@@ -53,8 +54,8 @@ import remixlab.fpstiming.*;
  * }
  * }
  * </pre>
- * your custom grabber-scene will {@link #toggleCameraType()} when the key 'z' is pressed (provided that
- * grabber-scene is the {@link #keyboardAgent()} {@link remixlab.bias.core.Agent#inputGrabber()}).
+ * your custom scene will {@link #toggleCameraType()} when the key 'z' is pressed (provided that
+ * scene is the {@link #keyboardAgent()} {@link remixlab.bias.core.Agent#inputGrabber()}).
  */
 public abstract class AbstractScene extends AnimatorObject implements Grabber {
 	protected boolean					dottedGrid;

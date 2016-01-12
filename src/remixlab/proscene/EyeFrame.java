@@ -12,6 +12,11 @@ package remixlab.proscene;
 
 import remixlab.dandelion.core.*;
 
+/**
+ * A Processing interactive eye {@link remixlab.dandelion.core.GenericFrame} with a {@link #profile()}.
+ * 
+ * @see remixlab.dandelion.core.GenericFrame
+ */
 public class EyeFrame extends GenericP5Frame {
 	public EyeFrame(Eye eye) {
 		super(eye);

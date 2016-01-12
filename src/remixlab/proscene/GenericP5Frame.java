@@ -18,7 +18,7 @@ import remixlab.dandelion.core.AbstractScene.Platform;
 import remixlab.dandelion.geom.Frame;
 import remixlab.util.*;
 
-public class GenericP5Frame extends GenericFrame {
+class GenericP5Frame extends GenericFrame {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37).
@@ -48,7 +48,7 @@ public class GenericP5Frame extends GenericFrame {
 		return (Scene)gScene;
 	}
 	
-	public Profile profile;
+	protected Profile profile;
 	
 	public GenericP5Frame(Scene scn) {
 		super(scn);
