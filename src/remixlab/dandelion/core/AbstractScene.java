@@ -20,7 +20,6 @@ import remixlab.dandelion.constraint.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
 
-//TODO doc animation stuff
 /**
  * A 2D or 3D {@link remixlab.bias.core.Grabber} scene.
  * 
@@ -46,9 +45,9 @@ import remixlab.fpstiming.*;
  * <h3>Animation mechanisms</h3>
  * The AbstractScene provides two animation mechanisms to define how your scene evolves over time:
  * <ol>
- * <li><b>Overriding the Dandelion {@link #animate()} method.</b> In this case, once you declare a Scene derived class,
+ * <li>Overriding the Dandelion {@link #animate()} method. In this case, once you declare a Scene derived class,
  * you should implement {@link #animate()} which defines how your scene objects evolve over time.
- * <li><b>By checking if the scene's {@link #timer()} was triggered within the frame.
+ * <li>By checking if the scene's {@link #timer()} was triggered within the frame.
  * </ol>
  * A grabber scene implements the {@link remixlab.bias.core.Grabber} interface and thus can react to
  * user (keyboard) gestures, (see {@link #performInteraction(KeyboardEvent)} and

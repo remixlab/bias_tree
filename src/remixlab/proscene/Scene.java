@@ -47,7 +47,7 @@ import java.nio.FloatBuffer;
  * <li><b>Inheritance</b>. In this case, once you declare a Scene derived class, you should implement
  * {@link #proscenium()} which defines the objects in your scene. Just make sure to define the {@code PApplet.draw()}
  * method, even if it's empty. See the example <i>AlternativeUse</i>.
- * <li><b>External draw handler registration</b>. In addition (not being part of Dandelion), you can even declare an
+ * <li><b>External draw handler registration</b>. In addition, you can even declare an
  * external drawing method and then register it at the Scene with {@link #addGraphicsHandler(Object, String)}. That
  * method should return {@code void} and have one single {@code Scene} parameter. This strategy may be useful when there
  * are multiple viewers sharing the same drawing code. See the example <i>StandardCamera</i>.
@@ -895,8 +895,9 @@ public class Scene extends AbstractScene implements PConstants {
 		if(!info.isEmpty()) {
 			result += "2. Eye bindings:\n";
 			result += info;
-		}		
-		result += "3. For a specific frame bindings use: frame.info():\n";		
+		}
+		if(this.frames().size() > 0)
+			result += "3. For a specific frame bindings use: frame.info():\n";		
 		/*
 		result += "Frames' info\n";
 		for (InteractiveFrame frame : frames()) {

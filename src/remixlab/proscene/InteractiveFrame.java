@@ -29,11 +29,11 @@ import remixlab.util.*;
  * Visual representations (PShapes or arbitrary graphics procedures) may be related to
  * an interactive-frame in two different ways:
  * <ol>
- * <li>Applying the frame transformation just before the graphics code happens in <b>papplet.draw()<b> (refer
- * to the {@link remixlab.dandelion.core.GenericFrame} API class documentation)
+ * <li>Applying the frame transformation just before the graphics code happens in <b>papplet.draw()</b> (refer
+ * to the {@link remixlab.dandelion.core.GenericFrame} API class documentation).
  * <li>Setting a visual representation directly to the frame, either by calling {@link #setShape(PShape)} or
- * {@link #addGraphicsHandler(Object, String)} in <b>papplet.setup()<b>, and then calling
- * {@link remixlab.proscene.Scene#drawFrames()} in <b>papplet.draw()<b>.
+ * {@link #addGraphicsHandler(Object, String)} in <b>papplet.setup()</b>, and then calling
+ * {@link remixlab.proscene.Scene#drawFrames()} in <b>papplet.draw()</b>.
  * </ol>
  * Note that in the latter case the interactive-frame will automatically be picked using the
  * {@link remixlab.proscene.Scene#pickingBuffer()}.
