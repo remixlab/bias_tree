@@ -15,7 +15,7 @@ import remixlab.bias.event.*;
 import remixlab.bias.ext.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.AbstractScene.Platform;
-import remixlab.dandelion.geom.Frame;
+import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
 class GenericP5Frame extends GenericFrame {
@@ -315,5 +315,149 @@ class GenericP5Frame extends GenericFrame {
 	
 	// dandelion <-> Processing
 	
-	
+//	public final void setTranslation(PVector t) {
+//		setTranslation(Scene.toVec(t));
+//	}
+//	
+//	public final void setTranslationWithConstraint(PVector t) {
+//		setTranslationWithConstraint(Scene.toVec(t));
+//	}
+//	
+//	public final void setPosition(PVector t) {
+//		setPosition(Scene.toVec(t));
+//	}
+//	
+//	public final void setPositionWithConstraint(PVector t) {
+//		setPositionWithConstraint(Scene.toVec(t));
+//	}
+//	
+//	public void translate(PVector t) {
+//		translate(Scene.toVec(t));
+//	}
+//	
+//	public void setXAxis(PVector axis) {
+//		setYAxis(Scene.toVec(axis));
+//	}
+//	
+//	public PVector xPosAxis() {
+//		return Scene.toPVector(xAxis(true));
+//	}
+//	
+//	public PVector xNegAxis() {
+//		return Scene.toPVector(xAxis(false));
+//	}
+//	
+//	public void setYAxis(PVector axis) {
+//		setXAxis(Scene.toVec(axis));
+//	}
+//	
+//	public PVector yPosAxis() {
+//		return Scene.toPVector(yAxis(true));
+//	}
+//	
+//	public PVector yNegAxis() {
+//		return Scene.toPVector(yAxis(false));
+//	}
+//	
+//	public void setZAxis(PVector axis) {
+//		setZAxis(Scene.toVec(axis));
+//	}
+//	
+//	public PVector zPosAxis() {
+//		return Scene.toPVector(zAxis(true));
+//	}
+//	
+//	public PVector zNegAxis() {
+//		return Scene.toPVector(zAxis(false));
+//	}
+//	
+//	public final void projectOnLine(PVector origin, PVector direction) {
+//		projectOnLine(Scene.toVec(origin), Scene.toVec(direction));
+//	}
+//	
+//	public void rotateAroundPoint(Rotation rotation, PVector point) {
+//		rotateAroundPoint(rotation, Scene.toVec(point));
+//	}
+//	
+//	public final void fromMatrix(PMatrix3D pM) {
+//		fromMatrix(Scene.toMat(pM));
+//	}
+//	
+//	public final void fromMatrix(PMatrix2D pM) {
+//		fromMatrix(Scene.toMat(pM));
+//	}
+//	
+//	public final void fromMatrix(PMatrix3D pM, float s) {
+//		fromMatrix(Scene.toMat(pM), s);
+//	}
+//	
+//	public final void fromMatrix(PMatrix2D pM, float s) {
+//		fromMatrix(Scene.toMat(pM), s);
+//	}
+//	
+//	public final PVector coordinatesOfFrom(PVector src, Frame from) {
+//		return Scene.toPVector(coordinatesOfFrom(Scene.toVec(src), from));
+//	}
+//	
+//	public final PVector coordinatesOfIn(PVector src, Frame in) {
+//		return Scene.toPVector(coordinatesOfIn(Scene.toVec(src), in));
+//	}
+//	
+//	public final PVector localCoordinatesOf(PVector src) {
+//		return Scene.toPVector(localCoordinatesOf(Scene.toVec(src)));
+//	}
+//	
+//	public final PVector coordinatesOf(PVector src) {
+//		return Scene.toPVector(coordinatesOf(Scene.toVec(src)));
+//	}
+//	
+//	public final PVector transformOfFrom(PVector src, Frame from) {
+//		return Scene.toPVector(transformOfFrom(Scene.toVec(src), from));
+//	}
+//	
+//	public final PVector transformOfIn(PVector src, Frame in) {
+//		return Scene.toPVector(transformOfIn(Scene.toVec(src), in));
+//	}
+//	
+//	public final PVector localInverseCoordinatesOf(PVector src) {
+//		return Scene.toPVector(localInverseCoordinatesOf(Scene.toVec(src)));
+//	}
+//	
+//	public final PVector inverseCoordinatesOf(PVector src) {
+//		return Scene.toPVector(inverseCoordinatesOf(Scene.toVec(src)));
+//	}
+//	
+//	public final PVector transformOf(PVector src) {
+//		return Scene.toPVector(transformOf(Scene.toVec(src)));
+//	}
+//	
+//	public final PVector inverseTransformOf(PVector src) {
+//		return Scene.toPVector(inverseTransformOf(Scene.toVec(src)));
+//	}
+//	
+//	public final PVector localTransformOf(PVector src) {
+//		return Scene.toPVector(localTransformOf(Scene.toVec(src)));
+//	}
+//	
+//	public final PVector localInverseTransformOf(PVector src) {
+//		return Scene.toPVector(localInverseTransformOf(Scene.toVec(src)));
+//	}
+//	
+//	// trickier:
+//	
+//	public PVector getTranslation() {
+//		return Scene.toPVector(translation());
+//	}
+//	
+//	public PVector getPosition() {
+//		return Scene.toPVector(position());
+//	}
+//	
+//	public PMatrix getMatrix() {
+//		return is2D() ? Scene.toPMatrix2D(matrix()) : Scene.toPMatrix(matrix());
+//	}
+//	
+//	public PMatrix getWorldMatrix() {
+//		return is2D() ? Scene.toPMatrix2D(worldMatrix()) : Scene.toPMatrix(worldMatrix());
+//	}
 }

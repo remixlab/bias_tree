@@ -1609,24 +1609,6 @@ public class Scene extends AbstractScene implements PConstants {
 		pg.endShape();
 		pg.popStyle();
 	}
-	
-	/**
-	 * Same as {@code drawHollowCylinder(pg(), detail, w, h, m, n)}.
-	 * 
-	 * @see #drawHollowCylinder(PGraphics, int, float, float, PVector, PVector)
-	 */
-	public void drawHollowCylinder(int detail, float w, float h, PVector m, PVector n) {
-		drawHollowCylinder(pg(), detail, w, h, m, n);
-	}
-
-	/**
-	 * Same as {@code drawHollowCylinder(pg, detail, w, h, Scene.toVec(m), Scene.toVec(n))}.
-	 * 
-	 * @see #drawHollowCylinder(PGraphics, int, float, float, Vec, Vec)
-	 */
-	public static void drawHollowCylinder(PGraphics pg, int detail, float w, float h, PVector m, PVector n) {
-		drawHollowCylinder(pg, detail, w, h, Scene.toVec(m), Scene.toVec(n));
-	}
 
 	@Override
 	public void drawCone(int detail, float x, float y, float r, float h) {
@@ -2582,213 +2564,250 @@ public class Scene extends AbstractScene implements PConstants {
 
 	// PVector <-> toVec
 	
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #drawArrow(Vec, Vec, float)
-	 */
-	public void drawArrow(PVector from, PVector to, float radius) {
-		drawArrow(Scene.toVec(from), Scene.toVec(to), radius);
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #drawFilledCircle(Vec, float)
-	 */
-	public void drawFilledCircle(PVector center, float radius) {
-		drawFilledCircle(Scene.toVec(center), radius);
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #drawFilledSquare(Vec, float)
-	 */
-	public void drawFilledSquare(PVector center, float edge) {
-		drawFilledSquare(Scene.toVec(center), edge);
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #drawShooterTarget(Vec, float)
-	 */
-	public void drawShooterTarget(PVector center, float length) {
-		drawShooterTarget(Scene.toVec(center), length);
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #isPointVisible(Vec)
-	 */
-	public boolean isPointVisible(PVector point) {
-		return isPointVisible(Scene.toVec(point));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #ballVisibility(Vec, float)
-	 */
-	public Eye.Visibility ballVisibility(PVector center, float radius) {
-		return ballVisibility(Scene.toVec(center), radius);
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #boxVisibility(Vec, Vec)
-	 */
-	public Eye.Visibility boxVisibility(PVector p1, PVector p2) {
-		return boxVisibility(Scene.toVec(p1), Scene.toVec(p2));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #isFaceBackFacing(Vec, Vec, Vec)
-	 */
-	public boolean isFaceBackFacing(PVector a, PVector b, PVector c) {
-		return isFaceBackFacing(Scene.toVec(a), Scene.toVec(b), Scene.toVec(c));
-	}
-	
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #pointUnderPixel(Point)
-	 */
-	public PVector pointUnderPixel(float x, float y) {
-		return Scene.toPVector(pointUnderPixel(new Point(x, y)));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #projectedCoordinatesOf(Vec)
-	 */
-	public PVector projectedCoordinatesOf(PVector src) {
-		return Scene.toPVector(projectedCoordinatesOf(Scene.toVec(src)));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #unprojectedCoordinatesOf(Vec)
-	 */
-	public PVector unprojectedCoordinatesOf(PVector src) {
-		return Scene.toPVector(unprojectedCoordinatesOf(Scene.toVec(src)));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #setCenter(Vec)
-	 */
-	public void setCenter(PVector center) {
-		setCenter(Scene.toVec(center));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #setAnchor(Vec)
-	 */
-	public void setAnchor(PVector anchor) {
-		setAnchor(Scene.toVec(anchor));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #setBoundingBox(Vec, Vec)
-	 */
-	public void setBoundingBox(PVector min, PVector max) {
-		setBoundingBox(Scene.toVec(min), Scene.toVec(max));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #setBoundingRect(Vec, Vec)
-	 */
-	public void setBoundingRect(PVector min, PVector max) {
-		setBoundingRect(Scene.toVec(min), Scene.toVec(max));
-	}
-
-    // PMatrix <-> toMat
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #applyModelView(PMatrix2D)
-	 */
-	public void applyModelView(PMatrix2D source) {
-		applyModelView(Scene.toMat(source));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #applyModelView(PMatrix3D)
-	 */
-	public void applyModelView(PMatrix3D source) {
-		applyModelView(Scene.toMat(source));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #applyProjection(PMatrix3D)
-	 */
-	public void applyProjection(PMatrix3D source) {
-		applyProjection(Scene.toMat(source));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #setModelView(PMatrix2D)
-	 */
-	public void setModelView(PMatrix2D source) {
-		setModelView(Scene.toMat(source));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #setModelView(PMatrix3D)
-	 */
-	public void setModelView(PMatrix3D source) {
-		setModelView(Scene.toMat(source));
-	}
-
-	/**
-	 * Processing version of the abstract-scene method with the same signature.
-	 * 
-	 * @see #setProjection(PMatrix3D)
-	 */
-	public void setProjection(PMatrix3D source) {
-		setProjection(Scene.toMat(source));
-	}
-	
-	// trickier:
-
-	/**
-	 * Same as {@link #modelView()} but returning a PMatrix.
-	 */
-	public PMatrix getModelView() {
-		if(is2D())
-			return Scene.toPMatrix2D(modelView());
-		else
-			return Scene.toPMatrix(modelView());
-	}
-
-	/**
-	 * Same as {@link #projection()} but returning a PMatrix.
-	 */
-	public PMatrix3D getProjection() {
-		return Scene.toPMatrix(projection());
-	}
+//	/**
+//	 * Same as {@code drawHollowCylinder(pg(), detail, w, h, m, n)}.
+//	 * 
+//	 * @see #drawHollowCylinder(PGraphics, int, float, float, PVector, PVector)
+//	 */
+//	public void drawHollowCylinder(int detail, float w, float h, PVector m, PVector n) {
+//		drawHollowCylinder(pg(), detail, w, h, m, n);
+//	}
+//
+//	/**
+//	 * Same as {@code drawHollowCylinder(pg, detail, w, h, Scene.toVec(m), Scene.toVec(n))}.
+//	 * 
+//	 * @see #drawHollowCylinder(PGraphics, int, float, float, Vec, Vec)
+//	 */
+//	public static void drawHollowCylinder(PGraphics pg, int detail, float w, float h, PVector m, PVector n) {
+//		drawHollowCylinder(pg, detail, w, h, Scene.toVec(m), Scene.toVec(n));
+//	}
+//	
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #drawArrow(Vec, Vec, float)
+//	 */
+//	public void drawArrow(PVector from, PVector to, float radius) {
+//		drawArrow(toVec(from), toVec(to), radius);
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #drawFilledCircle(Vec, float)
+//	 */
+//	public void drawFilledCircle(PVector center, float radius) {
+//		drawFilledCircle(toVec(center), radius);
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #drawFilledSquare(Vec, float)
+//	 */
+//	public void drawFilledSquare(PVector center, float edge) {
+//		drawFilledSquare(toVec(center), edge);
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #drawShooterTarget(Vec, float)
+//	 */
+//	public void drawShooterTarget(PVector center, float length) {
+//		drawShooterTarget(toVec(center), length);
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #isPointVisible(Vec)
+//	 */
+//	public boolean isPointVisible(PVector point) {
+//		return isPointVisible(toVec(point));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #ballVisibility(Vec, float)
+//	 */
+//	public Eye.Visibility ballVisibility(PVector center, float radius) {
+//		return ballVisibility(toVec(center), radius);
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #boxVisibility(Vec, Vec)
+//	 */
+//	public Eye.Visibility boxVisibility(PVector p1, PVector p2) {
+//		return boxVisibility(toVec(p1), toVec(p2));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #isFaceBackFacing(Vec, Vec, Vec)
+//	 */
+//	public boolean isFaceBackFacing(PVector a, PVector b, PVector c) {
+//		return isFaceBackFacing(toVec(a), toVec(b), toVec(c));
+//	}
+//	
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #pointUnderPixel(Point)
+//	 */
+//	public PVector pointUnderPixel(float x, float y) {
+//		return toPVector(pointUnderPixel(new Point(x, y)));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #projectedCoordinatesOf(Vec)
+//	 */
+//	public PVector projectedCoordinatesOf(PVector src) {
+//		return toPVector(projectedCoordinatesOf(toVec(src)));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #unprojectedCoordinatesOf(Vec)
+//	 */
+//	public PVector unprojectedCoordinatesOf(PVector src) {
+//		return toPVector(unprojectedCoordinatesOf(toVec(src)));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #setCenter(Vec)
+//	 */
+//	public void setCenter(PVector center) {
+//		setCenter(toVec(center));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #setAnchor(Vec)
+//	 */
+//	public void setAnchor(PVector anchor) {
+//		setAnchor(toVec(anchor));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #setBoundingBox(Vec, Vec)
+//	 */
+//	public void setBoundingBox(PVector min, PVector max) {
+//		setBoundingBox(toVec(min), toVec(max));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #setBoundingRect(Vec, Vec)
+//	 */
+//	public void setBoundingRect(PVector min, PVector max) {
+//		setBoundingRect(toVec(min), toVec(max));
+//	}
+//
+//    // PMatrix <-> toMat
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #applyModelView(PMatrix2D)
+//	 */
+//	public void applyModelView(PMatrix2D source) {
+//		applyModelView(toMat(source));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #applyModelView(PMatrix3D)
+//	 */
+//	public void applyModelView(PMatrix3D source) {
+//		applyModelView(toMat(source));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #applyProjection(PMatrix3D)
+//	 */
+//	public void applyProjection(PMatrix3D source) {
+//		applyProjection(toMat(source));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #setModelView(PMatrix2D)
+//	 */
+//	public void setModelView(PMatrix2D source) {
+//		setModelView(toMat(source));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #setModelView(PMatrix3D)
+//	 */
+//	public void setModelView(PMatrix3D source) {
+//		setModelView(toMat(source));
+//	}
+//
+//	/**
+//	 * Processing version of the abstract-scene method with the same name.
+//	 * 
+//	 * @see #setProjection(PMatrix3D)
+//	 */
+//	public void setProjection(PMatrix3D source) {
+//		setProjection(toMat(source));
+//	}
+//	
+//	// trickier:
+//
+//	/**
+//	 * Same as {@link #modelView()} but returning a PMatrix.
+//	 */
+//	public PMatrix getModelView() {
+//		return is2D() ? toPMatrix2D(modelView()) : toPMatrix(modelView());
+//	}
+//
+//	/**
+//	 * Same as {@link #projection()} but returning a PMatrix.
+//	 */
+//	public PMatrix3D getProjection() {
+//		return toPMatrix(projection());
+//	}
+//	
+//	// Quat stuff, even trickier:
+//	
+//	public static final PVector multiply(Quat q1, PVector v) {
+//		return toPVector(Quat.multiply(q1, toVec(v)));
+//	}
+//	
+//	public static Quat quat(PVector axis, float angle) {
+//		return new Quat(toVec(axis), angle);
+//	}
+//	
+//	public static Quat quat(PVector from, PVector to) {
+//		return new Quat(toVec(from), toVec(to));
+//	}
+//	
+//	public static Quat quat(PVector X, PVector Y, PVector Z) {
+//		return new Quat(toVec(X), toVec(Y), toVec(Z));
+//	}
+//	
+//	public static Quat quat(PMatrix3D matrix) {
+//		return new Quat(toMat(matrix));
+//	}
 }
