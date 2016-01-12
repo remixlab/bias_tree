@@ -34,7 +34,9 @@ import java.nio.FloatBuffer;
 //*/
 
 /**
- * A 2D or 3D interactive Processing Scene. The Scene is a specialization of the
+ * A 2D or 3D interactive Processing Scene with a {@link #profile()} instance which allows
+ * {@link remixlab.bias.core.Shortcut} to {@link java.lang.reflect.Method} bindings high-level customization
+ * (see all the <b>*Binding*()</b> methods). The Scene is a specialization of the
  * {@link remixlab.dandelion.core.AbstractScene}, providing an interface between Dandelion and Processing.
  * <p>
  * <h3>Usage</h3>
@@ -55,8 +57,8 @@ import java.nio.FloatBuffer;
  * complex ones. For convenience, two interaction mechanisms are provided by default: {@link #keyboardAgent()}, and
  * {@link #motionAgent()} (which in the desktop version of proscene defaults to a {@link #mouseAgent()}):
  * <ol>
- * <li><b>The default keyboard agent</b> provides shortcuts to global keyboard actions such as {@link #drawGrid()} or
- * {@link #drawAxes()}. See {@link #keyboardAgent()}.
+ * <li><b>The default keyboard agent</b> provides shortcuts to frame and scene keyboard actions (such as {@link #drawGrid()} or
+ * {@link #drawAxes()}). See {@link #keyboardAgent()}.
  * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame motion actions. Please refer
  * to the {@link remixlab.proscene.MouseAgent} and {@link remixlab.proscene.KeyAgent} API's.
  * </ol>
@@ -2360,7 +2362,6 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().popStyle();
 	}
 
-	// TODO check these comments:
 	@Override
 	protected void drawScreenRotateHint() {
 		if (!(motionAgent() instanceof MouseAgent))
@@ -2388,7 +2389,6 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().popStyle();
 	}
 
-	// TODO check these comments:
 	@Override
 	protected void drawZoomWindowHint() {
 		if (!(motionAgent() instanceof MouseAgent))
@@ -2415,92 +2415,199 @@ public class Scene extends AbstractScene implements PConstants {
 		pg().popStyle();
 	}
 	
+	/**
+	 * Same as {@code if (!bypassKey(event)) profile.handle(event)}.
+	 * 
+	 * @see #bypassKey(BogusEvent)
+	 * @see remixlab.bias.ext.Profile#handle(BogusEvent)
+	 */
 	@Override
 	public void performInteraction(BogusEvent event) {
 		if (!bypassKey(event))
 			profile.handle(event);
 	}
 	
+	/**
+	 * Same as {@code return profile.action(key)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#action(Shortcut)
+	 */
 	public String action(Shortcut key) {
 		return profile.action(key);
 	}
 	
+	/**
+	 * Same as {@code return profile.isActionBound(action)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#isActionBound(String)
+	 */
 	public boolean isActionBound(String action) {
 		return profile.isActionBound(action);
 	}
 	
 	// Key
 	
+	/**
+	 * Same as {@code profile.setBinding(new KeyboardShortcut(vkey), methodName)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+	 */
 	public void setKeyBinding(int vkey, String methodName) {
 		profile.setBinding(new KeyboardShortcut(vkey), methodName);
 	}
 	
+	/**
+	 * Same as {@code profile.setBinding(new KeyboardShortcut(key), methodName)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+	 */
 	public void setKeyBinding(char key, String methodName) {
 		profile.setBinding(new KeyboardShortcut(key), methodName);
 	}
 	
+	/**
+	 * Same as {@code profile.setBinding(object, new KeyboardShortcut(vkey), methodName)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+	 */
 	public void setKeyBinding(Object object, int vkey, String methodName) {
 		profile.setBinding(object, new KeyboardShortcut(vkey), methodName);
 	}
 	
+	/**
+	 * Same as {@code profile.setBinding(object, new KeyboardShortcut(key), methodName)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+	 */
 	public void setKeyBinding(Object object, char key, String methodName) {
 		profile.setBinding(object, new KeyboardShortcut(key), methodName);
 	}
 	
+	/**
+	 * Same as {@code return profile.hasBinding(new KeyboardShortcut(vkey))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+	 */
 	public boolean hasKeyBinding(int vkey) {
 		return profile.hasBinding(new KeyboardShortcut(vkey));
 	}
 	
+	/**
+	 * Same as {@code return profile.hasBinding(new KeyboardShortcut(key))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+	 */
 	public boolean hasKeyBinding(char key) {
 		return profile.hasBinding(new KeyboardShortcut(key));
 	}
 	
+	/**
+	 * Same as {@code profile.removeBinding(new KeyboardShortcut(vkey))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+	 */
 	public void removeKeyBinding(int vkey) {
 		profile.removeBinding(new KeyboardShortcut(vkey));
 	}
 	
+	/**
+	 * Same as {@code }.
+	 * 
+	 * @see remixlab.bias.ext.Profile
+	 */
 	public void removeKeyBinding(char key) {
 		profile.removeBinding(new KeyboardShortcut(key));
 	}
 	
 	//
 	
+	/**
+	 * Same as {@code profile.setBinding(new KeyboardShortcut(mask, vkey), methodName)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+	 */
 	public void setKeyBinding(int mask, int vkey, String methodName) {
 		profile.setBinding(new KeyboardShortcut(mask, vkey), methodName);
 	}
 	
+	/**
+	 * Same as {@code profile.setBinding(object, new KeyboardShortcut(mask, vkey), methodName)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+	 */
 	public void setKeyBinding(Object object, int mask, int vkey, String methodName) {
 		profile.setBinding(object, new KeyboardShortcut(mask, vkey), methodName);
 	}
 	
+	/**
+	 * Same as {@code return profile.hasBinding(new KeyboardShortcut(mask, vkey))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+	 */
 	public boolean hasKeyBinding(int mask, int vkey) {
 		return profile.hasBinding(new KeyboardShortcut(mask, vkey));
 	}
 	
+	/**
+	 * Same as {@code profile.removeBinding(new KeyboardShortcut(mask, vkey))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+	 */
 	public void removeKeyBinding(int mask, int vkey) {
 		profile.removeBinding(new KeyboardShortcut(mask, vkey));
 	}
 	
+	/**
+	 * Same as {@code setKeyBinding(mask, KeyAgent.keyCode(key), methodName)}.
+	 * 
+	 * @see #setKeyBinding(int, int, String)
+	 */
 	public void setKeyBinding(int mask, char key, String methodName) {
 		setKeyBinding(mask, KeyAgent.keyCode(key), methodName);
 	}
 	
+	/**
+	 * Same as {@code setKeyBinding(object, mask, KeyAgent.keyCode(key), methodName)}.
+	 * 
+	 * @see #setKeyBinding(Object, int, int, String)
+	 */
 	public void setKeyBinding(Object object, int mask, char key, String methodName) {
 		setKeyBinding(object, mask, KeyAgent.keyCode(key), methodName);
 	}
 	
+	/**
+	 * Same as {@code return hasKeyBinding(mask, KeyAgent.keyCode(key))}.
+	 * 
+	 * @see #hasKeyBinding(int, int)
+	 */
 	public boolean hasKeyBinding(int mask, char key) {
 		return hasKeyBinding(mask, KeyAgent.keyCode(key));
 	}
 	
+	/**
+	 * Same as {@code removeKeyBinding(mask, KeyAgent.keyCode(key))}.
+	 * 
+	 * @see #removeKeyBinding(int, int)
+	 */
 	public void removeKeyBinding(int mask, char key) {
 		removeKeyBinding(mask, KeyAgent.keyCode(key));
 	}
 	
+	/**
+	 * Same as {@code profile.removeBindings(KeyboardShortcut.class)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#removeBindings(Class)
+	 */
 	public void removeKeyBindings() {
 		profile.removeBindings(KeyboardShortcut.class);
 	}
 	
+	/**
+	 * Same as {@code profile.from(otherScene.profile())}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#from(Profile)
+	 * @see #setProfile(Profile)
+	 */
 	public void setBindings(Scene otherScene) {
 		profile.from(otherScene.profile());
 	}
@@ -2529,6 +2636,9 @@ public class Scene extends AbstractScene implements PConstants {
 	}
 	*/
 	
+	/**
+	 * Calls {@link #removeKeyBindings()} and sets the default frame key bindings which may be queried with {@link #info()}.
+	 */
 	public void setDefaultKeyBindings() {
 		removeKeyBindings();
 		setKeyBinding('a', "toggleAxesVisualHint");
@@ -2551,10 +2661,19 @@ public class Scene extends AbstractScene implements PConstants {
 		setKeyBinding('3', "playPath3");
 	}
 	
+	/**
+	 * Returns the frame {@link remixlab.bias.ext.Profile} instance.
+	 */
 	public Profile profile() {
 		return profile;
 	}
 	
+	/**
+	 * Sets the scene {@link remixlab.bias.ext.Profile} instance. Useful when a sharing a profile among
+	 * different scene instances.
+	 * 
+	 * @see #setBindings(Scene)
+	 */
 	public void setProfile(Profile p) {
 		if( p.grabber() == this )
 			profile = p;

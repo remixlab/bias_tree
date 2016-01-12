@@ -18,6 +18,13 @@ import remixlab.dandelion.core.AbstractScene.Platform;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
+/**
+ * Internal class defining the common API among the {@link remixlab.proscene.EyeFrame} and
+ * the {@link remixlab.proscene.InteractiveFrame} classes.
+ * <p>
+ * A GenericFrame with a {@link #profile()} instance which allows {@link remixlab.bias.core.Shortcut}
+ * to {@link java.lang.reflect.Method} bindings high-level customization.
+ */
 class GenericP5Frame extends GenericFrame {
 	@Override
 	public int hashCode() {
@@ -50,6 +57,12 @@ class GenericP5Frame extends GenericFrame {
 	
 	protected Profile profile;
 	
+	/**
+	 * Calls {@code super(scn)}, creates the frame {@link #profile()} and calls {@link #setDefaultMouseBindings()}
+	 * and {@link #setDefaultKeyBindings()}.
+	 * 
+	 * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene).
+	 */
 	public GenericP5Frame(Scene scn) {
 		super(scn);
 		setProfile(new Profile(this));
@@ -61,6 +74,12 @@ class GenericP5Frame extends GenericFrame {
 		setDefaultKeyBindings();
 	}
 	
+	/**
+	 * Calls {@code super(scn), referenceFrame}, creates the frame {@link #profile()} and calls {@link #setDefaultMouseBindings()}
+	 * and {@link #setDefaultKeyBindings()}.
+	 * 
+	 * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame).
+	 */
 	public GenericP5Frame(Scene scn, Frame referenceFrame) {
 		super(scn, referenceFrame);
 		setProfile(new Profile(this));
@@ -76,6 +95,12 @@ class GenericP5Frame extends GenericFrame {
 		}
 	}
 	
+	/**
+	 * Calls {@code super(eye)}, creates the frame {@link #profile()} and calls {@link #setDefaultMouseBindings()}
+	 * and {@link #setDefaultKeyBindings()}.
+	 * 
+	 * @see remixlab.dandelion.core.GenericFrame#GenericFrame(Eye).
+	 */
 	public GenericP5Frame(Eye eye) {
 		super(eye);
 		setProfile(new Profile(this));
@@ -103,24 +128,51 @@ class GenericP5Frame extends GenericFrame {
 		return profile.hasBinding(event.shortcut());
 	}
 	
+	/**
+	 * Same as {@code if (!bypassKey(event)) profile.handle(event)}.
+	 * 
+	 * @see #bypassKey(BogusEvent)
+	 * @see remixlab.bias.ext.Profile#handle(BogusEvent)
+	 */
 	@Override
 	public void performInteraction(BogusEvent event) {
 		if (!bypassKey(event))
 			profile.handle(event);
 	}
 	
+	/**
+	 * Same as {@code profile.removeBindings()}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#removeBindings()
+	 */
 	public void removeBindings() {
 		profile.removeBindings();
 	}
 	
+	/**
+	 * Same as {@code return profile.action(key)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#action(Shortcut)
+	 */
 	public String action(Shortcut key) {
 		return profile.action(key);
 	}
 	
+	/**
+	 * Same as {@code profile.isActionBound(action)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#isActionBound(String)
+	 */
 	public boolean isActionBound(String action) {
 		return profile.isActionBound(action);
 	}
 	
+	/**
+	 * Same as {@code scene().mouseAgent().setDefaultBindings(this)}. The default frame muse bindings which may be
+	 * queried with {@link #info()}.
+	 * 
+	 * @see remixlab.proscene.MouseAgent#setDefaultBindings(GenericP5Frame)
+	 */
 	public void setDefaultMouseBindings() {
 		scene().mouseAgent().setDefaultBindings(this);
 	}
@@ -132,6 +184,9 @@ class GenericP5Frame extends GenericFrame {
 	}
 	*/
 	
+	/**
+	 * Calls {@link #removeKeyBindings()} and sets the default frame key bindings which may be queried with {@link #info()}.
+	 */
 	public void setDefaultKeyBindings() {
 		removeKeyBindings();
 		setKeyBinding('n', "align");
@@ -150,26 +205,56 @@ class GenericP5Frame extends GenericFrame {
 
 	// good for all dofs :P
 	
+	/**
+	 * Same as {@code profile.setBinding(new MotionShortcut(id), action)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+	 */
 	public void setMotionBinding(int id, String action) {
 		profile.setBinding(new MotionShortcut(id), action);
 	}
 	
+	/**
+	 * Same as {@code profile.setBinding(object, new MotionShortcut(id), action)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+	 */
 	public void setMotionBinding(Object object, int id, String action) {
 		profile.setBinding(object, new MotionShortcut(id), action);
 	}
 	
+	/**
+	 * Same as {@code profile.removeBindings(MotionShortcut.class)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#removeBindings(Class)
+	 */
 	public void removeMotionBindings() {
 		profile.removeBindings(MotionShortcut.class);
 	}
 	
+	/**
+	 * Same as {@code profile.hasBinding(new MotionShortcut(id))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+	 */
 	public boolean hasMotionBinding(int id) {
 		return profile.hasBinding(new MotionShortcut(id));
 	}
 	
+	/**
+	 * Same as {@code profile.removeBinding(new MotionShortcut(id))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#removeBindings(Class)
+	 */
 	public void removeMotionBinding(int id) {
 		profile.removeBinding(new MotionShortcut(id));
 	}
 	
+	/**
+	 * Same as {@code for(int i=0; i< ids.length; i++) removeMotionBinding(ids[i])}.
+	 * 
+	 * @see #removeMotionBinding(int)
+	 */
 	public void removeMotionBindings(int [] ids) {
 		for(int i=0; i< ids.length; i++)
 			removeMotionBinding(ids[i]);
@@ -177,76 +262,166 @@ class GenericP5Frame extends GenericFrame {
 	
 	// Key
 	
+	/**
+	 * Same as {@code profile.setBinding(new KeyboardShortcut(vkey), action)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+	 */
 	public void setKeyBinding(int vkey, String action) {
 		profile.setBinding(new KeyboardShortcut(vkey), action);
 	}
 	
+	/**
+	 * Same as {@code profile.setBinding(new KeyboardShortcut(key), action)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+	 */
 	public void setKeyBinding(char key, String action) {
 		profile.setBinding(new KeyboardShortcut(key), action);
 	}
 	
+	/**
+	 * Same as {@code profile.setBinding(object, new KeyboardShortcut(vkey), action)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+	 */
 	public void setKeyBinding(Object object, int vkey, String action) {
 		profile.setBinding(object, new KeyboardShortcut(vkey), action);
 	}
 	
+	/**
+	 * Same as {@code profile.setBinding(object, new KeyboardShortcut(key), action)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+	 */
 	public void setKeyBinding(Object object, char key, String action) {
 		profile.setBinding(object, new KeyboardShortcut(key), action);
 	}
 	
+	/**
+	 * Same as {@code return profile.hasBinding(new KeyboardShortcut(vkey))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+	 */
 	public boolean hasKeyBinding(int vkey) {
 		return profile.hasBinding(new KeyboardShortcut(vkey));
 	}
 	
+	/**
+	 * Same as {@code return profile.hasBinding(new KeyboardShortcut(key))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+	 */
 	public boolean hasKeyBinding(char key) {
 		return profile.hasBinding(new KeyboardShortcut(key));
 	}
 	
+	/**
+	 * Same as {@code profile.removeBinding(new KeyboardShortcut(vkey))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+	 */
 	public void removeKeyBinding(int vkey) {
 		profile.removeBinding(new KeyboardShortcut(vkey));
 	}
 	
+	/**
+	 * Same as {@code profile.removeBinding(new KeyboardShortcut(key))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+	 */
 	public void removeKeyBinding(char key) {
 		profile.removeBinding(new KeyboardShortcut(key));
 	}
 	
+	/**
+	 * Same as {@code profile.setBinding(new KeyboardShortcut(mask, vkey), action)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+	 */
 	public void setKeyBinding(int mask, int vkey, String action) {
 		profile.setBinding(new KeyboardShortcut(mask, vkey), action);
 	}
 	
+	/**
+	 * Same as {@code profile.setBinding(object, new KeyboardShortcut(mask, vkey), action)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Object, Shortcut, String)
+	 */
 	public void setKeyBinding(Object object, int mask, int vkey, String action) {
 		profile.setBinding(object, new KeyboardShortcut(mask, vkey), action);
 	}
 	
+	/**
+	 * Same as {@code return profile.hasBinding(new KeyboardShortcut(mask, vkey))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+	 */
 	public boolean hasKeyBinding(int mask, int vkey) {
 		return profile.hasBinding(new KeyboardShortcut(mask, vkey));
 	}
 	
+	/**
+	 * Same as {@code profile.removeBinding(new KeyboardShortcut(mask, vkey))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+	 */
 	public void removeKeyBinding(int mask, int vkey) {
 		profile.removeBinding(new KeyboardShortcut(mask, vkey));
 	}
 	
+	/**
+	 * Same as {@code setKeyBinding(mask, KeyAgent.keyCode(key), action)}.
+	 * 
+	 * @see #setKeyBinding(int, int, String)
+	 */
 	public void setKeyBinding(int mask, char key, String action) {
 		setKeyBinding(mask, KeyAgent.keyCode(key), action);
 	}
 	
+	/**
+	 * Same as {@code setKeyBinding(object, mask, KeyAgent.keyCode(key), action)}.
+	 * 
+	 * @see #setKeyBinding(Object, int, int, String)
+	 */
 	public void setKeyBinding(Object object, int mask, char key, String action) {
 		setKeyBinding(object, mask, KeyAgent.keyCode(key), action);
 	}
 	
+	/**
+	 * Same as {@code hasKeyBinding(mask, KeyAgent.keyCode(key))}.
+	 * 
+	 * @see #hasKeyBinding(int, int)
+	 */
 	public boolean hasKeyBinding(int mask, char key) {
 		return hasKeyBinding(mask, KeyAgent.keyCode(key));
 	}
 	
+	/**
+	 * Same as {@code removeKeyBinding(mask, KeyAgent.keyCode(key))}.
+	 * 
+	 * @see #removeKeyBinding(int, int)
+	 */
 	public void removeKeyBinding(int mask, char key) {
 		removeKeyBinding(mask, KeyAgent.keyCode(key));
 	}
 	
+	/**
+	 * Same as {@code profile.removeBindings(KeyboardShortcut.class)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#removeBindings(Class)
+	 */
 	public void removeKeyBindings() {
 		profile.removeBindings(KeyboardShortcut.class);
 	}
 	
 	// click
 	
+	/**
+	 * Same as {@code }.
+	 * 
+	 * @see remixlab.bias.ext.Profile
+	 */
 	public void setClickBinding(int id, int count, String action) {
 		if(count > 0 && count < 4)
 			profile.setBinding(new ClickShortcut(id, count), action);
@@ -254,6 +429,11 @@ class GenericP5Frame extends GenericFrame {
 			System.out.println("Warning no click binding set! Count should be between 1 and 3");
 	}
 	
+	/**
+	 * Same as {@code profile.setBinding(object, new ClickShortcut(id, count), action)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#setBinding(Shortcut, String)
+	 */
 	public void setClickBinding(Object object, int id, int count, String action) {
 		if(count > 0 && count < 4)
 			profile.setBinding(object, new ClickShortcut(id, count), action);
@@ -261,27 +441,56 @@ class GenericP5Frame extends GenericFrame {
 			System.out.println("Warning no click binding set! Count should be between 1 and 3");
 	}
 	
+	/**
+	 * Same as {@code return profile.hasBinding(new ClickShortcut(id, count))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#hasBinding(Shortcut)
+	 */
 	public boolean hasClickBinding(int id, int count) {
 		return profile.hasBinding(new ClickShortcut(id, count));
 	}
 	
+	/**
+	 * Same as {@code profile.removeBinding(new ClickShortcut(id, count))}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#removeBinding(Shortcut)
+	 */
 	public void removeClickBinding(int id, int count) {
 		profile.removeBinding(new ClickShortcut(id, count));
 	}
 	
+	/**
+	 * Same as {@code profile.removeBindings(ClickShortcut.class)}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#removeBindings(Class)
+	 */
 	public void removeClickBindings() {
 		profile.removeBindings(ClickShortcut.class);
 	}
 	
+	/**
+	 * Same as {@code for(int i=0; i<ids.length; i++) removeClickBinding(ids[i], count)}.
+	 * 
+	 * @see #removeClickBinding(int, int)
+	 */
 	public void removeClickBindings(int [] ids, int count) {
 		for(int i=0; i<ids.length; i++)
 			removeClickBinding(ids[i], count);
 	}
 	
+	/**
+	 * Returns the frame {@link remixlab.bias.ext.Profile} instance.
+	 */
 	public Profile profile() {
 		return profile;
 	}
 	
+	/**
+	 * Sets the frame {@link remixlab.bias.ext.Profile} instance. Useful when a sharing a profile among
+	 * different frame instances.
+	 * 
+	 * @see #setBindings(GenericP5Frame)
+	 */
 	public void setProfile(Profile p) {
 		if( p.grabber() == this )
 			profile = p;
@@ -289,10 +498,19 @@ class GenericP5Frame extends GenericFrame {
 			System.out.println("Nothing done, profile grabber is different than this grabber");
 	}
 	
+	/**
+	 * Same as {@code profile.from(otherFrame.profile())}.
+	 * 
+	 * @see remixlab.bias.ext.Profile#from(Profile)
+	 * @see #setProfile(Profile)
+	 */
 	public void setBindings(GenericP5Frame otherFrame) {
 		profile.from(otherFrame.profile());
 	}
 	
+	/**
+	 * Returns a description of all the bindings this frame holds.
+	 */
 	public String info() {
 		String result = new String();
 		String info = profile().info(KeyboardShortcut.class);

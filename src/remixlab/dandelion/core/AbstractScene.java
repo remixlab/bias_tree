@@ -43,6 +43,13 @@ import remixlab.fpstiming.*;
  * {@link remixlab.dandelion.core.MatrixStackHelper} or through a third party matrix stack (like it's done with
  * Processing). For details please refer to the {@link remixlab.dandelion.core.MatrixHelper} interface.</li>
  * </ol>
+ * <h3>Animation mechanisms</h3>
+ * The AbstractScene provides two animation mechanisms to define how your scene evolves over time:
+ * <ol>
+ * <li><b>Overriding the Dandelion {@link #animate()} method.</b> In this case, once you declare a Scene derived class,
+ * you should implement {@link #animate()} which defines how your scene objects evolve over time.
+ * <li><b>By checking if the scene's {@link #timer()} was triggered within the frame.
+ * </ol>
  * A grabber scene implements the {@link remixlab.bias.core.Grabber} interface and thus can react to
  * user (keyboard) gestures, (see {@link #performInteraction(KeyboardEvent)} and
  * {@link #checkIfGrabsInput(KeyboardEvent)}). For example, with the following code:

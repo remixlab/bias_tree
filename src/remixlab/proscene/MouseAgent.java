@@ -17,8 +17,7 @@ import remixlab.bias.event.*;
 import remixlab.bias.ext.Profile;
 
 /**
- * Proscene mouse-agent. A {@link remixlab.bias.core.Agent} specialization
- * which handles Processing mouse-events. 
+ * Proscene mouse-agent. A Processing fully fledged mouse {@link remixlab.bias.core.Agent}.
  *
  * @see remixlab.bias.core.Agent
  * @see remixlab.proscene.KeyAgent
@@ -164,24 +163,41 @@ public class MouseAgent extends Agent {
 		return ySens;
 	}
 	
+	/**
+	 * Returns an array of motion id's (DOF1 and DOF2) this agent registers at the {@link remixlab.bias.ext.Profile}.
+	 */
 	public int [] motionIDs() {
 		return motionIDs;
 	}
 	
+	/**
+	 * Returns an array of the DOF2 motion id's this agent registers at the {@link remixlab.bias.ext.Profile}.
+	 */
 	public int [] dof2IDs() {
 		return dof2IDs;
 	}
 	
+	/**
+	 * Returns an array of the DOF1 motion id's this agent registers at the {@link remixlab.bias.ext.Profile}.
+	 */
 	public int [] dof1IDs() {
 		return dof1IDs;
 	}
 	
+	/**
+	 * Returns an array of the click id's this agent uses.
+	 */
 	public int [] clickIDs() {
 		return clickIDs;
 	}
 	
-	// 1. Default
-	
+	/**
+	 * Internal use. Other Agents should follow a similar pattern: 1. Register some motion ids within the Profile; and,
+	 * 2. Define the default bindings on the frame parameter.
+	 * 
+	 * @see remixlab.bias.ext.Profile#registerMotionID(int)
+	 * @see remixlab.bias.ext.Profile#registerMotionID(int, int)
+	 */
 	protected void setDefaultBindings(GenericP5Frame frame) {
 		frame.removeMotionBindings(motionIDs());
 		for(int i=1; i<4; i++)

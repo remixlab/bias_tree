@@ -14,8 +14,7 @@ import remixlab.bias.event.*;
 import remixlab.bias.core.*;
 
 /**
- * Proscene key-agent. An {@link remixlab.bias.core.Agent} specialization
- * which handles Processing key-events.
+ * Proscene key-agent. A Processing fully fledged key {@link remixlab.bias.core.Agent}.
  * 
  * @see remixlab.bias.core.Agent
  * @see remixlab.proscene.MouseAgent
@@ -101,6 +100,9 @@ public class KeyAgent extends Agent {
 	}
 	*/
 	
+	/**
+	 * Same as {@code return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key)}.
+	 */
 	public static int keyCode(char key) {
 		return java.awt.event.KeyEvent.getExtendedKeyCodeForChar(key);
 	}
