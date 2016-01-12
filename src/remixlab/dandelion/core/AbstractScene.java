@@ -2067,10 +2067,6 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 		Vec point = unprojectedCoordinatesOf(new Vec(pixel.x(), pixel.y(), depth));
 		return (depth < 1.0f) ? point : null;
 	}
-	
-	public Vec pointUnderPixel(float x, float y) {
-		return pointUnderPixel(new Point(x, y));
-	}
 
 	/**
 	 * Returns the depth (z-value) of the object under the {@code pixel}.

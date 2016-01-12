@@ -23,7 +23,6 @@ import remixlab.util.Util;
  * The three implementations of this class: LocalConstraint, WorldConstraint and EyeConstraint differ by the coordinate
  * system in which this direction is expressed.
  */
-
 public abstract class AxisPlaneConstraint extends Constraint {
 	/**
 	 * Type lists the different types of translation and rotation constraints that are available.
