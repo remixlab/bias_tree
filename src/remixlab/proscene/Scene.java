@@ -117,7 +117,6 @@ public class Scene extends AbstractScene implements PConstants {
 	///TODO decide placement
 	//Profile
 	public Profile profile;
-	String vkeyAction;
 
 	// E X C E P T I O N H A N D L I N G
 	protected int								beginOffScreenDrawingCalls;
@@ -2420,41 +2419,8 @@ public class Scene extends AbstractScene implements PConstants {
 	
 	@Override
 	public void performInteraction(BogusEvent event) {
-		if (!processKey(event))
+		if (!bypassKey(event))
 			profile.handle(event);
-	}
-	
-	protected boolean processKey(BogusEvent event) {
-		if(event instanceof KeyboardEvent) {
-			if(event.fired())
-				if(event.id() == 0)//TYPE event
-					return vkeyAction == null ? false : true;
-				else {
-					vkeyAction = profile.action(event.shortcut());
-				    return false;
-				}
-			if(event.flushed()) {
-				if( event.flushed() && vkeyAction != null )
-					vkeyAction = null;
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean initKeyboard(KeyboardEvent event) {
-		if(event.id() == 0)//TYPE event
-			return vkeyAction == null ? false : true;
-		else {
-			vkeyAction = profile.action(event.shortcut());
-		    return false;
-		}
-	}
-	
-	public boolean flushKeyboard(KeyboardEvent event) {
-		if( event.flushed() && vkeyAction != null )
-			vkeyAction = null;
-		return true;
 	}
 	
 	public String action(Shortcut key) {

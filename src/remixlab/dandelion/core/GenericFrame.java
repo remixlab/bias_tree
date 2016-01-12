@@ -37,19 +37,18 @@ import remixlab.util.*;
  * }
  * }
  * </pre>
- * See {@link #applyTransformation()}, {@link #applyTransformation()}, {@link #scene()},
+ * See {@link #applyTransformation()}, {@link #applyWorldTransformation()}, {@link #scene()},
  * {@link remixlab.dandelion.core.AbstractScene#pushModelView()} and
  * {@link remixlab.dandelion.core.AbstractScene#popModelView()}
  * <p>
  * A generic-frame may also be attached to an {@link remixlab.dandelion.core.Eye}, such as the
- * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} which is attached to the
+ * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} which in turn is attached to the
  * {@link remixlab.dandelion.core.AbstractScene#eye()} (see {@link #isEyeFrame()}). Some user gestures are then 
  * interpreted in a negated way, respect to non-eye frames. For instance, with a move-to-the-right user gesture the
  * {@link remixlab.dandelion.core.AbstractScene#eyeFrame()} has to go to the <i>left</i>, so that the <i>scene</i> seems
  * to move to the right. A generic-frame can be attached to an eye only at construction times (see {@link #GenericFrame(Eye)} and
  * all the constructors that take an eye parameter). An eye may have more than one generic-frame attached to it. To set
- * one of them as the {@link remixlab.dandelion.core.Eye#frame()}, call
- * {@link remixlab.dandelion.core.Eye#setFrame(GenericFrame)}.
+ * one of them as the {@link remixlab.dandelion.core.Eye#frame()}, call {@link remixlab.dandelion.core.Eye#setFrame(GenericFrame)}.
  * <p>
  * This class provides several gesture-to-motion converting methods, such as: {@link #rotate(MotionEvent)},
  * {@link #moveForward(DOF2Event, boolean)}, {@link #translateX(boolean)}, etc. To use them,
@@ -747,6 +746,31 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 	 * {@link remixlab.bias.event.KeyboardEvent}. 
 	 */
 	protected void performInteraction(KeyboardEvent event) {
+	}
+	
+	boolean vkeyAction;
+	
+	/**
+	 * Internal use. Inspired in Processing key event flow. Bypasses the key event so that
+	 * {@link remixlab.bias.event.KeyboardShortcut}s work smoothly. Call it at the beginning
+	 * of your {@link #performInteraction(KeyboardEvent)} method to discard useless keyboard events.
+	 */
+	protected boolean bypassKey(BogusEvent event) {
+		if(event instanceof KeyboardEvent) {
+			if(event.fired())
+				if(event.id() == 0)//TYPE event
+					return vkeyAction;
+				else {
+					vkeyAction = true;
+				    return false;
+				}
+			if(event.flushed()) {
+				if( event.flushed() && vkeyAction )
+					vkeyAction = false;
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// APPLY TRANSFORMATION

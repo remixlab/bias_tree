@@ -43,8 +43,6 @@ public class GenericP5Frame extends GenericFrame {
 				.isEquals();
 	}
 	
-	String vkeyAction;
-	
 	@Override
 	public Scene scene() {
 		return (Scene)gScene;
@@ -107,26 +105,8 @@ public class GenericP5Frame extends GenericFrame {
 	
 	@Override
 	public void performInteraction(BogusEvent event) {
-		if (!processKey(event))
+		if (!bypassKey(event))
 			profile.handle(event);
-	}
-	
-	protected boolean processKey(BogusEvent event) {
-		if(event instanceof KeyboardEvent) {
-			if(event.fired())
-				if(event.id() == 0)//TYPE event
-					return vkeyAction == null ? false : true;
-				else {
-					vkeyAction = profile.action(event.shortcut());
-				    return false;
-				}
-			if(event.flushed()) {
-				if( event.flushed() && vkeyAction != null )
-					vkeyAction = null;
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	public void removeBindings() {

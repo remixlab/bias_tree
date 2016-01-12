@@ -18,7 +18,7 @@ import remixlab.util.HashCodeBuilder;
  * The root of all events that are to be handled by an {@link remixlab.bias.core.Agent}. Every BogusEvent
  * encapsulates a {@link remixlab.bias.core.Shortcut} which may be bound to an user-defined
  * action (see {@link #shortcut()}). Gesture initialization and termination, which may be of the interest of
- * {@link remixlab.bias.core.Grabber} objects, are reported by {@link #fired()} and {@link #flushed()}, resp.
+ * {@link remixlab.bias.core.Grabber} objects, are reported by {@link #fired()} and {@link #flushed()}, respectively.
  * <p>
  * The following are the main class specializations: {@link remixlab.bias.event.MotionEvent},
  * {@link remixlab.bias.event.ClickEvent}, and {@link remixlab.bias.event.KeyboardEvent}. Please refer to their
@@ -145,6 +145,8 @@ public class BogusEvent implements Copyable {
 
 	/**
 	 * @return the shortcut encapsulated by this event.
+	 * 
+	 * @see remixlab.bias.core.Shortcut
 	 */
 	public Shortcut shortcut() {
 		return new Shortcut(modifiers(), id());

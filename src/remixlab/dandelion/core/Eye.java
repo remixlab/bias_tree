@@ -50,7 +50,7 @@ import remixlab.util.*;
  * An Eye can also be used outside of an Scene for its coordinate system conversion capabilities.
  */
 public abstract class Eye implements Copyable {
-	class GrabberEyeFrame extends GenericFrame /* implements Constants*/ {
+	class GrabberEyeFrame extends GenericFrame {
 		public final int LEFT_ID	= 37,		
 					     CENTER_ID = 3,
 					     RIGHT_ID = 39,
@@ -81,11 +81,6 @@ public abstract class Eye implements Copyable {
 
 		@Override
 		public void performInteraction(MotionEvent event) {
-			//TODO how to handle multi-tempi
-			/*
-			if(event.flushed())
-				stopFlying();
-				*/
 			switch( event.shortcut().id() ) {
 			case LEFT_ID:
 				rotate(event);
@@ -117,6 +112,8 @@ public abstract class Eye implements Copyable {
 		
 		@Override
 		public void performInteraction(KeyboardEvent event) {
+			if (bypassKey(event))
+				return;
 			if( event.isShiftDown() ) {
 				if(event.id()  == UP_KEY)
 					translateY(true);

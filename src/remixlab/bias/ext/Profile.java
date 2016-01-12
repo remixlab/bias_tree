@@ -23,7 +23,7 @@ import remixlab.bias.event.*;
 import remixlab.util.*;
 
 /**
- * A grabber {@link remixlab.bias.core.Grabber} extension which allows to define
+ * A {@link remixlab.bias.core.Grabber} extension which allows to define
  * {@link remixlab.bias.core.Shortcut} to {@link java.lang.reflect.Method} bindings.
  * See {@link #setBinding(Shortcut, String)} and {@link #setBinding(Object, Shortcut, String)}.
  * <p>
@@ -33,7 +33,8 @@ import remixlab.util.*;
  * {@code public void performInteraction(BogusEvent event) {} <br>
  * {@code  	profile.handle(event);} <br>
  * {@code }} <br>
- * and then simply pass the grabber instance to the {@link #Profile(Grabber)} constructor.
+ * (see {@link #handle(BogusEvent)}) and then simply pass the grabber instance to the
+ * {@link #Profile(Grabber)} constructor.
  */
 public class Profile {
 	class ObjectMethodTuple {
