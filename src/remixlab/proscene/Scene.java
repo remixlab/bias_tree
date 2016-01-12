@@ -2719,39 +2719,76 @@ public class Scene extends AbstractScene implements PConstants {
 
     // PMatrix <-> toMat
 
-//	public void applyModelViewMatrix(PMatrix2D source) {
-//		applyModelView(Scene.toMat(source));
-//	}
-//
-//	public void applyModelViewMatrix(PMatrix3D source) {
-//		applyModelView(Scene.toMat(source));
-//	}
-//
-//	public void applyProjectionMatrix(PMatrix3D source) {
-//		applyProjection(Scene.toMat(source));
-//	}
-//
-//	public PMatrix2D modelViewMatrix2D() {
-//		return Scene.toPMatrix2D(modelView());
-//	}
-//
-//	public PMatrix3D modelViewMatrix() {
-//		return Scene.toPMatrix(modelView());
-//	}
-//
-//	public PMatrix3D projectionMatrix() {
-//		return Scene.toPMatrix(projection());
-//	}
-//
-//	public void setModelViewMatrix(PMatrix2D source) {
-//		setModelView(Scene.toMat(source));
-//	}
-//
-//	public void setModelViewMatrix(PMatrix3D source) {
-//		setModelView(Scene.toMat(source));
-//	}
-//
-//	public void setProjectionMatrix(PMatrix3D source) {
-//		setProjection(Scene.toMat(source));
-//	}
+	/**
+	 * Processing version of the abstract-scene method with the same signature.
+	 * 
+	 * @see #applyModelView(PMatrix2D)
+	 */
+	public void applyModelView(PMatrix2D source) {
+		applyModelView(Scene.toMat(source));
+	}
+
+	/**
+	 * Processing version of the abstract-scene method with the same signature.
+	 * 
+	 * @see #applyModelView(PMatrix3D)
+	 */
+	public void applyModelView(PMatrix3D source) {
+		applyModelView(Scene.toMat(source));
+	}
+
+	/**
+	 * Processing version of the abstract-scene method with the same signature.
+	 * 
+	 * @see #applyProjection(PMatrix3D)
+	 */
+	public void applyProjection(PMatrix3D source) {
+		applyProjection(Scene.toMat(source));
+	}
+
+	/**
+	 * Processing version of the abstract-scene method with the same signature.
+	 * 
+	 * @see #setModelView(PMatrix2D)
+	 */
+	public void setModelView(PMatrix2D source) {
+		setModelView(Scene.toMat(source));
+	}
+
+	/**
+	 * Processing version of the abstract-scene method with the same signature.
+	 * 
+	 * @see #setModelView(PMatrix3D)
+	 */
+	public void setModelView(PMatrix3D source) {
+		setModelView(Scene.toMat(source));
+	}
+
+	/**
+	 * Processing version of the abstract-scene method with the same signature.
+	 * 
+	 * @see #setProjection(PMatrix3D)
+	 */
+	public void setProjection(PMatrix3D source) {
+		setProjection(Scene.toMat(source));
+	}
+	
+	// trickier:
+
+	/**
+	 * Same as {@link #modelView()} but returning a PMatrix.
+	 */
+	public PMatrix getModelView() {
+		if(is2D())
+			return Scene.toPMatrix2D(modelView());
+		else
+			return Scene.toPMatrix(modelView());
+	}
+
+	/**
+	 * Same as {@link #projection()} but returning a PMatrix.
+	 */
+	public PMatrix3D getProjection() {
+		return Scene.toPMatrix(projection());
+	}
 }
