@@ -14,68 +14,70 @@ package remixlab.fpstiming;
  * Interface defining the behavior animated objects should implement.
  */
 public interface Animator {
-	/**
-	 * Main call back animated method.
-	 */
-	void animate();
+  /**
+   * Main call back animated method.
+   */
+  void animate();
 
-	/**
-	 * Returns whether or not the animated method is defined externally, as when register it through reflection.
-	 */
-	boolean invokeAnimationHandler();
+  /**
+   * Returns whether or not the animated method is defined externally, as when register it
+   * through reflection.
+   */
+  boolean invokeAnimationHandler();
 
-	/**
-	 * Returns the animation period in milliseconds.
-	 */
-	long animationPeriod();
+  /**
+   * Returns the animation period in milliseconds.
+   */
+  long animationPeriod();
 
-	/**
-	 * Sets the animation period in milliseconds.
-	 */
-	void setAnimationPeriod(long period);
+  /**
+   * Sets the animation period in milliseconds.
+   */
+  void setAnimationPeriod(long period);
 
-	/**
-	 * Sets the animation period in milliseconds and restarts the animation according to {@code restart}.
-	 */
-	void setAnimationPeriod(long period, boolean restart);
+  /**
+   * Sets the animation period in milliseconds and restarts the animation according to
+   * {@code restart}.
+   */
+  void setAnimationPeriod(long period, boolean restart);
 
-	/**
-	 * Stops the animation.
-	 */
-	void stopAnimation();
+  /**
+   * Stops the animation.
+   */
+  void stopAnimation();
 
-	/**
-	 * Starts the animation executing periodically the animated call back method.
-	 */
-	void startAnimation();
+  /**
+   * Starts the animation executing periodically the animated call back method.
+   */
+  void startAnimation();
 
-	/**
-	 * Simply calls {@link #stopAnimation()} and then {@link #startAnimation()}.
-	 */
-	void restartAnimation();
+  /**
+   * Simply calls {@link #stopAnimation()} and then {@link #startAnimation()}.
+   */
+  void restartAnimation();
 
-	/**
-	 * Starts or stops the animation according to {@link #animationStarted()}.
-	 */
-	void toggleAnimation();
+  /**
+   * Starts or stops the animation according to {@link #animationStarted()}.
+   */
+  void toggleAnimation();
 
-	/**
-	 * Returns {@code true} if animation was started and {@code false} otherwise.
-	 */
-	boolean animationStarted();
+  /**
+   * Returns {@code true} if animation was started and {@code false} otherwise.
+   */
+  boolean animationStarted();
 
-	/**
-	 * Sets the timing handler.
-	 */
-	void setTimingHandler(TimingHandler h);
+  /**
+   * Sets the timing handler.
+   */
+  void setTimingHandler(TimingHandler h);
 
-	/**
-	 * Returns the timing handler.
-	 */
-	TimingHandler timingHandler();
+  /**
+   * Returns the timing handler.
+   */
+  TimingHandler timingHandler();
 
-	/**
-	 * Returns the sequential timer.
-	 */
-	SeqTimer timer();
+  /**
+   * Returns the sequential timer.
+   */
+  SeqTimer timer();
 }

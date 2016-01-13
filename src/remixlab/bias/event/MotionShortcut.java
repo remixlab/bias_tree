@@ -16,49 +16,50 @@ import remixlab.util.Copyable;
 /**
  * This class represents {@link remixlab.bias.event.MotionEvent} shortcuts.
  * <p>
- * Button shortcuts can be of one of two forms: 1. Buttons (e.g., 'LEFT' , or even 'B_NOBUTTON'); 2. Button + modifier
- * key combinations (e.g., 'RIGHT' + 'CTRL').
+ * Button shortcuts can be of one of two forms: 1. Buttons (e.g., 'LEFT' , or even
+ * 'B_NOBUTTON'); 2. Button + modifier key combinations (e.g., 'RIGHT' + 'CTRL').
  * <p>
- * Note that the shortcut may be empty: the no-button (B_NOBUTTON) and no-modifier-mask (B_NOMODIFIER_MASK) combo may
- * also defined a shortcut. Empty shortcuts may bind button-less motion interactions (e.g., mouse move without any
- * button pressed).
+ * Note that the shortcut may be empty: the no-button (B_NOBUTTON) and no-modifier-mask
+ * (B_NOMODIFIER_MASK) combo may also defined a shortcut. Empty shortcuts may bind
+ * button-less motion interactions (e.g., mouse move without any button pressed).
  */
 public final class MotionShortcut extends Shortcut implements Copyable {
-	/**
-	 * Constructs an "empty" shortcut by conveniently calling {@code this(B_NOMODIFIER_MASK, B_NOBUTTON);}
-	 */
-	public MotionShortcut() {
-		super();
-	}
+  /**
+   * Constructs an "empty" shortcut by conveniently calling
+   * {@code this(B_NOMODIFIER_MASK, B_NOBUTTON);}
+   */
+  public MotionShortcut() {
+    super();
+  }
 
-	/**
-	 * Defines a shortcut from the given button.
-	 * 
-	 * @param id
-	 *          button
-	 */
-	public MotionShortcut(int id) {
-		super(id);
-	}
+  /**
+   * Defines a shortcut from the given button.
+   * 
+   * @param id
+   *          button
+   */
+  public MotionShortcut(int id) {
+    super(id);
+  }
 
-	/**
-	 * Defines a shortcut from the given modifier mask and button combination.
-	 * 
-	 * @param m
-	 *          the mask
-	 * @param id
-	 *          button
-	 */
-	public MotionShortcut(int m, int id) {
-		super(m, id);
-	}
+  /**
+   * Defines a shortcut from the given modifier mask and button combination.
+   * 
+   * @param m
+   *          the mask
+   * @param id
+   *          button
+   */
+  public MotionShortcut(int m, int id) {
+    super(m, id);
+  }
 
-	protected MotionShortcut(MotionShortcut other) {
-		super(other);
-	}
+  protected MotionShortcut(MotionShortcut other) {
+    super(other);
+  }
 
-	@Override
-	public MotionShortcut get() {
-		return new MotionShortcut(this);
-	}
+  @Override
+  public MotionShortcut get() {
+    return new MotionShortcut(this);
+  }
 }

@@ -13,23 +13,24 @@ package remixlab.proscene;
 import remixlab.dandelion.core.*;
 
 /**
- * A Processing {@link remixlab.dandelion.core.GenericFrame} with a {@link #profile()} instance which allows
- * {@link remixlab.bias.core.Shortcut} to {@link java.lang.reflect.Method} bindings high-level customization.
+ * A Processing {@link remixlab.dandelion.core.GenericFrame} with a {@link #profile()}
+ * instance which allows {@link remixlab.bias.core.Shortcut} to
+ * {@link java.lang.reflect.Method} bindings high-level customization.
  * 
  * @see remixlab.dandelion.core.GenericFrame
  * @see remixlab.bias.ext.Profile
  */
 public class EyeFrame extends GenericP5Frame {
-	public EyeFrame(Eye eye) {
-		super(eye);
-	}
-	
-	protected EyeFrame(EyeFrame otherFrame) {
-		super(otherFrame);
-	}
+  public EyeFrame(Eye eye) {
+    super(eye);
+  }
 
-	@Override
-	public EyeFrame get() {
-		return new EyeFrame(this);
-	}
+  protected EyeFrame(EyeFrame otherFrame) {
+    super(otherFrame);
+  }
+
+  @Override
+  public EyeFrame get() {
+    return new EyeFrame(this);
+  }
 }

@@ -11,23 +11,24 @@
 package remixlab.bias.core;
 
 /**
- * Grabbers are means to attach a user-space object to all the {@link remixlab.bias.core.Agent}s
- * (see {@link remixlab.bias.core.Agent#addGrabber(Grabber)}) through which it's going to be handled.
- * For details, refer to the {@link remixlab.bias.core.Agent} documentation.
+ * Grabbers are means to attach a user-space object to all the
+ * {@link remixlab.bias.core.Agent}s (see
+ * {@link remixlab.bias.core.Agent#addGrabber(Grabber)}) through which it's going to be
+ * handled. For details, refer to the {@link remixlab.bias.core.Agent} documentation.
  */
 public interface Grabber {
-	/**
-	 * Defines the rules to set the grabber as an agent input-grabber.
-	 * 
-	 * @see remixlab.bias.core.Agent#updateTrackedGrabber(BogusEvent)
-	 * @see remixlab.bias.core.Agent#inputGrabber()
-	 */
-	boolean checkIfGrabsInput(BogusEvent event);
+  /**
+   * Defines the rules to set the grabber as an agent input-grabber.
+   * 
+   * @see remixlab.bias.core.Agent#updateTrackedGrabber(BogusEvent)
+   * @see remixlab.bias.core.Agent#inputGrabber()
+   */
+  boolean checkIfGrabsInput(BogusEvent event);
 
-	/**
-	 * Defines how the grabber should react according to the given bogus-event.
-	 * 
-	 * @see remixlab.bias.core.Agent#handle(BogusEvent)
-	 */
-	void performInteraction(BogusEvent event);
+  /**
+   * Defines how the grabber should react according to the given bogus-event.
+   * 
+   * @see remixlab.bias.core.Agent#handle(BogusEvent)
+   */
+  void performInteraction(BogusEvent event);
 }
