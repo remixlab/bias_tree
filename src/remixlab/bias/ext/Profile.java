@@ -314,6 +314,13 @@ public class Profile {
   }
 
   /**
+   * Internal macro.
+   */
+  protected void printError(Shortcut key, String action) {
+
+  }
+
+  /**
    * Defines the shortcut that triggers the given action.
    * <p>
    * The action is a method implemented by the {@link #grabber()} that returns void and
@@ -338,6 +345,10 @@ public class Profile {
     if (printWarning(key, action))
       return;
     Method method = null;
+    String message = "Check that the " + grabber().getClass().getSimpleName() + "." + action
+        + " method is public and returns void, and that it takes a "
+        + ((key instanceof MotionShortcut) ? cls(key).getSimpleName() + " or MotionEvent" : cls(key).getSimpleName())
+        + " parameter";
     try {
       method = grabber.getClass().getMethod(action, new Class<?>[] { cls(key) });
     } catch (Exception clazz) {
@@ -351,16 +362,16 @@ public class Profile {
             method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
             print = false;
           } catch (Exception motion) {
-            System.out.println("Something went wrong when registering your " + action + " method");
+            System.out.println(message);
             motion.printStackTrace();
           }
         else {
-          System.out.println("Something went wrong when registering your " + action + " method");
+          System.out.println(message);
           empty.printStackTrace();
         }
       }
       if (print) {
-        System.out.println("Something went wrong when registering your " + action + " method");
+        System.out.println(message);
         clazz.printStackTrace();
       }
     }
@@ -394,6 +405,11 @@ public class Profile {
     if (printWarning(key, action))
       return;
     Method method = null;
+    String message = "Check that the " + object.getClass().getSimpleName() + "." + action
+        + " method is public and returns void, and that it takes a " + grabber().getClass().getSimpleName()
+        + " parameter and a "
+        + ((key instanceof MotionShortcut) ? cls(key).getSimpleName() + " or MotionEvent" : cls(key).getSimpleName())
+        + " parameter";
     try {
       method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), cls(key) });
     } catch (Exception clazz) {
@@ -407,16 +423,16 @@ public class Profile {
             method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), MotionEvent.class });
             print = false;
           } catch (Exception motion) {
-            System.out.println("Something went wrong when registering your " + action + " method");
+            System.out.println(message);
             motion.printStackTrace();
           }
         else {
-          System.out.println("Something went wrong when registering your " + action + " method");
+          System.out.println(message);
           empty.printStackTrace();
         }
       }
       if (print) {
-        System.out.println("Something went wrong when registering your " + action + " method");
+        System.out.println(message);
         clazz.printStackTrace();
       }
     }

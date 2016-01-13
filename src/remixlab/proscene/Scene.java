@@ -198,7 +198,6 @@ public class Scene extends AbstractScene implements PConstants {
       enablePickingBuffer();
 
     // 4. Create agents and register P5 methods
-    // TODO add me properly
     setProfile(new Profile(this));
     // TODO android
     // discard this block one android is restored
@@ -2702,8 +2701,8 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Sets the scene {@link remixlab.bias.ext.Profile} instance. Useful when a sharing a
-   * profile among different scene instances.
+   * Sets the scene {@link remixlab.bias.ext.Profile} instance. Note that the
+   * {@link remixlab.bias.ext.Profile#grabber()} object should equals this scene.
    * 
    * @see #setBindings(Scene)
    */

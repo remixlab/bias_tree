@@ -482,8 +482,8 @@ class GenericP5Frame extends GenericFrame {
   }
 
   /**
-   * Sets the frame {@link remixlab.bias.ext.Profile} instance. Useful when a sharing a
-   * profile among different frame instances.
+   * Sets the frame {@link remixlab.bias.ext.Profile} instance. Note that the
+   * {@link remixlab.bias.ext.Profile#grabber()} object should equals this scene.
    * 
    * @see #setBindings(GenericP5Frame)
    */
