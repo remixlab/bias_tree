@@ -32,7 +32,7 @@ float defRotSens, defTransSens, defSpngSens, defWheelSens, defDampFrict;
 String renderer = P3D;
 
 void setup() {
-  size(640, 360, renderer);
+  size(840, 560, renderer);
   
   myFont = loadFont("FreeSans-16.vlw");
   textFont(myFont);
@@ -61,8 +61,8 @@ void setup() {
   buttons.add(new ClickButton(scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 90), myFont, "-", Sensitivity.SPINNING, false)); 		
   buttons.add(new ClickButton(scene, new PVector(xM + 210, 110), myFont, "+", Sensitivity.WHEEL, true));		
   buttons.add(new ClickButton(scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 110), myFont, "-", Sensitivity.WHEEL, false));  		
-  buttons.add(new ClickButton(scene, new PVector(xM + 210, 130), myFont, "+", Sensitivity.SPINNING_FRICTION, true));		
-  buttons.add(new ClickButton(scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 130), myFont, "-", Sensitivity.SPINNING_FRICTION, false));
+  buttons.add(new ClickButton(scene, new PVector(xM + 210, 130), myFont, "+", Sensitivity.DAMPING, true));		
+  buttons.add(new ClickButton(scene, new PVector((xM + 210 + ((ClickButton)buttons.get(buttons.size()-1)).myWidth + 10), 130), myFont, "-", Sensitivity.DAMPING, false));
 
   scene.setRadius(150);
   scene.showAll();
@@ -131,15 +131,15 @@ void displayControls() {
 
   fill(200, 255, 0);
   scene.beginScreenDrawing();
-  displayText(equals(iFrame.rotationSensitivity(), defRotSens) ? "Rotation sensitivity" : "Rotation sensitivity *", xM, 50);		
+  displayText(equals(iFrame.rotationSensitivity(), defRotSens) ? "Rotation sensitivity " : "Rotation sensitivity * ", xM, 50);		
   displayText(String.format("%.2f", iFrame.rotationSensitivity()), xM + 165, 50);
-  displayText(equals(iFrame.translationSensitivity(), defTransSens) ? "Translation sensitivity" : "Translation sensitivity *", xM, 70);		
+  displayText(equals(iFrame.translationSensitivity(), defTransSens) ? "Translation sensitivity " : "Translation sensitivity * ", xM, 70);		
   displayText(String.format("%.2f", iFrame.translationSensitivity()), xM + 165, 70);
-  displayText(equals(iFrame.spinningSensitivity(), defSpngSens) ? "Spinning sensitivity" : "Spinning sensitivity *", xM, 90);		
+  displayText(equals(iFrame.spinningSensitivity(), defSpngSens) ? "Spinning sensitivity " : "Spinning sensitivity * ", xM, 90);		
   displayText(String.format("%.2f", iFrame.spinningSensitivity()), xM + 165, 90);  
-  displayText(equals(iFrame.wheelSensitivity(), defWheelSens) ? "Wheel sensitivity" : "Wheel sensitivity *", xM, 110);
+  displayText(equals(iFrame.wheelSensitivity(), defWheelSens) ? "Wheel sensitivity " : "Wheel sensitivity * ", xM, 110);
   displayText(String.format("%.2f", iFrame.wheelSensitivity()), xM + 165, 110);  
-  displayText(equals(iFrame.damping(), defDampFrict) ? "Spinning friction" : "Spinning friction *", xM, 130);
+  displayText(equals(iFrame.damping(), defDampFrict) ? "Damping " : "Damping * ", xM, 130);
   displayText(String.format("%.2f", iFrame.damping()), xM + 165, 130);
   scene.endScreenDrawing();
 
@@ -204,7 +204,7 @@ void changeSensitivity(GenericFrame iFrame, Sensitivity sens, boolean increase) 
     if (-100<= res && res <=100)
       iFrame.setWheelSensitivity(res);
     break;
-  case SPINNING_FRICTION:
+  case DAMPING:
     step = increase ? 0.05f : -0.05f;
     res = iFrame.damping() + step;
     if (0<= res && res <=1)

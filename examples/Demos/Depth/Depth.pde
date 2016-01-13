@@ -2,6 +2,10 @@
  * Depth.
  * by Jean Pierre Charalambos.
  *
+ * This example illustrates how to attach a PShape to an interactive frame.
+ * PShapes attached to interactive frames can then be automatically picked
+ * and easily drawn.
+ *
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 

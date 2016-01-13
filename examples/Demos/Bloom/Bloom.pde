@@ -2,6 +2,10 @@
  * Bloom.
  * by Ivan Castellanos and Jean Pierre Charalambos.
  *
+ * This example illustrates how to attach a PShape to an interactive frame.
+ * PShapes attached to interactive frames can then be automatically picked
+ * and easily drawn.
+ *
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
 
@@ -13,7 +17,7 @@ Scene SrcScene;
 boolean original;
 color cols[];
 float posns[], kernel[];
-InteractiveFrame[] models;
+InteractiveFrame[] frames;
 int numCubes;
 
 public void setup() {
@@ -35,13 +39,13 @@ public void setup() {
   SrcScene = new Scene(this, SrcGraphics);
   SrcScene.setRadius(1000);
   SrcScene.showAll();
-  models = new InteractiveFrame[numCubes];
+  frames = new InteractiveFrame[numCubes];
   
-  for (int i = 0; i < models.length; i++) {
-    models[i] = new InteractiveFrame(SrcScene, Shape(i));
-    models[i].translate(posns[3*i], posns[3*i+1], posns[3*i+2]);
+  for (int i = 0; i < frames.length; i++) {
+    frames[i] = new InteractiveFrame(SrcScene, Shape(i));
+    frames[i].translate(posns[3*i], posns[3*i+1], posns[3*i+2]);
     pushStyle();
-    models[i].shape().setFill(cols[i]);
+    frames[i].shape().setFill(cols[i]);
     popStyle();
   }
   
@@ -70,15 +74,15 @@ public void draw() {
   background(0);
   PGraphics pg = SrcGraphics;
   
-  for (int i = 0; i < models.length; i++) 
-    if (models[i].grabsInput())
+  for (int i = 0; i < frames.length; i++) 
+    if (frames[i].grabsInput())
       {
-        models[i].shape().setFill(color(255, 255, 255, 255));
+        frames[i].shape().setFill(color(255, 255, 255, 255));
       }
     else {
       pushStyle();
       colorMode(HSB, 255);
-      models[i].shape().setFill(cols[i]);
+      frames[i].shape().setFill(cols[i]);
       popStyle();
     }
     

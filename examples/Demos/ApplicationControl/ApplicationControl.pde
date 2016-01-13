@@ -2,9 +2,15 @@
  * Application Control.
  * by Jean Pierre Charalambos.
  * 
- * This demo controls the shape and color of the scene torus using and a custom mouse agent.
+ * This demo controls the shape and color of the scene torus and box using two interactive
+ * frame instances, one displaying an ellipse and the other a rect.
+ *
+ * The behavior of an interactive frame may be customized eihter through external registration
+ * of some key and mouse handler methods (such as with the ellipse frame) or through inheritance
+ * (such as with the rect frame).
  * 
- * Click and drag the ellipse with the left mouse to control the torus color and shape.
+ * Click and drag the ellipse or the rect with the left mouse to control the torus and box
+ * color and shape.
  * Press ' ' (the spacebar) to toggle the application canvas aid.
  * Press 'h' to display the key shortcuts and mouse bindings in the console.
  */
