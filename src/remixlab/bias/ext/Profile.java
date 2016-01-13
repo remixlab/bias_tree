@@ -30,10 +30,15 @@ import remixlab.util.*;
  * <p>
  * To attach a profile to a grabber first override your
  * {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)} method like this:
- * {@code @Override} <br>
- * {@code public void performInteraction(BogusEvent event) {} <br>
- * {@code  	profile.handle(event);} <br>
- * {@code }} <br>
+ * 
+ * <pre>
+ * {@code
+ *   public void performInteraction(BogusEvent event) {
+ *     profile.handle(event);
+ *   }
+ * }
+ * </pre>
+ * 
  * (see {@link #handle(BogusEvent)}) and then simply pass the grabber instance to the
  * {@link #Profile(Grabber)} constructor.
  */

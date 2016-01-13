@@ -29,8 +29,7 @@ import remixlab.util.*;
  * parameter). To attach a generic-frame to {@code MyObject} use code like this:
  * 
  * <pre>
- * {
- *   &#64;code
+ * {@code
  *   public class MyObject {
  *     public GenericFrame gFrame;
  * 

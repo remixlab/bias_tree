@@ -111,7 +111,7 @@ public class Scene extends AbstractScene implements PConstants {
   // end: GWT-incompatible
   // */
 
-  public static final String prettyVersion = "3.0.0";
+  public static final String prettyVersion = "3.0.0-beta.1";
 
   public static final String version = "23";
 
@@ -2649,22 +2649,31 @@ public class Scene extends AbstractScene implements PConstants {
     profile.from(otherScene.profile());
   }
 
-  // click
-
-  /*
-   * public void setClickBinding(int id, int count, String methodName) {
-   * profile.setClickBinding(new ClickShortcut(id, count), methodName); }
-   * 
-   * public void setClickBinding(Object object, int id, int count, String methodName) {
-   * profile.setClickBinding(object, new ClickShortcut(id, count), methodName); }
-   * 
-   * public boolean hasClickBinding(int id, int count) { return profile.hasBinding(new
-   * ClickShortcut(id, count)); }
-   * 
-   * public void removeClickBinding(int id, int count) { profile.removeBinding(new
-   * ClickShortcut(id, count)); }
-   * 
-   * public void removeClickBindings() { profile.removeClickBindings(); }
+  /**
+   * Restores the default keyboard shortcuts:
+   * <p>
+   * {@code 'a' -> KeyboardAction.TOGGLE_AXES_VISUAL_HINT}<br>
+   * {@code 'f' -> KeyboardAction.TOGGLE_FRAME_VISUAL_HINT}<br>
+   * {@code 'g' -> KeyboardAction.TOGGLE_GRID_VISUAL_HINT}<br>
+   * {@code 'm' -> KeyboardAction.TOGGLE_ANIMATION}<br>
+   * {@code 'e' -> KeyboardAction.TOGGLE_CAMERA_TYPE}<br>
+   * {@code 'h' -> KeyboardAction.DISPLAY_INFO}<br>
+   * {@code 'r' -> KeyboardAction.TOGGLE_PATHS_VISUAL_HINT}<br>
+   * {@code 's' -> KeyboardAction.INTERPOLATE_TO_FIT}<br>
+   * {@code 'S' -> KeyboardAction.SHOW_ALL}<br>
+   * {@code left_arrow -> KeyboardAction.MOVE_LEFT}<br>
+   * {@code right_arrow -> KeyboardAction.MOVE_RIGHT}<br>
+   * {@code up_arrow -> KeyboardAction.MOVE_UP}<br>
+   * {@code down_arrow -> KeyboardAction.MOVE_DOWN }<br>
+   * {@code 'CTRL' + '1' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_1}<br>
+   * {@code 'ALT' + '1' -> KeyboardAction.DELETE_PATH_1}<br>
+   * {@code '1' -> KeyboardAction.PLAY_PATH_1}<br>
+   * {@code 'CTRL' + '2' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_2}<br>
+   * {@code 'ALT' + '2' -> KeyboardAction.DELETE_PATH_2}<br>
+   * {@code '2' -> KeyboardAction.PLAY_PATH_2}<br>
+   * {@code 'CTRL' + '3' -> KeyboardAction.ADD_KEYFRAME_TO_PATH_3}<br>
+   * {@code 'ALT' + '3' -> KeyboardAction.DELETE_PATH_3}<br>
+   * {@code '3' -> KeyboardAction.PLAY_PATH_3}<br>
    */
 
   /**

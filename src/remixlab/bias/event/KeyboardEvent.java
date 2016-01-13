@@ -24,7 +24,7 @@ import remixlab.bias.core.BogusEvent;
  * running your code. In Java, for instance, have a look at
  * <a href= "http://docs.oracle.com/javase/7/docs/api/java/awt/event/KeyEvent.html">
  * KeyEvent</a> to get some VK_* values. You may use these values to freely choose them as
- * a convention in your code. Have a look at the ProScene's CameraCustomization example.
+ * a convention in your code.
  */
 public class KeyboardEvent extends BogusEvent {
   protected final char key;
