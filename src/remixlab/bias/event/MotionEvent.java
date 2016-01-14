@@ -76,7 +76,6 @@ public class MotionEvent extends BogusEvent {
 
   protected MotionEvent(MotionEvent other) {
     super(other);
-    this.id = other.id;
     this.delay = other.delay;
     this.distance = other.distance;
     this.speed = other.speed;
@@ -86,6 +85,16 @@ public class MotionEvent extends BogusEvent {
   @Override
   public MotionEvent get() {
     return new MotionEvent(this);
+  }
+  
+  @Override
+  public MotionEvent flush() {
+    return (MotionEvent) super.flush();
+  }
+  
+  @Override
+  public MotionEvent fire() {
+    return (MotionEvent) super.fire();
   }
 
   /**

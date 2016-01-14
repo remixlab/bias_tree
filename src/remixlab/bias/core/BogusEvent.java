@@ -43,8 +43,8 @@ public class BogusEvent implements Copyable {
   public static final int META = 1 << 2;
   public static final int ALT = 1 << 3;
   public static final int ALT_GRAPH = 1 << 4;
-
-  private boolean init, flush;
+  
+  private boolean fire, flush;
 
   @Override
   public int hashCode() {
@@ -92,6 +92,8 @@ public class BogusEvent implements Copyable {
     this.modifiers = other.modifiers;
     this.id = other.id;
     this.timestamp = other.timestamp;
+    this.fire = other.fire;
+    this.flush = other.flush;
   }
 
   @Override
@@ -119,7 +121,7 @@ public class BogusEvent implements Copyable {
    */
   public BogusEvent fire() {
     BogusEvent bogusevent = this.get();
-    bogusevent.init = true;
+    bogusevent.fire = true;
     return bogusevent;
   }
 
@@ -140,7 +142,7 @@ public class BogusEvent implements Copyable {
    * @see #flushed()
    */
   public boolean fired() {
-    return init;
+    return fire;
   }
 
   /**

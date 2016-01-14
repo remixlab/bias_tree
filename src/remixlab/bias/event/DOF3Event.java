@@ -121,6 +121,16 @@ public class DOF3Event extends MotionEvent {
   public DOF3Event get() {
     return new DOF3Event(this);
   }
+  
+  @Override
+  public DOF3Event flush() {
+    return (DOF3Event) super.flush();
+  }
+  
+  @Override
+  public DOF3Event fire() {
+    return (DOF3Event) super.fire();
+  }
 
   @Override
   public void setPreviousEvent(MotionEvent prevEvent) {
@@ -248,6 +258,10 @@ public class DOF3Event extends MotionEvent {
     e2.delay = this.delay();
     e2.speed = this.speed();
     e2.distance = this.distance();
+    if(fired())
+      return e2.fire();
+    else if(flushed())
+      return e2.flush();
     return e2;
   }
 }
