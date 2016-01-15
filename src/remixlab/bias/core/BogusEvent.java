@@ -102,24 +102,32 @@ public class BogusEvent implements Copyable {
   }
 
   /**
-   * Same as {@code this.get()} but sets the {@link #flushed()} to true. Only agents may
-   * call this.
+   * Same as {@code this.get()} but sets the {@link #flushed()} flag to true. Only agents
+   * may call this.
    * 
    * @see #flushed()
    */
   public BogusEvent flush() {
+    if( fired() || flushed() ) {
+      System.out.println("Warning: event already " + (fired() ? "fired" : "flushed"));
+      return this;
+    }
     BogusEvent bogusevent = this.get();
     bogusevent.flush = true;
     return bogusevent;
   }
 
   /**
-   * Same as {@code this.get()} but sets the {@link #fired()} to true. Only agents may
-   * call this.
+   * Same as {@code this.get()} but sets the {@link #fired()} flag to true. Only agents
+   * may call this.
    * 
    * @see #flushed()
    */
   public BogusEvent fire() {
+    if( fired() || flushed() ) {
+      System.out.println("Warning: event already " + (fired() ? "fired" : "flushed"));
+      return this;
+    }
     BogusEvent bogusevent = this.get();
     bogusevent.fire = true;
     return bogusevent;
