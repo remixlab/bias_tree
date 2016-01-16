@@ -1,4 +1,4 @@
-ProScene [![Version](http://img.shields.io/badge/proscene-v-3.0.0-beta.1-brightgreen.svg)](https://github.com/remixlab/proscene/releases/download/v-3.0.0-beta.1/proscene-3.0.0-beta.1.zip) [![Dependencies](http://img.shields.io/badge/dependencies-processing%203-orange.svg)](http://processing.org/) [![License](http://img.shields.io/badge/license-GPL%203-blue.svg)](http://www.gnu.org/licenses/gpl.html)
+ProScene [![Version](https://img.shields.io/badge/proscene-v3.0.0--b1-brightgreen.svg)](https://github.com/remixlab/proscene/releases/download/v-3.0.0-beta.1/proscene-3.0.0-beta.1.zip) [![Dependencies](https://img.shields.io/badge/dependencies-processing%202-orange.svg)](http://processing.org/) [![License](https://img.shields.io/badge/license-GPL%203-blue.svg)](http://www.gnu.org/licenses/gpl.html)
 ========
 
 **Table of Contents**
