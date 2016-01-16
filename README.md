@@ -1,4 +1,4 @@
-ProScene [![Version](http://img.shields.io/badge/proscene-v2.0.5-brightgreen.svg)](https://github.com/remixlab/proscene/releases/download/v-2.0.5/proscene-2.0.5.zip) [![Dependencies](http://img.shields.io/badge/dependencies-processing%202-orange.svg)](http://processing.org/) [![License](http://img.shields.io/badge/license-GPL%203-blue.svg)](http://www.gnu.org/licenses/gpl.html)
+ProScene [![Version](http://img.shields.io/badge/proscene-v-3.0.0-beta.1-brightgreen.svg)](https://github.com/remixlab/proscene/releases/download/v-3.0.0-beta.1/proscene-3.0.0-beta.1.zip) [![Dependencies](http://img.shields.io/badge/dependencies-processing%203-orange.svg)](http://processing.org/) [![License](http://img.shields.io/badge/license-GPL%203-blue.svg)](http://www.gnu.org/licenses/gpl.html)
 ========
 
 **Table of Contents**
@@ -13,7 +13,7 @@ ProScene [![Version](http://img.shields.io/badge/proscene-v2.0.5-brightgreen.svg
 
 # Description
 
-**ProScene** (pronounced similar as the Czech word **"prosím"** which means **"please"**) is a free-software java library which provides classes to ease the creation of interactive 2D/3D scenes in [Processing](http://processing.org).
+**ProScene** (pronounced similar as the Czech word **"pros??m"** which means **"please"**) is a free-software java library which provides classes to ease the creation of interactive 2D/3D scenes in [Processing](http://processing.org).
 
 **ProScene** extensively uses **interactive frames**, i.e., coordinate systems that can be controlled with any [HID](http://en.wikipedia.org/wiki/Human_interface_device), allowing to easily setup an interactive 2D or 3D scene.
 
@@ -45,7 +45,7 @@ ProScene [![Version](http://img.shields.io/badge/proscene-v2.0.5-brightgreen.svg
 
 # Origin of the name
 
-*ProScene* not only means a *"pro-scene"*, but it is a two-phoneme word pronounced similar as the Czech word *"prosím"* (which means *"please"*), obtained by removing the middle phoneme (*"ce"*) of the word *pro-ce-ssing*. Thus, the name *"ProScene"* suggests the main goal of the package, which is to help you _shorten_ the creation of interactive 2D/3D scenes in **Processing**.
+*ProScene* not only means a *"pro-scene"*, but it is a two-phoneme word pronounced similar as the Czech word *"pros??m"* (which means *"please"*), obtained by removing the middle phoneme (*"ce"*) of the word *pro-ce-ssing*. Thus, the name *"ProScene"* suggests the main goal of the package, which is to help you _shorten_ the creation of interactive 2D/3D scenes in **Processing**.
 
 # Usage
 
