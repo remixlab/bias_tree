@@ -351,7 +351,7 @@ public class Profile {
       return;
     Method method = null;
     String message = "Check that the " + grabber().getClass().getSimpleName() + "." + action
-        + " method is public and returns void, and that it takes a "
+        + " method exists, is public and returns void, and that it takes no parameters or a "
         + ((key instanceof MotionShortcut) ? cls(key).getSimpleName() + " or MotionEvent" : cls(key).getSimpleName())
         + " parameter";
     try {
@@ -411,8 +411,8 @@ public class Profile {
       return;
     Method method = null;
     String message = "Check that the " + object.getClass().getSimpleName() + "." + action
-        + " method is public and returns void, and that it takes a " + grabber().getClass().getSimpleName()
-        + " parameter and a "
+        + " method exists, is public and returns void, and that it takes a " + grabber().getClass().getSimpleName()
+        + " parameter and, optionally, a "
         + ((key instanceof MotionShortcut) ? cls(key).getSimpleName() + " or MotionEvent" : cls(key).getSimpleName())
         + " parameter";
     try {
