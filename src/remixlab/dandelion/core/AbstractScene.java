@@ -161,51 +161,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     setVisualHints(AXES | GRID);
     upperLeftCorner = new Point(0, 0);
   }
-
-  // actions
-
-  /*
-   * public void addKeyFrameToPath1(ClickEvent event) { eye().addKeyFrameToPath(1); }
-   * 
-   * public void addKeyFrameToPath2(ClickEvent event) { eye().addKeyFrameToPath(2); }
-   * 
-   * public void addKeyFrameToPath3(ClickEvent event) { eye().addKeyFrameToPath(3); }
-   * 
-   * public void deletePath1(ClickEvent event) { eye().deletePath(1); }
-   * 
-   * public void deletePath2(ClickEvent event) { eye().deletePath(2); }
-   * 
-   * public void deletePath3(ClickEvent event) { eye().deletePath(3); }
-   * 
-   * public void playPath1(ClickEvent event) { eye().playPath(1); }
-   * 
-   * public void showAll(ClickEvent event) { showAll(); }
-   * 
-   * public void playPath2(ClickEvent event) { eye().playPath(2); }
-   * 
-   * public void playPath3(ClickEvent event) { eye().playPath(3); }
-   * 
-   * public void interpolateToFitScene(ClickEvent event) { eye().interpolateToFitScene();
-   * }
-   * 
-   * public void resetAnchor(ClickEvent event) { eye().setAnchor(new Vec(0, 0, 0)); //
-   * looks horrible, but works ;) eye().anchorFlag = true;
-   * eye().runResetAnchorHintTimer(1000); }
-   * 
-   * public void toggleAnimation(ClickEvent event) { toggleAnimation(); }
-   * 
-   * public void toggleAxesVisualHint(ClickEvent event) { toggleAxesVisualHint(); }
-   * 
-   * public void toggleCameraType(ClickEvent event) { toggleCameraType(); }
-   * 
-   * public void toggleGridVisualHint(ClickEvent event) { toggleGridVisualHint(); }
-   * 
-   * public void togglePickingVisualhint(ClickEvent event) { togglePickingVisualhint(); }
-   * 
-   * public void displayInfo(ClickEvent event) { displayInfo(); } //
-   */
-
-  //
+  
+  // Actions
 
   public void addKeyFrameToPath1() {
     eye().addKeyFrameToPath(1);
@@ -253,8 +210,6 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     eye().anchorFlag = true;
     eye().runResetAnchorHintTimer(1000);
   }
-
-  // end
 
   // Grabber Implementation
 

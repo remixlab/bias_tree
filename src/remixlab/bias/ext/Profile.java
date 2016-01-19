@@ -75,9 +75,6 @@ public class Profile {
   protected HashMap<Shortcut, ObjectMethodTuple> map;
   protected Grabber grabber;
 
-  // temporal vars
-  String initAction;
-
   /**
    * Attaches a profile to the given grabber.
    */
@@ -316,13 +313,6 @@ public class Profile {
       }
     }
     return false;
-  }
-
-  /**
-   * Internal macro.
-   */
-  protected void printError(Shortcut key, String action) {
-
   }
 
   /**

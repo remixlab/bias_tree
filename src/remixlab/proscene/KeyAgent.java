@@ -59,23 +59,13 @@ public class KeyAgent extends Agent {
     release = e.getAction() == processing.event.KeyEvent.RELEASE;
     type = e.getAction() == processing.event.KeyEvent.TYPE;
 
-    /*
-     * //debug KeyboardEvent kEvent; if(type) { kEvent = new KeyboardEvent(e.getKey());
-     * System.out.println("TYPE:    " + printEvent(kEvent) + printAction(kEvent)); }
-     * if(press) { kEvent = new KeyboardEvent(e.getModifiers(), e.getKeyCode());
-     * System.out.println( "PRESS:   " + printEvent(kEvent) + printAction(kEvent)); }
-     * if(release) { kEvent = new KeyboardEvent(e.getModifiers(), e.getKeyCode());
-     * System.out.println("RELEASE: " + printEvent(kEvent) + printAction(kEvent)); } // //
-     */
-
     if (type)
       currentEvent = new KeyboardEvent(e.getKey());
     else if (press || release)
       currentEvent = new KeyboardEvent(e.getModifiers(), e.getKeyCode());
     if (type || press)
       updateTrackedGrabber(currentEvent);
-    // handle(press ? currentEvent.fire() : release ? currentEvent.flush() :
-    // currentEvent);
+    
     handle(release ? currentEvent.flush() : currentEvent.fire());
   }
 

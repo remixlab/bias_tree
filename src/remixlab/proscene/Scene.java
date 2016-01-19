@@ -205,15 +205,16 @@ public class Scene extends AbstractScene implements PConstants {
       defMotionAgent = new MouseAgent(this);
       defKeyboardAgent = new KeyAgent(this);
       parent.registerMethod("mouseEvent", motionAgent());
-    }
-    //
-    /*
-     * if (platform() == Platform.PROCESSING_ANDROID) { defMotionAgent = new
-     * DroidTouchAgent(this, "proscene_touch"); defKeyboardAgent = new DroidKeyAgent(this,
-     * "proscene_keyboard"); } else { defMotionAgent = new MouseAgent(this,
-     * "proscene_mouse"); defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
-     * parent.registerMethod("mouseEvent", motionAgent()); }
-     */
+    }    
+//    if (platform() == Platform.PROCESSING_ANDROID) { 
+//      defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
+//      defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
+//      }
+//    else {
+//      defMotionAgent = new MouseAgent(this, "proscene_mouse");
+//      defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
+//      parent.registerMethod("mouseEvent", motionAgent());
+//    }
 
     parent.registerMethod("keyEvent", keyboardAgent());
     this.setDefaultKeyBindings();

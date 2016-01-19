@@ -107,9 +107,7 @@ public class MouseAgent extends Agent {
       prevEvent = currentEvent.get();
       return;
     }
-    if (e.getAction() == processing.event.MouseEvent.WHEEL) {// e.getAction() =
-      // MouseEvent.WHEEL
-      // = 8
+    if (e.getAction() == processing.event.MouseEvent.WHEEL) {
       handle(new DOF1Event(e.getCount(), /* e.getModifiers() */BogusEvent.NO_MODIFIER_MASK, WHEEL_ID));
       return;
     }
