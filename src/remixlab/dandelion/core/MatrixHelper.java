@@ -112,7 +112,12 @@ public abstract class MatrixHelper {
     return projectionViewInverseMat;
   }
 
-  // TODO doc me
+  /**
+   * Same as {@code setProjection(gScene.eye().getProjection(recompute))}.
+   * 
+   * @see #setProjection(Mat)
+   * @see remixlab.dandelion.core.Eye#getProjection(boolean)
+   */
   public void loadProjection(boolean recompute) {
     setProjection(gScene.eye().getProjection(recompute));
   }
@@ -128,7 +133,12 @@ public abstract class MatrixHelper {
     loadProjection(true);
   }
 
-  // TODO doc me
+  /**
+   * Same as {@code setModelView(gScene.eye().getView(recompute))}.     
+   *
+   * @see #setModelView(Mat)
+   * @see remixlab.dandelion.core.Eye#getView(boolean)
+   */
   public void loadModelView(boolean recompute) {
     setModelView(gScene.eye().getView(recompute));
   }

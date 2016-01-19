@@ -817,11 +817,6 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     setAxesVisualHint(!axesVisualHint());
   }
 
-  // TODO experimenting
-  public void toggleAxes(KeyboardEvent event) {
-    toggleAxesVisualHint();
-  }
-
   /**
    * Toggles the state of {@link #gridVisualHint()}.
    * 
