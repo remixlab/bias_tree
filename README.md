@@ -58,7 +58,7 @@ All library features requires a `Scene` object (which is the main package class)
 See the examples **BasicUse**, **AlternativeUse**, and **StandardCamera** for an illustration of these techniques. To get start using the library and learn
 its main features, have a look at the complete set of well documented examples that come along with it. Other uses are also covered in the example set and
 include (but are not limited to): drawing mechanisms, animation framework, and camera and keyboard customization. Advanced users may take full advantage of
-the fully documented [API reference](http://otrolado.info/prosceneApi/) (which is also
+the fully documented [API reference](http://remixlab.github.io/proscene-javadocs/) (which is also
 included in the package file).
 
 # Installation
