@@ -82,7 +82,6 @@ public abstract class Agent {
   public void removeGrabbers() {
     setDefaultGrabber(null);
     trackedGrabber = null;
-    // tGrabberBranch = null;
     grabberList.clear();
   }
 
@@ -95,10 +94,7 @@ public abstract class Agent {
    * @see #removeGrabbers()
    */
   public List<Grabber> grabbers() {
-    List<Grabber> pool = new ArrayList<Grabber>();
-    pool.removeAll(grabberList);
-    pool.addAll(grabberList);
-    return pool;
+    return grabberList;
   }
 
   /**
@@ -110,15 +106,10 @@ public abstract class Agent {
    * @see #removeGrabbers()
    */
   public boolean hasGrabber(Grabber grabber) {
-    if (grabber == null)
-      return false;
-    // return grabbers().contains(grabber);
-    // /*
     for (Grabber g : grabbers())
       if (g == grabber)
         return true;
     return false;
-    // */
   }
 
   /**
