@@ -238,8 +238,8 @@ public class InteractiveFrame extends GenericP5Frame {
   }
   
   protected void highlight(PGraphics pg) {
-    if( !this.grabsInput() )
-      return;
+    pg.scale(1.1f);
+    //TODO shapes pending, requires PShape style, stroke* and fill* to be readable
     if( pg.stroke )
       pg.stroke(highlight(pg.strokeColor));
     if( pg.fill )
@@ -368,12 +368,12 @@ public class InteractiveFrame extends GenericP5Frame {
       pg.fill(id());
       pg.stroke(id());
     }
-    else
-      if(isHighlightingEnabled())
-        highlight(pg);
     pg.pushMatrix();
     ((Scene) gScene).applyWorldTransformation(pg, this);
     pg.translate(shift.x(), shift.y(), shift.z());
+    //TODO shapes pending, requires PShape style, stroke* and fill* to be readable
+    if(isHighlightingEnabled() && this.grabsInput() && pg != ((Scene) gScene).pickingBuffer())
+      highlight(pg);
     if (shape() != null)
       pg.shape(shape());
     if (this.hasGraphicsHandler())
