@@ -296,12 +296,27 @@ public class InteractiveFrame extends GenericP5Frame {
    * Internal cache optimization method.
    */
   protected boolean update() {
-    if (pshape != null || this.hasGraphicsHandler())
+    if (pshape != null || this.hasGraphicsHandler()) {
+      setPickingPrecision(PickingPrecision.EXACT);
       return true;
-    for (InteractiveFrame m : ((Scene) gScene).frames())
-      if (m.shape() != null || m.hasGraphicsHandler())
-        return true;
+    } else {
+      if (pickingPrecision() == PickingPrecision.EXACT)
+        setPickingPrecision(PickingPrecision.ADAPTIVE);
+      for (InteractiveFrame m : ((Scene) gScene).frames())
+        if (m.pickingPrecision() == PickingPrecision.EXACT)
+          return true;
+    }
     return false;
+  }
+  
+  @Override
+  public void setPickingPrecision(PickingPrecision precision) {
+    if(precision == PickingPrecision.EXACT)
+      if(pshape == null && !this.hasGraphicsHandler()) {
+        System.out.println("Warning: nothing done. EXACT picking precision needs shape or graphics handler");
+        return;
+      }
+    pkgnPrecision = precision;
   }
 
   /**
@@ -324,7 +339,7 @@ public class InteractiveFrame extends GenericP5Frame {
    */
   @Override
   public final boolean checkIfGrabsInput(float x, float y) {
-    if ((shape() == null && !this.hasGraphicsHandler()) || !((Scene) gScene).isPickingBufferEnabled())
+    if (pickingPrecision() != PickingPrecision.EXACT || !((Scene) gScene).isPickingBufferEnabled())
       return super.checkIfGrabsInput(x, y);
     ((Scene) gScene).pickingBuffer().pushStyle();
     ((Scene) gScene).pickingBuffer().colorMode(PApplet.RGB, 255);
@@ -370,6 +385,8 @@ public class InteractiveFrame extends GenericP5Frame {
     }
     pg.pushMatrix();
     ((Scene) gScene).applyWorldTransformation(pg, this);
+    //drawNode(pg);
+    // ->
     pg.translate(shift.x(), shift.y(), shift.z());
     //TODO shapes pending, requires PShape style, stroke* and fill* to be readable
     if(isHighlightingEnabled() && this.grabsInput() && pg != ((Scene) gScene).pickingBuffer())
@@ -378,6 +395,7 @@ public class InteractiveFrame extends GenericP5Frame {
       pg.shape(shape());
     if (this.hasGraphicsHandler())
       this.invokeGraphicsHandler(pg);
+    // <-
     pg.popMatrix();
     if (pg == ((Scene) gScene).pickingBuffer()) {
       if (shape() != null)
@@ -386,6 +404,19 @@ public class InteractiveFrame extends GenericP5Frame {
     pg.popStyle();
     return true;
   }
+  
+  /*
+  protected void drawNode(PGraphics pg) {
+    pg.translate(shift.x(), shift.y(), shift.z());
+    //TODO shapes pending, requires PShape style, stroke* and fill* to be readable
+    if(isHighlightingEnabled() && this.grabsInput() && pg != ((Scene) gScene).pickingBuffer())
+      highlight(pg);
+    if (shape() != null)
+      pg.shape(shape());
+    if (this.hasGraphicsHandler())
+      this.invokeGraphicsHandler(pg);
+  }
+  */
 
   // DRAW METHOD REG
 
