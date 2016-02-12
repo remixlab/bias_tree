@@ -6,7 +6,6 @@ public class InteractiveTorus {
   InteractiveTorus(Scene scn) {
     scene = scn;    
     iFrame = new InteractiveFrame(scene);
-    iFrame.setGrabsInputThreshold(scene.radius()/4, true);
     setColor();
     setPosition();
   }

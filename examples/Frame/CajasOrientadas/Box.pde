@@ -66,14 +66,14 @@ public class Box {
     w = random(10, 40);
     h = random(10, 40);
     d = random(10, 40);
-    iFrame.setGrabsInputThreshold(max(w,h,d), true);
+    iFrame.setGrabsInputThreshold(max(w,h,d));
   }
 
   public void setSize(float myW, float myH, float myD) {
     w=myW; 
     h=myH; 
     d=myD;
-    iFrame.setGrabsInputThreshold(max(w,h,d), true);
+    iFrame.setGrabsInputThreshold(max(w,h,d));
   }  
 
   public int getColor() {

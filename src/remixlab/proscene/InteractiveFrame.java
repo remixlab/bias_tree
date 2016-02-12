@@ -237,7 +237,6 @@ public class InteractiveFrame extends GenericP5Frame {
     return c;
   }
   
-  // /*
   protected void highlight(PGraphics pg) {
     if( !this.grabsInput() )
       return;
@@ -245,101 +244,7 @@ public class InteractiveFrame extends GenericP5Frame {
       pg.stroke(highlight(pg.strokeColor));
     if( pg.fill )
       pg.fill(highlight(pg.fillColor));
-    //(instead of the previous two bocks)
-    //TODO needs readable shape properties: style, stroke, fill, strokeColor, fillColor
-//    if( shape() == null ) {
-//      if( pg.stroke )
-//        pg.stroke(highlight(pg.strokeColor));
-//      if( pg.fill )
-//        pg.fill(highlight(pg.fillColor));
-//    }
-//    else {
-//      if( !shape().style ) {
-//        if( pg.stroke )
-//          pg.stroke(highlight(pg.strokeColor));
-//        if( pg.fill )
-//          pg.fill(highlight(pg.fillColor));
-//      }
-//      else {
-//        if(shape().stroke)
-//          shape().setStroke(highlight(shape().strokeColor));
-//        if(shape().fill)
-//          shape().setFill(highlight(shape().fillColor));
-//      }
-//    }
   }
-  //*/
-  
-  /*
-  protected void highlight(PGraphics pg) {
-    if( !this.grabsInput() )
-      return;
-    pg.colorMode(PApplet.HSB, 255);
-    float hue, saturation, brightness;
-    
-    if( pg.stroke ) {
-      hue = pg.hue(pg.strokeColor);
-      saturation = pg.saturation(pg.strokeColor);
-      brightness = pg.brightness(pg.strokeColor);
-      pg.stroke(hue, saturation, brightness * 17f / 10f);
-    }
-    if( pg.fill ) {
-      hue = pg.hue(pg.fillColor);
-      saturation = pg.saturation(pg.fillColor);
-      brightness = pg.brightness(pg.fillColor);
-      pg.fill(hue, saturation, brightness * 17f / 10f);
-    }
-    
-    //(instead of the previous two blocks)
-    //TODO needs readable shape properties: style, stroke, fill, strokeColor, fillColor
-    
-//    if( shape() == null ) {
-//      if(pg.stroke) {
-//        hue = pg.hue(pg.strokeColor);
-//        saturation = pg.saturation(pg.strokeColor);
-//        brightness = pg.brightness(pg.strokeColor);
-//        pg.stroke(hue, saturation, brightness * 17f / 10f);
-//      }
-//      if( pg.fill ) {
-//        hue = pg.hue(pg.fillColor);
-//        saturation = pg.saturation(pg.fillColor);
-//        brightness = pg.brightness(pg.fillColor);
-//        pg.fill(hue, saturation, brightness * 17f / 10f);
-//      }
-//    }
-//    else { 
-//      if( !shape().style ) {
-//        if(pg.stroke) {
-//          hue = pg.hue(pg.strokeColor);
-//          saturation = pg.saturation(pg.strokeColor);
-//          brightness = pg.brightness(pg.strokeColor);
-//          pg.stroke(hue, saturation, brightness * 17f / 10f);
-//        }
-//        if( pg.fill ) {
-//          hue = pg.hue(pg.fillColor);
-//          saturation = pg.saturation(pg.fillColor);
-//          brightness = pg.brightness(pg.fillColor);
-//          pg.fill(hue, saturation, brightness * 17f / 10f);
-//        }
-//      }
-//      else {
-//        if(shape().stroke) {
-//          hue = pg.hue(shape().strokeColor);
-//          saturation = pg.saturation(shape().strokeColor);
-//          brightness = pg.brightness(shape().strokeColor);
-//          shape().setStroke(hue, saturation, brightness * 17f / 10f);
-//        }
-//        if( shape().fill ) {
-//          hue = pg.hue(shape().fillColor);
-//          saturation = pg.saturation(shape().fillColor);
-//          brightness = pg.brightness(shape().fillColor);
-//          shape().setFill(pg.color(hue, saturation, brightness * 17f / 10f));
-//        }
-//      }
-//    }
-   
-  }
-  //*/
 
   /**
    * Internal use. Frame graphics color to use in the

@@ -1564,21 +1564,11 @@ public abstract class Eye implements Copyable {
       info = false;
     }
 
-    /// *
     GenericFrame keyFrame = detachFrame();
+    keyFrame.setPickingPrecision(GenericFrame.PickingPrecision.FIXED);
+    keyFrame.setGrabsInputThreshold(20);
     if (gScene.pathsVisualHint())
-      gScene.motionAgent().addGrabber(keyFrame);// only works for iFrames
-    // for other frames (MyFrame) it requires to override: 1. MyFrame.detach()
-    // and 2. motionAgent.addGrabber(MyFrame)
-    // */
-
-    /*
-     * remixlab.dandelion.addon.InteractiveFrame keyFrame = new
-     * remixlab.dandelion.addon.InteractiveFrame((remixlab.dandelion.addon.
-     * InteractiveScene)scene); keyFrame.fromFrame(frame()); if(!scene.pathsVisualHint())
-     * scene.motionAgent().removeGrabber(keyFrame); //
-     */
-
+      gScene.motionAgent().addGrabber(keyFrame);
     kfi.get(key).addKeyFrame(keyFrame);
 
     if (info)

@@ -51,8 +51,6 @@ public void setup() {
 
   //frame 1
   frame1 = new InteractiveFrame(scene);
-  //comment the following line and see the difference in the picking squared area:
-  frame1.setGrabsInputThreshold(scene.radius()/4, true);
   frame1.translate(50, 50);
 
   // frame 2

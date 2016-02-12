@@ -2184,9 +2184,9 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    */
   static public void showOnlyEyeWarning(String method, boolean eye) {
     if (eye)
-      showWarning(method + "() can only be performed when frame is attached to an eye.");
+      showWarning(method + "() is meaningful only when frame is attached to an eye.");
     else
-      showWarning(method + "() can only be performed when frame detached from an eye.");
+      showWarning(method + "() is meaningful only when frame is detached from an eye.");
   }
 
   /**

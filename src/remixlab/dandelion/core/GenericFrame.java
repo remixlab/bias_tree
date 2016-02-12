@@ -147,18 +147,24 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   protected Eye theeye; // TODO add me in hashCode and equals?
 
   private float grabsInputThreshold;
-  private boolean adpThreshold;
+  
+  /**
+   * Enumerates the two possible types of Camera.
+   * <p>
+   * This type mainly defines different camera projection matrix. Many other methods take
+   * this Type into account.
+   */
+  public enum PickingPrecision {
+    FIXED, ADAPTIVE, EXACT
+  };
+  protected PickingPrecision pkgnPrecision;
 
   public DOF2Event initEvent;
   private float flySpeedCache;
 
-  // TODO decide this mode vs constraint! seems overkill
-  // protected boolean rspct2Frame;
-  // protected Frame gFrame;
-
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(grabsInputThreshold).append(adpThreshold)
+    return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(grabsInputThreshold).append(pkgnPrecision)
         .append(rotSensitivity).append(transSensitivity).append(sclSensitivity).append(spngRotation)
         .append(spngSensitivity).append(dampFriction).append(sFriction).append(wheelSensitivity).append(keySensitivity)
         .append(flyDisp).append(flySpd).append(scnUpVec).append(lastUpdate).toHashCode();
@@ -175,7 +181,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
     GenericFrame other = (GenericFrame) obj;
     return new EqualsBuilder().appendSuper(super.equals(obj)).append(grabsInputThreshold, other.grabsInputThreshold)
-        .append(adpThreshold, other.adpThreshold).append(dampFriction, other.dampFriction)
+        .append(pkgnPrecision, other.pkgnPrecision).append(dampFriction, other.dampFriction)
         .append(sFriction, other.sFriction).append(rotSensitivity, other.rotSensitivity)
         .append(sclSensitivity, other.sclSensitivity).append(spngRotation, other.spngRotation)
         .append(spngSensitivity, other.spngSensitivity).append(wheelSensitivity, other.wheelSensitivity)
@@ -473,7 +479,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   public GenericFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
     super(referenceFrame, p, r, s);
     init(scn);
-    setGrabsInputThreshold(20);
+    pkgnPrecision = PickingPrecision.ADAPTIVE;
+    setGrabsInputThreshold(Math.round(scn.radius()/4));
+    //setGrabsInputThreshold(20);
     setFlySpeed(0.01f * scene().eye().sceneRadius());
     for (Agent agent : scene().inputHandler().agents())
       agent.addGrabber(this);
@@ -500,6 +508,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     super(referenceFrame, p, r, s);
     theeye = eye;
     init(theeye.scene());
+    //dummy value:
+    pkgnPrecision = PickingPrecision.FIXED;
     setFlySpeed(0.01f * eye().sceneRadius());
     // fov = Math.PI / 3.0f
     if (scene().is3D())
@@ -533,10 +543,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     };
     scene().registerTimingTask(flyTimerTask);
     // end
-
-    // new
-    // TODO future versions should go (except for iFrames in eyePath?):
-    // setGrabsInputThreshold(Math.round(scene.radius()/10f), true);
 
     // TODO experimental
     q = scene().is3D() ? new Quat((float) Math.PI / 4, 0, 0) : new Rot((float) Math.PI / 4);
@@ -572,7 +578,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     //
     // this.setGrabsInputThreshold(otherFrame.grabsInputThreshold(),
     // otherFrame.adaptiveGrabsInputThreshold());
-    this.adpThreshold = otherFrame.adpThreshold;
+    this.pkgnPrecision = otherFrame.pkgnPrecision;
     this.grabsInputThreshold = otherFrame.grabsInputThreshold;
 
     this.setRotationSensitivity(otherFrame.rotationSensitivity());
@@ -2820,7 +2826,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
       AbstractScene.showOnlyEyeWarning("grabsInputThreshold", false);
       return 0;
     }
-    if (adaptiveGrabsInputThreshold())
+    if (pickingPrecision() == PickingPrecision.ADAPTIVE)
       return grabsInputThreshold * scaling() * gScene.eye().pixelToSceneRatio(position());
     return grabsInputThreshold;
   }
@@ -2830,27 +2836,19 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * and {@code false} otherwise.
    * 
    * @see #setGrabsInputThreshold(float, boolean)
-   */
-  public boolean adaptiveGrabsInputThreshold() {
-    if (isEyeFrame()) {
-      AbstractScene.showOnlyEyeWarning("adaptiveGrabsInputThreshold", false);
-      return false;
-    }
-    return adpThreshold;
+   */  
+  public PickingPrecision pickingPrecision() {
+    if (isEyeFrame())
+      AbstractScene.showOnlyEyeWarning("pickingPrecision", false);
+    return pkgnPrecision;
   }
-
-  /**
-   * Convenience function that simply calls
-   * {@code setGrabsInputThreshold(threshold, false)}.
-   * 
-   * @see #setGrabsInputThreshold(float, boolean)
-   */
-  public void setGrabsInputThreshold(float threshold) {
+  
+  public void setPickingPrecision(PickingPrecision precision) {
+    pkgnPrecision = precision;
     if (isEyeFrame()) {
-      AbstractScene.showOnlyEyeWarning("setGrabsInputThreshold", false);
+      AbstractScene.showOnlyEyeWarning("setPickingPrecision", false);
       return;
     }
-    setGrabsInputThreshold(threshold, false);
   }
 
   /**
@@ -2878,15 +2876,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * @see #grabsInputThreshold()
    * @see #checkIfGrabsInput(BogusEvent)
    */
-  public void setGrabsInputThreshold(float threshold, boolean adaptive) {
+  public void setGrabsInputThreshold(float threshold) {
     if (isEyeFrame()) {
       AbstractScene.showOnlyEyeWarning("setGrabsInputThreshold", false);
       return;
     }
-    if (threshold >= 0) {
-      adpThreshold = adaptive;
+    if (threshold >= 0)
       grabsInputThreshold = threshold;
-    }
   }
 
   /**
