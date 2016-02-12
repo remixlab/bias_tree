@@ -65,23 +65,12 @@ public class InteractiveFrame extends GenericP5Frame {
   // shape
   protected PShape pshape;
   protected int id;
-  protected PVector shift;
+  protected Vec shift;
 
   // Draw
   protected Object drawHandlerObject;
   protected Method drawHandlerMethod;
-
-  // TODO new experimenting with textures
-  protected PImage tex;
-
-  public InteractiveFrame(Scene scn, PShape ps, PImage texture) {
-    super(scn);
-    ((Scene) gScene).addFrame(this);
-    id = ++Scene.frameCount;
-    pshape = ps;
-    tex = texture;
-    shift = new PVector();
-  }
+  protected boolean highlight = true;
 
   /**
    * Constructs a interactive-frame and adds to the
@@ -97,7 +86,7 @@ public class InteractiveFrame extends GenericP5Frame {
     super(scn);
     ((Scene) gScene).addFrame(this);
     id = ++Scene.frameCount;
-    shift = new PVector();
+    shift = new Vec();
   }
 
   /**
@@ -115,7 +104,7 @@ public class InteractiveFrame extends GenericP5Frame {
     super(scn, referenceFrame);
     ((Scene) gScene).addFrame(this);
     id = ++Scene.frameCount;
-    shift = new PVector();
+    shift = new Vec();
   }
 
   /**
@@ -129,7 +118,7 @@ public class InteractiveFrame extends GenericP5Frame {
     super(scn);
     ((Scene) gScene).addFrame(this);
     id = ++Scene.frameCount;
-    shift = new PVector();
+    shift = new Vec();
     setShape(ps);
   }
 
@@ -145,7 +134,7 @@ public class InteractiveFrame extends GenericP5Frame {
     super(scn, referenceFrame);
     ((Scene) gScene).addFrame(this);
     id = ++Scene.frameCount;
-    shift = new PVector();
+    shift = new Vec();
     setShape(ps);
   }
 
@@ -162,7 +151,7 @@ public class InteractiveFrame extends GenericP5Frame {
     super(scn);
     ((Scene) gScene).addFrame(this);
     id = ++Scene.frameCount;
-    shift = new PVector();
+    shift = new Vec();
     addGraphicsHandler(obj, methodName);
   }
 
@@ -180,7 +169,7 @@ public class InteractiveFrame extends GenericP5Frame {
     super(scn, referenceFrame);
     ((Scene) gScene).addFrame(this);
     id = ++Scene.frameCount;
-    shift = new PVector();
+    shift = new Vec();
     addGraphicsHandler(obj, methodName);
   }
 
@@ -188,7 +177,7 @@ public class InteractiveFrame extends GenericP5Frame {
     super(otherFrame);
     this.pshape = otherFrame.pshape;
     this.id = otherFrame.id;
-    this.shift = otherFrame.shift.copy();
+    this.shift = otherFrame.shift.get();
     this.drawHandlerObject = otherFrame.drawHandlerObject;
     this.drawHandlerMethod = otherFrame.drawHandlerMethod;
   }
@@ -215,12 +204,148 @@ public class InteractiveFrame extends GenericP5Frame {
   public void applyWorldTransformation(PGraphics pg) {
     ((Scene) gScene).applyWorldTransformation(pg, this);
   }
+  
+  public void enableHighlighting() {
+    highlight = true;
+  }
+  
+  public void disableHighlighting() {
+    highlight = false;
+  }
+  
+  public void toggleHighlighting() {
+    highlight = !highlight;
+  }
+  
+  public boolean isHighlightingEnabled() {
+    return highlight;
+  }
+  
+  protected int highlight(int color) {
+    int c = 0;
+    float hue, saturation, brightness;
+    ((Scene) gScene).pApplet().pushStyle();
+    ((Scene) gScene).pApplet().colorMode(PApplet.HSB, 255);
+    
+    hue = ((Scene) gScene).pApplet().hue(color);
+    saturation = ((Scene) gScene).pApplet().saturation(color);
+    brightness = ((Scene) gScene).pApplet().brightness(color);
+    brightness *= (brightness > 150 ? 10f / 17f : 17f / 10f );
+    c = ((Scene) gScene).pApplet().color(hue, saturation, brightness);
+    
+    ((Scene) gScene).pApplet().popStyle();
+    return c;
+  }
+  
+  // /*
+  protected void highlight(PGraphics pg) {
+    if( !this.grabsInput() )
+      return;
+    if( pg.stroke )
+      pg.stroke(highlight(pg.strokeColor));
+    if( pg.fill )
+      pg.fill(highlight(pg.fillColor));
+    //(instead of the previous two bocks)
+    //TODO needs readable shape properties: style, stroke, fill, strokeColor, fillColor
+//    if( shape() == null ) {
+//      if( pg.stroke )
+//        pg.stroke(highlight(pg.strokeColor));
+//      if( pg.fill )
+//        pg.fill(highlight(pg.fillColor));
+//    }
+//    else {
+//      if( !shape().style ) {
+//        if( pg.stroke )
+//          pg.stroke(highlight(pg.strokeColor));
+//        if( pg.fill )
+//          pg.fill(highlight(pg.fillColor));
+//      }
+//      else {
+//        if(shape().stroke)
+//          shape().setStroke(highlight(shape().strokeColor));
+//        if(shape().fill)
+//          shape().setFill(highlight(shape().fillColor));
+//      }
+//    }
+  }
+  //*/
+  
+  /*
+  protected void highlight(PGraphics pg) {
+    if( !this.grabsInput() )
+      return;
+    pg.colorMode(PApplet.HSB, 255);
+    float hue, saturation, brightness;
+    
+    if( pg.stroke ) {
+      hue = pg.hue(pg.strokeColor);
+      saturation = pg.saturation(pg.strokeColor);
+      brightness = pg.brightness(pg.strokeColor);
+      pg.stroke(hue, saturation, brightness * 17f / 10f);
+    }
+    if( pg.fill ) {
+      hue = pg.hue(pg.fillColor);
+      saturation = pg.saturation(pg.fillColor);
+      brightness = pg.brightness(pg.fillColor);
+      pg.fill(hue, saturation, brightness * 17f / 10f);
+    }
+    
+    //(instead of the previous two blocks)
+    //TODO needs readable shape properties: style, stroke, fill, strokeColor, fillColor
+    
+//    if( shape() == null ) {
+//      if(pg.stroke) {
+//        hue = pg.hue(pg.strokeColor);
+//        saturation = pg.saturation(pg.strokeColor);
+//        brightness = pg.brightness(pg.strokeColor);
+//        pg.stroke(hue, saturation, brightness * 17f / 10f);
+//      }
+//      if( pg.fill ) {
+//        hue = pg.hue(pg.fillColor);
+//        saturation = pg.saturation(pg.fillColor);
+//        brightness = pg.brightness(pg.fillColor);
+//        pg.fill(hue, saturation, brightness * 17f / 10f);
+//      }
+//    }
+//    else { 
+//      if( !shape().style ) {
+//        if(pg.stroke) {
+//          hue = pg.hue(pg.strokeColor);
+//          saturation = pg.saturation(pg.strokeColor);
+//          brightness = pg.brightness(pg.strokeColor);
+//          pg.stroke(hue, saturation, brightness * 17f / 10f);
+//        }
+//        if( pg.fill ) {
+//          hue = pg.hue(pg.fillColor);
+//          saturation = pg.saturation(pg.fillColor);
+//          brightness = pg.brightness(pg.fillColor);
+//          pg.fill(hue, saturation, brightness * 17f / 10f);
+//        }
+//      }
+//      else {
+//        if(shape().stroke) {
+//          hue = pg.hue(shape().strokeColor);
+//          saturation = pg.saturation(shape().strokeColor);
+//          brightness = pg.brightness(shape().strokeColor);
+//          shape().setStroke(hue, saturation, brightness * 17f / 10f);
+//        }
+//        if( shape().fill ) {
+//          hue = pg.hue(shape().fillColor);
+//          saturation = pg.saturation(shape().fillColor);
+//          brightness = pg.brightness(shape().fillColor);
+//          shape().setFill(pg.color(hue, saturation, brightness * 17f / 10f));
+//        }
+//      }
+//    }
+   
+  }
+  //*/
 
   /**
    * Internal use. Frame graphics color to use in the
    * {@link remixlab.proscene.Scene#pickingBuffer()}.
    */
-  protected int getColor() {
+  protected int id() {
     // see here:
     // http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
     return ((Scene) gScene).pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
@@ -232,16 +357,16 @@ public class InteractiveFrame extends GenericP5Frame {
    * 
    * @see #graphicsShift()
    */
-  public void shiftGraphics(PVector shift) {
+  public void shiftGraphics(Vec shift) {
     this.shift = shift;
   }
 
   /**
    * Returns the {@link #shape()} shift.
    * 
-   * @see #shiftGraphics(PVector)
+   * @see #shiftGraphics(Vec)
    */
-  public PVector graphicsShift() {
+  public Vec graphicsShift() {
     return shift;
   }
 
@@ -289,7 +414,7 @@ public class InteractiveFrame extends GenericP5Frame {
    * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> with a
    * color buffer (see {@link remixlab.proscene.Scene#pickingBuffer()}). This method
    * compares the color of the {@link remixlab.proscene.Scene#pickingBuffer()} at
-   * {@code (x,y)} with {@link #getColor()}. Returns true if both colors are the same, and
+   * {@code (x,y)} with {@link #id()}. Returns true if both colors are the same, and
    * false otherwise.
    */
   @Override
@@ -300,7 +425,7 @@ public class InteractiveFrame extends GenericP5Frame {
     ((Scene) gScene).pickingBuffer().colorMode(PApplet.RGB, 255);
     int index = (int) y * gScene.width() + (int) x;
     if ((0 <= index) && (index < ((Scene) gScene).pickingBuffer().pixels.length))
-      return ((Scene) gScene).pickingBuffer().pixels[index] == getColor();
+      return ((Scene) gScene).pickingBuffer().pixels[index] == id();
     ((Scene) gScene).pickingBuffer().popStyle();
     return false;
   }
@@ -332,29 +457,26 @@ public class InteractiveFrame extends GenericP5Frame {
       return false;
     pg.pushStyle();
     if (pg == ((Scene) gScene).pickingBuffer()) {
-      if (shape() != null) {
+      if (shape() != null)
         shape().disableStyle();
-        if (tex != null)
-          shape().noTexture();
-      }
       pg.colorMode(PApplet.RGB, 255);
-      pg.fill(getColor());
-      pg.stroke(getColor());
+      pg.fill(id());
+      pg.stroke(id());
     }
+    else
+      if(isHighlightingEnabled())
+        highlight(pg);
     pg.pushMatrix();
     ((Scene) gScene).applyWorldTransformation(pg, this);
-    pg.translate(shift.x, shift.y, shift.z);
+    pg.translate(shift.x(), shift.y(), shift.z());
     if (shape() != null)
       pg.shape(shape());
     if (this.hasGraphicsHandler())
       this.invokeGraphicsHandler(pg);
     pg.popMatrix();
     if (pg == ((Scene) gScene).pickingBuffer()) {
-      if (shape() != null) {
-        if (tex != null)
-          shape().texture(tex);
+      if (shape() != null)
         shape().enableStyle();
-      }
     }
     pg.popStyle();
     return true;
@@ -367,7 +489,6 @@ public class InteractiveFrame extends GenericP5Frame {
    * {@link #draw(PGraphics)}.
    */
   protected boolean invokeGraphicsHandler(PGraphics pg) {
-    // 3. Draw external registered method
     if (drawHandlerObject != null) {
       try {
         drawHandlerMethod.invoke(drawHandlerObject, new Object[] { pg });
