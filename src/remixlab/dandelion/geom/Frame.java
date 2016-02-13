@@ -295,7 +295,7 @@ public class Frame implements Copyable {
    * {@link #referenceFrame()}). No action is performed if setting {@code refFrame} as the
    * {@link #referenceFrame()} would create a loop in the Frame hierarchy.
    */
-  public final void setReferenceFrame(Frame rFrame) {
+  public void setReferenceFrame(Frame rFrame) {
     if (settingAsReferenceFrameWillCreateALoop(rFrame)) {
       System.out.println("Frame.setReferenceFrame would create a loop in Frame hierarchy. Nothing done.");
       return;

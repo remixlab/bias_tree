@@ -18,6 +18,7 @@ package remixlab.proscene;
 import java.lang.reflect.Method;
 
 import processing.core.*;
+import remixlab.dandelion.core.GenericFrame;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
@@ -84,7 +85,6 @@ public class InteractiveFrame extends GenericP5Frame {
    */
   public InteractiveFrame(Scene scn) {
     super(scn);
-    ((Scene) gScene).addFrame(this);
     id = ++Scene.frameCount;
     shift = new Vec();
   }
@@ -102,7 +102,6 @@ public class InteractiveFrame extends GenericP5Frame {
    */
   public InteractiveFrame(Scene scn, Frame referenceFrame) {
     super(scn, referenceFrame);
-    ((Scene) gScene).addFrame(this);
     id = ++Scene.frameCount;
     shift = new Vec();
   }
@@ -116,7 +115,6 @@ public class InteractiveFrame extends GenericP5Frame {
    */
   public InteractiveFrame(Scene scn, PShape ps) {
     super(scn);
-    ((Scene) gScene).addFrame(this);
     id = ++Scene.frameCount;
     shift = new Vec();
     setShape(ps);
@@ -132,7 +130,6 @@ public class InteractiveFrame extends GenericP5Frame {
    */
   public InteractiveFrame(Scene scn, Frame referenceFrame, PShape ps) {
     super(scn, referenceFrame);
-    ((Scene) gScene).addFrame(this);
     id = ++Scene.frameCount;
     shift = new Vec();
     setShape(ps);
@@ -149,7 +146,6 @@ public class InteractiveFrame extends GenericP5Frame {
    */
   public InteractiveFrame(Scene scn, Object obj, String methodName) {
     super(scn);
-    ((Scene) gScene).addFrame(this);
     id = ++Scene.frameCount;
     shift = new Vec();
     addGraphicsHandler(obj, methodName);
@@ -167,7 +163,6 @@ public class InteractiveFrame extends GenericP5Frame {
    */
   public InteractiveFrame(Scene scn, Frame referenceFrame, Object obj, String methodName) {
     super(scn, referenceFrame);
-    ((Scene) gScene).addFrame(this);
     id = ++Scene.frameCount;
     shift = new Vec();
     addGraphicsHandler(obj, methodName);
@@ -302,8 +297,8 @@ public class InteractiveFrame extends GenericP5Frame {
     } else {
       if (pickingPrecision() == PickingPrecision.EXACT)
         setPickingPrecision(PickingPrecision.ADAPTIVE);
-      for (InteractiveFrame m : ((Scene) gScene).frames())
-        if (m.pickingPrecision() == PickingPrecision.EXACT)
+      for (GenericFrame frame : ((Scene) gScene).frames())
+        if (frame.pickingPrecision() == PickingPrecision.EXACT)
           return true;
     }
     return false;
@@ -375,38 +370,23 @@ public class InteractiveFrame extends GenericP5Frame {
   public boolean draw(PGraphics pg) {
     if (shape() == null && !this.hasGraphicsHandler())
       return false;
-    pg.pushStyle();
-    if (pg == ((Scene) gScene).pickingBuffer()) {
-      if (shape() != null)
-        shape().disableStyle();
-      pg.colorMode(PApplet.RGB, 255);
-      pg.fill(id());
-      pg.stroke(id());
-    }
     pg.pushMatrix();
     ((Scene) gScene).applyWorldTransformation(pg, this);
-    //drawNode(pg);
-    // ->
-    pg.translate(shift.x(), shift.y(), shift.z());
-    //TODO shapes pending, requires PShape style, stroke* and fill* to be readable
-    if(isHighlightingEnabled() && this.grabsInput() && pg != ((Scene) gScene).pickingBuffer())
-      highlight(pg);
-    if (shape() != null)
-      pg.shape(shape());
-    if (this.hasGraphicsHandler())
-      this.invokeGraphicsHandler(pg);
-    // <-
+    traverse(pg);
     pg.popMatrix();
-    if (pg == ((Scene) gScene).pickingBuffer()) {
-      if (shape() != null)
-        shape().enableStyle();
-    }
-    pg.popStyle();
     return true;
   }
   
-  /*
-  protected void drawNode(PGraphics pg) {
+  @Override
+  public void traverse() {
+    traverse(Scene.targetPGraphics);
+  }
+  
+  protected void traverse(PGraphics pg) {
+    pg.pushStyle();
+    if(pg == ((Scene) gScene).pickingBuffer())
+      beginPickingBuffer();
+    pg.pushMatrix();
     pg.translate(shift.x(), shift.y(), shift.z());
     //TODO shapes pending, requires PShape style, stroke* and fill* to be readable
     if(isHighlightingEnabled() && this.grabsInput() && pg != ((Scene) gScene).pickingBuffer())
@@ -415,8 +395,25 @@ public class InteractiveFrame extends GenericP5Frame {
       pg.shape(shape());
     if (this.hasGraphicsHandler())
       this.invokeGraphicsHandler(pg);
+    pg.popMatrix();
+    if(pg == ((Scene) gScene).pickingBuffer())
+      endPickingBuffer();
+    pg.popStyle();
   }
-  */
+  
+  protected void beginPickingBuffer() {
+    PGraphics pickingBuffer = ((Scene) gScene).pickingBuffer();
+    if (shape() != null)
+      shape().disableStyle();
+    pickingBuffer.colorMode(PApplet.RGB, 255);
+    pickingBuffer.fill(id());
+    pickingBuffer.stroke(id());
+  }
+  
+  protected void endPickingBuffer() {
+    if (shape() != null)
+      shape().enableStyle();
+  }
 
   // DRAW METHOD REG
 

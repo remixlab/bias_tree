@@ -12,8 +12,10 @@ package remixlab.dandelion.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+import processing.core.PGraphics;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.constraint.*;
@@ -121,6 +123,9 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   public enum Platform {
     PROCESSING_DESKTOP, PROCESSING_ANDROID, PROCESSING_JS
   }
+  
+  protected List<GenericFrame> seeds;
+  protected List<GenericFrame> frames;
 
   // public final static int PUP = 1 << 6;
   // public final static int ARP = 1 << 7;
@@ -152,6 +157,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * @see #setEye(Eye)
    */
   public AbstractScene() {
+    seeds = new ArrayList<GenericFrame>();
+    frames = new ArrayList<GenericFrame>();
     setPlatform();
     setTimingHandler(new TimingHandler(this));
     deltaCount = frameCount;
@@ -162,48 +169,181 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     upperLeftCorner = new Point(0, 0);
   }
   
+  /**
+   * Returns all the frames handled by the scene.
+   * 
+   * @see #drawFrames()
+   * @see #drawFrames(PGraphics)
+   */
+  public List<GenericFrame> frames() {
+    return frames;
+  }
+  
+  protected List<GenericFrame> frameSeeds() {
+    return seeds;
+  }
+  
+  protected boolean hasFrameSeed(GenericFrame gFrame) {
+    for (GenericFrame frame : frameSeeds())
+      if (frame == gFrame)
+        return true;
+    return false;
+  }
+  
+  
+  protected boolean hasFrame(GenericFrame gFrame) {
+    for (GenericFrame frame : frames())
+      if (frame == gFrame)
+        return true;
+    return false;
+  }
+  
+  protected boolean addFrameSeed(GenericFrame gFrame) {
+    if (gFrame == null || gFrame.referenceFrame() != null)
+      return false;
+    if (hasFrameSeed(gFrame))
+      return false;    
+    boolean result = frameSeeds().add(gFrame);
+    return result;
+  }
+  
+  /**
+   * Add the {@code frame} into the scene. Does nothing if the current frames belongs to
+   * the scene.
+   */
+  protected boolean addFrame(GenericFrame gFrame) {
+    if (gFrame == null)
+      return false;
+    if (hasFrame(gFrame))
+      return false;    
+    boolean result = frames().add(gFrame);
+    return result;
+  }
+  
+  protected boolean removeFrameSeed(GenericFrame iFrame) {
+    boolean result = false;
+    Iterator<GenericFrame> it = frameSeeds().iterator();
+    while (it.hasNext()) {
+      if (it.next() == iFrame) {
+        it.remove();
+        result = true;
+      }
+    }
+    return result;
+  }
+  
+  public void traverseFrameGraph() {
+    for (GenericFrame frame : frameSeeds())
+      traverse(frame);
+  }
+  
+  protected void traverse(Frame frame) {
+    pushModelView();
+    applyTransformation(frame);
+    if(frame instanceof GenericFrame)
+      ((GenericFrame)frame).traverse();
+    for (Frame child : frame.children())
+      traverse(child);
+    popModelView();
+  }
+  
   // Actions
 
+  /**
+   * Same as {@code eye().addKeyFrameToPath(1)}.
+   * 
+   * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
+   */
   public void addKeyFrameToPath1() {
     eye().addKeyFrameToPath(1);
   }
-
+  
+  /**
+   * Same as {@code eye().addKeyFrameToPath(2)}.
+   * 
+   * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
+   */
   public void addKeyFrameToPath2() {
     eye().addKeyFrameToPath(2);
   }
 
+  /**
+   * Same as {@code eye().addKeyFrameToPath(1)}.
+   * 
+   * @see remixlab.dandelion.core.Eye#addKeyFrameToPath(int)
+   */
   public void addKeyFrameToPath3() {
     eye().addKeyFrameToPath(3);
   }
 
+  /**
+   * Same as {@code eye().deletePath(1)}.
+   * 
+   * @see remixlab.dandelion.core.Eye#deletePath(int)
+   */
   public void deletePath1() {
     eye().deletePath(1);
   }
 
+  /**
+   * Same as {@code eye().deletePath(2)}.
+   * 
+   * @see remixlab.dandelion.core.Eye#deletePath(int)
+   */
   public void deletePath2() {
     eye().deletePath(2);
   }
 
+  /**
+   * Same as {@code eye().deletePath(3)}.
+   * 
+   * @see remixlab.dandelion.core.Eye#deletePath(int)
+   */
   public void deletePath3() {
-    eye().deletePath(1);
+    eye().deletePath(3);
   }
 
+  /**
+   * Same as {@code eye().playPath(1)}.
+   * 
+   * @see remixlab.dandelion.core.Eye#playPath(int)
+   */
   public void playPath1() {
     eye().playPath(1);
   }
 
+  /**
+   * Same as {@code eye().playPath(2)}.
+   * 
+   * @see remixlab.dandelion.core.Eye#playPath(int)
+   */
   public void playPath2() {
     eye().playPath(2);
   }
 
+  /**
+   * Same as {@code eye().playPath(3)}.
+   * 
+   * @see remixlab.dandelion.core.Eye#playPath(int)
+   */
   public void playPath3() {
-    eye().playPath(1);
+    eye().playPath(3);
   }
 
+  /**
+   * Same as {@code eye().interpolateToFitScene()}.
+   * 
+   * @see remixlab.dandelion.core.Eye#interpolateToFitScene()
+   */
   public void interpolateToFitScene() {
     eye().interpolateToFitScene();
   }
 
+  /**
+   * Same as {@code eye().setAnchor(new Vec(0, 0, 0))}.
+   * 
+   * @see remixlab.dandelion.core.Eye#setAnchor(Vec)
+   */
   public void resetAnchor() {
     eye().setAnchor(new Vec(0, 0, 0));
     // looks horrible, but works ;)

@@ -19,9 +19,7 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -123,7 +121,6 @@ public class Scene extends AbstractScene implements PConstants {
   protected static int frameCount;
   protected PGraphics pBuffer;
   protected boolean pBufferEnabled;
-  protected List<InteractiveFrame> frameList;
 
   protected Profile profile;
 
@@ -187,7 +184,6 @@ public class Scene extends AbstractScene implements PConstants {
     setMatrixHelper(matrixHelper(pg));
 
     // 3. Frames & picking buffer
-    frameList = new ArrayList<InteractiveFrame>();
     // pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ?
     // pApplet().createGraphics(pg().width, pg().height, pg() instanceof
     // PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width,
@@ -919,7 +915,7 @@ public class Scene extends AbstractScene implements PConstants {
       result += "2. Eye bindings:\n";
       result += info;
     }
-    if (this.frames().size() > 0)
+    if (this.frameSeeds().size() > 0)
       result += "3. For a specific frame bindings use: frame.info():\n";
     /*
      * result += "Frames' info\n"; for (InteractiveFrame frame : frames()) { result +=
@@ -1325,83 +1321,26 @@ public class Scene extends AbstractScene implements PConstants {
     // if (frames().size() > 0)
     pickingBuffer().loadPixels();
   }
-
-  /**
-   * Returns all the frames handled by the scene.
-   * 
-   * @see #drawFrames()
-   * @see #drawFrames(PGraphics)
-   * @see #addFrame(InteractiveFrame)
-   * @see #removeFrame(InteractiveFrame)
-   */
-  public List<InteractiveFrame> frames() {
-    return frameList;
-  }
-
-  /**
-   * Add the {@code frame} into the scene. Does nothing if the current frames belongs to
-   * the scene.
-   * 
-   * @see #frames()
-   * @see #drawFrames()
-   * @see #drawFrames(PGraphics)
-   * @see #removeFrame(InteractiveFrame)
-   */
-  public boolean addFrame(InteractiveFrame iFrame) {
-    if (iFrame == null)
+  
+  @Override
+  protected boolean addFrame(GenericFrame gFrame) {
+    if (gFrame == null)
       return false;
-    if (hasFrame(iFrame))
+    if (hasFrame(gFrame))
       return false;
+    
+    // a bit weird but otherwise checkifgrabsinput throws a npe at sketch startup
+    //if(gFrame instanceof InteractiveFrame)// this line throws the npe too
     if (frames().size() == 0)
-      if (this.isPickingBufferEnabled())
+      if (isPickingBufferEnabled())
         pickingBuffer().loadPixels();
-    boolean result = frames().add(iFrame);
+    
+    boolean result = frames().add(gFrame);
     return result;
-  }
-
-  /**
-   * Returns true if scene has {@code frame} and false otherwise.
-   */
-  public boolean hasFrame(InteractiveFrame iFrame) {
-    for (InteractiveFrame frame : frames())
-      if (frame == iFrame)
-        return true;
-    return false;
   }
 
   public static boolean GRAPHICS;
-
-  /**
-   * Remove the {@code frame} from the scene.
-   * 
-   * @see #frames()
-   * @see #drawFrames()
-   * @see #drawFrames(PGraphics)
-   * @see #addFrame(InteractiveFrame)
-   */
-  public boolean removeFrame(InteractiveFrame iFrame) {
-    boolean result = false;
-    Iterator<InteractiveFrame> it = frames().iterator();
-    while (it.hasNext()) {
-      if (it.next() == iFrame) {
-        it.remove();
-        result = true;
-      }
-    }
-    if (result) {
-      for (InteractiveFrame m : frames())
-        if (m.shape() != null || m.hasGraphicsHandler()) {
-          GRAPHICS = true;
-          break;
-        }
-      GRAPHICS = false;
-    }
-    return result;
-  }
-
-  public void removeFrames() {
-    frames().clear();
-  }
+  protected static PGraphics targetPGraphics;
 
   /**
    * Draw all scene {@link #frames()}. Same as:
@@ -1419,17 +1358,16 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #removeFrame(InteractiveFrame)
    * @see remixlab.proscene.InteractiveFrame#draw(PGraphics)
    */
+  ///*
   public void drawFrames() {
-    for (InteractiveFrame frame : frames())
-      frame.draw(pg());
+    targetPGraphics = pg();
+    traverseFrameGraph();
   }
 
   /**
    * Draw all {@link #frames()} into the given pgraphics. No
    * {@code pgraphics.beginDraw()/endDraw()} calls take place. This method allows shader
    * chaining.
-   * <p>
-   * Returns {@code true} if at least a frame get drawn.
    * <p>
    * Note that {@code drawFrames(pickingBuffer())} (which enables 'picking' of the frames
    * using a <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a>
@@ -1447,8 +1385,8 @@ public class Scene extends AbstractScene implements PConstants {
     // 1. Set pgraphics matrices using a custom MatrixHelper
     bindMatrices(pgraphics);
     // 2. Draw all frames into pgraphics
-    for (InteractiveFrame frame : frames())
-      frame.draw(pgraphics);
+    targetPGraphics = pgraphics;
+    traverseFrameGraph();
   }
 
   /**
@@ -1482,6 +1420,19 @@ public class Scene extends AbstractScene implements PConstants {
     if (this.pg() == pgraphics)
       return;
     matrixHelper(pgraphics).bind(false);
+  }
+  
+  //TODO really needs a second thought
+  @Override
+  protected void traverse(Frame frame) {
+    targetPGraphics.pushMatrix();
+    applyTransformation(targetPGraphics, frame);
+    if(frame instanceof GenericFrame)
+      // idea: add transformations into the frame
+      ((GenericFrame)frame).traverse();
+    for (Frame child : frame.children())
+      traverse(child);
+    targetPGraphics.popMatrix();
   }
 
   /**

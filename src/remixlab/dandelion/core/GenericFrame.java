@@ -518,6 +518,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
   protected void init(AbstractScene scn) {
     gScene = scn;
+    scene().addFrameSeed(this);
+    scene().addFrame(this);
     setRotationSensitivity(1.0f);
     setScalingSensitivity(1.0f);
     setTranslationSensitivity(1.0f);
@@ -601,6 +603,41 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   @Override
   public GenericFrame get() {
     return new GenericFrame(this);
+  }
+  
+  @Override  
+  public void setReferenceFrame(Frame rFrame) {
+    if (settingAsReferenceFrameWillCreateALoop(rFrame)) {
+      System.out.println("Frame.setReferenceFrame would create a loop in Frame hierarchy. Nothing done.");
+      return;
+    }
+
+    if (referenceFrame() == rFrame) {
+      if (referenceFrame() == null)
+        if(scene() != null)
+          scene().addFrameSeed(this);
+      return;
+    }
+    
+    if (referenceFrame() != null) // old
+      referenceFrame().children().remove(this);
+    else
+      if(scene() != null)
+        scene().removeFrameSeed(this);
+    
+    refFrame = rFrame;
+    
+    if (referenceFrame() != null) // new
+      referenceFrame().children().add(this);
+    else
+      if(scene() != null)
+        scene().addFrameSeed(this);
+    
+    modified();
+  }
+  
+  public void traverse() {
+    //TODO
   }
 
   /**
