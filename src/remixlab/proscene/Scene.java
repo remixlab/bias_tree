@@ -915,7 +915,7 @@ public class Scene extends AbstractScene implements PConstants {
       result += "2. Eye bindings:\n";
       result += info;
     }
-    if (this.frameSeeds().size() > 0)
+    if (this.leadingFrames().size() > 0)
       result += "3. For a specific frame bindings use: frame.info():\n";
     /*
      * result += "Frames' info\n"; for (InteractiveFrame frame : frames()) { result +=
@@ -1324,18 +1324,11 @@ public class Scene extends AbstractScene implements PConstants {
   
   @Override
   protected boolean addFrame(GenericFrame gFrame) {
-    if (gFrame == null)
-      return false;
-    if (hasFrame(gFrame))
-      return false;
-    
+    boolean result = super.addFrame(gFrame);    
     // a bit weird but otherwise checkifgrabsinput throws a npe at sketch startup
     //if(gFrame instanceof InteractiveFrame)// this line throws the npe too
-    if (frames().size() == 0)
-      if (isPickingBufferEnabled())
+    if (result && isPickingBufferEnabled())
         pickingBuffer().loadPixels();
-    
-    boolean result = frames().add(gFrame);
     return result;
   }
 

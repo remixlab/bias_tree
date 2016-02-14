@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import processing.core.PGraphics;
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.constraint.*;
@@ -171,26 +170,31 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   
   /**
    * Returns all the frames handled by the scene.
-   * 
-   * @see #drawFrames()
-   * @see #drawFrames(PGraphics)
    */
   public List<GenericFrame> frames() {
     return frames;
   }
   
-  protected List<GenericFrame> frameSeeds() {
+  /**
+   * Returns the top-level frames (those which referenceFrame is null) handled by the scene.
+   */
+  protected List<GenericFrame> leadingFrames() {
     return seeds;
   }
   
-  protected boolean hasFrameSeed(GenericFrame gFrame) {
-    for (GenericFrame frame : frameSeeds())
+  /**
+   * Returns {@code true} if the frame is top-level.
+   */
+  protected boolean isLeadingFrame(GenericFrame gFrame) {
+    for (GenericFrame frame : leadingFrames())
       if (frame == gFrame)
         return true;
     return false;
   }
   
-  
+  /**
+   * Returns {@code true} if the frame is handled by the scene.
+   */
   protected boolean hasFrame(GenericFrame gFrame) {
     for (GenericFrame frame : frames())
       if (frame == gFrame)
@@ -198,12 +202,23 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     return false;
   }
   
-  protected boolean addFrameSeed(GenericFrame gFrame) {
+  /**
+   * Registers the frame into the scene. Call by the frame constructor.
+   */
+  protected void registerFrame(GenericFrame gFrame) {
+    addLeadingFrame(gFrame);
+    addFrame(gFrame);
+  }
+  
+  /**
+   * Add the frame as top-level if its reference frame is null and it isn't already added.
+   */
+  protected boolean addLeadingFrame(GenericFrame gFrame) {
     if (gFrame == null || gFrame.referenceFrame() != null)
       return false;
-    if (hasFrameSeed(gFrame))
+    if (isLeadingFrame(gFrame))
       return false;    
-    boolean result = frameSeeds().add(gFrame);
+    boolean result = leadingFrames().add(gFrame);
     return result;
   }
   
@@ -220,23 +235,34 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     return result;
   }
   
-  protected boolean removeFrameSeed(GenericFrame iFrame) {
+  /**
+   * Removes the leading frame if present. Typically used when re-parenting the frame.
+   */
+  protected boolean removeLeadingFrame(GenericFrame iFrame) {
     boolean result = false;
-    Iterator<GenericFrame> it = frameSeeds().iterator();
+    Iterator<GenericFrame> it = leadingFrames().iterator();
     while (it.hasNext()) {
       if (it.next() == iFrame) {
         it.remove();
         result = true;
+        break;
       }
     }
     return result;
   }
   
+  /**
+   * Traverse the frame hierarchy, calling {@link remixlab.dandelion.core.GenericFrame#traverse()}
+   * on each frame.
+   */
   public void traverseFrameGraph() {
-    for (GenericFrame frame : frameSeeds())
+    for (GenericFrame frame : leadingFrames())
       traverse(frame);
   }
   
+  /**
+   * Used by the traverse frame graph algorithm.
+   */
   protected void traverse(Frame frame) {
     pushModelView();
     applyTransformation(frame);
