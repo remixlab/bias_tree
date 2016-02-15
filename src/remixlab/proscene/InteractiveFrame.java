@@ -18,7 +18,6 @@ package remixlab.proscene;
 import java.lang.reflect.Method;
 
 import processing.core.*;
-import remixlab.dandelion.core.GenericFrame;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
@@ -39,8 +38,32 @@ import remixlab.util.*;
  * <b>papplet.setup()</b>, and then calling {@link remixlab.proscene.Scene#drawFrames()}
  * in <b>papplet.draw()</b>.
  * </ol>
- * Note that in the latter case the interactive-frame will automatically be picked using
- * the {@link remixlab.proscene.Scene#pickingBuffer()}.
+ * When a visual representation is attached to a frame, picking can be performed in an
+ * exact manner (using the pixels of the projected visual representation themselves)
+ * provided that the {@link #pickingPrecision()} is set to {@link PickingPrecision#EXACT}
+ * and the scene {@link remixlab.proscene.Scene#pickingBuffer()} is enabled (see
+ * {@link remixlab.proscene.Scene#enablePickingBuffer()}). The strategy doesn't support
+ * coloring or texturing operations to take place within the visual representation. Use
+ * another {@link #pickingPrecision()} if this is the case or if performance is a concern
+ * (using a picking buffer requires the geometry to be drawn twice).
+ * <p>
+ * If the above conditions are met, the visual representation may be highlighted when
+ * picking takes place (see {@link #enableHighlighting()}). Highlighting is enabled by
+ * default when {@link remixlab.proscene.Scene#drawFrames()} is called. To implement a
+ * different highlighting strategy, {@link #disableHighlighting()} and then iterate
+ * through the scene frames using code like this:
+ * 
+ * <pre>
+ * {@code
+ * for (InteractiveFrame frame : scene.frames()) {
+ *   fill(scene.mouseAgent().inputGrabber() == frame ? highlightedColor : normalColor);
+ *   frame.draw();
+ * }
+ * }
+ * </pre>
+ * 
+ * Note that iterating through the scene frames is not as efficient as simply calling
+ * {@link remixlab.proscene.Scene#drawFrames()}.
  * 
  * @see remixlab.dandelion.core.GenericFrame
  */
@@ -74,11 +97,9 @@ public class InteractiveFrame extends GenericP5Frame {
   protected boolean highlight = true;
 
   /**
-   * Constructs a interactive-frame and adds to the
-   * {@link remixlab.proscene.Scene#genericFrames()} collection. Calls {@code super(scn}.
+   * Constructs a interactive-frame. Calls {@code super(scn}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
-   * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
    * @see #shape()
    * @see #setShape(PShape)
    * @see #addGraphicsHandler(Object, String)
@@ -90,12 +111,10 @@ public class InteractiveFrame extends GenericP5Frame {
   }
 
   /**
-   * Constructs an interactive-frame as a child of reference frame, and adds it to the
-   * {@link remixlab.proscene.Scene#genericFrames()} collection. Calls
+   * Constructs an interactive-frame as a child of reference frame. Calls
    * {@code super(scn, referenceFrame}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame)
-   * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
    * @see #shape()
    * @see #setShape(PShape)
    * @see #addGraphicsHandler(Object, String)
@@ -107,11 +126,9 @@ public class InteractiveFrame extends GenericP5Frame {
   }
 
   /**
-   * Wraps the pshape into this interactive-frame which is then added to the
-   * {@link remixlab.proscene.Scene#genericFrames()} collection. Calls {@code super(scn)}.
+   * Wraps the pshape into this interactive-frame. Calls {@code super(scn)}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
-   * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
    */
   public InteractiveFrame(Scene scn, PShape ps) {
     super(scn);
@@ -122,11 +139,9 @@ public class InteractiveFrame extends GenericP5Frame {
 
   /**
    * Wraps the pshape into this interactive-frame which is created as a child of reference
-   * frame and then added to the {@link remixlab.proscene.Scene#genericFrames()} collection.
-   * Calls {@code super(scn, referenceFrame)}.
+   * frame. Calls {@code super(scn, referenceFrame)}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame)
-   * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
    */
   public InteractiveFrame(Scene scn, Frame referenceFrame, PShape ps) {
     super(scn, referenceFrame);
@@ -136,12 +151,10 @@ public class InteractiveFrame extends GenericP5Frame {
   }
 
   /**
-   * Wraps the function object procedure into this interactive-frame which is then added
-   * it to the {@link remixlab.proscene.Scene#genericFrames()} collection. Calls
+   * Wraps the function object procedure into this interactive-frame. Calls
    * {@code super(scn}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
-   * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
    * @see #addGraphicsHandler(Object, String)
    */
   public InteractiveFrame(Scene scn, Object obj, String methodName) {
@@ -153,12 +166,9 @@ public class InteractiveFrame extends GenericP5Frame {
 
   /**
    * Wraps the the function object procedure into this interactive-frame which is is
-   * created as a child of reference frame and then added to the
-   * {@link remixlab.proscene.Scene#genericFrames()} collection. Calls
-   * {@code super(scn, referenceFrame}.
+   * created as a child of reference frame. Calls {@code super(scn, referenceFrame}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame)
-   * @see remixlab.proscene.Scene#addFrame(InteractiveFrame)
    * @see #addGraphicsHandler(Object, String)
    */
   public InteractiveFrame(Scene scn, Frame referenceFrame, Object obj, String methodName) {
@@ -199,45 +209,74 @@ public class InteractiveFrame extends GenericP5Frame {
   public void applyWorldTransformation(PGraphics pg) {
     ((Scene) gScene).applyWorldTransformation(pg, this);
   }
-  
+
+  /**
+   * Enables highlighting of the frame visual representation when picking takes place.
+   * 
+   * @see #disableHighlighting()
+   * @see #toggleHighlighting()
+   * @see #isHighlightingEnabled()
+   */
   public void enableHighlighting() {
     highlight = true;
   }
-  
+
+  /**
+   * Disables highlighting of the frame visual representation when picking takes place.
+   * 
+   * @see #enableHighlighting()
+   * @see #toggleHighlighting()
+   * @see #isHighlightingEnabled()
+   */
   public void disableHighlighting() {
     highlight = false;
   }
-  
+
+  /**
+   * Toggles highlighting of the frame visual representation when picking takes place.
+   * 
+   * @see #enableHighlighting()
+   * @see #disableHighlighting()
+   * @see #isHighlightingEnabled()
+   */
   public void toggleHighlighting() {
     highlight = !highlight;
   }
-  
+
+  /**
+   * Returns true if highlighting of the frame visual representation when picking takes
+   * place is enablesd.
+   * 
+   * @see #enableHighlighting()
+   * @see #disableHighlighting()
+   * @see #isHighlightingEnabled()
+   */
   public boolean isHighlightingEnabled() {
     return highlight;
   }
-  
+
   protected int highlight(int color) {
     int c = 0;
     float hue, saturation, brightness;
     ((Scene) gScene).pApplet().pushStyle();
     ((Scene) gScene).pApplet().colorMode(PApplet.HSB, 255);
-    
+
     hue = ((Scene) gScene).pApplet().hue(color);
     saturation = ((Scene) gScene).pApplet().saturation(color);
     brightness = ((Scene) gScene).pApplet().brightness(color);
-    brightness *= (brightness > 150 ? 10f / 17f : 17f / 10f );
+    brightness *= (brightness > 150 ? 10f / 17f : 17f / 10f);
     c = ((Scene) gScene).pApplet().color(hue, saturation, brightness);
-    
+
     ((Scene) gScene).pApplet().popStyle();
     return c;
   }
-  
+
   protected void highlight(PGraphics pg) {
     pg.scale(1.1f);
-    //TODO shapes pending, requires PShape style, stroke* and fill* to be readable
-    if( pg.stroke )
+    // TODO shapes pending, requires PShape style, stroke* and fill* to be readable
+    if (pg.stroke)
       pg.stroke(highlight(pg.strokeColor));
-    if( pg.fill )
+    if (pg.fill)
       pg.fill(highlight(pg.fillColor));
   }
 
@@ -297,20 +336,24 @@ public class InteractiveFrame extends GenericP5Frame {
     } else {
       if (pickingPrecision() == PickingPrecision.EXACT)
         setPickingPrecision(PickingPrecision.ADAPTIVE);
-      for (GenericFrame frame : ((Scene) gScene).genericFrames())
+      for (InteractiveFrame frame : ((Scene) gScene).frames())
         if (frame.pickingPrecision() == PickingPrecision.EXACT)
           return true;
     }
     return false;
   }
-  
+
   @Override
   public void setPickingPrecision(PickingPrecision precision) {
-    if(precision == PickingPrecision.EXACT)
-      if(pshape == null && !this.hasGraphicsHandler()) {
-        System.out.println("Warning: nothing done. EXACT picking precision needs shape or graphics handler");
+    if (precision == PickingPrecision.EXACT) {
+      if (pshape == null && !this.hasGraphicsHandler()) {
+        System.out.println("EXACT picking precision will behave like FIXED since it requires"
+            + "the scene to enable the pickingBuffer.");
         return;
       }
+      if (!((Scene) gScene).isPickingBufferEnabled())
+        System.out.println("EXACT picking precision behaves like FIXED");
+    }
     pkgnPrecision = precision;
   }
 
@@ -325,12 +368,14 @@ public class InteractiveFrame extends GenericP5Frame {
   }
 
   /**
-   * An interactive-frame is selected using
+   * An interactive-frame may be picked using
    * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> with a
    * color buffer (see {@link remixlab.proscene.Scene#pickingBuffer()}). This method
    * compares the color of the {@link remixlab.proscene.Scene#pickingBuffer()} at
-   * {@code (x,y)} with {@link #id()}. Returns true if both colors are the same, and
-   * false otherwise.
+   * {@code (x,y)} with {@link #id()}. Returns true if both colors are the same, and false
+   * otherwise.
+   * 
+   * @see #setPickingPrecision(PickingPrecision)
    */
   @Override
   public final boolean checkIfGrabsInput(float x, float y) {
@@ -376,31 +421,31 @@ public class InteractiveFrame extends GenericP5Frame {
     pg.popMatrix();
     return true;
   }
-  
+
   @Override
   public void traverse() {
     traverse(Scene.targetPGraphics);
   }
-  
+
   protected void traverse(PGraphics pg) {
     pg.pushStyle();
-    if(pg == ((Scene) gScene).pickingBuffer())
+    if (pg == ((Scene) gScene).pickingBuffer())
       beginPickingBuffer();
     pg.pushMatrix();
     pg.translate(shift.x(), shift.y(), shift.z());
-    //TODO shapes pending, requires PShape style, stroke* and fill* to be readable
-    if(isHighlightingEnabled() && this.grabsInput() && pg != ((Scene) gScene).pickingBuffer())
+    // TODO shapes pending, requires PShape style, stroke* and fill* to be readable
+    if (isHighlightingEnabled() && this.grabsInput() && pg != ((Scene) gScene).pickingBuffer())
       highlight(pg);
     if (shape() != null)
       pg.shape(shape());
     if (this.hasGraphicsHandler())
       this.invokeGraphicsHandler(pg);
     pg.popMatrix();
-    if(pg == ((Scene) gScene).pickingBuffer())
+    if (pg == ((Scene) gScene).pickingBuffer())
       endPickingBuffer();
     pg.popStyle();
   }
-  
+
   protected void beginPickingBuffer() {
     PGraphics pickingBuffer = ((Scene) gScene).pickingBuffer();
     if (shape() != null)
@@ -409,7 +454,7 @@ public class InteractiveFrame extends GenericP5Frame {
     pickingBuffer.fill(id());
     pickingBuffer.stroke(id());
   }
-  
+
   protected void endPickingBuffer() {
     if (shape() != null)
       shape().enableStyle();

@@ -134,7 +134,7 @@ public abstract class MatrixHelper {
   }
 
   /**
-   * Same as {@code setModelView(gScene.eye().getView(recompute))}.     
+   * Same as {@code setModelView(gScene.eye().getView(recompute))}.
    *
    * @see #setModelView(Mat)
    * @see remixlab.dandelion.core.Eye#getView(boolean)

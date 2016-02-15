@@ -86,12 +86,12 @@ public class MotionEvent extends BogusEvent {
   public MotionEvent get() {
     return new MotionEvent(this);
   }
-  
+
   @Override
   public MotionEvent flush() {
     return (MotionEvent) super.flush();
   }
-  
+
   @Override
   public MotionEvent fire() {
     return (MotionEvent) super.fire();

@@ -104,12 +104,12 @@ public class DOF1Event extends MotionEvent {
   public DOF1Event get() {
     return new DOF1Event(this);
   }
-  
+
   @Override
   public DOF1Event flush() {
     return (DOF1Event) super.flush();
   }
-  
+
   @Override
   public DOF1Event fire() {
     return (DOF1Event) super.fire();

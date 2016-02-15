@@ -30,16 +30,16 @@ import remixlab.util.*;
  * 
  * <pre>
  * {@code
- *   public class MyObject {
- *     public GenericFrame gFrame;
+ * public class MyObject {
+ *   public GenericFrame gFrame;
  * 
- *     public void draw() {
- *       gFrame.scene().pushModelView();
- *       gFrame.applyWorldTransformation();
- *       drawMyObject();
- *       gFrame.scene().popModelView();
- *     }
+ *   public void draw() {
+ *     gFrame.scene().pushModelView();
+ *     gFrame.applyWorldTransformation();
+ *     drawMyObject();
+ *     gFrame.scene().popModelView();
  *   }
+ * }
  * }
  * </pre>
  * 
@@ -82,11 +82,8 @@ import remixlab.util.*;
  * buttons, provided it's added to the mouse-agent first (see
  * {@link remixlab.bias.core.Agent#addGrabber(Grabber)}.
  * <p>
- * Picking a generic-frame is simply done by checking if the pointer is within a circled
- * area around the frame {@link #center()} screen projection (see
- * {@link #checkIfGrabsInput(float, float)},
- * {@link #setGrabsInputThreshold(float, boolean)} and
- * {@link #adaptiveGrabsInputThreshold()}).
+ * Picking a generic-frame is done accordingly to a {@link #pickingPrecision()}. Refer to
+ * {@link #setPickingPrecision(PickingPrecision)} for details.
  * <p>
  * A generic-frame is loosely-coupled with the scene object used to instantiate it, i.e.,
  * the transformation it represents may be applied to a different scene. See
@@ -147,7 +144,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   protected Eye theeye; // TODO add me in hashCode and equals?
 
   private float grabsInputThreshold;
-  
+
   /**
    * Enumerates the two possible types of Camera.
    * <p>
@@ -157,6 +154,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   public enum PickingPrecision {
     FIXED, ADAPTIVE, EXACT
   };
+
   protected PickingPrecision pkgnPrecision;
 
   public DOF2Event initEvent;
@@ -479,8 +477,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   public GenericFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
     super(referenceFrame, p, r, s);
     init(scn);
-    //pkgnPrecision = PickingPrecision.ADAPTIVE;
-    //setGrabsInputThreshold(Math.round(scn.radius()/4));
+    // pkgnPrecision = PickingPrecision.ADAPTIVE;
+    // setGrabsInputThreshold(Math.round(scn.radius()/4));
     pkgnPrecision = PickingPrecision.FIXED;
     setGrabsInputThreshold(20);
     setFlySpeed(0.01f * scene().eye().sceneRadius());
@@ -509,7 +507,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     super(referenceFrame, p, r, s);
     theeye = eye;
     init(theeye.scene());
-    //dummy value:
+    // dummy value:
     pkgnPrecision = PickingPrecision.FIXED;
     setFlySpeed(0.01f * eye().sceneRadius());
     // fov = Math.PI / 3.0f
@@ -604,8 +602,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   public GenericFrame get() {
     return new GenericFrame(this);
   }
-  
-  @Override  
+
+  @Override
   public void setReferenceFrame(Frame rFrame) {
     if (settingAsReferenceFrameWillCreateALoop(rFrame)) {
       System.out.println("Frame.setReferenceFrame would create a loop in Frame hierarchy. Nothing done.");
@@ -614,30 +612,33 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
     if (referenceFrame() == rFrame) {
       if (referenceFrame() == null)
-        if(scene() != null)
+        if (scene() != null)
           scene().addLeadingFrame(this);
       return;
     }
-    
+
     if (referenceFrame() != null) // old
       referenceFrame().children().remove(this);
-    else
-      if(scene() != null)
-        scene().removeLeadingFrame(this);
-    
+    else if (scene() != null)
+      scene().removeLeadingFrame(this);
+
     refFrame = rFrame;
-    
+
     if (referenceFrame() != null) // new
       referenceFrame().children().add(this);
-    else
-      if(scene() != null)
-        scene().addLeadingFrame(this);
-    
+    else if (scene() != null)
+      scene().addLeadingFrame(this);
+
     modified();
   }
-  
+
+  /**
+   * Procedure called by the scene frame traversal algorithm. Default implementation is
+   * empty, i.e., it is meant to be implemented by derived classes.
+   * 
+   * @see remixlab.dandelion.core.AbstractScene#traverseFrameGraph()
+   */
   public void traverse() {
-    //TODO
   }
 
   /**
@@ -727,7 +728,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   }
 
   /**
-   * Picks the generic-frame
+   * Picks the generic-frame according to the {@link #pickingPrecision()}.
+   * 
+   * @see #pickingPrecision()
+   * @see #setPickingPrecision(PickingPrecision)
    */
   public boolean checkIfGrabsInput(float x, float y) {
     Vec proj = gScene.eye().projectedCoordinatesOf(position());
@@ -2869,59 +2873,48 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   }
 
   /**
-   * Returns {@code true} if the {@link #checkIfGrabsInput(BogusEvent)} test is adaptive
-   * and {@code false} otherwise.
+   * Returns the frame picking precision. See
+   * {@link #setPickingPrecision(PickingPrecision)} for details.
    * 
-   * @see #setGrabsInputThreshold(float, boolean)
-   */  
+   * @see #setPickingPrecision(PickingPrecision)
+   * @see #setGrabsInputThreshold(float)
+   */
   public PickingPrecision pickingPrecision() {
     if (isEyeFrame())
       AbstractScene.showOnlyEyeWarning("pickingPrecision", false);
     return pkgnPrecision;
   }
-  
+
+  /**
+   * Sets the picking precision of the frame.
+   * <p>
+   * When {@link #pickingPrecision()} is {@link PickingPrecision#FIXED} or
+   * {@link PickingPrecision#ADAPTIVE} Picking is done by checking if the pointer lies
+   * within a squared area around the frame {@link #center()} screen projection which size
+   * is defined by {@link #setGrabsInputThreshold(float)}.
+   * <p>
+   * When {@link #pickingPrecision()} is {@link PickingPrecision#EXACT}, picking is done
+   * in a precise manner according to the projected pixels of the graphics related to the
+   * frame. It requires the scene to implement a so called picking buffer (see the
+   * proscene
+   * <a href="http://remixlab.github.io/proscene-javadocs/remixlab/proscene/Scene.html">
+   * Scene</a> class for a possible implementation) and the frame to implement means to
+   * attach graphics to it (see the proscene <a href=
+   * "http://remixlab.github.io/proscene-javadocs/remixlab/proscene/InteractiveFrame.html">
+   * InteractiveFrame</a> class for a possible implementation). Default implementation of
+   * this policy behaves like {@link PickingPrecision#FIXED}.
+   * 
+   * @see #pickingPrecision()
+   * @see #setGrabsInputThreshold(float)
+   */
   public void setPickingPrecision(PickingPrecision precision) {
+    if (precision == PickingPrecision.EXACT)
+      System.out.println("EXACT picking precision will behave like FIXED since it requires"
+          + "the scene to implement a pickingBuffer.");
     pkgnPrecision = precision;
     if (isEyeFrame()) {
       AbstractScene.showOnlyEyeWarning("setPickingPrecision", false);
       return;
-    }
-  }
-  
-  /**
-   * Sets the length of the hint that defined the {@link #checkIfGrabsInput(BogusEvent)}
-   * condition used for frame picking.
-   * <p>
-   * If {@code adaptive} is {@code false}, the {@code threshold} is expressed in pixels
-   * and directly defines the fixed length of the
-   * {@link remixlab.dandelion.core.AbstractScene#drawShooterTarget(Vec, float)} ,
-   * centered at the projection of the frame origin onto the screen.
-   * <p>
-   * If {@code adaptive} is {@code true}, the {@code threshold} is expressed in object
-   * space (world units) and defines the edge length of a squared bounding box that leads
-   * to an adaptive length of the
-   * {@link remixlab.dandelion.core.AbstractScene#drawShooterTarget(Vec, float)} ,
-   * centered at the projection of the frame origin onto the screen. Use this version only
-   * if you have a good idea of the bounding box size of the object you are attaching to
-   * the frame.
-   * <p>
-   * Default behavior is to set the {@link #grabsInputThreshold()} to 20 pixels length (in
-   * a non-adaptive manner).
-   * <p>
-   * Negative {@code threshold} values are silently ignored.
-   * 
-   * @deprecated use {@link #setPickingPrecision(PickingPrecision)} and
-   * {@link #setGrabsInputThreshold(float)}.
-   */
-  @Deprecated
-  public void setGrabsInputThreshold(float threshold, boolean adaptive) {
-    if (isEyeFrame()) {
-      AbstractScene.showOnlyEyeWarning("setGrabsInputThreshold", false);
-      return;
-    }
-    if (threshold >= 0) {
-      setPickingPrecision(adaptive ? PickingPrecision.ADAPTIVE : PickingPrecision.EXACT);
-      setGrabsInputThreshold(threshold);
     }
   }
 
@@ -2947,6 +2940,49 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * <p>
    * Negative {@code threshold} values are silently ignored.
    * 
+   * @deprecated use {@link #setPickingPrecision(PickingPrecision)} and
+   *             {@link #setGrabsInputThreshold(float)}.
+   */
+  @Deprecated
+  public void setGrabsInputThreshold(float threshold, boolean adaptive) {
+    if (isEyeFrame()) {
+      AbstractScene.showOnlyEyeWarning("setGrabsInputThreshold", false);
+      return;
+    }
+    if (threshold >= 0) {
+      setPickingPrecision(adaptive ? PickingPrecision.ADAPTIVE : PickingPrecision.EXACT);
+      setGrabsInputThreshold(threshold);
+    }
+  }
+
+  /**
+   * Sets the length of the squared area around the frame {@link #center()} screen
+   * projection that defined the {@link #checkIfGrabsInput(BogusEvent)} condition used for
+   * frame picking.
+   * <p>
+   * If {@link #pickingPrecision()} is {@link PickingPrecision#FIXED}, the
+   * {@code threshold} is expressed in pixels and directly defines the fixed length of the
+   * {@link remixlab.dandelion.core.AbstractScene#drawShooterTarget(Vec, float)}, centered
+   * at the projection of the frame origin onto the screen.
+   * <p>
+   * If {@link #pickingPrecision()} is {@link PickingPrecision#ADAPTIVE}, the
+   * {@code threshold} is expressed in object space (world units) and defines the edge
+   * length of a squared bounding box that leads to an adaptive length of the
+   * {@link remixlab.dandelion.core.AbstractScene#drawShooterTarget(Vec, float)} ,
+   * centered at the projection of the frame origin onto the screen. Use this version only
+   * if you have a good idea of the bounding box size of the object you are attaching to
+   * the frame.
+   * <p>
+   * The value is meaningless when the {@link #pickingPrecision()} is
+   * {@link PickingPrecision#EXACT}. See {@link #setPickingPrecision(PickingPrecision)}
+   * for details.
+   * <p>
+   * Default behavior is to set the {@link #grabsInputThreshold()} to 20 pixels length (in
+   * a non-adaptive manner).
+   * <p>
+   * Negative {@code threshold} values are silently ignored.
+   * 
+   * @see #pickingPrecision()
    * @see #grabsInputThreshold()
    * @see #checkIfGrabsInput(BogusEvent)
    */

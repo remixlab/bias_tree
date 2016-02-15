@@ -157,12 +157,12 @@ public class DOF6Event extends MotionEvent {
   public DOF6Event get() {
     return new DOF6Event(this);
   }
-  
+
   @Override
   public DOF6Event flush() {
     return (DOF6Event) super.flush();
   }
-  
+
   @Override
   public DOF6Event fire() {
     return (DOF6Event) super.fire();
@@ -407,9 +407,9 @@ public class DOF6Event extends MotionEvent {
     e3.delay = this.delay();
     e3.speed = this.speed();
     e3.distance = this.distance();
-    if(fired())
+    if (fired())
       return e3.fire();
-    else if(flushed())
+    else if (flushed())
       return e3.flush();
     return e3;
   }

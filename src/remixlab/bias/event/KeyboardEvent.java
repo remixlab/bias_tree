@@ -70,12 +70,12 @@ public class KeyboardEvent extends BogusEvent {
   public KeyboardEvent get() {
     return new KeyboardEvent(this);
   }
-  
+
   @Override
   public KeyboardEvent flush() {
     return (KeyboardEvent) super.flush();
   }
-  
+
   @Override
   public KeyboardEvent fire() {
     return (KeyboardEvent) super.fire();

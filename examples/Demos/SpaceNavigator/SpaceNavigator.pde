@@ -293,23 +293,3 @@ void openSpaceNavigator() {
   //button1 = device.getButton(0);
   //button2 = device.getButton(1);
 }
-
-/*
-void openSpaceNavigator() {
-  control = ControlIO.getInstance(this);
-  // Find a device that matches the configuration file
-  device = control.getMatchedDevice("SpaceNavigator");
-  if (device == null) {
-    println("No suitable device configured");
-    System.exit(-1); // End the program NOW!
-  }
-  sliderXpos = device.getSlider("x");
-  sliderYpos = device.getSlider("y");
-  sliderZpos = device.getSlider("z");
-  sliderXrot = device.getSlider("rx");
-  sliderYrot = device.getSlider("ry");
-  sliderZrot = device.getSlider("rz");
-  button1 = device.getButton("button1");
-  button2 = device.getButton("button2");
-}
-*/

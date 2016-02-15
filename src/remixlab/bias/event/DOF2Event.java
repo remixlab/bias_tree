@@ -110,12 +110,12 @@ public class DOF2Event extends MotionEvent {
   public DOF2Event get() {
     return new DOF2Event(this);
   }
-  
+
   @Override
   public DOF2Event flush() {
     return (DOF2Event) super.flush();
   }
-  
+
   @Override
   public DOF2Event fire() {
     return (DOF2Event) super.fire();
@@ -238,9 +238,9 @@ public class DOF2Event extends MotionEvent {
     e1.delay = this.delay();
     e1.speed = this.speed();
     e1.distance = this.distance();
-    if(fired())
+    if (fired())
       return e1.fire();
-    else if(flushed())
+    else if (flushed())
       return e1.flush();
     return e1;
   }

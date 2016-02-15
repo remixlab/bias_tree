@@ -43,7 +43,7 @@ public class BogusEvent implements Copyable {
   public static final int META = 1 << 2;
   public static final int ALT = 1 << 3;
   public static final int ALT_GRAPH = 1 << 4;
-  
+
   private boolean fire, flush;
 
   @Override
@@ -108,7 +108,7 @@ public class BogusEvent implements Copyable {
    * @see #flushed()
    */
   public BogusEvent flush() {
-    if( fired() || flushed() ) {
+    if (fired() || flushed()) {
       System.out.println("Warning: event already " + (fired() ? "fired" : "flushed"));
       return this;
     }
@@ -124,7 +124,7 @@ public class BogusEvent implements Copyable {
    * @see #flushed()
    */
   public BogusEvent fire() {
-    if( fired() || flushed() ) {
+    if (fired() || flushed()) {
       System.out.println("Warning: event already " + (fired() ? "fired" : "flushed"));
       return this;
     }

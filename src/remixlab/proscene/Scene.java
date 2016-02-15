@@ -59,10 +59,11 @@ import java.nio.FloatBuffer;
  * {@link #keyboardAgent()}, and {@link #motionAgent()} (which in the desktop version of
  * proscene defaults to a {@link #mouseAgent()}):
  * <ol>
- * <li><b>The default keyboard agent</b> provides shortcuts to frame and scene keyboard
- * actions (such as {@link #drawGrid()} or {@link #drawAxes()}). See
- * {@link #keyboardAgent()}.
- * <li><b>The default mouse agent</b> provides high-level methods to manage Eye and Frame
+ * <li><b>The default keyboard agent</b> provides shortcuts to
+ * {@link remixlab.proscene.InteractiveFrame}s and scene keyboard actions (such as
+ * {@link #drawGrid()} or {@link #drawAxes()}). See {@link #keyboardAgent()}.
+ * <li><b>The default mouse agent</b> provides high-level methods to manage the
+ * {@link remixlab.dandelion.core.Eye} and {@link remixlab.proscene.InteractiveFrame}
  * motion actions. Please refer to the {@link remixlab.proscene.MouseAgent} and
  * {@link remixlab.proscene.KeyAgent} API's.
  * </ol>
@@ -80,16 +81,15 @@ import java.nio.FloatBuffer;
  * {@code void} and have one single {@code Scene} parameter. See the example
  * <i>AnimationHandler</i>.
  * </ol>
- * <h3>Scene frames</h3> Each scene instance has a collection of frames (see
- * {@link #genericFrames()}). A {@link remixlab.proscene.InteractiveFrame} is a PSshape wrapper
- * {@link remixlab.bias.core.Grabber} (it may thus be manipulated by any
- * {@link remixlab.bias.core.Agent}), implementing a
+ * <h3>Scene frames</h3> Each scene has a collection of
+ * {@link remixlab.proscene.InteractiveFrame}s (see {@link #frames()}). An
+ * {@link remixlab.proscene.InteractiveFrame} is a high level
+ * {@link remixlab.dandelion.geom.Frame} PSshape wrapper (a coordinate system related to a
+ * PShape or an arbitrary graphics procedure) which may be manipulated by any
+ * {@link remixlab.bias.core.Agent}) and for which the scene implements a
  * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> with a color
- * buffer (see {@link #pickingBuffer()}) technique for easy and precise object selection.
- * Use {@link #genericFrames()}, {@link #addFrame(InteractiveFrame)}, {@link #removeFrames()},
- * {@link #hasFrame(InteractiveFrame)}, {@link #removeFrame(InteractiveFrame)},
- * {@link #removeFrames()}, {@link #drawFrames()} and {@link #drawFrames(PGraphics)} for
- * frame handling.
+ * buffer technique for easy and precise object selection (see {@link #pickingBuffer()}
+ * and {@link #drawFrames(PGraphics)}).
  */
 public class Scene extends AbstractScene implements PConstants {
   // begin: GWT-incompatible
@@ -204,16 +204,16 @@ public class Scene extends AbstractScene implements PConstants {
       defMotionAgent = new MouseAgent(this);
       defKeyboardAgent = new KeyAgent(this);
       parent.registerMethod("mouseEvent", motionAgent());
-    }    
-//    if (platform() == Platform.PROCESSING_ANDROID) { 
-//      defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
-//      defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
-//      }
-//    else {
-//      defMotionAgent = new MouseAgent(this, "proscene_mouse");
-//      defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
-//      parent.registerMethod("mouseEvent", motionAgent());
-//    }
+    }
+    // if (platform() == Platform.PROCESSING_ANDROID) {
+    // defMotionAgent = new DroidTouchAgent(this, "proscene_touch");
+    // defKeyboardAgent = new DroidKeyAgent(this, "proscene_keyboard");
+    // }
+    // else {
+    // defMotionAgent = new MouseAgent(this, "proscene_mouse");
+    // defKeyboardAgent = new KeyAgent(this, "proscene_keyboard");
+    // parent.registerMethod("mouseEvent", motionAgent());
+    // }
 
     parent.registerMethod("keyEvent", keyboardAgent());
     this.setDefaultKeyBindings();
@@ -1327,49 +1327,52 @@ public class Scene extends AbstractScene implements PConstants {
 
   public static boolean GRAPHICS;
   protected static PGraphics targetPGraphics;
-  
+
   @Override
   protected boolean addFrame(GenericFrame gFrame) {
-    boolean result = super.addFrame(gFrame);    
-    if(result) {
-      if(gFrame instanceof InteractiveFrame)
-        iFrames.add((InteractiveFrame)gFrame);
+    boolean result = super.addFrame(gFrame);
+    if (result) {
+      if (gFrame instanceof InteractiveFrame)
+        iFrames.add((InteractiveFrame) gFrame);
       // a bit weird but otherwise checkifgrabsinput throws a npe at sketch startup
-      //if(gFrame instanceof InteractiveFrame)// this line throws the npe too
+      // if(gFrame instanceof InteractiveFrame)// this line throws the npe too
       if (isPickingBufferEnabled())
-        pickingBuffer().loadPixels(); 
+        pickingBuffer().loadPixels();
     }
     return result;
   }
-  
+
+  /**
+   * Returns the collection of interactive frames the scene handles.
+   */
   public List<InteractiveFrame> frames() {
     return iFrames;
   }
 
   /**
-   * Draw all scene {@link #genericFrames()}. Same as:
+   * Draw all scene {@link #frames()} into the {@link #pg()} buffer. A similar (but
+   * slightly less efficient) effect may be achieved with
    * {@code for (InteractiveFrame frame : frames()) frame.draw(pg());}.
    * <p>
-   * Returns {@code true} if at least a frame get drawn.
+   * Note that {@code drawFrames()} is typically called from within your sketch
+   * {@link #pApplet()} draw() loop.
    * <p>
-   * Note that {@code drawFrames()} should be call by you, most likely from within your
-   * sketch main drawing loop (i.e., The P).
+   * This method is implementing by simply calling
+   * {@link remixlab.dandelion.core.AbstractScene#traverseFrameGraph()}.
    * 
    * @see #genericFrames()
    * @see #pg()
    * @see #drawFrames(PGraphics)
-   * @see #addFrame(InteractiveFrame)
-   * @see #removeFrame(InteractiveFrame)
    * @see remixlab.proscene.InteractiveFrame#draw(PGraphics)
    */
-  ///*
+  /// *
   public void drawFrames() {
     targetPGraphics = pg();
     traverseFrameGraph();
   }
 
   /**
-   * Draw all {@link #genericFrames()} into the given pgraphics. No
+   * Draw all {@link #frames()} into the given pgraphics. No
    * {@code pgraphics.beginDraw()/endDraw()} calls take place. This method allows shader
    * chaining.
    * <p>
@@ -1381,8 +1384,6 @@ public class Scene extends AbstractScene implements PConstants {
    * 
    * @see #genericFrames()
    * @see #drawFrames()
-   * @see #addFrame(InteractiveFrame)
-   * @see #removeFrame(InteractiveFrame)
    * @see remixlab.proscene.InteractiveFrame#draw(PGraphics)
    */
   public void drawFrames(PGraphics pgraphics) {
@@ -1425,15 +1426,15 @@ public class Scene extends AbstractScene implements PConstants {
       return;
     matrixHelper(pgraphics).bind(false);
   }
-  
-  //TODO really needs a second thought
+
+  // TODO really needs a second thought
   @Override
   protected void traverse(Frame frame) {
     targetPGraphics.pushMatrix();
     applyTransformation(targetPGraphics, frame);
-    if(frame instanceof GenericFrame)
+    if (frame instanceof GenericFrame)
       // idea: add transformations into the frame
-      ((GenericFrame)frame).traverse();
+      ((GenericFrame) frame).traverse();
     for (Frame child : frame.children())
       traverse(child);
     targetPGraphics.popMatrix();

@@ -103,12 +103,12 @@ public class ClickEvent extends BogusEvent {
   public ClickEvent get() {
     return new ClickEvent(this);
   }
-  
+
   @Override
   public ClickEvent flush() {
     return (ClickEvent) super.flush();
   }
-  
+
   @Override
   public ClickEvent fire() {
     return (ClickEvent) super.fire();

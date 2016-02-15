@@ -28,7 +28,11 @@ import remixlab.fpstiming.*;
  * For an introduction to DANDELION please refer to
  * <a href="http://nakednous.github.io/projects/dandelion">this</a>.
  * <p>
- * Each GrabberScene provides the following main object instances:
+ * The {@link remixlab.dandelion.core.GenericFrame}s collection attached to the scene may
+ * be retrieved with {@link #genericFrames()}. To traverse the frame hierarchy call
+ * {@link #traverseFrameGraph()}.
+ * <p>
+ * Each AbstractScene provides the following main object instances:
  * <ol>
  * <li>An {@link #eye()} which represents the 2D ( {@link remixlab.dandelion.core.Window})
  * or 3D ( {@link remixlab.dandelion.core.Camera}) controlling object. For details please
@@ -122,7 +126,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   public enum Platform {
     PROCESSING_DESKTOP, PROCESSING_ANDROID, PROCESSING_JS
   }
-  
+
   protected List<GenericFrame> seeds;
   protected List<GenericFrame> frames;
 
@@ -167,21 +171,26 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     setVisualHints(AXES | GRID);
     upperLeftCorner = new Point(0, 0);
   }
-  
+
   /**
    * Returns all the frames handled by the scene.
+   * 
+   * @see #leadingFrames()
    */
   public List<GenericFrame> genericFrames() {
     return frames;
   }
-  
+
   /**
-   * Returns the top-level frames (those which referenceFrame is null) handled by the scene.
+   * Returns the top-level frames (those which referenceFrame is null) handled by the
+   * scene.
+   * 
+   * @see #genericFrames()
    */
-  protected List<GenericFrame> leadingFrames() {
+  public List<GenericFrame> leadingFrames() {
     return seeds;
   }
-  
+
   /**
    * Returns {@code true} if the frame is top-level.
    */
@@ -191,7 +200,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
         return true;
     return false;
   }
-  
+
   /**
    * Returns {@code true} if the frame is handled by the scene.
    */
@@ -201,7 +210,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
         return true;
     return false;
   }
-  
+
   /**
    * Registers the frame into the scene. Call by the frame constructor.
    */
@@ -209,7 +218,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     addLeadingFrame(gFrame);
     addFrame(gFrame);
   }
-  
+
   /**
    * Add the frame as top-level if its reference frame is null and it isn't already added.
    */
@@ -217,11 +226,11 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     if (gFrame == null || gFrame.referenceFrame() != null)
       return false;
     if (isLeadingFrame(gFrame))
-      return false;    
+      return false;
     boolean result = leadingFrames().add(gFrame);
     return result;
   }
-  
+
   /**
    * Add the {@code frame} into the scene. Does nothing if the current frames belongs to
    * the scene.
@@ -230,11 +239,11 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     if (gFrame == null)
       return false;
     if (hasFrame(gFrame))
-      return false;    
+      return false;
     boolean result = genericFrames().add(gFrame);
     return result;
   }
-  
+
   /**
    * Removes the leading frame if present. Typically used when re-parenting the frame.
    */
@@ -250,29 +259,30 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     }
     return result;
   }
-  
+
   /**
-   * Traverse the frame hierarchy, calling {@link remixlab.dandelion.core.GenericFrame#traverse()}
-   * on each frame.
+   * Traverse the frame hierarchy, successively applying the local transformation defined
+   * by each traversed frame, and calling
+   * {@link remixlab.dandelion.core.GenericFrame#traverse()} on it.
    */
   public void traverseFrameGraph() {
     for (GenericFrame frame : leadingFrames())
       traverse(frame);
   }
-  
+
   /**
    * Used by the traverse frame graph algorithm.
    */
   protected void traverse(Frame frame) {
     pushModelView();
     applyTransformation(frame);
-    if(frame instanceof GenericFrame)
-      ((GenericFrame)frame).traverse();
+    if (frame instanceof GenericFrame)
+      ((GenericFrame) frame).traverse();
     for (Frame child : frame.children())
       traverse(child);
     popModelView();
   }
-  
+
   // Actions
 
   /**
@@ -283,7 +293,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   public void addKeyFrameToPath1() {
     eye().addKeyFrameToPath(1);
   }
-  
+
   /**
    * Same as {@code eye().addKeyFrameToPath(2)}.
    * 
