@@ -171,7 +171,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   /**
    * Returns all the frames handled by the scene.
    */
-  public List<GenericFrame> frames() {
+  public List<GenericFrame> genericFrames() {
     return frames;
   }
   
@@ -196,7 +196,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * Returns {@code true} if the frame is handled by the scene.
    */
   protected boolean hasFrame(GenericFrame gFrame) {
-    for (GenericFrame frame : frames())
+    for (GenericFrame frame : genericFrames())
       if (frame == gFrame)
         return true;
     return false;
@@ -231,7 +231,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
       return false;
     if (hasFrame(gFrame))
       return false;    
-    boolean result = frames().add(gFrame);
+    boolean result = genericFrames().add(gFrame);
     return result;
   }
   

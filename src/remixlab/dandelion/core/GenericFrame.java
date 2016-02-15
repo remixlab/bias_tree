@@ -1976,7 +1976,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     if (dof3Event != null)
       rotateXYZ(dof3Event);
     else
-      AbstractScene.showMinDOFsWarning("rotateXYZ", 2);
+      AbstractScene.showMinDOFsWarning("rotateXYZ", 3);
   }
 
   /**

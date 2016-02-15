@@ -19,6 +19,7 @@ import remixlab.dandelion.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.*;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -80,12 +81,12 @@ import java.nio.FloatBuffer;
  * <i>AnimationHandler</i>.
  * </ol>
  * <h3>Scene frames</h3> Each scene instance has a collection of frames (see
- * {@link #frames()}). A {@link remixlab.proscene.InteractiveFrame} is a PSshape wrapper
+ * {@link #genericFrames()}). A {@link remixlab.proscene.InteractiveFrame} is a PSshape wrapper
  * {@link remixlab.bias.core.Grabber} (it may thus be manipulated by any
  * {@link remixlab.bias.core.Agent}), implementing a
  * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> with a color
  * buffer (see {@link #pickingBuffer()}) technique for easy and precise object selection.
- * Use {@link #frames()}, {@link #addFrame(InteractiveFrame)}, {@link #removeFrames()},
+ * Use {@link #genericFrames()}, {@link #addFrame(InteractiveFrame)}, {@link #removeFrames()},
  * {@link #hasFrame(InteractiveFrame)}, {@link #removeFrame(InteractiveFrame)},
  * {@link #removeFrames()}, {@link #drawFrames()} and {@link #drawFrames(PGraphics)} for
  * frame handling.
@@ -121,6 +122,7 @@ public class Scene extends AbstractScene implements PConstants {
   protected static int frameCount;
   protected PGraphics pBuffer;
   protected boolean pBufferEnabled;
+  protected List<InteractiveFrame> iFrames;
 
   protected Profile profile;
 
@@ -184,6 +186,7 @@ public class Scene extends AbstractScene implements PConstants {
     setMatrixHelper(matrixHelper(pg));
 
     // 3. Frames & picking buffer
+    iFrames = new ArrayList<InteractiveFrame>();
     // pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ?
     // pApplet().createGraphics(pg().width, pg().height, pg() instanceof
     // PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width,
@@ -273,7 +276,7 @@ public class Scene extends AbstractScene implements PConstants {
   // PICKING BUFFER
 
   /**
-   * Returns the {@link #frames()}
+   * Returns the {@link #genericFrames()}
    * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> color
    * buffer.
    * 
@@ -1321,22 +1324,30 @@ public class Scene extends AbstractScene implements PConstants {
     // if (frames().size() > 0)
     pickingBuffer().loadPixels();
   }
+
+  public static boolean GRAPHICS;
+  protected static PGraphics targetPGraphics;
   
   @Override
   protected boolean addFrame(GenericFrame gFrame) {
     boolean result = super.addFrame(gFrame);    
-    // a bit weird but otherwise checkifgrabsinput throws a npe at sketch startup
-    //if(gFrame instanceof InteractiveFrame)// this line throws the npe too
-    if (result && isPickingBufferEnabled())
-        pickingBuffer().loadPixels();
+    if(result) {
+      if(gFrame instanceof InteractiveFrame)
+        iFrames.add((InteractiveFrame)gFrame);
+      // a bit weird but otherwise checkifgrabsinput throws a npe at sketch startup
+      //if(gFrame instanceof InteractiveFrame)// this line throws the npe too
+      if (isPickingBufferEnabled())
+        pickingBuffer().loadPixels(); 
+    }
     return result;
   }
-
-  public static boolean GRAPHICS;
-  protected static PGraphics targetPGraphics;
+  
+  public List<InteractiveFrame> frames() {
+    return iFrames;
+  }
 
   /**
-   * Draw all scene {@link #frames()}. Same as:
+   * Draw all scene {@link #genericFrames()}. Same as:
    * {@code for (InteractiveFrame frame : frames()) frame.draw(pg());}.
    * <p>
    * Returns {@code true} if at least a frame get drawn.
@@ -1344,7 +1355,7 @@ public class Scene extends AbstractScene implements PConstants {
    * Note that {@code drawFrames()} should be call by you, most likely from within your
    * sketch main drawing loop (i.e., The P).
    * 
-   * @see #frames()
+   * @see #genericFrames()
    * @see #pg()
    * @see #drawFrames(PGraphics)
    * @see #addFrame(InteractiveFrame)
@@ -1358,7 +1369,7 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Draw all {@link #frames()} into the given pgraphics. No
+   * Draw all {@link #genericFrames()} into the given pgraphics. No
    * {@code pgraphics.beginDraw()/endDraw()} calls take place. This method allows shader
    * chaining.
    * <p>
@@ -1368,7 +1379,7 @@ public class Scene extends AbstractScene implements PConstants {
    * 
    * @param pgraphics
    * 
-   * @see #frames()
+   * @see #genericFrames()
    * @see #drawFrames()
    * @see #addFrame(InteractiveFrame)
    * @see #removeFrame(InteractiveFrame)
