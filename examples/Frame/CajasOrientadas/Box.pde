@@ -66,6 +66,7 @@ public class Box {
     w = random(10, 40);
     h = random(10, 40);
     d = random(10, 40);
+    iFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
     iFrame.setGrabsInputThreshold(max(w,h,d));
   }
 
@@ -73,6 +74,7 @@ public class Box {
     w=myW; 
     h=myH; 
     d=myD;
+    iFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
     iFrame.setGrabsInputThreshold(max(w,h,d));
   }  
 

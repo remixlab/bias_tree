@@ -22,6 +22,8 @@ public void setup() {
   size(640, 360, renderer);
   scene = new CustomizedScene(this);
   iFrame = new InteractiveFrame(scene);
+  iFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
+  iFrame.setGrabsInputThreshold(scene.radius()/4);
   iFrame.translate(30, -30, 0);
   scene.removeKeyBinding('r');
   scene.setKeyBinding('u', "togglePathsVisualHint");

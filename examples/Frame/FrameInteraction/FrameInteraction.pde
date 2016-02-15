@@ -51,6 +51,8 @@ public void setup() {
 
   //frame 1
   frame1 = new InteractiveFrame(scene);
+  frame1.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
+  frame1.setGrabsInputThreshold(scene.radius()/4);
   frame1.translate(50, 50);
 
   // frame 2

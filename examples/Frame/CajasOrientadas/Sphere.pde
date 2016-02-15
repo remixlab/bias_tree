@@ -64,6 +64,7 @@ public class Sphere {
 
   public void setRadius(float myR) {
     r = myR;
+    iFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
     iFrame.setGrabsInputThreshold(2*r);
   }
 

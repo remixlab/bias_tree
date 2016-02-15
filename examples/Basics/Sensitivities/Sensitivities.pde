@@ -41,6 +41,8 @@ void setup() {
   scene = new Scene(this);
   scene.setGridVisualHint(false);
   interactiveFrame = new InteractiveFrame(scene);
+  interactiveFrame.setPickingPrecision(InteractiveFrame.PickingPrecision.ADAPTIVE);
+  interactiveFrame.setGrabsInputThreshold(scene.radius()/4);
   interactiveFrame.translate(60, 60);
 
   buttons = new ArrayList();

@@ -479,9 +479,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   public GenericFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
     super(referenceFrame, p, r, s);
     init(scn);
-    pkgnPrecision = PickingPrecision.ADAPTIVE;
-    setGrabsInputThreshold(Math.round(scn.radius()/4));
-    //setGrabsInputThreshold(20);
+    //pkgnPrecision = PickingPrecision.ADAPTIVE;
+    //setGrabsInputThreshold(Math.round(scn.radius()/4));
+    pkgnPrecision = PickingPrecision.FIXED;
+    setGrabsInputThreshold(20);
     setFlySpeed(0.01f * scene().eye().sceneRadius());
     for (Agent agent : scene().inputHandler().agents())
       agent.addGrabber(this);
@@ -2884,6 +2885,43 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     if (isEyeFrame()) {
       AbstractScene.showOnlyEyeWarning("setPickingPrecision", false);
       return;
+    }
+  }
+  
+  /**
+   * Sets the length of the hint that defined the {@link #checkIfGrabsInput(BogusEvent)}
+   * condition used for frame picking.
+   * <p>
+   * If {@code adaptive} is {@code false}, the {@code threshold} is expressed in pixels
+   * and directly defines the fixed length of the
+   * {@link remixlab.dandelion.core.AbstractScene#drawShooterTarget(Vec, float)} ,
+   * centered at the projection of the frame origin onto the screen.
+   * <p>
+   * If {@code adaptive} is {@code true}, the {@code threshold} is expressed in object
+   * space (world units) and defines the edge length of a squared bounding box that leads
+   * to an adaptive length of the
+   * {@link remixlab.dandelion.core.AbstractScene#drawShooterTarget(Vec, float)} ,
+   * centered at the projection of the frame origin onto the screen. Use this version only
+   * if you have a good idea of the bounding box size of the object you are attaching to
+   * the frame.
+   * <p>
+   * Default behavior is to set the {@link #grabsInputThreshold()} to 20 pixels length (in
+   * a non-adaptive manner).
+   * <p>
+   * Negative {@code threshold} values are silently ignored.
+   * 
+   * @deprecated use {@link #setPickingPrecision(PickingPrecision)} and
+   * {@link #setGrabsInputThreshold(float)}.
+   */
+  @Deprecated
+  public void setGrabsInputThreshold(float threshold, boolean adaptive) {
+    if (isEyeFrame()) {
+      AbstractScene.showOnlyEyeWarning("setGrabsInputThreshold", false);
+      return;
+    }
+    if (threshold >= 0) {
+      setPickingPrecision(adaptive ? PickingPrecision.ADAPTIVE : PickingPrecision.EXACT);
+      setGrabsInputThreshold(threshold);
     }
   }
 
