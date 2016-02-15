@@ -122,8 +122,26 @@ void keyPressed() {
     scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
     hidAgent.setDefaultGrabber(hidAgent.defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
   }
-  if ( key == 'j' )
-    scene.eyeFrame().setMotionBinding(SN_ID, scene.eyeFrame().isActionBound("hinge") ? "translateRotateXYZ" : "hinge");
+  if(key == ' ')
+    if( scene.eyeFrame().isActionBound("hinge") ) {
+      scene.eyeFrame().setMotionBinding(SN_ID, "translateRotateXYZ");
+      scene.eye().lookAt(scene.center());
+      scene.showAll();
+    }
+    else {
+      scene.eyeFrame().setMotionBinding(SN_ID, "hinge");
+      Vec t = new Vec(0,0,0.7*globeRadius);
+      float a = TWO_PI - 2; 
+      scene.camera().setPosition(t);
+      //For HINGE to work flawlessly we need to line up the eye up vector along the anchor and
+      //the camera position:
+      scene.camera().setUpVector(Vec.subtract(scene.camera().position(), scene.anchor()));
+      //The rest is just to make the scene appear in front of us. We could have just used
+      //the space navigator itself to make that happen too.
+      Quat q = new Quat();
+      q.fromEulerAngles(a,0,0);
+      scene.camera().frame().rotate(q);
+    }
 }
 
 void renderGlobe() {  
