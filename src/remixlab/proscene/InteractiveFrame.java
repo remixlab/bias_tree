@@ -273,12 +273,12 @@ public class InteractiveFrame extends GenericP5Frame {
     int c = 0;
     float hue, saturation, brightness;
     ((Scene) gScene).pApplet().pushStyle();
-    ((Scene) gScene).pApplet().colorMode(PApplet.HSB, 255);
+    ((Scene) gScene).pApplet().colorMode(PApplet.HSB, 4);
 
     hue = ((Scene) gScene).pApplet().hue(color);
     saturation = ((Scene) gScene).pApplet().saturation(color);
     brightness = ((Scene) gScene).pApplet().brightness(color);
-    brightness *= (brightness > 150 ? 10f / 17f : 17f / 10f);
+    brightness = brightness < 1 ? 2 : brightness < 2 ? 3 : 4;
     c = ((Scene) gScene).pApplet().color(hue, saturation, brightness);
 
     ((Scene) gScene).pApplet().popStyle();
@@ -379,7 +379,7 @@ public class InteractiveFrame extends GenericP5Frame {
     if (precision == PickingPrecision.EXACT)
       if (!((Scene) gScene).isPickingBufferEnabled())
         System.out.println(
-            "Warning: EXACT picking precision will behave like FIXED. Enable the scene.pickingBuffer() first and then set the frame picking precision again");
+            "Warning: EXACT picking precision will behave like FIXED until the scene.pickingBuffer() is enabled.");
     pkgnPrecision = precision;
     Scene.PRECISION = update(pickingPrecision());
   }

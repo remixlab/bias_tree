@@ -282,9 +282,8 @@ public class Profile {
    * The action is a method implemented by the {@link #grabber()} that returns void and
    * may have a {@link remixlab.bias.core.BogusEvent} parameter, or no parameters at all.
    * A {@link remixlab.bias.event.MotionEvent} or a <b>DOFnEvent()</b> that matches the
-   * {@link remixlab.bias.core.Shortcut#id()} dofs (which may be queried with
-   * {@link #dofs(int)}) may be passed to the action when binding a
-   * {@link remixlab.bias.event.MotionShortcut}. A
+   * {@link remixlab.bias.core.Shortcut#id()} dofs may be passed to the action when
+   * binding a {@link remixlab.bias.event.MotionShortcut}. A
    * {@link remixlab.bias.event.KeyboardEvent} and a
    * {@link remixlab.bias.event.ClickEvent} should always be passed to the action when
    * binding a {@link remixlab.bias.event.KeyboardShortcut} and a
@@ -340,9 +339,8 @@ public class Profile {
    * The action is a method implemented by the {@code object} that returns void and may
    * have a {@link remixlab.bias.core.BogusEvent} parameter, or no parameters at all. A
    * {@link remixlab.bias.event.MotionEvent} or a <b>DOFnEvent()</b> that matches the
-   * {@link remixlab.bias.core.Shortcut#id()} dofs (which may be queried with
-   * {@link #dofs(int)}) may be passed to the action when binding a
-   * {@link remixlab.bias.event.MotionShortcut}. A
+   * {@link remixlab.bias.core.Shortcut#id()} dofs may be passed to the action when
+   * binding a {@link remixlab.bias.event.MotionShortcut}. A
    * {@link remixlab.bias.event.KeyboardEvent} and a
    * {@link remixlab.bias.event.ClickEvent} should always be passed to the action when
    * binding a {@link remixlab.bias.event.KeyboardShortcut} and a
