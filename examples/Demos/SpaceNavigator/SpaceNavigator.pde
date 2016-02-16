@@ -3,12 +3,12 @@
  * by Jean Pierre Charalambos.
  *
  * This demo shows how to control your scene Eye and iFrames using a Space Navigator
- * (3D mouse), with 6 degrees-of-freedom.
+ * (3D mouse), with 6 degrees-of-freedom (DOFs). It requires the GameControlPlus
+ * library and a Space Navigator and it has been tested only under Linux.
  *
- * We implement the (non-conventional) user interaction mechanism as a HIDAgent
- * which provides up to 6DOFs. The Agent gathers Space Navigator input data and reduces
- * it as "bogus" 6DOF event from which the following the TRANSLATE_ROTATE proscene
- * built-in actions is bound.
+ * We implement the (non-conventional) user interaction mechanism as an HIDAgent
+ * which provides up to 6 DOFs. The Agent gathers Space Navigator input data and reduces
+ * it as "bogus" DOF6 event from which some proscene actions may be bound.
  * 
  * Press 'h' to display the key shortcuts, mouse and SpaceNavigator bindings in the console.
  */
@@ -41,7 +41,7 @@ float SINCOS_PRECISION = 0.5;
 int SINCOS_LENGTH = int(360.0 / SINCOS_PRECISION);
 
 Scene scene;
-int SN_ID;
+int SN_ID;// id of the SpaceNavigator gesture
 InteractiveFrame iFrame;
 HIDAgent hidAgent;
 
@@ -57,21 +57,29 @@ ControlButton button1; // Buttons
 ControlButton button2;
 
 public class HIDAgent extends Agent {
+  // array of sensitivities that will be multiply the sliders input
+  // pretty much found as trial an error
   float [] sens = {10, 10, 10, 10, 10, 10};
   
   public HIDAgent(Scene scn) {
     super(scn.inputHandler());
+    // we add all the frames registered at the scene to the agent
+    // the agent should then be defined after the frames comprising the scene
+    // otherwise the addGrabber method should be called after frame instantiation
     for(GenericFrame frame : scn.genericFrames())
       addGrabber(frame);
     resetDefaultGrabber();
   }
   
+  // resets the default agent's grabber to the scene eyeFrame
   @Override
   public boolean resetDefaultGrabber() {
     addGrabber(scene.eye().frame());
     return setDefaultGrabber(scene.eye().frame());
   }
   
+  // we need to override the agent sensitivities method for the agent
+  // to apply them to the input data gathered from the sliders
   @Override
   public float[] sensitivities(MotionEvent event) {
     if (event instanceof DOF6Event)
@@ -79,7 +87,9 @@ public class HIDAgent extends Agent {
     else
       return super.sensitivities(event);
   }
-
+  
+  // polling is done by overriding the feed agent method
+  // note that we pass the id of the gesture
   @Override
   public DOF6Event feed() {
     return new DOF6Event(sliderXpos.getValue(), sliderYpos.getValue(), sliderZpos.getValue(), sliderXrot.getValue(), sliderYrot.getValue(), sliderZrot.getValue(), BogusEvent.NO_MODIFIER_MASK, SN_ID);
@@ -92,6 +102,9 @@ void setup() {
   texmap = loadImage("world32k.jpg");    
   initializeSphere(sDetail);
   scene = new Scene(this);
+  // the scene.registerMotionID expects the degrees-of-freedom of the gesture and returns
+  // an unique id that may be use to bind (frame) actions to the gesture, pretty much in
+  // the same way as it's done with the LEFT and RIGHT mouse gestures.
   SN_ID = scene.registerMotionID(6);
   scene.setGridVisualHint(false);
   scene.setAxesVisualHint(false);  
@@ -103,6 +116,7 @@ void setup() {
 
   hidAgent = new HIDAgent(scene);
   
+  // we bound some frame DOF6 actions to the gesture on both frames
   scene.eyeFrame().setMotionBinding(SN_ID, "translateRotateXYZ");
   iFrame.setMotionBinding(SN_ID, "translateRotateXYZ");
 
