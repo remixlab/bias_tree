@@ -131,10 +131,10 @@ void draw() {
 void keyPressed() {
   if (key == 'y')
       scene.flip();
-  if ( key == 'i') {
-    scene.motionAgent().setDefaultGrabber(scene.motionAgent().defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
-    hidAgent.setDefaultGrabber(hidAgent.defaultGrabber() == iFrame ? scene.eye().frame() : iFrame);
-  }
+  //Shift the default grabber for all agents: mouseAgent, keyboardAgent and the hidAgent
+  if ( key == 'i')
+    for( Agent agent : scene.inputHandler().agents())
+      agent.shiftDefaultGrabber(scene.eye().frame(), iFrame);
   if(key == ' ')
     if( scene.eyeFrame().isActionBound("hinge") ) {
       scene.eyeFrame().setMotionBinding(SN_ID, "translateRotateXYZ");
@@ -174,7 +174,7 @@ void renderIFrame() {
   // Draw an axis using the Scene static function
   scene.drawAxes(20);
   // Draw a second box
-  if (iFrame.grabsInput(scene.motionAgent()) || iFrame.grabsInput(hidAgent) ) {
+  if (iFrame.grabsInput()) {
     fill(255, 0, 0);
     box(12, 17, 22);
   } else {
