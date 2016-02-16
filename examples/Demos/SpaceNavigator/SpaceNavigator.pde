@@ -41,6 +41,7 @@ float SINCOS_PRECISION = 0.5;
 int SINCOS_LENGTH = int(360.0 / SINCOS_PRECISION);
 
 Scene scene;
+int SN_ID;
 InteractiveFrame iFrame;
 HIDAgent hidAgent;
 
@@ -54,8 +55,6 @@ ControlSlider sliderYrot;
 ControlSlider sliderZrot;
 ControlButton button1; // Buttons
 ControlButton button2;
-
-public static final int SN_ID = Profile.registerMotionID(7, 6);
 
 public class HIDAgent extends Agent {
   float [] sens = {10, 10, 10, 10, 10, 10};
@@ -93,6 +92,7 @@ void setup() {
   texmap = loadImage("world32k.jpg");    
   initializeSphere(sDetail);
   scene = new Scene(this);
+  SN_ID = scene.registerMotionID(6);
   scene.setGridVisualHint(false);
   scene.setAxesVisualHint(false);  
   scene.setRadius(260);

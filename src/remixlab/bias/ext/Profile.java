@@ -87,8 +87,6 @@ public class Profile {
    * Registers a {@link remixlab.bias.event.MotionEvent#id()} to the Profile.
    * 
    * @see #registerMotionID(int)
-   * @see #motionIDs()
-   * @see #unregisterMotionID(int)
    * 
    * @param id
    *          the intended {@link remixlab.bias.event.MotionEvent#id()} to be registered
@@ -98,12 +96,9 @@ public class Profile {
    */
   public static int registerMotionID(int id, int dof) {
     if (idMap.containsKey(id))
-      // System.out.println("Warning: nothing done! id already present in
-      // Profile. Call Profile.unregisterID first or use an id different than: "
-      // + Arrays.toString(idMap.keySet().toArray()));
       throw new RuntimeException(
           "Nothing done! id already present in Profile. Call Profile.unregisterMotionID first or use an id different than: "
-              + motionIDs().toString());
+              + (new ArrayList<Integer>(idMap.keySet())).toString());
     if (dof == 1 || dof == 2 || dof == 3 || dof == 6) {
       idMap.put(id, dof);
       return id;
@@ -115,8 +110,6 @@ public class Profile {
    * Registers a {@link remixlab.bias.event.MotionEvent#id()} to the Profile.
    * 
    * @see #registerMotionID(int, int)
-   * @see #motionIDs()
-   * @see #unregisterMotionID(int)
    * 
    * @param dof
    *          Motion id degrees-of-freedom.. Either 1,2,3, or 6.
@@ -126,44 +119,12 @@ public class Profile {
     if (dof != 1 && dof != 2 && dof != 3 && dof != 6)
       throw new RuntimeException(
           "Warning: Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
-    int key = Collections.max(new ArrayList<Integer>(idMap.keySet())) + 1;
+    ArrayList<Integer> ids = new ArrayList<Integer>(idMap.keySet());
+    int key = 1;
+    if (ids.size() > 0)
+      key = Collections.max(ids) + 1;
     idMap.put(key, dof);
     return key;
-  }
-
-  /**
-   * Returns the DOFs related to the given motion id.
-   * 
-   * @see #registerMotionID(int, int)
-   * @see #motionIDs()
-   * @see #unregisterMotionID(int)
-   */
-  public static int dofs(int motionID) {
-    return idMap.get(motionID);
-  }
-
-  /**
-   * Returns a list of motion ids already registered at the profile.
-   * 
-   * @see #registerMotionID(int, int)
-   * @see #registerMotionID(int)
-   * @see #unregisterMotionID(int)
-   * 
-   * @return a list of motion ids already registered at the profile.
-   */
-  public static ArrayList<Integer> motionIDs() {
-    return new ArrayList<Integer>(idMap.keySet());
-  }
-
-  /**
-   * Unregisters the {@link remixlab.bias.event.MotionEvent#id()} from the Profile.
-   * 
-   * @see #registerMotionID(int, int)
-   * @see #registerMotionID(int)
-   * @see #motionIDs()
-   */
-  public static void unregisterMotionID(int id) {
-    idMap.remove(id);
   }
 
   /**

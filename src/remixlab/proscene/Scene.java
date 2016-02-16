@@ -1313,7 +1313,7 @@ public class Scene extends AbstractScene implements PConstants {
     // draw into picking buffer
     // TODO experimental, should be tested when no pshape nor graphics are
     // created, but yet there exists some 'frames'
-    if (!this.isPickingBufferEnabled() || !GRAPHICS)
+    if (!this.isPickingBufferEnabled() || !PRECISION || !GRAPHICS)
       return;
     pickingBuffer().beginDraw();
     pickingBuffer().pushStyle();
@@ -1325,7 +1325,27 @@ public class Scene extends AbstractScene implements PConstants {
     pickingBuffer().loadPixels();
   }
 
-  public static boolean GRAPHICS;
+  /**
+   * Same as {@code return Profile.registerMotionID(id, dof)}.
+   * 
+   * @see #registerMotionID(int)
+   * @see remixlab.bias.ext.Profile#registerMotionID(int, int)
+   */
+  public int registerMotionID(int id, int dof) {
+    return Profile.registerMotionID(id, dof);
+  }
+
+  /**
+   * Same as {@code return Profile.registerMotionID(dof)}.
+   *
+   * @see #registerMotionID(int, int)
+   * @see remixlab.bias.ext.Profile#registerMotionID(int)
+   */
+  public int registerMotionID(int dof) {
+    return Profile.registerMotionID(dof);
+  }
+
+  protected static boolean PRECISION, GRAPHICS;
   protected static PGraphics targetPGraphics;
 
   @Override

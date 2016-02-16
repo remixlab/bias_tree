@@ -472,6 +472,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * {@link #keyboardSensitivity()}, {@link #rotationSensitivity()},
    * {@link #translationSensitivity()} and {@link #scalingSensitivity()}.
    * <p>
+   * Sets the {@link #pickingPrecision()} to {@link PickingPrecision#FIXED}.
+   * <p>
    * After object creation a call to {@link #isEyeFrame()} will return {@code false}.
    */
   public GenericFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
@@ -2895,22 +2897,22 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * <p>
    * When {@link #pickingPrecision()} is {@link PickingPrecision#EXACT}, picking is done
    * in a precise manner according to the projected pixels of the graphics related to the
-   * frame. It requires the scene to implement a so called picking buffer (see the
-   * proscene
+   * frame. It is meant to be implemented by generic frame derived classes and requires
+   * the scene to implement a so called picking buffer (see the proscene
    * <a href="http://remixlab.github.io/proscene-javadocs/remixlab/proscene/Scene.html">
    * Scene</a> class for a possible implementation) and the frame to implement means to
    * attach graphics to it (see the proscene <a href=
    * "http://remixlab.github.io/proscene-javadocs/remixlab/proscene/InteractiveFrame.html">
    * InteractiveFrame</a> class for a possible implementation). Default implementation of
-   * this policy behaves like {@link PickingPrecision#FIXED}.
+   * this policy will behave like {@link PickingPrecision#FIXED}.
    * 
    * @see #pickingPrecision()
    * @see #setGrabsInputThreshold(float)
    */
   public void setPickingPrecision(PickingPrecision precision) {
     if (precision == PickingPrecision.EXACT)
-      System.out.println("EXACT picking precision will behave like FIXED since it requires"
-          + "the scene to implement a pickingBuffer.");
+      System.out.println(
+          "Warning: EXACT picking precision will behave like FIXED. EXACT precision is meant to be implemented for derived feneric frames and scenes that support a pickingBuffer.");
     pkgnPrecision = precision;
     if (isEyeFrame()) {
       AbstractScene.showOnlyEyeWarning("setPickingPrecision", false);

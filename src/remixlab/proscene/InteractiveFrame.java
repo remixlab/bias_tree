@@ -18,6 +18,7 @@ package remixlab.proscene;
 import java.lang.reflect.Method;
 
 import processing.core.*;
+import remixlab.dandelion.core.GenericFrame.PickingPrecision;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
@@ -91,13 +92,15 @@ public class InteractiveFrame extends GenericP5Frame {
   protected int id;
   protected Vec shift;
 
-  // Draw
+  // graphics handler
   protected Object drawHandlerObject;
   protected Method drawHandlerMethod;
+
   protected boolean highlight = true;
 
   /**
-   * Constructs a interactive-frame. Calls {@code super(scn}.
+   * Constructs an interactive-frame. Calls {@code super(scn}. Sets the
+   * {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
    * @see #shape()
@@ -108,11 +111,13 @@ public class InteractiveFrame extends GenericP5Frame {
     super(scn);
     id = ++Scene.frameCount;
     shift = new Vec();
+    setPickingPrecision(PickingPrecision.EXACT);
   }
 
   /**
    * Constructs an interactive-frame as a child of reference frame. Calls
-   * {@code super(scn, referenceFrame}.
+   * {@code super(scn, referenceFrame}. Sets the {@link #pickingPrecision()} to
+   * {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame)
    * @see #shape()
@@ -123,10 +128,12 @@ public class InteractiveFrame extends GenericP5Frame {
     super(scn, referenceFrame);
     id = ++Scene.frameCount;
     shift = new Vec();
+    setPickingPrecision(PickingPrecision.EXACT);
   }
 
   /**
-   * Wraps the pshape into this interactive-frame. Calls {@code super(scn)}.
+   * Wraps the pshape into this interactive-frame. Calls {@code super(scn)}. Sets the
+   * {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
    */
@@ -135,11 +142,13 @@ public class InteractiveFrame extends GenericP5Frame {
     id = ++Scene.frameCount;
     shift = new Vec();
     setShape(ps);
+    setPickingPrecision(PickingPrecision.EXACT);
   }
 
   /**
    * Wraps the pshape into this interactive-frame which is created as a child of reference
-   * frame. Calls {@code super(scn, referenceFrame)}.
+   * frame. Calls {@code super(scn, referenceFrame)}. Sets the {@link #pickingPrecision()}
+   * to {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame)
    */
@@ -148,11 +157,13 @@ public class InteractiveFrame extends GenericP5Frame {
     id = ++Scene.frameCount;
     shift = new Vec();
     setShape(ps);
+    setPickingPrecision(PickingPrecision.EXACT);
   }
 
   /**
    * Wraps the function object procedure into this interactive-frame. Calls
-   * {@code super(scn}.
+   * {@code super(scn}. Sets the {@link #pickingPrecision()} to
+   * {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene)
    * @see #addGraphicsHandler(Object, String)
@@ -162,11 +173,13 @@ public class InteractiveFrame extends GenericP5Frame {
     id = ++Scene.frameCount;
     shift = new Vec();
     addGraphicsHandler(obj, methodName);
+    setPickingPrecision(PickingPrecision.EXACT);
   }
 
   /**
    * Wraps the the function object procedure into this interactive-frame which is is
-   * created as a child of reference frame. Calls {@code super(scn, referenceFrame}.
+   * created as a child of reference frame. Calls {@code super(scn, referenceFrame}. Sets
+   * the {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
    * 
    * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame)
    * @see #addGraphicsHandler(Object, String)
@@ -176,6 +189,7 @@ public class InteractiveFrame extends GenericP5Frame {
     id = ++Scene.frameCount;
     shift = new Vec();
     addGraphicsHandler(obj, methodName);
+    setPickingPrecision(PickingPrecision.EXACT);
   }
 
   protected InteractiveFrame(InteractiveFrame otherFrame) {
@@ -285,8 +299,7 @@ public class InteractiveFrame extends GenericP5Frame {
    * {@link remixlab.proscene.Scene#pickingBuffer()}.
    */
   protected int id() {
-    // see here:
-    // http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
+    // see here: http://stackoverflow.com/questions/2262100/rgb-int-to-rgb-python
     return ((Scene) gScene).pickingBuffer().color(id & 255, (id >> 8) & 255, (id >> 16) & 255);
   }
 
@@ -327,37 +340,6 @@ public class InteractiveFrame extends GenericP5Frame {
   }
 
   /**
-   * Internal cache optimization method.
-   */
-  protected boolean update() {
-    if (pshape != null || this.hasGraphicsHandler()) {
-      setPickingPrecision(PickingPrecision.EXACT);
-      return true;
-    } else {
-      if (pickingPrecision() == PickingPrecision.EXACT)
-        setPickingPrecision(PickingPrecision.ADAPTIVE);
-      for (InteractiveFrame frame : ((Scene) gScene).frames())
-        if (frame.pickingPrecision() == PickingPrecision.EXACT)
-          return true;
-    }
-    return false;
-  }
-
-  @Override
-  public void setPickingPrecision(PickingPrecision precision) {
-    if (precision == PickingPrecision.EXACT) {
-      if (pshape == null && !this.hasGraphicsHandler()) {
-        System.out.println("EXACT picking precision will behave like FIXED since it requires"
-            + "the scene to enable the pickingBuffer.");
-        return;
-      }
-      if (!((Scene) gScene).isPickingBufferEnabled())
-        System.out.println("EXACT picking precision behaves like FIXED");
-    }
-    pkgnPrecision = precision;
-  }
-
-  /**
    * Unsets the shape which is wrapped by this interactive-frame.
    */
   public PShape unsetShape() {
@@ -365,6 +347,41 @@ public class InteractiveFrame extends GenericP5Frame {
     pshape = null;
     Scene.GRAPHICS = update();
     return prev;
+  }
+
+  /**
+   * Internal cache optimization method.
+   */
+  protected boolean update() {
+    if (shape() != null || this.hasGraphicsHandler())
+      return true;
+    else
+      for (InteractiveFrame frame : ((Scene) gScene).frames())
+        if (frame.shape() != null || frame.hasGraphicsHandler())
+          return true;
+    return false;
+  }
+
+  /**
+   * Internal cache optimization method.
+   */
+  protected boolean update(PickingPrecision precision) {
+    if (precision == PickingPrecision.EXACT)
+      return true;
+    for (InteractiveFrame frame : ((Scene) gScene).frames())
+      if (frame.pickingPrecision() == PickingPrecision.EXACT)
+        return true;
+    return false;
+  }
+
+  @Override
+  public void setPickingPrecision(PickingPrecision precision) {
+    if (precision == PickingPrecision.EXACT)
+      if (!((Scene) gScene).isPickingBufferEnabled())
+        System.out.println(
+            "Warning: EXACT picking precision will behave like FIXED. Enable the scene.pickingBuffer() first and then set the frame picking precision again");
+    pkgnPrecision = precision;
+    Scene.PRECISION = update(pickingPrecision());
   }
 
   /**
@@ -379,7 +396,8 @@ public class InteractiveFrame extends GenericP5Frame {
    */
   @Override
   public final boolean checkIfGrabsInput(float x, float y) {
-    if (pickingPrecision() != PickingPrecision.EXACT || !((Scene) gScene).isPickingBufferEnabled())
+    if (pickingPrecision() != PickingPrecision.EXACT || (shape() == null && !this.hasGraphicsHandler())
+        || !((Scene) gScene).isPickingBufferEnabled())
       return super.checkIfGrabsInput(x, y);
     ((Scene) gScene).pickingBuffer().pushStyle();
     ((Scene) gScene).pickingBuffer().colorMode(PApplet.RGB, 255);
