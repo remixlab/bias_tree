@@ -612,6 +612,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     return new GenericFrame(this);
   }
   
+  // GRAPH
+  
   @Override
   public GenericFrame referenceFrame() {
     return (GenericFrame)this.refFrame;
@@ -651,6 +653,28 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
       scene().addLeadingFrame(this);
 
     modified();
+  }
+  
+  /**
+   * Returns a list of the frame children, i.e., frame which {@link #referenceFrame()} is
+   * this.
+   * 
+   * @see #removeChildren()
+   */
+  public List<GenericFrame> children() {
+    return childrenList;
+  }
+
+  /**
+   * Remove all frame {@link #children()}.
+   */
+  public void removeChildren() {
+    Iterator<GenericFrame> iterator = childrenList.iterator();
+    while (iterator.hasNext()) {
+      Frame frame = iterator.next();
+      childrenList.remove(frame);
+      frame.setReferenceFrame(null);
+    }
   }
 
   /**
@@ -919,28 +943,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   }
 
   // MODIFIED
-  
-  /**
-   * Returns a list of the frame children, i.e., frame which {@link #referenceFrame()} is
-   * this.
-   * 
-   * @see #removeChildren()
-   */
-  public List<GenericFrame> children() {
-    return childrenList;
-  }
-
-  /**
-   * Remove all frame {@link #children()}.
-   */
-  public void removeChildren() {
-    Iterator<GenericFrame> iterator = childrenList.iterator();
-    while (iterator.hasNext()) {
-      Frame frame = iterator.next();
-      childrenList.remove(frame);
-      frame.setReferenceFrame(null);
-    }
-  }
 
   /**
    * Internal use. Automatically call by all methods which change the Frame state.

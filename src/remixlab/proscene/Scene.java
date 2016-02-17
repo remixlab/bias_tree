@@ -199,7 +199,7 @@ public class Scene extends AbstractScene implements PConstants {
     // 4. Create agents and register P5 methods
     setProfile(new Profile(this));
     // TODO android
-    // discard this block one android is restored
+    // discard this block once android is restored
     {
       defMotionAgent = new MouseAgent(this);
       defKeyboardAgent = new KeyAgent(this);
@@ -1447,13 +1447,11 @@ public class Scene extends AbstractScene implements PConstants {
     matrixHelper(pgraphics).bind(false);
   }
 
-  // TODO really needs a second thought
   @Override
   protected void traverse(GenericFrame frame) {
     targetPGraphics.pushMatrix();
     applyTransformation(targetPGraphics, frame);
     if (frame instanceof GenericFrame)
-      // idea: add transformations into the frame
       frame.traverse();
     for (GenericFrame child : frame.children())
       traverse(child);
