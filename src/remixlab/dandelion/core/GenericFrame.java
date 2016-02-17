@@ -190,7 +190,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}.
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(AbstractScene scn) {
     this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
@@ -200,7 +200,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * Same as
    * {@code this(eye, null, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), 1)} .
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(Eye eye) {
     this(eye, null, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), 1);
@@ -209,7 +209,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1)}.
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(AbstractScene scn, Vec p) {
     this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), 1);
@@ -218,7 +218,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(eye, null, p, eye.scene().is3D() ? new Quat() : new Rot(), 1)}.
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(Eye eye, Vec p) {
     this(eye, null, p, eye.scene().is3D() ? new Quat() : new Rot(), 1);
@@ -227,7 +227,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(scn, null, new Vec(), r, 1)}.
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(AbstractScene scn, Rotation r) {
     this(scn, null, new Vec(), r, 1);
@@ -236,7 +236,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(eye, null, new Vec(), r, 1)}.
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(Eye eye, Rotation r) {
     this(eye, null, new Vec(), r, 1);
@@ -245,7 +245,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}.
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(AbstractScene scn, float s) {
     this(scn, null, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
@@ -255,7 +255,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * Same as
    * {@code this(eye, null, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), s)} .
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(Eye eye, float s) {
     this(eye, null, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), s);
@@ -264,7 +264,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s)}.
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(AbstractScene scn, Vec p, float s) {
     this(scn, null, p, scn.is3D() ? new Quat() : new Rot(), s);
@@ -273,7 +273,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(eye, null, p, eye.scene().is3D() ? new Quat() : new Rot(), s)}.
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(Eye eye, Vec p, float s) {
     this(eye, null, p, eye.scene().is3D() ? new Quat() : new Rot(), s);
@@ -282,7 +282,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(scn, null, p, r, 1)}.
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(AbstractScene scn, Vec p, Rotation r) {
     this(scn, null, p, r, 1);
@@ -291,7 +291,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(eye, null, p, r, 1)}.
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(Eye eye, Vec p, Rotation r) {
     this(eye, null, p, r, 1);
@@ -300,7 +300,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(scn, null, new Vec(), r, s)}.
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(AbstractScene scn, Rotation r, float s) {
     this(scn, null, new Vec(), r, s);
@@ -309,7 +309,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(eye, null, new Vec(), r, s)}.
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(Eye eye, Rotation r, float s) {
     this(eye, null, new Vec(), r, s);
@@ -318,7 +318,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Same as {@code this(scn, null, p, r, s)}.
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
   public GenericFrame(AbstractScene scn, Vec p, Rotation r, float s) {
     this(scn, null, p, r, s);
@@ -329,13 +329,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1)}
    * .
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(AbstractScene scn, Frame referenceFrame) {
+  public GenericFrame(AbstractScene scn, GenericFrame referenceFrame) {
     this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), 1);
   }
 
-  public GenericFrame(Eye eye, Frame referenceFrame) {
+  public GenericFrame(Eye eye, GenericFrame referenceFrame) {
     this(eye, referenceFrame, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), 1);
   }
 
@@ -343,9 +343,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1)}
    * .
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(AbstractScene scn, Frame referenceFrame, Vec p) {
+  public GenericFrame(AbstractScene scn, GenericFrame referenceFrame, Vec p) {
     this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), 1);
   }
 
@@ -354,27 +354,27 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * {@code this(eye, referenceFrame, p, eye.scene().is3D() ? new Quat() : new Rot(), 1)}
    * .
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(Eye eye, Frame referenceFrame, Vec p) {
+  public GenericFrame(Eye eye, GenericFrame referenceFrame, Vec p) {
     this(eye, referenceFrame, p, eye.scene().is3D() ? new Quat() : new Rot(), 1);
   }
 
   /**
    * Same as {@code this(scn, referenceFrame, new Vec(), r, 1)}.
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(AbstractScene scn, Frame referenceFrame, Rotation r) {
+  public GenericFrame(AbstractScene scn, GenericFrame referenceFrame, Rotation r) {
     this(scn, referenceFrame, new Vec(), r, 1);
   }
 
   /**
    * Same as {@code this(eye, referenceFrame, new Vec(), r, 1)}.
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(Eye eye, Frame referenceFrame, Rotation r) {
+  public GenericFrame(Eye eye, GenericFrame referenceFrame, Rotation r) {
     this(eye, referenceFrame, new Vec(), r, 1);
   }
 
@@ -383,9 +383,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * {@code this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s)}
    * .
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(AbstractScene scn, Frame referenceFrame, float s) {
+  public GenericFrame(AbstractScene scn, GenericFrame referenceFrame, float s) {
     this(scn, referenceFrame, new Vec(), scn.is3D() ? new Quat() : new Rot(), s);
   }
 
@@ -394,9 +394,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * {@code this(eye, referenceFrame, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), s)}
    * .
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(Eye eye, Frame referenceFrame, float s) {
+  public GenericFrame(Eye eye, GenericFrame referenceFrame, float s) {
     this(eye, referenceFrame, new Vec(), eye.scene().is3D() ? new Quat() : new Rot(), s);
   }
 
@@ -404,9 +404,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * Same as {@code this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s)}
    * .
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(AbstractScene scn, Frame referenceFrame, Vec p, float s) {
+  public GenericFrame(AbstractScene scn, GenericFrame referenceFrame, Vec p, float s) {
     this(scn, referenceFrame, p, scn.is3D() ? new Quat() : new Rot(), s);
   }
 
@@ -415,45 +415,45 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * {@code this(eye, referenceFrame, p, eye.scene().is3D() ? new Quat() : new Rot(), s)}
    * .
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(Eye eye, Frame referenceFrame, Vec p, float s) {
+  public GenericFrame(Eye eye, GenericFrame referenceFrame, Vec p, float s) {
     this(eye, referenceFrame, p, eye.scene().is3D() ? new Quat() : new Rot(), s);
   }
 
   /**
    * Same as {@code this(scn, referenceFrame, p, r, 1)}.
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r) {
+  public GenericFrame(AbstractScene scn, GenericFrame referenceFrame, Vec p, Rotation r) {
     this(scn, referenceFrame, p, r, 1);
   }
 
   /**
    * Same as {@code this(eye, referenceFrame, p, r, 1)}.
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r) {
+  public GenericFrame(Eye eye, GenericFrame referenceFrame, Vec p, Rotation r) {
     this(eye, referenceFrame, p, r, 1);
   }
 
   /**
    * Same as {@code this(scn, referenceFrame, new Vec(), r, s)}.
    * 
-   * @see #GenericFrame(AbstractScene, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(AbstractScene, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(AbstractScene scn, Frame referenceFrame, Rotation r, float s) {
+  public GenericFrame(AbstractScene scn, GenericFrame referenceFrame, Rotation r, float s) {
     this(scn, referenceFrame, new Vec(), r, s);
   }
 
   /**
    * Same as {@code this(eye, referenceFrame, new Vec(), r, s)}.
    * 
-   * @see #GenericFrame(Eye, Frame, Vec, Rotation, float)
+   * @see #GenericFrame(Eye, GenericFrame, Vec, Rotation, float)
    */
-  public GenericFrame(Eye eye, Frame referenceFrame, Rotation r, float s) {
+  public GenericFrame(Eye eye, GenericFrame referenceFrame, Rotation r, float s) {
     this(eye, referenceFrame, new Vec(), r, s);
   }
 
@@ -476,7 +476,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * <p>
    * After object creation a call to {@link #isEyeFrame()} will return {@code false}.
    */
-  public GenericFrame(AbstractScene scn, Frame referenceFrame, Vec p, Rotation r, float s) {
+  public GenericFrame(AbstractScene scn, GenericFrame referenceFrame, Vec p, Rotation r, float s) {
     super(referenceFrame, p, r, s);
     init(scn);
     // pkgnPrecision = PickingPrecision.ADAPTIVE;
@@ -505,7 +505,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * <p>
    * After object creation a call to {@link #isEyeFrame()} will return {@code true}.
    */
-  public GenericFrame(Eye eye, Frame referenceFrame, Vec p, Rotation r, float s) {
+  public GenericFrame(Eye eye, GenericFrame referenceFrame, Vec p, Rotation r, float s) {
     super(referenceFrame, p, r, s);
     theeye = eye;
     init(theeye.scene());

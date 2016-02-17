@@ -15,7 +15,6 @@ import remixlab.bias.event.*;
 import remixlab.bias.ext.*;
 import remixlab.dandelion.core.*;
 import remixlab.dandelion.core.AbstractScene.Platform;
-import remixlab.dandelion.geom.*;
 import remixlab.util.*;
 
 /**
@@ -73,9 +72,9 @@ class GenericP5Frame extends GenericFrame {
    * Calls {@code super(scn), referenceFrame}, creates the frame {@link #profile()} and
    * calls {@link #setDefaultMouseBindings()} and {@link #setDefaultKeyBindings()}.
    * 
-   * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame).
+   * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, GenericFrame).
    */
-  public GenericP5Frame(Scene scn, Frame referenceFrame) {
+  public GenericP5Frame(Scene scn, GenericFrame referenceFrame) {
     super(scn, referenceFrame);
     setProfile(new Profile(this));
     if (referenceFrame instanceof GenericP5Frame)

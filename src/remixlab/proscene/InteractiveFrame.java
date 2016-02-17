@@ -18,6 +18,7 @@ package remixlab.proscene;
 import java.lang.reflect.Method;
 
 import processing.core.*;
+import remixlab.dandelion.core.GenericFrame;
 import remixlab.dandelion.core.GenericFrame.PickingPrecision;
 import remixlab.dandelion.geom.*;
 import remixlab.util.*;
@@ -119,12 +120,12 @@ public class InteractiveFrame extends GenericP5Frame {
    * {@code super(scn, referenceFrame}. Sets the {@link #pickingPrecision()} to
    * {@link PickingPrecision#EXACT}.
    * 
-   * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame)
+   * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, GenericFrame)
    * @see #shape()
    * @see #setShape(PShape)
    * @see #addGraphicsHandler(Object, String)
    */
-  public InteractiveFrame(Scene scn, Frame referenceFrame) {
+  public InteractiveFrame(Scene scn, GenericFrame referenceFrame) {
     super(scn, referenceFrame);
     id = ++Scene.frameCount;
     shift = new Vec();
@@ -150,9 +151,9 @@ public class InteractiveFrame extends GenericP5Frame {
    * frame. Calls {@code super(scn, referenceFrame)}. Sets the {@link #pickingPrecision()}
    * to {@link PickingPrecision#EXACT}.
    * 
-   * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame)
+   * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, GenericFrame)
    */
-  public InteractiveFrame(Scene scn, Frame referenceFrame, PShape ps) {
+  public InteractiveFrame(Scene scn, GenericFrame referenceFrame, PShape ps) {
     super(scn, referenceFrame);
     id = ++Scene.frameCount;
     shift = new Vec();
@@ -181,10 +182,10 @@ public class InteractiveFrame extends GenericP5Frame {
    * created as a child of reference frame. Calls {@code super(scn, referenceFrame}. Sets
    * the {@link #pickingPrecision()} to {@link PickingPrecision#EXACT}.
    * 
-   * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, Frame)
+   * @see remixlab.dandelion.core.GenericFrame#GenericFrame(AbstractScene, GenericFrame)
    * @see #addGraphicsHandler(Object, String)
    */
-  public InteractiveFrame(Scene scn, Frame referenceFrame, Object obj, String methodName) {
+  public InteractiveFrame(Scene scn, GenericFrame referenceFrame, Object obj, String methodName) {
     super(scn, referenceFrame);
     id = ++Scene.frameCount;
     shift = new Vec();
