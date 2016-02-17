@@ -268,7 +268,7 @@ public class Frame implements Copyable {
    * {@link #transformOfIn(Vec, Frame)}, {@link #localTransformOf(Vec)} and their inverse
    * functions.
    */
-  public final Frame referenceFrame() {
+  public Frame referenceFrame() {
     return refFrame;
   }
 

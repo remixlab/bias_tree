@@ -611,15 +611,27 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   public GenericFrame get() {
     return new GenericFrame(this);
   }
-
+  
   @Override
-  public void setReferenceFrame(Frame rFrame) {
-    if (settingAsReferenceFrameWillCreateALoop(rFrame)) {
+  public GenericFrame referenceFrame() {
+    return (GenericFrame)this.refFrame;
+  }
+  
+  @Override
+  public void setReferenceFrame(Frame frame) {
+    if(frame instanceof GenericFrame)
+      setReferenceFrame((GenericFrame) frame);
+    else
+      System.out.println("Warning: nothing done: Generic.referenceFrame() should be instanceof GenericFrame");
+  }
+
+  public void setReferenceFrame(GenericFrame frame) {
+    if (settingAsReferenceFrameWillCreateALoop(frame)) {
       System.out.println("Frame.setReferenceFrame would create a loop in Frame hierarchy. Nothing done.");
       return;
     }
 
-    if (referenceFrame() == rFrame) {
+    if (referenceFrame() == frame) {
       if (referenceFrame() == null)
         if (scene() != null)
           scene().addLeadingFrame(this);
@@ -627,18 +639,14 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     }
 
     if (referenceFrame() != null) // old
-      //TODO new
-      //referenceFrame().children().remove(this);
-      ((GenericFrame)referenceFrame()).children().remove(this);
+      referenceFrame().children().remove(this);
     else if (scene() != null)
       scene().removeLeadingFrame(this);
 
-    refFrame = rFrame;
+    refFrame = frame;
 
     if (referenceFrame() != null) // new
-      //TODO new
-      //referenceFrame().children().add(this);
-      ((GenericFrame)referenceFrame()).children().add(this);
+      referenceFrame().children().add(this); 
     else if (scene() != null)
       scene().addLeadingFrame(this);
 
