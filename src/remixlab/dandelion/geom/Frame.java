@@ -10,10 +10,6 @@
 
 package remixlab.dandelion.geom;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import remixlab.dandelion.constraint.*;
 import remixlab.util.*;
 
@@ -113,7 +109,7 @@ public class Frame implements Copyable {
   @Override
   public int hashCode() {
     return new HashCodeBuilder(17, 37).append(trans).append(rot).append(scl).append(refFrame).append(cnstrnt)
-        .append(childrenList).toHashCode();
+        .toHashCode();
   }
 
   @Override
@@ -127,7 +123,7 @@ public class Frame implements Copyable {
 
     Frame other = (Frame) obj;
     return new EqualsBuilder().append(trans, other.trans).append(scl, other.scl).append(rot, other.rot)
-        .append(refFrame, other.refFrame).append(childrenList, other.childrenList).append(cnstrnt, other.cnstrnt)
+        .append(refFrame, other.refFrame).append(cnstrnt, other.cnstrnt)
         .isEquals();
   }
 
@@ -136,7 +132,6 @@ public class Frame implements Copyable {
   protected Rotation rot;
   protected Frame refFrame;
   protected Constraint cnstrnt;
-  protected List<Frame> childrenList;
 
   public Frame() {
     this(true);
@@ -202,7 +197,6 @@ public class Frame implements Copyable {
    * {@link #rotation()} and {@link #scaling()}, respectively.
    */
   public Frame(Frame referenceFrame, Vec p, Rotation r, float s) {
-    childrenList = new ArrayList<Frame>();
     setTranslation(p);
     setRotation(r);
     setScaling(s);
@@ -210,7 +204,6 @@ public class Frame implements Copyable {
   }
 
   protected Frame(Frame other) {
-    childrenList = new ArrayList<Frame>();
     // TODO experimental
     // Iterator<Frame> iterator = other.childrenList.iterator();
     // while (iterator.hasNext())
@@ -233,8 +226,6 @@ public class Frame implements Copyable {
    * Internal use. Automatically call by all methods which change the Frame state.
    */
   protected void modified() {
-    for (Frame child : childrenList)
-      child.modified();
   }
 
   // DIM
@@ -302,11 +293,7 @@ public class Frame implements Copyable {
     }
     if (referenceFrame() == rFrame)
       return;
-    if (referenceFrame() != null) // old
-      referenceFrame().childrenList.remove(this);
     refFrame = rFrame;
-    if (referenceFrame() != null) // new
-      referenceFrame().childrenList.add(this);
     modified();
   }
 
@@ -322,28 +309,6 @@ public class Frame implements Copyable {
       f = f.referenceFrame();
     }
     return false;
-  }
-
-  /**
-   * Returns a list of the frame children, i.e., frame which {@link #referenceFrame()} is
-   * this.
-   * 
-   * @see #removeChildren()
-   */
-  public List<Frame> children() {
-    return childrenList;
-  }
-
-  /**
-   * Remove all frame {@link #children()}.
-   */
-  public void removeChildren() {
-    Iterator<Frame> iterator = childrenList.iterator();
-    while (iterator.hasNext()) {
-      Frame frame = iterator.next();
-      childrenList.remove(frame);
-      frame.setReferenceFrame(null);
-    }
   }
 
   // CONSTRAINT

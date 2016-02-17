@@ -1449,13 +1449,13 @@ public class Scene extends AbstractScene implements PConstants {
 
   // TODO really needs a second thought
   @Override
-  protected void traverse(Frame frame) {
+  protected void traverse(GenericFrame frame) {
     targetPGraphics.pushMatrix();
     applyTransformation(targetPGraphics, frame);
     if (frame instanceof GenericFrame)
       // idea: add transformations into the frame
-      ((GenericFrame) frame).traverse();
-    for (Frame child : frame.children())
+      frame.traverse();
+    for (GenericFrame child : frame.children())
       traverse(child);
     targetPGraphics.popMatrix();
   }

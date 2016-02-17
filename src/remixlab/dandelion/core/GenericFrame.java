@@ -10,6 +10,10 @@
 
 package remixlab.dandelion.core;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
 import remixlab.dandelion.geom.*;
@@ -159,13 +163,15 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
   public DOF2Event initEvent;
   private float flySpeedCache;
+  
+  protected List<GenericFrame> childrenList;
 
   @Override
   public int hashCode() {
     return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(grabsInputThreshold).append(pkgnPrecision)
         .append(rotSensitivity).append(transSensitivity).append(sclSensitivity).append(spngRotation)
         .append(spngSensitivity).append(dampFriction).append(sFriction).append(wheelSensitivity).append(keySensitivity)
-        .append(flyDisp).append(flySpd).append(scnUpVec).append(lastUpdate).toHashCode();
+        .append(flyDisp).append(flySpd).append(scnUpVec).append(lastUpdate).append(childrenList).toHashCode();
   }
 
   @Override
@@ -184,7 +190,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
         .append(sclSensitivity, other.sclSensitivity).append(spngRotation, other.spngRotation)
         .append(spngSensitivity, other.spngSensitivity).append(wheelSensitivity, other.wheelSensitivity)
         .append(keySensitivity, other.keySensitivity).append(flyDisp, other.flyDisp).append(flySpd, other.flySpd)
-        .append(scnUpVec, other.scnUpVec).append(lastUpdate, other.lastUpdate).isEquals();
+        .append(scnUpVec, other.scnUpVec).append(lastUpdate, other.lastUpdate).append(childrenList, other.childrenList).isEquals();
   }
 
   /**
@@ -519,6 +525,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
   protected void init(AbstractScene scn) {
     gScene = scn;
+    childrenList = new ArrayList<GenericFrame>();
     scene().registerFrame(this);
     setRotationSensitivity(1.0f);
     setScalingSensitivity(1.0f);
@@ -620,14 +627,18 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     }
 
     if (referenceFrame() != null) // old
-      referenceFrame().children().remove(this);
+      //TODO new
+      //referenceFrame().children().remove(this);
+      ((GenericFrame)referenceFrame()).children().remove(this);
     else if (scene() != null)
       scene().removeLeadingFrame(this);
 
     refFrame = rFrame;
 
     if (referenceFrame() != null) // new
-      referenceFrame().children().add(this);
+      //TODO new
+      //referenceFrame().children().add(this);
+      ((GenericFrame)referenceFrame()).children().add(this);
     else if (scene() != null)
       scene().addLeadingFrame(this);
 
@@ -900,14 +911,39 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   }
 
   // MODIFIED
+  
+  /**
+   * Returns a list of the frame children, i.e., frame which {@link #referenceFrame()} is
+   * this.
+   * 
+   * @see #removeChildren()
+   */
+  public List<GenericFrame> children() {
+    return childrenList;
+  }
+
+  /**
+   * Remove all frame {@link #children()}.
+   */
+  public void removeChildren() {
+    Iterator<GenericFrame> iterator = childrenList.iterator();
+    while (iterator.hasNext()) {
+      Frame frame = iterator.next();
+      childrenList.remove(frame);
+      frame.setReferenceFrame(null);
+    }
+  }
 
   /**
    * Internal use. Automatically call by all methods which change the Frame state.
    */
+  @Override
   protected void modified() {
     if (gScene != null)
       lastUpdate = gScene.frameCount();
-    super.modified();
+    if(children() != null)
+    for (GenericFrame child : children())
+      child.modified();
   }
 
   /**

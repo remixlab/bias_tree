@@ -273,12 +273,11 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   /**
    * Used by the traverse frame graph algorithm.
    */
-  protected void traverse(Frame frame) {
+  protected void traverse(GenericFrame frame) {
     pushModelView();
     applyTransformation(frame);
-    if (frame instanceof GenericFrame)
-      ((GenericFrame) frame).traverse();
-    for (Frame child : frame.children())
+      frame.traverse();
+    for (GenericFrame child : frame.children())
       traverse(child);
     popModelView();
   }
