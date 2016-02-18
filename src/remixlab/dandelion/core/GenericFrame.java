@@ -11,9 +11,7 @@
 package remixlab.dandelion.core;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
@@ -659,8 +657,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     
     // 2a. before assigning new reference frame
     if (referenceFrame() != null) // old
-      //referenceFrame().children().remove(this);
-      referenceFrame().removeChild(this);
+      referenceFrame().children().remove(this);
     else if (scene() != null)
       scene().removeLeadingFrame(this);
 
@@ -668,7 +665,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
     // 2b. after assigning new reference frame
     if (referenceFrame() != null) // new
-      referenceFrame().addChild(this); 
+      referenceFrame().children().add(this);
     else if (scene() != null)
       scene().addLeadingFrame(this);
     
@@ -684,58 +681,46 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   /**
    * Returns a list of the frame children, i.e., frame which {@link #referenceFrame()} is
    * this.
-   * 
-   * @see #removeChildren()
    */
   public final List<GenericFrame> children() {
     return childrenList;
   }
   
-  /**
-   * Internal use. Remove frame child. Called by the scene when removing a frame.
-   * 
-   * @see remixlab.dandelion.core.AbstractScene#removeFrame(GenericFrame)
-   */
-  protected boolean removeChild(GenericFrame child) {
-    return children().remove(child);
-    /*
-    boolean result = false;
-    Iterator<GenericFrame> it = children().iterator();
-    while (it.hasNext()) {
-      if (it.next() == child) {
-        it.remove();
-        result = true;
-        break;
+  //Experimental!
+  /*
+  protected void transferChildren(GenericFrame frame, boolean keepglobal) {
+    List<GenericFrame> frames = frame.children();
+    for (GenericFrame child : frames) {
+      Vec position = child.position();
+      Rotation rotation = child.orientation();
+      float magnitude = child.magnitude();
+      child.refFrame = this;
+      if(keepglobal) {
+        child.setPosition(position);
+        child.setOrientation(rotation);
+        child.setMagnitude(magnitude);
       }
     }
-    return result;
-    //*/
+    children().addAll(frames);
+    frame.removeChildren();
+  }
+  
+  protected void setRefFrame(GenericFrame frame) {
+    super.setReferenceFrame(frame);
+  }
+  
+  protected boolean removeChild(GenericFrame child) {
+    return children().remove(child);
   }
   
   protected boolean addChild(GenericFrame child) {
     return children().add(child);
-    /*
-    ListIterator<GenericFrame> iter = children().listIterator();
-    iter.add(child);
-    return true;
-    */
-    /*
-    boolean result = false;
-    Iterator<GenericFrame> it = children().iterator();
-    while (it.hasNext()) {
-      if (it.next() == child) {
-        it.remove();
-        result = true;
-        break;
-      }
-    }
-    return result;
-    */
   }
   
   protected void removeChildren() {
     children().clear();
   }
+  // */
 
   /**
    * Procedure called by the scene frame traversal algorithm. Default implementation is

@@ -12,7 +12,6 @@ package remixlab.dandelion.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import remixlab.bias.core.*;
@@ -24,8 +23,8 @@ import remixlab.fpstiming.*;
 /**
  * A 2D or 3D {@link remixlab.bias.core.Grabber} scene.
  * 
- * Main package class representing an interface between Dandelion and the outside world.
- * For an introduction to DANDELION please refer to
+ * Main package class rjavaepresenting an interface between Dandelion and the outside world.
+ * For an introduction javato DANDELION please refer to
  * <a href="http://nakednous.github.io/projects/dandelion">this</a>.
  * <p>
  * The {@link remixlab.dandelion.core.GenericFrame}s collection attached to the scene may
@@ -180,81 +179,60 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     return seeds;
   }
   
-  //TODO api docs, after testing
-  public boolean removeFrame(GenericFrame frame, boolean keepglobal) {
-    return true;
-  }
-  
-  //TODO api docs, after testing
+  //Experimental!
   /*
-  public boolean removeFrame(GenericFrame frame, boolean keepglobal) {
-    if(frame == null)
-      return false;
-    if( this.hasFrame(frame) ) {
-      GenericFrame referenceFrame = frame.referenceFrame();
-      for (GenericFrame child : frame.children()) {
-        Vec position = child.position();
-        Rotation rotation = child.orientation();
-        float magnitude = child.magnitude();
-        child.setReferenceFrame(referenceFrame);
-        if(keepglobal) {
-          child.setPosition(position);
-          child.setOrientation(rotation);
-          child.setMagnitude(magnitude);
-        }
+  protected void transferChildren(GenericFrame frame, boolean keepglobal) {
+    List<GenericFrame> frames = frame.children();
+    for (GenericFrame child : frames) {
+      Vec position = child.position();
+      Rotation rotation = child.orientation();
+      float magnitude = child.magnitude();
+      child.setRefFrame(null);
+      if(keepglobal) {
+        child.setPosition(position);
+        child.setOrientation(rotation);
+        child.setMagnitude(magnitude);
       }
-      
-//      Iterator<GenericFrame> it = frame.children().iterator();
-//      while (it.hasNext()) {
-//        GenericFrame child = it.next();
-//        Vec position = new Vec();
-//        Rotation rotation = new Quat();
-//        float magnitude = 0;
-//        if(keepglobal) {
-//          position = child.position();
-//          rotation = child.orientation();
-//          magnitude = child.magnitude();
-//        }
-//        it.next().setReferenceFrame(referenceFrame);
-//        if(keepglobal) {
-//          child.setPosition(position);
-//          child.setOrientation(rotation);
-//          child.setMagnitude(magnitude);
-//        }
-//      }
-      
-      for( Agent agent : this.inputHandler().agents() )
-        agent.removeGrabber(frame);
-      
-      if( frame.referenceFrame() == null )
-        return removeLeadingFrame(frame);
-      else
-        return frame.referenceFrame().removeChild(frame);
     }
-    return false;
+    leadingFrames().addAll(frames);
+    frame.removeChildren();
   }
-  */
   
+  //Experimental!
+  public boolean removeFrame(GenericFrame frame, boolean keepglobal) {
+    if(frame.referenceFrame() == null)
+      transferChildren(frame, keepglobal);
+    else
+      frame.referenceFrame().transferChildren(frame, keepglobal);
+    for( Agent agent : this.inputHandler().agents() )
+      agent.removeGrabber(frame);
+    if( frame.referenceFrame() == null )
+      return removeLeadingFrame(frame);
+    else
+      return frame.referenceFrame().removeChild(frame);
+  }
+  
+  //Experimental!
   public boolean removeFrame(GenericFrame frame) {
     return removeFrame(frame, true);
   }
   
   public boolean pruneFrame(GenericFrame frame) {
-    if (hasFrame(frame)) {
-      pruneBranch(frame);
-      return true;
+    if(!hasFrame(frame))
+      return false;
+    List<GenericFrame> list = new ArrayList<GenericFrame>();
+    collectFrames(frame, list);
+    for(GenericFrame gFrame : list) {
+      for( Agent agent : this.inputHandler().agents() )
+        agent.removeGrabber(gFrame);
+      if( gFrame.referenceFrame() != null )
+        gFrame.referenceFrame().removeChild(gFrame);
+      else
+        removeLeadingFrame(gFrame);
     }
-    return false;
+    return true;
   }
-  
-  public void pruneBranch(GenericFrame frame) {
-    for (GenericFrame child : frame.children())
-      pruneBranch(child);
-    if(frame.referenceFrame() == null)
-      removeLeadingFrame(frame);
-    else
-      frame.referenceFrame().removeChild(frame);
-  }
+  // */
 
   /**
    * Returns {@code true} if the frame is top-level.
@@ -282,18 +260,6 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    */
   protected boolean removeLeadingFrame(GenericFrame iFrame) {
     return leadingFrames().remove(iFrame);
-    /*
-    boolean result = false;
-    Iterator<GenericFrame> it = leadingFrames().iterator();
-    while (it.hasNext()) {
-      if (it.next() == iFrame) {
-        it.remove();
-        result = true;
-        break;
-      }
-    }
-    return result;
-    */
   }
 
   /**
@@ -346,14 +312,14 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   public List<GenericFrame> genericFrames() {
     List<GenericFrame> list = new ArrayList<GenericFrame>();
     for (GenericFrame gFrame : leadingFrames())
-      genericFrames(gFrame, list);
+      collectFrames(gFrame, list);
     return list;
   }
   
-  protected void genericFrames(GenericFrame frame, List<GenericFrame> list) {
+  protected void collectFrames(GenericFrame frame, List<GenericFrame> list) {
     list.add(frame);
     for (GenericFrame child : frame.children())
-      genericFrames(child, list);
+      collectFrames(child, list);
   }
 
   // Actions
