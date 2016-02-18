@@ -122,7 +122,6 @@ public class Scene extends AbstractScene implements PConstants {
   protected static int frameCount;
   protected PGraphics pBuffer;
   protected boolean pBufferEnabled;
-  protected List<InteractiveFrame> iFrames;
 
   protected Profile profile;
 
@@ -186,7 +185,6 @@ public class Scene extends AbstractScene implements PConstants {
     setMatrixHelper(matrixHelper(pg));
 
     // 3. Frames & picking buffer
-    iFrames = new ArrayList<InteractiveFrame>();
     // pBuffer = (pg() instanceof processing.opengl.PGraphicsOpenGL) ?
     // pApplet().createGraphics(pg().width, pg().height, pg() instanceof
     // PGraphics3D ? P3D : P2D) : pApplet().createGraphics(pg().width,
@@ -199,7 +197,7 @@ public class Scene extends AbstractScene implements PConstants {
     // 4. Create agents and register P5 methods
     setProfile(new Profile(this));
     // TODO android
-    // discard this block once android is restored
+    // discard this block one android is restored
     {
       defMotionAgent = new MouseAgent(this);
       defKeyboardAgent = new KeyAgent(this);
@@ -1349,16 +1347,14 @@ public class Scene extends AbstractScene implements PConstants {
   protected static PGraphics targetPGraphics;
 
   @Override
-  protected boolean addFrame(GenericFrame gFrame) {
-    boolean result = super.addFrame(gFrame);
-    if (result) {
+  protected boolean addLeadingFrame(GenericFrame gFrame) {
+    boolean result = super.addLeadingFrame(gFrame);
+    if (result)
       if (gFrame instanceof InteractiveFrame)
-        iFrames.add((InteractiveFrame) gFrame);
-      // a bit weird but otherwise checkifgrabsinput throws a npe at sketch startup
-      // if(gFrame instanceof InteractiveFrame)// this line throws the npe too
-      if (isPickingBufferEnabled())
-        pickingBuffer().loadPixels();
-    }
+        // a bit weird but otherwise checkifgrabsinput throws a npe at sketch startup
+        // if(gFrame instanceof InteractiveFrame)// this line throws the npe too
+        if (isPickingBufferEnabled())
+          pickingBuffer().loadPixels();
     return result;
   }
 
@@ -1366,6 +1362,10 @@ public class Scene extends AbstractScene implements PConstants {
    * Returns the collection of interactive frames the scene handles.
    */
   public List<InteractiveFrame> frames() {
+    List<InteractiveFrame> iFrames = new ArrayList<InteractiveFrame>();
+    for(GenericFrame frame : genericFrames())
+      if(frame instanceof InteractiveFrame)
+        iFrames.add((InteractiveFrame)frame);
     return iFrames;
   }
 

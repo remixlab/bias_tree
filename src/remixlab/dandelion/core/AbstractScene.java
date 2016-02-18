@@ -128,7 +128,6 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   }
 
   protected List<GenericFrame> seeds;
-  protected List<GenericFrame> frames;
 
   // public final static int PUP = 1 << 6;
   // public final static int ARP = 1 << 7;
@@ -161,7 +160,6 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    */
   public AbstractScene() {
     seeds = new ArrayList<GenericFrame>();
-    frames = new ArrayList<GenericFrame>();
     setPlatform();
     setTimingHandler(new TimingHandler(this));
     deltaCount = frameCount;
@@ -173,15 +171,6 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   }
 
   /**
-   * Returns all the frames handled by the scene.
-   * 
-   * @see #leadingFrames()
-   */
-  public List<GenericFrame> genericFrames() {
-    return frames;
-  }
-
-  /**
    * Returns the top-level frames (those which referenceFrame is null) handled by the
    * scene.
    * 
@@ -189,6 +178,82 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    */
   public List<GenericFrame> leadingFrames() {
     return seeds;
+  }
+  
+  //TODO api docs, after testing
+  public boolean removeFrame(GenericFrame frame, boolean keepglobal) {
+    return true;
+  }
+  
+  //TODO api docs, after testing
+  /*
+  public boolean removeFrame(GenericFrame frame, boolean keepglobal) {
+    if(frame == null)
+      return false;
+    if( this.hasFrame(frame) ) {
+      GenericFrame referenceFrame = frame.referenceFrame();
+      for (GenericFrame child : frame.children()) {
+        Vec position = child.position();
+        Rotation rotation = child.orientation();
+        float magnitude = child.magnitude();
+        child.setReferenceFrame(referenceFrame);
+        if(keepglobal) {
+          child.setPosition(position);
+          child.setOrientation(rotation);
+          child.setMagnitude(magnitude);
+        }
+      }
+      
+//      Iterator<GenericFrame> it = frame.children().iterator();
+//      while (it.hasNext()) {
+//        GenericFrame child = it.next();
+//        Vec position = new Vec();
+//        Rotation rotation = new Quat();
+//        float magnitude = 0;
+//        if(keepglobal) {
+//          position = child.position();
+//          rotation = child.orientation();
+//          magnitude = child.magnitude();
+//        }
+//        it.next().setReferenceFrame(referenceFrame);
+//        if(keepglobal) {
+//          child.setPosition(position);
+//          child.setOrientation(rotation);
+//          child.setMagnitude(magnitude);
+//        }
+//      }
+      
+      for( Agent agent : this.inputHandler().agents() )
+        agent.removeGrabber(frame);
+      
+      if( frame.referenceFrame() == null )
+        return removeLeadingFrame(frame);
+      else
+        return frame.referenceFrame().removeChild(frame);
+    }
+    return false;
+  }
+  */
+  
+  public boolean removeFrame(GenericFrame frame) {
+    return removeFrame(frame, true);
+  }
+  
+  public boolean pruneFrame(GenericFrame frame) {
+    if (hasFrame(frame)) {
+      pruneBranch(frame);
+      return true;
+    }
+    return false;
+  }
+  
+  public void pruneBranch(GenericFrame frame) {
+    for (GenericFrame child : frame.children())
+      pruneBranch(child);
+    if(frame.referenceFrame() == null)
+      removeLeadingFrame(frame);
+    else
+      frame.referenceFrame().removeChild(frame);
   }
 
   /**
@@ -202,24 +267,6 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   }
 
   /**
-   * Returns {@code true} if the frame is handled by the scene.
-   */
-  protected boolean hasFrame(GenericFrame gFrame) {
-    for (GenericFrame frame : genericFrames())
-      if (frame == gFrame)
-        return true;
-    return false;
-  }
-
-  /**
-   * Registers the frame into the scene. Call by the frame constructor.
-   */
-  protected void registerFrame(GenericFrame gFrame) {
-    addLeadingFrame(gFrame);
-    addFrame(gFrame);
-  }
-
-  /**
    * Add the frame as top-level if its reference frame is null and it isn't already added.
    */
   protected boolean addLeadingFrame(GenericFrame gFrame) {
@@ -227,27 +274,15 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
       return false;
     if (isLeadingFrame(gFrame))
       return false;
-    boolean result = leadingFrames().add(gFrame);
-    return result;
-  }
-
-  /**
-   * Add the {@code frame} into the scene. Does nothing if the current frames belongs to
-   * the scene.
-   */
-  protected boolean addFrame(GenericFrame gFrame) {
-    if (gFrame == null)
-      return false;
-    if (hasFrame(gFrame))
-      return false;
-    boolean result = genericFrames().add(gFrame);
-    return result;
+    return leadingFrames().add(gFrame);
   }
 
   /**
    * Removes the leading frame if present. Typically used when re-parenting the frame.
    */
   protected boolean removeLeadingFrame(GenericFrame iFrame) {
+    return leadingFrames().remove(iFrame);
+    /*
     boolean result = false;
     Iterator<GenericFrame> it = leadingFrames().iterator();
     while (it.hasNext()) {
@@ -258,6 +293,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
       }
     }
     return result;
+    */
   }
 
   /**
@@ -280,6 +316,44 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     for (GenericFrame child : frame.children())
       traverse(child);
     popModelView();
+  }
+  
+  public boolean hasFrame(GenericFrame frame) {
+    for (GenericFrame branch : leadingFrames())
+      if (branch == frame)
+        return true;
+      else
+        if(hasFrame(frame, branch))
+          return true;
+    return false;
+  }
+  
+  protected boolean hasFrame(GenericFrame frame, GenericFrame branch) {
+    if (branch == frame)
+      return true;
+    else
+      for(GenericFrame child : branch.children())
+        if(hasFrame(frame, child))
+          return true;
+    return false;
+  }
+  
+  /**
+   * Returns all the frames handled by the scene.
+   * 
+   * @see #leadingFrames()
+   */
+  public List<GenericFrame> genericFrames() {
+    List<GenericFrame> list = new ArrayList<GenericFrame>();
+    for (GenericFrame gFrame : leadingFrames())
+      genericFrames(gFrame, list);
+    return list;
+  }
+  
+  protected void genericFrames(GenericFrame frame, List<GenericFrame> list) {
+    list.add(frame);
+    for (GenericFrame child : frame.children())
+      genericFrames(child, list);
   }
 
   // Actions

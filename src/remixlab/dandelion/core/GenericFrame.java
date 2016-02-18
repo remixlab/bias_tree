@@ -13,6 +13,7 @@ package remixlab.dandelion.core;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
@@ -526,7 +527,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   protected void init(AbstractScene scn) {
     gScene = scn;
     childrenList = new ArrayList<GenericFrame>();
-    scene().registerFrame(this);
+    scene().addLeadingFrame(this);
     setRotationSensitivity(1.0f);
     setScalingSensitivity(1.0f);
     setTranslationSensitivity(1.0f);
@@ -621,18 +622,29 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   
   @Override
   public void setReferenceFrame(Frame frame) {
-    if(frame instanceof GenericFrame)
+    /*
+    if(frame == null) {
+      super.setReferenceFrame(frame);
+      return;
+    }
+    //*/
+    if(frame instanceof GenericFrame || frame == null)
       setReferenceFrame((GenericFrame) frame);
     else
       System.out.println("Warning: nothing done: Generic.referenceFrame() should be instanceof GenericFrame");
   }
-
+  
   public void setReferenceFrame(GenericFrame frame) {
+    setReferenceFrame(frame, true);
+  }
+
+  public void setReferenceFrame(GenericFrame frame, boolean keepglobal) {
     if (settingAsReferenceFrameWillCreateALoop(frame)) {
       System.out.println("Frame.setReferenceFrame would create a loop in Frame hierarchy. Nothing done.");
       return;
     }
 
+    // 1. no need to re-parent, just check this needs to be added as leadingFrame
     if (referenceFrame() == frame) {
       if (referenceFrame() == null)
         if (scene() != null)
@@ -640,17 +652,31 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
       return;
     }
 
+    // 2. else re-parenting
+    Vec pos = position();
+    Rotation ori = orientation();
+    float mag = magnitude();
+    
+    // 2a. before assigning new reference frame
     if (referenceFrame() != null) // old
-      referenceFrame().children().remove(this);
+      //referenceFrame().children().remove(this);
+      referenceFrame().removeChild(this);
     else if (scene() != null)
       scene().removeLeadingFrame(this);
 
     refFrame = frame;
 
+    // 2b. after assigning new reference frame
     if (referenceFrame() != null) // new
-      referenceFrame().children().add(this); 
+      referenceFrame().addChild(this); 
     else if (scene() != null)
       scene().addLeadingFrame(this);
+    
+    if(keepglobal) {
+      setPosition(pos);
+      setOrientation(ori);
+      setMagnitude(mag);
+    }
 
     modified();
   }
@@ -661,20 +687,54 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * 
    * @see #removeChildren()
    */
-  public List<GenericFrame> children() {
+  public final List<GenericFrame> children() {
     return childrenList;
   }
-
+  
   /**
-   * Remove all frame {@link #children()}.
+   * Internal use. Remove frame child. Called by the scene when removing a frame.
+   * 
+   * @see remixlab.dandelion.core.AbstractScene#removeFrame(GenericFrame)
    */
-  public void removeChildren() {
-    Iterator<GenericFrame> iterator = childrenList.iterator();
-    while (iterator.hasNext()) {
-      Frame frame = iterator.next();
-      childrenList.remove(frame);
-      frame.setReferenceFrame(null);
+  protected boolean removeChild(GenericFrame child) {
+    return children().remove(child);
+    /*
+    boolean result = false;
+    Iterator<GenericFrame> it = children().iterator();
+    while (it.hasNext()) {
+      if (it.next() == child) {
+        it.remove();
+        result = true;
+        break;
+      }
     }
+    return result;
+    //*/
+  }
+  
+  protected boolean addChild(GenericFrame child) {
+    return children().add(child);
+    /*
+    ListIterator<GenericFrame> iter = children().listIterator();
+    iter.add(child);
+    return true;
+    */
+    /*
+    boolean result = false;
+    Iterator<GenericFrame> it = children().iterator();
+    while (it.hasNext()) {
+      if (it.next() == child) {
+        it.remove();
+        result = true;
+        break;
+      }
+    }
+    return result;
+    */
+  }
+  
+  protected void removeChildren() {
+    children().clear();
   }
 
   /**
