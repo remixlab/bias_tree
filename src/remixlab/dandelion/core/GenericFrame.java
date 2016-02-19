@@ -643,9 +643,12 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
     // 1. no need to re-parent, just check this needs to be added as leadingFrame
     if (referenceFrame() == frame) {
+      restorePath(referenceFrame(), this);
+      /*
       if (referenceFrame() == null)
         if (scene() != null)
           scene().addLeadingFrame(this);
+      */
       return;
     }
 
@@ -659,12 +662,27 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     refFrame = frame;
 
     // 2b. after assigning new reference frame
+    restorePath(referenceFrame(), this);
+    /*
     if (referenceFrame() != null) // new
       referenceFrame().children().add(this);
     else if (scene() != null)
       scene().addLeadingFrame(this);
+      */
 
     modified();
+  }
+  
+  public void restorePath(GenericFrame parent, GenericFrame child) {
+    if (parent == null) {
+      if (scene() != null)
+        scene().addLeadingFrame(child);
+    } else {
+      if (!parent.hasChild(child)) {
+        parent.children().add(child);
+        restorePath(parent.referenceFrame(), parent);
+      }
+    }
   }
   
   /**
