@@ -23,13 +23,14 @@ import remixlab.fpstiming.*;
 /**
  * A 2D or 3D {@link remixlab.bias.core.Grabber} scene.
  * 
- * Main package class rjavaepresenting an interface between Dandelion and the outside world.
- * For an introduction javato DANDELION please refer to
+ * Main package class representing an interface between Dandelion and the outside world.
+ * For an introduction to DANDELION please refer to
  * <a href="http://nakednous.github.io/projects/dandelion">this</a>.
  * <p>
+ * //TODO: improve docs here
  * The {@link remixlab.dandelion.core.GenericFrame}s collection attached to the scene may
- * be retrieved with {@link #genericFrames()}. To traverse the frame hierarchy call
- * {@link #traverseFrameGraph()}.
+ * be retrieved with {@link #frames()}. To traverse the frame hierarchy call
+ * {@link #traverseGraph()}.
  * <p>
  * Each AbstractScene provides the following main object instances:
  * <ol>
@@ -170,10 +171,14 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   }
 
   /**
-   * Returns the top-level frames (those which referenceFrame is null) handled by the
-   * scene.
+   * Returns the top-level frames (those which referenceFrame is null).
+   * <p>
+   * All leading frames are also reachable by the {@link #traverseGraph()} algorithm for which
+   * they are the seeds.
    * 
-   * @see #genericFrames()
+   * @see #frames()
+   * @see #isFrameReachable(GenericFrame)
+   * @see #pruneFrame(GenericFrame)
    */
   public List<GenericFrame> leadingFrames() {
     return seeds;
@@ -266,60 +271,145 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * Traverse the frame hierarchy, successively applying the local transformation defined
    * by each traversed frame, and calling
    * {@link remixlab.dandelion.core.GenericFrame#traverse()} on it.
+   * <p>
+   * Note that only reachable frames are visited by this algorithm.
+   * 
+   * @see #isFrameReachable(GenericFrame)
+   * @see #pruneFrame(GenericFrame)
    */
-  public void traverseFrameGraph() {
+  public void traverseGraph() {
     for (GenericFrame frame : leadingFrames())
-      traverse(frame);
+      traverseFrame(frame);
   }
 
   /**
    * Used by the traverse frame graph algorithm.
    */
-  protected void traverse(GenericFrame frame) {
+  protected void traverseFrame(GenericFrame frame) {
     pushModelView();
     applyTransformation(frame);
       frame.traverse();
     for (GenericFrame child : frame.children())
-      traverse(child);
+      traverseFrame(child);
     popModelView();
   }
   
-  public boolean hasFrame(GenericFrame frame) {
+  /*
+  public boolean isFrameReachable(GenericFrame frame) {
     for (GenericFrame branch : leadingFrames())
       if (branch == frame)
         return true;
       else
-        if(hasFrame(frame, branch))
+        if(isFrameReachable(frame, branch))
           return true;
     return false;
   }
   
-  protected boolean hasFrame(GenericFrame frame, GenericFrame branch) {
+  protected boolean isFrameReachable(GenericFrame frame, GenericFrame branch) {
     if (branch == frame)
       return true;
     else
       for(GenericFrame child : branch.children())
-        if(hasFrame(frame, child))
+        if(isFrameReachable(frame, child))
           return true;
     return false;
   }
   
+  public boolean pruneFrame(GenericFrame frame) {
+    if(!isFrameReachable(frame))
+      return false;
+    List<GenericFrame> list = new ArrayList<GenericFrame>();
+    collectFrames(list, frame, true);
+    for(GenericFrame gFrame : list) {
+      for( Agent agent : this.inputHandler().agents() )
+        agent.removeGrabber(gFrame);
+      if( gFrame.referenceFrame() != null )
+        gFrame.referenceFrame().children().remove(gFrame);
+      else
+        removeLeadingFrame(gFrame);
+    }
+    return true;
+  }
+  */
+  
   /**
-   * Returns all the frames handled by the scene.
+   * Same as {@code for(GenericFrame frame : leadingFrames()) pruneFrame(frame)}.
    * 
-   * @see #leadingFrames()
+   * @see #pruneFrame(GenericFrame)
    */
-  public List<GenericFrame> genericFrames() {
+  public void pruneFrames() {
+    for(GenericFrame frame : leadingFrames())
+      pruneFrame(frame);
+  }
+  
+  /**
+   * Make all the frames in the {@code frame} branch eligible for garbage collection.
+   * <p>
+   * A call to {@link #isFrameReachable(GenericFrame)} on all
+   * {@code frame} descendants (including {@code frame}) will return false, after issuing this method.
+   * It also means that all frames in the {@code frame} branch will become unreachable
+   * by the {@link #traverseGraph()} algorithm.
+   * <p>
+   * Frames in the {@code frame} branch will also be removed from all the agents currently
+   * registered in the {@link #inputHandler()}.
+   * <p>
+   * To make a the frame reachable again simply call {@link remixlab.dandelion.core.GenericFrame#setReferenceFrame(GenericFrame)},
+   * and to interactively handle it, add it to some agents, such as the {@link #motionAgent()}.
+   * <p>
+   * Pruned frames are eligible for garbage collection and will behave simply as {@link remixlab.dandelion.geom.Frame} in the meantime.
+   * 
+   * @see #pruneFrames()
+   * @see #isFrameReachable(GenericFrame)
+   */
+  public boolean pruneFrame(GenericFrame frame) {
+    if(!isFrameReachable(frame))
+      return false;
+    List<GenericFrame> list = new ArrayList<GenericFrame>();
+    collectFrames(list, frame, true);
+    for(GenericFrame gFrame : list) {
+      inputHandler().removeGrabber(gFrame);
+      if( gFrame.referenceFrame() != null )
+        gFrame.referenceFrame().children().remove(gFrame);
+      else
+        removeLeadingFrame(gFrame);
+    }
+    return true;
+  }
+  
+  /**
+   * Returns {@code true} if the frame is reachable by the {@link #traverseGraph()} algorithm and {@code false} otherwise.
+   * <p>
+   * Frames are make unreachable with {@link #pruneFrame(GenericFrame)} and reachable again
+   * with {@link remixlab.dandelion.core.GenericFrame#setReferenceFrame(GenericFrame)}.
+   * 
+   * @see #traverseGraph()
+   * @see #frames(boolean)
+   */
+  public boolean isFrameReachable(GenericFrame frame) {
+    return frame.referenceFrame() == null ? isLeadingFrame(frame) : frame.referenceFrame().hasChild(frame) ;
+  }
+  
+  /**
+   * Returns a list of all the frames that are reachable by the {@link #traverseGraph()} algorithm, including the EyeFrames (when {@code eyeframes} is {@code true}.
+   * 
+   * @ see {@link #isFrameReachable(GenericFrame)}
+   * @see remixlab.dandelion.core.GenericFrame#isEyeFrame()
+   */
+  public List<GenericFrame> frames(boolean eyeframes) {
     List<GenericFrame> list = new ArrayList<GenericFrame>();
     for (GenericFrame gFrame : leadingFrames())
-      collectFrames(gFrame, list);
+      collectFrames(list, gFrame, eyeframes);
     return list;
   }
   
-  protected void collectFrames(GenericFrame frame, List<GenericFrame> list) {
-    list.add(frame);
+  /**
+   * Routine used to collect the frames in the scene graph, including the EyeFrames (when {@code eyeframes} is {@code true}.
+   */
+  protected void collectFrames(List<GenericFrame> list, GenericFrame frame, boolean eyeframes) {
+    if( !frame.isEyeFrame() || eyeframes )
+      list.add(frame);
     for (GenericFrame child : frame.children())
-      collectFrames(child, list);
+      collectFrames(list, child, eyeframes);
   }
 
   // Actions

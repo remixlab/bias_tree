@@ -103,6 +103,8 @@ import remixlab.util.*;
  * documentation. See also {@link #setTrackingEyeDistance(float)},
  * {@link #setTrackingEyeAzimuth(float)} and {@link #setTrackingEyeInclination(float)}.
  */
+
+//TODO to make a generic frame eligible for garbage collection.
 public class GenericFrame extends Frame implements Grabber, Trackable {
   // according to space-nav fine tuning it turned out that the space-nav is
   // right handed
@@ -631,12 +633,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     else
       System.out.println("Warning: nothing done: Generic.referenceFrame() should be instanceof GenericFrame");
   }
-  
-  public void setReferenceFrame(GenericFrame frame) {
-    setReferenceFrame(frame, true);
-  }
 
-  public void setReferenceFrame(GenericFrame frame, boolean keepglobal) {
+  public void setReferenceFrame(GenericFrame frame) {
     if (settingAsReferenceFrameWillCreateALoop(frame)) {
       System.out.println("Frame.setReferenceFrame would create a loop in Frame hierarchy. Nothing done.");
       return;
@@ -650,11 +648,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
       return;
     }
 
-    // 2. else re-parenting
-    Vec pos = position();
-    Rotation ori = orientation();
-    float mag = magnitude();
-    
+    // 2. else re-parenting    
     // 2a. before assigning new reference frame
     if (referenceFrame() != null) // old
       referenceFrame().children().remove(this);
@@ -668,12 +662,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
       referenceFrame().children().add(this);
     else if (scene() != null)
       scene().addLeadingFrame(this);
-    
-    if(keepglobal) {
-      setPosition(pos);
-      setOrientation(ori);
-      setMagnitude(mag);
-    }
 
     modified();
   }
@@ -685,6 +673,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   public final List<GenericFrame> children() {
     return childrenList;
   }
+  
+  protected boolean hasChild(GenericFrame gFrame) {
+    for (GenericFrame frame : children())
+      if (frame == gFrame)
+        return true;
+    return false;
+  } 
   
   //Experimental!
   /*
@@ -726,7 +721,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * Procedure called by the scene frame traversal algorithm. Default implementation is
    * empty, i.e., it is meant to be implemented by derived classes.
    * 
-   * @see remixlab.dandelion.core.AbstractScene#traverseFrameGraph()
+   * @see remixlab.dandelion.core.AbstractScene#traverseGraph()
    */
   public void traverse() {
   }

@@ -82,7 +82,7 @@ import java.nio.FloatBuffer;
  * <i>AnimationHandler</i>.
  * </ol>
  * <h3>Scene frames</h3> Each scene has a collection of
- * {@link remixlab.proscene.InteractiveFrame}s (see {@link #frames()}). An
+ * {@link remixlab.proscene.InteractiveFrame}s (see {@link #iFrames()}). An
  * {@link remixlab.proscene.InteractiveFrame} is a high level
  * {@link remixlab.dandelion.geom.Frame} PSshape wrapper (a coordinate system related to a
  * PShape or an arbitrary graphics procedure) which may be manipulated by any
@@ -274,7 +274,7 @@ public class Scene extends AbstractScene implements PConstants {
   // PICKING BUFFER
 
   /**
-   * Returns the {@link #genericFrames()}
+   * Returns the {@link #frames()}
    * <a href="http://schabby.de/picking-opengl-ray-tracing/">'ray-picking'</a> color
    * buffer.
    * 
@@ -1363,14 +1363,14 @@ public class Scene extends AbstractScene implements PConstants {
    */
   public List<InteractiveFrame> frames() {
     List<InteractiveFrame> iFrames = new ArrayList<InteractiveFrame>();
-    for(GenericFrame frame : genericFrames())
+    for(GenericFrame frame : frames(false))
       if(frame instanceof InteractiveFrame)
         iFrames.add((InteractiveFrame)frame);
     return iFrames;
   }
 
   /**
-   * Draw all scene {@link #frames()} into the {@link #pg()} buffer. A similar (but
+   * Draw all scene {@link #iFrames()} into the {@link #pg()} buffer. A similar (but
    * slightly less efficient) effect may be achieved with
    * {@code for (InteractiveFrame frame : frames()) frame.draw(pg());}.
    * <p>
@@ -1378,9 +1378,9 @@ public class Scene extends AbstractScene implements PConstants {
    * {@link #pApplet()} draw() loop.
    * <p>
    * This method is implementing by simply calling
-   * {@link remixlab.dandelion.core.AbstractScene#traverseFrameGraph()}.
+   * {@link remixlab.dandelion.core.AbstractScene#traverseGraph()}.
    * 
-   * @see #genericFrames()
+   * @see #frames()
    * @see #pg()
    * @see #drawFrames(PGraphics)
    * @see remixlab.proscene.InteractiveFrame#draw(PGraphics)
@@ -1388,11 +1388,11 @@ public class Scene extends AbstractScene implements PConstants {
   /// *
   public void drawFrames() {
     targetPGraphics = pg();
-    traverseFrameGraph();
+    traverseGraph();
   }
 
   /**
-   * Draw all {@link #frames()} into the given pgraphics. No
+   * Draw all {@link #iFrames()} into the given pgraphics. No
    * {@code pgraphics.beginDraw()/endDraw()} calls take place. This method allows shader
    * chaining.
    * <p>
@@ -1402,7 +1402,7 @@ public class Scene extends AbstractScene implements PConstants {
    * 
    * @param pgraphics
    * 
-   * @see #genericFrames()
+   * @see #frames()
    * @see #drawFrames()
    * @see remixlab.proscene.InteractiveFrame#draw(PGraphics)
    */
@@ -1411,7 +1411,7 @@ public class Scene extends AbstractScene implements PConstants {
     bindMatrices(pgraphics);
     // 2. Draw all frames into pgraphics
     targetPGraphics = pgraphics;
-    traverseFrameGraph();
+    traverseGraph();
   }
 
   /**
@@ -1448,13 +1448,13 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   @Override
-  protected void traverse(GenericFrame frame) {
+  protected void traverseFrame(GenericFrame frame) {
     targetPGraphics.pushMatrix();
     applyTransformation(targetPGraphics, frame);
     if (frame instanceof GenericFrame)
       frame.traverse();
     for (GenericFrame child : frame.children())
-      traverse(child);
+      traverseFrame(child);
     targetPGraphics.popMatrix();
   }
 
