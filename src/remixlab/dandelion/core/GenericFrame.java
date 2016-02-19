@@ -680,42 +680,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
         return true;
     return false;
   } 
-  
-  //Experimental!
-  /*
-  protected void transferChildren(GenericFrame frame, boolean keepglobal) {
-    List<GenericFrame> frames = frame.children();
-    for (GenericFrame child : frames) {
-      Vec position = child.position();
-      Rotation rotation = child.orientation();
-      float magnitude = child.magnitude();
-      child.refFrame = this;
-      if(keepglobal) {
-        child.setPosition(position);
-        child.setOrientation(rotation);
-        child.setMagnitude(magnitude);
-      }
-    }
-    children().addAll(frames);
-    frame.removeChildren();
-  }
-  
-  protected void setRefFrame(GenericFrame frame) {
-    super.setReferenceFrame(frame);
-  }
-  
-  protected boolean removeChild(GenericFrame child) {
-    return children().remove(child);
-  }
-  
-  protected boolean addChild(GenericFrame child) {
-    return children().add(child);
-  }
-  
-  protected void removeChildren() {
-    children().clear();
-  }
-  // */
 
   /**
    * Procedure called by the scene frame traversal algorithm. Default implementation is

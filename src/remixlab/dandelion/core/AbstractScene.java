@@ -183,61 +183,6 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   public List<GenericFrame> leadingFrames() {
     return seeds;
   }
-  
-  //Experimental!
-  /*
-  protected void transferChildren(GenericFrame frame, boolean keepglobal) {
-    List<GenericFrame> frames = frame.children();
-    for (GenericFrame child : frames) {
-      Vec position = child.position();
-      Rotation rotation = child.orientation();
-      float magnitude = child.magnitude();
-      child.setRefFrame(null);
-      if(keepglobal) {
-        child.setPosition(position);
-        child.setOrientation(rotation);
-        child.setMagnitude(magnitude);
-      }
-    }
-    leadingFrames().addAll(frames);
-    frame.removeChildren();
-  }
-  
-  //Experimental!
-  public boolean removeFrame(GenericFrame frame, boolean keepglobal) {
-    if(frame.referenceFrame() == null)
-      transferChildren(frame, keepglobal);
-    else
-      frame.referenceFrame().transferChildren(frame, keepglobal);
-    for( Agent agent : this.inputHandler().agents() )
-      agent.removeGrabber(frame);
-    if( frame.referenceFrame() == null )
-      return removeLeadingFrame(frame);
-    else
-      return frame.referenceFrame().removeChild(frame);
-  }
-  
-  //Experimental!
-  public boolean removeFrame(GenericFrame frame) {
-    return removeFrame(frame, true);
-  }
-  
-  public boolean pruneFrame(GenericFrame frame) {
-    if(!hasFrame(frame))
-      return false;
-    List<GenericFrame> list = new ArrayList<GenericFrame>();
-    collectFrames(frame, list);
-    for(GenericFrame gFrame : list) {
-      for( Agent agent : this.inputHandler().agents() )
-        agent.removeGrabber(gFrame);
-      if( gFrame.referenceFrame() != null )
-        gFrame.referenceFrame().removeChild(gFrame);
-      else
-        removeLeadingFrame(gFrame);
-    }
-    return true;
-  }
-  // */
 
   /**
    * Returns {@code true} if the frame is top-level.
@@ -293,44 +238,6 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
       traverseFrame(child);
     popModelView();
   }
-  
-  /*
-  public boolean isFrameReachable(GenericFrame frame) {
-    for (GenericFrame branch : leadingFrames())
-      if (branch == frame)
-        return true;
-      else
-        if(isFrameReachable(frame, branch))
-          return true;
-    return false;
-  }
-  
-  protected boolean isFrameReachable(GenericFrame frame, GenericFrame branch) {
-    if (branch == frame)
-      return true;
-    else
-      for(GenericFrame child : branch.children())
-        if(isFrameReachable(frame, child))
-          return true;
-    return false;
-  }
-  
-  public boolean pruneFrame(GenericFrame frame) {
-    if(!isFrameReachable(frame))
-      return false;
-    List<GenericFrame> list = new ArrayList<GenericFrame>();
-    collectFrames(list, frame, true);
-    for(GenericFrame gFrame : list) {
-      for( Agent agent : this.inputHandler().agents() )
-        agent.removeGrabber(gFrame);
-      if( gFrame.referenceFrame() != null )
-        gFrame.referenceFrame().children().remove(gFrame);
-      else
-        removeLeadingFrame(gFrame);
-    }
-    return true;
-  }
-  */
   
   /**
    * Same as {@code for(GenericFrame frame : leadingFrames()) pruneFrame(frame)}.
