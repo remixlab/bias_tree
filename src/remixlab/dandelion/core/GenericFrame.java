@@ -11,6 +11,7 @@
 package remixlab.dandelion.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import remixlab.bias.core.*;
@@ -651,7 +652,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     // 2. else re-parenting    
     // 2a. before assigning new reference frame
     if (referenceFrame() != null) // old
-      referenceFrame().children().remove(this);
+      referenceFrame().removeChild(this);
     else if (scene() != null)
       scene().removeLeadingFrame(this);
 
@@ -672,6 +673,22 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    */
   public final List<GenericFrame> children() {
     return childrenList;
+  }
+  
+  /**
+   * Removes the leading frame if present. Typically used when re-parenting the frame.
+   */
+  protected boolean removeChild(GenericFrame iFrame) {
+    boolean result = false;
+    Iterator<GenericFrame> it = children().iterator();
+    while (it.hasNext()) {
+      if (it.next() == iFrame) {
+        it.remove();
+        result = true;
+        break;
+      }
+    }
+    return result;
   }
   
   protected boolean hasChild(GenericFrame gFrame) {

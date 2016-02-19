@@ -12,6 +12,7 @@ package remixlab.dandelion.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import remixlab.bias.core.*;
@@ -209,7 +210,16 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * Removes the leading frame if present. Typically used when re-parenting the frame.
    */
   protected boolean removeLeadingFrame(GenericFrame iFrame) {
-    return leadingFrames().remove(iFrame);
+    boolean result = false;
+    Iterator<GenericFrame> it = leadingFrames().iterator();
+    while (it.hasNext()) {
+      if (it.next() == iFrame) {
+        it.remove();
+        result = true;
+        break;
+      }
+    }
+    return result;
   }
 
   /**
@@ -276,7 +286,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     for(GenericFrame gFrame : list) {
       inputHandler().removeGrabber(gFrame);
       if( gFrame.referenceFrame() != null )
-        gFrame.referenceFrame().children().remove(gFrame);
+        gFrame.referenceFrame().removeChild(gFrame);
       else
         removeLeadingFrame(gFrame);
     }
