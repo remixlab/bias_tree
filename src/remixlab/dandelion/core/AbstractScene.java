@@ -28,10 +28,10 @@ import remixlab.fpstiming.*;
  * For an introduction to DANDELION please refer to
  * <a href="http://nakednous.github.io/projects/dandelion">this</a>.
  * <p>
- * Instantiated {@link remixlab.dandelion.core.GenericFrame}s in the scene form
- * scene-graph which may be traverse with {@link #traverseGraph()}. The frame collection
- * belonging to the scene may be retrieved with {@link #frames()}. The scene provides
- * other useful routines to handle the hierarchy, such as
+ * Instantiated scene {@link remixlab.dandelion.core.GenericFrame}s form a scene-graph of
+ * transformations which may be traverse with {@link #traverseGraph()}. The frame
+ * collection belonging to the scene may be retrieved with {@link #frames()}. The scene
+ * provides other useful routines to handle the hierarchy, such as
  * {@link #pruneBranch(GenericFrame)}, {@link #appendBranch(List)},
  * {@link #isFrameReachable(GenericFrame)}, {@link #branch(GenericFrame, boolean)}, and
  * {@link #clearGraph()}.
