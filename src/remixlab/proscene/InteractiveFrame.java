@@ -436,17 +436,17 @@ public class InteractiveFrame extends GenericP5Frame {
       return false;
     pg.pushMatrix();
     ((Scene) gScene).applyWorldTransformation(pg, this);
-    traverse(pg);
+    visit(pg);
     pg.popMatrix();
     return true;
   }
 
   @Override
-  public void traverse() {
-    traverse(Scene.targetPGraphics);
+  public void visit() {
+    visit(Scene.targetPGraphics);
   }
 
-  protected void traverse(PGraphics pg) {
+  protected void visit(PGraphics pg) {
     pg.pushStyle();
     if (pg == ((Scene) gScene).pickingBuffer())
       beginPickingBuffer();

@@ -65,7 +65,7 @@ public class HIDAgent extends Agent {
     // we add all the frames registered at the scene to the agent
     // the agent should then be defined after the frames comprising the scene
     // otherwise the addGrabber method should be called after frame instantiation
-    for(GenericFrame frame : scn.genericFrames())
+    for(GenericFrame frame : scn.frames())
       addGrabber(frame);
     resetDefaultGrabber();
   }

@@ -123,8 +123,7 @@ public class Frame implements Copyable {
 
     Frame other = (Frame) obj;
     return new EqualsBuilder().append(trans, other.trans).append(scl, other.scl).append(rot, other.rot)
-        .append(refFrame, other.refFrame).append(cnstrnt, other.cnstrnt)
-        .isEquals();
+        .append(refFrame, other.refFrame).append(cnstrnt, other.cnstrnt).isEquals();
   }
 
   protected Vec trans;

@@ -1361,11 +1361,26 @@ public class Scene extends AbstractScene implements PConstants {
   /**
    * Returns the collection of interactive frames the scene handles.
    */
-  public List<InteractiveFrame> frames() {
-    List<InteractiveFrame> iFrames = new ArrayList<InteractiveFrame>();
-    for(GenericFrame frame : frames(false))
-      if(frame instanceof InteractiveFrame)
-        iFrames.add((InteractiveFrame)frame);
+  public ArrayList<InteractiveFrame> frames() {
+    ArrayList<InteractiveFrame> iFrames = new ArrayList<InteractiveFrame>();
+    for (GenericFrame frame : frames(false))
+      if (frame instanceof InteractiveFrame)
+        iFrames.add((InteractiveFrame) frame);
+    return iFrames;
+  }
+
+  /**
+   * Collects {@code frame} and all its descendant frames. When {@code eyeframes} is
+   * {@code true} eye-frames will also be collected. Note that for a frame to be collected
+   * it must be reachable.
+   * 
+   * @see #isFrameReachable(GenericFrame)
+   */
+  public ArrayList<InteractiveFrame> frames(GenericFrame frame) {
+    ArrayList<InteractiveFrame> iFrames = new ArrayList<InteractiveFrame>();
+    for (GenericFrame gFrame : frames(frame, false))
+      if (gFrame instanceof InteractiveFrame)
+        iFrames.add((InteractiveFrame) gFrame);
     return iFrames;
   }
 
@@ -1448,13 +1463,13 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   @Override
-  protected void traverseFrame(GenericFrame frame) {
+  protected void visitFrame(GenericFrame frame) {
     targetPGraphics.pushMatrix();
     applyTransformation(targetPGraphics, frame);
     if (frame instanceof GenericFrame)
-      frame.traverse();
+      frame.visitCallback();
     for (GenericFrame child : frame.children())
-      traverseFrame(child);
+      visitFrame(child);
     targetPGraphics.popMatrix();
   }
 

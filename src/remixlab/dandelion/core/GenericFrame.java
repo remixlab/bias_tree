@@ -33,17 +33,18 @@ import remixlab.util.*;
  * parameter). To attach a generic-frame to {@code MyObject} use code like this:
  * 
  * <pre>
- * {@code
- * public class MyObject {
- *   public GenericFrame gFrame;
+ * {
+ *   &#64;code
+ *   public class MyObject {
+ *     public GenericFrame gFrame;
  * 
- *   public void draw() {
- *     gFrame.scene().pushModelView();
- *     gFrame.applyWorldTransformation();
- *     drawMyObject();
- *     gFrame.scene().popModelView();
+ *     public void draw() {
+ *       gFrame.scene().pushModelView();
+ *       gFrame.applyWorldTransformation();
+ *       drawMyObject();
+ *       gFrame.scene().popModelView();
+ *     }
  *   }
- * }
  * }
  * </pre>
  * 
@@ -105,7 +106,7 @@ import remixlab.util.*;
  * {@link #setTrackingEyeAzimuth(float)} and {@link #setTrackingEyeInclination(float)}.
  */
 
-//TODO to make a generic frame eligible for garbage collection.
+// TODO to make a generic frame eligible for garbage collection.
 public class GenericFrame extends Frame implements Grabber, Trackable {
   // according to space-nav fine tuning it turned out that the space-nav is
   // right handed
@@ -151,6 +152,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
   private float grabsInputThreshold;
 
+  private boolean visit = true;
+
   /**
    * Enumerates the two possible types of Camera.
    * <p>
@@ -165,7 +168,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
   public DOF2Event initEvent;
   private float flySpeedCache;
-  
+
   protected List<GenericFrame> childrenList;
 
   @Override
@@ -173,7 +176,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(grabsInputThreshold).append(pkgnPrecision)
         .append(rotSensitivity).append(transSensitivity).append(sclSensitivity).append(spngRotation)
         .append(spngSensitivity).append(dampFriction).append(sFriction).append(wheelSensitivity).append(keySensitivity)
-        .append(flyDisp).append(flySpd).append(scnUpVec).append(lastUpdate).append(childrenList).toHashCode();
+        .append(flyDisp).append(flySpd).append(scnUpVec).append(lastUpdate).append(childrenList).append(visit)
+        .toHashCode();
   }
 
   @Override
@@ -192,7 +196,8 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
         .append(sclSensitivity, other.sclSensitivity).append(spngRotation, other.spngRotation)
         .append(spngSensitivity, other.spngSensitivity).append(wheelSensitivity, other.wheelSensitivity)
         .append(keySensitivity, other.keySensitivity).append(flyDisp, other.flyDisp).append(flySpd, other.flySpd)
-        .append(scnUpVec, other.scnUpVec).append(lastUpdate, other.lastUpdate).append(childrenList, other.childrenList).isEquals();
+        .append(scnUpVec, other.scnUpVec).append(lastUpdate, other.lastUpdate).append(childrenList, other.childrenList)
+        .append(visit, other.visit).isEquals();
   }
 
   /**
@@ -613,23 +618,20 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   public GenericFrame get() {
     return new GenericFrame(this);
   }
-  
+
   // GRAPH
-  
+
   @Override
   public GenericFrame referenceFrame() {
-    return (GenericFrame)this.refFrame;
+    return (GenericFrame) this.refFrame;
   }
-  
+
   @Override
   public void setReferenceFrame(Frame frame) {
     /*
-    if(frame == null) {
-      super.setReferenceFrame(frame);
-      return;
-    }
-    //*/
-    if(frame instanceof GenericFrame || frame == null)
+     * if(frame == null) { super.setReferenceFrame(frame); return; } //
+     */
+    if (frame instanceof GenericFrame || frame == null)
       setReferenceFrame((GenericFrame) frame);
     else
       System.out.println("Warning: nothing done: Generic.referenceFrame() should be instanceof GenericFrame");
@@ -644,15 +646,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     // 1. no need to re-parent, just check this needs to be added as leadingFrame
     if (referenceFrame() == frame) {
       restorePath(referenceFrame(), this);
-      /*
-      if (referenceFrame() == null)
-        if (scene() != null)
-          scene().addLeadingFrame(this);
-      */
+//      if (referenceFrame() == null)
+//        if (scene() != null)
+//          scene().addLeadingFrame(this);
       return;
     }
 
-    // 2. else re-parenting    
+    // 2. else re-parenting
     // 2a. before assigning new reference frame
     if (referenceFrame() != null) // old
       referenceFrame().removeChild(this);
@@ -662,29 +662,27 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     refFrame = frame;
 
     // 2b. after assigning new reference frame
-    restorePath(referenceFrame(), this);
-    /*
-    if (referenceFrame() != null) // new
-      referenceFrame().children().add(this);
-    else if (scene() != null)
-      scene().addLeadingFrame(this);
-      */
-
+    restorePath(referenceFrame(), this); 
+//    if (referenceFrame() != null) // new
+//      referenceFrame().children().add(this);
+//    else if
+//    (scene() != null) scene().addLeadingFrame(this);
+    
     modified();
   }
-  
-  public void restorePath(GenericFrame parent, GenericFrame child) {
+
+  protected void restorePath(GenericFrame parent, GenericFrame child) {
     if (parent == null) {
       if (scene() != null)
         scene().addLeadingFrame(child);
     } else {
       if (!parent.hasChild(child)) {
-        parent.children().add(child);
+        parent.addChild(child);
         restorePath(parent.referenceFrame(), parent);
       }
     }
   }
-  
+
   /**
    * Returns a list of the frame children, i.e., frame which {@link #referenceFrame()} is
    * this.
@@ -693,14 +691,22 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     return childrenList;
   }
   
+  protected boolean addChild(GenericFrame frame) {
+    if (frame == null)
+      return false;
+    if (hasChild(frame))
+      return false;
+    return children().add(frame);
+  }
+
   /**
    * Removes the leading frame if present. Typically used when re-parenting the frame.
    */
-  protected boolean removeChild(GenericFrame iFrame) {
+  protected boolean removeChild(GenericFrame frame) {
     boolean result = false;
     Iterator<GenericFrame> it = children().iterator();
     while (it.hasNext()) {
-      if (it.next() == iFrame) {
+      if (it.next() == frame) {
         it.remove();
         result = true;
         break;
@@ -708,13 +714,13 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     }
     return result;
   }
-  
+
   protected boolean hasChild(GenericFrame gFrame) {
     for (GenericFrame frame : children())
       if (frame == gFrame)
         return true;
     return false;
-  } 
+  }
 
   /**
    * Procedure called by the scene frame traversal algorithm. Default implementation is
@@ -722,7 +728,60 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
    * 
    * @see remixlab.dandelion.core.AbstractScene#traverseGraph()
    */
-  public void traverse() {
+  protected void visit() {
+  }
+
+  public void visitCallback() {
+    if (isVisitEnabled())
+      visit();
+  }
+
+  /**
+   * Enables {@link #visit()} of this frame when performing the
+   * {@link remixlab.dandelion.core.AbstractScene#traverseGraph()}.
+   * 
+   * @see #disableVisit()
+   * @see #toggleVisit()
+   * @see #isVisitEnabled()
+   */
+  public void enableVisit() {
+    visit = true;
+  }
+
+  /**
+   * Disables {@link #visit()} of this frame when performing the
+   * {@link remixlab.dandelion.core.AbstractScene#traverseGraph()}.
+   * 
+   * @see #enableVisit()
+   * @see #toggleVisit()
+   * @see #isVisitEnabled()
+   */
+  public void disableVisit() {
+    visit = false;
+  }
+
+  /**
+   * Toggles {@link #visit()} of this frame when performing the
+   * {@link remixlab.dandelion.core.AbstractScene#traverseGraph()}.
+   * 
+   * @see #enableVisit()
+   * @see #disableVisit()
+   * @see #isVisitEnabled()
+   */
+  public void toggleVisit() {
+    visit = !visit;
+  }
+
+  /**
+   * Returns true if {@link #visit()} of this frame when performing the
+   * {@link remixlab.dandelion.core.AbstractScene#traverseGraph() is enabled}.
+   * 
+   * @see #enableVisit()
+   * @see #disableVisit()
+   * @see #isVisitEnabled()
+   */
+  public boolean isVisitEnabled() {
+    return visit;
   }
 
   /**
@@ -990,9 +1049,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   protected void modified() {
     if (gScene != null)
       lastUpdate = gScene.frameCount();
-    if(children() != null)
-    for (GenericFrame child : children())
-      child.modified();
+    if (children() != null)
+      for (GenericFrame child : children())
+        child.modified();
   }
 
   /**

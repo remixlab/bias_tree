@@ -22,9 +22,9 @@ import remixlab.bias.event.*;
  * {@link remixlab.bias.core.Grabber} objects) to consume them (
  * {@link #handle(BogusEvent)}). Agents thus effectively open up a channel between all
  * kinds of input data sources and user-space objects. To add/remove a grabber to/from the
- * #grabbers() collection issue #addGrabber(Grabber) / #removeGrabber(Grabber) calls.
- * Derive from this agent and either call {@link #handle(BogusEvent)} or override
- * {@link #handleFeed()} .
+ * {@link #grabbers()} collection issue {@link #addGrabber(Grabber)} /
+ * {@link #removeGrabber(Grabber)} calls. Derive from this agent and either call
+ * {@link #handle(BogusEvent)} or override {@link #handleFeed()} .
  * <p>
  * The agent may send bogus-events to its {@link #inputGrabber()} which may be regarded as
  * the agent's grabber target. The {@link #inputGrabber()} may be set by querying each
