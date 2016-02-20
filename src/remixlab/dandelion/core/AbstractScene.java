@@ -28,9 +28,13 @@ import remixlab.fpstiming.*;
  * For an introduction to DANDELION please refer to
  * <a href="http://nakednous.github.io/projects/dandelion">this</a>.
  * <p>
- * //TODO: improve docs here The {@link remixlab.dandelion.core.GenericFrame}s collection
- * attached to the scene may be retrieved with {@link #frames()}. To traverse the frame
- * hierarchy call {@link #traverseGraph()}.
+ * Instantiated {@link remixlab.dandelion.core.GenericFrame}s in the scene form
+ * scene-graph which may be traverse with {@link #traverseGraph()}. The frame collection
+ * belonging to the scene may be retrieved with {@link #frames()}. The scene provides
+ * other useful routines to handle the hierarchy, such as
+ * {@link #pruneBranch(GenericFrame)}, {@link #appendBranch(List)},
+ * {@link #isFrameReachable(GenericFrame)}, {@link #branch(GenericFrame, boolean)}, and
+ * {@link #clearGraph()}.
  * <p>
  * Each AbstractScene provides the following main object instances:
  * <ol>
@@ -253,7 +257,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * 
    * @see #pruneBranch(GenericFrame)
    */
-  public void pruneBranches() {
+  public void clearGraph() {
     for (GenericFrame frame : leadingFrames())
       pruneBranch(frame);
   }
@@ -269,14 +273,19 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * Frames in the {@code frame} branch will also be removed from all the agents currently
    * registered in the {@link #inputHandler()}.
    * <p>
-   * To make a the frame reachable again simply call
-   * {@link remixlab.dandelion.core.GenericFrame#setReferenceFrame(GenericFrame)}, and to
-   * interactively handle it, add it to some agents, such as the {@link #motionAgent()}.
+   * To make a the frames in the branch reachable again, first cache the frames belonging
+   * to the branch (i.e., {@code branch=pruneBranch(frame)}) and then call
+   * {@link #appendBranch(List)} on the cached branch. Note that calling
+   * {@link remixlab.dandelion.core.GenericFrame#setReferenceFrame(GenericFrame)} on a
+   * frame belonging to the pruned branch will become reachable again by the traversal
+   * algorithm. In this case, the frame should be manually added to some agents to
+   * interactively handle it.
    * <p>
    * If not collected, pruned frames are eligible for garbage collection and will behave
    * simply as {@link remixlab.dandelion.geom.Frame} in the meantime.
    * 
-   * @see #pruneBranches()
+   * @see #clearGraph()
+   * @see #appendBranch(List)
    * @see #isFrameReachable(GenericFrame)
    */
   public ArrayList<GenericFrame> pruneBranch(GenericFrame frame) {
@@ -294,8 +303,16 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     return list;
   }
 
-  public void appendBranch(List<GenericFrame> list) {
-    for (GenericFrame gFrame : list) {
+  /**
+   * Appends the branch which typically should come from the one pruned (and cached) with
+   * {@link #pruneBranch(GenericFrame)}.
+   * <p>
+   * All frames belonging to the branch are automatically added to all scene agents.
+   * 
+   * {@link #pruneBranch(GenericFrame)}
+   */
+  public void appendBranch(List<GenericFrame> branch) {
+    for (GenericFrame gFrame : branch) {
       inputHandler().addGrabber(gFrame);
       if (gFrame.referenceFrame() != null)
         gFrame.referenceFrame().addChild(gFrame);
@@ -341,7 +358,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * 
    * @see #isFrameReachable(GenericFrame)
    */
-  public ArrayList<GenericFrame> frames(GenericFrame frame, boolean eyeframes) {
+  public ArrayList<GenericFrame> branch(GenericFrame frame, boolean eyeframes) {
     ArrayList<GenericFrame> list = new ArrayList<GenericFrame>();
     collectFrames(list, frame, eyeframes);
     return list;
@@ -1902,12 +1919,12 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   public void setEye(Eye vp) {
     if (vp == null)
       return;
+    if (vp.scene() != this)
+      return;
     if (!replaceEye(vp)) {
       eye = vp;
-      for (Agent agent : inputHandler().agents()) {
-        agent.addGrabber(eye().frame());
-        agent.setDefaultGrabber(eye().frame());
-      }
+      inputHandler().resetDefaultGrabber();// adds eye frame to all agents and sets it as
+                                           // default
     }
     eye().setSceneRadius(radius());
     eye().setSceneCenter(center());
@@ -1919,18 +1936,21 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     if (vp == null || vp == eye())
       return false;
     if (eye() != null) {
-      List<Agent> agents = new ArrayList<Agent>();
+      List<Agent> agents1 = new ArrayList<Agent>();
+      List<Agent> agents2 = new ArrayList<Agent>();
       for (Agent agent : inputHandler().agents())
-        if (agent.defaultGrabber() == eye().frame() && agent.defaultGrabber() != null) {
-          agents.add(agent);
+        if (agent.defaultGrabber() == eye().frame() && eye().frame() != null)
+          agents2.add(agent);
+      for (Agent agent : inputHandler().agents())
+        if (agent.hasGrabber(eye().frame()) && eye().frame() != null) {
+          agents1.add(agent);
           agent.removeGrabber(eye().frame());
         }
-      eye = vp;
-      for (Agent agent : inputHandler().agents())
+      eye = vp;// eye() changed
+      for (Agent agent : agents1)
         agent.addGrabber(eye().frame());
-      for (Agent agent : agents)
+      for (Agent agent : agents2)
         agent.setDefaultGrabber(eye().frame());
-
       return true;
     }
     return false;

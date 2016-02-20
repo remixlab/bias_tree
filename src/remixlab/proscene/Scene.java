@@ -82,7 +82,7 @@ import java.nio.FloatBuffer;
  * <i>AnimationHandler</i>.
  * </ol>
  * <h3>Scene frames</h3> Each scene has a collection of
- * {@link remixlab.proscene.InteractiveFrame}s (see {@link #iFrames()}). An
+ * {@link remixlab.proscene.InteractiveFrame}s (see {@link #frames()}). An
  * {@link remixlab.proscene.InteractiveFrame} is a high level
  * {@link remixlab.dandelion.geom.Frame} PSshape wrapper (a coordinate system related to a
  * PShape or an arbitrary graphics procedure) which may be manipulated by any
@@ -1376,16 +1376,16 @@ public class Scene extends AbstractScene implements PConstants {
    * 
    * @see #isFrameReachable(GenericFrame)
    */
-  public ArrayList<InteractiveFrame> frames(GenericFrame frame) {
+  public ArrayList<InteractiveFrame> branch(GenericFrame frame) {
     ArrayList<InteractiveFrame> iFrames = new ArrayList<InteractiveFrame>();
-    for (GenericFrame gFrame : frames(frame, false))
+    for (GenericFrame gFrame : branch(frame, false))
       if (gFrame instanceof InteractiveFrame)
         iFrames.add((InteractiveFrame) gFrame);
     return iFrames;
   }
 
   /**
-   * Draw all scene {@link #iFrames()} into the {@link #pg()} buffer. A similar (but
+   * Draw all scene {@link #frames()} into the {@link #pg()} buffer. A similar (but
    * slightly less efficient) effect may be achieved with
    * {@code for (InteractiveFrame frame : frames()) frame.draw(pg());}.
    * <p>
@@ -1407,7 +1407,7 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Draw all {@link #iFrames()} into the given pgraphics. No
+   * Draw all {@link #frames()} into the given pgraphics. No
    * {@code pgraphics.beginDraw()/endDraw()} calls take place. This method allows shader
    * chaining.
    * <p>

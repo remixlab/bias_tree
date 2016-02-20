@@ -33,18 +33,17 @@ import remixlab.util.*;
  * parameter). To attach a generic-frame to {@code MyObject} use code like this:
  * 
  * <pre>
- * {
- *   &#64;code
- *   public class MyObject {
- *     public GenericFrame gFrame;
+ * {@code
+ * public class MyObject {
+ *   public GenericFrame gFrame;
  * 
- *     public void draw() {
- *       gFrame.scene().pushModelView();
- *       gFrame.applyWorldTransformation();
- *       drawMyObject();
- *       gFrame.scene().popModelView();
- *     }
+ *   public void draw() {
+ *     gFrame.scene().pushModelView();
+ *     gFrame.applyWorldTransformation();
+ *     drawMyObject();
+ *     gFrame.scene().popModelView();
  *   }
+ * }
  * }
  * </pre>
  * 
@@ -105,8 +104,6 @@ import remixlab.util.*;
  * documentation. See also {@link #setTrackingEyeDistance(float)},
  * {@link #setTrackingEyeAzimuth(float)} and {@link #setTrackingEyeInclination(float)}.
  */
-
-// TODO to make a generic frame eligible for garbage collection.
 public class GenericFrame extends Frame implements Grabber, Trackable {
   // according to space-nav fine tuning it turned out that the space-nav is
   // right handed
@@ -628,9 +625,6 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
 
   @Override
   public void setReferenceFrame(Frame frame) {
-    /*
-     * if(frame == null) { super.setReferenceFrame(frame); return; } //
-     */
     if (frame instanceof GenericFrame || frame == null)
       setReferenceFrame((GenericFrame) frame);
     else
@@ -642,32 +636,21 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
       System.out.println("Frame.setReferenceFrame would create a loop in Frame hierarchy. Nothing done.");
       return;
     }
-
     // 1. no need to re-parent, just check this needs to be added as leadingFrame
     if (referenceFrame() == frame) {
       restorePath(referenceFrame(), this);
-//      if (referenceFrame() == null)
-//        if (scene() != null)
-//          scene().addLeadingFrame(this);
       return;
     }
-
     // 2. else re-parenting
     // 2a. before assigning new reference frame
     if (referenceFrame() != null) // old
       referenceFrame().removeChild(this);
     else if (scene() != null)
       scene().removeLeadingFrame(this);
-
-    refFrame = frame;
-
+    // finally assign the reference frame
+    refFrame = frame;// referenceFrame() returns now the new value
     // 2b. after assigning new reference frame
-    restorePath(referenceFrame(), this); 
-//    if (referenceFrame() != null) // new
-//      referenceFrame().children().add(this);
-//    else if
-//    (scene() != null) scene().addLeadingFrame(this);
-    
+    restorePath(referenceFrame(), this);
     modified();
   }
 
@@ -690,7 +673,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   public final List<GenericFrame> children() {
     return childrenList;
   }
-  
+
   protected boolean addChild(GenericFrame frame) {
     if (frame == null)
       return false;

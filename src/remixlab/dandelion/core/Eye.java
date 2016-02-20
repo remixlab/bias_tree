@@ -445,12 +445,12 @@ public abstract class Eye implements Copyable {
     if (g.theeye == null) {// only detached frames
       gFrame = g;
       for (Agent agent : gScene.inputHandler().agents())
-        agent.removeGrabber(gFrame);
-      gFrame.theeye = this;
-      interpolationKfi.setFrame(gFrame);
+        agent.removeGrabber(frame());
+      frame().theeye = this;
+      interpolationKfi.setFrame(frame());
       Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
       while (itr.hasNext())
-        itr.next().setFrame(gFrame);
+        itr.next().setFrame(frame());
     }
   }
 
@@ -471,22 +471,27 @@ public abstract class Eye implements Copyable {
     if (g == null || g == frame())
       return;
     if (g.theeye == this) {
-      List<Agent> agents = new ArrayList<Agent>();
-      for (Agent agent : gScene.inputHandler().agents())
-        if (agent.defaultGrabber() == frame() && agent.defaultGrabber() != null)
-          agents.add(agent);
-      gFrame = g;
+      List<Agent> agents1 = new ArrayList<Agent>();
+      List<Agent> agents2 = new ArrayList<Agent>();
+      for (Agent agent : scene().inputHandler().agents())
+        if (agent.defaultGrabber() == frame() && frame() != null)
+          agents2.add(agent);
+      for (Agent agent : scene().inputHandler().agents())
+        if (agent.hasGrabber(frame()) && frame() != null) {
+          agents1.add(agent);
+          agent.removeGrabber(frame());
+        }
+      gFrame = g;// frame() is new
       if (gScene.is3D())
         ((Camera) this).setFocusDistance(sceneRadius() / (float) Math.tan(((Camera) this).fieldOfView() / 2.0f));
-      interpolationKfi.setFrame(gFrame);
+      interpolationKfi.setFrame(frame());
       Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
       while (itr.hasNext())
-        itr.next().setFrame(gFrame);
-      for (Agent agent : agents) {
-        if (this == gScene.eye())
-          agent.addGrabber(frame());
+        itr.next().setFrame(frame());
+      for (Agent agent : agents1)
+        agent.addGrabber(frame());
+      for (Agent agent : agents2)
         agent.setDefaultGrabber(frame());
-      }
     } else {
       System.err.println("Only frames constructed with this Eye may be attached to it.");
     }

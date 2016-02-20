@@ -62,19 +62,14 @@ public class HIDAgent extends Agent {
   
   public HIDAgent(Scene scn) {
     super(scn.inputHandler());
-    // we add all the frames registered at the scene to the agent
-    // the agent should then be defined after the frames comprising the scene
-    // otherwise the addGrabber method should be called after frame instantiation
-    for(GenericFrame frame : scn.frames())
-      addGrabber(frame);
     resetDefaultGrabber();
   }
   
   // resets the default agent's grabber to the scene eyeFrame
   @Override
   public boolean resetDefaultGrabber() {
-    addGrabber(scene.eye().frame());
-    return setDefaultGrabber(scene.eye().frame());
+    addGrabber(scene.eyeFrame());
+    return setDefaultGrabber(scene.eyeFrame());
   }
   
   // we need to override the agent sensitivities method for the agent
@@ -110,10 +105,11 @@ void setup() {
   scene.setRadius(260);
   scene.showAll();
 
+  hidAgent = new HIDAgent(scene);
+  
+  //the iFrame is added to all scene agents (that's why we previously instantiated the hidAgent)
   iFrame = new InteractiveFrame(scene);
   iFrame.translate(new Vec(180, 180, 0));
-
-  hidAgent = new HIDAgent(scene);
   
   // we bound some frame DOF6 actions to the gesture on both frames
   scene.eyeFrame().setMotionBinding(SN_ID, "translateRotateXYZ");
@@ -134,7 +130,7 @@ void keyPressed() {
   //Shift the default grabber for all agents: mouseAgent, keyboardAgent and the hidAgent
   if ( key == 'i')
     for( Agent agent : scene.inputHandler().agents())
-      agent.shiftDefaultGrabber(scene.eye().frame(), iFrame);
+      agent.shiftDefaultGrabber(scene.eyeFrame(), iFrame);
   if(key == ' ')
     if( scene.eyeFrame().isActionBound("hinge") ) {
       scene.eyeFrame().setMotionBinding(SN_ID, "translateRotateXYZ");
