@@ -57,12 +57,6 @@ public class MouseAgent extends Agent {
     setPickingMode(PickingMode.MOVE);
   }
 
-  @Override
-  public boolean resetDefaultGrabber() {
-    addGrabber(scene.eye().frame());
-    return setDefaultGrabber(scene.eye().frame());
-  }
-
   /**
    * Returns the scene this object belongs to.
    */

@@ -67,7 +67,7 @@ public abstract class Agent {
     if (defaultGrabber() == grabber)
       setDefaultGrabber(null);
     if (trackedGrabber() == grabber)
-      trackedGrabber = null;
+      resetTrackedGrabber();
     return grabberList.remove(grabber);
   }
 
@@ -361,6 +361,8 @@ public abstract class Agent {
    */
   public boolean shiftDefaultGrabber(Grabber g1, Grabber g2) {
     return defaultGrabber() != g1 ? setDefaultGrabber(g1) ? true : setDefaultGrabber(g2) : setDefaultGrabber(g2);
+    // return defaultGrabber() == g1 ? setDefaultGrabber(g2) ? true : false :
+    // defaultGrabber() == g2 ? setDefaultGrabber(g1) : false;
   }
 
   /**
@@ -387,15 +389,5 @@ public abstract class Agent {
    */
   public void resetTrackedGrabber() {
     trackedGrabber = null;
-  }
-
-  /**
-   * Resets the {@link #defaultGrabber()}. Convenience function that simply calls:
-   * {@code setDefaultGrabber(null)}.
-   * 
-   * @see #setDefaultGrabber(Grabber)
-   */
-  public boolean resetDefaultGrabber() {
-    return setDefaultGrabber(null);
   }
 }

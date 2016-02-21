@@ -38,12 +38,6 @@ public class KeyAgent extends Agent {
     addGrabber(scene);
   }
 
-  @Override
-  public boolean resetDefaultGrabber() {
-    addGrabber(scene.eye().frame());
-    return setDefaultGrabber(scene.eye().frame());
-  }
-
   /**
    * Returns the scene this object belongs to.
    */

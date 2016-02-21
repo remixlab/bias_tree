@@ -84,7 +84,7 @@ public void draw() {
 
 public void keyPressed() {
   if ( key == 'i')
-    scene.motionAgent().shiftDefaultGrabber(scene.eyeFrame(), iFrame);
+    scene.inputHandler().shiftDefaultGrabber(scene.eyeFrame(), iFrame);
 }
 
 void mousePressed() {

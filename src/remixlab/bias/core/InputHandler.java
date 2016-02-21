@@ -112,12 +112,23 @@ public class InputHandler {
   }
 
   /**
-   * Calls {@link remixlab.bias.core.Agent#resetDefaultGrabber()} on registered
-   * {@link #agents()}.
+   * Calls {@link remixlab.bias.core.Agent#shiftDefaultGrabber(Grabber, Grabber)} on
+   * registered {@link #agents()}.
    */
-  public void resetDefaultGrabber() {
+  public void shiftDefaultGrabber(Grabber g1, Grabber g2) {
     for (Agent agent : agents())
-      agent.resetDefaultGrabber();
+      agent.shiftDefaultGrabber(g1, g2);
+  }
+
+  /**
+   * Returns {@code true} if {@link remixlab.bias.core.Agent#hasGrabber(Grabber)} is
+   * {@code true} for at least one agent in {@link #agents()}.
+   */
+  public boolean hasGrabber(Grabber g) {
+    for (Agent agent : agents())
+      if (agent.hasGrabber(g))
+        return true;
+    return false;
   }
 
   /**

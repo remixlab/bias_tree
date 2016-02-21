@@ -444,8 +444,7 @@ public abstract class Eye implements Copyable {
       return;
     if (g.theeye == null) {// only detached frames
       gFrame = g;
-      for (Agent agent : gScene.inputHandler().agents())
-        agent.removeGrabber(frame());
+      scene().inputHandler().removeGrabber(frame());
       frame().theeye = this;
       interpolationKfi.setFrame(frame());
       Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
@@ -471,16 +470,17 @@ public abstract class Eye implements Copyable {
     if (g == null || g == frame())
       return;
     if (g.theeye == this) {
-      List<Agent> agents1 = new ArrayList<Agent>();
-      List<Agent> agents2 = new ArrayList<Agent>();
+      // /*
       for (Agent agent : scene().inputHandler().agents())
-        if (agent.defaultGrabber() == frame() && frame() != null)
-          agents2.add(agent);
-      for (Agent agent : scene().inputHandler().agents())
-        if (agent.hasGrabber(frame()) && frame() != null) {
-          agents1.add(agent);
-          agent.removeGrabber(frame());
-        }
+        if (agent.defaultGrabber() != null)
+          if (agent.defaultGrabber() == frame()) {
+            agent.addGrabber(g);
+            agent.setDefaultGrabber(g);
+          }
+      scene().inputHandler().removeGrabber(frame());
+      // */
+      // scene().inputHandler().shiftDefaultGrabber(g, frame());
+      // scene().inputHandler().removeGrabber(frame());
       gFrame = g;// frame() is new
       if (gScene.is3D())
         ((Camera) this).setFocusDistance(sceneRadius() / (float) Math.tan(((Camera) this).fieldOfView() / 2.0f));
@@ -488,12 +488,9 @@ public abstract class Eye implements Copyable {
       Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
       while (itr.hasNext())
         itr.next().setFrame(frame());
-      for (Agent agent : agents1)
-        agent.addGrabber(frame());
-      for (Agent agent : agents2)
-        agent.setDefaultGrabber(frame());
     } else {
-      System.err.println("Only frames constructed with this Eye may be attached to it.");
+      System.out.println("Warning no eye frame set as the eye class (" + this.getClass().getSimpleName()
+          + ") and the frame eye class (" + g.eye().getClass().getSimpleName() + ") are different");
     }
   }
 

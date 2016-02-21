@@ -491,11 +491,10 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     init(scn);
     // pkgnPrecision = PickingPrecision.ADAPTIVE;
     // setGrabsInputThreshold(Math.round(scn.radius()/4));
+    scene().inputHandler().addGrabber(this);
     pkgnPrecision = PickingPrecision.FIXED;
     setGrabsInputThreshold(20);
     setFlySpeed(0.01f * scene().eye().sceneRadius());
-    for (Agent agent : scene().inputHandler().agents())
-      agent.addGrabber(this);
   }
 
   /**

@@ -267,5 +267,5 @@ void keyPressed() {
       setDefaults( scene.eyeFrame() );
   }
   if ( key == 'i')
-    scene.motionAgent().shiftDefaultGrabber(scene.eyeFrame(), interactiveFrame);
+    scene.inputHandler().shiftDefaultGrabber(scene.eyeFrame(), interactiveFrame);
 }

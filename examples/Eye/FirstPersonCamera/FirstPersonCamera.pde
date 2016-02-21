@@ -68,7 +68,7 @@ public void toggleFirstPerson() {
 
 public void keyPressed() {
   if ( key == 'i')
-    scene.motionAgent().shiftDefaultGrabber(scene.eyeFrame(), iFrame);
+    scene.inputHandler().shiftDefaultGrabber(scene.eyeFrame(), iFrame);
   if ( key == ' ')
     toggleFirstPerson();
   if(key == '+')

@@ -62,14 +62,8 @@ public class HIDAgent extends Agent {
   
   public HIDAgent(Scene scn) {
     super(scn.inputHandler());
-    resetDefaultGrabber();
-  }
-  
-  // resets the default agent's grabber to the scene eyeFrame
-  @Override
-  public boolean resetDefaultGrabber() {
     addGrabber(scene.eyeFrame());
-    return setDefaultGrabber(scene.eyeFrame());
+    setDefaultGrabber(scene.eyeFrame());
   }
   
   // we need to override the agent sensitivities method for the agent
@@ -129,8 +123,7 @@ void keyPressed() {
       scene.flip();
   //Shift the default grabber for all agents: mouseAgent, keyboardAgent and the hidAgent
   if ( key == 'i')
-    for( Agent agent : scene.inputHandler().agents())
-      agent.shiftDefaultGrabber(scene.eyeFrame(), iFrame);
+    scene.inputHandler().shiftDefaultGrabber(scene.eyeFrame(), iFrame);
   if(key == ' ')
     if( scene.eyeFrame().isActionBound("hinge") ) {
       scene.eyeFrame().setMotionBinding(SN_ID, "translateRotateXYZ");

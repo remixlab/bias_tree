@@ -1847,7 +1847,6 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     trck = t;
     if (avatar() == null)
       return;
-
     eye().frame().stopSpinning();
     if (avatar() instanceof GenericFrame)
       ((GenericFrame) (avatar())).stopSpinning();
@@ -1861,13 +1860,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     eyeFrameCopy.setMagnitude(avatar().trackingEyeFrame().scaling());
     eye().interpolateTo(eyeFrameCopy);
 
-    if (avatar() instanceof GenericFrame) {
-      GenericFrame avatarGrabber = (GenericFrame) avatar();
-      for (Agent agent : inputHandler().agents()) {
-        agent.addGrabber(avatarGrabber);
-        agent.setDefaultGrabber(avatarGrabber);
-      }
-    }
+    if (avatar() instanceof GenericFrame)
+      inputHandler().setDefaultGrabber((GenericFrame) avatar());
   }
 
   /**
@@ -1878,10 +1872,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   public Trackable unsetAvatar() {
     Trackable prev = trck;
     if (prev != null) {
-      for (Agent agent : inputHandler().agents()) {
-        agent.resetTrackedGrabber();
-        agent.resetDefaultGrabber();
-      }
+      inputHandler().resetTrackedGrabber();
+      inputHandler().setDefaultGrabber(eye().frame());
       eye().interpolateToFitScene();
     }
     trck = null;
@@ -1923,8 +1915,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
       return;
     if (!replaceEye(vp)) {
       eye = vp;
-      inputHandler().resetDefaultGrabber();// adds eye frame to all agents and sets it as
-                                           // default
+      inputHandler().addGrabber(eye.frame());
+      inputHandler().setDefaultGrabber(eye.frame());
     }
     eye().setSceneRadius(radius());
     eye().setSceneCenter(center());
@@ -1936,21 +1928,18 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     if (vp == null || vp == eye())
       return false;
     if (eye() != null) {
-      List<Agent> agents1 = new ArrayList<Agent>();
-      List<Agent> agents2 = new ArrayList<Agent>();
+      // /*
       for (Agent agent : inputHandler().agents())
-        if (agent.defaultGrabber() == eye().frame() && eye().frame() != null)
-          agents2.add(agent);
-      for (Agent agent : inputHandler().agents())
-        if (agent.hasGrabber(eye().frame()) && eye().frame() != null) {
-          agents1.add(agent);
-          agent.removeGrabber(eye().frame());
-        }
+        if (agent.defaultGrabber() != null)
+          if (agent.defaultGrabber() == eye.frame()) {
+            agent.addGrabber(vp.frame());
+            agent.setDefaultGrabber(vp.frame());
+          }
+      inputHandler().removeGrabber(eye.frame());
+      // */
+      // inputHandler().shiftDefaultGrabber(vp.frame(), eye.frame());
+      // inputHandler().removeGrabber(eye.frame());
       eye = vp;// eye() changed
-      for (Agent agent : agents1)
-        agent.addGrabber(eye().frame());
-      for (Agent agent : agents2)
-        agent.setDefaultGrabber(eye().frame());
       return true;
     }
     return false;
