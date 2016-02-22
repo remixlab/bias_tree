@@ -529,7 +529,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   protected void init(AbstractScene scn) {
     gScene = scn;
     childrenList = new ArrayList<GenericFrame>();
-    scene().addLeadingFrame(this);
+    // scene().addLeadingFrame(this);
+    // TODO testing
+    setReferenceFrame(referenceFrame());// restorePath seems more robust
     setRotationSensitivity(1.0f);
     setScalingSensitivity(1.0f);
     setTranslationSensitivity(1.0f);
@@ -565,6 +567,9 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     super(otherFrame);
     this.gScene = otherFrame.gScene;
     this.theeye = otherFrame.theeye;
+
+    this.childrenList = new ArrayList<GenericFrame>();
+    this.setReferenceFrame(referenceFrame());// restorePath
 
     this.spinningTimerTask = new TimingTask() {
       public void execute() {
@@ -2428,6 +2433,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
     pos = position();
     o = (Quat) orientation();
     setReferenceFrame(oldRef);
+    scene().pruneBranch(rFrame);
     setPosition(pos);
     setOrientation(o);
   }
@@ -2702,13 +2708,14 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   public void rotateAroundFrame(float roll, float pitch, float yaw, Frame frame) {
     if (frame != null) {
       Frame ref = frame.get();
-      if (ref instanceof Grabber) {
+      if (ref instanceof GenericFrame)
+        gScene.pruneBranch((GenericFrame) ref);
+      else if (ref instanceof Grabber) {
         gScene.motionAgent().removeGrabber((Grabber) ref);
         gScene.keyboardAgent().removeGrabber((Grabber) ref);
       }
       GenericFrame copy = get();
-      gScene.motionAgent().removeGrabber((Grabber) copy);
-      gScene.keyboardAgent().removeGrabber((Grabber) copy);
+      gScene.pruneBranch(copy);
       copy.setReferenceFrame(ref);
       copy.fromFrame(this);
       ref.rotate(new Quat(gScene.isLeftHanded() ? -roll : roll, pitch, gScene.isLeftHanded() ? -yaw : yaw));
@@ -3253,8 +3260,7 @@ public class GenericFrame extends Frame implements Grabber, Trackable {
   protected void updateTrackingEyeFrame() {
     if (eFrame == null) {
       eFrame = new GenericFrame(scene(), this);
-      scene().motionAgent().removeGrabber(eFrame);
-      scene().keyboardAgent().removeGrabber(eFrame);
+      scene().pruneBranch(eFrame);
     }
     if (scene().is3D()) {
       Vec p = q.rotate(new Vec(0, 0, 1));

@@ -1222,7 +1222,7 @@ public class Camera extends Eye implements Copyable {
     GenericFrame frame = new GenericFrame(gScene,
         Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target, 0.7f)), frame().orientation(),
         frame().magnitude());
-    scene().inputHandler().removeGrabber(frame);
+    scene().pruneBranch(frame);
     interpolationKfi.addKeyFrame(frame, 0.4f);
     // interpolationKfi.addKeyFrame(new InteractiveFrame(gScene,
     // Vec.add(Vec.multiply(frame().position(), 0.3f), Vec.multiply(target,

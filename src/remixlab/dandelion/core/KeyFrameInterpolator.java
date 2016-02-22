@@ -12,7 +12,6 @@ package remixlab.dandelion.core;
 
 import java.util.*;
 
-import remixlab.bias.core.*;
 import remixlab.dandelion.geom.*;
 import remixlab.fpstiming.TimingTask;
 import remixlab.util.*;
@@ -692,8 +691,7 @@ public class KeyFrameInterpolator implements Copyable {
     if (interpolationStarted())
       stopInterpolation();
     KeyFrame kf = keyFrameList.remove(index);
-    for (Agent agent : gScene.inputHandler().agents())
-      agent.removeGrabber(kf.frm);
+    gScene.pruneBranch(kf.frm);
     setInterpolationTime(firstTime());
   }
 

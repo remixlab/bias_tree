@@ -30,8 +30,8 @@ import remixlab.fpstiming.*;
  * <p>
  * Instantiated scene {@link remixlab.dandelion.core.GenericFrame}s form a scene-graph of
  * transformations which may be traverse with {@link #traverseGraph()}. The frame
- * collection belonging to the scene may be retrieved with {@link #frames()}. The scene
- * provides other useful routines to handle the hierarchy, such as
+ * collection belonging to the scene may be retrieved with {@link #frames(boolean)}. The
+ * scene provides other useful routines to handle the hierarchy, such as
  * {@link #pruneBranch(GenericFrame)}, {@link #appendBranch(List)},
  * {@link #isFrameReachable(GenericFrame)}, {@link #branch(GenericFrame, boolean)}, and
  * {@link #clearGraph()}.
@@ -333,6 +333,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * @see #frames(boolean)
    */
   public boolean isFrameReachable(GenericFrame frame) {
+    if (frame == null)
+      return false;
     return frame.referenceFrame() == null ? isLeadingFrame(frame) : frame.referenceFrame().hasChild(frame);
   }
 
@@ -1859,6 +1861,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     GenericFrame eyeFrameCopy = avatar().trackingEyeFrame().get();
     eyeFrameCopy.setMagnitude(avatar().trackingEyeFrame().scaling());
     eye().interpolateTo(eyeFrameCopy);
+    pruneBranch(eyeFrameCopy);
 
     if (avatar() instanceof GenericFrame)
       inputHandler().setDefaultGrabber((GenericFrame) avatar());
@@ -1928,17 +1931,20 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     if (vp == null || vp == eye())
       return false;
     if (eye() != null) {
-      // /*
+      // /* option 1
       for (Agent agent : inputHandler().agents())
         if (agent.defaultGrabber() != null)
           if (agent.defaultGrabber() == eye.frame()) {
             agent.addGrabber(vp.frame());
             agent.setDefaultGrabber(vp.frame());
           }
-      inputHandler().removeGrabber(eye.frame());
-      // */
-      // inputHandler().shiftDefaultGrabber(vp.frame(), eye.frame());
       // inputHandler().removeGrabber(eye.frame());
+      pruneBranch(eye.frame());// better than remove grabber
+      // */
+      // option 2
+      // inputHandler().shiftDefaultGrabber(vp.frame(), eye.frame());
+      // //inputHandler().removeGrabber(eye.frame());
+      // pruneBranch(eye.frame());// better than remove grabber
       eye = vp;// eye() changed
       return true;
     }

@@ -425,7 +425,7 @@ public abstract class Eye implements Copyable {
   /// *
   protected GrabberEyeFrame detachFrame() {
     GrabberEyeFrame frame = new GrabberEyeFrame(gScene);
-    gScene.inputHandler().removeGrabber(frame);
+    scene().pruneBranch(frame);
     frame.fromFrame(frame());
     return frame;
   }
@@ -442,9 +442,8 @@ public abstract class Eye implements Copyable {
   protected final void replaceFrame(GenericFrame g) {
     if (g == null || g == frame())
       return;
-    if (g.theeye == null) {// only detached frames
+    if (g.theeye == null) {// only detached frames which call pruneBranch on g
       gFrame = g;
-      scene().inputHandler().removeGrabber(frame());
       frame().theeye = this;
       interpolationKfi.setFrame(frame());
       Iterator<KeyFrameInterpolator> itr = kfi.values().iterator();
@@ -470,17 +469,20 @@ public abstract class Eye implements Copyable {
     if (g == null || g == frame())
       return;
     if (g.theeye == this) {
-      // /*
+      // /* option 1
       for (Agent agent : scene().inputHandler().agents())
         if (agent.defaultGrabber() != null)
           if (agent.defaultGrabber() == frame()) {
             agent.addGrabber(g);
             agent.setDefaultGrabber(g);
           }
-      scene().inputHandler().removeGrabber(frame());
-      // */
-      // scene().inputHandler().shiftDefaultGrabber(g, frame());
       // scene().inputHandler().removeGrabber(frame());
+      scene().pruneBranch(frame());// better than remove grabber
+      // */
+      // option 2
+      // scene().inputHandler().shiftDefaultGrabber(g, frame());
+      // //scene().inputHandler().removeGrabber(frame());
+      // scene().pruneBranch(frame());// better than remove grabber
       gFrame = g;// frame() is new
       if (gScene.is3D())
         ((Camera) this).setFocusDistance(sceneRadius() / (float) Math.tan(((Camera) this).fieldOfView() / 2.0f));
@@ -1592,7 +1594,7 @@ public abstract class Eye implements Copyable {
     if (kfi.containsKey(key)) {
       KeyFrameInterpolator k = kfi.get(key);
       for (int i = 0; i < k.keyFrames().size(); ++i)
-        gScene.motionAgent().removeGrabber(k.keyFrames().get(i).frame());
+        gScene.pruneBranch(k.keyFrames().get(i).frame());
     }
   }
 
