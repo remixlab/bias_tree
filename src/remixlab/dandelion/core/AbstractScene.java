@@ -253,7 +253,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
   }
 
   /**
-   * Same as {@code for(GenericFrame frame : leadingFrames()) pruneFrame(frame)}.
+   * Same as {@code for(GenericFrame frame : leadingFrames()) pruneBranch(frame)}.
    * 
    * @see #pruneBranch(GenericFrame)
    */
@@ -273,24 +273,31 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * Frames in the {@code frame} branch will also be removed from all the agents currently
    * registered in the {@link #inputHandler()}.
    * <p>
-   * To make a the frames in the branch reachable again, first cache the frames belonging
-   * to the branch (i.e., {@code branch=pruneBranch(frame)}) and then call
+   * To make all the frames in the branch reachable again, first cache the frames
+   * belonging to the branch (i.e., {@code branch=pruneBranch(frame)}) and then call
    * {@link #appendBranch(List)} on the cached branch. Note that calling
    * {@link remixlab.dandelion.core.GenericFrame#setReferenceFrame(GenericFrame)} on a
    * frame belonging to the pruned branch will become reachable again by the traversal
    * algorithm. In this case, the frame should be manually added to some agents to
    * interactively handle it.
    * <p>
-   * If not collected, pruned frames are eligible for garbage collection and will behave
-   * simply as {@link remixlab.dandelion.geom.Frame} in the meantime.
+   * //TODO
+   * Note that if frame is not reachable ({@link #isFrameReachable(GenericFrame)}) this
+   * method returns {@code null}.
+   * <p>
+   * When collected, pruned frames behave like {@link remixlab.dandelion.geom.Frame},
+   * otherwise they are eligible for garbage collection.
    * 
    * @see #clearGraph()
    * @see #appendBranch(List)
    * @see #isFrameReachable(GenericFrame)
    */
   public ArrayList<GenericFrame> pruneBranch(GenericFrame frame) {
+    // /*
+    // TODO
     if (!isFrameReachable(frame))
-      return null;
+      return null; 
+    // */
     ArrayList<GenericFrame> list = new ArrayList<GenericFrame>();
     collectFrames(list, frame, true);
     for (GenericFrame gFrame : list) {
@@ -312,6 +319,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * {@link #pruneBranch(GenericFrame)}
    */
   public void appendBranch(List<GenericFrame> branch) {
+    if (branch == null)
+      return;
     for (GenericFrame gFrame : branch) {
       inputHandler().addGrabber(gFrame);
       if (gFrame.referenceFrame() != null)
@@ -340,7 +349,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
 
   /**
    * Returns a list of all the frames that are reachable by the {@link #traverseGraph()}
-   * algorithm, including the EyeFrames (when {@code eyeframes} is {@code true}.
+   * algorithm, including the EyeFrames (when {@code eyeframes} is {@code true}).
    * 
    * @ see {@link #isFrameReachable(GenericFrame)}
    * 
@@ -374,6 +383,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * @see #isFrameReachable(GenericFrame)
    */
   protected void collectFrames(List<GenericFrame> list, GenericFrame frame, boolean eyeframes) {
+    if(frame == null)
+      return;
     if (!frame.isEyeFrame() || eyeframes)
       list.add(frame);
     for (GenericFrame child : frame.children())
