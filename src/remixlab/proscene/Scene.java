@@ -1329,8 +1329,8 @@ public class Scene extends AbstractScene implements PConstants {
    * @see #registerMotionID(int)
    * @see remixlab.bias.ext.Profile#registerMotionID(int, int)
    */
-  public int registerMotionID(int id, Class<?> agent, int dof) {
-    return Profile.registerMotionID(id, agent, dof);
+  public int registerMotionID(int id, Agent agent, int dof) {
+    return Profile.registerMotionID(id, agent.getClass(), dof);
   }
 
   /**
@@ -1338,11 +1338,20 @@ public class Scene extends AbstractScene implements PConstants {
    *
    * @see #registerMotionID(int, int)
    * @see remixlab.bias.ext.Profile#registerMotionID(int)
-   */
-  public int registerMotionID(Class<?> agent, int dof) {
-    return Profile.registerMotionID(agent, dof);
+   */  
+  public int registerMotionID(Agent agent, int dof) {
+    return Profile.registerMotionID(agent.getClass(), dof);
   }
-
+  
+  //TODO docs
+  public int registerClickID(int id, Agent agent) {
+    return Profile.registerClickID(id, agent.getClass());
+  }
+  
+  public int registerClickID(Agent agent) {
+    return Profile.registerClickID(agent.getClass());
+  }
+  
   protected static boolean PRECISION, GRAPHICS;
   protected static PGraphics targetPGraphics;
 

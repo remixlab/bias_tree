@@ -81,7 +81,7 @@ public class Profile {
     return new EqualsBuilder().append(map, other.map).isEquals();
   }
 
-  protected static HashMap<Integer, AgentDOFTuple> idMap = new HashMap<Integer, AgentDOFTuple>();
+  protected static HashMap<Integer, AgentDOFTuple> motionMap = new HashMap<Integer, AgentDOFTuple>();
   protected static HashMap<Integer, Class<?>> clickMap = new HashMap<Integer, Class<?>>();
   protected HashMap<Shortcut, ObjectMethodTuple> map;
   protected Grabber grabber;
@@ -106,11 +106,11 @@ public class Profile {
    * @return the id or an exception if the id exists.
    */
   public static int registerMotionID(int id, Class<?> agent, int dof) {
-    if (idMap.containsKey(id))
+    if (motionMap.containsKey(id))
       throw new RuntimeException("Nothing done! id already present in Profile. Use an id different than: "
-              + (new ArrayList<Integer>(idMap.keySet())).toString());
+              + (new ArrayList<Integer>(motionMap.keySet())).toString());
     if (dof == 1 || dof == 2 || dof == 3 || dof == 6) {
-      idMap.put(id, new AgentDOFTuple(agent, dof));
+      motionMap.put(id, new AgentDOFTuple(agent, dof));
       return id;
     } else
       throw new RuntimeException("Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
@@ -128,11 +128,11 @@ public class Profile {
   public static int registerMotionID(Class<?> agent, int dof) {
     if (dof != 1 && dof != 2 && dof != 3 && dof != 6)
       throw new RuntimeException("Warning: Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
-    ArrayList<Integer> ids = new ArrayList<Integer>(idMap.keySet());
+    ArrayList<Integer> ids = new ArrayList<Integer>(motionMap.keySet());
     int key = 1;
     if (ids.size() > 0)
       key = Collections.max(ids) + 1;
-    idMap.put(key, new AgentDOFTuple(agent, dof));
+    motionMap.put(key, new AgentDOFTuple(agent, dof));
     return key;
   }
   
@@ -145,12 +145,47 @@ public class Profile {
   }
   
   public static int registerClickID(Class<?> agent) {
-    ArrayList<Integer> ids = new ArrayList<Integer>(idMap.keySet());
+    ArrayList<Integer> ids = new ArrayList<Integer>(motionMap.keySet());
     int key = 1;
     if (ids.size() > 0)
       key = Collections.max(ids) + 1;
     clickMap.put(key, agent);
     return key;
+  }
+  
+  //TODO names
+  
+  protected static ArrayList<Integer> motionIDs(Class<?> cls) {
+    ArrayList<Integer> result = new ArrayList<Integer>();
+    Iterator<Entry<Integer, AgentDOFTuple>> it = motionMap.entrySet().iterator();
+    while (it.hasNext()) {
+      Map.Entry<Integer, AgentDOFTuple> pair = it.next();
+      if (cls == pair.getValue().agent)
+        result.add(pair.getKey());
+    }
+    return result;
+  }
+  
+  protected static ArrayList<Integer> motionIDs(Class<?> cls, int dofs) {
+    ArrayList<Integer> result = new ArrayList<Integer>();
+    Iterator<Entry<Integer, AgentDOFTuple>> it = motionMap.entrySet().iterator();
+    while (it.hasNext()) {
+      Map.Entry<Integer, AgentDOFTuple> pair = it.next();
+      if (cls == pair.getValue().agent && dofs == pair.getValue().dofs)
+        result.add(pair.getKey());
+    }
+    return result;
+  }
+  
+  protected static ArrayList<Integer> clickIDs(Class<?> cls) {
+    ArrayList<Integer> result = new ArrayList<Integer>();
+    Iterator<Entry<Integer, Class<?>>> it = clickMap.entrySet().iterator();
+    while (it.hasNext()) {
+      Map.Entry<Integer, Class<?>> pair = it.next();
+      if (cls == pair.getValue())
+        result.add(pair.getKey());
+    }
+    return result;
   }
 
   /**
@@ -227,7 +262,7 @@ public class Profile {
     else if (key instanceof ClickShortcut)
       eventClass = ClickEvent.class;
     else if (key instanceof MotionShortcut) {
-      switch (idMap.get(key.id()).dofs) {
+      switch (motionMap.get(key.id()).dofs) {
       case 1:
         eventClass = DOF1Event.class;
         break;
@@ -434,6 +469,23 @@ public class Profile {
    */
   public void removeBindings() {
     map.clear();
+  }
+  
+  //TODO doc me: only 
+  public void removeBindings(Agent agent, Class<?> shortcut) {
+    if(shortcut == KeyboardShortcut.class) {
+      removeBindings(shortcut);
+      return;
+    }
+    ArrayList<Integer> IDs = shortcut == MotionShortcut.class ? motionIDs(agent.getClass()) :  clickIDs(agent.getClass());
+    Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
+    while (it.hasNext()) {
+      Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
+      if (shortcut.isInstance(pair.getKey()))
+        for(int id : IDs)
+          if(id == pair.getKey().id())
+            it.remove();
+    }
   }
 
   /**

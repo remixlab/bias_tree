@@ -28,12 +28,8 @@ import remixlab.bias.ext.Profile;
 public class MouseAgent extends Agent {
   public static final int LEFT_ID = Profile.registerMotionID(37, MouseAgent.class, 2), CENTER_ID = Profile.registerMotionID(3, MouseAgent.class, 2),
       RIGHT_ID = Profile.registerMotionID(39, MouseAgent.class, 2), WHEEL_ID = Profile.registerMotionID(8, MouseAgent.class, 1),
-      NO_BUTTON = Profile.registerMotionID(BogusEvent.NO_ID, MouseAgent.class, 2);
-
-  protected int[] motionIDs = { LEFT_ID, CENTER_ID, RIGHT_ID, WHEEL_ID, NO_BUTTON };
-  protected int[] dof2IDs = { LEFT_ID, CENTER_ID, RIGHT_ID, NO_BUTTON };
-  protected int[] dof1IDs = { WHEEL_ID };
-  protected int[] clickIDs = { LEFT_ID, CENTER_ID, RIGHT_ID };
+      NO_BUTTON = Profile.registerMotionID(BogusEvent.NO_ID, MouseAgent.class, 2), LEFT_CLICK_ID = Profile.registerClickID(37, MouseAgent.class),
+      CENTER_CLICK_ID = Profile.registerClickID(3, MouseAgent.class), RIGHT_CLICK_ID = Profile.registerClickID(39, MouseAgent.class);
 
   protected float xSens = 1f;
   protected float ySens = 1f;
@@ -161,37 +157,6 @@ public class MouseAgent extends Agent {
   }
 
   /**
-   * Returns an array of motion id's (DOF1 and DOF2) this agent registers at the
-   * {@link remixlab.bias.ext.Profile}.
-   */
-  public int[] motionIDs() {
-    return motionIDs;
-  }
-
-  /**
-   * Returns an array of the DOF2 motion id's this agent registers at the
-   * {@link remixlab.bias.ext.Profile}.
-   */
-  public int[] dof2IDs() {
-    return dof2IDs;
-  }
-
-  /**
-   * Returns an array of the DOF1 motion id's this agent registers at the
-   * {@link remixlab.bias.ext.Profile}.
-   */
-  public int[] dof1IDs() {
-    return dof1IDs;
-  }
-
-  /**
-   * Returns an array of the click id's this agent uses.
-   */
-  public int[] clickIDs() {
-    return clickIDs;
-  }
-
-  /**
    * Internal use. Other Agents should follow a similar pattern: 1. Register some motion
    * ids within the Profile; and, 2. Define the default bindings on the frame parameter.
    * 
@@ -199,9 +164,8 @@ public class MouseAgent extends Agent {
    * @see remixlab.bias.ext.Profile#registerMotionID(int, int)
    */
   protected void setDefaultBindings(GenericP5Frame frame) {
-    frame.removeMotionBindings(motionIDs());
-    for (int i = 1; i < 4; i++)
-      frame.removeClickBindings(clickIDs(), i);
+    frame.removeMotionBindings(this);
+    frame.removeClickBindings(this);
 
     frame.setMotionBinding(LEFT_ID, "rotate");
     frame.setMotionBinding(CENTER_ID, frame.isEyeFrame() ? "zoomOnRegion" : "screenRotate");

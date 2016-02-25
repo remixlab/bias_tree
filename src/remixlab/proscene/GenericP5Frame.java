@@ -172,10 +172,10 @@ class GenericP5Frame extends GenericFrame {
   }
 
   // TODO restore me
-  /*
-   * public void setDefaultTouchBindings() {
-   * scene().touchAgent().setDefaultBindings(this); }
-   */
+  
+//   public void setDefaultTouchBindings() {
+//     scene().touchAgent().setDefaultBindings(this);
+//   }
 
   /**
    * Calls {@link #removeKeyBindings()} and sets the default frame key bindings which may
@@ -245,13 +245,13 @@ class GenericP5Frame extends GenericFrame {
   }
 
   /**
+   * // TODO docs
    * Same as {@code for(int i=0; i< ids.length; i++) removeMotionBinding(ids[i])}.
    * 
    * @see #removeMotionBinding(int)
-   */
-  public void removeMotionBindings(int[] ids) {
-    for (int i = 0; i < ids.length; i++)
-      removeMotionBinding(ids[i]);
+   */  
+  public void removeMotionBindings(Agent agent) {
+    profile.removeBindings(agent, MotionShortcut.class);
   }
 
   // Key
@@ -453,6 +453,12 @@ class GenericP5Frame extends GenericFrame {
   public void removeClickBinding(int id, int count) {
     profile.removeBinding(new ClickShortcut(id, count));
   }
+  
+  //TODO
+  public void removeClickBinding(int id) {
+    for (int i = 1; i < 4; i++)
+      profile.removeBinding(new ClickShortcut(id, i));
+  }
 
   /**
    * Same as {@code profile.removeBindings(ClickShortcut.class)}.
@@ -468,9 +474,8 @@ class GenericP5Frame extends GenericFrame {
    * 
    * @see #removeClickBinding(int, int)
    */
-  public void removeClickBindings(int[] ids, int count) {
-    for (int i = 0; i < ids.length; i++)
-      removeClickBinding(ids[i], count);
+  public void removeClickBindings(Agent agent) {
+    profile.removeBindings(agent, ClickShortcut.class);
   }
 
   /**

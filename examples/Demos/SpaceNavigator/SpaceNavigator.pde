@@ -62,6 +62,10 @@ public class HIDAgent extends Agent {
   
   public HIDAgent(Scene scn) {
     super(scn.inputHandler());
+    // the scene.registerMotionID expects the degrees-of-freedom of the gesture and returns
+    // an unique id that may be use to bind (frame) actions to the gesture, pretty much in
+    // the same way as it's done with the LEFT and RIGHT mouse gestures.
+    SN_ID = scn.registerMotionID(this, 6);
     addGrabber(scene.eyeFrame());
     setDefaultGrabber(scene.eyeFrame());
   }
@@ -90,10 +94,7 @@ void setup() {
   texmap = loadImage("world32k.jpg");    
   initializeSphere(sDetail);
   scene = new Scene(this);
-  // the scene.registerMotionID expects the degrees-of-freedom of the gesture and returns
-  // an unique id that may be use to bind (frame) actions to the gesture, pretty much in
-  // the same way as it's done with the LEFT and RIGHT mouse gestures.
-  SN_ID = scene.registerMotionID(HIDAgent.class, 6);
+  
   scene.setGridVisualHint(false);
   scene.setAxesVisualHint(false);  
   scene.setRadius(260);
