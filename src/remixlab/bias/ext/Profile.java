@@ -107,8 +107,7 @@ public class Profile {
    */
   public static int registerMotionID(int id, Class<?> agent, int dof) {
     if (idMap.containsKey(id))
-      throw new RuntimeException(
-          "Nothing done! id already present in Profile. Call Profile.unregisterMotionID first or use an id different than: "
+      throw new RuntimeException("Nothing done! id already present in Profile. Use an id different than: "
               + (new ArrayList<Integer>(idMap.keySet())).toString());
     if (dof == 1 || dof == 2 || dof == 3 || dof == 6) {
       idMap.put(id, new AgentDOFTuple(agent, dof));
@@ -128,13 +127,29 @@ public class Profile {
    */
   public static int registerMotionID(Class<?> agent, int dof) {
     if (dof != 1 && dof != 2 && dof != 3 && dof != 6)
-      throw new RuntimeException(
-          "Warning: Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
+      throw new RuntimeException("Warning: Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
     ArrayList<Integer> ids = new ArrayList<Integer>(idMap.keySet());
     int key = 1;
     if (ids.size() > 0)
       key = Collections.max(ids) + 1;
     idMap.put(key, new AgentDOFTuple(agent, dof));
+    return key;
+  }
+  
+  public static int registerClickID(int id, Class<?> agent) {
+    if (clickMap.containsKey(id))
+      throw new RuntimeException("Nothing done! id already present in Profile. Use an id different than: "
+              + (new ArrayList<Integer>(clickMap.keySet())).toString());
+      clickMap.put(id, agent);
+      return id;
+  }
+  
+  public static int registerClickID(Class<?> agent) {
+    ArrayList<Integer> ids = new ArrayList<Integer>(idMap.keySet());
+    int key = 1;
+    if (ids.size() > 0)
+      key = Collections.max(ids) + 1;
+    clickMap.put(key, agent);
     return key;
   }
 
@@ -223,7 +238,7 @@ public class Profile {
         eventClass = DOF3Event.class;
         break;
       case 6:
-        eventClass = DOF2Event.class;
+        eventClass = DOF6Event.class;
         break;
       }
     }
@@ -422,7 +437,7 @@ public class Profile {
   }
 
   /**
-   * Removes all the shortcuts from the given event class.
+   * Removes all the shortcuts from the given shortcut class.
    */
   public void removeBindings(Class<?> cls) {
     Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
@@ -434,7 +449,7 @@ public class Profile {
   }
 
   /**
-   * Returns a description of all the bindings this profile holds from the given event
+   * Returns a description of all the bindings this profile holds from the given shortcut
    * class.
    */
   public String info(Class<?> cls) {
