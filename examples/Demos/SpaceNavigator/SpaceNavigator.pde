@@ -93,7 +93,7 @@ void setup() {
   // the scene.registerMotionID expects the degrees-of-freedom of the gesture and returns
   // an unique id that may be use to bind (frame) actions to the gesture, pretty much in
   // the same way as it's done with the LEFT and RIGHT mouse gestures.
-  SN_ID = scene.registerMotionID(6);
+  SN_ID = scene.registerMotionID(HIDAgent.class, 6);
   scene.setGridVisualHint(false);
   scene.setAxesVisualHint(false);  
   scene.setRadius(260);

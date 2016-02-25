@@ -52,6 +52,16 @@ public class Profile {
       method = m;
     }
   }
+  
+  static class AgentDOFTuple {
+    Class<?> agent;
+    int dofs;
+
+    AgentDOFTuple(Class<?> a, int d) {
+      agent = a;
+      dofs = d;
+    }
+  }
 
   @Override
   public int hashCode() {
@@ -71,7 +81,8 @@ public class Profile {
     return new EqualsBuilder().append(map, other.map).isEquals();
   }
 
-  protected static HashMap<Integer, Integer> idMap = new HashMap<Integer, Integer>();
+  protected static HashMap<Integer, AgentDOFTuple> idMap = new HashMap<Integer, AgentDOFTuple>();
+  protected static HashMap<Integer, Class<?>> clickMap = new HashMap<Integer, Class<?>>();
   protected HashMap<Shortcut, ObjectMethodTuple> map;
   protected Grabber grabber;
 
@@ -94,13 +105,13 @@ public class Profile {
    *          Motion id degrees-of-freedom.. Either 1,2,3, or 6.
    * @return the id or an exception if the id exists.
    */
-  public static int registerMotionID(int id, int dof) {
+  public static int registerMotionID(int id, Class<?> agent, int dof) {
     if (idMap.containsKey(id))
       throw new RuntimeException(
           "Nothing done! id already present in Profile. Call Profile.unregisterMotionID first or use an id different than: "
               + (new ArrayList<Integer>(idMap.keySet())).toString());
     if (dof == 1 || dof == 2 || dof == 3 || dof == 6) {
-      idMap.put(id, dof);
+      idMap.put(id, new AgentDOFTuple(agent, dof));
       return id;
     } else
       throw new RuntimeException("Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
@@ -115,7 +126,7 @@ public class Profile {
    *          Motion id degrees-of-freedom.. Either 1,2,3, or 6.
    * @return the id.
    */
-  public static int registerMotionID(int dof) {
+  public static int registerMotionID(Class<?> agent, int dof) {
     if (dof != 1 && dof != 2 && dof != 3 && dof != 6)
       throw new RuntimeException(
           "Warning: Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
@@ -123,7 +134,7 @@ public class Profile {
     int key = 1;
     if (ids.size() > 0)
       key = Collections.max(ids) + 1;
-    idMap.put(key, dof);
+    idMap.put(key, new AgentDOFTuple(agent, dof));
     return key;
   }
 
@@ -201,7 +212,7 @@ public class Profile {
     else if (key instanceof ClickShortcut)
       eventClass = ClickEvent.class;
     else if (key instanceof MotionShortcut) {
-      switch (idMap.get(key.id())) {
+      switch (idMap.get(key.id()).dofs) {
       case 1:
         eventClass = DOF1Event.class;
         break;

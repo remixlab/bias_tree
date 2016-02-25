@@ -26,9 +26,9 @@ import remixlab.bias.ext.Profile;
  * @see remixlab.proscene.DroidTouchAgent
  */
 public class MouseAgent extends Agent {
-  public static final int LEFT_ID = Profile.registerMotionID(37, 2), CENTER_ID = Profile.registerMotionID(3, 2),
-      RIGHT_ID = Profile.registerMotionID(39, 2), WHEEL_ID = Profile.registerMotionID(8, 1),
-      NO_BUTTON = Profile.registerMotionID(BogusEvent.NO_ID, 2);
+  public static final int LEFT_ID = Profile.registerMotionID(37, MouseAgent.class, 2), CENTER_ID = Profile.registerMotionID(3, MouseAgent.class, 2),
+      RIGHT_ID = Profile.registerMotionID(39, MouseAgent.class, 2), WHEEL_ID = Profile.registerMotionID(8, MouseAgent.class, 1),
+      NO_BUTTON = Profile.registerMotionID(BogusEvent.NO_ID, MouseAgent.class, 2);
 
   protected int[] motionIDs = { LEFT_ID, CENTER_ID, RIGHT_ID, WHEEL_ID, NO_BUTTON };
   protected int[] dof2IDs = { LEFT_ID, CENTER_ID, RIGHT_ID, NO_BUTTON };
