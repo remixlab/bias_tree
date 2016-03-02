@@ -172,10 +172,10 @@ class GenericP5Frame extends GenericFrame {
   }
 
   // TODO restore me
-  
-//   public void setDefaultTouchBindings() {
-//     scene().touchAgent().setDefaultBindings(this);
-//   }
+
+  // public void setDefaultTouchBindings() {
+  // scene().touchAgent().setDefaultBindings(this);
+  // }
 
   /**
    * Calls {@link #removeKeyBindings()} and sets the default frame key bindings which may
@@ -218,7 +218,8 @@ class GenericP5Frame extends GenericFrame {
   }
 
   /**
-   * Same as {@code profile.removeBindings(MotionShortcut.class)}.
+   * Remove all motion bindings. Same as
+   * {@code profile.removeBindings(MotionShortcut.class)}.
    * 
    * @see remixlab.bias.ext.Profile#removeBindings(Class)
    */
@@ -245,11 +246,12 @@ class GenericP5Frame extends GenericFrame {
   }
 
   /**
-   * // TODO docs
-   * Same as {@code for(int i=0; i< ids.length; i++) removeMotionBinding(ids[i])}.
+   * Remove all the motion bindings related to the agent. Same as
+   * {@code profile.removeBindings(agent, MotionShortcut.class)}.
    * 
    * @see #removeMotionBinding(int)
-   */  
+   * @see remixlab.bias.ext.Profile#removeBindings(Agent, Class)
+   */
   public void removeMotionBindings(Agent agent) {
     profile.removeBindings(agent, MotionShortcut.class);
   }
@@ -402,7 +404,8 @@ class GenericP5Frame extends GenericFrame {
   }
 
   /**
-   * Same as {@code profile.removeBindings(KeyboardShortcut.class)}.
+   * Remove all key bindings. Same as
+   * {@code profile.removeBindings(KeyboardShortcut.class)}.
    * 
    * @see remixlab.bias.ext.Profile#removeBindings(Class)
    */
@@ -453,15 +456,21 @@ class GenericP5Frame extends GenericFrame {
   public void removeClickBinding(int id, int count) {
     profile.removeBinding(new ClickShortcut(id, count));
   }
-  
-  //TODO
+
+  /**
+   * Same as
+   * {@code for (int i = 1; i < 4; i++) profile.removeBinding(new ClickShortcut(id, i))}.
+   * 
+   * @param id
+   */
   public void removeClickBinding(int id) {
     for (int i = 1; i < 4; i++)
       profile.removeBinding(new ClickShortcut(id, i));
   }
 
   /**
-   * Same as {@code profile.removeBindings(ClickShortcut.class)}.
+   * Remove all click bindings. Same as
+   * {@code profile.removeBindings(ClickShortcut.class)}.
    * 
    * @see remixlab.bias.ext.Profile#removeBindings(Class)
    */
@@ -470,9 +479,11 @@ class GenericP5Frame extends GenericFrame {
   }
 
   /**
-   * Same as {@code for(int i=0; i<ids.length; i++) removeClickBinding(ids[i], count)}.
+   * Remove the click bindings related to the agent. Same as
+   * {@code profile.removeBindings(agent, ClickShortcut.class)}.
    * 
    * @see #removeClickBinding(int, int)
+   * @see remixlab.bias.ext.Profile#removeBindings(Agent, Class)
    */
   public void removeClickBindings(Agent agent) {
     profile.removeBindings(agent, ClickShortcut.class);

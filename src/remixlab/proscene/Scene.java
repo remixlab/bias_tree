@@ -110,9 +110,9 @@ public class Scene extends AbstractScene implements PConstants {
   // end: GWT-incompatible
   // */
 
-  public static final String prettyVersion = "3.0.0-beta.3";
+  public static final String prettyVersion = "3.0.0-beta.4";
 
-  public static final String version = "25";
+  public static final String version = "26";
 
   // P R O C E S S I N G A P P L E T A N D O B J E C T S
   protected PApplet parent;
@@ -1324,34 +1324,45 @@ public class Scene extends AbstractScene implements PConstants {
   }
 
   /**
-   * Same as {@code return Profile.registerMotionID(id, dof)}.
+   * Same as {@code return Profile.registerMotionID(id, agent.getClass(), dof)}.
    * 
-   * @see #registerMotionID(int)
-   * @see remixlab.bias.ext.Profile#registerMotionID(int, int)
+   * @see #registerMotionID(int, Agent, int)
+   * @see remixlab.bias.ext.Profile#registerMotionID(int, Class, int)
    */
   public int registerMotionID(int id, Agent agent, int dof) {
     return Profile.registerMotionID(id, agent.getClass(), dof);
   }
 
   /**
-   * Same as {@code return Profile.registerMotionID(dof)}.
+   * Same as {@code return Profile.registerMotionID(agent.getClass(), dof)}.
    *
-   * @see #registerMotionID(int, int)
-   * @see remixlab.bias.ext.Profile#registerMotionID(int)
-   */  
+   * @see #registerMotionID(int, Agent, int)
+   * @see remixlab.bias.ext.Profile#registerMotionID(Class, int)
+   */
   public int registerMotionID(Agent agent, int dof) {
     return Profile.registerMotionID(agent.getClass(), dof);
   }
-  
-  //TODO docs
+
+  /**
+   * Same as {@code return Profile.registerClickID(id, agent.getClass())}.
+   * 
+   * @see #registerClickID(Agent)
+   * @see remixlab.bias.ext.Profile#registerClickID(int, Class)
+   */
   public int registerClickID(int id, Agent agent) {
     return Profile.registerClickID(id, agent.getClass());
   }
-  
+
+  /**
+   * Same as {@code return Profile.registerClickID(agent.getClass())}.
+   * 
+   * @see #registerClickID(Agent)
+   * @see remixlab.bias.ext.Profile#registerClickID(Class)
+   */
   public int registerClickID(Agent agent) {
     return Profile.registerClickID(agent.getClass());
   }
-  
+
   protected static boolean PRECISION, GRAPHICS;
   protected static PGraphics targetPGraphics;
 
@@ -1363,7 +1374,7 @@ public class Scene extends AbstractScene implements PConstants {
         // a bit weird but otherwise checkifgrabsinput throws a npe at sketch startup
         // if(gFrame instanceof InteractiveFrame)// this line throws the npe too
         if (isPickingBufferEnabled())
-          pickingBuffer().loadPixels();
+        pickingBuffer().loadPixels();
     return result;
   }
 

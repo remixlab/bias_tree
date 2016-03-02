@@ -52,7 +52,7 @@ public class Profile {
       method = m;
     }
   }
-  
+
   static class AgentDOFTuple {
     Class<?> agent;
     int dofs;
@@ -97,64 +97,92 @@ public class Profile {
   /**
    * Registers a {@link remixlab.bias.event.MotionEvent#id()} to the Profile.
    * 
-   * @see #registerMotionID(int)
+   * @see #registerMotionID(Class, int)
    * 
    * @param id
-   *          the intended {@link remixlab.bias.event.MotionEvent#id()} to be registered
+   *          the intended {@link remixlab.bias.event.MotionEvent#id()} to be registered.
+   * @param agent
+   *          the agent Class to which the id should belong.
    * @param dof
-   *          Motion id degrees-of-freedom.. Either 1,2,3, or 6.
+   *          Motion id degrees-of-freedom. Either 1,2,3, or 6.
    * @return the id or an exception if the id exists.
    */
   public static int registerMotionID(int id, Class<?> agent, int dof) {
     if (motionMap.containsKey(id))
-      throw new RuntimeException("Nothing done! id already present in Profile. Use an id different than: "
-              + (new ArrayList<Integer>(motionMap.keySet())).toString());
-    if (dof == 1 || dof == 2 || dof == 3 || dof == 6) {
+      System.out.println("Nothing done! id already present in Profile. Use an id different than: "
+          + (new ArrayList<Integer>(motionMap.keySet())).toString());
+    if (dof == 1 || dof == 2 || dof == 3 || dof == 6)
       motionMap.put(id, new AgentDOFTuple(agent, dof));
-      return id;
-    } else
-      throw new RuntimeException("Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
+    else
+      System.out.println("Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
+    return id;
   }
 
   /**
    * Registers a {@link remixlab.bias.event.MotionEvent#id()} to the Profile.
    * 
-   * @see #registerMotionID(int, int)
+   * @see #registerMotionID(int, Class, int)
    * 
+   * @param agent
+   *          the agent Class to which the id should belong.
    * @param dof
-   *          Motion id degrees-of-freedom.. Either 1,2,3, or 6.
+   *          Motion id degrees-of-freedom. Either 1,2,3, or 6.
    * @return the id.
    */
   public static int registerMotionID(Class<?> agent, int dof) {
+    int key = 0;
     if (dof != 1 && dof != 2 && dof != 3 && dof != 6)
-      throw new RuntimeException("Warning: Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
-    ArrayList<Integer> ids = new ArrayList<Integer>(motionMap.keySet());
-    int key = 1;
-    if (ids.size() > 0)
-      key = Collections.max(ids) + 1;
-    motionMap.put(key, new AgentDOFTuple(agent, dof));
+      System.out.println("Warning: Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
+    else {
+      ArrayList<Integer> ids = new ArrayList<Integer>(motionMap.keySet());
+      if (ids.size() > 0)
+        key = Collections.max(ids) + 1;
+      motionMap.put(key, new AgentDOFTuple(agent, dof));
+    }
     return key;
   }
-  
+
+  /**
+   * Registers a {@link remixlab.bias.event.ClickEvent#id()} to the Profile.
+   * 
+   * @param id
+   *          Click id.
+   * @param agent
+   *          the agent Class to which the id should belong.
+   * @return the id
+   * 
+   * @see #registerClickID(Class)
+   */
   public static int registerClickID(int id, Class<?> agent) {
     if (clickMap.containsKey(id))
-      throw new RuntimeException("Nothing done! id already present in Profile. Use an id different than: "
-              + (new ArrayList<Integer>(clickMap.keySet())).toString());
+      System.out.println("Nothing done! id already present in Profile. Use an id different than: "
+          + (new ArrayList<Integer>(clickMap.keySet())).toString());
+    else
       clickMap.put(id, agent);
-      return id;
+    return id;
   }
-  
+
+  /**
+   * Registers a {@link remixlab.bias.event.ClickEvent#id()} to the Profile.
+   * 
+   * @param agent
+   *          the agent Class to which the id should belong.
+   * @return the id
+   * 
+   * @see #registerClickID(int, Class)
+   */
   public static int registerClickID(Class<?> agent) {
-    ArrayList<Integer> ids = new ArrayList<Integer>(motionMap.keySet());
     int key = 1;
+    ArrayList<Integer> ids = new ArrayList<Integer>(motionMap.keySet());
     if (ids.size() > 0)
       key = Collections.max(ids) + 1;
     clickMap.put(key, agent);
     return key;
   }
-  
-  //TODO names
-  
+
+  /**
+   * Internal use. Mainly used by {@link #removeBindings(Agent, Class)}.
+   */
   protected static ArrayList<Integer> motionIDs(Class<?> cls) {
     ArrayList<Integer> result = new ArrayList<Integer>();
     Iterator<Entry<Integer, AgentDOFTuple>> it = motionMap.entrySet().iterator();
@@ -165,7 +193,10 @@ public class Profile {
     }
     return result;
   }
-  
+
+  /**
+   * Not in used currently. Provided for completeness.
+   */
   protected static ArrayList<Integer> motionIDs(Class<?> cls, int dofs) {
     ArrayList<Integer> result = new ArrayList<Integer>();
     Iterator<Entry<Integer, AgentDOFTuple>> it = motionMap.entrySet().iterator();
@@ -176,7 +207,10 @@ public class Profile {
     }
     return result;
   }
-  
+
+  /**
+   * Internal use. Mainly used by {@link #removeBindings(Agent, Class)}.
+   */
   protected static ArrayList<Integer> clickIDs(Class<?> cls) {
     ArrayList<Integer> result = new ArrayList<Integer>();
     Iterator<Entry<Integer, Class<?>>> it = clickMap.entrySet().iterator();
@@ -470,20 +504,26 @@ public class Profile {
   public void removeBindings() {
     map.clear();
   }
-  
-  //TODO doc me: only 
+
+  /**
+   * Removes all the {@code shortcut} bindings related to the {@code agent}. Same as
+   * {@code removeBindings(shortcut)} when {@code shortcut} is instance of
+   * {@link remixlab.bias.event.KeyboardShortcut} (keyboard shortcuts are global, i.e.,
+   * not related to a specific agent).
+   */
   public void removeBindings(Agent agent, Class<?> shortcut) {
-    if(shortcut == KeyboardShortcut.class) {
+    if (shortcut == KeyboardShortcut.class) {
       removeBindings(shortcut);
       return;
     }
-    ArrayList<Integer> IDs = shortcut == MotionShortcut.class ? motionIDs(agent.getClass()) :  clickIDs(agent.getClass());
+    ArrayList<Integer> IDs = shortcut == MotionShortcut.class ? motionIDs(agent.getClass())
+        : clickIDs(agent.getClass());
     Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
     while (it.hasNext()) {
       Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
       if (shortcut.isInstance(pair.getKey()))
-        for(int id : IDs)
-          if(id == pair.getKey().id())
+        for (int id : IDs)
+          if (id == pair.getKey().id())
             it.remove();
     }
   }

@@ -281,9 +281,8 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * algorithm. In this case, the frame should be manually added to some agents to
    * interactively handle it.
    * <p>
-   * //TODO
-   * Note that if frame is not reachable ({@link #isFrameReachable(GenericFrame)}) this
-   * method returns {@code null}.
+   * //TODO Note that if frame is not reachable ({@link #isFrameReachable(GenericFrame)})
+   * this method returns {@code null}.
    * <p>
    * When collected, pruned frames behave like {@link remixlab.dandelion.geom.Frame},
    * otherwise they are eligible for garbage collection.
@@ -296,7 +295,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
     // /*
     // TODO
     if (!isFrameReachable(frame))
-      return null; 
+      return null;
     // */
     ArrayList<GenericFrame> list = new ArrayList<GenericFrame>();
     collectFrames(list, frame, true);
@@ -383,7 +382,7 @@ public abstract class AbstractScene extends AnimatorObject implements Grabber {
    * @see #isFrameReachable(GenericFrame)
    */
   protected void collectFrames(List<GenericFrame> list, GenericFrame frame, boolean eyeframes) {
-    if(frame == null)
+    if (frame == null)
       return;
     if (!frame.isEyeFrame() || eyeframes)
       list.add(frame);

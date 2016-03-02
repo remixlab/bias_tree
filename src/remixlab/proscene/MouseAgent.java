@@ -14,7 +14,6 @@ package remixlab.proscene;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.bias.ext.Profile;
 
 /**
  * Proscene mouse-agent. A Processing fully fledged mouse {@link remixlab.bias.core.Agent}
@@ -26,11 +25,7 @@ import remixlab.bias.ext.Profile;
  * @see remixlab.proscene.DroidTouchAgent
  */
 public class MouseAgent extends Agent {
-  public static final int LEFT_ID = Profile.registerMotionID(37, MouseAgent.class, 2), CENTER_ID = Profile.registerMotionID(3, MouseAgent.class, 2),
-      RIGHT_ID = Profile.registerMotionID(39, MouseAgent.class, 2), WHEEL_ID = Profile.registerMotionID(8, MouseAgent.class, 1),
-      NO_BUTTON = Profile.registerMotionID(BogusEvent.NO_ID, MouseAgent.class, 2), LEFT_CLICK_ID = Profile.registerClickID(37, MouseAgent.class),
-      CENTER_CLICK_ID = Profile.registerClickID(3, MouseAgent.class), RIGHT_CLICK_ID = Profile.registerClickID(39, MouseAgent.class);
-
+  public static int LEFT_ID, CENTER_ID, RIGHT_ID, WHEEL_ID, NO_BUTTON;
   protected float xSens = 1f;
   protected float ySens = 1f;
   protected Scene scene;
@@ -50,6 +45,15 @@ public class MouseAgent extends Agent {
   public MouseAgent(Scene scn) {
     super(scn.inputHandler());
     scene = scn;
+    LEFT_ID = scene().registerMotionID(37, this, 2);
+    CENTER_ID = scene().registerMotionID(3, this, 2);
+    RIGHT_ID = scene().registerMotionID(39, this, 2);
+    WHEEL_ID = scene().registerMotionID(8, this, 1);
+    NO_BUTTON = scene().registerMotionID(BogusEvent.NO_ID, this, 2);
+    // click ids are anonymous (since they are the same as motions)
+    scene().registerClickID(LEFT_ID, this);
+    scene().registerClickID(CENTER_ID, this);
+    scene().registerClickID(RIGHT_ID, this);
     setPickingMode(PickingMode.MOVE);
   }
 
