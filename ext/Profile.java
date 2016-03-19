@@ -108,10 +108,11 @@ public class Profile {
    * @return the id or an exception if the id exists.
    */
   public static int registerMotionID(int id, Class<?> agent, int dof) {
-    if (motionMap.containsKey(id))
-      System.out.println("Nothing done! id already present in Profile. Use an id different than: "
-          + (new ArrayList<Integer>(motionMap.keySet())).toString());
-    if (dof == 1 || dof == 2 || dof == 3 || dof == 6)
+    if (motionMap.containsKey(id)) {
+      if (!motionIDs(agent, dof).contains(id))
+        System.out.println("Nothing done! id already present in Profile. Use an id different than: "
+            + (new ArrayList<Integer>(motionMap.keySet())).toString());
+    } else if (dof == 1 || dof == 2 || dof == 3 || dof == 6)
       motionMap.put(id, new AgentDOFTuple(agent, dof));
     else
       System.out.println("Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
@@ -154,10 +155,11 @@ public class Profile {
    * @see #registerClickID(Class)
    */
   public static int registerClickID(int id, Class<?> agent) {
-    if (clickMap.containsKey(id))
-      System.out.println("Nothing done! id already present in Profile. Use an id different than: "
-          + (new ArrayList<Integer>(clickMap.keySet())).toString());
-    else
+    if (clickMap.containsKey(id)) {
+      if (!clickIDs(agent).contains(id))
+        System.out.println("Nothing done! id already present in Profile. Use an id different than: "
+            + (new ArrayList<Integer>(clickMap.keySet())).toString());
+    } else
       clickMap.put(id, agent);
     return id;
   }
@@ -183,12 +185,12 @@ public class Profile {
   /**
    * Internal use. Mainly used by {@link #removeBindings(Agent, Class)}.
    */
-  protected static ArrayList<Integer> motionIDs(Class<?> cls) {
+  protected static ArrayList<Integer> motionIDs(Class<?> agent) {
     ArrayList<Integer> result = new ArrayList<Integer>();
     Iterator<Entry<Integer, AgentDOFTuple>> it = motionMap.entrySet().iterator();
     while (it.hasNext()) {
       Map.Entry<Integer, AgentDOFTuple> pair = it.next();
-      if (cls == pair.getValue().agent)
+      if (agent == pair.getValue().agent)
         result.add(pair.getKey());
     }
     return result;
@@ -197,12 +199,12 @@ public class Profile {
   /**
    * Not in used currently. Provided for completeness.
    */
-  protected static ArrayList<Integer> motionIDs(Class<?> cls, int dofs) {
+  protected static ArrayList<Integer> motionIDs(Class<?> agent, int dofs) {
     ArrayList<Integer> result = new ArrayList<Integer>();
     Iterator<Entry<Integer, AgentDOFTuple>> it = motionMap.entrySet().iterator();
     while (it.hasNext()) {
       Map.Entry<Integer, AgentDOFTuple> pair = it.next();
-      if (cls == pair.getValue().agent && dofs == pair.getValue().dofs)
+      if (agent == pair.getValue().agent && dofs == pair.getValue().dofs)
         result.add(pair.getKey());
     }
     return result;
@@ -211,12 +213,12 @@ public class Profile {
   /**
    * Internal use. Mainly used by {@link #removeBindings(Agent, Class)}.
    */
-  protected static ArrayList<Integer> clickIDs(Class<?> cls) {
+  protected static ArrayList<Integer> clickIDs(Class<?> agent) {
     ArrayList<Integer> result = new ArrayList<Integer>();
     Iterator<Entry<Integer, Class<?>>> it = clickMap.entrySet().iterator();
     while (it.hasNext()) {
       Map.Entry<Integer, Class<?>> pair = it.next();
-      if (cls == pair.getValue())
+      if (agent == pair.getValue())
         result.add(pair.getKey());
     }
     return result;
