@@ -44,7 +44,7 @@ public abstract class Agent {
   protected InputHandler handler;
 
   /**
-   * Constructs an Agent with the given name and registers is at the given inputHandler.
+   * Constructs an Agent and registers is at the given inputHandler.
    */
   public Agent(InputHandler inputHandler) {
     grabberList = new ArrayList<Grabber>();
