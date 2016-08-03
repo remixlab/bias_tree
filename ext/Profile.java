@@ -20,7 +20,6 @@ import java.util.Map.Entry;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.util.*;
 
 /**
  * A {@link remixlab.bias.core.Grabber} extension which allows to define
@@ -61,24 +60,6 @@ public class Profile {
       agent = a;
       dofs = d;
     }
-  }
-
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(map).toHashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == null)
-      return false;
-    if (obj == this)
-      return true;
-    if (obj.getClass() != getClass())
-      return false;
-
-    Profile other = (Profile) obj;
-    return new EqualsBuilder().append(map, other.map).isEquals();
   }
 
   protected static HashMap<Integer, AgentDOFTuple> motionMap = new HashMap<Integer, AgentDOFTuple>();
