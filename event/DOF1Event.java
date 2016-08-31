@@ -44,12 +44,12 @@ public class DOF1Event extends MotionEvent {
    * @param x
    *          1-dof
    * @param modifiers
-   *          ButtonShortcut modifiers
-   * @param button
-   *          ButtonShortcut button
+   *          MotionShortcut modifiers
+   * @param id
+   *          MotionShortcut gesture-id
    */
-  public DOF1Event(float x, int modifiers, int button) {
-    super(modifiers, button);
+  public DOF1Event(float x, int modifiers, int id) {
+    super(modifiers, id);
     this.dx = x;
   }
 
@@ -60,12 +60,12 @@ public class DOF1Event extends MotionEvent {
    * @param x
    *          1-dof
    * @param modifiers
-   *          ButtonShortcut modifiers
-   * @param button
-   *          ButtonShortcut button
+   *          MotionShortcut modifiers
+   * @param id
+   *          MotionShortcut gesture-id
    */
-  public DOF1Event(DOF1Event prevEvent, float x, int modifiers, int button) {
-    super(modifiers, button);
+  public DOF1Event(DOF1Event prevEvent, float x, int modifiers, int id) {
+    super(modifiers, id);
     this.x = x;
     setPreviousEvent(prevEvent);
   }

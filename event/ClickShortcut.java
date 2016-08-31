@@ -20,7 +20,8 @@ import remixlab.util.HashCodeBuilder;
  * This class represents {@link remixlab.bias.event.ClickEvent} shortcuts.
  * <p>
  * Click shortcuts are defined with a specific number of clicks and can be of one out of
- * two forms: 1. A button; and, 2. A button plus a key-modifier (such as the CTRL key).
+ * two forms: 1. A gesture-id; and, 2. A gesture-id plus a key-modifier (such as the CTRL
+ * key).
  * <p>
  * Note that click shortcuts should have at least one click.
  */
@@ -46,7 +47,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
   protected final int numberOfClicks;
 
   /**
-   * Defines a single click shortcut from the given button.
+   * Defines a single click shortcut from the given gesture-id.
    * 
    * @param id
    *          id
@@ -56,7 +57,7 @@ public class ClickShortcut extends Shortcut implements Copyable {
   }
 
   /**
-   * Defines a click shortcut from the given button and number of clicks.
+   * Defines a click shortcut from the given gesture-id and number of clicks.
    * 
    * @param id
    *          id
@@ -68,7 +69,8 @@ public class ClickShortcut extends Shortcut implements Copyable {
   }
 
   /**
-   * Defines a click shortcut from the given button, modifier mask, and number of clicks.
+   * Defines a click shortcut from the given gesture-id, modifier mask, and number of
+   * clicks.
    * 
    * @param m
    *          modifier mask

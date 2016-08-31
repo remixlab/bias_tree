@@ -18,9 +18,9 @@ import remixlab.util.HashCodeBuilder;
  * Shortcuts are {@link remixlab.bias.core.BogusEvent} means to bind user-defined actions
  * from a {@link remixlab.bias.core.BogusEvent}.
  * <p>
- * Every {@link remixlab.bias.core.BogusEvent} instance has a shortcut which can
- * represent, for instance, the button being dragged and the modifier key pressed at the
- * very moment an user interaction takes place, such as when she/he drags a giving mouse
+ * Every {@link remixlab.bias.core.BogusEvent} instance has a shortcut which represents a
+ * gesture-id, for instance, the button being dragged and the modifier key pressed at the
+ * very moment an user interaction takes place, such as when she drags a giving mouse
  * button while pressing the 'CTRL' modifier key (see
  * {@link remixlab.bias.core.BogusEvent#shortcut()}).
  * <p>
@@ -73,7 +73,7 @@ public class Shortcut implements Copyable {
    * Defines a shortcut from the given id.
    * 
    * @param _id
-   *          button
+   *          gesture-id
    */
   public Shortcut(int _id) {
     mask = BogusEvent.NO_MODIFIER_MASK;

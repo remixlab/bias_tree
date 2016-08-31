@@ -70,8 +70,8 @@ public class MotionEvent extends BogusEvent {
    * Constructs a MotionEvent taking the given {@code modifiers} and {@code modifiers} as
    * a {@link remixlab.bias.event.MotionShortcut}.
    */
-  public MotionEvent(int modifiers, int button) {
-    super(modifiers, button);
+  public MotionEvent(int modifiers, int id) {
+    super(modifiers, id);
   }
 
   protected MotionEvent(MotionEvent other) {

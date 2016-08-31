@@ -16,39 +16,39 @@ import remixlab.util.Copyable;
 /**
  * This class represents {@link remixlab.bias.event.MotionEvent} shortcuts.
  * <p>
- * Button shortcuts can be of one of two forms: 1. Buttons (e.g., 'LEFT' , or even
- * 'B_NOBUTTON'); 2. Button + modifier key combinations (e.g., 'RIGHT' + 'CTRL').
+ * Motion shortcuts can be of one of two forms: 1. A gesture-id (e.g., 'LEFT_ID' , or even
+ * 'NO_ID') or, ; 2. A gesture-id + modifier key combinations (e.g., 'RIGHT_ID' + 'CTRL').
  * <p>
- * Note that the shortcut may be empty: the no-button (B_NOBUTTON) and no-modifier-mask
- * (B_NOMODIFIER_MASK) combo may also defined a shortcut. Empty shortcuts may bind
- * button-less motion interactions (e.g., mouse move without any button pressed).
+ * Note that the shortcut may be empty: the no-id (NO_ID) and no-modifier-mask
+ * (NO_MODIFIER_MASK) combo may also defined a shortcut. Empty shortcuts may bind
+ * gesture-less motion interactions (e.g., mouse move without any button pressed).
  */
 public final class MotionShortcut extends Shortcut implements Copyable {
   /**
    * Constructs an "empty" shortcut by conveniently calling
-   * {@code this(B_NOMODIFIER_MASK, B_NOBUTTON);}
+   * {@code this(NO_MODIFIER_MASK, NO_ID);}
    */
   public MotionShortcut() {
     super();
   }
 
   /**
-   * Defines a shortcut from the given button.
+   * Defines a shortcut from the given gesture-id.
    * 
    * @param id
-   *          button
+   *          gesture-id
    */
   public MotionShortcut(int id) {
     super(id);
   }
 
   /**
-   * Defines a shortcut from the given modifier mask and button combination.
+   * Defines a shortcut from the given modifier mask and gesture-id combination.
    * 
    * @param m
    *          the mask
    * @param id
-   *          button
+   *          gesture-id
    */
   public MotionShortcut(int m, int id) {
     super(m, id);

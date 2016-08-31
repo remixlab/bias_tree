@@ -45,8 +45,8 @@ public class ClickEvent extends BogusEvent {
   protected final int numberOfClicks;
 
   /**
-   * Constructs a single click ClickEvent at the given position and from the given button
-   * defining the events {@link #shortcut()}
+   * Constructs a single click ClickEvent at the given position and from the given
+   * gesture-id defining the events {@link #shortcut()}
    * 
    * @param x
    * @param y
@@ -60,7 +60,7 @@ public class ClickEvent extends BogusEvent {
   }
 
   /**
-   * Constructs a ClickEvent at the given position, from the given button defining the
+   * Constructs a ClickEvent at the given position, from the given gesture-id defining the
    * events {@link #shortcut()}, and with the given number of clicks.
    * 
    * @param x
@@ -76,8 +76,9 @@ public class ClickEvent extends BogusEvent {
   }
 
   /**
-   * Constructs a ClickEvent at the given position, from the given button and modifiers
-   * which defines the events {@link #shortcut()}, and with the given number of clicks.
+   * Constructs a ClickEvent at the given position, from the given gesture-id and
+   * modifiers which defines the events {@link #shortcut()}, and with the given number of
+   * clicks.
    * 
    * @param x
    * @param y

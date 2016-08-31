@@ -48,10 +48,10 @@ public class DOF2Event extends MotionEvent {
    * @param x
    * @param y
    * @param modifiers
-   * @param button
+   * @param gesture-id
    */
-  public DOF2Event(float x, float y, int modifiers, int button) {
-    super(modifiers, button);
+  public DOF2Event(float x, float y, int modifiers, int id) {
+    super(modifiers, id);
     this.dx = x;
     this.dy = y;
   }
@@ -63,10 +63,10 @@ public class DOF2Event extends MotionEvent {
    * @param x
    * @param y
    * @param modifiers
-   * @param button
+   * @param gesture-id
    */
-  public DOF2Event(DOF2Event prevEvent, float x, float y, int modifiers, int button) {
-    super(modifiers, button);
+  public DOF2Event(DOF2Event prevEvent, float x, float y, int modifiers, int id) {
+    super(modifiers, id);
     this.x = x;
     this.y = y;
     setPreviousEvent(prevEvent);
