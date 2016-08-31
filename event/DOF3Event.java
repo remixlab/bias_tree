@@ -50,7 +50,7 @@ public class DOF3Event extends MotionEvent {
    * @param y
    * @param z
    * @param modifiers
-   * @param gesture-d
+   * @param id
    */
   public DOF3Event(float x, float y, float z, int modifiers, int id) {
     super(modifiers, id);
@@ -67,7 +67,7 @@ public class DOF3Event extends MotionEvent {
    * @param y
    * @param z
    * @param modifiers
-   * @param gesture-id
+   * @param id
    */
   public DOF3Event(DOF3Event prevEvent, float x, float y, float z, int modifiers, int id) {
     super(modifiers, id);

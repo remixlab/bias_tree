@@ -58,7 +58,7 @@ public class DOF6Event extends MotionEvent {
    * @param ry
    * @param rz
    * @param modifiers
-   * @param gesture-id
+   * @param id
    */
   public DOF6Event(float x, float y, float z, float rx, float ry, float rz, int modifiers, int id) {
     super(modifiers, id);
@@ -81,7 +81,7 @@ public class DOF6Event extends MotionEvent {
    * @param ry
    * @param rz
    * @param modifiers
-   * @param gesture-id
+   * @param id
    */
   public DOF6Event(DOF6Event prevEvent, float x, float y, float z, float rx, float ry, float rz, int modifiers,
       int id) {
