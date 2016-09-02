@@ -254,7 +254,6 @@ public class DOF3Event extends MotionEvent {
     } else {
       e2 = new DOF2Event(dx(), dy(), modifiers(), id());
     }
-    e2.modifiedTimestamp(this.timestamp());
     e2.delay = this.delay();
     e2.speed = this.speed();
     e2.distance = this.distance();

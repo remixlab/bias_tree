@@ -403,7 +403,6 @@ public class DOF6Event extends MotionEvent {
         e3 = new DOF3Event(drx(), dry(), drz(), modifiers(), id());
       }
     }
-    e3.modifiedTimestamp(this.timestamp());
     e3.delay = this.delay();
     e3.speed = this.speed();
     e3.distance = this.distance();
