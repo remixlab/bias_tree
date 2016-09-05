@@ -62,4 +62,9 @@ public final class MotionShortcut extends Shortcut implements Copyable {
   public MotionShortcut get() {
     return new MotionShortcut(this);
   }
+  
+  @Override
+  public Class<?> eventClass() {
+    return MotionEvent.class;
+  }
 }

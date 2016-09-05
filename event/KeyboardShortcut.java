@@ -84,6 +84,11 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
   public KeyboardShortcut get() {
     return new KeyboardShortcut(this);
   }
+  
+  @Override
+  public Class<?> eventClass() {
+    return KeyboardEvent.class;
+  }
 
   @Override
   public String description() {

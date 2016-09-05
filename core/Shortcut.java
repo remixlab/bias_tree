@@ -109,11 +109,24 @@ public class Shortcut implements Copyable {
     return ((m.length() > 0) ? m + "+ID_" : "ID_") + String.valueOf(id);
   }
 
+  /**
+   * Returns the shortcut's modifiers mask.
+   */
   public int modifiers() {
     return mask;
   }
 
+  /**
+   * Returns the shortcut's id.
+   */
   public int id() {
     return id;
+  }
+  
+  /**
+   * Returns the event class this shortcut is to be attached to.
+   */
+  public Class<?> eventClass() {
+    return BogusEvent.class;
   }
 }

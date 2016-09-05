@@ -96,6 +96,11 @@ public class ClickShortcut extends Shortcut implements Copyable {
   public ClickShortcut get() {
     return new ClickShortcut(this);
   }
+  
+  @Override
+  public Class<?> eventClass() {
+    return ClickEvent.class;
+  }
 
   /**
    * Returns a textual description of this click shortcut.

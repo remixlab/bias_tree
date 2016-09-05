@@ -65,7 +65,6 @@ public class Profile {
   // API sugar
   protected static HashMap<Integer, AgentDOFTuple> motionMap = new HashMap<Integer, AgentDOFTuple>();
   protected static HashMap<Integer, Class<?>> clickMap = new HashMap<Integer, Class<?>>();
-  protected static HashMap<Class<?>, Class<?>> eventMap = new HashMap<Class<?>, Class<?>>();
   
   // the real stuff
   protected HashMap<Shortcut, ObjectMethodTuple> map;
@@ -208,12 +207,6 @@ public class Profile {
     }
     return result;
   }
-  
-  public static void registerEvent(Class<?> Event, Class<?> Shortcut) {
-    if(eventMap.containsKey(Shortcut))
-      System.out.println("Warning: re-registering " + Event.getName());
-    eventMap.put(Shortcut, Event);
-  }
 
   /**
    * Instantiates this profile from another profile. Both Profile {@link #grabber()}
@@ -283,7 +276,7 @@ public class Profile {
    * you intend to implement your own event class.
    */
   protected Class<?> cls(Shortcut key) {
-    Class<?> eventClass = Profile.eventMap.get(key.getClass());
+    Class<?> eventClass = key.eventClass();
     if(eventClass == MotionEvent.class)
       switch (motionMap.get(key.id()).dofs) {
       case 1:
