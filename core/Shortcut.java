@@ -122,7 +122,7 @@ public class Shortcut implements Copyable {
   public int id() {
     return id;
   }
-  
+
   /**
    * Returns the event class this shortcut is to be attached to.
    */

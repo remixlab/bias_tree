@@ -61,8 +61,7 @@ public class BogusEvent implements Copyable {
       return false;
 
     BogusEvent other = (BogusEvent) obj;
-    return new EqualsBuilder().append(modifiers, other.modifiers).append(id, other.id)
-        .isEquals();
+    return new EqualsBuilder().append(modifiers, other.modifiers).append(id, other.id).isEquals();
   }
 
   protected final int modifiers;

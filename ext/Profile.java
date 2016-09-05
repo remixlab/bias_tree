@@ -65,10 +65,13 @@ public class Profile {
   // API sugar
   protected static HashMap<Integer, AgentDOFTuple> motionMap = new HashMap<Integer, AgentDOFTuple>();
   protected static HashMap<Integer, Class<?>> clickMap = new HashMap<Integer, Class<?>>();
-  
+
   // the real stuff
   protected HashMap<Shortcut, ObjectMethodTuple> map;
   protected Grabber grabber;
+  
+  //TODO decide me
+  public static Object context = null;
 
   /**
    * Attaches a profile to the given grabber.
@@ -272,12 +275,11 @@ public class Profile {
   }
 
   /**
-   * Internal macro. Sort of a shortcut to event reverse mapping. Override this method if
-   * you intend to implement your own event class.
+   * Internal macro. Sort of a shortcut to event reverse mapping.
    */
   protected Class<?> cls(Shortcut key) {
     Class<?> eventClass = key.eventClass();
-    if(eventClass == MotionEvent.class)
+    if (eventClass == MotionEvent.class)
       switch (motionMap.get(key.id()).dofs) {
       case 1:
         eventClass = DOF1Event.class;
@@ -372,9 +374,10 @@ public class Profile {
    * 
    * @see #setBinding(Object, Shortcut, String)
    */
-  public void setBinding(Shortcut key, String action) {
+  public boolean setBinding(Shortcut key, String action) {
     if (printWarning(key, action))
-      return;
+      return false;
+    boolean success = false;
     Method method = null;
     String message = "Check that the " + grabber().getClass().getSimpleName() + "." + action
         + " method exists, is public and returns void, and that it takes no parameters or a "
@@ -382,31 +385,37 @@ public class Profile {
         + " parameter";
     try {
       method = grabber.getClass().getMethod(action, new Class<?>[] { cls(key) });
+      success = true;
     } catch (Exception clazz) {
-      boolean print = true;
       try {
         method = grabber.getClass().getMethod(action, new Class<?>[] {});
-        print = false;
+        success = true;
       } catch (Exception empty) {
         if (key instanceof MotionShortcut)
           try {
             method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
-            print = false;
+            success = true;
           } catch (Exception motion) {
-            System.out.println(message);
-            motion.printStackTrace();
+            if(context == null) {
+              System.out.println(message);
+              clazz.printStackTrace();
+              motion.printStackTrace();
+            }
           }
-        else {
-          System.out.println(message);
-          empty.printStackTrace();
+        if (!success && context != null && context != grabber) {
+          success = setBinding(context, key, action);
+          if(!success) {
+            System.out.println(message);
+            clazz.printStackTrace();
+            empty.printStackTrace();
+          }
+          return success;
         }
       }
-      if (print) {
-        System.out.println(message);
-        clazz.printStackTrace();
-      }
     }
-    map.put(key, new ObjectMethodTuple(grabber, method));
+    if (success)
+      map.put(key, new ObjectMethodTuple(grabber, method));
+    return success;
   }
 
   /**
@@ -431,9 +440,10 @@ public class Profile {
    * 
    * @see #setBinding(Object, Shortcut, String)
    */
-  public void setBinding(Object object, Shortcut key, String action) {
+  public boolean setBinding(Object object, Shortcut key, String action) {
     if (printWarning(key, action))
-      return;
+      return false;
+    boolean success = false;
     Method method = null;
     String message = "Check that the " + object.getClass().getSimpleName() + "." + action
         + " method exists, is public and returns void, and that it takes a " + grabber().getClass().getSimpleName()
@@ -442,31 +452,31 @@ public class Profile {
         + " parameter";
     try {
       method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), cls(key) });
+      success = true;
     } catch (Exception clazz) {
-      boolean print = true;
       try {
         method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass() });
-        print = false;
+        success = true;
       } catch (Exception empty) {
         if (key instanceof MotionShortcut)
           try {
             method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), MotionEvent.class });
-            print = false;
+            success = true;
           } catch (Exception motion) {
             System.out.println(message);
+            clazz.printStackTrace();
             motion.printStackTrace();
           }
         else {
           System.out.println(message);
+          clazz.printStackTrace();
           empty.printStackTrace();
         }
       }
-      if (print) {
-        System.out.println(message);
-        clazz.printStackTrace();
-      }
     }
-    map.put(key, new ObjectMethodTuple(object, method));
+    if (success)
+      map.put(key, new ObjectMethodTuple(object, method));
+    return success;
   }
 
   /**
