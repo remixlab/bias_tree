@@ -62,7 +62,7 @@ public class Profile {
     }
   }
 
-  //API sugar
+  // API sugar
   protected static HashMap<Integer, AgentDOFTuple> motionMap = new HashMap<Integer, AgentDOFTuple>();
   protected static HashMap<Integer, Class<?>> clickMap = new HashMap<Integer, Class<?>>();
   protected static HashMap<Class<?>, Class<?>> eventMap = new HashMap<Class<?>, Class<?>>();
