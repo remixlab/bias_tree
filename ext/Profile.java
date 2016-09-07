@@ -219,7 +219,8 @@ public class Profile {
     Method method = null;
     String message = "Check that the " + grabber().getClass().getSimpleName() + "." + action
         + " method exists, is public and returns void, and that it takes no parameters or a "
-        + ((key instanceof MotionShortcut) ? key.eventClass().getSimpleName() + " or MotionEvent" : key.eventClass().getSimpleName())
+        + ((key instanceof MotionShortcut) ? key.eventClass().getSimpleName() + " or MotionEvent"
+            : key.eventClass().getSimpleName())
         + " parameter";
     try {
       method = grabber.getClass().getMethod(action, new Class<?>[] { key.eventClass() });
@@ -234,7 +235,7 @@ public class Profile {
             method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
             success = true;
           } catch (Exception motion) {
-            if(context == null) {
+            if (context == null) {
               System.out.println(message);
               clazz.printStackTrace();
               motion.printStackTrace();
@@ -242,7 +243,7 @@ public class Profile {
           }
         if (!success && context != null && context != grabber) {
           success = setBinding(context, key, action);
-          if(!success) {
+          if (!success) {
             System.out.println(message);
             clazz.printStackTrace();
             empty.printStackTrace();
@@ -285,8 +286,8 @@ public class Profile {
     Method method = null;
     String message = "Check that the " + object.getClass().getSimpleName() + "." + action
         + " method exists, is public and returns void, and that it takes a " + grabber().getClass().getSimpleName()
-        + " parameter and, optionally, a "
-        + ((key instanceof MotionShortcut) ? key.eventClass().getSimpleName() + " or MotionEvent" : key.eventClass().getSimpleName())
+        + " parameter and, optionally, a " + ((key instanceof MotionShortcut)
+            ? key.eventClass().getSimpleName() + " or MotionEvent" : key.eventClass().getSimpleName())
         + " parameter";
     try {
       method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), key.eventClass() });

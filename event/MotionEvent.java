@@ -178,8 +178,8 @@ public class MotionEvent extends BogusEvent {
   }
 
   /**
-   * Returns a {@link remixlab.bias.event.DOF1Event} from the MotionEvent x-coordinate
-   * if {@code fromX} is {@code true} and from the y-coordinate otherwise.
+   * Returns a {@link remixlab.bias.event.DOF1Event} from the MotionEvent x-coordinate if
+   * {@code fromX} is {@code true} and from the y-coordinate otherwise.
    */
   public static DOF1Event dof1Event(MotionEvent event, boolean fromX) {
     if (event instanceof DOF1Event)
@@ -203,8 +203,8 @@ public class MotionEvent extends BogusEvent {
   }
 
   /**
-   * Returns a {@link remixlab.bias.event.DOF2Event} from the MotionEvent x-coordinate
-   * if {@code fromX} is {@code true} and from the y-coordinate otherwise.
+   * Returns a {@link remixlab.bias.event.DOF2Event} from the MotionEvent x-coordinate if
+   * {@code fromX} is {@code true} and from the y-coordinate otherwise.
    */
   public static DOF2Event dof2Event(MotionEvent event, boolean fromX) {
     if (event instanceof DOF1Event)
@@ -229,8 +229,9 @@ public class MotionEvent extends BogusEvent {
   }
 
   /**
-   * Returns a {@link remixlab.bias.event.DOF3Event} from the MotionEvent translation-coordinates
-   * if {@code fromTranslation} is {@code true} and from the rotation-coordinate otherwise.
+   * Returns a {@link remixlab.bias.event.DOF3Event} from the MotionEvent
+   * translation-coordinates if {@code fromTranslation} is {@code true} and from the
+   * rotation-coordinate otherwise.
    */
   public static DOF3Event dof3Event(MotionEvent event, boolean fromTranslation) {
     if (event instanceof DOF1Event)

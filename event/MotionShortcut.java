@@ -31,8 +31,8 @@ import remixlab.util.Copyable;
  * {@link #registerID(int)}) before using the shortcut.
  */
 public final class MotionShortcut extends Shortcut implements Copyable {
-protected static HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
-  
+  protected static HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+
   /**
    * Returns the {@link #id()} DOF's.
    * <p>
@@ -42,11 +42,11 @@ protected static HashMap<Integer, Integer> map = new HashMap<Integer, Integer>()
    * @see #registerID(int, int)
    */
   public static int dofs(int id) {
-    if(!map.containsKey(id))
-        System.out.println("MotionEvent id: " + id + " not registered. Call MotionShortcut.registerID(id) first" );
+    if (!map.containsKey(id))
+      System.out.println("MotionEvent id: " + id + " not registered. Call MotionShortcut.registerID(id) first");
     return map.get(id);
   }
-  
+
   /**
    * Registers a MotionEvent {@link #id()} with the given dofs.
    * 
@@ -61,15 +61,15 @@ protected static HashMap<Integer, Integer> map = new HashMap<Integer, Integer>()
    */
   public static int registerID(int id, int dof) {
     if (map.containsKey(id)) {
-        System.out.println("Nothing done! id already present in MotionShortcut. Use an id different than: "
-            + (new ArrayList<Integer>(map.keySet())).toString());
+      System.out.println("Nothing done! id already present in MotionShortcut. Use an id different than: "
+          + (new ArrayList<Integer>(map.keySet())).toString());
     } else if (dof == 1 || dof == 2 || dof == 3 || dof == 6)
       map.put(id, dof);
     else
       System.out.println("Nothing done! dofs in MotionShortcut.registerMotionID should be either 1, 2, 3 or 6.");
     return id;
   }
-  
+
   /**
    * Registers a MotionEvent {@link #id()} with the given dofs.
    * 
@@ -92,7 +92,7 @@ protected static HashMap<Integer, Integer> map = new HashMap<Integer, Integer>()
     }
     return key;
   }
-  
+
   /**
    * Constructs an "empty" shortcut by conveniently calling
    * {@code this(NO_MODIFIER_MASK, NO_ID);}
@@ -135,7 +135,7 @@ protected static HashMap<Integer, Integer> map = new HashMap<Integer, Integer>()
   @Override
   public Class<?> eventClass() {
     Class<?> clazz = MotionEvent.class;
-    if((Integer)dofs(id()) != null)
+    if ((Integer) dofs(id()) != null)
       switch (dofs(id())) {
       case 1:
         clazz = DOF1Event.class;
