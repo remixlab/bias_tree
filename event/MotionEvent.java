@@ -168,10 +168,19 @@ public class MotionEvent extends BogusEvent {
     }
   }
 
+  /**
+   * Same as {@code return dof1Event(event, true)}.
+   * 
+   * @see #dof1Event(MotionEvent, boolean)
+   */
   public static DOF1Event dof1Event(MotionEvent event) {
     return dof1Event(event, true);
   }
 
+  /**
+   * Returns a {@link remixlab.bias.event.DOF1Event} from the MotionEvent x-coordinate
+   * if {@code fromX} is {@code true} and from the y-coordinate otherwise.
+   */
   public static DOF1Event dof1Event(MotionEvent event, boolean fromX) {
     if (event instanceof DOF1Event)
       return (DOF1Event) event;
@@ -184,10 +193,19 @@ public class MotionEvent extends BogusEvent {
     return null;
   }
 
+  /**
+   * Same as {@code return dof2Event(event, true)}.
+   * 
+   * @see #dof2Event(MotionEvent, boolean)
+   */
   public static DOF2Event dof2Event(MotionEvent event) {
     return dof2Event(event, true);
   }
 
+  /**
+   * Returns a {@link remixlab.bias.event.DOF2Event} from the MotionEvent x-coordinate
+   * if {@code fromX} is {@code true} and from the y-coordinate otherwise.
+   */
   public static DOF2Event dof2Event(MotionEvent event, boolean fromX) {
     if (event instanceof DOF1Event)
       return null;
@@ -201,10 +219,19 @@ public class MotionEvent extends BogusEvent {
     return null;
   }
 
+  /**
+   * Same as {@code return dof3Event(event, true)}.
+   * 
+   * @see #dof3Event(MotionEvent, boolean)
+   */
   public static DOF3Event dof3Event(MotionEvent event) {
     return dof3Event(event, true);
   }
 
+  /**
+   * Returns a {@link remixlab.bias.event.DOF3Event} from the MotionEvent translation-coordinates
+   * if {@code fromTranslation} is {@code true} and from the rotation-coordinate otherwise.
+   */
   public static DOF3Event dof3Event(MotionEvent event, boolean fromTranslation) {
     if (event instanceof DOF1Event)
       return null;
@@ -217,6 +244,10 @@ public class MotionEvent extends BogusEvent {
     return null;
   }
 
+  /**
+   * Returns a {@link remixlab.bias.event.DOF6Event} if the MotionEvent {@code instanceof}
+   * {@link remixlab.bias.event.DOF6Event} and null otherwise..
+   */
   public static DOF6Event dof6Event(MotionEvent event) {
     if (event instanceof DOF6Event)
       return (DOF6Event) event;
