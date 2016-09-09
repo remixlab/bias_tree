@@ -60,6 +60,16 @@ public class DOF3Event extends MotionEvent {
   }
 
   /**
+   * Same as
+   * {@code this(prevEvent instanceof DOF3Event ? (DOF3Event) prevEvent : null, x, y, z, modifiers, id)}.
+   * 
+   * @see #DOF3Event(DOF3Event, float, float, float, int, int)
+   */
+  public DOF3Event(MotionEvent prevEvent, float x, float y, float z, int modifiers, int id) {
+    this(prevEvent instanceof DOF3Event ? (DOF3Event) prevEvent : null, x, y, z, modifiers, id);
+  }
+
+  /**
    * Construct a relative event from the given previous event, dof's and modifiers.
    * 
    * @param prevEvent
@@ -89,6 +99,16 @@ public class DOF3Event extends MotionEvent {
     this.dx = x;
     this.dy = y;
     this.dz = z;
+  }
+
+  /**
+   * Same as
+   * {@code this(prevEvent instanceof DOF3Event ? (DOF3Event) prevEvent : null, x, y, z)}.
+   * 
+   * @see #DOF3Event(DOF3Event, float, float, float)
+   */
+  public DOF3Event(MotionEvent prevEvent, float x, float y, float z) {
+    this(prevEvent instanceof DOF3Event ? (DOF3Event) prevEvent : null, x, y, z);
   }
 
   /**

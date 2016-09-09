@@ -57,6 +57,16 @@ public class DOF2Event extends MotionEvent {
   }
 
   /**
+   * Same as
+   * {@code this(prevEvent instanceof DOF2Event ? (DOF2Event) prevEvent : null, x, y, modifiers, id)}.
+   * 
+   * @see #DOF2Event(DOF2Event, float, float, int, int)
+   */
+  public DOF2Event(MotionEvent prevEvent, float x, float y, int modifiers, int id) {
+    this(prevEvent instanceof DOF2Event ? (DOF2Event) prevEvent : null, x, y, modifiers, id);
+  }
+
+  /**
    * Construct a relative event from the given previous event, dof's and modifiers.
    * 
    * @param prevEvent
@@ -82,6 +92,16 @@ public class DOF2Event extends MotionEvent {
     super();
     this.dx = x;
     this.dy = y;
+  }
+
+  /**
+   * Same as
+   * {@code this(prevEvent instanceof DOF2Event ? (DOF2Event) prevEvent : null, x, y)}.
+   * 
+   * @see #DOF2Event(DOF2Event, float, float)
+   */
+  public DOF2Event(MotionEvent prevEvent, float x, float y) {
+    this(prevEvent instanceof DOF2Event ? (DOF2Event) prevEvent : null, x, y);
   }
 
   /**

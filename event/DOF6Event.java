@@ -71,6 +71,17 @@ public class DOF6Event extends MotionEvent {
   }
 
   /**
+   * Same as
+   * {@code this(prevEvent instanceof DOF6Event ? (DOF6Event) prevEvent : null, x, y, z, rx, ry, rz, modifiers, id)}.
+   * 
+   * @see #DOF6Event(DOF6Event, float, float, float, float, float, float, int, int)
+   */
+  public DOF6Event(MotionEvent prevEvent, float x, float y, float z, float rx, float ry, float rz, int modifiers,
+      int id) {
+    this(prevEvent instanceof DOF6Event ? (DOF6Event) prevEvent : null, x, y, z, rx, ry, rz, modifiers, id);
+  }
+
+  /**
    * Construct a relative event from the given previous event, dof's and modifiers.
    * 
    * @param prevEvent
@@ -113,6 +124,16 @@ public class DOF6Event extends MotionEvent {
     this.drx = rx;
     this.dry = ry;
     this.drz = rz;
+  }
+
+  /**
+   * Same as
+   * {@code this(prevEvent instanceof DOF6Event ? (DOF6Event) prevEvent : null, x, y, z, rx, ry, rz)}.
+   * 
+   * @see #DOF6Event(DOF6Event, float, float, float, float, float, float)
+   */
+  public DOF6Event(MotionEvent prevEvent, float x, float y, float z, float rx, float ry, float rz) {
+    this(prevEvent instanceof DOF6Event ? (DOF6Event) prevEvent : null, x, y, z, rx, ry, rz);
   }
 
   /**
