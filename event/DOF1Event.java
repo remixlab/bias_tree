@@ -88,7 +88,7 @@ public class DOF1Event extends MotionEvent {
    */
   public DOF1Event(float x) {
     super();
-    this.x = x;
+    this.dx = x;
   }
 
   /**
@@ -137,9 +137,9 @@ public class DOF1Event extends MotionEvent {
 
   @Override
   public void setPreviousEvent(MotionEvent prevEvent) {
+    rel = true;
     if (prevEvent != null)
-      if (prevEvent instanceof DOF1Event) {
-        rel = true;
+      if (prevEvent instanceof DOF1Event && prevEvent.id() == this.id()) {
         this.dx = this.x() - ((DOF1Event) prevEvent).x();
         distance = this.x() - ((DOF1Event) prevEvent).x();
         delay = this.timestamp() - prevEvent.timestamp();
@@ -147,11 +147,6 @@ public class DOF1Event extends MotionEvent {
           speed = distance;
         else
           speed = distance / (float) delay;
-      } else {
-        this.dx = 0f;
-        delay = 0l;
-        speed = 0f;
-        distance = 0f;
       }
   }
 

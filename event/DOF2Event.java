@@ -143,9 +143,9 @@ public class DOF2Event extends MotionEvent {
 
   @Override
   public void setPreviousEvent(MotionEvent prevEvent) {
+    rel = true;
     if (prevEvent != null)
-      if (prevEvent instanceof DOF2Event) {
-        rel = true;
+      if (prevEvent instanceof DOF2Event && prevEvent.id() == this.id()) {
         this.dx = this.x() - ((DOF2Event) prevEvent).x();
         this.dy = this.y() - ((DOF2Event) prevEvent).y();
         distance = Util.distance(x, y, ((DOF2Event) prevEvent).x(), ((DOF2Event) prevEvent).y());
@@ -154,12 +154,6 @@ public class DOF2Event extends MotionEvent {
           speed = distance;
         else
           speed = distance / (float) delay;
-      } else {
-        this.dx = 0f;
-        this.dy = 0f;
-        delay = 0l;
-        speed = 0f;
-        distance = 0f;
       }
   }
 

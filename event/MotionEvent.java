@@ -154,18 +154,15 @@ public class MotionEvent extends BogusEvent {
    * Sets the event's previous event to build a relative event.
    */
   public void setPreviousEvent(MotionEvent prevEvent) {
-    if (prevEvent == null) {
-      delay = 0l;
-      speed = 0f;
-      distance = 0f;
-    } else {
-      rel = true;
-      delay = this.timestamp() - prevEvent.timestamp();
-      if (delay == 0l)
-        speed = distance;
-      else
-        speed = distance / (float) delay;
-    }
+    rel = true;
+    if (prevEvent != null)
+      if (prevEvent.id() == this.id()) {
+        delay = this.timestamp() - prevEvent.timestamp();
+        if (delay == 0)
+          speed = distance;
+        else
+          speed = distance / (float) delay;
+      }
   }
 
   /**

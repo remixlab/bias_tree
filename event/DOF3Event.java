@@ -154,10 +154,9 @@ public class DOF3Event extends MotionEvent {
 
   @Override
   public void setPreviousEvent(MotionEvent prevEvent) {
-    super.setPreviousEvent(prevEvent);
+    rel = true;
     if (prevEvent != null)
-      if (prevEvent instanceof DOF3Event) {
-        rel = true;
+      if (prevEvent instanceof DOF3Event && prevEvent.id() == this.id()) {
         this.dx = this.x() - ((DOF3Event) prevEvent).x();
         this.dy = this.y() - ((DOF3Event) prevEvent).y();
         this.dz = this.z() - ((DOF3Event) prevEvent).z();
@@ -168,13 +167,6 @@ public class DOF3Event extends MotionEvent {
           speed = distance;
         else
           speed = distance / (float) delay;
-      } else {
-        this.dx = 0f;
-        this.dy = 0f;
-        this.dz = 0f;
-        delay = 0l;
-        speed = 0f;
-        distance = 0f;
       }
   }
 
