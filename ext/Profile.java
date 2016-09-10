@@ -198,12 +198,8 @@ public class Profile {
    * The action is a method implemented by the {@link #grabber()} that returns void and
    * may have a {@link remixlab.bias.core.BogusEvent} parameter, or no parameters at all.
    * A {@link remixlab.bias.event.MotionEvent} or a <b>DOFnEvent()</b> that matches the
-   * {@link remixlab.bias.core.Shortcut#id()} dofs may be passed to the action when
-   * binding a {@link remixlab.bias.event.MotionShortcut}. A
-   * {@link remixlab.bias.event.KeyboardEvent} and a
-   * {@link remixlab.bias.event.ClickEvent} should always be passed to the action when
-   * binding a {@link remixlab.bias.event.KeyboardShortcut} and a
-   * {@link remixlab.bias.event.ClickShortcut}, respectively.
+   * {@link remixlab.bias.core.Shortcut#eventClass()} may be passed to the action when
+   * binding a {@link remixlab.bias.event.MotionShortcut}.
    * 
    * @param key
    *          {@link remixlab.bias.core.Shortcut}
@@ -217,41 +213,40 @@ public class Profile {
       return false;
     boolean success = false;
     Method method = null;
-    String message = "Check that the " + grabber().getClass().getSimpleName() + "." + action
-        + " method exists, is public and returns void, and that it takes no parameters or a "
-        + ((key instanceof MotionShortcut) ? key.eventClass().getSimpleName() + " or MotionEvent"
-            : key.eventClass().getSimpleName())
-        + " parameter";
-    try {
-      method = grabber.getClass().getMethod(action, new Class<?>[] { key.eventClass() });
-      success = true;
-    } catch (Exception clazz) {
+    String message = "Check that the " + context != null
+        ? context.getClass().getSimpleName() + "." + action + " or the "
+        : "" + grabber().getClass().getSimpleName() + "." + action
+            + " method exists, is public and returns void, and that it takes no parameters or a "
+            + ((key instanceof MotionShortcut) ? key.eventClass().getSimpleName() + " or MotionEvent"
+                : key.eventClass().getSimpleName())
+            + " parameter";
+    if (context != null && context != grabber)
+      success = setBinding(context, key, action);
+    if (!success)
       try {
-        method = grabber.getClass().getMethod(action, new Class<?>[] {});
+        method = grabber.getClass().getMethod(action, new Class<?>[] { key.eventClass() });
         success = true;
-      } catch (Exception empty) {
-        if (key instanceof MotionShortcut)
-          try {
-            method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
-            success = true;
-          } catch (Exception motion) {
-            if (context == null) {
+      } catch (Exception clazz) {
+        try {
+          method = grabber.getClass().getMethod(action, new Class<?>[] {});
+          success = true;
+        } catch (Exception empty) {
+          if (key instanceof MotionShortcut)
+            try {
+              method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
+              success = true;
+            } catch (Exception motion) {
               System.out.println(message);
               clazz.printStackTrace();
               motion.printStackTrace();
             }
-          }
-        if (!success && context != null && context != grabber) {
-          success = setBinding(context, key, action);
-          if (!success) {
+          else {
             System.out.println(message);
             clazz.printStackTrace();
             empty.printStackTrace();
           }
-          return success;
         }
       }
-    }
     if (success)
       map.put(key, new ObjectMethodTuple(grabber, method));
     return success;
@@ -263,12 +258,8 @@ public class Profile {
    * The action is a method implemented by the {@code object} that returns void and may
    * have a {@link remixlab.bias.core.BogusEvent} parameter, or no parameters at all. A
    * {@link remixlab.bias.event.MotionEvent} or a <b>DOFnEvent()</b> that matches the
-   * {@link remixlab.bias.core.Shortcut#id()} dofs may be passed to the action when
-   * binding a {@link remixlab.bias.event.MotionShortcut}. A
-   * {@link remixlab.bias.event.KeyboardEvent} and a
-   * {@link remixlab.bias.event.ClickEvent} should always be passed to the action when
-   * binding a {@link remixlab.bias.event.KeyboardShortcut} and a
-   * {@link remixlab.bias.event.ClickShortcut}, respectively.
+   * {@link remixlab.bias.core.Shortcut#eventClass()} may be passed to the action when
+   * binding a {@link remixlab.bias.event.MotionShortcut}.
    * 
    * @param object
    *          {@link java.lang.Object}
@@ -317,7 +308,12 @@ public class Profile {
       map.put(key, new ObjectMethodTuple(object, method));
     return success;
   }
-
+  
+  public void set(Object object, Shortcut key, String action) throws NoSuchMethodException, SecurityException {
+    
+    
+  }
+  
   /**
    * Removes the shortcut binding.
    * 
