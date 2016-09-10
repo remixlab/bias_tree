@@ -19,10 +19,9 @@ import remixlab.util.*;
  * <p>
  * A MotionEvent encapsulates a {@link remixlab.bias.event.MotionShortcut}. MotionEvents
  * may be relative or absolute (see {@link #isRelative()}, {@link #isAbsolute()})
- * depending whether or not they're defined from a previous MotionEvent (see
- * {@link #setPreviousEvent(MotionEvent)}). While relative motion events have
- * {@link #distance()}, {@link #speed()}, and {@link #delay()}, absolute motion events
- * don't.
+ * depending whether or not they're constructed from a previous MotionEvent. While
+ * relative motion events have {@link #distance()}, {@link #speed()}, and
+ * {@link #delay()}, absolute motion events don't.
  */
 public class MotionEvent extends BogusEvent {
   @Override
@@ -52,14 +51,15 @@ public class MotionEvent extends BogusEvent {
   protected boolean rel;
 
   /**
-   * Constructs a MotionEvent with an "empty" {@link remixlab.bias.event.MotionShortcut}.
+   * Constructs an absolute MotionEvent with an "empty"
+   * {@link remixlab.bias.event.MotionShortcut}.
    */
   public MotionEvent() {
     super();
   }
 
   /**
-   * Constructs a MotionEvent taking the given {@code modifiers} as a
+   * Constructs an absolute MotionEvent taking the given {@code modifiers} as a
    * {@link remixlab.bias.event.MotionShortcut}.
    */
   public MotionEvent(int modifiers) {
@@ -67,8 +67,8 @@ public class MotionEvent extends BogusEvent {
   }
 
   /**
-   * Constructs a MotionEvent taking the given {@code modifiers} and {@code modifiers} as
-   * a {@link remixlab.bias.event.MotionShortcut}.
+   * Constructs an absolute MotionEvent taking the given {@code modifiers} and
+   * {@code modifiers} as a {@link remixlab.bias.event.MotionShortcut}.
    */
   public MotionEvent(int modifiers, int id) {
     super(modifiers, id);
@@ -153,7 +153,7 @@ public class MotionEvent extends BogusEvent {
   /**
    * Sets the event's previous event to build a relative event.
    */
-  public void setPreviousEvent(MotionEvent prevEvent) {
+  protected void setPreviousEvent(MotionEvent prevEvent) {
     rel = true;
     if (prevEvent != null)
       if (prevEvent.id() == this.id()) {

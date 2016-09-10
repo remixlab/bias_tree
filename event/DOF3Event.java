@@ -153,7 +153,7 @@ public class DOF3Event extends MotionEvent {
   }
 
   @Override
-  public void setPreviousEvent(MotionEvent prevEvent) {
+  protected void setPreviousEvent(MotionEvent prevEvent) {
     rel = true;
     if (prevEvent != null)
       if (prevEvent instanceof DOF3Event && prevEvent.id() == this.id()) {
@@ -171,7 +171,7 @@ public class DOF3Event extends MotionEvent {
   }
 
   /**
-   * @return dof-1
+   * @return dof-1, only meaningful if the event {@link #isRelative()}
    */
   public float x() {
     return x;
@@ -185,7 +185,7 @@ public class DOF3Event extends MotionEvent {
   }
 
   /**
-   * @return previous dof-1
+   * @return previous dof-1, only meaningful if the event {@link #isRelative()}
    */
   public float prevX() {
     return x() - dx();
@@ -193,7 +193,7 @@ public class DOF3Event extends MotionEvent {
 
   /**
    * 
-   * @return dof-2
+   * @return dof-2, only meaningful if the event {@link #isRelative()}
    */
   public float y() {
     return y;
@@ -208,14 +208,14 @@ public class DOF3Event extends MotionEvent {
   }
 
   /**
-   * @return previous dof-2
+   * @return previous dof-2, only meaningful if the event {@link #isRelative()}
    */
   public float prevY() {
     return y() - dy();
   }
 
   /**
-   * @return dof-3
+   * @return dof-3, only meaningful if the event {@link #isRelative()}
    */
   public float z() {
     return z;
@@ -230,7 +230,7 @@ public class DOF3Event extends MotionEvent {
   }
 
   /**
-   * @return previous dof-3
+   * @return previous dof-3, only meaningful if the event {@link #isRelative()}
    */
   public float prevZ() {
     return z() - dz();

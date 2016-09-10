@@ -190,7 +190,7 @@ public class DOF6Event extends MotionEvent {
   }
 
   @Override
-  public void setPreviousEvent(MotionEvent prevEvent) {
+  protected void setPreviousEvent(MotionEvent prevEvent) {
     rel = true;
     if (prevEvent != null)
       if (prevEvent instanceof DOF6Event && prevEvent.id() == this.id()) {
@@ -212,7 +212,7 @@ public class DOF6Event extends MotionEvent {
   }
 
   /**
-   * @return dof1
+   * @return dof1, only meaningful if the event {@link #isRelative()}
    */
   public float x() {
     return x;
@@ -226,14 +226,14 @@ public class DOF6Event extends MotionEvent {
   }
 
   /**
-   * @return previous dof1
+   * @return previous dof1, only meaningful if the event {@link #isRelative()}
    */
   public float prevX() {
     return x() - dx();
   }
 
   /**
-   * @return dof2
+   * @return dof2, only meaningful if the event {@link #isRelative()}
    */
   public float y() {
     return y;
@@ -247,14 +247,14 @@ public class DOF6Event extends MotionEvent {
   }
 
   /**
-   * @return previous dof2
+   * @return previous dof2, only meaningful if the event {@link #isRelative()}
    */
   public float prevY() {
     return y() - dy();
   }
 
   /**
-   * @return dof3
+   * @return dof3, only meaningful if the event {@link #isRelative()}
    */
   public float z() {
     return z;
@@ -268,14 +268,14 @@ public class DOF6Event extends MotionEvent {
   }
 
   /**
-   * @return prvious dof3
+   * @return previous dof3, only meaningful if the event {@link #isRelative()}
    */
   public float prevZ() {
     return z() - dz();
   }
 
   /**
-   * Alias for {@link #rx()}
+   * Alias for {@link #rx()}, only meaningful if the event {@link #isRelative()}
    */
   public float roll() {
     return rx();
@@ -283,35 +283,35 @@ public class DOF6Event extends MotionEvent {
 
   /**
    * 
-   * @return dof4
+   * @return dof4, only meaningful if the event {@link #isRelative()}
    */
   public float rx() {
     return rx;
   }
 
   /**
-   * Alias for {@link #ry()}
+   * Alias for {@link #ry()}, only meaningful if the event {@link #isRelative()}
    */
   public float pitch() {
     return ry();
   }
 
   /**
-   * @return dof5
+   * @return dof5, only meaningful if the event {@link #isRelative()}
    */
   public float ry() {
     return ry;
   }
 
   /**
-   * alias for {@link #rz()}
+   * alias for {@link #rz()}, only meaningful if the event {@link #isRelative()}
    */
   public float yaw() {
     return rz();
   }
 
   /**
-   * @return dof6
+   * @return dof6, only meaningful if the event {@link #isRelative()}
    */
   public float rz() {
     return rz;
@@ -339,21 +339,21 @@ public class DOF6Event extends MotionEvent {
   }
 
   /**
-   * @return previous dof4
+   * @return previous dof4, only meaningful if the event {@link #isRelative()}
    */
   public float prevRX() {
     return rx() - drx();
   }
 
   /**
-   * @return previous dof5
+   * @return previous dof5, only meaningful if the event {@link #isRelative()}
    */
   public float prevRY() {
     return ry() - dry();
   }
 
   /**
-   * @return previous dof6
+   * @return previous dof6, only meaningful if the event {@link #isRelative()}
    */
   public float prevRZ() {
     return rz() - drz();

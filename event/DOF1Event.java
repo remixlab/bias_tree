@@ -136,7 +136,7 @@ public class DOF1Event extends MotionEvent {
   }
 
   @Override
-  public void setPreviousEvent(MotionEvent prevEvent) {
+  protected void setPreviousEvent(MotionEvent prevEvent) {
     rel = true;
     if (prevEvent != null)
       if (prevEvent instanceof DOF1Event && prevEvent.id() == this.id()) {
@@ -151,14 +151,14 @@ public class DOF1Event extends MotionEvent {
   }
 
   /**
-   * @return dof-1
+   * @return dof-1, only meaningful if the event {@link #isRelative()}
    */
   public float x() {
     return x;
   }
 
   /**
-   * @return dof-1 delta, only meaningful if the event {@link #isRelative()}
+   * @return dof-1 delta
    */
   public float dx() {
     return dx;
