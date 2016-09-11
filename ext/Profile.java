@@ -220,33 +220,36 @@ public class Profile {
             + ((key instanceof MotionShortcut) ? key.eventClass().getSimpleName() + " or MotionEvent"
                 : key.eventClass().getSimpleName())
             + " parameter";
-    if (context != null && context != grabber)
-      success = setBinding(context, key, action);
-    if (!success)
+    try {
+      method = grabber.getClass().getMethod(action, new Class<?>[] { key.eventClass() });
+      success = true;
+    } catch (Exception clazz) {
       try {
-        method = grabber.getClass().getMethod(action, new Class<?>[] { key.eventClass() });
+        method = grabber.getClass().getMethod(action, new Class<?>[] {});
         success = true;
-      } catch (Exception clazz) {
-        try {
-          method = grabber.getClass().getMethod(action, new Class<?>[] {});
-          success = true;
-        } catch (Exception empty) {
-          if (key instanceof MotionShortcut)
-            try {
-              method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
-              success = true;
-            } catch (Exception motion) {
+      } catch (Exception empty) {
+        if (key instanceof MotionShortcut)
+          try {
+            method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
+            success = true;
+          } catch (Exception motion) {
+            if (context == null) {
               System.out.println(message);
               clazz.printStackTrace();
               motion.printStackTrace();
             }
-          else {
+          }
+        if (!success && context != null && context != grabber) {
+          success = setBinding(context, key, action);
+          if (!success) {
             System.out.println(message);
             clazz.printStackTrace();
             empty.printStackTrace();
           }
+          return success;
         }
       }
+    }
     if (success)
       map.put(key, new ObjectMethodTuple(grabber, method));
     return success;
@@ -309,10 +312,6 @@ public class Profile {
     return success;
   }
   
-  public void set(Object object, Shortcut key, String action) throws NoSuchMethodException, SecurityException {
-    
-    
-  }
   
   /**
    * Removes the shortcut binding.
