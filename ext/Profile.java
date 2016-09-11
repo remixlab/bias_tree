@@ -277,42 +277,45 @@ public class Profile {
     if (printWarning(key, action))
       return false;
     boolean success = false;
-    Method method = null;
     String message = "Check that the " + object.getClass().getSimpleName() + "." + action
         + " method exists, is public and returns void, and that it takes a " + grabber().getClass().getSimpleName()
         + " parameter and, optionally, a " + ((key instanceof MotionShortcut)
             ? key.eventClass().getSimpleName() + " or MotionEvent" : key.eventClass().getSimpleName())
         + " parameter";
+    Method method = null;
     try {
-      method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), key.eventClass() });
+      method = method(object, key, action);
       success = true;
-    } catch (Exception clazz) {
-      try {
-        method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass() });
-        success = true;
-      } catch (Exception empty) {
-        if (key instanceof MotionShortcut)
-          try {
-            method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), MotionEvent.class });
-            success = true;
-          } catch (Exception motion) {
-            System.out.println(message);
-            clazz.printStackTrace();
-            motion.printStackTrace();
-          }
-        else {
-          System.out.println(message);
-          clazz.printStackTrace();
-          empty.printStackTrace();
-        }
-      }
+    } catch (Exception e) {
+      System.out.println(message);
+      e.printStackTrace();
     }
     if (success)
       map.put(key, new ObjectMethodTuple(object, method));
     return success;
   }
-  
-  
+
+  /**
+   * Internal use.
+   * 
+   * @see #setBinding(Shortcut, String)
+   * @see #setBinding(Object, Shortcut, String)
+   */
+  protected Method method(Object object, Shortcut key, String action) throws NoSuchMethodException, SecurityException {
+    Method method = null;
+    try {
+      method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), key.eventClass() });
+    } catch (Exception clazz) {
+      try {
+        method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass() });
+      } catch (Exception empty) {
+        if (key instanceof MotionShortcut)
+          method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), MotionEvent.class });
+      }
+    }
+    return method;
+  }
+
   /**
    * Removes the shortcut binding.
    * 
