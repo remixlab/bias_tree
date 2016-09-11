@@ -211,8 +211,6 @@ public class Profile {
   public boolean setBinding(Shortcut key, String action) {
     if (printWarning(key, action))
       return false;
-    boolean success = false;
-    Method method = null;
     String message = "Check that the " + context != null
         ? context.getClass().getSimpleName() + "." + action + " or the "
         : "" + grabber().getClass().getSimpleName() + "." + action
@@ -220,39 +218,39 @@ public class Profile {
             + ((key instanceof MotionShortcut) ? key.eventClass().getSimpleName() + " or MotionEvent"
                 : key.eventClass().getSimpleName())
             + " parameter";
+    Method method = null;
+    if (context != null && context != grabber) {
+      try {
+        method = method(context, key, action);
+      } catch (Exception e) {
+        //TODO ?
+      }
+      if (method != null) {
+        map.put(key, new ObjectMethodTuple(context, method));
+        return true;
+      }
+    }
     try {
       method = grabber.getClass().getMethod(action, new Class<?>[] { key.eventClass() });
-      success = true;
     } catch (Exception clazz) {
       try {
         method = grabber.getClass().getMethod(action, new Class<?>[] {});
-        success = true;
       } catch (Exception empty) {
         if (key instanceof MotionShortcut)
           try {
             method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
-            success = true;
           } catch (Exception motion) {
-            if (context == null) {
-              System.out.println(message);
-              clazz.printStackTrace();
-              motion.printStackTrace();
-            }
-          }
-        if (!success && context != null && context != grabber) {
-          success = setBinding(context, key, action);
-          if (!success) {
             System.out.println(message);
             clazz.printStackTrace();
-            empty.printStackTrace();
+            motion.printStackTrace();
           }
-          return success;
-        }
       }
     }
-    if (success)
+    if (method != null) {
       map.put(key, new ObjectMethodTuple(grabber, method));
-    return success;
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -276,7 +274,6 @@ public class Profile {
   public boolean setBinding(Object object, Shortcut key, String action) {
     if (printWarning(key, action))
       return false;
-    boolean success = false;
     String message = "Check that the " + object.getClass().getSimpleName() + "." + action
         + " method exists, is public and returns void, and that it takes a " + grabber().getClass().getSimpleName()
         + " parameter and, optionally, a " + ((key instanceof MotionShortcut)
@@ -285,14 +282,15 @@ public class Profile {
     Method method = null;
     try {
       method = method(object, key, action);
-      success = true;
     } catch (Exception e) {
       System.out.println(message);
       e.printStackTrace();
     }
-    if (success)
+    if (method != null) {
       map.put(key, new ObjectMethodTuple(object, method));
-    return success;
+      return true;
+    }
+    return false;
   }
 
   /**
