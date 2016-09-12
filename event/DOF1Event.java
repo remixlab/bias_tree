@@ -41,16 +41,16 @@ public class DOF1Event extends MotionEvent {
   /**
    * Construct an absolute DOF1 event.
    * 
-   * @param x
+   * @param dx
    *          1-dof
    * @param modifiers
    *          MotionShortcut modifiers
    * @param id
    *          MotionShortcut gesture-id
    */
-  public DOF1Event(float x, int modifiers, int id) {
+  public DOF1Event(float dx, int modifiers, int id) {
     super(modifiers, id);
-    this.dx = x;
+    this.dx = dx;
   }
 
   /**
@@ -65,6 +65,9 @@ public class DOF1Event extends MotionEvent {
 
   /**
    * Construct a relative DOF1 event.
+   * <p>
+   * If the {@link #id()} of the {@code prevEvent} is different then {@link #id()}, sets
+   * the {@link #distance()}, {@link #delay()} and {@link #speed()} all to {@code zero}.
    * 
    * @param prevEvent
    * @param x
@@ -83,12 +86,12 @@ public class DOF1Event extends MotionEvent {
   /**
    * Construct an absolute DOF1 event.
    * 
-   * @param x
+   * @param dx
    *          1-dof
    */
-  public DOF1Event(float x) {
+  public DOF1Event(float dx) {
     super();
-    this.dx = x;
+    this.dx = dx;
   }
 
   /**
@@ -103,6 +106,9 @@ public class DOF1Event extends MotionEvent {
 
   /**
    * Construct a relative DOF1 event.
+   * <p>
+   * If the {@link #id()} of the {@code prevEvent} is different then {@link #id()}, sets
+   * the {@link #distance()}, {@link #delay()} and {@link #speed()} all to {@code zero}.
    * 
    * @param prevEvent
    * @param x

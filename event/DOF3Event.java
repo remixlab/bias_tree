@@ -46,17 +46,17 @@ public class DOF3Event extends MotionEvent {
   /**
    * Construct an absolute event from the given dof's and modifiers.
    * 
-   * @param x
-   * @param y
-   * @param z
+   * @param dx
+   * @param dy
+   * @param dz
    * @param modifiers
    * @param id
    */
-  public DOF3Event(float x, float y, float z, int modifiers, int id) {
+  public DOF3Event(float dx, float dy, float dz, int modifiers, int id) {
     super(modifiers, id);
-    this.dx = x;
-    this.dy = y;
-    this.dz = z;
+    this.dx = dx;
+    this.dy = dy;
+    this.dz = dz;
   }
 
   /**
@@ -71,6 +71,9 @@ public class DOF3Event extends MotionEvent {
 
   /**
    * Construct a relative event from the given previous event, dof's and modifiers.
+   * <p>
+   * If the {@link #id()} of the {@code prevEvent} is different then {@link #id()}, sets
+   * the {@link #distance()}, {@link #delay()} and {@link #speed()} all to {@code zero}.
    * 
    * @param prevEvent
    * @param x
@@ -90,15 +93,15 @@ public class DOF3Event extends MotionEvent {
   /**
    * Construct an absolute event from the given dof's.
    * 
-   * @param x
-   * @param y
-   * @param z
+   * @param dx
+   * @param dy
+   * @param dz
    */
-  public DOF3Event(float x, float y, float z) {
+  public DOF3Event(float dx, float dy, float dz) {
     super();
-    this.dx = x;
-    this.dy = y;
-    this.dz = z;
+    this.dx = dx;
+    this.dy = dy;
+    this.dz = dz;
   }
 
   /**
@@ -113,6 +116,9 @@ public class DOF3Event extends MotionEvent {
 
   /**
    * Construct a relative event from the given previous event, dof's and modifiers.
+   * <p>
+   * If the {@link #id()} of the {@code prevEvent} is different then {@link #id()}, sets
+   * the {@link #distance()}, {@link #delay()} and {@link #speed()} all to {@code zero}.
    * 
    * @param prevEvent
    * @param x

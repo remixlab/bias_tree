@@ -45,15 +45,15 @@ public class DOF2Event extends MotionEvent {
   /**
    * Construct an absolute event from the given dof's and modifiers.
    * 
-   * @param x
-   * @param y
+   * @param dx
+   * @param dy
    * @param modifiers
    * @param id
    */
-  public DOF2Event(float x, float y, int modifiers, int id) {
+  public DOF2Event(float dx, float dy, int modifiers, int id) {
     super(modifiers, id);
-    this.dx = x;
-    this.dy = y;
+    this.dx = dx;
+    this.dy = dy;
   }
 
   /**
@@ -68,6 +68,9 @@ public class DOF2Event extends MotionEvent {
 
   /**
    * Construct a relative event from the given previous event, dof's and modifiers.
+   * <p>
+   * If the {@link #id()} of the {@code prevEvent} is different then {@link #id()}, sets
+   * the {@link #distance()}, {@link #delay()} and {@link #speed()} all to {@code zero}.
    * 
    * @param prevEvent
    * @param x
@@ -85,13 +88,13 @@ public class DOF2Event extends MotionEvent {
   /**
    * Construct an absolute event from the given dof's.
    * 
-   * @param x
-   * @param y
+   * @param dx
+   * @param dy
    */
-  public DOF2Event(float x, float y) {
+  public DOF2Event(float dx, float dy) {
     super();
-    this.dx = x;
-    this.dy = y;
+    this.dx = dx;
+    this.dy = dy;
   }
 
   /**
@@ -106,6 +109,9 @@ public class DOF2Event extends MotionEvent {
 
   /**
    * Construct a relative event from the given previous event, dof's and modifiers.
+   * <p>
+   * If the {@link #id()} of the {@code prevEvent} is different then {@link #id()}, sets
+   * the {@link #distance()}, {@link #delay()} and {@link #speed()} all to {@code zero}.
    * 
    * @param prevEvent
    * @param x

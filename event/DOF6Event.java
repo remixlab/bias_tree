@@ -51,23 +51,23 @@ public class DOF6Event extends MotionEvent {
   /**
    * Construct an absolute event from the given dof's and modifiers.
    * 
-   * @param x
-   * @param y
-   * @param z
-   * @param rx
-   * @param ry
-   * @param rz
+   * @param dx
+   * @param dy
+   * @param dz
+   * @param drx
+   * @param dry
+   * @param drz
    * @param modifiers
    * @param id
    */
-  public DOF6Event(float x, float y, float z, float rx, float ry, float rz, int modifiers, int id) {
+  public DOF6Event(float dx, float dy, float dz, float drx, float dry, float drz, int modifiers, int id) {
     super(modifiers, id);
-    this.dx = x;
-    this.dy = y;
-    this.dz = z;
-    this.drx = rx;
-    this.dry = ry;
-    this.drz = rz;
+    this.dx = dx;
+    this.dy = dy;
+    this.dz = dz;
+    this.drx = drx;
+    this.dry = dry;
+    this.drz = drz;
   }
 
   /**
@@ -83,6 +83,9 @@ public class DOF6Event extends MotionEvent {
 
   /**
    * Construct a relative event from the given previous event, dof's and modifiers.
+   * <p>
+   * If the {@link #id()} of the {@code prevEvent} is different then {@link #id()}, sets
+   * the {@link #distance()}, {@link #delay()} and {@link #speed()} all to {@code zero}.
    * 
    * @param prevEvent
    * @param x
@@ -109,21 +112,21 @@ public class DOF6Event extends MotionEvent {
   /**
    * Construct an absolute event from the given dof's and modifiers.
    * 
-   * @param x
-   * @param y
-   * @param z
-   * @param rx
-   * @param ry
-   * @param rz
+   * @param dx
+   * @param dy
+   * @param dz
+   * @param drx
+   * @param dry
+   * @param drz
    */
-  public DOF6Event(float x, float y, float z, float rx, float ry, float rz) {
+  public DOF6Event(float dx, float dy, float dz, float drx, float dry, float drz) {
     super();
-    this.dx = x;
-    this.dy = y;
-    this.dz = z;
-    this.drx = rx;
-    this.dry = ry;
-    this.drz = rz;
+    this.dx = dx;
+    this.dy = dy;
+    this.dz = dz;
+    this.drx = drx;
+    this.dry = dry;
+    this.drz = drz;
   }
 
   /**
@@ -138,6 +141,9 @@ public class DOF6Event extends MotionEvent {
 
   /**
    * Construct a relative event from the given previous event, dof's and modifiers.
+   * <p>
+   * If the {@link #id()} of the {@code prevEvent} is different then {@link #id()}, sets
+   * the {@link #distance()}, {@link #delay()} and {@link #speed()} all to {@code zero}.
    * 
    * @param prevEvent
    * @param x
