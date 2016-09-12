@@ -211,25 +211,24 @@ public class Profile {
   public boolean setBinding(Shortcut key, String action) {
     if (printWarning(key, action))
       return false;
-    String message = "Check that the " + context != null
-        ? context.getClass().getSimpleName() + "." + action + " or the "
-        : "" + grabber().getClass().getSimpleName() + "." + action
-            + " method exists, is public and returns void, and that it takes no parameters or a "
-            + ((key instanceof MotionShortcut) ? key.eventClass().getSimpleName() + " or MotionEvent"
-                : key.eventClass().getSimpleName())
-            + " parameter";
+    String message1 = null;
     Method method = null;
     if (context != null && context != grabber) {
       try {
         method = method(context, key, action);
       } catch (Exception e) {
-        //TODO ?
+        message1 = message(context, key, action);
       }
       if (method != null) {
         map.put(key, new ObjectMethodTuple(context, method));
         return true;
       }
     }
+    String message2 = grabber().getClass().getSimpleName() + "." + action
+        + " exists, is public and returns void, and that it takes no parameters or a "
+        + ((key instanceof MotionShortcut) ? key.eventClass().getSimpleName() + " or MotionEvent"
+            : key.eventClass().getSimpleName())
+        + " parameter";
     try {
       method = grabber.getClass().getMethod(action, new Class<?>[] { key.eventClass() });
     } catch (Exception clazz) {
@@ -240,7 +239,8 @@ public class Profile {
           try {
             method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
           } catch (Exception motion) {
-            System.out.println(message);
+            System.out.println("Warning: not binding set! Check that the " + (message1 != null
+                ? message1 + ". Also check that the " + message2 : message2));
             clazz.printStackTrace();
             motion.printStackTrace();
           }
@@ -274,16 +274,11 @@ public class Profile {
   public boolean setBinding(Object object, Shortcut key, String action) {
     if (printWarning(key, action))
       return false;
-    String message = "Check that the " + object.getClass().getSimpleName() + "." + action
-        + " method exists, is public and returns void, and that it takes a " + grabber().getClass().getSimpleName()
-        + " parameter and, optionally, a " + ((key instanceof MotionShortcut)
-            ? key.eventClass().getSimpleName() + " or MotionEvent" : key.eventClass().getSimpleName())
-        + " parameter";
     Method method = null;
     try {
       method = method(object, key, action);
     } catch (Exception e) {
-      System.out.println(message);
+      System.out.println("Warning: not binding set! Check that the " + message(object, key, action));
       e.printStackTrace();
     }
     if (method != null) {
@@ -291,6 +286,23 @@ public class Profile {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Internal use.
+   * 
+   * @see #setBinding(Shortcut, String)
+   * @see #setBinding(Object, Shortcut, String)
+   */
+  protected String message(Object object, Shortcut key, String action) {
+    String message = null;
+    if (object != null)
+      message = object.getClass().getSimpleName() + "." + action
+          + " method exists, is public and returns void, and that it takes a " + grabber().getClass().getSimpleName()
+          + " parameter and, optionally, a " + ((key instanceof MotionShortcut)
+              ? key.eventClass().getSimpleName() + " or MotionEvent" : key.eventClass().getSimpleName())
+          + " parameter.";
+    return message;
   }
 
   /**
@@ -307,6 +319,7 @@ public class Profile {
       try {
         method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass() });
       } catch (Exception empty) {
+        // Take into account that at the end this is the only exception to be thrown!
         if (key instanceof MotionShortcut)
           method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), MotionEvent.class });
       }
