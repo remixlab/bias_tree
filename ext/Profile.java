@@ -239,8 +239,8 @@ public class Profile {
           try {
             method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
           } catch (Exception motion) {
-            System.out.println("Warning: not binding set! Check that the " + (message1 != null
-                ? message1 + ". Also check that the " + message2 : message2));
+            System.out.println("Warning: not binding set! Check that the "
+                + (message1 != null ? message1 + ". Also check that the " + message2 : message2));
             clazz.printStackTrace();
             motion.printStackTrace();
           }
