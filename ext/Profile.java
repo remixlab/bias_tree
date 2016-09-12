@@ -195,11 +195,23 @@ public class Profile {
   /**
    * Defines the shortcut that triggers the given action.
    * <p>
-   * The action is a method implemented by the {@link #grabber()} that returns void and
-   * may have a {@link remixlab.bias.core.BogusEvent} parameter, or no parameters at all.
-   * A {@link remixlab.bias.event.MotionEvent} or a <b>DOFnEvent()</b> that matches the
+   * The action may be:
+   * <ol>
+   * <li>A method implemented in the {@link #context} that returns void and has a
+   * {@link #grabber()} parameter and, optionally, a {@link remixlab.bias.core.BogusEvent}
+   * parameter, or no parameters at all. A {@link remixlab.bias.event.MotionEvent} or a
+   * <b>DOFnEvent()</b> that matches the {@link remixlab.bias.core.Shortcut#eventClass()}
+   * may be passed to the action when binding a
+   * {@link remixlab.bias.event.MotionShortcut}.</li>
+   * <li>A method implemented by the {@link #grabber()} that returns void and may have a
+   * {@link remixlab.bias.core.BogusEvent} parameter, or no parameters at all. A
+   * {@link remixlab.bias.event.MotionEvent} or a <b>DOFnEvent()</b> that matches the
    * {@link remixlab.bias.core.Shortcut#eventClass()} may be passed to the action when
-   * binding a {@link remixlab.bias.event.MotionShortcut}.
+   * binding a {@link remixlab.bias.event.MotionShortcut}.</li>
+   * </ol>
+   * The algorithm searches the action in the above order. It will only search the action
+   * in the {@link #grabber()} if nothing is found at the {@link #context}, i.e., the
+   * {@link #context} takes higher precedence over the {@link #grabber()}.
    * 
    * @param key
    *          {@link remixlab.bias.core.Shortcut}
