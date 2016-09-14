@@ -11,6 +11,10 @@
 package remixlab.bias.ext;
 
 import java.lang.reflect.Method;
+
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -62,7 +66,56 @@ public class Profile {
 
   protected HashMap<Shortcut, ObjectMethodTuple> map;
   protected Grabber grabber;
+
+  // : static stuff
   public static Object context = null;
+
+  public static String parseKeyInfo(String info) {
+    // parse...
+    // the left-right-up-down keys:
+    String vk_l = "VKEY_" + String.valueOf(37);
+    String vk_u = "VKEY_" + String.valueOf(38);
+    String vk_r = "VKEY_" + String.valueOf(39);
+    String vk_d = "VKEY_" + String.valueOf(40);
+    // the function keys
+    String vk_f1 = "VKEY_" + String.valueOf(112);
+    String vk_f2 = "VKEY_" + String.valueOf(113);
+    String vk_f3 = "VKEY_" + String.valueOf(114);
+    String vk_f4 = "VKEY_" + String.valueOf(115);
+    String vk_f5 = "VKEY_" + String.valueOf(116);
+    String vk_f6 = "VKEY_" + String.valueOf(117);
+    String vk_f7 = "VKEY_" + String.valueOf(118);
+    String vk_f8 = "VKEY_" + String.valueOf(119);
+    String vk_f9 = "VKEY_" + String.valueOf(120);
+    String vk_f10 = "VKEY_" + String.valueOf(121);
+    String vk_f11 = "VKEY_" + String.valueOf(122);
+    String vk_f12 = "VKEY_" + String.valueOf(123);
+    // other common keys
+    String vk_cancel = "VKEY_" + String.valueOf(3);
+    String vk_insert = "VKEY_" + String.valueOf(155);
+    String vk_delete = "VKEY_" + String.valueOf(127);
+    String vk_scape = "VKEY_" + String.valueOf(27);
+    String vk_enter = "VKEY_" + String.valueOf(10);
+    String vk_pageup = "VKEY_" + String.valueOf(33);
+    String vk_pagedown = "VKEY_" + String.valueOf(34);
+    String vk_end = "VKEY_" + String.valueOf(35);
+    String vk_home = "VKEY_" + String.valueOf(36);
+    String vk_begin = "VKEY_" + String.valueOf(65368);
+
+    // ... and replace it with proper descriptions:
+
+    info = info.replace(vk_l, "LEFT_vkey").replace(vk_u, "UP_vkey").replace(vk_r, "RIGHT_vkey")
+        .replace(vk_d, "DOWN_vkey").replace(vk_f1, "F1_vkey").replace(vk_f2, "F2_vkey").replace(vk_f3, "F3_vkey")
+        .replace(vk_f4, "F4_vkey").replace(vk_f5, "F5_vkey").replace(vk_f6, "F6_vkey").replace(vk_f7, "F7_vkey")
+        .replace(vk_f8, "F8_vkey").replace(vk_f9, "F9_vkey").replace(vk_f10, "F10_vkey").replace(vk_f11, "F11_vkey")
+        .replace(vk_f12, "F12_vkey").replace(vk_cancel, "CANCEL_vkey").replace(vk_insert, "INSERT_vkey")
+        .replace(vk_delete, "DELETE_vkey").replace(vk_scape, "SCAPE_vkey").replace(vk_enter, "ENTER_vkey")
+        .replace(vk_pageup, "PAGEUP_vkey").replace(vk_pagedown, "PAGEDOWN_vkey").replace(vk_end, "END_vkey")
+        .replace(vk_home, "HOME_vkey").replace(vk_begin, "BEGIN_vkey");
+    // */
+
+    return info;
+  }
 
   /**
    * Attaches a profile to the given grabber.
@@ -374,10 +427,21 @@ public class Profile {
    */
   public String info(Class<?> cls) {
     String result = new String();
+    HashMap<Shortcut, ObjectMethodTuple> clsMap = map(cls);
+    for (Entry<Shortcut, ObjectMethodTuple> entry : clsMap.entrySet())
+      result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
+    return result;
+  }
+
+  /**
+   * (Internal) Used by {@link #info(Class)}.
+   */
+  protected HashMap<Shortcut, ObjectMethodTuple> map(Class<?> cls) {
+    HashMap<Shortcut, ObjectMethodTuple> result = new HashMap<Shortcut, ObjectMethodTuple>();
     for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
       if (entry.getKey() != null && entry.getValue() != null)
         if (cls.isInstance(entry.getKey()))
-          result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
+          result.put(entry.getKey(), entry.getValue());
     return result;
   }
 
@@ -385,16 +449,21 @@ public class Profile {
    * Returns a description of all the bindings this profile holds.
    */
   public String info() {
+    // 1. Shortcut class list
+    ArrayList<Class<?>> list = new ArrayList<Class<?>>();
+    for (Shortcut s : map.keySet())
+      if (!list.contains(s.getClass()))
+        list.add(s.getClass());
+    System.out.println(list.size());
+    // 2. Print info per Shortcut class
     String result = new String();
-    boolean title = false;
-    for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
-      if (entry.getKey() != null && entry.getValue() != null) {
-        if (!title) {
-          result += entry.getKey().getClass().getSimpleName() + "s:\n";
-          title = true;
-        }
-        result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
+    for (Class<?> clazz : list) {
+      String info = info(clazz);
+      if (!info.isEmpty()) {
+        result += clazz.getSimpleName() + " bindings:\n";
+        result += parseKeyInfo(info);
       }
+    }
     return result;
   }
 
