@@ -350,6 +350,10 @@ public class Profile {
    * @see #setBinding(Object, Shortcut, String)
    */
   public boolean setBinding(Object object, Shortcut key, String action) {
+    if(object == null) {
+      System.out.println("Warning: no binding set. Object can't be null");
+      return false;
+    }
     if (printWarning(key, action))
       return false;
     Method method = null;
@@ -388,20 +392,16 @@ public class Profile {
    * @see #setBinding(Object, Shortcut, String)
    */
   protected String prototypes(Object object, Shortcut key, String action) {
-    String message = null;
-    if (object != null) {
-      String sgn1 = "public void " + object.getClass().getSimpleName() + "." + action + "("
-          + grabber().getClass().getSimpleName() + ")";
-      String sgn2 = "public void " + object.getClass().getSimpleName() + "." + action + "("
-          + grabber().getClass().getSimpleName() + ", " + key.eventClass().getSimpleName() + ")";
-      if (key instanceof MotionShortcut) {
-        String sgn3 = "public void " + object.getClass().getSimpleName() + "." + action + "("
-            + grabber().getClass().getSimpleName() + ", " + MotionEvent.class.getSimpleName() + ")";
-        message = sgn1 + ", " + sgn2 + ", " + sgn3;
-      } else
-        message = sgn1 + ", " + sgn2;
-    }
-    return message;
+    String sgn1 = "public void " + object.getClass().getSimpleName() + "." + action + "("
+        + grabber().getClass().getSimpleName() + ")";
+    String sgn2 = "public void " + object.getClass().getSimpleName() + "." + action + "("
+        + grabber().getClass().getSimpleName() + ", " + key.eventClass().getSimpleName() + ")";
+    if (key instanceof MotionShortcut) {
+      String sgn3 = "public void " + object.getClass().getSimpleName() + "." + action + "("
+          + grabber().getClass().getSimpleName() + ", " + MotionEvent.class.getSimpleName() + ")";
+      return sgn1 + ", " + sgn2 + ", " + sgn3;
+    } else
+      return sgn1 + ", " + sgn2;
   }
 
   /**
@@ -410,17 +410,15 @@ public class Profile {
    * @see #setBinding(Shortcut, String)
    */
   protected String prototypes(Shortcut key, String action) {
-    String message = null;
     String sgn1 = "public void " + grabber.getClass().getSimpleName() + "." + action + "()";
     String sgn2 = "public void " + grabber.getClass().getSimpleName() + "." + action + "("
         + key.eventClass().getSimpleName() + ")";
     if (key instanceof MotionShortcut) {
       String sgn3 = "public void " + grabber.getClass().getSimpleName() + "." + action + "("
           + MotionEvent.class.getSimpleName() + ")";
-      message = sgn1 + ", " + sgn2 + ", " + sgn3;
+      return sgn1 + ", " + sgn2 + ", " + sgn3;
     } else
-      message = sgn1 + ", " + sgn2;
-    return message;
+      return sgn1 + ", " + sgn2;
   }
 
   /**
