@@ -274,24 +274,34 @@ public class Profile {
   public boolean setBinding(Shortcut key, String action) {
     if (printWarning(key, action))
       return false;
-    String message1 = null;
+    // 1. Search at context:
+    String proto1 = null;
     Method method = null;
     if (context != null && context != grabber) {
       try {
-        method = method(context, key, action);
-      } catch (Exception e) {
-        message1 = message(context, key, action);
+        method = context.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), key.eventClass() });
+      } catch (Exception clazz) {
+        try {
+          method = context.getClass().getMethod(action, new Class<?>[] { grabber.getClass() });
+        } catch (Exception empty) {
+          if (key instanceof MotionShortcut)
+            try {
+              method = context.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), MotionEvent.class });
+            } catch (Exception e) {
+              proto1 = prototypes(context, key, action);
+            }
+          else {
+            proto1 = prototypes(context, key, action);
+          }
+        }
       }
       if (method != null) {
         map.put(key, new ObjectMethodTuple(context, method));
         return true;
       }
     }
-    String message2 = grabber().getClass().getSimpleName() + "." + action
-        + " exists, is public and returns void, and that it takes no parameters or a "
-        + ((key instanceof MotionShortcut) ? key.eventClass().getSimpleName() + " or MotionEvent"
-            : key.eventClass().getSimpleName())
-        + " parameter";
+    // 2. If not found, search at grabber:
+    String proto2 = null;
     try {
       method = grabber.getClass().getMethod(action, new Class<?>[] { key.eventClass() });
     } catch (Exception clazz) {
@@ -302,11 +312,16 @@ public class Profile {
           try {
             method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
           } catch (Exception motion) {
-            System.out.println("Warning: not binding set! Check that the "
-                + (message1 != null ? message1 + ". Also check that the " + message2 : message2));
-            clazz.printStackTrace();
-            motion.printStackTrace();
+            proto2 = prototypes(key, action);
+            System.out
+                .println("Warning: not binding set! Check the existance of one of the following method prototypes: "
+                    + (proto1 != null ? proto1 + ", " + proto2 : proto2));
           }
+        else {
+          proto2 = prototypes(key, action);
+          System.out.println("Warning: not binding set! Check the existance of one of the following method prototypes: "
+              + (proto1 != null ? proto1 + ", " + proto2 : proto2));
+        }
       }
     }
     if (method != null) {
@@ -339,10 +354,25 @@ public class Profile {
       return false;
     Method method = null;
     try {
-      method = method(object, key, action);
-    } catch (Exception e) {
-      System.out.println("Warning: not binding set! Check that the " + message(object, key, action));
-      e.printStackTrace();
+      method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), key.eventClass() });
+    } catch (Exception clazz) {
+      try {
+        method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass() });
+      } catch (Exception empty) {
+        if (key instanceof MotionShortcut)
+          try {
+            method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), MotionEvent.class });
+          } catch (Exception e) {
+            System.out
+                .println("Warning: not binding set! Check the existance of one of the following method prototypes: "
+                    + prototypes(object, key, action));
+          }
+        else {
+          System.out
+              .println("Warning: not binding set! Check the existance of one of the following method prototypes:: "
+                  + prototypes(object, key, action));
+        }
+      }
     }
     if (method != null) {
       map.put(key, new ObjectMethodTuple(object, method));
@@ -357,14 +387,20 @@ public class Profile {
    * @see #setBinding(Shortcut, String)
    * @see #setBinding(Object, Shortcut, String)
    */
-  protected String message(Object object, Shortcut key, String action) {
+  protected String prototypes(Object object, Shortcut key, String action) {
     String message = null;
-    if (object != null)
-      message = object.getClass().getSimpleName() + "." + action
-          + " method exists, is public and returns void, and that it takes a " + grabber().getClass().getSimpleName()
-          + " parameter and, optionally, a " + ((key instanceof MotionShortcut)
-              ? key.eventClass().getSimpleName() + " or MotionEvent" : key.eventClass().getSimpleName())
-          + " parameter.";
+    if (object != null) {
+      String sgn1 = "public void " + object.getClass().getSimpleName() + "." + action + "("
+          + grabber().getClass().getSimpleName() + ")";
+      String sgn2 = "public void " + object.getClass().getSimpleName() + "." + action + "("
+          + grabber().getClass().getSimpleName() + ", " + key.eventClass().getSimpleName() + ")";
+      if (key instanceof MotionShortcut) {
+        String sgn3 = "public void " + object.getClass().getSimpleName() + "." + action + "("
+            + grabber().getClass().getSimpleName() + ", " + MotionEvent.class.getSimpleName() + ")";
+        message = sgn1 + ", " + sgn2 + ", " + sgn3;
+      } else
+        message = sgn1 + ", " + sgn2;
+    }
     return message;
   }
 
@@ -372,22 +408,19 @@ public class Profile {
    * Internal use.
    * 
    * @see #setBinding(Shortcut, String)
-   * @see #setBinding(Object, Shortcut, String)
    */
-  protected Method method(Object object, Shortcut key, String action) throws NoSuchMethodException, SecurityException {
-    Method method = null;
-    try {
-      method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), key.eventClass() });
-    } catch (Exception clazz) {
-      try {
-        method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass() });
-      } catch (Exception empty) {
-        // Take into account that at the end this is the only exception to be thrown!
-        if (key instanceof MotionShortcut)
-          method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), MotionEvent.class });
-      }
-    }
-    return method;
+  protected String prototypes(Shortcut key, String action) {
+    String message = null;
+    String sgn1 = "public void " + grabber.getClass().getSimpleName() + "." + action + "()";
+    String sgn2 = "public void " + grabber.getClass().getSimpleName() + "." + action + "("
+        + key.eventClass().getSimpleName() + ")";
+    if (key instanceof MotionShortcut) {
+      String sgn3 = "public void " + grabber.getClass().getSimpleName() + "." + action + "("
+          + MotionEvent.class.getSimpleName() + ")";
+      message = sgn1 + ", " + sgn2 + ", " + sgn3;
+    } else
+      message = sgn1 + ", " + sgn2;
+    return message;
   }
 
   /**
