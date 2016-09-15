@@ -302,6 +302,7 @@ public class Profile {
     }
     // 2. If not found, search at grabber:
     String proto2 = null;
+    String other = ". Or, if your binding lies within other object, use setBinding(Object object, Shortcut key, String action) instead.";
     try {
       method = grabber.getClass().getMethod(action, new Class<?>[] { key.eventClass() });
     } catch (Exception clazz) {
@@ -315,12 +316,12 @@ public class Profile {
             proto2 = prototypes(key, action);
             System.out
                 .println("Warning: not binding set! Check the existance of one of the following method prototypes: "
-                    + (proto1 != null ? proto1 + ", " + proto2 : proto2));
+                    + (proto1 != null ? proto1 + ", " + proto2 : proto2) + other);
           }
         else {
           proto2 = prototypes(key, action);
           System.out.println("Warning: not binding set! Check the existance of one of the following method prototypes: "
-              + (proto1 != null ? proto1 + ", " + proto2 : proto2));
+              + (proto1 != null ? proto1 + ", " + proto2 : proto2) + other);
         }
       }
     }
@@ -350,7 +351,7 @@ public class Profile {
    * @see #setBinding(Object, Shortcut, String)
    */
   public boolean setBinding(Object object, Shortcut key, String action) {
-    if(object == null) {
+    if (object == null) {
       System.out.println("Warning: no binding set. Object can't be null");
       return false;
     }
