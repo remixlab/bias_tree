@@ -106,7 +106,7 @@ public class Shortcut implements Copyable {
    */
   public String description() {
     String m = BogusEvent.modifiersText(mask);
-    return ((m.length() > 0) ? m + "+ID_" : "ID_") + String.valueOf(id);
+    return ((m.length() > 0) ? m + "+ID_" : "ID_") + String.valueOf(id) + " ";
   }
 
   /**
