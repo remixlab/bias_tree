@@ -10,6 +10,8 @@
 
 package remixlab.bias.core;
 
+import java.util.HashMap;
+
 import remixlab.util.Copyable;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
@@ -59,6 +61,7 @@ public class Shortcut implements Copyable {
 
   protected final int mask;
   protected final int id;
+  protected static HashMap<Integer, String> ids = new HashMap<Integer, String>();
 
   /**
    * Constructs an "empty" shortcut. Same as: {@link #Shortcut(int)} with the integer
@@ -98,7 +101,12 @@ public class Shortcut implements Copyable {
   public Shortcut get() {
     return new Shortcut(this);
   }
-
+  
+  public static void registerID(int id, String description) {
+    if(ids.put(id, description) != null)
+      System.out.println("Warning: overwriting id: " + id + " description");
+  }
+  
   /**
    * Shortcut description.
    * 
@@ -106,7 +114,7 @@ public class Shortcut implements Copyable {
    */
   public String description() {
     String m = BogusEvent.modifiersText(mask);
-    return ((m.length() > 0) ? m + "+ID_" : "ID_") + String.valueOf(id) + " ";
+    return ((m.length() > 0) ? m + "+ID_" : "ID_") + ids.get(id);
   }
 
   /**

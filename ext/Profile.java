@@ -68,24 +68,6 @@ public class Profile {
   // : static stuff
   public static Object context = null;
   
-  protected static HashMap<String, String> ids = new HashMap<String, String>();
-
-  protected static String parseKeyInfo(String info) {
-    for (Map.Entry<String, String> entry : ids.entrySet())
-      info = info.replace(entry.getKey(), entry.getValue());
-    return info;
-  }
-  
-  public static void registerID(int id, String description) {
-    if(ids.put("ID_" + String.valueOf(id) + " ", description) != null)
-      System.out.println("Warning: overwriting id: " + id + " description");
-  }
-  
-  public static void registerVKey(int id, String description) {
-    if(ids.put("VKEY_" + String.valueOf(id) + " ", description) != null)
-      System.out.println("Warning: overwriting vkey: " + id + " description");
-  }
-
   /**
    * Attaches a profile to the given grabber.
    */
@@ -431,7 +413,7 @@ public class Profile {
     HashMap<Shortcut, ObjectMethodTuple> clsMap = map(cls);
     for (Entry<Shortcut, ObjectMethodTuple> entry : clsMap.entrySet())
       result += entry.getKey().description() + " -> " + entry.getValue().method.getName() + "\n";
-    return parseKeyInfo(result);
+    return result;
   }
 
   /**
