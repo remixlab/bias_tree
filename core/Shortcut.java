@@ -102,9 +102,20 @@ public class Shortcut implements Copyable {
     return new Shortcut(this);
   }
   
+  /*
   public static void registerID(int id, String description) {
     if(ids.put(id, description) != null)
       System.out.println("Warning: overwriting id: " + id + " description");
+  }
+  */
+  
+  public static void registerID(Class<? extends Shortcut> clazz, int id, String description) {
+    if(ids.put((clazz.getSimpleName() + String.valueOf(id)).hashCode(), description) != null)
+      System.out.println("Warning: overwriting id: " + id + " description");
+  }
+  
+  protected int getID() {
+    return (getClass().getSimpleName() + String.valueOf(id)).hashCode();
   }
   
   /**
@@ -114,7 +125,7 @@ public class Shortcut implements Copyable {
    */
   public String description() {
     String m = BogusEvent.modifiersText(mask);
-    return ((m.length() > 0) ? m + "+ID_" : "ID_") + ids.get(id);
+    return ((m.length() > 0) ? m + "+ID_" : "ID_") + ids.get(getID());
   }
 
   /**

@@ -95,6 +95,6 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
     if (key != '\0')
       return String.valueOf(key);
     String m = BogusEvent.modifiersText(mask);
-    return ((m.length() > 0) ? m + "+VKEY_" : "VKEY_") + ids.get(id);
+    return ((m.length() > 0) ? m + "+VKEY_" : "VKEY_") + ids.get(getID());
   }
 }
