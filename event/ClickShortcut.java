@@ -98,8 +98,41 @@ public class ClickShortcut extends Shortcut implements Copyable {
   }
 
   @Override
-  public Class<?> eventClass() {
+  public Class<? extends ClickEvent> eventClass() {
     return ClickEvent.class;
+  }
+
+  /**
+   * Same as {@code return Shortcut.registerID(ClickShortcut.class, id, description)}.
+   * 
+   * @see #registerID(String)
+   * @see remixlab.bias.core.Shortcut#registerID(Class, int, String)
+   * @see #hasID(int)
+   */
+  public static int registerID(int id, String description) {
+    return Shortcut.registerID(ClickShortcut.class, id, description);
+  }
+
+  /**
+   * Same as {@code return Shortcut.registerID(ClickShortcut.class, description)}.
+   * 
+   * @see #registerID(int, String)
+   * @see remixlab.bias.core.Shortcut#registerID(Class, String)
+   * @see #hasID(int)
+   */
+  public static int registerID(String description) {
+    return Shortcut.registerID(ClickShortcut.class, description);
+  }
+
+  /**
+   * Same as {@code return Shortcut.hasID(ClickShortcut.class, id)}.
+   * 
+   * @see ClickShortcut#registerID(String)
+   * @see #registerID(int, String)
+   * @see remixlab.bias.core.Shortcut#hasID(Class, int)
+   */
+  public static boolean hasID(int id) {
+    return Shortcut.hasID(ClickShortcut.class, id);
   }
 
   /**

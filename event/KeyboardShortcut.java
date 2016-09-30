@@ -86,15 +86,34 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
   }
 
   @Override
-  public Class<?> eventClass() {
+  public Class<? extends KeyboardEvent> eventClass() {
     return KeyboardEvent.class;
+  }
+
+  /**
+   * Same as {@code return Shortcut.registerID(KeyboardShortcut.class, id, description)}.
+   * 
+   * @see remixlab.bias.core.Shortcut#registerID(Class, int, String)
+   * @see #hasID(int)
+   */
+  public static int registerID(int id, String description) {
+    return Shortcut.registerID(KeyboardShortcut.class, id, description);
+  }
+
+  /**
+   * Same as {@code return Shortcut.hasID(KeyboardShortcut.class, id)}.
+   * 
+   * @see remixlab.bias.core.Shortcut#hasID(Class, int)
+   * @see #registerID(int, String)
+   */
+  public static boolean hasID(int id) {
+    return Shortcut.hasID(KeyboardShortcut.class, id);
   }
 
   @Override
   public String description() {
     if (key != '\0')
       return String.valueOf(key);
-    String m = BogusEvent.modifiersText(mask);
-    return ((m.length() > 0) ? m + "+VKEY_" : "VKEY_") + ids.get(getID());
+    return super.description();
   }
 }

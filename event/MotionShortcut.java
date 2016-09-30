@@ -11,7 +11,6 @@
 package remixlab.bias.event;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 import remixlab.bias.core.Shortcut;
@@ -38,8 +37,9 @@ public final class MotionShortcut extends Shortcut implements Copyable {
    * <p>
    * Returns {@code null} if nthe id is not registered.
    * 
-   * @see #registerID(int)
-   * @see #registerID(int, int)
+   * @see #registerID(int, String)
+   * @see #registerID(int, int, String)
+   * @see #hasID(int)
    */
   public static int dofs(int id) {
     if (!map.containsKey(id))
@@ -48,10 +48,12 @@ public final class MotionShortcut extends Shortcut implements Copyable {
   }
 
   /**
-   * Registers a MotionEvent {@link #id()} with the given dofs.
+   * Registers a MotionEvent {@link #id()} with the given {@code dof}s and
+   * {@code description}.
    * 
-   * @see #registerID(int, int)
+   * @see #registerID(int, String)
    * @see #dofs(int)
+   * @see #hasID(int)
    * 
    * @param id
    *          the intended {@link #id()} to be registered.
@@ -59,38 +61,50 @@ public final class MotionShortcut extends Shortcut implements Copyable {
    *          Motion id degrees-of-freedom. Either 1,2,3, or 6.
    * @return the id or an exception if the id exists.
    */
-  public static int registerID(int id, int dof) {
+  public static int registerID(int id, int dof, String description) {
     if (map.containsKey(id)) {
       System.out.println("Nothing done! id already present in MotionShortcut. Use an id different than: "
           + (new ArrayList<Integer>(map.keySet())).toString());
-    } else if (dof == 1 || dof == 2 || dof == 3 || dof == 6)
+    } else if (dof == 1 || dof == 2 || dof == 3 || dof == 6) {
+      Shortcut.registerID(MotionShortcut.class, id, description);
       map.put(id, dof);
-    else
+    } else
       System.out.println("Nothing done! dofs in MotionShortcut.registerMotionID should be either 1, 2, 3 or 6.");
     return id;
   }
 
   /**
-   * Registers a MotionEvent {@link #id()} with the given dofs.
+   * Registers a MotionEvent {@link #id()} with the given {@code dof}s and
+   * {@code description}.
    * 
-   * @see #registerID(int, int)
+   * @see #registerID(int, int, String)
    * @see #dofs(int)
+   * @see #hasID(int)
    * 
    * @param dof
    *          Motion id degrees-of-freedom. Either 1,2,3, or 6.
    * @return the id.
    */
-  public static int registerID(int dof) {
+  public static int registerID(int dof, String description) {
     int key = 0;
     if (dof != 1 && dof != 2 && dof != 3 && dof != 6)
       System.out.println("Warning: Nothing done! dofs in Profile.registerMotionID should be either 1, 2, 3 or 6.");
     else {
-      ArrayList<Integer> ids = new ArrayList<Integer>(map.keySet());
-      if (ids.size() > 0)
-        key = Collections.max(ids) + 1;
+      key = Shortcut.registerID(MotionShortcut.class, description);
       map.put(key, dof);
     }
     return key;
+  }
+
+  /**
+   * Same as {@code return Shortcut.hasID(MotionShortcut.class, id)}.
+   * 
+   * @see remixlab.bias.core.Shortcut#hasID(Class, int)
+   * @see #registerID(int, String)
+   * @see #registerID(int, int, String)
+   */
+  public static boolean hasID(int id) {
+    return Shortcut.hasID(MotionShortcut.class, id);
   }
 
   /**
@@ -133,8 +147,8 @@ public final class MotionShortcut extends Shortcut implements Copyable {
   }
 
   @Override
-  public Class<?> eventClass() {
-    Class<?> clazz = MotionEvent.class;
+  public Class<? extends MotionEvent> eventClass() {
+    Class<? extends MotionEvent> clazz = MotionEvent.class;
     if ((Integer) dofs(id()) != null)
       switch (dofs(id())) {
       case 1:

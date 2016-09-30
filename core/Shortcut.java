@@ -10,6 +10,8 @@
 
 package remixlab.bias.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import remixlab.util.Copyable;
@@ -23,8 +25,8 @@ import remixlab.util.HashCodeBuilder;
  * Every {@link remixlab.bias.core.BogusEvent} instance has a shortcut which represents a
  * gesture-id, for instance, the button being dragged and the modifier key pressed at the
  * very moment an user interaction takes place, such as when she drags a giving mouse
- * button while pressing the 'CTRL' modifier key (see
- * {@link remixlab.bias.core.BogusEvent#shortcut()}).
+ * button while pressing the 'CTRL' modifier key (see {@link remixlab.bias.cor? extends
+ * BogusEvente.BogusEvent#shortcut()}).
  * <p>
  * Different bogus event types are related to different shortcuts. The current
  * implementation supports the following event/shortcut types:
@@ -61,7 +63,7 @@ public class Shortcut implements Copyable {
 
   protected final int mask;
   protected final int id;
-  protected static HashMap<Integer, String> ids = new HashMap<Integer, String>();
+  protected static HashMap<String, String> ids = new HashMap<String, String>();
 
   /**
    * Constructs an "empty" shortcut. Same as: {@link #Shortcut(int)} with the integer
@@ -102,19 +104,68 @@ public class Shortcut implements Copyable {
     return new Shortcut(this);
   }
 
-  /*
-   * public static void registerID(int id, String description) { if(ids.put(id,
-   * description) != null) System.out.println("Warning: overwriting id: " + id +
-   * " description"); }
+  /**
+   * Registers (and returns) the first available {@code id} for the shortcut {@code clazz}
+   * with the given {@code description}.
+   * 
+   * @see #registerID(Class, int, String)
+   * @see #hasID(Class, int)
    */
-
-  public static void registerID(Class<? extends Shortcut> clazz, int id, String description) {
-    if (ids.put((clazz.getSimpleName() + String.valueOf(id)).hashCode(), description) != null)
-      System.out.println("Warning: overwriting id: " + id + " description");
+  public static int registerID(Class<? extends Shortcut> clazz, String description) {
+    int key = 0;
+    ArrayList<String> stringIDS = new ArrayList<String>(ids.keySet());
+    ArrayList<Integer> intIDS = new ArrayList<Integer>();
+    int l = clazz.getSimpleName().length();
+    for (String str : stringIDS)
+      if (str.substring(0, l).equals(clazz.getSimpleName()))
+        intIDS.add(Integer.parseInt(str.substring(l)));
+    if (intIDS.size() > 0)
+      key = Collections.max(intIDS) + 1;
+    return registerID(clazz, key, description);
   }
 
-  protected int getID() {
-    return (getClass().getSimpleName() + String.valueOf(id)).hashCode();
+  /**
+   * Same as {@code return registerID(Shortcut.class, description)}.
+   * 
+   * @see Shortcut#registerID(Class, String)
+   * @see #hasID(Class, int)
+   */
+  public static int registerID(String description) {
+    return registerID(Shortcut.class, description);
+  }
+
+  /**
+   * Returns {@code true} if the given Shortcut {@code clazz} {@code id} is registered and
+   * {@code false} otherwise.
+   * 
+   * @see #registerID(Class, String)
+   * @see #registerID(Class, int, String)
+   */
+  public static boolean hasID(Class<? extends Shortcut> clazz, int id) {
+    return ids.containsKey((clazz.getSimpleName() + String.valueOf(id)));
+  }
+
+  /**
+   * Registers (and returns) the given {@code id} for the shortcut {@code clazz} with the
+   * given {@code description}.
+   * 
+   * @see #registerID(Class, String)
+   * @see #hasID(Class, int)
+   */
+  public static int registerID(Class<? extends Shortcut> clazz, int id, String description) {
+    if (ids.put(clazz.getSimpleName() + String.valueOf(id), description) != null)
+      System.out.println("Warning: overwriting id: " + id + " description");
+    return id;
+  }
+
+  /**
+   * Same as {@code return registerID(Shortcut.class, id, description)}.
+   * 
+   * @see #registerID(Class, int, String)
+   * @see #hasID(Class, int)
+   */
+  public static int registerID(int id, String description) {
+    return registerID(Shortcut.class, id, description);
   }
 
   /**
@@ -124,7 +175,8 @@ public class Shortcut implements Copyable {
    */
   public String description() {
     String m = BogusEvent.modifiersText(mask);
-    return ((m.length() > 0) ? m + "+ID_" : "ID_") + ids.get(getID());
+    String i = ids.get(getClass().getSimpleName() + String.valueOf(id));
+    return ((m.length() > 0) ? m + "+" + i : i);
   }
 
   /**
@@ -144,7 +196,7 @@ public class Shortcut implements Copyable {
   /**
    * Returns the event class this shortcut is to be attached to.
    */
-  public Class<?> eventClass() {
+  public Class<? extends BogusEvent> eventClass() {
     return BogusEvent.class;
   }
 }
