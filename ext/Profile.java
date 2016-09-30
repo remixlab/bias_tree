@@ -67,7 +67,7 @@ public class Profile {
 
   // : static stuff
   public static Object context = null;
-  
+
   /**
    * Attaches a profile to the given grabber.
    */
