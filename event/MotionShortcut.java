@@ -27,7 +27,7 @@ import remixlab.util.Copyable;
  * gesture-less motion interactions (e.g., mouse move without any button pressed).
  * <p>
  * <b>Note</b> that the motion-event {@link #id()} DOFs should be registered first (see
- * {@link #registerID(int)}) before using the shortcut.
+ * {@link #registerID(int, String)}) before using the shortcut.
  */
 public final class MotionShortcut extends Shortcut implements Copyable {
   protected static HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
@@ -105,6 +105,26 @@ public final class MotionShortcut extends Shortcut implements Copyable {
    */
   public static boolean hasID(int id) {
     return Shortcut.hasID(MotionShortcut.class, id);
+  }
+
+  /**
+   * Returns the {code id} description.
+   * 
+   * @see #descriptions()
+   * @see #description()
+   */
+  public static String description(int id) {
+    return Shortcut.description(MotionShortcut.class, id);
+  }
+
+  /**
+   * Returns the description of all the ids.
+   * 
+   * @see #description(int)
+   * @see #description()
+   */
+  public static String descriptions() {
+    return Shortcut.descriptions(MotionShortcut.class);
   }
 
   /**

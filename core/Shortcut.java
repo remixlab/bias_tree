@@ -25,8 +25,8 @@ import remixlab.util.HashCodeBuilder;
  * Every {@link remixlab.bias.core.BogusEvent} instance has a shortcut which represents a
  * gesture-id, for instance, the button being dragged and the modifier key pressed at the
  * very moment an user interaction takes place, such as when she drags a giving mouse
- * button while pressing the 'CTRL' modifier key (see {@link remixlab.bias.cor? extends
- * BogusEvente.BogusEvent#shortcut()}).
+ * button while pressing the 'CTRL' modifier key (see
+ * {@link remixlab.bias.core.BogusEvent#shortcut()}).
  * <p>
  * Different bogus event types are related to different shortcuts. The current
  * implementation supports the following event/shortcut types:
@@ -166,6 +166,32 @@ public class Shortcut implements Copyable {
    */
   public static int registerID(int id, String description) {
     return registerID(Shortcut.class, id, description);
+  }
+
+  /**
+   * Returns the {@code clazz} {code id} description.
+   * 
+   * @see #descriptions(Class)
+   * @see #description()
+   */
+  public static String description(Class<? extends Shortcut> clazz, int id) {
+    return ids.get((clazz.getSimpleName() + String.valueOf(id)));
+  }
+
+  /**
+   * Returns the description of all the {@code clazz} ids.
+   * 
+   * @see #description(Class, int)
+   * @see #description()
+   */
+  public static String descriptions(Class<? extends Shortcut> clazz) {
+    String result = new String();
+    int l = clazz.getSimpleName().length();
+    for (String key : ids.keySet())
+      if (key.length() > l)
+        if (key.substring(0, l).equals(clazz.getSimpleName()))
+          result += key.substring(l) + " -> " + ids.get(key) + "\n";
+    return result;
   }
 
   /**
