@@ -215,8 +215,7 @@ public abstract class Agent {
       return trackedGrabber();
     // We first check if default grabber is tracked,
     // i.e., default grabber has the highest priority (which is good for
-    // keyboards
-    // and doesn't hurt motion grabbers:
+    // keyboards and doesn't hurt motion grabbers:
     Grabber dG = defaultGrabber();
     if (dG != null)
       if (dG.checkIfGrabsInput(event)) {
