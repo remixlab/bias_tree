@@ -375,8 +375,9 @@ public abstract class Agent {
       return true;
     }
     if (!hasGrabber(grabber)) {
-      System.out.println("To set a default grabber the " + grabber.getClass().getSimpleName()
-          + " should be added into agent first. Use one of the agent addGrabber() methods");
+      System.out.println(
+          "To set a " + getClass().getSimpleName() + " default grabber the " + grabber.getClass().getSimpleName()
+              + " should be added into agent first. Use one of the agent addGrabber() methods");
       return false;
     }
     defaultGrabber = grabber;
