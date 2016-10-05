@@ -26,6 +26,10 @@ import remixlab.util.HashCodeBuilder;
  * {@link remixlab.bias.event.KeyboardEvent}. Please refer to their documentation for
  * details.
  * <p>
+ * If you ever need to define you're own bogus-event type, derive from this class, declare
+ * a shortcut type for your event (for details refer to the
+ * {@link remixlab.bias.core.Shortcut}) and override {@link #shortcut()}.
+ * <p>
  * <b>Note</b> BogusEvent detection/reduction could happened in several different ways.
  * For instance, in the context of Java-based application, it typically takes place when
  * implementing a mouse listener interface. In Processing, it does it when registering at

@@ -23,12 +23,14 @@ import remixlab.util.HashCodeBuilder;
  * from a {@link remixlab.bias.core.BogusEvent}.
  * <p>
  * Every {@link remixlab.bias.core.BogusEvent} instance has a shortcut which represents a
- * gesture-id, for instance, the button being dragged and the modifier key pressed at the
- * very moment an user interaction takes place, such as when she drags a giving mouse
- * button while pressing the 'CTRL' modifier key (see
- * {@link remixlab.bias.core.BogusEvent#shortcut()}).
+ * gesture-{@link #id()}, for instance, the button being dragged and the modifier key
+ * pressed (see {@link #modifiers()}) at the very moment an user interaction takes place,
+ * such as when she drags a giving mouse button while pressing the 'CTRL' modifier key.
+ * See {@link remixlab.bias.core.BogusEvent#shortcut()}. Note that for the shortcut
+ * {@link #description()} to work properly, gesture-{@link #id()}s should be registered at
+ * the shortcut class first (see {@link #registerID(String)).
  * <p>
- * Different bogus event types are related to different shortcuts. The current
+ * Different bogus event types should be related to different shortcuts. The current
  * implementation supports the following event/shortcut types:
  * <ol>
  * <li>{@link remixlab.bias.event.MotionEvent} /
@@ -41,6 +43,27 @@ import remixlab.util.HashCodeBuilder;
  * <li>{@link remixlab.bias.event.KeyboardEvent} /
  * {@link remixlab.bias.event.KeyboardShortcut}</li>
  * </ol>
+ * If you ever need to define your own shortcut type (such as when declaring a custom
+ * bogus-event type) derive from this class and override {@link #eventClass()}.e.g.,
+ * 
+ * <pre>
+ * {@code
+ * public Class<? extends CustomEvent> eventClass() {
+ *   return CustomEvent.class;
+ * }
+ * }
+ * </pre>
+ * 
+ * and implement a register id routine either from {@link #registerID(Class, String)} or
+ * {@link #registerID(Class, int, String)}, e.g.,
+ * 
+ * <pre>
+ * {@code
+ * public static int registerID(int id, String description) {
+ *   return Shortcut.registerID(CustomShortcut.class, id, description);
+ * }
+ * }
+ * </pre>
  */
 public class Shortcut implements Copyable {
   @Override
@@ -67,7 +90,7 @@ public class Shortcut implements Copyable {
 
   /**
    * Constructs an "empty" shortcut. Same as: {@link #Shortcut(int)} with the integer
-   * parameter being B_NOMODIFIER_MASK.
+   * parameter being NO_NOMODIFIER_MASK.
    */
   public Shortcut() {
     mask = BogusEvent.NO_MODIFIER_MASK;
@@ -169,7 +192,7 @@ public class Shortcut implements Copyable {
   }
 
   /**
-   * Returns the {@code clazz} {code id} description.
+   * Returns the description of {@code clazz} {code id} registered at this shortcut class.
    * 
    * @see #descriptions(Class)
    * @see #description()
@@ -179,7 +202,8 @@ public class Shortcut implements Copyable {
   }
 
   /**
-   * Returns the description of all the {@code clazz} ids.
+   * Returns the description of all the {@code clazz} ids registered at this shortcut
+   * class.
    * 
    * @see #description(Class, int)
    * @see #description()
