@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import remixlab.util.Copyable;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
@@ -65,7 +64,7 @@ import remixlab.util.HashCodeBuilder;
  * }
  * </pre>
  */
-public class Shortcut implements Copyable {
+public class Shortcut {
   @Override
   public int hashCode() {
     return new HashCodeBuilder(17, 37).append(mask).append(id).toHashCode();
@@ -115,16 +114,6 @@ public class Shortcut implements Copyable {
   public Shortcut(int m, int i) {
     mask = m;
     id = i;
-  }
-
-  protected Shortcut(Shortcut other) {
-    this.mask = other.mask;
-    this.id = other.id;
-  }
-
-  @Override
-  public Shortcut get() {
-    return new Shortcut(this);
   }
 
   /**

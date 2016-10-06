@@ -12,7 +12,6 @@ package remixlab.bias.event;
 
 import remixlab.bias.core.BogusEvent;
 import remixlab.bias.core.Shortcut;
-import remixlab.util.Copyable;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
@@ -25,7 +24,7 @@ import remixlab.util.HashCodeBuilder;
  * <p>
  * Note that click shortcuts should have at least one click.
  */
-public class ClickShortcut extends Shortcut implements Copyable {
+public class ClickShortcut extends Shortcut {
   @Override
   public int hashCode() {
     return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(numberOfClicks).toHashCode();
@@ -85,16 +84,6 @@ public class ClickShortcut extends Shortcut implements Copyable {
       this.numberOfClicks = 1;
     else
       this.numberOfClicks = c;
-  }
-
-  protected ClickShortcut(ClickShortcut other) {
-    super(other);
-    this.numberOfClicks = other.numberOfClicks;
-  }
-
-  @Override
-  public ClickShortcut get() {
-    return new ClickShortcut(this);
   }
 
   @Override

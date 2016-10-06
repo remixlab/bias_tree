@@ -20,7 +20,7 @@ import remixlab.util.*;
  * Virtual keys (e.g., right arrow key); or, 2. Key combinations (e.g., CTRL key + virtual
  * key representing 'a').
  */
-public final class KeyboardShortcut extends Shortcut implements Copyable {
+public final class KeyboardShortcut extends Shortcut {
   @Override
   public int hashCode() {
     return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(key).toHashCode();
@@ -73,16 +73,6 @@ public final class KeyboardShortcut extends Shortcut implements Copyable {
   public KeyboardShortcut(int vk) {
     super(vk);
     key = '\0';
-  }
-
-  protected KeyboardShortcut(KeyboardShortcut other) {
-    super(other);
-    this.key = other.key;
-  }
-
-  @Override
-  public KeyboardShortcut get() {
-    return new KeyboardShortcut(this);
   }
 
   @Override

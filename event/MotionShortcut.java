@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import remixlab.bias.core.Shortcut;
-import remixlab.util.Copyable;
 
 /**
  * This class represents {@link remixlab.bias.event.MotionEvent} shortcuts.
@@ -29,7 +28,7 @@ import remixlab.util.Copyable;
  * <b>Note</b> that the motion-event {@link #id()} DOFs should be registered first (see
  * {@link #registerID(int, String)}) before using the shortcut.
  */
-public final class MotionShortcut extends Shortcut implements Copyable {
+public final class MotionShortcut extends Shortcut {
   protected static HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
 
   /**
@@ -155,15 +154,6 @@ public final class MotionShortcut extends Shortcut implements Copyable {
    */
   public MotionShortcut(int m, int id) {
     super(m, id);
-  }
-
-  protected MotionShortcut(MotionShortcut other) {
-    super(other);
-  }
-
-  @Override
-  public MotionShortcut get() {
-    return new MotionShortcut(this);
   }
 
   @Override
