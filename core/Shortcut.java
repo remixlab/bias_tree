@@ -63,6 +63,9 @@ import remixlab.util.HashCodeBuilder;
  * }
  * }
  * </pre>
+ * 
+ * Note that if your <b>CustomShortcut</b> class defines it's own attributes, its
+ * {@link #hashCode()} and {@link #equals(Object)} methods should be overridden as well.
  */
 public class Shortcut {
   @Override

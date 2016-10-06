@@ -29,7 +29,9 @@ import remixlab.util.HashCodeBuilder;
  * If you ever need to define you're own bogus-event type, derive from this class, declare
  * a shortcut type for your event (for details refer to the
  * {@link remixlab.bias.core.Shortcut}), and override the {@link #shortcut()} and
- * {@link #get()} methods.
+ * {@link #get()} methods. If your custom event class defines it's own attributes, its
+ * {@link #hashCode()}, {@link #equals(Object)} and {@link #get()} methods should be
+ * overridden as well.
  * <p>
  * <b>Note</b> BogusEvent detection/reduction could happened in several different ways.
  * For instance, in the context of Java-based application, it typically takes place when
