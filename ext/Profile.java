@@ -186,10 +186,11 @@ public class Profile {
     if (hasBinding(key)) {
       Method a = method(key);
       if (a.getName().equals(action)) {
-        System.out.println("Warning: shortcut already bound to " + a.getName());
+        System.out.println("Warning: shortcut " + key.description() + " already bound to " + a.getName());
         return true;
       } else {
-        System.out.println("Warning: overwriting shortcut which was previously bound to " + a.getName());
+        System.out.println(
+            "Warning: overwriting shortcut " + key.description() + " which was previously bound to " + a.getName());
         return false;
       }
     }
