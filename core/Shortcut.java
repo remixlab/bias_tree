@@ -28,7 +28,7 @@ import remixlab.util.HashCodeBuilder;
  * such as when she drags a giving mouse button while pressing the 'CTRL' modifier key.
  * See {@link remixlab.bias.core.BogusEvent#shortcut()}. Note that for the shortcut
  * {@link #description()} to work properly, gesture-{@link #id()}s should be registered at
- * the shortcut class first (see {@link #registerID(String)).
+ * the shortcut class first (see {@link #registerID(String)}).
  * <p>
  * Different bogus event types should be related to different shortcuts. The current
  * implementation supports the following event/shortcut types:
