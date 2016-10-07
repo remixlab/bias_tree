@@ -121,6 +121,17 @@ public class InputHandler {
   }
 
   /**
+   * Returns {@code true} if {@link remixlab.bias.core.Agent#isInputGrabber(Grabber)} is
+   * {@code true} for at least one agent in {@link #agents()}.
+   */
+  public boolean isInputGrabber(Grabber g) {
+    for (Agent agent : agents())
+      if (agent.isInputGrabber(g))
+        return true;
+    return false;
+  }
+
+  /**
    * Returns {@code true} if {@link remixlab.bias.core.Agent#hasGrabber(Grabber)} is
    * {@code true} for at least one agent in {@link #agents()}.
    */
