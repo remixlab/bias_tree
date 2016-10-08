@@ -17,9 +17,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
+import remixlab.util.EqualsBuilder;
 
 /**
  * A {@link remixlab.bias.core.Grabber} extension which allows to define
@@ -42,6 +44,19 @@ import remixlab.bias.event.*;
  * {@link #Profile(Grabber)} constructor.
  */
 public class Profile {
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+    if (obj == this)
+      return true;
+    if (obj.getClass() != getClass())
+      return false;
+
+    Profile other = (Profile) obj;
+    return new EqualsBuilder().append(actionMap(), other.actionMap()).isEquals();
+  }
+
   class ObjectMethodTuple {
     Object object;
     Method method;
@@ -80,18 +95,27 @@ public class Profile {
    * Instantiates this profile from another profile. Both Profile {@link #grabber()}
    * should be of the same type.
    */
-  public void from(Profile p) {
+  public void set(Profile p) {
     if (grabber.getClass() != p.grabber.getClass()) {
       System.err.println("Profile grabbers should be of the same type");
       return;
     }
     map = new HashMap<Shortcut, ObjectMethodTuple>();
-    for (Map.Entry<Shortcut, ObjectMethodTuple> entry : p.actionMap().entrySet()) {
+    for (Map.Entry<Shortcut, ObjectMethodTuple> entry : p.map().entrySet()) {
       if (entry.getValue().object == p.grabber)
         map.put(entry.getKey(), new ObjectMethodTuple(grabber, entry.getValue().method));
       else
         map.put(entry.getKey(), new ObjectMethodTuple(entry.getValue().object, entry.getValue().method));
     }
+  }
+
+  // public HashMap<Shortcut, Method>
+
+  /**
+   * Returns this profile set of shortcuts.
+   */
+  public Set<Shortcut> shortcuts() {
+    return map.keySet();
   }
 
   /**
@@ -102,10 +126,21 @@ public class Profile {
   }
 
   /**
-   * Internal use. Shortcut to action map.
+   * Internal use. Shortcut to object-method map.
    */
-  protected HashMap<Shortcut, ObjectMethodTuple> actionMap() {
+  protected HashMap<Shortcut, ObjectMethodTuple> map() {
     return map;
+  }
+
+  /**
+   * Internal use. Shortcut to method map.
+   */
+  protected HashMap<Shortcut, Method> actionMap() {
+    HashMap<Shortcut, Method> mmap = new HashMap<Shortcut, Method>();
+    Set<Shortcut> set = map().keySet();
+    for (Shortcut shortcut : set)
+      mmap.put(shortcut, method(shortcut));
+    return mmap;
   }
 
   /**
@@ -132,10 +167,10 @@ public class Profile {
   }
 
   /**
-   * Internal macro. Returns the action performing object. Either the {@link #grabber()}
-   * or an external object.
+   * Returns the action performing object. Either the {@link #grabber()} or an external
+   * object.
    */
-  protected Object object(Shortcut key) {
+  public Object object(Shortcut key) {
     return map.get(key) == null ? null : map.get(key).object;
   }
 
@@ -309,6 +344,8 @@ public class Profile {
       System.out.println("Warning: no binding set. Object can't be null");
       return false;
     }
+    if (object == grabber())
+      return setBinding(key, action);
     if (printWarning(key, action))
       return false;
     Method method = null;
