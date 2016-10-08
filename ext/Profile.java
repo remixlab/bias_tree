@@ -21,7 +21,6 @@ import java.util.Set;
 
 import remixlab.bias.core.*;
 import remixlab.bias.event.*;
-import remixlab.util.EqualsBuilder;
 
 /**
  * A {@link remixlab.bias.core.Grabber} extension which allows to define
@@ -44,19 +43,6 @@ import remixlab.util.EqualsBuilder;
  * {@link #Profile(Grabber)} constructor.
  */
 public class Profile {
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == null)
-      return false;
-    if (obj == this)
-      return true;
-    if (obj.getClass() != getClass())
-      return false;
-
-    Profile other = (Profile) obj;
-    return new EqualsBuilder().append(actionMap(), other.actionMap()).isEquals();
-  }
-
   class ObjectMethodTuple {
     Object object;
     Method method;
@@ -64,16 +50,6 @@ public class Profile {
     ObjectMethodTuple(Object o, Method m) {
       object = o;
       method = m;
-    }
-  }
-
-  static class AgentDOFTuple {
-    Class<?> agent;
-    int dofs;
-
-    AgentDOFTuple(Class<?> a, int d) {
-      agent = a;
-      dofs = d;
     }
   }
 
@@ -133,24 +109,13 @@ public class Profile {
   }
 
   /**
-   * Internal use. Shortcut to method map.
-   */
-  protected HashMap<Shortcut, Method> actionMap() {
-    HashMap<Shortcut, Method> mmap = new HashMap<Shortcut, Method>();
-    Set<Shortcut> set = map().keySet();
-    for (Shortcut shortcut : set)
-      mmap.put(shortcut, method(shortcut));
-    return mmap;
-  }
-
-  /**
    * Returns the {@link java.lang.reflect.Method} binding for the given
    * {@link remixlab.bias.core.Shortcut} key.
    * 
    * @see #action(Shortcut)
    */
-  public Method method(Shortcut key) {
-    return map.get(key) == null ? null : map.get(key).method;
+  public Method method(Shortcut shortcut) {
+    return map.get(shortcut) == null ? null : map.get(shortcut).method;
   }
 
   /**
@@ -159,8 +124,8 @@ public class Profile {
    * 
    * @see #method(Shortcut)
    */
-  public String action(Shortcut key) {
-    Method m = method(key);
+  public String action(Shortcut shortcut) {
+    Method m = method(shortcut);
     if (m == null)
       return null;
     return m.getName();
@@ -170,8 +135,8 @@ public class Profile {
    * Returns the action performing object. Either the {@link #grabber()} or an external
    * object.
    */
-  public Object object(Shortcut key) {
-    return map.get(key) == null ? null : map.get(key).object;
+  public Object object(Shortcut shortcut) {
+    return map.get(shortcut) == null ? null : map.get(shortcut).object;
   }
 
   /**
@@ -212,20 +177,20 @@ public class Profile {
   /**
    * Internal macro.
    */
-  protected boolean printWarning(Shortcut key, String action) {
+  protected boolean printWarning(Shortcut shortcut, String action) {
     if (action == null) {
-      this.removeBinding(key);
-      System.out.println(key.description() + " removed");
+      this.removeBinding(shortcut);
+      System.out.println(shortcut.description() + " removed");
       return true;
     }
-    if (hasBinding(key)) {
-      Method a = method(key);
+    if (hasBinding(shortcut)) {
+      Method a = method(shortcut);
       if (a.getName().equals(action)) {
-        System.out.println("Warning: shortcut " + key.description() + " already bound to " + a.getName());
+        System.out.println("Warning: shortcut " + shortcut.description() + " already bound to " + a.getName());
         return true;
       } else {
-        System.out.println(
-            "Warning: overwriting shortcut " + key.description() + " which was previously bound to " + a.getName());
+        System.out.println("Warning: overwriting shortcut " + shortcut.description() + " which was previously bound to "
+            + a.getName());
         return false;
       }
     }
@@ -235,57 +200,75 @@ public class Profile {
   /**
    * Defines the shortcut that triggers the given action.
    * <p>
-   * The action may be:
+   * Attempt to set a shortcut for the {@code action} implemented by the {@link #context}
+   * (e.g., the {@code PApplet} in the case of a Processing application) or the
+   * {@link #grabber()} (e.g., the {@code InteractiveFrame} instance this profile is
+   * attached to, in the case of a Processing application) when no prototype is found in
+   * the {@link #context}.
+   * <p>
+   * The available action prototypes for the {@link #context} are:
    * <ol>
-   * <li>A method implemented in the {@link #context} that returns void and has a
-   * {@link #grabber()} parameter and, optionally, a {@link remixlab.bias.core.BogusEvent}
-   * parameter, or no parameters at all. A {@link remixlab.bias.event.MotionEvent} or a
-   * <b>DOFnEvent()</b> that matches the {@link remixlab.bias.core.Shortcut#eventClass()}
-   * may be passed to the action when binding a
-   * {@link remixlab.bias.event.MotionShortcut}.</li>
-   * <li>A method implemented by the {@link #grabber()} that returns void and may have a
-   * {@link remixlab.bias.core.BogusEvent} parameter, or no parameters at all. A
-   * {@link remixlab.bias.event.MotionEvent} or a <b>DOFnEvent()</b> that matches the
-   * {@link remixlab.bias.core.Shortcut#eventClass()} may be passed to the action when
-   * binding a {@link remixlab.bias.event.MotionShortcut}.</li>
+   * <li><b>public void action(grabber.getClass(), BogusEvent)</b></li>
+   * <li><b>public void action(grabber.getClass())</b></li>
    * </ol>
-   * The algorithm searches the action in the above order. It will only search the action
-   * in the {@link #grabber()} if nothing is found at the {@link #context}, i.e., the
-   * {@link #context} takes higher precedence over the {@link #grabber()}.
+   * <p>
+   * The available action prototypes for the {@link #grabber()} are:
+   * <ol>
+   * <li><b>public void action(BogusEvent)</b></li>
+   * <li><b>public void action()</b></li>
+   * </ol>
+   * <p>
+   * The bogus-event type that may be passed to the above prototypes is the one specified
+   * by the {@link remixlab.bias.core.Shortcut#eventClass()} method:
+   * <ol>
+   * <li>A {@link remixlab.bias.event.ClickEvent} for a
+   * {@link remixlab.bias.event.ClickShortcut}</li>
+   * <li>A {@link remixlab.bias.event.KeyboardEvent} for a
+   * {@link remixlab.bias.event.KeyboardShortcut}</li>
+   * <li>A {@code DOFnEvent} for a {@link remixlab.bias.event.MotionShortcut}, where
+   * {@code n} is the {@link remixlab.bias.event.MotionShortcut#dofs(int)} of the
+   * motion-shortcut {@link remixlab.bias.event.MotionShortcut#id()}.</li>
+   * </ol>
+   * <b>Note</b> that in the latter case a {@link remixlab.bias.event.MotionEvent} may be
+   * passed too.
    * 
-   * @param key
+   * @param shortcut
    *          {@link remixlab.bias.core.Shortcut}
    * @param action
    *          {@link java.lang.String}
    * 
    * @see #setBinding(Object, Shortcut, String)
+   * @see remixlab.bias.core.Shortcut#eventClass()
+   * @see remixlab.bias.event.MotionShortcut#eventClass()
+   * @see remixlab.bias.event.MotionShortcut#dofs(int)
+   * @see remixlab.bias.event.MotionShortcut#registerID(int, int, String)
    */
-  public boolean setBinding(Shortcut key, String action) {
-    if (printWarning(key, action))
+  public boolean setBinding(Shortcut shortcut, String action) {
+    if (printWarning(shortcut, action))
       return false;
     // 1. Search at context:
     String proto1 = null;
     Method method = null;
     if (context != null && context != grabber) {
       try {
-        method = context.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), key.eventClass() });
+        method = context.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), shortcut.eventClass() });
       } catch (Exception clazz) {
         try {
           method = context.getClass().getMethod(action, new Class<?>[] { grabber.getClass() });
         } catch (Exception empty) {
-          if (key instanceof MotionShortcut)
+          if (shortcut instanceof MotionShortcut)
             try {
               method = context.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), MotionEvent.class });
             } catch (Exception e) {
-              proto1 = prototypes(context, key, action);
+              proto1 = prototypes(context, shortcut, action);
             }
           else {
-            proto1 = prototypes(context, key, action);
+            proto1 = prototypes(context, shortcut, action);
           }
         }
       }
       if (method != null) {
-        map.put(key, new ObjectMethodTuple(context, method));
+        map.put(shortcut, new ObjectMethodTuple(context, method));
         return true;
       }
     }
@@ -293,29 +276,29 @@ public class Profile {
     String proto2 = null;
     String other = ". Or, if your binding lies within other object, use setBinding(Object object, Shortcut key, String action) instead.";
     try {
-      method = grabber.getClass().getMethod(action, new Class<?>[] { key.eventClass() });
+      method = grabber.getClass().getMethod(action, new Class<?>[] { shortcut.eventClass() });
     } catch (Exception clazz) {
       try {
         method = grabber.getClass().getMethod(action, new Class<?>[] {});
       } catch (Exception empty) {
-        if (key instanceof MotionShortcut)
+        if (shortcut instanceof MotionShortcut)
           try {
             method = grabber.getClass().getMethod(action, new Class<?>[] { MotionEvent.class });
           } catch (Exception motion) {
-            proto2 = prototypes(key, action);
+            proto2 = prototypes(shortcut, action);
             System.out
                 .println("Warning: not binding set! Check the existance of one of the following method prototypes: "
                     + (proto1 != null ? proto1 + ", " + proto2 : proto2) + other);
           }
         else {
-          proto2 = prototypes(key, action);
+          proto2 = prototypes(shortcut, action);
           System.out.println("Warning: not binding set! Check the existance of one of the following method prototypes: "
               + (proto1 != null ? proto1 + ", " + proto2 : proto2) + other);
         }
       }
     }
     if (method != null) {
-      map.put(key, new ObjectMethodTuple(grabber, method));
+      map.put(shortcut, new ObjectMethodTuple(grabber, method));
       return true;
     }
     return false;
@@ -324,54 +307,72 @@ public class Profile {
   /**
    * Defines the shortcut that triggers the given action.
    * <p>
-   * The action is a method implemented by the {@code object} that returns void and may
-   * have a {@link remixlab.bias.core.BogusEvent} parameter, or no parameters at all. A
-   * {@link remixlab.bias.event.MotionEvent} or a <b>DOFnEvent()</b> that matches the
-   * {@link remixlab.bias.core.Shortcut#eventClass()} may be passed to the action when
-   * binding a {@link remixlab.bias.event.MotionShortcut}.
+   * Attempt to set a shortcut for the {@code action} implemented by {@code object}. The
+   * action procedure may have two different prototypes:
+   * <ol>
+   * <li><b>public void action(BogusEvent)</b></li>
+   * <li><b>public void action()</b></li>
+   * </ol>
+   * The bogus-event type that may be passed to the first prototype is the one specified
+   * by the {@link remixlab.bias.core.Shortcut#eventClass()} method:
+   * <ol>
+   * <li>A {@link remixlab.bias.event.ClickEvent} for a
+   * {@link remixlab.bias.event.ClickShortcut}</li>
+   * <li>A {@link remixlab.bias.event.KeyboardEvent} for a
+   * {@link remixlab.bias.event.KeyboardShortcut}</li>
+   * <li>A {@code DOFnEvent} for a {@link remixlab.bias.event.MotionShortcut}, where
+   * {@code n} is the {@link remixlab.bias.event.MotionShortcut#dofs(int)} of the
+   * motion-shortcut {@link remixlab.bias.event.MotionShortcut#id()}.</li>
+   * </ol>
+   * <b>Note</b> that in the latter case a {@link remixlab.bias.event.MotionEvent} may be
+   * passed too.
    * 
    * @param object
    *          {@link java.lang.Object}
-   * @param key
+   * @param shortcut
    *          {@link remixlab.bias.core.Shortcut}
    * @param action
    *          {@link java.lang.String}
    * 
    * @see #setBinding(Object, Shortcut, String)
+   * @see remixlab.bias.core.Shortcut#eventClass()
+   * @see remixlab.bias.event.MotionShortcut#eventClass()
+   * @see remixlab.bias.event.MotionShortcut#dofs(int)
+   * @see remixlab.bias.event.MotionShortcut#registerID(int, int, String)
    */
-  public boolean setBinding(Object object, Shortcut key, String action) {
+  public boolean setBinding(Object object, Shortcut shortcut, String action) {
     if (object == null) {
       System.out.println("Warning: no binding set. Object can't be null");
       return false;
     }
     if (object == grabber())
-      return setBinding(key, action);
-    if (printWarning(key, action))
+      return setBinding(shortcut, action);
+    if (printWarning(shortcut, action))
       return false;
     Method method = null;
     try {
-      method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), key.eventClass() });
+      method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), shortcut.eventClass() });
     } catch (Exception clazz) {
       try {
         method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass() });
       } catch (Exception empty) {
-        if (key instanceof MotionShortcut)
+        if (shortcut instanceof MotionShortcut)
           try {
             method = object.getClass().getMethod(action, new Class<?>[] { grabber.getClass(), MotionEvent.class });
           } catch (Exception e) {
             System.out
                 .println("Warning: not binding set! Check the existance of one of the following method prototypes: "
-                    + prototypes(object, key, action));
+                    + prototypes(object, shortcut, action));
           }
         else {
           System.out
               .println("Warning: not binding set! Check the existance of one of the following method prototypes:: "
-                  + prototypes(object, key, action));
+                  + prototypes(object, shortcut, action));
         }
       }
     }
     if (method != null) {
-      map.put(key, new ObjectMethodTuple(object, method));
+      map.put(shortcut, new ObjectMethodTuple(object, method));
       return true;
     }
     return false;
@@ -383,12 +384,12 @@ public class Profile {
    * @see #setBinding(Shortcut, String)
    * @see #setBinding(Object, Shortcut, String)
    */
-  protected String prototypes(Object object, Shortcut key, String action) {
+  protected String prototypes(Object object, Shortcut shortcut, String action) {
     String sgn1 = "public void " + object.getClass().getSimpleName() + "." + action + "("
         + grabber().getClass().getSimpleName() + ")";
     String sgn2 = "public void " + object.getClass().getSimpleName() + "." + action + "("
-        + grabber().getClass().getSimpleName() + ", " + key.eventClass().getSimpleName() + ")";
-    if (key instanceof MotionShortcut) {
+        + grabber().getClass().getSimpleName() + ", " + shortcut.eventClass().getSimpleName() + ")";
+    if (shortcut instanceof MotionShortcut) {
       String sgn3 = "public void " + object.getClass().getSimpleName() + "." + action + "("
           + grabber().getClass().getSimpleName() + ", " + MotionEvent.class.getSimpleName() + ")";
       return sgn1 + ", " + sgn2 + ", " + sgn3;
@@ -416,11 +417,11 @@ public class Profile {
   /**
    * Removes the shortcut binding.
    * 
-   * @param key
+   * @param shortcut
    *          {@link remixlab.bias.core.Shortcut}
    */
-  public void removeBinding(Shortcut key) {
-    map.remove(key);
+  public void removeBinding(Shortcut shortcut) {
+    map.remove(shortcut);
   }
 
   /**
@@ -433,7 +434,7 @@ public class Profile {
   /**
    * Removes all the shortcuts from the given shortcut class.
    */
-  public void removeBindings(Class<?> cls) {
+  public void removeBindings(Class<? extends Shortcut> cls) {
     Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
     while (it.hasNext()) {
       Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
@@ -446,7 +447,7 @@ public class Profile {
    * Returns a description of all the bindings this profile holds from the given shortcut
    * class.
    */
-  public String info(Class<?> cls) {
+  public String info(Class<? extends Shortcut> cls) {
     String result = new String();
     HashMap<Shortcut, ObjectMethodTuple> clsMap = map(cls);
     for (Entry<Shortcut, ObjectMethodTuple> entry : clsMap.entrySet())
@@ -457,7 +458,7 @@ public class Profile {
   /**
    * (Internal) Used by {@link #info(Class)}.
    */
-  protected HashMap<Shortcut, ObjectMethodTuple> map(Class<?> cls) {
+  protected HashMap<Shortcut, ObjectMethodTuple> map(Class<? extends Shortcut> cls) {
     HashMap<Shortcut, ObjectMethodTuple> result = new HashMap<Shortcut, ObjectMethodTuple>();
     for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
       if (entry.getKey() != null && entry.getValue() != null)
@@ -471,13 +472,13 @@ public class Profile {
    */
   public String info() {
     // 1. Shortcut class list
-    ArrayList<Class<?>> list = new ArrayList<Class<?>>();
+    ArrayList<Class<? extends Shortcut>> list = new ArrayList<Class<? extends Shortcut>>();
     for (Shortcut s : map.keySet())
       if (!list.contains(s.getClass()))
         list.add(s.getClass());
     // 2. Print info per Shortcut class
     String result = new String();
-    for (Class<?> clazz : list) {
+    for (Class<? extends Shortcut> clazz : list) {
       String info = info(clazz);
       if (!info.isEmpty()) {
         result += clazz.getSimpleName() + " bindings:\n";
@@ -490,12 +491,12 @@ public class Profile {
   /**
    * Returns true if this object contains a binding for the specified shortcut.
    * 
-   * @param key
+   * @param shortcut
    *          {@link remixlab.bias.core.Shortcut}
    * @return true if this object contains a binding for the specified shortcut.
    */
-  public boolean hasBinding(Shortcut key) {
-    return map.containsKey(key);
+  public boolean hasBinding(Shortcut shortcut) {
+    return map.containsKey(shortcut);
   }
 
   /**

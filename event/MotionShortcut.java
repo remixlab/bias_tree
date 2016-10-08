@@ -156,6 +156,14 @@ public final class MotionShortcut extends Shortcut {
     super(m, id);
   }
 
+  /**
+   * Returns {@code DOFnEvent.class} where {@code n} is {@link #dofs(int)}.
+   * <p>
+   * Returns {@code MotionEvent.class} if the shortcut {@link #id()} isn't registered.
+   * 
+   * @see #dofs(int)
+   * @see MotionShortcut#registerID(int, int, String)
+   */
   @Override
   public Class<? extends MotionEvent> eventClass() {
     Class<? extends MotionEvent> clazz = MotionEvent.class;
