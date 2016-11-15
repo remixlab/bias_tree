@@ -42,212 +42,207 @@ import remixlab.util.HashCodeBuilder;
  * non-default input hardware).
  */
 public class BogusEvent implements Copyable {
-  // modifier keys
-  public static final int NO_MODIFIER_MASK = 0;
-  public static final int NO_ID = 0;
-  public static final int SHIFT = 1 << 0;
-  public static final int CTRL = 1 << 1;
-  public static final int META = 1 << 2;
-  public static final int ALT = 1 << 3;
-  public static final int ALT_GRAPH = 1 << 4;
+ // modifier keys
+ public static final int NO_MODIFIER_MASK = 0;
+ public static final int NO_ID = 0;
+ public static final int SHIFT = 1 << 0;
+ public static final int CTRL = 1 << 1;
+ public static final int META = 1 << 2;
+ public static final int ALT = 1 << 3;
+ public static final int ALT_GRAPH = 1 << 4;
 
-  private boolean fire, flush;
+ private boolean fire, flush;
 
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(modifiers).append(id).toHashCode();
+ @Override public int hashCode() {
+  return new HashCodeBuilder(17, 37).append(modifiers).append(id).toHashCode();
+ }
+
+ @Override public boolean equals(Object obj) {
+  if (obj == null)
+   return false;
+  if (obj == this)
+   return true;
+  if (obj.getClass() != getClass())
+   return false;
+
+  BogusEvent other = (BogusEvent) obj;
+  return new EqualsBuilder().append(modifiers, other.modifiers).append(id, other.id).isEquals();
+ }
+
+ protected final int modifiers;
+ protected long timestamp;
+ protected int id;
+
+ /**
+  * Constructs an event with an "empty" {@link remixlab.bias.core.Shortcut}.
+  */
+ public BogusEvent() {
+  this.modifiers = NO_MODIFIER_MASK;
+  this.id = NO_ID;
+  timestamp = System.currentTimeMillis();
+ }
+
+ /**
+  * Constructs an event taking the given {@code modifiers} as a
+  * {@link remixlab.bias.core.Shortcut}.
+  */
+ public BogusEvent(int modifiers, int id) {
+  this.modifiers = modifiers;
+  this.id = id;
+  timestamp = System.currentTimeMillis();
+ }
+
+ protected BogusEvent(BogusEvent other) {
+  this.modifiers = other.modifiers;
+  this.id = other.id;
+  this.timestamp = System.currentTimeMillis();
+  this.fire = other.fire;
+  this.flush = other.flush;
+ }
+
+ @Override public BogusEvent get() {
+  return new BogusEvent(this);
+ }
+
+ /**
+  * Same as {@code this.get()} but sets the {@link #flushed()} flag to true. Only agents
+  * may call this.
+  *
+  * @see #flushed()
+  */
+ public BogusEvent flush() {
+  if (fired() || flushed()) {
+   System.out.println("Warning: event already " + (fired() ? "fired" : "flushed"));
+   return this;
   }
+  BogusEvent bogusevent = this.get();
+  bogusevent.flush = true;
+  return bogusevent;
+ }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == null)
-      return false;
-    if (obj == this)
-      return true;
-    if (obj.getClass() != getClass())
-      return false;
-
-    BogusEvent other = (BogusEvent) obj;
-    return new EqualsBuilder().append(modifiers, other.modifiers).append(id, other.id).isEquals();
+ /**
+  * Same as {@code this.get()} but sets the {@link #fired()} flag to true. Only agents
+  * may call this.
+  *
+  * @see #flushed()
+  */
+ public BogusEvent fire() {
+  if (fired() || flushed()) {
+   System.out.println("Warning: event already " + (fired() ? "fired" : "flushed"));
+   return this;
   }
+  BogusEvent bogusevent = this.get();
+  bogusevent.fire = true;
+  return bogusevent;
+ }
 
-  protected final int modifiers;
-  protected long timestamp;
-  protected int id;
+ /**
+  * Returns true if this is a 'flushed' event. Flushed events indicate gesture
+  * termination, such as a mouse-release.
+  *
+  * @see #fired()
+  */
+ public boolean flushed() {
+  return flush;
+ }
 
-  /**
-   * Constructs an event with an "empty" {@link remixlab.bias.core.Shortcut}.
-   */
-  public BogusEvent() {
-    this.modifiers = NO_MODIFIER_MASK;
-    this.id = NO_ID;
-    timestamp = System.currentTimeMillis();
-  }
+ /**
+  * Returns true if this is a 'fired' event. Fired events indicate gesture activation,
+  * such as a mouse-press.
+  *
+  * @see #flushed()
+  */
+ public boolean fired() {
+  return fire;
+ }
 
-  /**
-   * Constructs an event taking the given {@code modifiers} as a
-   * {@link remixlab.bias.core.Shortcut}.
-   */
-  public BogusEvent(int modifiers, int id) {
-    this.modifiers = modifiers;
-    this.id = id;
-    timestamp = System.currentTimeMillis();
-  }
+ /**
+  * @return the shortcut encapsulated by this event.
+  * @see remixlab.bias.core.Shortcut
+  */
+ public Shortcut shortcut() {
+  return new Shortcut(modifiers(), id());
+ }
 
-  protected BogusEvent(BogusEvent other) {
-    this.modifiers = other.modifiers;
-    this.id = other.id;
-    this.timestamp = System.currentTimeMillis();
-    this.fire = other.fire;
-    this.flush = other.flush;
-  }
+ /**
+  * @return the modifiers defining the event {@link remixlab.bias.core.Shortcut}.
+  */
+ public int modifiers() {
+  return modifiers;
+ }
 
-  @Override
-  public BogusEvent get() {
-    return new BogusEvent(this);
-  }
+ /**
+  * Returns the id defining the event's {@link remixlab.bias.core.Shortcut}.
+  */
+ public int id() {
+  return id;
+ }
 
-  /**
-   * Same as {@code this.get()} but sets the {@link #flushed()} flag to true. Only agents
-   * may call this.
-   * 
-   * @see #flushed()
-   */
-  public BogusEvent flush() {
-    if (fired() || flushed()) {
-      System.out.println("Warning: event already " + (fired() ? "fired" : "flushed"));
-      return this;
-    }
-    BogusEvent bogusevent = this.get();
-    bogusevent.flush = true;
-    return bogusevent;
-  }
+ /**
+  * @return the time at which the event occurs
+  */
+ public long timestamp() {
+  return timestamp;
+ }
 
-  /**
-   * Same as {@code this.get()} but sets the {@link #fired()} flag to true. Only agents
-   * may call this.
-   * 
-   * @see #flushed()
-   */
-  public BogusEvent fire() {
-    if (fired() || flushed()) {
-      System.out.println("Warning: event already " + (fired() ? "fired" : "flushed"));
-      return this;
-    }
-    BogusEvent bogusevent = this.get();
-    bogusevent.fire = true;
-    return bogusevent;
-  }
+ /**
+  * Only {@link remixlab.bias.event.MotionEvent}s may be null.
+  */
+ public boolean isNull() {
+  return false;
+ }
 
-  /**
-   * Returns true if this is a 'flushed' event. Flushed events indicate gesture
-   * termination, such as a mouse-release.
-   * 
-   * @see #fired()
-   */
-  public boolean flushed() {
-    return flush;
-  }
+ /**
+  * @return true if Shift was down when the event occurs
+  */
+ public boolean isShiftDown() {
+  return (modifiers & SHIFT) != 0;
+ }
 
-  /**
-   * Returns true if this is a 'fired' event. Fired events indicate gesture activation,
-   * such as a mouse-press.
-   * 
-   * @see #flushed()
-   */
-  public boolean fired() {
-    return fire;
-  }
+ /**
+  * @return true if Ctrl was down when the event occurs
+  */
+ public boolean isControlDown() {
+  return (modifiers & CTRL) != 0;
+ }
 
-  /**
-   * @return the shortcut encapsulated by this event.
-   * 
-   * @see remixlab.bias.core.Shortcut
-   */
-  public Shortcut shortcut() {
-    return new Shortcut(modifiers(), id());
-  }
+ /**
+  * @return true if Meta was down when the event occurs
+  */
+ public boolean isMetaDown() {
+  return (modifiers & META) != 0;
+ }
 
-  /**
-   * @return the modifiers defining the event {@link remixlab.bias.core.Shortcut}.
-   */
-  public int modifiers() {
-    return modifiers;
-  }
+ /**
+  * @return true if Alt was down when the event occurs
+  */
+ public boolean isAltDown() {
+  return (modifiers & ALT) != 0;
+ }
 
-  /**
-   * Returns the id defining the event's {@link remixlab.bias.core.Shortcut}.
-   */
-  public int id() {
-    return id;
-  }
+ /**
+  * @return true if AltGraph was down when the event occurs
+  */
+ public boolean isAltGraph() {
+  return (modifiers & ALT_GRAPH) != 0;
+ }
 
-  /**
-   * @return the time at which the event occurs
-   */
-  public long timestamp() {
-    return timestamp;
-  }
-
-  /**
-   * Only {@link remixlab.bias.event.MotionEvent}s may be null.
-   */
-  public boolean isNull() {
-    return false;
-  }
-
-  /**
-   * @return true if Shift was down when the event occurs
-   */
-  public boolean isShiftDown() {
-    return (modifiers & SHIFT) != 0;
-  }
-
-  /**
-   * @return true if Ctrl was down when the event occurs
-   */
-  public boolean isControlDown() {
-    return (modifiers & CTRL) != 0;
-  }
-
-  /**
-   * @return true if Meta was down when the event occurs
-   */
-  public boolean isMetaDown() {
-    return (modifiers & META) != 0;
-  }
-
-  /**
-   * @return true if Alt was down when the event occurs
-   */
-  public boolean isAltDown() {
-    return (modifiers & ALT) != 0;
-  }
-
-  /**
-   * @return true if AltGraph was down when the event occurs
-   */
-  public boolean isAltGraph() {
-    return (modifiers & ALT_GRAPH) != 0;
-  }
-
-  /**
-   * @param mask
-   *          of modifiers
-   * @return a String listing the event modifiers
-   */
-  public static String modifiersText(int mask) {
-    String r = new String();
-    if ((ALT & mask) == ALT)
-      r += "ALT";
-    if ((SHIFT & mask) == SHIFT)
-      r += (r.length() > 0) ? "+SHIFT" : "SHIFT";
-    if ((CTRL & mask) == CTRL)
-      r += (r.length() > 0) ? "+CTRL" : "CTRL";
-    if ((META & mask) == META)
-      r += (r.length() > 0) ? "+META" : "META";
-    if ((ALT_GRAPH & mask) == ALT_GRAPH)
-      r += (r.length() > 0) ? "+ALT_GRAPH" : "ALT_GRAPH";
-    return r;
-  }
+ /**
+  * @param mask of modifiers
+  * @return a String listing the event modifiers
+  */
+ public static String modifiersText(int mask) {
+  String r = new String();
+  if ((ALT & mask) == ALT)
+   r += "ALT";
+  if ((SHIFT & mask) == SHIFT)
+   r += (r.length() > 0) ? "+SHIFT" : "SHIFT";
+  if ((CTRL & mask) == CTRL)
+   r += (r.length() > 0) ? "+CTRL" : "CTRL";
+  if ((META & mask) == META)
+   r += (r.length() > 0) ? "+META" : "META";
+  if ((ALT_GRAPH & mask) == ALT_GRAPH)
+   r += (r.length() > 0) ? "+ALT_GRAPH" : "ALT_GRAPH";
+  return r;
+ }
 }

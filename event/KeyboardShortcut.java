@@ -10,8 +10,9 @@
 
 package remixlab.bias.event;
 
-import remixlab.bias.core.*;
-import remixlab.util.*;
+import remixlab.bias.core.Shortcut;
+import remixlab.util.EqualsBuilder;
+import remixlab.util.HashCodeBuilder;
 
 /**
  * This class represents {@link remixlab.bias.event.KeyboardEvent} shortcuts.
@@ -21,109 +22,102 @@ import remixlab.util.*;
  * key representing 'a').
  */
 public final class KeyboardShortcut extends Shortcut {
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(key).toHashCode();
-  }
+ @Override public int hashCode() {
+  return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(key).toHashCode();
+ }
 
-  public boolean equals(Object obj) {
-    if (obj == null)
-      return false;
-    if (obj == this)
-      return true;
-    if (obj.getClass() != getClass())
-      return false;
+ public boolean equals(Object obj) {
+  if (obj == null)
+   return false;
+  if (obj == this)
+   return true;
+  if (obj.getClass() != getClass())
+   return false;
 
-    KeyboardShortcut rhs = (KeyboardShortcut) obj;
-    return new EqualsBuilder().appendSuper(super.equals(obj)).append(key, rhs.key).isEquals();
-  }
+  KeyboardShortcut rhs = (KeyboardShortcut) obj;
+  return new EqualsBuilder().appendSuper(super.equals(obj)).append(key, rhs.key).isEquals();
+ }
 
-  protected final char key;
+ protected final char key;
 
-  /**
-   * Defines a keyboard shortcut from the given character.
-   * 
-   * @param k
-   *          the character that defines the keyboard shortcut.
-   */
-  public KeyboardShortcut(char k) {
-    super();
-    key = k;
-  }
+ /**
+  * Defines a keyboard shortcut from the given character.
+  *
+  * @param k the character that defines the keyboard shortcut.
+  */
+ public KeyboardShortcut(char k) {
+  super();
+  key = k;
+ }
 
-  /**
-   * Defines a keyboard shortcut from the given modifier mask and virtual key combination.
-   * 
-   * @param m
-   *          the mask
-   * @param vk
-   *          the virtual key that defines the keyboard shortcut.
-   */
-  public KeyboardShortcut(int m, int vk) {
-    super(m, vk);
-    key = '\0';
-  }
+ /**
+  * Defines a keyboard shortcut from the given modifier mask and virtual key combination.
+  *
+  * @param m  the mask
+  * @param vk the virtual key that defines the keyboard shortcut.
+  */
+ public KeyboardShortcut(int m, int vk) {
+  super(m, vk);
+  key = '\0';
+ }
 
-  /**
-   * Defines a keyboard shortcut from the given virtual key.
-   * 
-   * @param vk
-   *          the virtual key that defines the keyboard shortcut.
-   */
-  public KeyboardShortcut(int vk) {
-    super(vk);
-    key = '\0';
-  }
+ /**
+  * Defines a keyboard shortcut from the given virtual key.
+  *
+  * @param vk the virtual key that defines the keyboard shortcut.
+  */
+ public KeyboardShortcut(int vk) {
+  super(vk);
+  key = '\0';
+ }
 
-  @Override
-  public Class<? extends KeyboardEvent> eventClass() {
-    return KeyboardEvent.class;
-  }
+ @Override public Class<? extends KeyboardEvent> eventClass() {
+  return KeyboardEvent.class;
+ }
 
-  /**
-   * Same as {@code return Shortcut.registerID(KeyboardShortcut.class, id, description)}.
-   * 
-   * @see remixlab.bias.core.Shortcut#registerID(Class, int, String)
-   * @see #hasID(int)
-   */
-  public static int registerID(int id, String description) {
-    return Shortcut.registerID(KeyboardShortcut.class, id, description);
-  }
+ /**
+  * Same as {@code return Shortcut.registerID(KeyboardShortcut.class, id, description)}.
+  *
+  * @see remixlab.bias.core.Shortcut#registerID(Class, int, String)
+  * @see #hasID(int)
+  */
+ public static int registerID(int id, String description) {
+  return Shortcut.registerID(KeyboardShortcut.class, id, description);
+ }
 
-  /**
-   * Same as {@code return Shortcut.hasID(KeyboardShortcut.class, id)}.
-   * 
-   * @see remixlab.bias.core.Shortcut#hasID(Class, int)
-   * @see #registerID(int, String)
-   */
-  public static boolean hasID(int id) {
-    return Shortcut.hasID(KeyboardShortcut.class, id);
-  }
+ /**
+  * Same as {@code return Shortcut.hasID(KeyboardShortcut.class, id)}.
+  *
+  * @see remixlab.bias.core.Shortcut#hasID(Class, int)
+  * @see #registerID(int, String)
+  */
+ public static boolean hasID(int id) {
+  return Shortcut.hasID(KeyboardShortcut.class, id);
+ }
 
-  /**
-   * Returns the {code id} description.
-   * 
-   * @see #descriptions()
-   * @see #description()
-   */
-  public static String description(int id) {
-    return Shortcut.description(KeyboardShortcut.class, id);
-  }
+ /**
+  * Returns the {code id} description.
+  *
+  * @see #descriptions()
+  * @see #description()
+  */
+ public static String description(int id) {
+  return Shortcut.description(KeyboardShortcut.class, id);
+ }
 
-  /**
-   * Returns the description of all the ids.
-   * 
-   * @see #description(int)
-   * @see #description()
-   */
-  public static String descriptions() {
-    return Shortcut.descriptions(KeyboardShortcut.class);
-  }
+ /**
+  * Returns the description of all the ids.
+  *
+  * @see #description(int)
+  * @see #description()
+  */
+ public static String descriptions() {
+  return Shortcut.descriptions(KeyboardShortcut.class);
+ }
 
-  @Override
-  public String description() {
-    if (key != '\0')
-      return String.valueOf(key);
-    return super.description();
-  }
+ @Override public String description() {
+  if (key != '\0')
+   return String.valueOf(key);
+  return super.description();
+ }
 }
