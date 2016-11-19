@@ -27,59 +27,63 @@ import remixlab.bias.core.BogusEvent;
  * a convention in your code.
  */
 public class KeyboardEvent extends BogusEvent {
- protected final char key;
+  protected final char key;
 
- /**
-  * Constructs a keyboard event with the <b>modifiers</b> and <b>vk</b> defining its
-  * {@link remixlab.bias.event.KeyboardShortcut}.
-  */
- public KeyboardEvent(int modifiers, int vk) {
-  super(modifiers, vk);
-  key = '\0';
- }
+  /**
+   * Constructs a keyboard event with the <b>modifiers</b> and <b>vk</b> defining its
+   * {@link remixlab.bias.event.KeyboardShortcut}.
+   */
+  public KeyboardEvent(int modifiers, int vk) {
+    super(modifiers, vk);
+    key = '\0';
+  }
 
- /**
-  * Constructs a keyboard event with <b>c</b> defining its
-  * {@link remixlab.bias.event.KeyboardShortcut}.
-  */
- public KeyboardEvent(int vk) {
-  super(NO_MODIFIER_MASK, vk);
-  key = '\uFFFF';
- }
+  /**
+   * Constructs a keyboard event with <b>c</b> defining its
+   * {@link remixlab.bias.event.KeyboardShortcut}.
+   */
+  public KeyboardEvent(int vk) {
+    super(NO_MODIFIER_MASK, vk);
+    key = '\uFFFF';
+  }
 
- public KeyboardEvent(char _key) {
-  super();
-  key = _key;
- }
+  public KeyboardEvent(char _key) {
+    super();
+    key = _key;
+  }
 
- /**
-  * @param other
-  */
- protected KeyboardEvent(KeyboardEvent other) {
-  super(other);
-  this.key = other.key;
- }
+  /**
+   * @param other
+   */
+  protected KeyboardEvent(KeyboardEvent other) {
+    super(other);
+    this.key = other.key;
+  }
 
- @Override public KeyboardEvent get() {
-  return new KeyboardEvent(this);
- }
+  @Override
+  public KeyboardEvent get() {
+    return new KeyboardEvent(this);
+  }
 
- @Override public KeyboardEvent flush() {
-  return (KeyboardEvent) super.flush();
- }
+  @Override
+  public KeyboardEvent flush() {
+    return (KeyboardEvent) super.flush();
+  }
 
- @Override public KeyboardEvent fire() {
-  return (KeyboardEvent) super.fire();
- }
+  @Override
+  public KeyboardEvent fire() {
+    return (KeyboardEvent) super.fire();
+  }
 
- @Override public KeyboardShortcut shortcut() {
-  if (key == '\0')
-   return new KeyboardShortcut(modifiers(), id());
-  else
-   return new KeyboardShortcut(key());
- }
+  @Override
+  public KeyboardShortcut shortcut() {
+    if (key == '\0')
+      return new KeyboardShortcut(modifiers(), id());
+    else
+      return new KeyboardShortcut(key());
+  }
 
- public char key() {
-  return key;
- }
+  public char key() {
+    return key;
+  }
 }
