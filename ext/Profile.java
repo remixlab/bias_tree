@@ -54,7 +54,7 @@ public class Profile {
   protected HashMap<Shortcut, ObjectMethodTuple> map;
   protected Grabber grabber;
 
-  // : static stuff
+  // static stuff
   public static Object context = null;
 
   /**

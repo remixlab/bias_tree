@@ -156,7 +156,6 @@ public class MotionEvent extends BogusEvent {
    */
   protected void setPreviousEvent(MotionEvent prevEvent) {
     rel = true;
-    // TODO decide if this will be kept
     // makes sense only if derived classes call it
     if (prevEvent != null)
       if (prevEvent.id() == this.id()) {
