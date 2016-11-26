@@ -435,7 +435,7 @@ public class Profile {
     Iterator<Entry<Shortcut, ObjectMethodTuple>> it = map.entrySet().iterator();
     while (it.hasNext()) {
       Map.Entry<Shortcut, ObjectMethodTuple> pair = it.next();
-      if (cls.isInstance(pair.getKey()))
+      if (cls.equals(pair.getKey().getClass()))
         it.remove();
     }
   }
@@ -464,7 +464,7 @@ public class Profile {
     HashMap<Shortcut, ObjectMethodTuple> result = new HashMap<Shortcut, ObjectMethodTuple>();
     for (Entry<Shortcut, ObjectMethodTuple> entry : map.entrySet())
       if (entry.getKey() != null && entry.getValue() != null)
-        if (cls.isInstance(entry.getKey()))
+        if (cls.equals(entry.getKey().getClass()))
           result.put(entry.getKey(), entry.getValue());
     return result;
   }
