@@ -119,26 +119,6 @@ public class ClickShortcut extends Shortcut {
   }
 
   /**
-   * Returns the {code id} description.
-   *
-   * @see #descriptions()
-   * @see #description()
-   */
-  public static String description(int id) {
-    return Shortcut.description(ClickShortcut.class, id);
-  }
-
-  /**
-   * Returns the description of all the ids.
-   *
-   * @see #description(int)
-   * @see #description()
-   */
-  public static String descriptions() {
-    return Shortcut.descriptions(ClickShortcut.class);
-  }
-
-  /**
    * Returns a textual description of this click shortcut.
    *
    * @return description

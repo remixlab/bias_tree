@@ -103,26 +103,6 @@ public final class MotionShortcut extends Shortcut {
   }
 
   /**
-   * Returns the {code id} description.
-   *
-   * @see #descriptions()
-   * @see #description()
-   */
-  public static String description(int id) {
-    return Shortcut.description(MotionShortcut.class, id);
-  }
-
-  /**
-   * Returns the description of all the ids.
-   *
-   * @see #description(int)
-   * @see #description()
-   */
-  public static String descriptions() {
-    return Shortcut.descriptions(MotionShortcut.class);
-  }
-
-  /**
    * Constructs an "empty" shortcut by conveniently calling
    * {@code this(NO_MODIFIER_MASK, NO_ID);}
    */

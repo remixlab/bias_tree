@@ -97,26 +97,6 @@ public final class KeyboardShortcut extends Shortcut {
     return Shortcut.hasID(KeyboardShortcut.class, id);
   }
 
-  /**
-   * Returns the {code id} description.
-   *
-   * @see #descriptions()
-   * @see #description()
-   */
-  public static String description(int id) {
-    return Shortcut.description(KeyboardShortcut.class, id);
-  }
-
-  /**
-   * Returns the description of all the ids.
-   *
-   * @see #description(int)
-   * @see #description()
-   */
-  public static String descriptions() {
-    return Shortcut.descriptions(KeyboardShortcut.class);
-  }
-
   @Override
   public String description() {
     if (key != '\0')

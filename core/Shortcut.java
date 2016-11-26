@@ -138,16 +138,6 @@ public class Shortcut {
   }
 
   /**
-   * Same as {@code return registerID(Shortcut.class, description)}.
-   *
-   * @see Shortcut#registerID(Class, String)
-   * @see #hasID(Class, int)
-   */
-  public static int registerID(String description) {
-    return registerID(Shortcut.class, description);
-  }
-
-  /**
    * Returns {@code true} if the given Shortcut {@code clazz} {@code id} is registered and
    * {@code false} otherwise.
    *
@@ -182,30 +172,23 @@ public class Shortcut {
   }
 
   /**
-   * Returns the description of {@code clazz} {code id} registered at this shortcut class.
+   * Same as {@code return registerID(Shortcut.class, description)}.
    *
-   * @see #descriptions(Class)
-   * @see #description()
+   * @see Shortcut#registerID(Class, String)
+   * @see #hasID(Class, int)
    */
-  public static String description(Class<? extends Shortcut> clazz, int id) {
-    return ids.get((clazz.getSimpleName() + String.valueOf(id)));
+  public static int registerID(String description) {
+    return registerID(Shortcut.class, description);
   }
 
   /**
-   * Returns the description of all the {@code clazz} ids registered at this shortcut
-   * class.
+   * Same as {@code return Shortcut.hasID(Shortcut.class, id)}.
    *
-   * @see #description(Class, int)
-   * @see #description()
+   * @see #registerID(int, String)
+   * @see #hasID(Class, int)
    */
-  public static String descriptions(Class<? extends Shortcut> clazz) {
-    String result = new String();
-    int l = clazz.getSimpleName().length();
-    for (String key : ids.keySet())
-      if (key.length() > l)
-        if (key.substring(0, l).equals(clazz.getSimpleName()))
-          result += key.substring(l) + " -> " + ids.get(key) + "\n";
-    return result;
+  public static boolean hasID(int id) {
+    return Shortcut.hasID(Shortcut.class, id);
   }
 
   /**
