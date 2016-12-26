@@ -8,11 +8,8 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  **************************************************************************************/
 
-package remixlab.bias.ext;
+package remixlab.bias.core;
 
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.Grabber;
-import remixlab.bias.core.Shortcut;
 import remixlab.bias.event.MotionEvent;
 import remixlab.bias.event.MotionShortcut;
 
