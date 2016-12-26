@@ -46,8 +46,7 @@ public abstract class GrabberObject implements Grabber {
    * @see InputHandler#agents()
    */
   public GrabberObject(InputHandler inputHandler) {
-    for (Agent agent : inputHandler.agents())
-      agent.addGrabber(this);
+    inputHandler.addGrabber(this);
   }
 
   /**
