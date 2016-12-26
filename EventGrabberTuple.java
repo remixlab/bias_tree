@@ -8,27 +8,27 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  **************************************************************************************/
 
-package remixlab.bias.core;
+package remixlab.bias;
 
 /**
- * A [{@link remixlab.bias.core.BogusEvent},{@link remixlab.bias.core.Grabber}] tuple. An
- * enqueued tuple fires {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}
+ * A [{@link BogusEvent},{@link Grabber}] tuple. An
+ * enqueued tuple fires {@link Grabber#performInteraction(BogusEvent)}
  * call from the event in the tuple.
  * <p>
  * Tuples are typically enqueued by an agent (see
- * {@link remixlab.bias.core.Agent#handle(BogusEvent)}), but may be enqueued manually, see
- * {@link remixlab.bias.core.InputHandler#enqueueEventTuple(EventGrabberTuple)}.
+ * {@link Agent#handle(BogusEvent)}), but may be enqueued manually, see
+ * {@link InputHandler#enqueueEventTuple(EventGrabberTuple)}.
  */
 public class EventGrabberTuple {
   protected BogusEvent event;
   protected Grabber grabber;
 
   /**
-   * Constructs a {@link remixlab.bias.core.BogusEvent},
-   * {@link remixlab.bias.core.Grabber} tuple.
+   * Constructs a {@link BogusEvent},
+   * {@link Grabber} tuple.
    *
-   * @param e {@link remixlab.bias.core.BogusEvent}
-   * @param g {@link remixlab.bias.core.Grabber}
+   * @param e {@link BogusEvent}
+   * @param g {@link Grabber}
    */
   public EventGrabberTuple(BogusEvent e, Grabber g) {
     event = e;
@@ -36,7 +36,7 @@ public class EventGrabberTuple {
   }
 
   /**
-   * Calls {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}.
+   * Calls {@link Grabber#performInteraction(BogusEvent)}.
    *
    * @return true if succeeded and false otherwise.
    */

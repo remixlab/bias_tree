@@ -10,12 +10,12 @@
 
 package remixlab.bias.event;
 
-import remixlab.bias.core.BogusEvent;
+import remixlab.bias.BogusEvent;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
 /**
- * Base class of all DOF_n_Events: {@link remixlab.bias.core.BogusEvent}s defined from
+ * Base class of all DOF_n_Events: {@link BogusEvent}s defined from
  * DOFs (degrees-of-freedom).
  * <p>
  * A MotionEvent encapsulates a {@link remixlab.bias.event.MotionShortcut}. MotionEvents

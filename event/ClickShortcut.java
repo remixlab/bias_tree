@@ -10,8 +10,8 @@
 
 package remixlab.bias.event;
 
-import remixlab.bias.core.BogusEvent;
-import remixlab.bias.core.Shortcut;
+import remixlab.bias.BogusEvent;
+import remixlab.bias.Shortcut;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
@@ -89,7 +89,7 @@ public class ClickShortcut extends Shortcut {
    * Same as {@code return Shortcut.registerID(ClickShortcut.class, id, description)}.
    *
    * @see #registerID(String)
-   * @see remixlab.bias.core.Shortcut#registerID(Class, int, String)
+   * @see Shortcut#registerID(Class, int, String)
    * @see #hasID(int)
    */
   public static int registerID(int id, String description) {
@@ -100,7 +100,7 @@ public class ClickShortcut extends Shortcut {
    * Same as {@code return Shortcut.registerID(ClickShortcut.class, description)}.
    *
    * @see #registerID(int, String)
-   * @see remixlab.bias.core.Shortcut#registerID(Class, String)
+   * @see Shortcut#registerID(Class, String)
    * @see #hasID(int)
    */
   public static int registerID(String description) {
@@ -112,7 +112,7 @@ public class ClickShortcut extends Shortcut {
    *
    * @see ClickShortcut#registerID(String)
    * @see #registerID(int, String)
-   * @see remixlab.bias.core.Shortcut#hasID(Class, int)
+   * @see Shortcut#hasID(Class, int)
    */
   public static boolean hasID(int id) {
     return Shortcut.hasID(ClickShortcut.class, id);

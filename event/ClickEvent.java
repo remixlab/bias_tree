@@ -10,7 +10,7 @@
 
 package remixlab.bias.event;
 
-import remixlab.bias.core.BogusEvent;
+import remixlab.bias.BogusEvent;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 

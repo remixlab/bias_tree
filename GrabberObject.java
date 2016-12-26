@@ -8,13 +8,13 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  **************************************************************************************/
 
-package remixlab.bias.core;
+package remixlab.bias;
 
 import remixlab.bias.event.*;
 
 /**
- * {@link remixlab.bias.core.Grabber} object which eases third-party implementation of the
- * {@link remixlab.bias.core.Grabber} interface.
+ * {@link Grabber} object which eases third-party implementation of the
+ * {@link Grabber} interface.
  * <p>
  * Based on the concrete event type, this model object splits the
  * {@link #checkIfGrabsInput(BogusEvent)} and the {@link #performInteraction(BogusEvent)}
@@ -34,7 +34,7 @@ public abstract class GrabberObject implements Grabber {
   /**
    * Constructs and adds this grabber to the agent pool.
    *
-   * @see remixlab.bias.core.Agent#grabbers()
+   * @see Agent#grabbers()
    */
   public GrabberObject(Agent agent) {
     agent.addGrabber(this);
@@ -43,7 +43,7 @@ public abstract class GrabberObject implements Grabber {
   /**
    * Constructs and adds this grabber to all agents belonging to the input handler.
    *
-   * @see remixlab.bias.core.InputHandler#agents()
+   * @see InputHandler#agents()
    */
   public GrabberObject(InputHandler inputHandler) {
     for (Agent agent : inputHandler.agents())
@@ -51,7 +51,7 @@ public abstract class GrabberObject implements Grabber {
   }
 
   /**
-   * Check if this object is the {@link remixlab.bias.core.Agent#inputGrabber()} . Returns
+   * Check if this object is the {@link Agent#inputGrabber()} . Returns
    * {@code true} if this object grabs the agent and {@code false} otherwise.
    */
   public boolean grabsInput(Agent agent) {

@@ -8,17 +8,17 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  **************************************************************************************/
 
-package remixlab.bias.core;
+package remixlab.bias;
 
 import remixlab.util.Copyable;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
 /**
- * The root of all events that are to be handled by an {@link remixlab.bias.core.Agent}.
- * Every BogusEvent encapsulates a {@link remixlab.bias.core.Shortcut} which may be bound
+ * The root of all events that are to be handled by an {@link Agent}.
+ * Every BogusEvent encapsulates a {@link Shortcut} which may be bound
  * to an user-defined action (see {@link #shortcut()}). Gesture initialization and
- * termination, which may be of the interest of {@link remixlab.bias.core.Grabber}
+ * termination, which may be of the interest of {@link Grabber}
  * objects, are reported by {@link #fired()} and {@link #flushed()}, respectively.
  * <p>
  * The following are the main class specializations:
@@ -28,7 +28,7 @@ import remixlab.util.HashCodeBuilder;
  * <p>
  * If you ever need to define you're own bogus-event type, derive from this class, declare
  * a shortcut type for your event (for details refer to the
- * {@link remixlab.bias.core.Shortcut}), and override the {@link #shortcut()} and
+ * {@link Shortcut}), and override the {@link #shortcut()} and
  * {@link #get()} methods. If your custom event class defines it's own attributes, its
  * {@link #hashCode()}, {@link #equals(Object)} and {@link #get()} methods should be
  * overridden as well.
@@ -37,7 +37,7 @@ import remixlab.util.HashCodeBuilder;
  * For instance, in the context of Java-based application, it typically takes place when
  * implementing a mouse listener interface. In Processing, it does it when registering at
  * the PApplet the so called mouseEvent and KeyEvent methods. Moreover, the
- * {@link remixlab.bias.core.Agent#handleFeed()} provides a callback alternative when none
+ * {@link Agent#handleFeed()} provides a callback alternative when none
  * of these mechanisms are available (as it often happens when dealing with specialized,
  * non-default input hardware).
  */
@@ -76,7 +76,7 @@ public class BogusEvent implements Copyable {
   protected int id;
 
   /**
-   * Constructs an event with an "empty" {@link remixlab.bias.core.Shortcut}.
+   * Constructs an event with an "empty" {@link Shortcut}.
    */
   public BogusEvent() {
     this.modifiers = NO_MODIFIER_MASK;
@@ -86,7 +86,7 @@ public class BogusEvent implements Copyable {
 
   /**
    * Constructs an event taking the given {@code modifiers} as a
-   * {@link remixlab.bias.core.Shortcut}.
+   * {@link Shortcut}.
    */
   public BogusEvent(int modifiers, int id) {
     this.modifiers = modifiers;
@@ -161,21 +161,21 @@ public class BogusEvent implements Copyable {
 
   /**
    * @return the shortcut encapsulated by this event.
-   * @see remixlab.bias.core.Shortcut
+   * @see Shortcut
    */
   public Shortcut shortcut() {
     return new Shortcut(modifiers(), id());
   }
 
   /**
-   * @return the modifiers defining the event {@link remixlab.bias.core.Shortcut}.
+   * @return the modifiers defining the event {@link Shortcut}.
    */
   public int modifiers() {
     return modifiers;
   }
 
   /**
-   * Returns the id defining the event's {@link remixlab.bias.core.Shortcut}.
+   * Returns the id defining the event's {@link Shortcut}.
    */
   public int id() {
     return id;

@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  **************************************************************************************/
 
-package remixlab.bias.core;
+package remixlab.bias;
 
 import remixlab.bias.event.MotionEvent;
 import remixlab.bias.event.MotionShortcut;
@@ -18,13 +18,13 @@ import java.util.*;
 import java.util.Map.Entry;
 
 /**
- * A {@link remixlab.bias.core.Grabber} extension which allows to define
- * {@link remixlab.bias.core.Shortcut} to {@link java.lang.reflect.Method} bindings. See
+ * A {@link Grabber} extension which allows to define
+ * {@link Shortcut} to {@link java.lang.reflect.Method} bindings. See
  * {@link #setBinding(Shortcut, String)} and {@link #setBinding(Object, Shortcut, String)}
  * .
  * <p>
  * To attach a profile to a grabber first override your
- * {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)} method like this:
+ * {@link Grabber#performInteraction(BogusEvent)} method like this:
  * <p>
  * <pre>
  * {@code
@@ -105,7 +105,7 @@ public class Profile {
 
   /**
    * Returns the {@link java.lang.reflect.Method} binding for the given
-   * {@link remixlab.bias.core.Shortcut} key.
+   * {@link Shortcut} key.
    *
    * @see #action(Shortcut)
    */
@@ -115,7 +115,7 @@ public class Profile {
 
   /**
    * Returns the {@link java.lang.reflect.Method} binding for the given
-   * {@link remixlab.bias.core.Shortcut} key.
+   * {@link Shortcut} key.
    *
    * @see #method(Shortcut)
    */
@@ -136,8 +136,8 @@ public class Profile {
 
   /**
    * Main class method to be called from
-   * {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)}. Calls an action
-   * handler if the {@link remixlab.bias.core.BogusEvent#shortcut()} is bound.
+   * {@link Grabber#performInteraction(BogusEvent)}. Calls an action
+   * handler if the {@link BogusEvent#shortcut()} is bound.
    *
    * @see #setBinding(Shortcut, String)
    * @see #setBinding(Object, Shortcut, String)
@@ -214,7 +214,7 @@ public class Profile {
    * </ol>
    * <p>
    * The bogus-event type that may be passed to the above prototypes is the one specified
-   * by the {@link remixlab.bias.core.Shortcut#eventClass()} method:
+   * by the {@link Shortcut#eventClass()} method:
    * <ol>
    * <li>A {@link remixlab.bias.event.ClickEvent} for a
    * {@link remixlab.bias.event.ClickShortcut}</li>
@@ -227,10 +227,10 @@ public class Profile {
    * <b>Note</b> that in the latter case a {@link remixlab.bias.event.MotionEvent} may be
    * passed too.
    *
-   * @param shortcut {@link remixlab.bias.core.Shortcut}
+   * @param shortcut {@link Shortcut}
    * @param action   {@link java.lang.String}
    * @see #setBinding(Object, Shortcut, String)
-   * @see remixlab.bias.core.Shortcut#eventClass()
+   * @see Shortcut#eventClass()
    * @see remixlab.bias.event.MotionShortcut#eventClass()
    * @see remixlab.bias.event.MotionShortcut#dofs(int)
    * @see remixlab.bias.event.MotionShortcut#registerID(int, int, String)
@@ -309,7 +309,7 @@ public class Profile {
    * <li><b>public void action()</b></li>
    * </ol>
    * The bogus-event type that may be passed to the first prototype is the one specified
-   * by the {@link remixlab.bias.core.Shortcut#eventClass()} method:
+   * by the {@link Shortcut#eventClass()} method:
    * <ol>
    * <li>A {@link remixlab.bias.event.ClickEvent} for a
    * {@link remixlab.bias.event.ClickShortcut}</li>
@@ -323,10 +323,10 @@ public class Profile {
    * passed too.
    *
    * @param object   {@link java.lang.Object}
-   * @param shortcut {@link remixlab.bias.core.Shortcut}
+   * @param shortcut {@link Shortcut}
    * @param action   {@link java.lang.String}
    * @see #setBinding(Object, Shortcut, String)
-   * @see remixlab.bias.core.Shortcut#eventClass()
+   * @see Shortcut#eventClass()
    * @see remixlab.bias.event.MotionShortcut#eventClass()
    * @see remixlab.bias.event.MotionShortcut#dofs(int)
    * @see remixlab.bias.event.MotionShortcut#registerID(int, int, String)
@@ -412,7 +412,7 @@ public class Profile {
   /**
    * Removes the shortcut binding.
    *
-   * @param shortcut {@link remixlab.bias.core.Shortcut}
+   * @param shortcut {@link Shortcut}
    */
   public void removeBinding(Shortcut shortcut) {
     map.remove(shortcut);
@@ -488,7 +488,7 @@ public class Profile {
   /**
    * Returns true if this object contains a binding for the specified shortcut.
    *
-   * @param shortcut {@link remixlab.bias.core.Shortcut}
+   * @param shortcut {@link Shortcut}
    * @return true if this object contains a binding for the specified shortcut.
    */
   public boolean hasBinding(Shortcut shortcut) {

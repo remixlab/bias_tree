@@ -10,10 +10,10 @@
 
 package remixlab.bias.event;
 
-import remixlab.bias.core.BogusEvent;
+import remixlab.bias.BogusEvent;
 
 /**
- * A keyboard event is a {@link remixlab.bias.core.BogusEvent} specialization that
+ * A keyboard event is a {@link BogusEvent} specialization that
  * encapsulates a {@link remixlab.bias.event.KeyboardShortcut}. Keyboard shortcuts may be
  * of one form out of two: 1. A single Character; or, 2. A modifier mask (such as: (ALT |
  * SHIFT)) plus a virtual-key.

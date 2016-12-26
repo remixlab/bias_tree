@@ -10,7 +10,7 @@
 
 package remixlab.bias.event;
 
-import remixlab.bias.core.Shortcut;
+import remixlab.bias.Shortcut;
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
 
@@ -80,7 +80,7 @@ public final class KeyboardShortcut extends Shortcut {
   /**
    * Same as {@code return Shortcut.registerID(KeyboardShortcut.class, id, description)}.
    *
-   * @see remixlab.bias.core.Shortcut#registerID(Class, int, String)
+   * @see Shortcut#registerID(Class, int, String)
    * @see #hasID(int)
    */
   public static int registerID(int id, String description) {
@@ -90,7 +90,7 @@ public final class KeyboardShortcut extends Shortcut {
   /**
    * Same as {@code return Shortcut.hasID(KeyboardShortcut.class, id)}.
    *
-   * @see remixlab.bias.core.Shortcut#hasID(Class, int)
+   * @see Shortcut#hasID(Class, int)
    * @see #registerID(int, String)
    */
   public static boolean hasID(int id) {

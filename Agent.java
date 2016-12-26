@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  **************************************************************************************/
 
-package remixlab.bias.core;
+package remixlab.bias;
 
 import remixlab.bias.event.MotionEvent;
 
@@ -18,8 +18,8 @@ import java.util.List;
 /**
  * Agents gather data from different sources --mostly from input devices such touch
  * surfaces or simple mice-- and reduce them into a rather simple but quite 'useful' set
- * of interface events ({@link remixlab.bias.core.BogusEvent} ) for third party objects (
- * {@link remixlab.bias.core.Grabber} objects) to consume them (
+ * of interface events ({@link BogusEvent} ) for third party objects (
+ * {@link Grabber} objects) to consume them (
  * {@link #handle(BogusEvent)}). Agents thus effectively open up a channel between all
  * kinds of input data sources and user-space objects. To add/remove a grabber to/from the
  * {@link #grabbers()} collection issue {@link #addGrabber(Grabber)} /
@@ -29,7 +29,7 @@ import java.util.List;
  * The agent may send bogus-events to its {@link #inputGrabber()} which may be regarded as
  * the agent's grabber target. The {@link #inputGrabber()} may be set by querying each
  * grabber object in {@link #grabbers()} to check if its
- * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)}) condition is met (see
+ * {@link Grabber#checkIfGrabsInput(BogusEvent)}) condition is met (see
  * {@link #updateTrackedGrabber(BogusEvent)}, {@link #updateTrackedGrabberFeed()}). The
  * first grabber meeting the condition, namely the {@link #trackedGrabber()}), will then
  * be set as the {@link #inputGrabber()}. When no grabber meets the condition, the
@@ -135,10 +135,10 @@ public abstract class Agent {
    * higher-precedence.
    * <p>
    * Automatically call by the main event loop (
-   * {@link remixlab.bias.core.InputHandler#handle()}). See ProScene's Space-Navigator
+   * {@link InputHandler#handle()}). See ProScene's Space-Navigator
    * example.
    *
-   * @see remixlab.bias.core.InputHandler#handle()
+   * @see InputHandler#handle()
    * @see #handleFeed()
    * @see #updateTrackedGrabberFeed()
    * @see #handle(BogusEvent)
@@ -153,10 +153,10 @@ public abstract class Agent {
    * Use it in place of {@link #feed()} which takes lower-precedence.
    * <p>
    * Automatically call by the main event loop (
-   * {@link remixlab.bias.core.InputHandler#handle()}). See ProScene's Space-Navigator
+   * {@link InputHandler#handle()}). See ProScene's Space-Navigator
    * example.
    *
-   * @see remixlab.bias.core.InputHandler#handle()
+   * @see InputHandler#handle()
    * @see #feed()
    * @see #updateTrackedGrabberFeed()
    * @see #handle(BogusEvent)
@@ -171,9 +171,9 @@ public abstract class Agent {
    * by default. Use it in place of {@link #feed()} which takes lower-precedence.
    * <p>
    * Automatically call by the main event loop (
-   * {@link remixlab.bias.core.InputHandler#handle()}).
+   * {@link InputHandler#handle()}).
    *
-   * @see remixlab.bias.core.InputHandler#handle()
+   * @see InputHandler#handle()
    * @see #feed()
    * @see #handleFeed()
    * @see #handle(BogusEvent)
@@ -184,7 +184,7 @@ public abstract class Agent {
   }
 
   /**
-   * Returns the {@link remixlab.bias.core.InputHandler} this agent is registered to.
+   * Returns the {@link InputHandler} this agent is registered to.
    */
   public InputHandler inputHandler() {
     return handler;
@@ -193,7 +193,7 @@ public abstract class Agent {
   /**
    * If {@link #isTracking()} and the agent is registered at the {@link #inputHandler()}
    * then queries each object in the {@link #grabbers()} to check if the
-   * {@link remixlab.bias.core.Grabber#checkIfGrabsInput(BogusEvent)}) condition is met.
+   * {@link Grabber#checkIfGrabsInput(BogusEvent)}) condition is met.
    * The first object meeting the condition will be set as the {@link #inputGrabber()} and
    * returned. Note that a null grabber means that no object in the {@link #grabbers()}
    * met the condition. A {@link #inputGrabber()} may also be enforced simply with
@@ -246,11 +246,11 @@ public abstract class Agent {
 
   /**
    * Enqueues an EventGrabberTuple(event, inputGrabber()) on the
-   * {@link remixlab.bias.core.InputHandler#eventTupleQueue()}, thus enabling a call on
+   * {@link InputHandler#eventTupleQueue()}, thus enabling a call on
    * the {@link #inputGrabber()}
-   * {@link remixlab.bias.core.Grabber#performInteraction(BogusEvent)} method (which is
+   * {@link Grabber#performInteraction(BogusEvent)} method (which is
    * scheduled for execution till the end of this main event loop iteration, see
-   * {@link remixlab.bias.core.InputHandler#enqueueEventTuple(EventGrabberTuple)} for
+   * {@link InputHandler#enqueueEventTuple(EventGrabberTuple)} for
    * details).
    *
    * @see #inputGrabber()

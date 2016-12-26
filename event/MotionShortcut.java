@@ -10,7 +10,7 @@
 
 package remixlab.bias.event;
 
-import remixlab.bias.core.Shortcut;
+import remixlab.bias.Shortcut;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,7 +94,7 @@ public final class MotionShortcut extends Shortcut {
   /**
    * Same as {@code return Shortcut.hasID(MotionShortcut.class, id)}.
    *
-   * @see remixlab.bias.core.Shortcut#hasID(Class, int)
+   * @see Shortcut#hasID(Class, int)
    * @see #registerID(int, String)
    * @see #registerID(int, int, String)
    */

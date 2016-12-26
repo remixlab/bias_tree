@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  **************************************************************************************/
 
-package remixlab.bias.core;
+package remixlab.bias;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,10 +17,10 @@ import java.util.List;
 /**
  * The InputHandler object is the high level package handler which holds a collection of
  * {@link #agents()}, and an event dispatcher queue of
- * {@link remixlab.bias.core.EventGrabberTuple}s ({@link #eventTupleQueue()}). Such tuple
+ * {@link EventGrabberTuple}s ({@link #eventTupleQueue()}). Such tuple
  * represents a message passing to application objects, allowing an object to be
  * instructed to perform a particular user-defined action from a given
- * {@link remixlab.bias.core.BogusEvent}. For an introduction to BIAS please refer to
+ * {@link BogusEvent}. For an introduction to BIAS please refer to
  * <a href="http://nakednous.github.io/projects/bias">this</a>.
  * <p>
  * At runtime, the input handler should continuously run the two loops defined in
@@ -46,22 +46,22 @@ public class InputHandler {
    * <p>
    * The handle comprises the following two loops:
    * <p>
-   * 1. {@link remixlab.bias.core.EventGrabberTuple} producer loop which for each
+   * 1. {@link EventGrabberTuple} producer loop which for each
    * registered agent calls: a.
-   * {@link remixlab.bias.core.Agent#updateTrackedGrabber(BogusEvent)}; and, b.
-   * {@link remixlab.bias.core.Agent#handle(BogusEvent)}. Note that the bogus event are
+   * {@link Agent#updateTrackedGrabber(BogusEvent)}; and, b.
+   * {@link Agent#handle(BogusEvent)}. Note that the bogus event are
    * obtained from the agents callback
-   * {@link remixlab.bias.core.Agent#updateTrackedGrabberFeed()} and
-   * {@link remixlab.bias.core.Agent#handleFeed()} methods, respectively. The bogus event
-   * may also be obtained from {@link remixlab.bias.core.Agent#handleFeed()} which may
+   * {@link Agent#updateTrackedGrabberFeed()} and
+   * {@link Agent#handleFeed()} methods, respectively. The bogus event
+   * may also be obtained from {@link Agent#handleFeed()} which may
    * replace both of the previous feeds when they are null.<br>
    * 2. User-defined action consumer loop: which for each
-   * {@link remixlab.bias.core.EventGrabberTuple} calls
-   * {@link remixlab.bias.core.EventGrabberTuple#perform()}.<br>
+   * {@link EventGrabberTuple} calls
+   * {@link EventGrabberTuple#perform()}.<br>
    *
-   * @see remixlab.bias.core.Agent#feed()
-   * @see remixlab.bias.core.Agent#updateTrackedGrabberFeed()
-   * @see remixlab.bias.core.Agent#handleFeed()
+   * @see Agent#feed()
+   * @see Agent#updateTrackedGrabberFeed()
+   * @see Agent#handleFeed()
    */
   public void handle() {
     // 1. Agents
@@ -76,7 +76,7 @@ public class InputHandler {
   }
 
   /**
-   * Calls {@link remixlab.bias.core.Agent#addGrabber(Grabber)} on registered
+   * Calls {@link Agent#addGrabber(Grabber)} on registered
    * {@link #agents()}.
    */
   public void addGrabber(Grabber grabber) {
@@ -85,7 +85,7 @@ public class InputHandler {
   }
 
   /**
-   * Calls {@link remixlab.bias.core.Agent#removeGrabber(Grabber)} on registered
+   * Calls {@link Agent#removeGrabber(Grabber)} on registered
    * {@link #agents()}.
    */
   public void removeGrabber(Grabber grabber) {
@@ -94,7 +94,7 @@ public class InputHandler {
   }
 
   /**
-   * Calls {@link remixlab.bias.core.Agent#removeGrabbers()} on registered
+   * Calls {@link Agent#removeGrabbers()} on registered
    * {@link #agents()}.
    */
   public void removeGrabbers() {
@@ -103,7 +103,7 @@ public class InputHandler {
   }
 
   /**
-   * Calls {@link remixlab.bias.core.Agent#setDefaultGrabber(Grabber)} on registered
+   * Calls {@link Agent#setDefaultGrabber(Grabber)} on registered
    * {@link #agents()}.
    */
   public void setDefaultGrabber(Grabber grabber) {
@@ -112,7 +112,7 @@ public class InputHandler {
   }
 
   /**
-   * Calls {@link remixlab.bias.core.Agent#shiftDefaultGrabber(Grabber, Grabber)} on
+   * Calls {@link Agent#shiftDefaultGrabber(Grabber, Grabber)} on
    * registered {@link #agents()}.
    */
   public void shiftDefaultGrabber(Grabber g1, Grabber g2) {
@@ -121,7 +121,7 @@ public class InputHandler {
   }
 
   /**
-   * Returns {@code true} if {@link remixlab.bias.core.Agent#isInputGrabber(Grabber)} is
+   * Returns {@code true} if {@link Agent#isInputGrabber(Grabber)} is
    * {@code true} for at least one agent in {@link #agents()}.
    */
   public boolean isInputGrabber(Grabber g) {
@@ -132,7 +132,7 @@ public class InputHandler {
   }
 
   /**
-   * Returns {@code true} if {@link remixlab.bias.core.Agent#hasGrabber(Grabber)} is
+   * Returns {@code true} if {@link Agent#hasGrabber(Grabber)} is
    * {@code true} for at least one agent in {@link #agents()}.
    */
   public boolean hasGrabber(Grabber g) {
@@ -143,7 +143,7 @@ public class InputHandler {
   }
 
   /**
-   * Calls {@link remixlab.bias.core.Agent#resetTrackedGrabber()} on registered
+   * Calls {@link Agent#resetTrackedGrabber()} on registered
    * {@link #agents()}.
    */
   public void resetTrackedGrabber() {

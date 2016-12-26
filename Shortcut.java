@@ -8,7 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  **************************************************************************************/
 
-package remixlab.bias.core;
+package remixlab.bias;
 
 import remixlab.util.EqualsBuilder;
 import remixlab.util.HashCodeBuilder;
@@ -18,14 +18,14 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * Shortcuts are {@link remixlab.bias.core.BogusEvent} means to bind user-defined actions
- * from a {@link remixlab.bias.core.BogusEvent}.
+ * Shortcuts are {@link BogusEvent} means to bind user-defined actions
+ * from a {@link BogusEvent}.
  * <p>
- * Every {@link remixlab.bias.core.BogusEvent} instance has a shortcut which represents a
+ * Every {@link BogusEvent} instance has a shortcut which represents a
  * gesture-{@link #id()}, for instance, the button being dragged and the modifier key
  * pressed (see {@link #modifiers()}) at the very moment an user interaction takes place,
  * such as when she drags a giving mouse button while pressing the 'CTRL' modifier key.
- * See {@link remixlab.bias.core.BogusEvent#shortcut()}. Note that for the shortcut
+ * See {@link BogusEvent#shortcut()}. Note that for the shortcut
  * {@link #description()} to work properly, gesture-{@link #id()}s should be registered at
  * the shortcut class first (see {@link #registerID(String)}).
  * <p>
