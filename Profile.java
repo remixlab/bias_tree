@@ -278,14 +278,14 @@ public class Profile {
             method = grabber.getClass().getMethod(action, new Class<?>[]{MotionEvent.class});
           } catch (Exception motion) {
             proto2 = prototypes(shortcut, action);
-            System.out.println("Warning: not binding set! Check the existance of one of the following method prototypes: " + (
+            System.out.println("Warning: not binding set! Check the existence of one of the following method prototypes: " + (
                 proto1 != null ?
                     proto1 + ", " + proto2 :
                     proto2) + other);
           }
         else {
           proto2 = prototypes(shortcut, action);
-          System.out.println("Warning: not binding set! Check the existance of one of the following method prototypes: " + (
+          System.out.println("Warning: not binding set! Check the existence of one of the following method prototypes: " + (
               proto1 != null ?
                   proto1 + ", " + proto2 :
                   proto2) + other);
@@ -352,12 +352,12 @@ public class Profile {
             method = object.getClass().getMethod(action, new Class<?>[]{grabber.getClass(), MotionEvent.class});
           } catch (Exception e) {
             System.out.println(
-                "Warning: not binding set! Check the existance of one of the following method prototypes: " + prototypes(
+                "Warning: not binding set! Check the existence of one of the following method prototypes: " + prototypes(
                     object, shortcut, action));
           }
         else {
           System.out.println(
-              "Warning: not binding set! Check the existance of one of the following method prototypes:: " + prototypes(
+              "Warning: not binding set! Check the existence of one of the following method prototypes:: " + prototypes(
                   object, shortcut, action));
         }
       }
