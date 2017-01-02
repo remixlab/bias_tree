@@ -8,12 +8,18 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  **************************************************************************************/
 
-package remixlab.bias;
+package remixlab.bias.ext;
 
+import remixlab.bias.BogusEvent;
+import remixlab.bias.Grabber;
+import remixlab.bias.Shortcut;
+import remixlab.bias.event.KeyboardShortcut;
 import remixlab.bias.event.MotionEvent;
 import remixlab.bias.event.MotionShortcut;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -45,6 +51,37 @@ public class Profile {
     ObjectMethodTuple(Object o, Method m) {
       object = o;
       method = m;
+    }
+  }
+
+  /**
+   * Utility function to programmatically register virtual keys.
+   */
+  public static void registerVKeys(Class<?> keyEventClass) {
+    // TODO android needs testing
+    // idea took from here:
+    // http://stackoverflow.com/questions/15313469/java-keyboard-keycodes-list
+    // and here:
+    // http://www.java2s.com/Code/JavaAPI/java.lang.reflect/FieldgetIntObjectobj.htm
+    String prefix = keyEventClass.getName().contains("android") ? "KEYCODE_" : "VK_";
+    int l = prefix.length();
+    Field[] fields = keyEventClass.getDeclaredFields();
+    for (Field f : fields) {
+      if (Modifier.isStatic(f.getModifiers()) && Modifier.isPublic(f.getModifiers())) {
+        Class<?> clazzType = f.getType();
+        if (clazzType.toString().equals("int")) {
+          int id = -1;
+          try {
+            id = f.getInt(keyEventClass);
+            String name = f.getName();
+            if (!KeyboardShortcut.hasID(id) && name.substring(0, l).equals(prefix))
+              KeyboardShortcut.registerID(id, name);
+          } catch (Exception e) {
+            System.out.println("Warning: couldn't register key");
+            e.printStackTrace();
+          }
+        }
+      }
     }
   }
 

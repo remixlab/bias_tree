@@ -8,7 +8,9 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  **************************************************************************************/
 
-package remixlab.bias;
+package remixlab.bias.ext;
+
+import remixlab.bias.*;
 
 /**
  * A {@link remixlab.bias.GrabberObject} with a {@link Profile} instance which allows
@@ -18,7 +20,7 @@ package remixlab.bias;
  * {@link Profile#setBinding(Object, Shortcut, String)} for the type of
  * actions and method signatures that may be bound.
  *
- * @see remixlab.bias.Profile
+ * @see Profile
  */
 public class InteractiveGrabberObject extends GrabberObject {
   protected Profile profile;
