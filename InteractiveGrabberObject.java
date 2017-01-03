@@ -8,9 +8,7 @@
  * which is available at http://www.gnu.org/licenses/gpl.html
  **************************************************************************************/
 
-package remixlab.bias.ext;
-
-import remixlab.bias.*;
+package remixlab.bias;
 
 /**
  * A {@link remixlab.bias.GrabberObject} with a {@link Profile} instance which allows

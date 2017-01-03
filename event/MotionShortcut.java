@@ -157,4 +157,9 @@ public final class MotionShortcut extends Shortcut {
       }
     return clazz;
   }
+
+  @Override
+  public Class<? extends MotionEvent> defaultEventClass() {
+    return MotionEvent.class;
+  }
 }

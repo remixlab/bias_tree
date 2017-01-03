@@ -217,9 +217,24 @@ public class Shortcut {
   }
 
   /**
-   * Returns the event class this shortcut is to be attached to.
+   * Returns the event class this shortcut is to be attached to. Should be non-null.
+   *
+   * @see #defaultEventClass()
    */
-  public Class<? extends BogusEvent> eventClass() {
+  protected Class<? extends BogusEvent> eventClass() {
     return BogusEvent.class;
+  }
+
+  /**
+   * Returns the default-event class (alternative to {@link #eventClass()}) this shortcut is
+   * to be attached to. Default value is {@code null}.
+   * <p>
+   * Override it when an optional {@link #eventClass()} is needed (rarely). For an example
+   * refer to the {@code MotionEvent} implementation.
+   *
+   * @see #eventClass()
+   */
+  protected Class<? extends BogusEvent> defaultEventClass() {
+    return null;
   }
 }
