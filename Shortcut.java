@@ -47,7 +47,7 @@ import java.util.HashMap;
  * <p>
  * <pre>
  * {@code
- * public Class<? extends CustomEvent> eventClass() {
+ * protected Class<? extends CustomEvent> eventClass() {
  *   return CustomEvent.class;
  * }
  * }
